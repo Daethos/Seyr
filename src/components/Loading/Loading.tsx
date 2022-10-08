@@ -1,7 +1,7 @@
 import Placeholder from 'react-bootstrap/Placeholder';
 import './Loading.css';
 
-export default function Loading({ user, handleLogout }) {
+export default function Loading() {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
         <div className="" id="placeholder"> 

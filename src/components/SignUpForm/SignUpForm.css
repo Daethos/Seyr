@@ -1,7 +1,7 @@
 /* .monster-image {
     max-width: 25%;
     max-height: 25%;
-} */
+}
 /* .tapered-rule{
     display: block;
     width: 100%;
@@ -12,9 +12,7 @@
     fill: #922610;
     stroke: #922610;
 } */
-.signup-form {
-    font-family: 'Cinzel' !important;
-}
+
 .signup-labels {
     color: #922610;
-}
+} 

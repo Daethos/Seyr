@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import NavBar from '../../components/NavBar/NavBar';
-// import UserProfile from '../UserProfile/UserProfile';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import NavBar from '../../components/NavBar/NavBar';
+import UserProfile from '../UserProfile/UserProfile';
 import './App.css';
 import userService from "../../utils/userService";
 // import * as monstersAPI from '../../utils/monsterApi';
@@ -19,13 +19,12 @@ import Loading from "../../components/Loading/Loading";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
-  const [monstahUrl, setMonstahUrl] = useState('');
-  const [backgroundState, setBackgroundState] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [monstahUrl, setMonstahUrl] = useState<string>('');
+  const [backgroundState, setBackgroundState] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   // const [submitting, setSubmitting] = useState(false);
   // const [monstra, setMonstra] = useState([])
-  const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/dungeons/';
-  console.log(backgroundState, "<- What's up?")
+  const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/seyr/';
 
 
   function handleSignUpOrLogin() {
@@ -52,21 +51,16 @@ function App() {
 //         console.log(err.message, '<- This is the error in handleMonster')
 //     }
 // }
-
 // async function editMonstra(monstra) {
 //   try {
 //     console.log(monstra, '<- Monstra in editMonstra start')
 //     const response = await monstersAPI.edit(monstra);
-    
 //     console.log(response, '<- Response in editMonstra')
-    
 //     setMonstra([response.data, ...monstra]);
 //   } catch (err)  {
 //     console.log(err.message, '<- You are having an error in the editMonstra function in App.jsx')
 //   }
 // }
-
-  
 
 //   async function colores(background) {
 //     try {
@@ -97,7 +91,7 @@ function App() {
 
   if (loading) {
     return (
-        <Loading user={user} handleLogout={handleLogout} />
+        <Loading />
     );
 }
 
@@ -113,10 +107,10 @@ function App() {
       //style={{ backgroundImage: `url(${BUCKET_START}Y4.png)`}}
       // className="user-background"
       > 
-      {/* <NavBar user={user} setUser={setUser} handleLogout={handleLogout} getmonstahurl={getmonstahurl} handleColor={handleColor} /> */}
+      <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
       <Routes>
-        {/* <Route path="/" element={<UserProfile loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
-        <Route path="/Community" element={<Community loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
+        <Route path="/" element={<UserProfile loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
+        {/* <Route path="/Community" element={<Community loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/:username" element={<ProfilePage user={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />
         <Route path="/Monsters/Data" element={<ApiMonsterData user={user} handleLogout={handleLogout} />} />
@@ -132,19 +126,19 @@ function App() {
   }
 
   return (
-    <div 
+    //<div 
       // style={
       //   backgroundState
       //   ? { backgroundImage:`url(${backgroundState})` }
       //   : { backgroundImage: `url(${BUCKET_START}Y4.png)` }
       // }
-      className="user-background"
-      > 
+      //className="user-background"
+      //> 
     <Routes>
       <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       <Route path="/*" element={<Navigate to="/Authorization" />} />
     </Routes>
-    </div>
+    //</div>
   );
 }
 

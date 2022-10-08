@@ -30,7 +30,7 @@ app.use(require('./config/auth'));
 
 // TODO: Remember to update this
 // FIXME: When you add the file again
-// app.use('/api/users', require('./routes/api/users'));
+app.use('/api/users', require('./routes/api/users')); // USERS IS NOW LIVE!
 // app.use('/api/monsters', require('./routes/api/monsters'));
 // app.use('/api/dndapi', require('./routes/api/dndapi'));
 // app.use('/api/community', require('./routes/api/community'));

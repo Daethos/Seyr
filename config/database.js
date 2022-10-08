@@ -5,7 +5,6 @@ mongoose.connect(
 
 );
 
-
 const db = mongoose.connection;
 
 db.on('connected', function() {

@@ -98,7 +98,7 @@ const isLocalhost = Boolean(
       });
   }
   
-  function checkValidServiceWorker(swUrl: RequestInfo | URL, config: { onUpdate: (arg0: ServiceWorkerRegistration) => void; onSuccess: (arg0: ServiceWorkerRegistration) => void; }) {
+  function checkValidServiceWorker(swUrl: string | URL, config: { onUpdate: (arg0: ServiceWorkerRegistration) => void; onSuccess: (arg0: ServiceWorkerRegistration) => void; }) {
     // Check if the service worker can be found. If it can't reload the page.
     fetch(swUrl, {
       headers: { 'Service-Worker': 'script' },

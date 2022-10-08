@@ -1,0 +1,24 @@
+#navbar {
+    font-family: 'Cinzel';
+    /* background-color: #191919; */
+    background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100);
+    box-shadow: 10px 5px 20px 0 rgba(80, 0, 0, 0.55), 10px 6px 20px 0 rgba(80, 0, 0, 0.55);
+    font-weight: 900;
+
+}
+#nav-pic {
+    max-width: 6.5vw;
+    max-height: 6.5vh;
+}
+
+.links {
+    font-weight: 900;
+}
+
+.nav-item .dropdown-menu {
+    background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
+  }
+  
+.nav-item .dropdown-item {
+    color: #ffffff;
+}

@@ -1,5 +1,9 @@
-import React, { FC } from 'react';
+import React from 'react';
 
-export default function ErrorMessage({ error}){
+interface ErrorProps {
+    error: string;
+}
+
+export default function ErrorMessage({ error }: ErrorProps){
     return <span className={"error"}>{error}</span>
 }
