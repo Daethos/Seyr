@@ -29,8 +29,13 @@ const asceanSchema = new Schema(
         ring_two: {type: Schema.Types.ObjectId, ref: 'Rings'},
         amulet: {type: Schema.Types.ObjectId, ref: 'Amulets'},
         trinket: {type: Schema.Types.ObjectId, ref: 'Trinkets'},
-        adherent: Boolean,
-        devoted: Boolean 
+        faith: {
+            type: String,
+            enum : ["adherent", "devoted", "none"],
+            default: "none"
+        },
+        // adherent: Boolean,
+        // devoted: Boolean 
     },
     {
         timestamps: true,

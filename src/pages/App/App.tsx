@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from '../../components/NavBar/NavBar';
 import UserProfile from '../UserProfile/UserProfile';
+import NewAscean from "../../components/NewAscean/NewAscean";
 import './App.css';
 import userService from "../../utils/userService";
 // import * as monstersAPI from '../../utils/monsterApi';
@@ -110,6 +111,7 @@ function App() {
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
+        <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} />} />
         {/* <Route path="/Community" element={<Community loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/:username" element={<ProfilePage user={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />

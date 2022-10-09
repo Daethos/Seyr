@@ -13,6 +13,11 @@ const helmetSchema = new Schema(
         magical_resistance: Number,
         dodge: Number,
         roll: Number,
+        constitution: Number,
+        strength: Number,
+        agility: Number,
+        achre: Number,
+        caeren: Number,
         imgURL: String
     },
 );
