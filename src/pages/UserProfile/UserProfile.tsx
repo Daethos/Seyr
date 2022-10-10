@@ -56,9 +56,8 @@ if (loading) {
               />
             )
           })
-          : ''
+          : 'No Characters? No worries! Just hit the Ascean tab to create a new character ^_^'
         }
-        
     </Container>
   )
 }

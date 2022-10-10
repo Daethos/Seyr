@@ -8,10 +8,10 @@ import Col from 'react-bootstrap/Col';
 
 
 interface WeaponProps {
-    weapon: any;
-    weapon_one: any;
-    weapon_two: any;
-    weapon_three: any;
+    weapon?: any;
+    weapon_one?: any;
+    weapon_two?: any;
+    weapon_three?: any;
     index: any;
     userProfile: boolean;
 }

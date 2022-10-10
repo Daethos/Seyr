@@ -43,6 +43,12 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [devotionChecked, setDevotionChecked] = useState<boolean>(false);
     const [weaponModalShow, setWeaponModalShow] = React.useState<boolean>(false)
     const [shieldModalShow, setShieldModalShow] = React.useState<boolean>(false)
+    const [helmetModalShow, setHelmetModalShow] = React.useState<boolean>(false)
+    const [chestModalShow, setChestModalShow] = React.useState<boolean>(false)
+    const [legsModalShow, setLegsModalShow] = React.useState<boolean>(false)
+    const [amuletModalShow, setAmuletModalShow] = React.useState<boolean>(false)
+    const [ringsModalShow, setRingsModalShow] = React.useState<boolean>(false)
+    const [trinketModalShow, setTrinketModalShow] = React.useState<boolean>(false)
     const [asceanState, setAsceanState] = useState<any>({
         name: '',
         description: '',
@@ -114,7 +120,6 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             setLoading(false);
         }
     }
-    
     // The Function to Create the Character!
     function handleSubmit(e: any) {
         e.preventDefault();
@@ -130,15 +135,11 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             }
             createAscean(); 
         }
-        
-    
-    
-
     // New Character Use Effect
     useEffect(() => {
         console.log(asceanState, '<- New Statistics')
     }, [asceanState])
-
+    // General asceanState Updating
     function handleChange(e: { target: { name: any; value: any; }; }) {
         console.log('Name:', e.target.name, 'Value:', e.target.value)
         setAsceanState({
@@ -146,6 +147,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             [e.target.name]: e.target.value,
         })
     }
+    // Handles Equipment ID into asceanState
     function handleEquipment(equipment: any) {
         console.log(equipment.target.value, '<- the Equipment value being handled?')
         console.log([equipment.target.innerText], '<- the Equipment name being handled?')
@@ -158,7 +160,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             [name]: equipment.target.value,
         })
     }
-    
+    // Handles Faith of asceanState
     function handleFaith(e: { target: { name: any; value: any; checked: boolean; }; }) {
         console.log(e.target.name, '(', e.target.value, ')')
         console.log(e.target.checked, '<- Checked?')
@@ -660,7 +662,11 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             </Form.Select>
 
 
-            <Button variant="outline-danger" className="my-2" size="lg" onClick={() => setWeaponModalShow(true)}>Weapons & Spells</Button>
+            <Button variant="outline-danger" 
+                className="my-2" 
+                size="lg" 
+                onClick={() => setWeaponModalShow(true)}
+            >Weapons & Spells</Button>
             <Col>
             <Modal show={weaponModalShow}
                 onHide={() => setWeaponModalShow(false)}
@@ -670,7 +676,15 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {weapons.map((w, index) => {
                     return (
-                        <WeaponsCard userProfile={false} weapon={w} weapon_one={w} weapon_two={w} weapon_three={w} key={w._id} index={index} />
+                        <WeaponsCard 
+                            userProfile={false} 
+                            weapon={w} 
+                            weapon_one={w} 
+                            weapon_two={w} 
+                            weapon_three={w} 
+                            key={w._id} 
+                            index={index} 
+                        />
                 )})}
                 </Modal.Body>
             </Modal>
@@ -694,7 +708,11 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" className="my-2" size="lg" onClick={() => setShieldModalShow(true)}>Shields</Button>
+            <Button variant="outline-danger" 
+                className="my-2" 
+                size="lg" 
+                onClick={() => setShieldModalShow(true)}
+            >Shields</Button>
             <Modal show={shieldModalShow}
                 onHide={() => setShieldModalShow(false)}
                 centered
@@ -720,9 +738,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" size="lg" className="my-2" onClick={() => setShieldModalShow(true)}>Helmets and Hoods</Button>
-            <Modal show={shieldModalShow}
-                onHide={() => setShieldModalShow(false)}
+            <Button 
+                variant="outline-danger" 
+                size="lg" 
+                className="my-2" 
+                onClick={() => setHelmetModalShow(true)}
+            >Helmets and Hoods</Button>
+            <Modal show={helmetModalShow}
+                onHide={() => setHelmetModalShow(false)}
                 centered
                 id="modal-weapon">
             <Modal.Body id="modal-weapon">
@@ -746,9 +769,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" size="lg" className="my-2" onClick={() => setShieldModalShow(true)}>Cuirasses and Robes</Button>
-            <Modal show={shieldModalShow}
-                onHide={() => setShieldModalShow(false)}
+            <Button 
+                variant="outline-danger" 
+                size="lg" 
+                className="my-2" 
+                onClick={() => setChestModalShow(true)}
+            >Cuirasses and Robes</Button>
+            <Modal show={chestModalShow}
+                onHide={() => setChestModalShow(false)}
                 centered
                 id="modal-weapon">
             <Modal.Body id="modal-weapon">
@@ -772,9 +800,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" className="my-2" size="lg" onClick={() => setShieldModalShow(true)}>Greaves and Pants</Button>
-            <Modal show={shieldModalShow}
-                onHide={() => setShieldModalShow(false)}
+            <Button 
+                variant="outline-danger" 
+                className="my-2" 
+                size="lg" 
+                onClick={() => setLegsModalShow(true)}
+            >Greaves and Pants</Button>
+            <Modal show={legsModalShow}
+                onHide={() => setLegsModalShow(false)}
                 centered
                 id="modal-weapon">
             <Modal.Body id="modal-weapon">
@@ -798,9 +831,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" className="my-2" size="lg" onClick={() => setShieldModalShow(true)}>Amulets and Chokers</Button>
-            <Modal show={shieldModalShow}
-                onHide={() => setShieldModalShow(false)}
+            <Button 
+                variant="outline-danger" 
+                className="my-2" 
+                size="lg" 
+                onClick={() => setAmuletModalShow(true)}
+            >Amulets and Chokers</Button>
+            <Modal show={amuletModalShow}
+                onHide={() => setAmuletModalShow(false)}
                 centered
                 id="modal-weapon">
             <Modal.Body id="modal-weapon">
@@ -832,9 +870,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" className="my-2" size="lg" onClick={() => setShieldModalShow(true)}>Rings and Things</Button>
-            <Modal show={shieldModalShow}
-                onHide={() => setShieldModalShow(false)}
+            <Button 
+                variant="outline-danger" 
+                className="my-2" 
+                size="lg" 
+                onClick={() => setRingsModalShow(true)}
+            >Rings and Things</Button>
+            <Modal show={ringsModalShow}
+                onHide={() => setRingsModalShow(false)}
                 centered
                 id="modal-weapon">
             <Modal.Body id="modal-weapon">
@@ -858,9 +901,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Button variant="outline-danger" className="my-2" size="lg" onClick={() => setShieldModalShow(true)}>Trinkets</Button>
-            <Modal show={shieldModalShow}
-                onHide={() => setShieldModalShow(false)}
+            <Button 
+                variant="outline-danger" 
+                className="my-2" 
+                size="lg" 
+                onClick={() => setTrinketModalShow(true)}
+            >Trinkets</Button>
+            <Modal show={trinketModalShow}
+                onHide={() => setTrinketModalShow(false)}
                 centered
                 id="modal-weapon">
             <Modal.Body id="modal-weapon">

@@ -5,9 +5,9 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
 interface RingProps {
-    ring: any;
-    ring_one: any;
-    ring_two: any;
+    ring?: any;
+    ring_one?: any;
+    ring_two?: any;
     index: any;
     userProfile: boolean;
 }
