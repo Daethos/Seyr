@@ -6,7 +6,7 @@ import UserProfile from '../UserProfile/UserProfile';
 import NewAscean from "../../components/NewAscean/NewAscean";
 import './App.css';
 import userService from "../../utils/userService";
-// import * as monstersAPI from '../../utils/monsterApi';
+import * as asceanAPI from '../../utils/asceanApi';
 // import ApiMonsters from "../../components/ApiMonsters/ApiMonsters";
 // import EditMonster from "../../components/EditMonster/EditMonster";
 // import ApiMonsterDetails from "../../components/ApiMonsterDetails/ApiMonsterDetails";
@@ -24,7 +24,7 @@ function App() {
   const [backgroundState, setBackgroundState] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   // const [submitting, setSubmitting] = useState(false);
-  // const [monstra, setMonstra] = useState([])
+  const [ascean, setAscean] = useState<object[]>([])
   const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/seyr/';
 
 
@@ -41,17 +41,17 @@ function App() {
 //     setMonstahUrl(url);
 //   }
 
-//   async function handleMonster(monstroso: Object) {
-//     try {
-//         console.log(monstroso, '<- Monstroso in handleMonster start')
-//         const response = await monstersAPI.create(monstroso);
-//         console.log(response, '<- Response in handleMonster');
-//         setMonstra([response.data, ...monstra]);
-//         // setMonstra([...monstra, response.data]);
-//     } catch (err) {
-//         console.log(err.message, '<- This is the error in handleMonster')
-//     }
-// }
+  async function handleAsceanCreate(newAscean: Object) {
+    try {
+        console.log(newAscean, '<- newAscean in handleAsceanCreate start')
+        const response = await asceanAPI.create(newAscean);
+        console.log(response, '<- Response in handleAsceanCreate');
+        setAscean([response.data, ...ascean]);
+    } catch (err) {
+        console.log(err, '<- This is the error in handleAsceanCreate')
+    }
+}
+
 // async function editMonstra(monstra) {
 //   try {
 //     console.log(monstra, '<- Monstra in editMonstra start')
@@ -111,7 +111,7 @@ function App() {
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
-        <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} />} />
+        <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />
         {/* <Route path="/Community" element={<Community loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/:username" element={<ProfilePage user={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />

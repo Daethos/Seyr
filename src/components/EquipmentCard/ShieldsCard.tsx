@@ -16,7 +16,7 @@ const ShieldsCard = ({ shield, index, show, setModalShow }: ShieldProps) => {
     const shieldPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL} /></span></Popover.Header>
-            <Popover.Body id="shield-popover-body" className="text-info">
+            <Popover.Body id="popover-body" className="">
                 {shield.type}<br />
                 Physical Defense: +{shield.phyiscal_resistance}% <br />
                 Magical Defense: +{shield.magical_resistance}% <br />
@@ -30,8 +30,8 @@ const ShieldsCard = ({ shield, index, show, setModalShow }: ShieldProps) => {
         </Popover>
     )
   return (
-    <OverlayTrigger trigger="click" placement="bottom" overlay={shieldPopover}>
-        <Button variant="outline-info" size="lg" className="m-3 p-4">{shield.name}</Button>
+    <OverlayTrigger trigger="click" placement="right" overlay={shieldPopover}>
+        <Button variant="outline-danger" size="lg" className="m-3 p-4">{shield.name}</Button>
     </OverlayTrigger>
   )
 }

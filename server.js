@@ -32,7 +32,7 @@ app.use(require('./config/auth'));
 // FIXME: When you add the file again
 app.use('/api/users', require('./routes/api/users')); // USERS IS NOW LIVE!
 app.use('/api/equipment', require('./routes/api/equipment'));
-// app.use('/api/monsters', require('./routes/api/monsters'));
+app.use('/api/ascean', require('./routes/api/ascean'));
 // app.use('/api/dndapi', require('./routes/api/dndapi'));
 // app.use('/api/community', require('./routes/api/community'));
 
