@@ -16,7 +16,7 @@ const HelmetsCard = ({ helmet, index, userProfile }: HelmetProps) => {
             <Popover.Header id="popover-header" className="" as="h3">{helmet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + helmet.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {helmet.type}<br />
-                Physical Defense: +{helmet.phyiscal_resistance}% <br />
+                Physical Defense: +{helmet.physical_resistance}% <br />
                 Magical Defense: +{helmet.magical_resistance}% <br />
                 Physical Damage: {helmet.physical_damage}x <br />
                 Magical Damage: {helmet.magical_damage}x <br />

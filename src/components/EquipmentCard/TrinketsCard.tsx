@@ -16,7 +16,7 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
             <Popover.Header id="popover-header" className="" as="h3">{trinket.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {trinket.type}<br />
-                Physical Defense: +{trinket.phyiscal_resistance}% <br />
+                Physical Defense: +{trinket.physical_resistance}% <br />
                 Magical Defense: +{trinket.magical_resistance}% <br />
                 Physical Damage: {trinket.physical_damage}x <br />
                 Magical Damage: {trinket.magical_damage}x <br />
@@ -29,7 +29,7 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={trinketPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{trinket.name}</Button>
+        <Button variant="outline-danger" className="m-3 p-4">{trinket.name}</Button>
     </OverlayTrigger>
   )
 }

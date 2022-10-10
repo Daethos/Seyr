@@ -1,7 +1,7 @@
 #popover, #popover-header, #popover-body {
     font-family: 'Cinzel';
     /* background-color: #191919; */
-    background: #FDF1DC;
+    background: #fafafa;
     color: purple;
     box-shadow: 10px 5px 20px 0 rgba(80, 0, 0, 0.55), 10px 6px 20px 0 rgba(80, 0, 0, 0.55);
     font-weight: 900;

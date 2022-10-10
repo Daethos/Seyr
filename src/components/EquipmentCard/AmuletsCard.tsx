@@ -16,7 +16,7 @@ const AmuletsCard = ({ amulet, index, userProfile }: AmuletProps) => {
             <Popover.Header id="popover-header" className="" as="h3">{amulet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + amulet.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {amulet.type}<br />
-                Physical Defense: +{amulet.phyiscal_resistance}% <br />
+                Physical Defense: +{amulet.physical_resistance}% <br />
                 Magical Defense: +{amulet.magical_resistance}% <br />
                 Physical Damage: {amulet.physical_damage}x <br />
                 Magical Damage: {amulet.magical_damage}x <br />

@@ -16,7 +16,7 @@ const ShieldsCard = ({ shield, index, userProfile }: ShieldProps) => {
             <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {shield.type}<br />
-                Physical Defense: +{shield.phyiscal_resistance}% <br />
+                Physical Defense: +{shield.physical_resistance}% <br />
                 Magical Defense: +{shield.magical_resistance}% <br />
                 Physical Damage: {shield.physical_damage}x <br />
                 Magical Damage: {shield.magical_damage}x <br />
