@@ -1,6 +1,9 @@
 import React from 'react'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container'
 
 
 interface Props {
@@ -189,50 +192,58 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         </Popover>
     )
     return (
-        <>
+        <Container>
+            <Row className="justify-content-center"
+            >
+
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
             <OverlayTrigger trigger="click" placement="right" overlay={weaponOnePopover}>
-            <img src={weapon_one.imgURL} />
+            <img src={weapon_one.imgURL} className="m-2" />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="right" overlay={weaponTwoPopover}>
-            <img src={weapon_two.imgURL} />
+            <img src={weapon_two.imgURL} className="m-2" />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="right" overlay={weaponThreePopover}>
-            <img src={weapon_three.imgURL} />
+            <img src={weapon_three.imgURL} className="m-2" />
             </OverlayTrigger>
-
             <OverlayTrigger trigger="click" placement="right" overlay={shieldPopover}>
-            <img src={shield.imgURL} />
+            <img src={shield.imgURL} className="m-2" />
             </OverlayTrigger>
+            </Col>
 
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
             <OverlayTrigger trigger="click" placement="right" overlay={helmetPopover}>
-            <img src={helmet.imgURL} />
+            <img src={helmet.imgURL} className="m-3" />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="right" overlay={chestPopover}>
-            <img src={chest.imgURL} />
+            <img src={chest.imgURL} className="m-3" />
             </OverlayTrigger>
-
+            
             <OverlayTrigger trigger="click" placement="right" overlay={legsPopover}>
-            <img src={legs.imgURL} />
+            <img src={legs.imgURL} className="m-3" />
             </OverlayTrigger>
-            
-            <OverlayTrigger trigger="click" placement="right" overlay={amuletPopover}>
-            <img src={amulet.imgURL} />
-            </OverlayTrigger>
-            
+            </Col>
 
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
+            <OverlayTrigger trigger="click" placement="right" overlay={amuletPopover}>
+            <img src={amulet.imgURL} className="m-2" />
+            </OverlayTrigger>
+            
             <OverlayTrigger trigger="click" placement="right" overlay={ringOnePopover}>
-            <img src={ring_one.imgURL} />
+            <img src={ring_one.imgURL} className="m-2" />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="right" overlay={ringTwoPopover}>
-            <img src={ring_two.imgURL} />
+            <img src={ring_two.imgURL} className="m-2" />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="right" overlay={trinketPopover}>
-            <img src={trinket.imgURL} />
+            <img src={trinket.imgURL} className="m-2" />
             </OverlayTrigger>
-            
-        </>
+            </Col>
+
+            </Row>
+        </Container>
   )
 }
 
