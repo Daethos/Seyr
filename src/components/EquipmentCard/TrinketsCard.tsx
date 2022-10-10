@@ -7,12 +7,10 @@ import Popover from 'react-bootstrap/Popover';
 interface TrinketProps {
     trinket: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const TrinketsCard = ({ trinket, index, show, setModalShow }: TrinketProps) => {
+const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
     const trinketPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{trinket.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket.imgURL} /></span></Popover.Header>

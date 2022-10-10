@@ -6,13 +6,13 @@ import Popover from 'react-bootstrap/Popover';
 
 interface RingProps {
     ring: any;
+    ring_one: any;
+    ring_two: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const RingsCard = ({ ring, index, show, setModalShow }: RingProps) => {
+const RingsCard = ({ ring, index, ring_one, ring_two, userProfile }: RingProps) => {
     const ringPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{ring.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring.imgURL} /></span></Popover.Header>
@@ -31,7 +31,7 @@ const RingsCard = ({ ring, index, show, setModalShow }: RingProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={ringPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{ring.name}</Button>
+        <Button variant="outline-danger" className="m-3 p-4">{ring.name}</Button>
     </OverlayTrigger>
   )
 }

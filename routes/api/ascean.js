@@ -4,6 +4,7 @@ const asceanCtrl = require('../../controllers/ascean');
 
 
 // /*---------- Public Routes ----------*/
+router.get('/', asceanCtrl.index)
 router.post('/', asceanCtrl.create);
 /*---------- Protected Routes ----------*/
 

@@ -23,3 +23,18 @@ export async function create(ascean: any) {
         })
     });
 }
+
+export async function getAllAscean() {
+    return fetch(BASE_URL, {
+        headers: {
+        'Authorization': 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+        console.log(response)
+        throw new Error(response.err)
+        })
+    });
+}

@@ -7,12 +7,10 @@ import Popover from 'react-bootstrap/Popover';
 interface HelmetProps {
     helmet: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const HelmetsCard = ({ helmet, index, show, setModalShow }: HelmetProps) => {
+const HelmetsCard = ({ helmet, index, userProfile }: HelmetProps) => {
     const helmetPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{helmet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + helmet.imgURL} /></span></Popover.Header>
@@ -31,7 +29,7 @@ const HelmetsCard = ({ helmet, index, show, setModalShow }: HelmetProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={helmetPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{helmet.name}</Button>
+        <Button variant="outline-danger"  className="m-3 p-4">{helmet.name}</Button>
     </OverlayTrigger>
   )
 }

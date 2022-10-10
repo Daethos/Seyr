@@ -7,12 +7,10 @@ import Popover from 'react-bootstrap/Popover';
 interface ShieldProps {
     shield: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const ShieldsCard = ({ shield, index, show, setModalShow }: ShieldProps) => {
+const ShieldsCard = ({ shield, index, userProfile }: ShieldProps) => {
     const shieldPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL} /></span></Popover.Header>
@@ -31,7 +29,7 @@ const ShieldsCard = ({ shield, index, show, setModalShow }: ShieldProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={shieldPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{shield.name}</Button>
+        <Button variant="outline-danger" className="m-3 p-4">{shield.name}</Button>
     </OverlayTrigger>
   )
 }

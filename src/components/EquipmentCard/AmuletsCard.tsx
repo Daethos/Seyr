@@ -7,12 +7,10 @@ import Popover from 'react-bootstrap/Popover';
 interface AmuletProps {
     amulet: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const AmuletsCard = ({ amulet, index, show, setModalShow }: AmuletProps) => {
+const AmuletsCard = ({ amulet, index, userProfile }: AmuletProps) => {
     const amuletPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{amulet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + amulet.imgURL} /></span></Popover.Header>
@@ -31,7 +29,7 @@ const AmuletsCard = ({ amulet, index, show, setModalShow }: AmuletProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={amuletPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{amulet.name}</Button>
+        <Button variant="outline-danger"  className="m-3 p-4">{amulet.name}</Button>
     </OverlayTrigger>
   )
 }

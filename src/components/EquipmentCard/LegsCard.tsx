@@ -7,12 +7,10 @@ import Popover from 'react-bootstrap/Popover';
 interface LegProps {
     leg: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const LegsCard = ({ leg, index, show, setModalShow }: LegProps) => {
+const LegsCard = ({ leg, index, userProfile }: LegProps) => {
     const legPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{leg.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + leg.imgURL} /></span></Popover.Header>
@@ -31,7 +29,7 @@ const LegsCard = ({ leg, index, show, setModalShow }: LegProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={legPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{leg.name}</Button>
+        <Button variant="outline-danger" className="m-3 p-4">{leg.name}</Button>
     </OverlayTrigger>
   )
 }

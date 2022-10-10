@@ -670,7 +670,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {weapons.map((w, index) => {
                     return (
-                        <WeaponsCard setModalShow={setWeaponModalShow} show={weaponModalShow} weapon={w} key={w._id} index={index} onHide={() => setWeaponModalShow(false)} />
+                        <WeaponsCard userProfile={false} weapon={w} weapon_one={w} weapon_two={w} weapon_three={w} key={w._id} index={index} />
                 )})}
                 </Modal.Body>
             </Modal>
@@ -681,50 +681,6 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         </div>
         <div className="section-right">
             <div className="actions">
-            {/* <h3>Weapons & Spells</h3>
-            <div className="property-block">
-            <Form.Select value={asceanState.weapon_one}  onChange={handleEquipment}>
-                <option>Weapon or Spell One</option>
-            {weapons.map((w) => {
-                return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_one</option>
-                )
-            })}
-            </Form.Select>
-            <Form.Select value={asceanState.weapon_two}  onChange={handleEquipment}>
-                <option>Weapon or Spell Two</option>
-            {weapons.map((w) => {
-                return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_two</option>
-                )
-            })}
-            </Form.Select>
-            <Form.Select value={asceanState.weapon_three}  onChange={handleEquipment}>
-                <option>Weapon or Spell Three</option>
-            {weapons.map((w) => {
-                return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_three</option>
-                )
-            })}
-            </Form.Select>
-
-
-            <Button variant="outline-danger" size="lg" onClick={() => setWeaponModalShow(true)}>Weapons & Spells</Button>
-            <Col>
-            <Modal show={weaponModalShow}
-                onHide={() => setWeaponModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {weapons.map((w, index) => {
-                    return (
-                        <WeaponsCard setModalShow={setWeaponModalShow} show={weaponModalShow} weapon={w} key={w._id} index={index} onHide={() => setWeaponModalShow(false)} />
-                )})}
-                </Modal.Body>
-            </Modal>
-            </Col>
-
-            </div> */}
             <h3>Armor & Eccentricities</h3>
             <div className='property-block'>
 
@@ -746,7 +702,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {shields.map((s, index) => {
                     return (
-                        <ShieldsCard setModalShow={setShieldModalShow} show={shieldModalShow} shield={s} key={s._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <ShieldsCard userProfile={false} shield={s} key={s._id} index={index} />
                 )})}
             </Modal.Body>
             </Modal>
@@ -772,7 +728,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {helmets.map((h, index) => {
                     return (
-                        <HelmetsCard setModalShow={setShieldModalShow} show={shieldModalShow} helmet={h} key={h._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <HelmetsCard userProfile={false} helmet={h} key={h._id} index={index} />
                 )})}
             </Modal.Body>
             </Modal>
@@ -798,7 +754,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {chests.map((c, index) => {
                     return (
-                        <ChestsCard setModalShow={setShieldModalShow} show={shieldModalShow} chest={c} key={c._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <ChestsCard userProfile={false} chest={c} key={c._id} index={index}  />
                 )})}
             </Modal.Body>
             </Modal>
@@ -824,7 +780,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {legs.map((l, index) => {
                     return (
-                        <LegsCard setModalShow={setShieldModalShow} show={shieldModalShow} leg={l} key={l._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <LegsCard userProfile={false} leg={l} key={l._id} index={index} />
                 )})}
             </Modal.Body>
             </Modal>
@@ -850,7 +806,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {amulets.map((a, index) => {
                     return (
-                        <AmuletsCard setModalShow={setShieldModalShow} show={shieldModalShow} amulet={a} key={a._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <AmuletsCard userProfile={false} amulet={a} key={a._id} index={index} />
                 )})}
             </Modal.Body>
             </Modal>
@@ -884,7 +840,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {rings.map((r, index) => {
                     return (
-                        <RingsCard setModalShow={setShieldModalShow} show={shieldModalShow} ring={r} key={r._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <RingsCard userProfile={false} ring={r} ring_one={r} ring_two={r} key={r._id} index={index} />
                 )})}
             </Modal.Body>
             </Modal>
@@ -910,7 +866,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Modal.Body id="modal-weapon">
                 {trinkets.map((t, index) => {
                     return (
-                        <TrinketsCard setModalShow={setShieldModalShow} show={shieldModalShow} trinket={t} key={t._id} index={index} onHide={() => setShieldModalShow(false)} />
+                        <TrinketsCard userProfile={false} trinket={t} key={t._id} index={index} />
                 )})}
             </Modal.Body>
             </Modal>

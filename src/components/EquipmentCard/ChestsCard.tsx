@@ -7,12 +7,10 @@ import Popover from 'react-bootstrap/Popover';
 interface ChestProps {
     chest: any;
     index: any;
-    show: boolean;
-    onHide: () => any;
-    setModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    userProfile: boolean;
 }
 
-const ChestsCard = ({ chest, index, show, setModalShow }: ChestProps) => {
+const ChestsCard = ({ chest, index, userProfile }: ChestProps) => {
     const chestPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{chest.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + chest.imgURL} /></span></Popover.Header>
@@ -31,7 +29,7 @@ const ChestsCard = ({ chest, index, show, setModalShow }: ChestProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={chestPopover}>
-        <Button variant="outline-danger" size="lg" className="m-3 p-4">{chest.name}</Button>
+        <Button variant="outline-danger"  className="m-3 p-4">{chest.name}</Button>
     </OverlayTrigger>
   )
 }

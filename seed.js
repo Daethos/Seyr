@@ -28,7 +28,7 @@ const seedWeapons = [
         damage_type: ['Pierce', 'Slash'],
         physical_damage: 8,
         magical_damage: 0,
-        phyiscal_resistance: 0,
+        physical_resistance: 0,
         magical_resistance: 0,
         critical_chance: 3,
         critical_damage: 1.5,
