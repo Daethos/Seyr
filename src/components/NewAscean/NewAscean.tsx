@@ -125,9 +125,6 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         async function createAscean() {
             try {
                 handleAsceanCreate(asceanState);
-                // const response = await asceanAPI.create(asceanState);
-                //console.log(response, '%c New Ascean!', 'color: blue');
-    
                 } catch (err) {
                     console.log(err, '%c <- You have an error in creating a character', 'color: red')
                 }
@@ -238,22 +235,6 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         }
     }, [caerenOutput])
 
-
-    // if (conMinusButton !== null && constitutionOutput >= 8) {
-    //     conMinusButton!.style.display = 'none';
-    // }
-    // if (strMinusButton !== null) {
-    //     strMinusButton!.style.display = 'none';
-    // }
-    // if (agiMinusButton !== null) {
-    //     agiMinusButton!.style.display = 'none';
-    // }
-    // if (achMinusButton !== null) {
-    //     achMinusButton!.style.display = 'none';
-    // }
-    // if (caerMinusButton !== null) {
-    //     caerMinusButton!.style.display = 'none';
-    // }
     // Pool Total Use Effect
     useEffect(() => {
         if (poolOutput != null) {
@@ -490,251 +471,255 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
     return (
         <Row className="justify-content-center">
-    <Form className="form-block wide" onSubmit={handleSubmit}>
-        <hr className="orange-border" />
-        <div className="section-left">
-            {/* <div className="character-heading"> */}
-            <div className="actions">
-                    <h3>Character</h3>
-                    </div>
-               <div className="top-stats">
-               <div className="property-line first">
-                <h4>Name  
-                    <Form.Control 
-                        name="name" 
-                        placeholder="Enter Name Here"
-                        value={asceanState.name}
-                        onChange={handleChange} 
-                    />
-                </h4>
-                </div>
-                <div className="property-line last">
-                <h4>Description 
-                    <Form.Control 
-                        name="description" 
-                        placeholder="What are they like?"
-                        value={asceanState.description}
-                        onChange={handleChange} 
-                    />
-                </h4>
-                </div>
-            </div>
-            <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-            <div className="top-stats">
+        <Form className="form-block wide" onSubmit={handleSubmit}>
+            <hr className="orange-border" />
+            <div className="section-left">
+                {/* <div className="character-heading"> */}
                 <div className="actions">
-                    <h3>Attributes</h3>
-                    <h3 id="pool-output"></h3>
-                </div>
+                        <h3>Character</h3>
+                        </div>
+                <div className="top-stats">
                 <div className="property-line first">
-                    <h4>Constitution</h4>
-                    <p> Defense, Magic, Health, Posture</p>
-                    <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
-                    <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
-                        <input 
-                            id="con-slider" 
-                            className="form-control-number" 
-                            type="number" 
-                            name="constitution" 
-                            value={asceanState.constitution} 
-                            min="8" max="18"
-                            step="1"
-                            readOnly 
-                        ></input>
-                        <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
-                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="con-box">
-                        </h4>
-                    </InputGroup>
-                </div>
-                <div className="property-line">
-                    <h4>Strength</h4>
-                    <p> Crit Damage, Physical, Posture</p>
-                    <InputGroup className="mb-1">
-                    <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
-                    <input 
-                            id="con-slider" 
-                            className="form-control-number" 
-                            type="number" 
-                            name="strength" 
-                            value={asceanState.strength} 
-                            min="8" max="18"
-                            step="1"
-                            readOnly 
-                        ></input>
-                    <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
-                    <h4 className="" style={{ marginLeft: 15 + '%' }} id="str-box">
-                        </h4>
-                    </InputGroup>
-                </div>
-                <div className="property-line">
-                    <h4>Agility</h4>
-                    <p> Crit Chance, Dodge, Physical, Roll</p>
-                    <InputGroup className="mb-1">
-                    <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
-                    <input 
-                            id="con-slider" 
-                            className="form-control-number" 
-                            type="number" 
-                            name="agility" 
-                            value={asceanState.agility} 
-                            min="8" max="18"
-                            step="1"
-                            readOnly 
-                        ></input>
-                    <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
-                    <h4 className="" style={{ marginLeft: 15 + '%' }} id="agi-box">
-                        </h4>
-                    </InputGroup>
-                </div>
-                <div className="property-line">
-                    <h4>Achre</h4>
-                    <p> Spell Damage, Crit, Dodge, Magic, Roll</p>
-                    <InputGroup className="mb-1">
-                    <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
-                    <input 
-                            id="con-slider" 
-                            className="form-control-number" 
-                            type="number" 
-                            name="achre" 
-                            value={asceanState.achre} 
-                            min="8" max="18"
-                            step="1"
-                            readOnly 
-                        ></input>
-                    <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
-                    <h4 className="" style={{ marginLeft: 15 + '%' }} id="ach-box">
-                        </h4>
-                    </InputGroup>
-                </div>
-                <div className="property-line last">
-                    <h4>Caeren</h4>
-                    <p> Spell Damage, Defense, Health, Magic, Posture</p>
-                    <InputGroup className="mb-1">
-                    <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
-                    <input 
-                            id="con-slider" 
-                            className="form-control-number" 
-                            type="number" 
-                            name="caeren" 
-                            value={asceanState.caeren} 
-                            min="8" max="18"
-                            step="1"
-                            readOnly 
-                        ></input>
-                        <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
-                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="caer-box">
-                        </h4>
-                    </InputGroup>
+                    <h4>Name  
+                        <Form.Control 
+                            name="name" 
+                            placeholder="Enter Name Here"
+                            value={asceanState.name}
+                            onChange={handleChange} 
+                        />
+                    </h4>
+                    </div>
+                    <div className="property-line last">
+                    <h4>Description 
+                        <Form.Control 
+                            name="description" 
+                            placeholder="What are they like?"
+                            value={asceanState.description}
+                            onChange={handleChange} 
+                        />
+                    </h4>
+                    </div>
                 </div>
                 <svg height="5" width="100%" className="tapered-rule">
                     <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>
-                <div className="actions">
-                    <h3>Faith</h3>
-                </div>
-                <div className="property-line first">
-                    <h4>Adherence</h4>
-                    <p id="adherence"> Worshiper of the Ancients{' '}</p>
-                    <FormCheck.Input 
-                        aria-describedby='adherence' 
-                        isValid={asceanState.adherent}
-                        name="faith"
-                        id="adherentID" 
-                        value='adherent' 
-                        onChange={handleFaith}
-                    />
-                </div>
-                <div className="property-line first">
-                    <h4>Devotion</h4>
-                    <p> Worshiper of Daethos{' '}</p>
-                    <FormCheck.Input
-                        aria-describedby='devoted' 
-                        isValid={asceanState.devoted}
-                        name="faith"
-                        id="devotedID" 
-                        value='devoted' 
-                        onChange={handleFaith} 
-                    />
-                </div>
-                <div className="actions">
-            <h3>Weapons & Spells</h3>
-            <div className="property-block">
-            <Form.Select value={asceanState.weapon_one}  onChange={handleEquipment}>
-                <option>Weapon or Spell One</option>
-            {weapons.map((w) => {
-                return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_one</option>
-                )
-            })}
-            </Form.Select>
-            <Form.Select value={asceanState.weapon_two}  onChange={handleEquipment}>
-                <option>Weapon or Spell Two</option>
-            {weapons.map((w) => {
-                return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_two</option>
-                )
-            })}
-            </Form.Select>
-            <Form.Select value={asceanState.weapon_three}  onChange={handleEquipment}>
-                <option>Weapon or Spell Three</option>
-            {weapons.map((w) => {
-                return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_three</option>
-                )
-            })}
-            </Form.Select>
-
-
-            <Button variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setWeaponModalShow(true)}
-            >Weapons & Spells</Button>
-            <Col>
-            <Modal show={weaponModalShow}
-                onHide={() => setWeaponModalShow(false)}
-                centered
-                id="modal-weapon"
-                >
-            <Modal.Body id="modal-weapon">
-                {weapons.map((w, index) => {
-                    return (
-                        <WeaponsCard 
-                            userProfile={false} 
-                            weapon={w} 
-                            weapon_one={w} 
-                            weapon_two={w} 
-                            weapon_three={w} 
-                            key={w._id} 
-                            index={index} 
+                <div className="top-stats">
+                    <div className="actions">
+                        <h3>Attributes</h3>
+                        <h3 id="pool-output"></h3>
+                    </div>
+                    <div className="property-line first">
+                        <h4>Constitution</h4>
+                        <p> Defense, Magic, Health, Posture</p>
+                        <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
+                        <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
+                            <input 
+                                id="con-slider" 
+                                className="form-control-number" 
+                                type="number" 
+                                name="constitution" 
+                                value={asceanState.constitution} 
+                                min="8" max="18"
+                                step="1"
+                                readOnly 
+                            ></input>
+                            <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
+                            <h4 className="" style={{ marginLeft: 15 + '%' }} id="con-box">
+                            </h4>
+                        </InputGroup>
+                    </div>
+                    <div className="property-line">
+                        <h4>Strength</h4>
+                        <p> Crit Damage, Physical, Posture</p>
+                        <InputGroup className="mb-1">
+                        <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
+                        <input 
+                                id="con-slider" 
+                                className="form-control-number" 
+                                type="number" 
+                                name="strength" 
+                                value={asceanState.strength} 
+                                min="8" max="18"
+                                step="1"
+                                readOnly 
+                            ></input>
+                        <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
+                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="str-box">
+                            </h4>
+                        </InputGroup>
+                    </div>
+                    <div className="property-line">
+                        <h4>Agility</h4>
+                        <p> Crit Chance, Dodge, Physical, Roll</p>
+                        <InputGroup className="mb-1">
+                        <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
+                        <input 
+                                id="con-slider" 
+                                className="form-control-number" 
+                                type="number" 
+                                name="agility" 
+                                value={asceanState.agility} 
+                                min="8" max="18"
+                                step="1"
+                                readOnly 
+                            ></input>
+                        <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
+                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="agi-box">
+                            </h4>
+                        </InputGroup>
+                    </div>
+                    <div className="property-line">
+                        <h4>Achre</h4>
+                        <p> Spell Damage, Crit, Dodge, Magic, Roll</p>
+                        <InputGroup className="mb-1">
+                        <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
+                        <input 
+                                id="con-slider" 
+                                className="form-control-number" 
+                                type="number" 
+                                name="achre" 
+                                value={asceanState.achre} 
+                                min="8" max="18"
+                                step="1"
+                                readOnly 
+                            ></input>
+                        <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
+                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="ach-box">
+                            </h4>
+                        </InputGroup>
+                    </div>
+                    <div className="property-line last">
+                        <h4>Caeren</h4>
+                        <p> Spell Damage, Defense, Health, Magic, Posture</p>
+                        <InputGroup className="mb-1">
+                        <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
+                        <input 
+                                id="con-slider" 
+                                className="form-control-number" 
+                                type="number" 
+                                name="caeren" 
+                                value={asceanState.caeren} 
+                                min="8" max="18"
+                                step="1"
+                                readOnly 
+                            ></input>
+                            <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
+                            <h4 className="" style={{ marginLeft: 15 + '%' }} id="caer-box">
+                            </h4>
+                        </InputGroup>
+                    </div>
+                    <svg height="5" width="100%" className="tapered-rule">
+                        <polyline points="0,0 400,2.5 0,5"></polyline>
+                    </svg>
+                    <div className="actions">
+                        <h3>Faith</h3>
+                    </div>
+                    <div className="property-line first">
+                        <h4>Adherence</h4>
+                        <p id="adherence"> Worshiper of the Ancients{' '}</p>
+                        <FormCheck.Input 
+                            aria-describedby='adherence' 
+                            isValid={asceanState.adherent}
+                            name="faith"
+                            id="adherentID" 
+                            value='adherent' 
+                            onChange={handleFaith}
                         />
-                )})}
-                </Modal.Body>
-            </Modal>
-            </Col>
-            </div>
-            </div>
-            </div>
-        </div>
-        <div className="section-right">
-            <div className="actions">
-            <h3>Armor & Eccentricities</h3>
-            <div className='property-block'>
+                    </div>
+                    <div className="property-line first">
+                        <h4>Devotion</h4>
+                        <p> Worshiper of Daethos{' '}</p>
+                        <FormCheck.Input
+                            aria-describedby='devoted' 
+                            isValid={asceanState.devoted}
+                            name="faith"
+                            id="devotedID" 
+                            value='devoted' 
+                            onChange={handleFaith} 
+                        />
+                    </div>
 
-                {/* ========== Shield Equipment Selection ========== */}
+{/* ========================================= Weapon Equipment Selection ======================================= */}
 
-            <Form.Select value={asceanState.shield}  onChange={handleEquipment}>
-                <option>Shield Options</option>
-            {shields.map((s) => {
-                return (
-                    <option value={s._id} label={s.name} key={s._id}>shield</option>
-                )
-            })}
-            </Form.Select>
-            <Button variant="outline-danger" 
-                className="my-2" 
+                    <div className="actions">
+                    <h3>Weapons & Spells</h3>
+                    <div className="edit-eqp-button">
+                    <Button variant="outline" 
+                        className="my-2" 
+                        size="lg" 
+                        style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                        onClick={() => setWeaponModalShow(true)}
+                    >Weapons & Spells</Button>
+                    <Modal 
+                        show={weaponModalShow}
+                        onHide={() => setWeaponModalShow(false)}
+                        centered
+                        
+                        aria-labelledby="contained-modal-title-vcenter"
+                        id="modal-weapon"
+                        >
+                            {/* <Modal.Header closeButton>
+                                <Modal.Title >
+                                Weapons & Spells
+                                </Modal.Title>
+                            </Modal.Header> */}
+                    <Modal.Body id="modal-weapon" className="equipment-modal">
+                    {weapons.map((w, index) => {
+                        return (
+                            <WeaponsCard 
+                                userProfile={false} 
+                                weapon={w} 
+                                weapon_one={w} 
+                                weapon_two={w} 
+                                weapon_three={w} 
+                                key={w._id} 
+                                index={index} 
+                            />
+                    )})}
+                    </Modal.Body>
+                    </Modal>
+                </div>
+                <div className="property-block">
+                <Form.Select value={asceanState.weapon_one}  onChange={handleEquipment}>
+                    <option>Weapon or Spell One</option>
+                {weapons.map((w) => {
+                    return (
+                        <option value={w._id} label={w.name} key={w._id}>weapon_one</option>
+                    )
+                })}
+                </Form.Select>
+                <Form.Select value={asceanState.weapon_two}  onChange={handleEquipment}>
+                    <option>Weapon or Spell Two</option>
+                {weapons.map((w) => {
+                    return (
+                        <option value={w._id} label={w.name} key={w._id}>weapon_two</option>
+                    )
+                })}
+                </Form.Select>
+                <Form.Select value={asceanState.weapon_three}  onChange={handleEquipment}>
+                    <option>Weapon or Spell Three</option>
+                {weapons.map((w) => {
+                    return (
+                        <option value={w._id} label={w.name} key={w._id}>weapon_three</option>
+                    )
+                })}
+                </Form.Select>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div className="section-right">
+                <div className="actions">
+                <h3>Armor & Eccentricities</h3>
+                <div className='property-block'>
+
+{/* ========================================= Shield Equipment Selection ======================================= */}
+
+            <div className="edit-eqp-button">
+            <Button variant="outline" 
+                className="mb-2" 
                 size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 onClick={() => setShieldModalShow(true)}
             >Shields</Button>
             <Modal show={shieldModalShow}
@@ -748,213 +733,241 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )})}
             </Modal.Body>
             </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-            {/* ============== Helmet Equipment Selection ================ */}
-
-            <Form.Select value={asceanState.helmet}  onChange={handleEquipment}>
-                <option>Helmet and Hood Options</option>
-            {helmets.map((h) => {
-                return (
-                    <option value={h._id} label={h.name} key={h._id}>helmet</option>
-                )
-            })}
-            </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                size="lg" 
-                className="my-2" 
-                onClick={() => setHelmetModalShow(true)}
-            >Helmets and Hoods</Button>
-            <Modal show={helmetModalShow}
-                onHide={() => setHelmetModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {helmets.map((h, index) => {
-                    return (
-                        <HelmetsCard userProfile={false} helmet={h} key={h._id} index={index} />
-                )})}
-            </Modal.Body>
-            </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-            {/* =============== Chest Equipment Selection ====================== */}
-
-            <Form.Select value={asceanState.chest}  onChange={handleEquipment}>
-                <option>Cuirass and Robe Options</option>
-            {chests.map((c) => {
-                return (
-                    <option value={c._id} label={c.name} key={c._id}>chest</option>
-                )
-            })}
-            </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                size="lg" 
-                className="my-2" 
-                onClick={() => setChestModalShow(true)}
-            >Cuirasses and Robes</Button>
-            <Modal show={chestModalShow}
-                onHide={() => setChestModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {chests.map((c, index) => {
-                    return (
-                        <ChestsCard userProfile={false} chest={c} key={c._id} index={index}  />
-                )})}
-            </Modal.Body>
-            </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-            {/* =============== Leg Equipment Selection ====================== */}
-
-            <Form.Select value={asceanState.leg}  onChange={handleEquipment}>
-                <option>Greaves and Pant Options</option>
-            {legs.map((l) => {
-                return (
-                    <option value={l._id} label={l.name} key={l._id}>legs</option>
-                )
-            })}
-            </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setLegsModalShow(true)}
-            >Greaves and Pants</Button>
-            <Modal show={legsModalShow}
-                onHide={() => setLegsModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {legs.map((l, index) => {
-                    return (
-                        <LegsCard userProfile={false} leg={l} key={l._id} index={index} />
-                )})}
-            </Modal.Body>
-            </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>  
-
-            {/* =============== Amulet Equipment Selection ===================== */}
-
-            <Form.Select value={asceanState.amulet}  onChange={handleEquipment}>
-                <option>Amulet and Choker Options</option>
-            {amulets.map((a) => {
-                return (
-                    <option value={a._id} label={a.name} key={a._id}>amulet</option>
-                )
-            })}
-            </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setAmuletModalShow(true)}
-            >Amulets and Chokers</Button>
-            <Modal show={amuletModalShow}
-                onHide={() => setAmuletModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {amulets.map((a, index) => {
-                    return (
-                        <AmuletsCard userProfile={false} amulet={a} key={a._id} index={index} />
-                )})}
-            </Modal.Body>
-            </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-            {/* =============== Ring Equipment Selection ========================== */}
-
-            <Form.Select value={asceanState.ring_one}  onChange={handleEquipment}>
-                <option>Ring One</option>
-            {rings.map((r) => {
-                return (
-                    <option value={r._id} label={r.name} key={r._id}>ring_one</option>
-                )
-            })}
-            </Form.Select>
-            <Form.Select value={asceanState.ring_two}  onChange={handleEquipment}>
-                <option>Ring Two</option>
-            {rings.map((r) => {
-                return (
-                    <option value={r._id} label={r.name} key={r._id}>ring_two</option>
-                )
-            })}
-            </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setRingsModalShow(true)}
-            >Rings and Things</Button>
-            <Modal show={ringsModalShow}
-                onHide={() => setRingsModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {rings.map((r, index) => {
-                    return (
-                        <RingsCard userProfile={false} ring={r} ring_one={r} ring_two={r} key={r._id} index={index} />
-                )})}
-            </Modal.Body>
-            </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-            {/* =============== Trinket Equipment Selection ======================= */}
-
-            <Form.Select value={asceanState.trinket}  onChange={handleEquipment}>
-                <option>Trinket Options</option>
-            {trinkets.map((t) => {
-                return (
-                    <option value={t._id} label={t.name} key={t._id}>trinket</option>
-                )
-            })}
-            </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setTrinketModalShow(true)}
-            >Trinkets</Button>
-            <Modal show={trinketModalShow}
-                onHide={() => setTrinketModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {trinkets.map((t, index) => {
-                    return (
-                        <TrinketsCard userProfile={false} trinket={t} key={t._id} index={index} />
-                )})}
-            </Modal.Body>
-            </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-
-{/* ================= Submit to Create Ascean ================== */}
-
-            <button className="btn btn-outline-success btn-lg" value={asceanState} type="submit">Create Ascean</button>
             </div>
+                <Form.Select value={asceanState.shield}  onChange={handleEquipment}>
+                    <option>Shield Options</option>
+                {shields.map((s) => {
+                    return (
+                        <option value={s._id} label={s.name} key={s._id}>shield</option>
+                    )
+                })}
+                </Form.Select>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>
+
+{/* ===================================== Helmet Equipment Selection ================================ */}
+
+                <div className="edit-eqp-button">  
+                <Button 
+                    variant="outline" 
+                    size="lg" 
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                    className="my-2" 
+                    onClick={() => setHelmetModalShow(true)}
+                >Helmets and Hoods</Button>
+                <Modal show={helmetModalShow}
+                    onHide={() => setHelmetModalShow(false)}
+                    centered
+                    id="modal-weapon">
+                <Modal.Body id="modal-weapon">
+                    {helmets.map((h, index) => {
+                        return (
+                            <HelmetsCard userProfile={false} helmet={h} key={h._id} index={index} />
+                    )})}
+                </Modal.Body>
+                </Modal>
+                </div>
+                <Form.Select value={asceanState.helmet}  onChange={handleEquipment}>
+                    <option>Helmet and Hood Options</option>
+                {helmets.map((h) => {
+                    return (
+                        <option value={h._id} label={h.name} key={h._id}>helmet</option>
+                    )
+                })}
+                </Form.Select>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>
+
+{/* ========================================= Chest Equipment Selection ======================================= */}
+
+                <div className="edit-eqp-button">
+                <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="my-2" 
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                    onClick={() => setChestModalShow(true)}
+                >Cuirasses and Robes</Button>
+                <Modal show={chestModalShow}
+                    onHide={() => setChestModalShow(false)}
+                    centered
+                    id="modal-weapon">
+                <Modal.Body id="modal-weapon">
+                    {chests.map((c, index) => {
+                        return (
+                            <ChestsCard userProfile={false} chest={c} key={c._id} index={index}  />
+                    )})}
+                </Modal.Body>
+                </Modal>
+                </div>
+                <Form.Select value={asceanState.chest}  onChange={handleEquipment}>
+                    <option>Cuirass and Robe Options</option>
+                {chests.map((c) => {
+                    return (
+                        <option value={c._id} label={c.name} key={c._id}>chest</option>
+                    )
+                })}
+                </Form.Select>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>
+
+{/* ========================================== Leg Equipment Selection ======================================== */}
+
+                <div className="edit-eqp-button">
+                <Button 
+                    variant="outline" 
+                    className="my-2" 
+                    size="lg" 
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                    onClick={() => setLegsModalShow(true)}
+                >Greaves and Pants</Button>
+                <Modal show={legsModalShow}
+                    onHide={() => setLegsModalShow(false)}
+                    centered
+                    id="modal-weapon">
+                <Modal.Body id="modal-weapon">
+                    {legs.map((l, index) => {
+                        return (
+                            <LegsCard userProfile={false} leg={l} key={l._id} index={index} />
+                    )})}
+                </Modal.Body>
+                </Modal>
+                </div>
+                <Form.Select value={asceanState.leg}  onChange={handleEquipment}>
+                    <option>Greaves and Pant Options</option>
+                {legs.map((l) => {
+                    return (
+                        <option value={l._id} label={l.name} key={l._id}>legs</option>
+                    )
+                })}
+                </Form.Select>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>  
+
+{/* ======================================= Amulet Equipment Selection ========================================= */}
+
+                <div className="edit-eqp-button">
+                <Button 
+                    variant="outline" 
+                    className="my-2" 
+                    size="lg" 
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                    onClick={() => setAmuletModalShow(true)}
+                >Amulets and Chokers</Button>
+                <Modal show={amuletModalShow}
+                    onHide={() => setAmuletModalShow(false)}
+                    centered
+                    id="modal-weapon">
+                <Modal.Body id="modal-weapon">
+                    {amulets.map((a, index) => {
+                        return (
+                            <AmuletsCard userProfile={false} amulet={a} key={a._id} index={index} />
+                    )})}
+                </Modal.Body>
+                </Modal>
+                </div>
+                <Form.Select value={asceanState.amulet}  onChange={handleEquipment}>
+                    <option>Amulet and Choker Options</option>
+                {amulets.map((a) => {
+                    return (
+                        <option value={a._id} label={a.name} key={a._id}>amulet</option>
+                    )
+                })}
+                </Form.Select>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>
+
+{/* ======================================== Ring Equipment Selection ============================================ */}
+
+                <div className="edit-eqp-button">
+                <Button 
+                    variant="outline" 
+                    className="my-2" 
+                    size="lg" 
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                    onClick={() => setRingsModalShow(true)}
+                >Rings and Things</Button>
+                <Modal show={ringsModalShow}
+                    onHide={() => setRingsModalShow(false)}
+                    centered
+                    id="modal-weapon">
+                <Modal.Body id="modal-weapon">
+                    {rings.map((r, index) => {
+                        return (
+                            <RingsCard userProfile={false} ring={r} ring_one={r} ring_two={r} key={r._id} index={index} />
+                    )})}
+                </Modal.Body>
+                </Modal>
+                </div>
+                <Form.Select value={asceanState.ring_one}  onChange={handleEquipment}>
+                    <option>Ring One</option>
+                {rings.map((r) => {
+                    return (
+                        <option value={r._id} label={r.name} key={r._id}>ring_one</option>
+                    )
+                })}
+                </Form.Select>
+                <Form.Select value={asceanState.ring_two}  onChange={handleEquipment}>
+                    <option>Ring Two</option>
+                {rings.map((r) => {
+                    return (
+                        <option value={r._id} label={r.name} key={r._id}>ring_two</option>
+                    )
+                })}
+                </Form.Select>
+
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>
+
+{/* ====================================== Trinket Equipment Selection ============================================== */}
+
+
+                <div className="edit-eqp-button">
+                <Button 
+                    variant="outline" 
+                    className="my-2" 
+                    size="lg" 
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                    onClick={() => setTrinketModalShow(true)}
+                >Trinkets</Button>
+                <Modal show={trinketModalShow}
+                    onHide={() => setTrinketModalShow(false)}
+                    centered
+                    id="modal-weapon">
+                <Modal.Body id="modal-weapon">
+                    {trinkets.map((t, index) => {
+                        return (
+                            <TrinketsCard userProfile={false} trinket={t} key={t._id} index={index} />
+                    )})}
+                </Modal.Body>
+                </Modal>
+                </div>
+                <Form.Select value={asceanState.trinket}  onChange={handleEquipment}>
+                    <option>Trinket Options</option>
+                {trinkets.map((t) => {
+                    return (
+                        <option value={t._id} label={t.name} key={t._id}>trinket</option>
+                    )
+                })}
+                </Form.Select>
+                <svg height="5" width="100%" className="tapered-rule my-2">
+                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                </svg>
+
+    {/* ================= Submit to Create Ascean ================== */}
+
+                <button className="btn btn-outline-success btn-lg" value={asceanState} type="submit">Create Ascean</button>
+                </div>
+                </div>
             </div>
-        </div>
-        <hr className="orange-border bottom" />
-    </Form>
+            <hr className="orange-border bottom" />
+        </Form>
     </Row>
     )
 }

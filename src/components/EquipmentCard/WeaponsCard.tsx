@@ -5,6 +5,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row'
 
 
 interface WeaponProps {
@@ -17,11 +18,17 @@ interface WeaponProps {
 }
 
 const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, userProfile }: WeaponProps) => {
+    let weaponDamageTypeSplitter: any = [weapon.damage_type]
+    if (weaponDamageTypeSplitter.length > 1) {
+        weaponDamageTypeSplitter.split('');
+        console.log(weaponDamageTypeSplitter, '<- What values were split?')
+        return weaponDamageTypeSplitter
+    } 
     const weaponPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon.name} [{weapon.type}] <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-                {weapon.attack_type} [{weapon.damage_type}] <br />
+                {weapon.attack_type} {weapon.damage_type.length > 1 ? weaponDamageTypeSplitter : [weapon.damage_type]}  <br />
                 Damage: {weapon.physical_damage} Physical | {weapon.magical_damage} Magical <br />
                 Critical Chance: +{weapon.critical_chance}% <br />
                 Critical Damage: {weapon.critical_damage}x <br />
@@ -87,7 +94,7 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
         </>
         : 
             <OverlayTrigger trigger="click" placement="right" overlay={weaponPopover}>
-                <Button variant="outline-danger"  className="m-3 p-4">{weapon.name}</Button>
+                <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{weapon.name}</Button>
             </OverlayTrigger>
     } 
     </>

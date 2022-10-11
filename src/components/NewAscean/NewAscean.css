@@ -1,11 +1,21 @@
-#modal-weapon {
+/* #modal-weapon {
     background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
 
-}
+} */
 
 .modal-content {
+    background: #f9e8fd;
     background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
+    text-align: center;
+    font-variant: small-caps;
+    color: purple;
+    border: 1.5px solid red;
+    box-shadow: 0 0 1.5em #840101; 
+    
 }
+/* .equipment-modal {
+    text-align: center;
+} */
 
 .form-block {
     text-align: left; 
