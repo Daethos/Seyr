@@ -29,7 +29,7 @@ const AmuletsCard = ({ amulet, index, userProfile }: AmuletProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={amuletPopover}>
-        <Button variant="outline-danger"  className="m-3 p-4">{amulet.name}</Button>
+        <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{amulet.name}</Button>
     </OverlayTrigger>
   )
 }

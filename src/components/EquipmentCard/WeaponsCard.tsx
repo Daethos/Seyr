@@ -26,8 +26,9 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
     } 
     const weaponPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{weapon.name} [{weapon.type}] <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{weapon.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {weapon.type} [{weapon.grip}] <br />
                 {weapon.attack_type} {weapon.damage_type.length > 1 ? weaponDamageTypeSplitter : [weapon.damage_type]}  <br />
                 Damage: {weapon.physical_damage} Physical | {weapon.magical_damage} Magical <br />
                 Critical Chance: +{weapon.critical_chance}% <br />
@@ -83,13 +84,13 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
         ? 
         <>
         <OverlayTrigger trigger="click" placement="right" overlay={weaponOnePopover}>
-                <Button variant="outline-danger"  className="m-3 p-4">{weapon_one.name}</Button>
+                <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{weapon_one.name}</Button>
         </OverlayTrigger>
         <OverlayTrigger trigger="click" placement="right" overlay={weaponTwoPopover}>
-                <Button variant="outline-danger"  className="m-3 p-4">{weapon_two.name}</Button>
+                <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{weapon_two.name}</Button>
         </OverlayTrigger>
         <OverlayTrigger trigger="click" placement="right" overlay={weaponThreePopover}>
-                <Button variant="outline-danger"  className="m-3 p-4">{weapon_three.name}</Button>
+                <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{weapon_three.name}</Button>
         </OverlayTrigger>
         </>
         : 

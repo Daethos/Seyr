@@ -29,7 +29,7 @@ const HelmetsCard = ({ helmet, index, userProfile }: HelmetProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={helmetPopover}>
-        <Button variant="outline-danger"  className="m-3 p-4">{helmet.name}</Button>
+        <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{helmet.name}</Button>
     </OverlayTrigger>
   )
 }

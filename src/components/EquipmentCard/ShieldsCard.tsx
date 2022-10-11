@@ -29,7 +29,7 @@ const ShieldsCard = ({ shield, index, userProfile }: ShieldProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={shieldPopover}>
-        <Button variant="outline-danger" className="m-3 p-4">{shield.name}</Button>
+        <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{shield.name}</Button>
     </OverlayTrigger>
   )
 }

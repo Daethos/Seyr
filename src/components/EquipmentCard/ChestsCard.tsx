@@ -29,7 +29,7 @@ const ChestsCard = ({ chest, index, userProfile }: ChestProps) => {
     )
   return (
     <OverlayTrigger trigger="click" placement="right" overlay={chestPopover}>
-        <Button variant="outline-danger"  className="m-3 p-4">{chest.name}</Button>
+        <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{chest.name}</Button>
     </OverlayTrigger>
   )
 }
