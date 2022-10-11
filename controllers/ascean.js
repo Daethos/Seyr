@@ -7,7 +7,8 @@ module.exports = {
     create,
     index,
     editAscean,
-    getOneAscean
+    getOneAscean,
+    delete: deleteAscean
 }
 
 async function editAscean(req, res) {
@@ -17,6 +18,16 @@ async function editAscean(req, res) {
         res.status(201).json({ ascean: ascean })
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Editing the Ascean!')
+    }
+}
+
+async function deleteAscean(req, res) {
+    try {
+        await Ascean.findByIdAndDelete(req.params.id)
+        res.status(201).json({});
+    } catch (err) {
+        console.log(err.message, '<- Error in delete Ascean function')
+        res.status(400).json({ err })
     }
 }
 

@@ -9,9 +9,10 @@ import Form from 'react-bootstrap/Form';
 interface Props {
     ascean: any;
     userProfile: boolean;
+    deleteAscean: any;
 }
 
-const SolaAscean = ({ ascean, userProfile }: Props) => {
+const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
   return (
     <React.Fragment>
         
@@ -164,17 +165,18 @@ const SolaAscean = ({ ascean, userProfile }: Props) => {
                 className="btn btn-white btn-lg" 
                 value={ascean._id} 
                 style={{ color: 'blue', fontWeight: 700 }}>
-                    Edit
+                    Update Ascean
                 </button>
             </Link>
-            <Form>
+            
             <button 
                 className="btn btn-lg" 
                 value={ascean._id} 
+                onClick={deleteAscean}
                 style={{ color: 'red', fontWeight: 700 }}>
                     Delete Ascean
             </button>
-            </Form>
+            
             </>
             : ''
         }

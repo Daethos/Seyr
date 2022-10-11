@@ -36,6 +36,13 @@ async function getAscean() {
   }
 }
 
+async function deleteAscean(ascean: any) {
+  ascean.preventDefault();
+  console.log(ascean.target.value, '<- What are you in here?')
+  asceanAPI.deleteAscean(ascean.target.value)
+  getAscean();
+}
+
 if (loading) {
   return (
   <>
@@ -53,6 +60,7 @@ if (loading) {
                 ascean={ascean}
                 key={ascean._id}
                 userProfile={userProfile}
+                deleteAscean={deleteAscean}
               />
             )
           })

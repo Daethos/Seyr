@@ -8,6 +8,7 @@ router.get('/', asceanCtrl.index);
 router.get('/:id', asceanCtrl.getOneAscean)
 router.put('/:id', asceanCtrl.editAscean)
 router.post('/', asceanCtrl.create);
+router.delete('/:id', asceanCtrl.delete)
 /*---------- Protected Routes ----------*/
 
 

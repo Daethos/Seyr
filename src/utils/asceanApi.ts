@@ -53,6 +53,21 @@ export async function getOneAscean(asceanID: string | undefined) {
     })
 }
 
+export async function deleteAscean(ascean: string) {
+    return fetch(BASE_URL + ascean, {
+        method: 'DELETE',
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then((response) => {
+            console.log(response, '<- Response in Delete Ascean in asceanApi')
+            throw new Error (response.err)
+        })
+    })
+}
+
 export async function edit(vaEsai: any) {
     console.log(vaEsai, '<- New Ascean vaEsai!')
     return fetch(BASE_URL + vaEsai._id, {
