@@ -271,21 +271,21 @@ const EditAscean = ({ editAscean }: Props) => {
     }, [caerenOutput])
 
 
-    if (conPlusButton !== null) {
-        conPlusButton!.style.display = 'none';
-    }
-    if (strPlusButton !== null) {
-        strPlusButton!.style.display = 'none';
-    }
-    if (agiPlusButton !== null) {
-        agiPlusButton!.style.display = 'none';
-    }
-    if (achPlusButton !== null) {
-        achPlusButton!.style.display = 'none';
-    }
-    if (caerPlusButton !== null) {
-        caerPlusButton!.style.display = 'none';
-    }
+    // if (conPlusButton !== null) {
+    //     conPlusButton!.style.display = 'none';
+    // }
+    // if (strPlusButton !== null) {
+    //     strPlusButton!.style.display = 'none';
+    // }
+    // if (agiPlusButton !== null) {
+    //     agiPlusButton!.style.display = 'none';
+    // }
+    // if (achPlusButton !== null) {
+    //     achPlusButton!.style.display = 'none';
+    // }
+    // if (caerPlusButton !== null) {
+    //     caerPlusButton!.style.display = 'none';
+    // }
     // Pool Total Use Effect
     useEffect(() => {
         poolUpdate();
@@ -1054,7 +1054,7 @@ const EditAscean = ({ editAscean }: Props) => {
             </div>
             
         </div>
-        <button className="btn btn-lg" value={editState} type="submit">Edit Ascean</button>
+        <button className="btn btn-lg" value={editState} type="submit">Update {ascean.name}</button>
         <hr className="orange-border bottom" />
     </Form>
     </Row>

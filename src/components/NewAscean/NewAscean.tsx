@@ -239,21 +239,21 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     }, [caerenOutput])
 
 
-    if (conMinusButton !== null) {
-        conMinusButton!.style.display = 'none';
-    }
-    if (strMinusButton !== null) {
-        strMinusButton!.style.display = 'none';
-    }
-    if (agiMinusButton !== null) {
-        agiMinusButton!.style.display = 'none';
-    }
-    if (achMinusButton !== null) {
-        achMinusButton!.style.display = 'none';
-    }
-    if (caerMinusButton !== null) {
-        caerMinusButton!.style.display = 'none';
-    }
+    // if (conMinusButton !== null && constitutionOutput >= 8) {
+    //     conMinusButton!.style.display = 'none';
+    // }
+    // if (strMinusButton !== null) {
+    //     strMinusButton!.style.display = 'none';
+    // }
+    // if (agiMinusButton !== null) {
+    //     agiMinusButton!.style.display = 'none';
+    // }
+    // if (achMinusButton !== null) {
+    //     achMinusButton!.style.display = 'none';
+    // }
+    // if (caerMinusButton !== null) {
+    //     caerMinusButton!.style.display = 'none';
+    // }
     // Pool Total Use Effect
     useEffect(() => {
         if (poolOutput != null) {
@@ -344,6 +344,31 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         if (poolTotal <= 25 && caerenOutput > 8) {
             if (caerMinusButton !== null) {
                 caerMinusButton!.style.display = 'inline-block';
+            }
+        }
+        if (poolTotal <= 25 && constitutionOutput <= 8) {
+            if (conMinusButton !== null) {
+                conMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && strengthOutput <= 8) {
+            if (strMinusButton !== null) {
+                strMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && agilityOutput <= 8) {
+            if (agiMinusButton !== null) {
+                agiMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && achreOutput <= 8) {
+            if (achMinusButton !== null) {
+                achMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && caerenOutput <= 8) {
+            if (caerMinusButton !== null) {
+                caerMinusButton!.style.display = 'none';
             }
         }
     }, [poolTotal])

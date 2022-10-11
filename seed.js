@@ -8,6 +8,7 @@ const Rings = require('./models/ring');
 const Amulets = require('./models/amulet');
 const Trinkets = require('./models/trinket');
 const SNEED = process.env.DATABASE_URL;
+console.log('Are we feeding or are we seeding?')
 
 mongoose.connect(SNEED, 
     {
@@ -983,7 +984,7 @@ const seedChests = [
         imgURL: '/images/soverain-armor.png'
     },
     {
-        name: 'Occult Mask',
+        name: 'Occult Armor',
         type: 'Leather-Mail',
         physical_damage: 1.05,
         magical_damage: 1.05,

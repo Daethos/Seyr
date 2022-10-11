@@ -165,7 +165,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 className="btn btn-white btn-lg" 
                 value={ascean._id} 
                 style={{ color: 'blue', fontWeight: 700 }}>
-                    Update Ascean
+                    Update {ascean.name}
                 </button>
             </Link>
             
@@ -174,7 +174,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 value={ascean._id} 
                 onClick={deleteAscean}
                 style={{ color: 'red', fontWeight: 700 }}>
-                    Delete Ascean
+                    Delete {ascean.name}
             </button>
             
             </>
