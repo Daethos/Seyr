@@ -263,3 +263,13 @@ html, body {
 		page-break-after: always;
 	}
 }
+
+.edit-eqp-button {
+  text-align: center;
+}
+.edit-eqp-button:hover {
+  transform: scale(1.05);
+}
+.eqp-popover:hover {
+  transform: scale(1.5);
+}

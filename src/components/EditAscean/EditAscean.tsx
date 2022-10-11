@@ -270,41 +270,42 @@ const EditAscean = ({ editAscean }: Props) => {
         }
     }, [caerenOutput])
 
-
-    // if (conPlusButton !== null) {
-    //     conPlusButton!.style.display = 'none';
-    // }
-    // if (strPlusButton !== null) {
-    //     strPlusButton!.style.display = 'none';
-    // }
-    // if (agiPlusButton !== null) {
-    //     agiPlusButton!.style.display = 'none';
-    // }
-    // if (achPlusButton !== null) {
-    //     achPlusButton!.style.display = 'none';
-    // }
-    // if (caerPlusButton !== null) {
-    //     caerPlusButton!.style.display = 'none';
-    // }
     // Pool Total Use Effect
     useEffect(() => {
-        poolUpdate();
-    }, [poolTotal])
-    async function poolUpdate() {
         if (poolOutput != null) {
             poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
         }
         if (poolTotal >= 25) {
-            conPlusButton!.style.display = 'none';
-            strPlusButton!.style.display = 'none';
-            agiPlusButton!.style.display = 'none';
-            achPlusButton!.style.display = 'none';
-            caerPlusButton!.style.display = 'none';
-            conMinusButton!.style.display = 'inline-block';
-            strMinusButton!.style.display = 'inline-block';
-            agiMinusButton!.style.display = 'inline-block';
-            achMinusButton!.style.display = 'inline-block';
-            caerMinusButton!.style.display = 'inline-block';
+            if (conPlusButton != null) {
+                conPlusButton!.style.display = 'none';
+            }
+            if (strPlusButton != null) {
+                strPlusButton!.style.display = 'none';
+            }
+            if (agiPlusButton != null) {
+                agiPlusButton!.style.display = 'none';
+            }
+            if (achPlusButton != null) {
+                achPlusButton!.style.display = 'none';
+            }
+            if (caerPlusButton != null) {
+                caerPlusButton!.style.display = 'none';
+            }
+            if (conMinusButton != null) {
+                conMinusButton!.style.display = 'inline-block';
+            }
+            if (strMinusButton != null) {
+                strMinusButton!.style.display = 'inline-block';
+            }
+            if (agiMinusButton != null) {
+                agiMinusButton!.style.display = 'inline-block';
+            }
+            if (achMinusButton != null) {
+                achMinusButton!.style.display = 'inline-block';
+            }
+            if (caerMinusButton != null) {
+                caerMinusButton!.style.display = 'inline-block';
+            }
         }
         if (poolTotal < 25 && constitutionOutput >= 18) {
             if (conPlusButton !== null) {
@@ -406,7 +407,7 @@ const EditAscean = ({ editAscean }: Props) => {
                 caerMinusButton!.style.display = 'none';
             }
         }
-    }
+    }, [poolTotal])
 
     function handleConMinus(e: any) {
         e.preventDefault();
@@ -737,8 +738,39 @@ const EditAscean = ({ editAscean }: Props) => {
                         onChange={handleFaith} 
                     />
                 </div>
+                
                 <div className="actions">
             <h3>Weapons & Spells</h3>
+            <div className="edit-eqp-button">
+            <Button variant="outline" 
+                className="my-2" 
+                size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                onClick={() => setWeaponModalShow(true)}
+            >Weapons & Spells</Button>
+            <Col>
+            <Modal show={weaponModalShow}
+                onHide={() => setWeaponModalShow(false)}
+                centered
+                id="modal-weapon"
+                >
+            <Modal.Body id="modal-weapon">
+                {weapons.map((w, index) => {
+                    return (
+                        <WeaponsCard 
+                            userProfile={false} 
+                            weapon={w} 
+                            weapon_one={w} 
+                            weapon_two={w} 
+                            weapon_three={w} 
+                            key={w._id} 
+                            index={index} 
+                        />
+                )})}
+                </Modal.Body>
+            </Modal>
+            </Col>
+            </div>
             <div className="property-block">
             <Form.Select value={editState.weapon_one}  onChange={handleEquipment}>
                 <option>Weapon or Spell One</option>
@@ -766,43 +798,11 @@ const EditAscean = ({ editAscean }: Props) => {
             </Form.Select>
 
 
-            <Button variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setWeaponModalShow(true)}
-            >Weapons & Spells</Button>
-            <Col>
-            <Modal show={weaponModalShow}
-                onHide={() => setWeaponModalShow(false)}
-                centered
-                id="modal-weapon"
-                >
-            <Modal.Body id="modal-weapon">
-                {weapons.map((w, index) => {
-                    return (
-                        <WeaponsCard 
-                            userProfile={false} 
-                            weapon={w} 
-                            weapon_one={w} 
-                            weapon_two={w} 
-                            weapon_three={w} 
-                            key={w._id} 
-                            index={index} 
-                        />
-                )})}
-                </Modal.Body>
-            </Modal>
-            </Col>
+            
             </div>
             </div>
             </div>
-            <div className='actions'>
-            <h3>Communal Visibility</h3></div>
-                    <Form.Select onChange={handleVisibility} name="visibility" className="my-3">
-                        <option value={editState.visibility}>Select Preference</option>
-                        <option value="public" label="Public">public</option>
-                        <option value="private" label="Private">private</option>
-                    </Form.Select> 
+           
         </div>
         <div className="section-right">
         <div className="actions">
@@ -826,18 +826,11 @@ const EditAscean = ({ editAscean }: Props) => {
             <div className="actions">
             <h3>Armor & Eccentricities</h3>
             <div className='property-block'>
-
-            <Form.Select value={editState.shield}  onChange={handleEquipment}>
-                <option>Shield Options</option>
-            {shields.map((s) => {
-                return (
-                    <option value={s._id} label={s.name} key={s._id}>shield</option>
-                )
-            })}
-            </Form.Select>
-            <Button variant="outline-danger" 
+            <div className="edit-eqp-button">
+            <Button variant="outline" 
                 className="my-2" 
                 size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 onClick={() => setShieldModalShow(true)}
             >Shields</Button>
             <Modal show={shieldModalShow}
@@ -851,23 +844,26 @@ const EditAscean = ({ editAscean }: Props) => {
                 )})}
             </Modal.Body>
             </Modal>
+            </div>
+            <Form.Select value={editState.shield} onChange={handleEquipment}>
+                <option>Shield Options</option>
+            {shields.map((s) => {
+                return (
+                    <option value={s._id} label={s.name} key={s._id}>shield</option>
+                )
+            })}
+            </Form.Select>
+            
             <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
 
             {/* ============== Helmet Equipment Selection ================ */}
-
-            <Form.Select value={editState.helmet}  onChange={handleEquipment}>
-                <option>Helmet and Hood Options</option>
-            {helmets.map((h) => {
-                return (
-                    <option value={h._id} label={h.name} key={h._id}>helmet</option>
-                )
-            })}
-            </Form.Select>
+            <div className="edit-eqp-button">
             <Button 
-                variant="outline-danger" 
+                variant="outline" 
                 size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 className="my-2" 
                 onClick={() => setHelmetModalShow(true)}
             >Helmets and Hoods</Button>
@@ -882,24 +878,27 @@ const EditAscean = ({ editAscean }: Props) => {
                 )})}
             </Modal.Body>
             </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
-            {/* =============== Chest Equipment Selection ====================== */}
-
-            <Form.Select value={editState.chest}  onChange={handleEquipment}>
-                <option>Cuirass and Robe Options</option>
-            {chests.map((c) => {
+            </div>
+            <Form.Select value={editState.helmet}  onChange={handleEquipment}>
+                <option>Helmet and Hood Options</option>
+            {helmets.map((h) => {
                 return (
-                    <option value={c._id} label={c.name} key={c._id}>chest</option>
+                    <option value={h._id} label={h.name} key={h._id}>helmet</option>
                 )
             })}
             </Form.Select>
+            
+            <svg height="5" width="100%" className="tapered-rule my-2">
+                <polyline points="0,0 400,2.5 0,5"></polyline>
+            </svg>
+                        
+            {/* =============== Chest Equipment Selection ====================== */}
+            <div className="edit-eqp-button">
             <Button 
-                variant="outline-danger" 
+                variant="outline" 
                 size="lg" 
                 className="my-2" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 onClick={() => setChestModalShow(true)}
             >Cuirasses and Robes</Button>
             <Modal show={chestModalShow}
@@ -913,24 +912,27 @@ const EditAscean = ({ editAscean }: Props) => {
                 )})}
             </Modal.Body>
             </Modal>
+            </div>
+            <Form.Select value={editState.chest}  onChange={handleEquipment}>
+                <option>Cuirass and Robe Options</option>
+            {chests.map((c) => {
+                return (
+                    <option value={c._id} label={c.name} key={c._id}>chest</option>
+                )
+            })}
+            </Form.Select>
+            
             <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
 
             {/* =============== Leg Equipment Selection ====================== */}
-
-            <Form.Select value={editState.leg}  onChange={handleEquipment}>
-                <option>Greaves and Pant Options</option>
-            {legs.map((l) => {
-                return (
-                    <option value={l._id} label={l.name} key={l._id}>legs</option>
-                )
-            })}
-            </Form.Select>
+            <div className="edit-eqp-button">
             <Button 
-                variant="outline-danger" 
+                variant="outline" 
                 className="my-2" 
                 size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 onClick={() => setLegsModalShow(true)}
             >Greaves and Pants</Button>
             <Modal show={legsModalShow}
@@ -944,24 +946,27 @@ const EditAscean = ({ editAscean }: Props) => {
                 )})}
             </Modal.Body>
             </Modal>
+            </div>
+            <Form.Select value={editState.leg}  onChange={handleEquipment}>
+                <option>Greaves and Pant Options</option>
+            {legs.map((l) => {
+                return (
+                    <option value={l._id} label={l.name} key={l._id}>legs</option>
+                )
+            })}
+            </Form.Select>
+            
             <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>  
 
             {/* =============== Amulet Equipment Selection ===================== */}
-
-            <Form.Select value={editState.amulet}  onChange={handleEquipment}>
-                <option>Amulet and Choker Options</option>
-            {amulets.map((a) => {
-                return (
-                    <option value={a._id} label={a.name} key={a._id}>amulet</option>
-                )
-            })}
-            </Form.Select>
+            <div className="edit-eqp-button">
             <Button 
-                variant="outline-danger" 
+                variant="outline" 
                 className="my-2" 
                 size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 onClick={() => setAmuletModalShow(true)}
             >Amulets and Chokers</Button>
             <Modal show={amuletModalShow}
@@ -975,12 +980,41 @@ const EditAscean = ({ editAscean }: Props) => {
                 )})}
             </Modal.Body>
             </Modal>
+            </div>
+            <Form.Select value={editState.amulet}  onChange={handleEquipment}>
+                <option>Amulet and Choker Options</option>
+            {amulets.map((a) => {
+                return (
+                    <option value={a._id} label={a.name} key={a._id}>amulet</option>
+                )
+            })}
+            </Form.Select>
+            
             <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
 
             {/* =============== Ring Equipment Selection ========================== */}
-
+            <div className="edit-eqp-button">
+            <Button 
+                variant="outline" 
+                className="my-2" 
+                size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                onClick={() => setRingsModalShow(true)}
+            >Rings and Things</Button>
+            <Modal show={ringsModalShow}
+                onHide={() => setRingsModalShow(false)}
+                centered
+                id="modal-weapon">
+            <Modal.Body id="modal-weapon">
+                {rings.map((r, index) => {
+                    return (
+                        <RingsCard userProfile={false} ring={r} ring_one={r} ring_two={r} key={r._id} index={index} />
+                )})}
+            </Modal.Body>
+            </Modal>
+            </div>
             <Form.Select value={editState.ring_one}  onChange={handleEquipment}>
                 <option>Ring One</option>
             {rings.map((r) => {
@@ -997,41 +1031,18 @@ const EditAscean = ({ editAscean }: Props) => {
                 )
             })}
             </Form.Select>
-            <Button 
-                variant="outline-danger" 
-                className="my-2" 
-                size="lg" 
-                onClick={() => setRingsModalShow(true)}
-            >Rings and Things</Button>
-            <Modal show={ringsModalShow}
-                onHide={() => setRingsModalShow(false)}
-                centered
-                id="modal-weapon">
-            <Modal.Body id="modal-weapon">
-                {rings.map((r, index) => {
-                    return (
-                        <RingsCard userProfile={false} ring={r} ring_one={r} ring_two={r} key={r._id} index={index} />
-                )})}
-            </Modal.Body>
-            </Modal>
+            
             <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
 
             {/* =============== Trinket Equipment Selection ======================= */}
-
-            <Form.Select value={editState.trinket}  onChange={handleEquipment}>
-                <option>Trinket Options</option>
-            {trinkets.map((t) => {
-                return (
-                    <option value={t._id} label={t.name} key={t._id}>trinket</option>
-                )
-            })}
-            </Form.Select>
+            <div className="edit-eqp-button">
             <Button 
-                variant="outline-danger" 
+                variant="outline" 
                 className="my-2" 
                 size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 onClick={() => setTrinketModalShow(true)}
             >Trinkets</Button>
             <Modal show={trinketModalShow}
@@ -1045,6 +1056,23 @@ const EditAscean = ({ editAscean }: Props) => {
                 )})}
             </Modal.Body>
             </Modal>
+            </div>
+            <Form.Select value={editState.trinket}  onChange={handleEquipment}>
+                <option>Trinket Options</option>
+            {trinkets.map((t) => {
+                return (
+                    <option value={t._id} label={t.name} key={t._id}>trinket</option>
+                )
+            })}
+            </Form.Select>
+            
+            <div className='actions'>
+                <h3>Communal Visibility</h3></div>
+                    <Form.Select onChange={handleVisibility} name="visibility" className="my-3">
+                        <option value={editState.visibility}>Select Preference</option>
+                        <option value="public" label="Public">public</option>
+                        <option value="private" label="Private">private</option>
+                    </Form.Select> 
 
 {/* ================= Submit to Create Ascean ================== */}
 
@@ -1054,7 +1082,13 @@ const EditAscean = ({ editAscean }: Props) => {
             </div>
             
         </div>
-        <button className="btn btn-lg" value={editState} type="submit">Update {ascean.name}</button>
+        <button 
+            className="btn" 
+            value={editState} 
+            style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+            type="submit">
+                Update {ascean.name}
+        </button>
         <hr className="orange-border bottom" />
     </Form>
     </Row>

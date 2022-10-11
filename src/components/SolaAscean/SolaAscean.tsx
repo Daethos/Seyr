@@ -16,7 +16,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
   return (
     <React.Fragment>
         
-    <Row className="justify-content-center my-3">
+    <Row className="justify-content-center my-5">
         
     <Col className="stat-block wide">
     <hr className="orange-border" />
@@ -33,10 +33,54 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
+            {/* <AsceanImageCard
+                weapon_one={ascean.weapon_one}
+                weapon_two={ascean.weapon_two}
+                weapon_three={ascean.weapon_three}
+                shield={ascean.shield}
+                helmet={ascean.helmet}
+                chest={ascean.chest}
+                legs={ascean.legs}
+                amulet={ascean.amulet}
+                ring_one={ascean.ring_one}
+                ring_two={ascean.ring_two}
+                trinket={ascean.trinket}
+            />
+            <svg height="5" width="100%" className="tapered-rule">
+                <polyline points="0,0 400,2.5 0,5"></polyline>
+            </svg> */}
             <div className="top-stats">
             <div className="actions">
-                <h3>Statistics</h3>
+                <h3>Attributes & Statistics</h3>
             </div>
+            <div className="abilities">
+            <div className="ability-strength">
+                <h4>CON</h4>
+                    <p className="" id="con-box">{ascean.constitution}</p>
+            </div>
+            <div className="ability-dexterity">
+                <h4>STR</h4>
+                <p className="" id="str-box">{ascean.strength}</p>
+            </div>
+            <div className="ability-constitution">
+                <h4>AGI</h4>
+                <p className=""  id="agi-box">{ascean.agility}</p>
+                
+            </div>
+            <div className="ability-intelligence">
+                <h4>Achr</h4>
+                <p className="" id="ach-box">{ascean.achre}</p>
+                
+            </div>
+            <div className="ability-wisdom">
+                <h4>CAER</h4>
+                <p className="" id="caer-box">{ascean.caeren}</p>
+            </div>
+            </div>
+            {/* <svg height="5" width="100%" className="tapered-rule">
+                <polyline points="0,0 400,2.5 0,5"></polyline>
+            </svg> */}
+            <div className="actions"><h3></h3></div>
             <div className="property-line first">
                 <h4>Experience</h4>
                 <p> {ascean.experience}</p>
@@ -69,10 +113,10 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 <h4>Critical</h4>
                 <p id="magi-res"> (Crit Chance Calculated)% / (Crit Damage Calculated)x</p>
             </div>
-            <svg height="5" width="100%" className="tapered-rule mt-3">
+            {/* <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-            <div className="actions">
+            </svg> */}
+            {/* <div className="actions">
                 <h3>Attributes</h3>
             </div>
 
@@ -99,7 +143,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 <h4>CAER</h4>
                 <p className="" id="caer-box">{ascean.caeren}</p>
             </div>
-            </div>
+            </div> */}
 
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -162,18 +206,18 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
             ? <>
             <Link to={{ pathname: `/edit/${ascean._id}` }}>
                 <button 
-                className="btn btn-white btn-lg" 
+                className="btn" 
                 value={ascean._id} 
-                style={{ color: 'blue', fontWeight: 700 }}>
+                style={{ color: 'blue', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
                     Update {ascean.name}
                 </button>
             </Link>
             
             <button 
-                className="btn btn-lg" 
+                className="btn" 
                 value={ascean._id} 
                 onClick={deleteAscean}
-                style={{ color: 'red', fontWeight: 700 }}>
+                style={{ color: 'red', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
                     Delete {ascean.name}
             </button>
             
