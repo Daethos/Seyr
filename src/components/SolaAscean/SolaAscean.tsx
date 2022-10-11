@@ -1,18 +1,9 @@
 import React from 'react'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import WeaponsCard from '../EquipmentCard/WeaponsCard';
-import ShieldsCard from '../EquipmentCard/ShieldsCard';
-import HelmetsCard from '../EquipmentCard/HelmetsCard';
-import ChestsCard from '../EquipmentCard/ChestsCard';
-import LegsCard from '../EquipmentCard/LegsCard';
-import RingsCard from '../EquipmentCard/RingsCard';
-import AmuletsCard from '../EquipmentCard/AmuletsCard';
-import TrinketsCard from '../EquipmentCard/TrinketsCard';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
-import Popover from 'react-bootstrap/Popover'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Button from 'react-bootstrap/Button';
+import { Link } from "react-router-dom";
+import Form from 'react-bootstrap/Form';
 
 
 interface Props {
@@ -21,12 +12,15 @@ interface Props {
 }
 
 const SolaAscean = ({ ascean, userProfile }: Props) => {
-    console.log(ascean, '<- Did you make it over?')
   return (
-    <Row className="justify-content-center">
-    <Col className="form-block wide">
-        <hr className="orange-border" />
+    <React.Fragment>
+        
+    <Row className="justify-content-center my-3">
+        
+    <Col className="stat-block wide">
+    <hr className="orange-border" />
         <div className="section-left">
+            
             {/* <div className="character-heading"> */}
             <div className="actions">
                 <h3>Character</h3>
@@ -135,15 +129,6 @@ const SolaAscean = ({ ascean, userProfile }: Props) => {
             </div>
             <div className="actions">
             <div className="property-block">
-            {/* <WeaponsCard 
-                userProfile={userProfile} 
-                weapon={ascean.weapon_one} 
-                weapon_one={ascean.weapon_one} 
-                weapon_two={ascean.weapon_two} 
-                weapon_three={ascean.weapon_three} 
-                key={ascean.weapon_one._id} 
-                index={ascean.name} 
-            /> */}
             </div>
             </div>
             </div>
@@ -167,79 +152,37 @@ const SolaAscean = ({ ascean, userProfile }: Props) => {
             />
             </div>
             <div className='property-block'>
-            {/* <ShieldsCard 
-                userProfile={userProfile} 
-                shield={ascean.shield} 
-                key={ascean.shield._id} 
-                index={ascean.name}  
-            />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-            <HelmetsCard 
-                userProfile={userProfile} 
-                helmet={ascean.helmet} 
-                key={ascean.helmet._id} 
-                index={ascean.name} 
-            />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-            <ChestsCard 
-                userProfile={userProfile} 
-                chest={ascean.chest} 
-                key={ascean.chest._id} 
-                index={ascean.name} 
-            />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-            <LegsCard 
-                userProfile={userProfile} 
-                leg={ascean.legs} 
-                key={ascean.legs._id} 
-                index={ascean.name} 
-            />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>  
-            <AmuletsCard 
-                userProfile={userProfile} 
-                amulet={ascean.amulet} 
-                key={ascean.amulet._id} 
-                index={ascean.name} 
-            />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-            <RingsCard 
-                userProfile={userProfile} 
-                ring={ascean.ring_one} 
-                ring_one={ascean.ring_one} 
-                ring_two={ascean.ring_two} 
-                key={ascean.ring_one._id} 
-                index={ascean.name}  
-            />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-                <TrinketsCard 
-                    userProfile={userProfile} 
-                    trinket={ascean.trinket} 
-                    key={ascean.trinket._id} 
-                    index={ascean.name} 
-                />
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg> */}
             </div>
             </div>
-    
+            
         </div>
-       
+        {
+            userProfile
+            ? <>
+            <Link to={{ pathname: `/edit/${ascean._id}` }}>
+                <button 
+                className="btn btn-white btn-lg" 
+                value={ascean._id} 
+                style={{ color: 'blue', fontWeight: 700 }}>
+                    Edit
+                </button>
+            </Link>
+            <Form>
+            <button 
+                className="btn btn-lg" 
+                value={ascean._id} 
+                style={{ color: 'red', fontWeight: 700 }}>
+                    Delete Ascean
+            </button>
+            </Form>
+            </>
+            : ''
+        }
+         <hr className='orange-border bottom' />
     </Col>
-    <button>Hello!</button> 
+    
     </Row>
+    </React.Fragment>
   )
 }
 

@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import './NewAscean.css';
-import * as equipmentAPI from '../../utils/equipmentApi';
-import WeaponsCard from '../EquipmentCard/WeaponsCard';
-import ShieldsCard from '../EquipmentCard/ShieldsCard';
-import AmuletsCard from '../EquipmentCard/AmuletsCard';
-import HelmetsCard from '../EquipmentCard/HelmetsCard';
-import ChestsCard from '../EquipmentCard/ChestsCard';
-import LegsCard from '../EquipmentCard/LegsCard';
-import RingsCard from '../EquipmentCard/RingsCard';
-import TrinketsCard from '../EquipmentCard/TrinketsCard';
-import Loading from "../Loading/Loading";
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
+import * as asceanAPI from '../../utils/asceanApi';  
+import Loading from '../Loading/Loading'; 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
@@ -19,16 +12,26 @@ import Modal from 'react-bootstrap/Modal';
 import Card from 'react-bootstrap/Card'
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormCheck from 'react-bootstrap/FormCheck'
+import * as equipmentAPI from '../../utils/equipmentApi';
+import WeaponsCard from '../EquipmentCard/WeaponsCard';
+import ShieldsCard from '../EquipmentCard/ShieldsCard';
+import AmuletsCard from '../EquipmentCard/AmuletsCard';
+import HelmetsCard from '../EquipmentCard/HelmetsCard';
+import ChestsCard from '../EquipmentCard/ChestsCard';
+import LegsCard from '../EquipmentCard/LegsCard';
+import RingsCard from '../EquipmentCard/RingsCard';
+import TrinketsCard from '../EquipmentCard/TrinketsCard';
 
-interface AsceanProps {
-    loggedUser: any;
-    setUser: React.Dispatch<any>;
-    handleAsceanCreate: any;
+interface Props {
+    editAscean: any;
 }
 
-const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => {
-
-    const [equipment, setEquipment] = useState<any[]>([]);
+const EditAscean = ({ editAscean }: Props) => {
+    const adherentID = document.getElementById('adherentID');
+    const devotedID = document.getElementById('devotedID'); 
+    const [ascean, setAscean] = useState<any>({})
+    const [loading, setLoading] = useState(true);
+    const { asceanID } = useParams();
     const [weapons, setWeapons] = useState<any[]>([]);
     const [shields, setShields] = useState<any[]>([]);
     const [helmets, setHelmets] = useState<any[]>([]);
@@ -37,9 +40,17 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [rings, setRings] = useState<any[]>([]);
     const [amulets, setAmulets] = useState<any[]>([]);
     const [trinkets, setTrinkets] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [adherenceChecked, setAdherenceChecked] = useState<boolean>(false);
-    const [devotionChecked, setDevotionChecked] = useState<boolean>(false);
+    const [weaponOneImage, setWeaponOneImage] = useState<any[]>([]);
+    const [weaponTwoImage, setWeaponTwoImage] = useState<any[]>([]);
+    const [weaponThreeImage, setWeaponThreeImage] = useState<any[]>([]);
+    const [shieldImage, setShieldImage] = useState<any[]>([]);
+    const [helmetImage, setHelmetImage] = useState<any[]>([]);
+    const [chestImage, setChestImage] = useState<any[]>([]);
+    const [legsImage, setLegsImage] = useState<any[]>([]);
+    const [ringOneImage, setRingOneImage] = useState<any[]>([]);
+    const [ringTwoImage, setRingTwoImage] = useState<any[]>([]);
+    const [amuletImage, setAmuletImage] = useState<any[]>([]);
+    const [trinketImage, setTrinketImage] = useState<any[]>([]);
     const [weaponModalShow, setWeaponModalShow] = React.useState<boolean>(false)
     const [shieldModalShow, setShieldModalShow] = React.useState<boolean>(false)
     const [helmetModalShow, setHelmetModalShow] = React.useState<boolean>(false)
@@ -48,30 +59,27 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [amuletModalShow, setAmuletModalShow] = React.useState<boolean>(false)
     const [ringsModalShow, setRingsModalShow] = React.useState<boolean>(false)
     const [trinketModalShow, setTrinketModalShow] = React.useState<boolean>(false)
-    const [asceanState, setAsceanState] = useState<any>({
-        name: '',
-        description: '',
-        constitution: 8,
-        strength: 8,
-        agility: 8,
-        achre: 8,
-        caeren: 8,
-        weapon_one: '',
-        weapon_two: '',
-        weapon_three: '',
-        shield: '',
-        helmet: '',
-        chest: '',
-        legs: '',
-        ring_one: '',
-        ring_two: '',
-        amulet: '',
-        trinket: '',
-        faith: 'none',
-        // adherent: false,
-        // devoted: false,
-    });
-
+    const [editState, setEditState] = useState<any>({
+        // name: 'Ascean Name',
+        // description: 'Ascean Description',
+        // constitution: 8,
+        // strength: 8,
+        // agility: 8,
+        // achre: 8,
+        // caeren: 8,
+        // weapon_one: 'Weapon One',
+        // weapon_two: 'Weapon Two',
+        // weapon_three: 'Weapon Three',
+        // shield: 'Shield',
+        // helmet: 'Helmet',
+        // chest: 'Chest',
+        // legs: 'Legguards',
+        // ring_one: 'Rings',
+        // ring_two: 'Things',
+        // amulet: 'Amulet',
+        // trinket: 'Trinket',
+        // faith: 'none',
+    })
     const conMinusButton = document.getElementById('con-minus');
     const conPlusButton = document.getElementById('con-plus');
     const strMinusButton = document.getElementById('str-minus');
@@ -84,7 +92,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const caerPlusButton = document.getElementById('caer-plus');
 
     let poolOutput = document.getElementById('pool-output') as HTMLOutputElement | null;
-    const [poolTotal, setPoolTotal] = useState<number>(0);
+    const [poolTotal, setPoolTotal] = useState<number>(25);
 
     const [constitutionOutput, setConstitutionOutput] = useState<number>(8)
     const [strengthOutput, setStrengthOutput] = useState<number>(8)
@@ -92,10 +100,39 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [achreOutput, setAchreOutput] = useState<number>(8)
     const [caerenOutput, setCaerenOutput] = useState<number>(8)
 
-    const adherentID = document.getElementById('adherentID');
-    const devotedID = document.getElementById('devotedID'); 
+    useEffect(() => {
+      getAscean();
+    }, [])
 
-    // Equipment Function Use Effect
+    async function getAscean() {
+        setLoading(true);
+        try {
+            const response = await asceanAPI.getOneAscean(asceanID);
+            console.log(response, '<- Response in Getting an Ascean to Edit')
+            setAscean(response.data);
+            setEditState(response.data);
+            setConstitutionOutput(response.data.constitution)
+            setStrengthOutput(response.data.strength)
+            setAgilityOutput(response.data.agility)
+            setAchreOutput(response.data.achre)
+            setCaerenOutput(response.data.caeren)
+            setLoading(false)
+            setWeaponOneImage(response.data.weapon_one)
+            setWeaponTwoImage(response.data.weapon_two)
+            setWeaponThreeImage(response.data.weapon_three)
+            setShieldImage(response.data.shield)
+            setHelmetImage(response.data.helmet)
+            setChestImage(response.data.chest)
+            setLegsImage(response.data.legs)
+            setRingOneImage(response.data.ring_one)
+            setRingTwoImage(response.data.Ring_two)
+            setAmuletImage(response.data.amulet)
+            setTrinketImage(response.data.trinket)
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+            setLoading(false)
+        }
+    }
     useEffect(() => {
         getAllEquipment();
     }, [])
@@ -103,8 +140,6 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         setLoading(true);
         try {
             const response = await equipmentAPI.index();
-            console.log(response.data, 'The entire database of equipment');
-            setEquipment(response.data);
             setWeapons(response.data.weapons);
             setShields(response.data.shields);
             setHelmets(response.data.helmets);
@@ -119,34 +154,13 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             setLoading(false);
         }
     }
-    // The Function to Create the Character!
-    function handleSubmit(e: any) {
-        e.preventDefault();
-        async function createAscean() {
-            try {
-                handleAsceanCreate(asceanState);
-                // const response = await asceanAPI.create(asceanState);
-                //console.log(response, '%c New Ascean!', 'color: blue');
-    
-                } catch (err) {
-                    console.log(err, '%c <- You have an error in creating a character', 'color: red')
-                }
-            }
-            createAscean(); 
-        }
-    // New Character Use Effect
-    useEffect(() => {
-        console.log(asceanState, '<- New Statistics')
-    }, [asceanState])
-    // General asceanState Updating
     function handleChange(e: { target: { name: any; value: any; }; }) {
         console.log('Name:', e.target.name, 'Value:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
     }
-    // Handles Equipment ID into asceanState
     function handleEquipment(equipment: any) {
         console.log(equipment.target.value, '<- the Equipment value being handled?')
         console.log([equipment.target.innerText], '<- the Equipment name being handled?')
@@ -154,50 +168,68 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         name = equipment.target.innerText;
         name = name.split('\n')[2];
         console.log(name, '<- What is the new name?')
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [name]: equipment.target.value,
         })
     }
-    // Handles Faith of asceanState
     function handleFaith(e: { target: { name: any; value: any; checked: boolean; }; }) {
         console.log(e.target.name, '(', e.target.value, ')')
         console.log(e.target.checked, '<- Checked?')
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         if (e.target.value === 'adherent' && e.target.checked === true) {
             devotedID!.style.display = 'none';
-            setAsceanState({
-                ...asceanState,
+            setEditState({
+                ...editState,
                 [e.target.name]: e.target.value,
             })
         }
         if (e.target.value === 'adherent' && e.target.checked === false) {
             devotedID!.style.display = 'inline-block';
-            setAsceanState({
-                ...asceanState,
+            setEditState({
+                ...editState,
                 [e.target.name]: 'none',
             })
         }
         if (e.target.value === 'devoted' && e.target.checked === true) {
             adherentID!.style.display = 'none';
-            setAsceanState({
-                ...asceanState,
+            setEditState({
+                ...editState,
                 [e.target.name]: e.target.value,
             })
         }
         if (e.target.value === 'devoted' && e.target.checked === false) {
             adherentID!.style.display = 'inline-block';
-            setAsceanState({
-                ...asceanState,
+            setEditState({
+                ...editState,
                 [e.target.name]: 'none',
             })
         }
-        console.log(asceanState)
+        console.log(editState)
     }
-
+    function handleSubmit(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        console.log('Editing underway!')
+        async function asceanVaEsai() {
+            try {
+                editAscean(editState)
+            } catch (err: any) {
+                console.log(err.message, '<- Error initiating Ascean Edit')
+            }
+        }
+        asceanVaEsai();
+        getAscean();
+    }
+    function handleVisibility(e: { target: { name: any; value: any; }; }) {
+        const { name, value }  = e.target;
+        console.log(name, value, '<- Name and Value in Visibility Handler')
+        editState[name] = value;
+        setEditState({...editState})
+        console.log(editState)
+    }
     const conOut = document.getElementById('con-box') as HTMLOutputElement | null;
     useEffect(() => { 
         console.log(constitutionOutput, '<- New Constitution Point Total');
@@ -239,23 +271,26 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     }, [caerenOutput])
 
 
-    if (conMinusButton !== null) {
-        conMinusButton!.style.display = 'none';
+    if (conPlusButton !== null) {
+        conPlusButton!.style.display = 'none';
     }
-    if (strMinusButton !== null) {
-        strMinusButton!.style.display = 'none';
+    if (strPlusButton !== null) {
+        strPlusButton!.style.display = 'none';
     }
-    if (agiMinusButton !== null) {
-        agiMinusButton!.style.display = 'none';
+    if (agiPlusButton !== null) {
+        agiPlusButton!.style.display = 'none';
     }
-    if (achMinusButton !== null) {
-        achMinusButton!.style.display = 'none';
+    if (achPlusButton !== null) {
+        achPlusButton!.style.display = 'none';
     }
-    if (caerMinusButton !== null) {
-        caerMinusButton!.style.display = 'none';
+    if (caerPlusButton !== null) {
+        caerPlusButton!.style.display = 'none';
     }
     // Pool Total Use Effect
     useEffect(() => {
+        poolUpdate();
+    }, [poolTotal])
+    async function poolUpdate() {
         if (poolOutput != null) {
             poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
         }
@@ -346,14 +381,39 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 caerMinusButton!.style.display = 'inline-block';
             }
         }
-    }, [poolTotal])
+        if (poolTotal <= 25 && constitutionOutput <= 8) {
+            if (conMinusButton !== null) {
+                conMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && strengthOutput <= 8) {
+            if (strMinusButton !== null) {
+                strMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && agilityOutput <= 8) {
+            if (agiMinusButton !== null) {
+                agiMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && achreOutput <= 8) {
+            if (achMinusButton !== null) {
+                achMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && caerenOutput <= 8) {
+            if (caerMinusButton !== null) {
+                caerMinusButton!.style.display = 'none';
+            }
+        }
+    }
 
     function handleConMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
         console.log(e.target.name, 'Decrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setConstitutionOutput(e.target.value)
@@ -363,8 +423,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
         console.log(e.target.name, 'Incrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setConstitutionOutput(e.target.value)
@@ -375,8 +435,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value -= 1;
         console.log(e.target.name, 'Decrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setStrengthOutput(e.target.value)
@@ -386,8 +446,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
         console.log(e.target.name, 'Incrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setStrengthOutput(e.target.value)
@@ -398,8 +458,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value -= 1;
         console.log(e.target.name, 'Decrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setAgilityOutput(e.target.value)
@@ -409,8 +469,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
         console.log(e.target.name, 'Incrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setAgilityOutput(e.target.value)
@@ -421,8 +481,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value -= 1;
         console.log(e.target.name, 'Decrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setAchreOutput(e.target.value)
@@ -432,8 +492,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
         console.log(e.target.name, 'Incrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setAchreOutput(e.target.value)
@@ -444,8 +504,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value -= 1;
         console.log(e.target.name, 'Decrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setCaerenOutput(e.target.value)
@@ -455,17 +515,24 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
         console.log(e.target.name, 'Incrementing to:', e.target.value)
-        setAsceanState({
-            ...asceanState,
+        setEditState({
+            ...editState,
             [e.target.name]: e.target.value,
         })
         setCaerenOutput(e.target.value)
         setPoolTotal(poolTotal + 1)
     }
+    if (loading) {
+        return (
+        <>
+            <Loading />
+        </>
+        );
+    }
 
     return (
         <Row className="justify-content-center">
-    <Form className="form-block wide" onSubmit={handleSubmit}>
+    <Form className="stat-block wide" onSubmit={handleSubmit}>
         <hr className="orange-border" />
         <div className="section-left">
             {/* <div className="character-heading"> */}
@@ -478,7 +545,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <Form.Control 
                         name="name" 
                         placeholder="Enter Name Here"
-                        value={asceanState.name}
+                        value={editState.name}
                         onChange={handleChange} 
                     />
                 </h4>
@@ -488,7 +555,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <Form.Control 
                         name="description" 
                         placeholder="What are they like?"
-                        value={asceanState.description}
+                        value={editState.description}
                         onChange={handleChange} 
                     />
                 </h4>
@@ -497,8 +564,46 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
+            <div className="actions">
+                <h3>Statistics</h3>
+            </div>
+            <div className="property-line first">
+                <h4>Experience</h4>
+                <p> {ascean.experience}</p>
+            </div>
+            <div className="property-line">
+                <h4>Level</h4>
+                <p> {ascean.level}</p>
+            </div>
+            <div className="property-line">
+                <h4>Health</h4>
+                <p> (Health Calculated)</p>
+            </div>
+            <div className="property-line">
+                <h4>Physical Damage</h4>
+                <p id="phys-dam"> {ascean.weapon_one.physical_damage} [{ascean.weapon_one.damage_type}], {ascean.weapon_two.physical_damage} [{ascean.weapon_two.damage_type}], {ascean.weapon_three.physical_damage} [{ascean.weapon_three.damage_type}]</p>
+            </div>
+            <div className="property-line">
+                <h4>Magical Damage</h4>
+                <p id="magi-dam"> {ascean.weapon_one.magical_damage} [{ascean.weapon_one.damage_type}], {ascean.weapon_two.magical_damage} [{ascean.weapon_two.damage_type}], {ascean.weapon_three.magical_damage} [{ascean.weapon_three.damage_type}]</p>
+            </div>
+            <div className="property-line">
+                <h4>Physical Defense</h4>
+                <p id="phys-res"> (Armor Calculated)% / (Armor Calculated)% Postured</p>
+            </div>
+            <div className="property-line">
+                <h4>Magical Defense</h4>
+                <p id="magi-res"> (Armor Calculated)% / (Armor Calculated)% Postured</p>
+            </div>
+            <div className="property-line">
+                <h4>Critical</h4>
+                <p id="magi-res"> (Crit Chance Calculated)% / (Crit Damage Calculated)x</p>
+            </div>
+            <svg height="5" width="100%" className="tapered-rule mt-3">
+                <polyline points="0,0 400,2.5 0,5"></polyline>
+            </svg>
             <div className="top-stats">
-                <div className="actions">
+            <div className="actions">
                     <h3>Attributes</h3>
                     <h3 id="pool-output"></h3>
                 </div>
@@ -506,18 +611,18 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <h4>Constitution</h4>
                     <p> Defense, Magic, Health, Posture</p>
                     <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
-                    <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
+                    <button id="con-minus" onClick={handleConMinus} name="constitution" value={editState.constitution}>−</button>
                         <input 
                             id="con-slider" 
                             className="form-control-number" 
                             type="number" 
                             name="constitution" 
-                            value={asceanState.constitution} 
+                            value={editState.constitution} 
                             min="8" max="18"
                             step="1"
                             readOnly 
                         ></input>
-                        <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
+                        <button id="con-plus" onClick={handleConPlus} name="constitution" value={editState.constitution}>+</button>
                         <h4 className="" style={{ marginLeft: 15 + '%' }} id="con-box">
                         </h4>
                     </InputGroup>
@@ -526,18 +631,18 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <h4>Strength</h4>
                     <p> Crit Damage, Physical, Posture</p>
                     <InputGroup className="mb-1">
-                    <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
+                    <button id="str-minus" onClick={handleStrMinus} name="strength" value={editState.strength}>−</button>
                     <input 
                             id="con-slider" 
                             className="form-control-number" 
                             type="number" 
                             name="strength" 
-                            value={asceanState.strength} 
+                            value={editState.strength} 
                             min="8" max="18"
                             step="1"
                             readOnly 
                         ></input>
-                    <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
+                    <button id="str-plus" onClick={handleStrPlus} name="strength" value={editState.strength}>+</button>
                     <h4 className="" style={{ marginLeft: 15 + '%' }} id="str-box">
                         </h4>
                     </InputGroup>
@@ -546,18 +651,18 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <h4>Agility</h4>
                     <p> Crit Chance, Dodge, Physical, Roll</p>
                     <InputGroup className="mb-1">
-                    <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
+                    <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={editState.agility}>−</button>
                     <input 
                             id="con-slider" 
                             className="form-control-number" 
                             type="number" 
                             name="agility" 
-                            value={asceanState.agility} 
+                            value={editState.agility} 
                             min="8" max="18"
                             step="1"
                             readOnly 
                         ></input>
-                    <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
+                    <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={editState.agility}>+</button>
                     <h4 className="" style={{ marginLeft: 15 + '%' }} id="agi-box">
                         </h4>
                     </InputGroup>
@@ -566,18 +671,18 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <h4>Achre</h4>
                     <p> Spell Damage, Crit, Dodge, Magic, Roll</p>
                     <InputGroup className="mb-1">
-                    <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
+                    <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={editState.achre}>−</button>
                     <input 
                             id="con-slider" 
                             className="form-control-number" 
                             type="number" 
                             name="achre" 
-                            value={asceanState.achre} 
+                            value={editState.achre} 
                             min="8" max="18"
                             step="1"
                             readOnly 
                         ></input>
-                    <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
+                    <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={editState.achre}>+</button>
                     <h4 className="" style={{ marginLeft: 15 + '%' }} id="ach-box">
                         </h4>
                     </InputGroup>
@@ -586,23 +691,23 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <h4>Caeren</h4>
                     <p> Spell Damage, Defense, Health, Magic, Posture</p>
                     <InputGroup className="mb-1">
-                    <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
+                    <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={editState.caeren}>−</button>
                     <input 
                             id="con-slider" 
                             className="form-control-number" 
                             type="number" 
                             name="caeren" 
-                            value={asceanState.caeren} 
+                            value={editState.caeren} 
                             min="8" max="18"
                             step="1"
                             readOnly 
                         ></input>
-                        <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
+                        <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={editState.caeren}>+</button>
                         <h4 className="" style={{ marginLeft: 15 + '%' }} id="caer-box">
                         </h4>
                     </InputGroup>
                 </div>
-                <svg height="5" width="100%" className="tapered-rule">
+                <svg height="5" width="100%" className="tapered-rule mt-2">
                     <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>
                 <div className="actions">
@@ -613,7 +718,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <p id="adherence"> Worshiper of the Ancients{' '}</p>
                     <FormCheck.Input 
                         aria-describedby='adherence' 
-                        isValid={asceanState.adherent}
+                        isValid={editState.adherent}
                         name="faith"
                         id="adherentID" 
                         value='adherent' 
@@ -625,7 +730,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                     <p> Worshiper of Daethos{' '}</p>
                     <FormCheck.Input
                         aria-describedby='devoted' 
-                        isValid={asceanState.devoted}
+                        isValid={editState.devoted}
                         name="faith"
                         id="devotedID" 
                         value='devoted' 
@@ -635,7 +740,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 <div className="actions">
             <h3>Weapons & Spells</h3>
             <div className="property-block">
-            <Form.Select value={asceanState.weapon_one}  onChange={handleEquipment}>
+            <Form.Select value={editState.weapon_one}  onChange={handleEquipment}>
                 <option>Weapon or Spell One</option>
             {weapons.map((w) => {
                 return (
@@ -643,7 +748,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Form.Select value={asceanState.weapon_two}  onChange={handleEquipment}>
+            <Form.Select value={editState.weapon_two}  onChange={handleEquipment}>
                 <option>Weapon or Spell Two</option>
             {weapons.map((w) => {
                 return (
@@ -651,7 +756,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Form.Select value={asceanState.weapon_three}  onChange={handleEquipment}>
+            <Form.Select value={editState.weapon_three}  onChange={handleEquipment}>
                 <option>Weapon or Spell Three</option>
             {weapons.map((w) => {
                 return (
@@ -691,15 +796,38 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             </div>
             </div>
             </div>
+            <div className='actions'>
+            <h3>Communal Visibility</h3></div>
+                    <Form.Select onChange={handleVisibility} name="visibility" className="my-3">
+                        <option value={editState.visibility}>Select Preference</option>
+                        <option value="public" label="Public">public</option>
+                        <option value="private" label="Private">private</option>
+                    </Form.Select> 
         </div>
         <div className="section-right">
+        <div className="actions">
+                <h3>Eccentricities & Equipment</h3>
+            <div className='property-block'>
+            <AsceanImageCard
+                weapon_one={ascean.weapon_one}
+                weapon_two={ascean.weapon_two}
+                weapon_three={ascean.weapon_three}
+                shield={ascean.shield}
+                helmet={ascean.helmet}
+                chest={ascean.chest}
+                legs={ascean.legs}
+                amulet={ascean.amulet}
+                ring_one={ascean.ring_one}
+                ring_two={ascean.ring_two}
+                trinket={ascean.trinket}
+            />
+            </div>
+        </div>
             <div className="actions">
             <h3>Armor & Eccentricities</h3>
             <div className='property-block'>
 
-                {/* ========== Shield Equipment Selection ========== */}
-
-            <Form.Select value={asceanState.shield}  onChange={handleEquipment}>
+            <Form.Select value={editState.shield}  onChange={handleEquipment}>
                 <option>Shield Options</option>
             {shields.map((s) => {
                 return (
@@ -729,7 +857,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
             {/* ============== Helmet Equipment Selection ================ */}
 
-            <Form.Select value={asceanState.helmet}  onChange={handleEquipment}>
+            <Form.Select value={editState.helmet}  onChange={handleEquipment}>
                 <option>Helmet and Hood Options</option>
             {helmets.map((h) => {
                 return (
@@ -760,7 +888,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
             {/* =============== Chest Equipment Selection ====================== */}
 
-            <Form.Select value={asceanState.chest}  onChange={handleEquipment}>
+            <Form.Select value={editState.chest}  onChange={handleEquipment}>
                 <option>Cuirass and Robe Options</option>
             {chests.map((c) => {
                 return (
@@ -791,7 +919,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
             {/* =============== Leg Equipment Selection ====================== */}
 
-            <Form.Select value={asceanState.leg}  onChange={handleEquipment}>
+            <Form.Select value={editState.leg}  onChange={handleEquipment}>
                 <option>Greaves and Pant Options</option>
             {legs.map((l) => {
                 return (
@@ -822,7 +950,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
             {/* =============== Amulet Equipment Selection ===================== */}
 
-            <Form.Select value={asceanState.amulet}  onChange={handleEquipment}>
+            <Form.Select value={editState.amulet}  onChange={handleEquipment}>
                 <option>Amulet and Choker Options</option>
             {amulets.map((a) => {
                 return (
@@ -853,7 +981,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
             {/* =============== Ring Equipment Selection ========================== */}
 
-            <Form.Select value={asceanState.ring_one}  onChange={handleEquipment}>
+            <Form.Select value={editState.ring_one}  onChange={handleEquipment}>
                 <option>Ring One</option>
             {rings.map((r) => {
                 return (
@@ -861,7 +989,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )
             })}
             </Form.Select>
-            <Form.Select value={asceanState.ring_two}  onChange={handleEquipment}>
+            <Form.Select value={editState.ring_two}  onChange={handleEquipment}>
                 <option>Ring Two</option>
             {rings.map((r) => {
                 return (
@@ -892,7 +1020,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
             {/* =============== Trinket Equipment Selection ======================= */}
 
-            <Form.Select value={asceanState.trinket}  onChange={handleEquipment}>
+            <Form.Select value={editState.trinket}  onChange={handleEquipment}>
                 <option>Trinket Options</option>
             {trinkets.map((t) => {
                 return (
@@ -917,21 +1045,21 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
                 )})}
             </Modal.Body>
             </Modal>
-            <svg height="5" width="100%" className="tapered-rule my-2">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
-
 
 {/* ================= Submit to Create Ascean ================== */}
 
-            <button className="btn btn-outline-success btn-lg" value={asceanState} type="submit">Create Ascean</button>
+            
             </div>
+            
             </div>
+            
         </div>
+        <button className="btn btn-lg" value={editState} type="submit">Edit Ascean</button>
         <hr className="orange-border bottom" />
     </Form>
     </Row>
     )
+
 }
 
-export default NewAscean
+export default EditAscean

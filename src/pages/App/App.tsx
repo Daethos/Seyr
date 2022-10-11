@@ -7,13 +7,8 @@ import NewAscean from "../../components/NewAscean/NewAscean";
 import './App.css';
 import userService from "../../utils/userService";
 import * as asceanAPI from '../../utils/asceanApi';
-// import ApiMonsters from "../../components/ApiMonsters/ApiMonsters";
-// import EditMonster from "../../components/EditMonster/EditMonster";
-// import ApiMonsterDetails from "../../components/ApiMonsterDetails/ApiMonsterDetails";
-// import ApiMonsterData from "../../components/ApiMonsterData/ApiMonsterData";
-// import ApiSpells from "../../components/ApiSpells/ApiSpells";
+import EditAscean from "../../components/EditAscean/EditAscean";
 import AuthPage from "../AuthPage/AuthPage";
-// import ApiCharacters from "../../components/ApiClasses/ApiClasses";
 import Loading from "../../components/Loading/Loading";
 // import Community from "../Community/Community";
 // import ProfilePage from "../Profile/Profile"
@@ -52,16 +47,16 @@ function App() {
     }
 }
 
-// async function editMonstra(monstra) {
-//   try {
-//     console.log(monstra, '<- Monstra in editMonstra start')
-//     const response = await monstersAPI.edit(monstra);
-//     console.log(response, '<- Response in editMonstra')
-//     setMonstra([response.data, ...monstra]);
-//   } catch (err)  {
-//     console.log(err.message, '<- You are having an error in the editMonstra function in App.jsx')
-//   }
-// }
+async function editAscean(vaEsai: Object) {
+  try {
+    console.log(vaEsai, '<- Ascean in editAscean start')
+    const response = await asceanAPI.edit(vaEsai);
+    console.log(response, '<- Response in editAscean')
+    setAscean([response.data, ...ascean]);
+  } catch (err: any)  {
+    console.log(err.message, '<- You are having an error in the editAscean function in App.jsx')
+  }
+}
 
 //   async function colores(background) {
 //     try {
@@ -112,6 +107,7 @@ function App() {
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
         {/* <Route path="/Community" element={<Community loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/:username" element={<ProfilePage user={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />
@@ -119,7 +115,7 @@ function App() {
         <Route path="/Monsters/:monsterName" element={<ApiMonsterDetails user={user} handleLogout={handleLogout} getmonstahurl={getmonstahurl} handleMonster={handleMonster} />} />
         <Route path="/Spells" element={<ApiSpells user={user}/>} />
         <Route path="/Characters" element={<ApiCharacters user={user} />} />
-        <Route path="/edit/:monsterId" element={<EditMonster user={user} editMonstra={editMonstra} />} /> */}
+         */}
         <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>
       </div>

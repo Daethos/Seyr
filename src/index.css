@@ -11,7 +11,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.custom-popover {
+/* .custom-popover {
   --bs-popover-max-width: 200px;
   --bs-popover-border-color: var(--bs-info) !important;
   --bs-popover-header-bg: var(--bs-black) !important;
@@ -78,10 +78,18 @@ html, body {
 }
 #tooltip[data-popper-placement^='right'] > #arrow {
   left: -4px;
+} */
+.stat-block { 
+  text-align: left; 
+  margin: 20px; 
+  display: inline-block; 
+  vertical-align: top; 
+  width: 17%; 
+  min-width:280px; 
+  background: #fdf6d8; 
+  padding: 5px 10px 20px; 
+  box-shadow: 0 0 1.5em #726f57; 
 }
-.stat-block { text-align: left; margin: 20px; display: inline-block; vertical-align: top; width: 17%; min-width:280px; 
-  background: #fdf6d8; padding: 5px 10px 20px; 
-  box-shadow: 0 0 1.5em #726f57; }
 .stat-block.wide { width: 65%; min-width: 560px; text-align: center; }
 .stat-block.wide .section-left,
 .stat-block.wide .section-right { display: inline-block; vertical-align: top; width: 48%; text-align: left; }
@@ -106,7 +114,7 @@ html, body {
 }
 .orange-border{
     display: block;
-    background: #681000;
+    background: #791200;
     border: 1px solid #000;
     height: 5px;
     padding: 0 10px 0;
