@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import * as communityAPI from '../../utils/communityApi'
+import * as feelingAPI from '../../utils/feelingApi'
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 
 interface CommunityProps {
@@ -20,6 +21,28 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
     const [allAscean, setAllAscean] = useState<any[]>(ascean);
     const [isSaved, setIsSaved] = useState(true)
     const [communityFeed, setCommunityFeed] = useState<boolean>(true)
+    const [error, setError] = useState<string>('');
+
+    async function addFeeling(asceanID: any) {
+        try {
+            const response = await feelingAPI.createFeeling(asceanID);
+            console.log(response, 'Response in Adding a Feeling')
+            getAscean()
+        } catch (err: any) {
+            console.log(err.message, '<- Error adding a feeling!')
+        }
+    }
+
+    async function removeFeeling(asceanID: any) {
+        try {
+            const response = await feelingAPI.removeFeeling(asceanID);
+            console.log(response, 'Response in Adding a Feeling')
+            getAscean()
+        } catch (err: any) {
+            console.log(err.message, '<- Error adding a feeling!')
+        }
+    }
+    
 
     async function filterAscean(results: any) {
         console.log(results, '<- Results in filterMonsters')
@@ -101,12 +124,15 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
             ? <>{displayResults()}</>
             : ''
         }
-        {ascean.map((a: { _id: React.Key | null | undefined; }) => {
+        {ascean.map((a: any) => {
             return (
                 <SolaAscean
                     ascean={a}
                     key={a._id}
                     communityFeed={communityFeed}
+                    addFeeling={addFeeling}
+                    removeFeeling={removeFeeling}
+                    loggedUser={loggedUser}
                     />
             )
         })}

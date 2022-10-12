@@ -34,6 +34,7 @@ app.use('/api/users', require('./routes/api/users')); // USERS IS NOW LIVE!
 app.use('/api/equipment', require('./routes/api/equipment'));
 app.use('/api/ascean', require('./routes/api/ascean'));
 app.use('/api/community', require('./routes/api/community'));
+app.use('/api', require('./routes/api/feelings'));
 
 // "catch all" route
 app.get('/*', function(req, res) {

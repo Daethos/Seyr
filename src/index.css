@@ -279,3 +279,6 @@ html, body {
 .eqp-popover:hover {
   transform: scale(1.5);
 }
+.feeling-icon:hover {
+  transform: scale(1.5);
+}

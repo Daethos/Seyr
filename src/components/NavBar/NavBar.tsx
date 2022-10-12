@@ -29,13 +29,13 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
             <Link to="/Ascean" className="text-info btn btn-lg btn-outline-black">Ascean</Link>
             &nbsp;&nbsp;
             <NavDropdown title="Community" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
-                <NavDropdown.Item className=""><Link to="/Forums" className="text-info btn btn-lg btn-outline-black">Forums</Link></NavDropdown.Item>
-                <NavDropdown.Item className=""><Link to="/Friends" className="text-info btn btn-lg btn-outline-black">Friends</Link></NavDropdown.Item>
-                <NavDropdown.Item className=""><Link to="/CommunityFeed" className="text-info btn btn-lg btn-outline-black">Feed</Link></NavDropdown.Item>
+                <NavDropdown.Item className="text-primary btn btn-lg"><Link to="/Forums" className="text-info btn btn-lg btn-outline-black">Forums</Link></NavDropdown.Item>
+                <NavDropdown.Item className="text-primary btn btn-lg"><Link to="/Friends" className="text-info btn btn-lg btn-outline-black">Friends</Link></NavDropdown.Item>
+                <NavDropdown.Item className="text-primary btn btn-lg"><Link to="/CommunityFeed" className="text-info btn btn-lg btn-outline-black">Feed</Link></NavDropdown.Item>
             </NavDropdown>
             &nbsp;&nbsp;
             <NavDropdown title="Equipment" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
-                <NavDropdown.Item className=""><Link to="/Weapons" className="text-info btn btn-lg btn-outline-black">Weapons</Link></NavDropdown.Item>
+                <NavDropdown.Item className="text-primary btn btn-lg"><Link to="/Weapons" className="text-info btn btn-lg btn-outline-black">Weapons</Link></NavDropdown.Item>
                 <NavDropdown.Item className="text-primary btn btn-lg"><Link to="/Spells" className="text-info btn btn-lg btn-outline-black">Spells</Link></NavDropdown.Item>
                 <NavDropdown.Item className="text-success btn btn-lg"><Link to="/Shields" className="text-info btn btn-lg btn-outline-black">Shields</Link></NavDropdown.Item>
                 <NavDropdown.Item className="text-success btn btn-lg"><Link to="/Helmets" className="text-info btn btn-lg btn-outline-black">Helmets</Link></NavDropdown.Item>
