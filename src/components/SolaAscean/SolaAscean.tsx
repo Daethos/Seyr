@@ -38,7 +38,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, communityFeed, addFeeli
       const likeHandler =
         likedIndex > -1
           ? () => removeFeeling(ascean.likes[likedIndex]._id) // user has liked the ascean 
-          : () => addFeeling(ascean._id);  // user hasn't liked the post handler
+          : () => addFeeling(ascean._id, 'like');  // user hasn't liked the post handler
 
         const dislikeHandler =
         dislikedIndex > -1

@@ -7,21 +7,29 @@ module.exports = {
 }
 
 async function create(req, res) {
-    console.log(req.body, '%c Feeling in Controller', 'color: green');
+    console.log(req.params.feeling, 'Feeling in Controller');
     try {
         const ascean = await Ascean.findById(req.params.id);
-        ascean.likes.push({ 
-            username: req.user.username, 
-            userId: req.user._id
-        })
-        ascean.dislikes.push({ 
-            username: req.user.username, 
-            userId: req.user._id
-        })
-        ascean.double_dislikes.push({ 
-            username: req.user.username, 
-            userId: req.user._id
-        })
+
+        if (req.params.feeling === 'like') {
+            ascean.likes.push({ 
+                username: req.user.username, 
+                userId: req.user._id
+            })
+        }
+        if (req.params.feeling === 'dislike') {
+            ascean.dislikes.push({ 
+                username: req.user.username, 
+                userId: req.user._id
+            })
+        }
+        if (req.params.feeling === 'doubleDislike') {
+            ascean.double_dislikes.push({ 
+                username: req.user.username, 
+                userId: req.user._id
+            })
+        }
+        
         await ascean.save()
         res.status(201).json({ data: ascean })
     } catch (err) {
@@ -30,10 +38,12 @@ async function create(req, res) {
 }
 
 async function deleteFeeling(req, res){
-    console.log(req.body, '<- What is the body?')
+    console.log(req.params.id, '<- What is the ID in Delete?')
     try {
         const ascean = await Ascean.findOne({'likes._id': req.params.id, 'likes.username': req.user.username});
         ascean.likes.remove(req.params.id) // mutating a document
+        ascean.dislikes.remove(req.params.id)
+        ascean.double_dislikes.remove(req.params.id)
         // req.params.id is the like id 
         await ascean.save() // after you mutate a document you must save
         res.json({ data: ascean })

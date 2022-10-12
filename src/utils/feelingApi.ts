@@ -1,10 +1,14 @@
 import tokenService from "./tokenService";
 const BASE_URL = "/api/";
 
-export function createFeeling(asceanID: any) {
-    return fetch (`${BASE_URL}ascean/${asceanID}/feelings`, {
+export function createFeeling(asceanID: any, feeling: string) {
+    console.log('Feeling in API Utility', feeling)
+    return fetch (`${BASE_URL}ascean/${asceanID}/feelings/${feeling}`, {
         method: 'POST',
+        // body: JSON.stringify(feeling),
+        // body: feeling,
         headers:  {
+            //'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken()
         }
     })
