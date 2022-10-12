@@ -31,7 +31,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
             <NavDropdown title="Community" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
                 <NavDropdown.Item className=""><Link to="/Forums" className="text-info btn btn-lg btn-outline-black">Forums</Link></NavDropdown.Item>
                 <NavDropdown.Item className=""><Link to="/Friends" className="text-info btn btn-lg btn-outline-black">Friends</Link></NavDropdown.Item>
-                <NavDropdown.Item className=""><Link to="/Latest" className="text-info btn btn-lg btn-outline-black">Latest</Link></NavDropdown.Item>
+                <NavDropdown.Item className=""><Link to="/CommunityFeed" className="text-info btn btn-lg btn-outline-black">Feed</Link></NavDropdown.Item>
             </NavDropdown>
             &nbsp;&nbsp;
             <NavDropdown title="Equipment" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">

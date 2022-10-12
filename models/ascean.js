@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// TODO: Inventory Field! Empty Array? Default Null?
+// FIXME: Perhaps capture all the current EQP? Is that possible?
+
+const feelingSchema = new Schema({
+    username: String,
+    like: Boolean,
+    dislike: Boolean,
+    doubleDislike: Boolean,
+    userId: { type: mongoose.Schema.Types.Object }
+})
+
 const asceanSchema = new Schema(
     {
         user: {type: Schema.Types.ObjectId, ref: 'User'},
@@ -34,6 +45,7 @@ const asceanSchema = new Schema(
             enum : ["adherent", "devoted", "none"],
             default: "none"
         },
+        feelings: [feelingSchema]
         // adherent: Boolean,
         // devoted: Boolean 
     },

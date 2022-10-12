@@ -1,8 +1,8 @@
 import tokenService from './tokenService';
 const BASE_URL = '/api/users/';
 
-function getProfile(username: string){
-  console.log('getProfile calling')
+function getProfile(username: any){
+  console.log('getProfile calling: ', username)
   return fetch(BASE_URL + username, {
     headers: {
       Authorization: "Bearer " + tokenService.getToken(), // <- since this will be called when we're logged in, send over the jwt token

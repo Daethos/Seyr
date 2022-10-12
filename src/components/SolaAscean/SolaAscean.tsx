@@ -8,11 +8,12 @@ import Form from 'react-bootstrap/Form';
 
 interface Props {
     ascean: any;
-    userProfile: boolean;
-    deleteAscean: any;
+    userProfile?: boolean;
+    deleteAscean?: any;
+    communityFeed?: boolean
 }
 
-const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
+const SolaAscean = ({ ascean, userProfile, deleteAscean, communityFeed }: Props) => {
   return (
     <React.Fragment>
         
@@ -21,8 +22,28 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
     <Col className="stat-block wide">
     <hr className="orange-border" />
         <div className="section-left">
-            
             {/* <div className="character-heading"> */}
+            {
+                communityFeed
+                ?
+                <div className="actions">
+                    <Link to={`/${ascean.user.username}`} style={{ textDecoration: 'none' }}>
+                        <h3>
+                            <img 
+                                src={ascean.user.photoUrl ? ascean.user.photoUrl : ''} 
+                                alt={ascean.user.username ? ascean.user.username : ''} 
+                                id="community-pic"
+                            />
+                            {
+                                ascean.user.username
+                                ? ascean.user.username
+                                : ''
+                            } 
+                        </h3>
+                    </Link>
+                </div>
+                : ''
+            }
             <div className="actions">
                 <h3>Character</h3>
             </div>

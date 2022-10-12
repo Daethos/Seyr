@@ -10,8 +10,8 @@ import * as asceanAPI from '../../utils/asceanApi';
 import EditAscean from "../../components/EditAscean/EditAscean";
 import AuthPage from "../AuthPage/AuthPage";
 import Loading from "../../components/Loading/Loading";
-// import Community from "../Community/Community";
-// import ProfilePage from "../Profile/Profile"
+import CommunityFeed from "../CommunityFeed/CommunityFeed";
+import ProfilePage from "../ProfilePage/ProfilePage"
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -108,9 +108,10 @@ async function editAscean(vaEsai: Object) {
         <Route path="/" element={<UserProfile loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
-        {/* <Route path="/Community" element={<Community loggedUser={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
-        <Route path="/:username" element={<ProfilePage user={user} monstra={monstra} setMonstra={setMonstra} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
-        <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />
+        
+        <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
+        <Route path="/:username" element={<ProfilePage user={user} handleLogout={handleLogout} />} />
+        {/* <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />
         <Route path="/Monsters/Data" element={<ApiMonsterData user={user} handleLogout={handleLogout} />} />
         <Route path="/Monsters/:monsterName" element={<ApiMonsterDetails user={user} handleLogout={handleLogout} getmonstahurl={getmonstahurl} handleMonster={handleMonster} />} />
         <Route path="/Spells" element={<ApiSpells user={user}/>} />

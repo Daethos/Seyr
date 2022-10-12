@@ -4,13 +4,19 @@ html, body {
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
-  /* margin: auto 0; */
+  overflow: auto;
   /* justify-content: center; */
   font-family: 'Cinzel';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+#community-pic{
+  border-radius: 5px;
+  max-width: 5vw;
+  max-height: 5vh;
+  margin-right: 1.5vw;
+}
 /* .custom-popover {
   --bs-popover-max-width: 200px;
   --bs-popover-border-color: var(--bs-info) !important;
