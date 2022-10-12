@@ -269,7 +269,6 @@ html, body {
 		page-break-after: always;
 	}
 }
-
 .edit-eqp-button {
   text-align: center;
 }
@@ -279,6 +278,20 @@ html, body {
 .eqp-popover:hover {
   transform: scale(1.5);
 }
+.svg-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.svg-wrapper > svg {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  text-decoration: none;
+}
+.feeling-icon {
+  transform: scale(2.5);
+}
 .feeling-icon:hover {
-  transform: scale(1.5);
+  transform: scale(3.5);
 }
