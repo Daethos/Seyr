@@ -24,7 +24,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
     const [error, setError] = useState<string>('');
 
     async function addFeeling(asceanID: any, feeling: string) {
-        console.log('Ascean ID: ', asceanID, 'Feeling: ', feeling)
+        console.log('Ascean ID: ', asceanID, 'Feeling to Create: ', feeling)
         try {
             const response = await feelingAPI.createFeeling(asceanID, feeling);
             console.log(response.data, 'Response in Adding a Feeling')
@@ -34,9 +34,10 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
         }
     }
 
-    async function removeFeeling(asceanID: any) {
+    async function removeFeeling(asceanID: any, feeling: string) {
+        console.log('Ascean ID: ', asceanID, 'Feeling to Remove: ', feeling)
         try {
-            const response = await feelingAPI.removeFeeling(asceanID);
+            const response = await feelingAPI.removeFeeling(asceanID, feeling);
             console.log(response.data, 'Response in Removing a Feeling')
             getAscean()
         } catch (err: any) {

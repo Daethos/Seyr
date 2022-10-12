@@ -37,18 +37,18 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, communityFeed, addFeeli
                         
       const likeHandler =
         likedIndex > -1
-          ? () => removeFeeling(ascean.likes[likedIndex]._id) // user has liked the ascean 
+          ? () => removeFeeling(ascean.likes[likedIndex]._id, 'like') // user has liked the ascean 
           : () => addFeeling(ascean._id, 'like');  // user hasn't liked the post handler
 
         const dislikeHandler =
         dislikedIndex > -1
-            ? () => removeFeeling(ascean.dislikes[dislikedIndex]._id) // user has liked the ascean 
-            : () => addFeeling(ascean._id);  // user hasn't liked the post handler
+            ? () => removeFeeling(ascean.dislikes[dislikedIndex]._id, 'dislike') // user has liked the ascean 
+            : () => addFeeling(ascean._id, 'dislike');  // user hasn't liked the post handler
 
         const doubleDislikeHandler =
         doubleDislikedIndex > -1
-            ? () => removeFeeling(ascean.double_dislikes[doubleDislikedIndex]._id) // user has liked the ascean 
-            : () => addFeeling(ascean._id);  // user hasn't liked the post handler
+            ? () => removeFeeling(ascean.double_dislikes[doubleDislikedIndex]._id, 'doubleDislike') // user has liked the ascean 
+            : () => addFeeling(ascean._id, 'doubleDislike');  // user hasn't liked the post handler
 
     useEffect(() => {
         setFeelingState(ascean)

@@ -18,8 +18,8 @@ export function createFeeling(asceanID: any, feeling: string) {
     });
 }
 
-export function removeFeeling(feelingID: any) {
-    return fetch(`${BASE_URL}feelings/${feelingID}`, {
+export function removeFeeling(asceanID: any, feeling: string) {
+    return fetch(`${BASE_URL}feelings/${asceanID}/${feeling}`, {
         method: "DELETE",
         headers: {
           Authorization: "Bearer " + tokenService.getToken(), // This grabs thee JWT token out
