@@ -89,7 +89,6 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
         const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText))        
         filterAscean(filteredResults)
         console.log(searchText, '<- the changing search text')
-        return filteredResults
     }, [searchText, ascean])
 
     useEffect(() => {
@@ -114,7 +113,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
         </InputGroup.Text>
         <Form.Control 
             className="headerSearchInput bg-black text-white" 
-            placeholder="What Character are you looking for?" 
+            placeholder="Ascean are cap sensitive, beware!" 
             type="text" value={searchText} 
             onChange={handleChange}
         />
