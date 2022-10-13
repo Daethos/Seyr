@@ -12,15 +12,15 @@ const FeelingsCard = ({ loggedUser, addFeeling, removeFeeling, ascean }: Props) 
     const [feelingState, setFeelingState] = useState<any>({})
 
     const likedIndex = ascean.likes.findIndex(
-        (like: { username: any; }) => like.username === loggedUser.username
+        (like: { username: any; }) => like?.username === loggedUser?.username
       );
 
       const dislikedIndex = ascean.dislikes.findIndex(
-        (dislike: { username: any; }) => dislike.username === loggedUser.username
+        (dislike: { username: any; }) => dislike?.username === loggedUser?.username
       );
 
       const doubleDislikedIndex = ascean.double_dislikes.findIndex(
-        (doubleDislike: { username: any; }) => doubleDislike.username === loggedUser.username
+        (doubleDislike: { username: any; }) => doubleDislike?.username === loggedUser?.username
       );
     
       const likeColor = likedIndex > -1 ? "blue" : "blue";
@@ -29,18 +29,18 @@ const FeelingsCard = ({ loggedUser, addFeeling, removeFeeling, ascean }: Props) 
                         
       const likeHandler =
         likedIndex > -1
-          ? () => removeFeeling(ascean.likes[likedIndex]._id, 'like') // user has liked the ascean 
-          : () => addFeeling(ascean._id, 'like');  // user hasn't liked the post handler
+          ? () => removeFeeling(ascean?.likes[likedIndex]._id, 'like') // user has liked the ascean 
+          : () => addFeeling(ascean?._id, 'like');  // user hasn't liked the post handler
 
         const dislikeHandler =
         dislikedIndex > -1
-            ? () => removeFeeling(ascean.dislikes[dislikedIndex]._id, 'dislike') // user has liked the ascean 
-            : () => addFeeling(ascean._id, 'dislike');  // user hasn't liked the post handler
+            ? () => removeFeeling(ascean?.dislikes[dislikedIndex]._id, 'dislike') // user has liked the ascean 
+            : () => addFeeling(ascean?._id, 'dislike');  // user hasn't liked the post handler
 
         const doubleDislikeHandler =
         doubleDislikedIndex > -1
-            ? () => removeFeeling(ascean.double_dislikes[doubleDislikedIndex]._id, 'doubleDislike') // user has liked the ascean 
-            : () => addFeeling(ascean._id, 'doubleDislike');  // user hasn't liked the post handler
+            ? () => removeFeeling(ascean?.double_dislikes[doubleDislikedIndex]._id, 'doubleDislike') // user has liked the ascean 
+            : () => addFeeling(ascean?._id, 'doubleDislike');  // user hasn't liked the post handler
 
     // useEffect(() => {
     //     setFeelingState(ascean)

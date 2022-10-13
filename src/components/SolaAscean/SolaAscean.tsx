@@ -108,7 +108,8 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, communityFee
             {/* <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg> */}
-            <div className="actions"><h3></h3></div>
+            {/* FIXME: Check in the morning, ES Lint is complaining! */}
+            <div className="actions"><h3> </h3></div>
             <div className="property-line first">
                 <h4>Experience</h4>
                 <p> {ascean.experience}</p>

@@ -13,7 +13,32 @@ module.exports = {
 
 async function editAscean(req, res) {
     try {
-        const ascean = await Ascean.findByIdAndUpdate(req.params.id, req.body);
+        const ascean = await Ascean.findByIdAndUpdate(req.params.id, {
+            user: req.user,
+            visibility: req.body.visibility,
+            shareable: req.body.shareable,
+            name: req.body.name,
+            index: req.body.name,
+            description: req.body.description,
+            constitution: req.body.constitution,
+            strength: req.body.strength,
+            agility: req.body.agility,
+            achre: req.body.achre,
+            caeren: req.body.caeren,
+            weapon_one: req.body.weapon_one,
+            weapon_two: req.body.weapon_two,
+            weapon_three: req.body.weapon_three,
+            shield: req.body.shield,
+            helmet: req.body.helmet,
+            helmet: req.body.helmet,
+            chest: req.body.chest,
+            legs: req.body.legs,
+            ring_one: req.body.ring_one,
+            ring_two: req.body.ring_two,
+            amulet: req.body.amulet,
+            trinket: req.body.trinket,
+            faith: req.body.faith,
+        })
         ascean.save();
         res.status(201).json({ ascean: ascean })
     } catch (err) {

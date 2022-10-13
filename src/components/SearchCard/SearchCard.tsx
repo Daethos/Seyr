@@ -7,14 +7,16 @@ import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import * as communityAPI from '../../utils/communityApi'
 
 interface SearchProps {
-    ascean: any;
-    communityFeed: boolean;
+    ascean?: any;
+    communityFeed?: boolean;
+    addFeeling?: any;
+    removeFeeling?: any;
 }
 
-const SearchCard = ({ ascean, communityFeed }: SearchProps) => {
+const SearchCard = ({ ascean, communityFeed, addFeeling, removeFeeling }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
-    
+
     async function filterAscean(results: any) {
         console.log(results, '<- Results in filtering the Ascean')
         console.log(results.length, '<- The amount of search results!')
@@ -36,6 +38,8 @@ const SearchCard = ({ ascean, communityFeed }: SearchProps) => {
                         ascean={allAscean[i]}
                         key={allAscean[i]._id}
                         communityFeed={communityFeed}
+                        addFeeling={addFeeling}
+                        removeFeeling={removeFeeling}
                     />
                 </Col>
             )
@@ -64,10 +68,15 @@ const SearchCard = ({ ascean, communityFeed }: SearchProps) => {
         <Col md={{span: 8, offset: 2}} className="my-5">
     <InputGroup className="bg-black">
     <InputGroup.Text className="bg-black">
+    <img 
+        src={ascean?.helmet?.imgUrl} 
+        alt="User" 
+        style={{maxWidth: 5 + 'vw', maxHeight: 5 + 'vh'}}
+    />
     </InputGroup.Text>
     <Form.Control 
         className="headerSearchInput bg-black text-white" 
-        placeholder="Ascean are cap sensitive, beware!" 
+        placeholder="Names are case sensitive, beware!" 
         type="text" value={searchText} 
         onChange={handleChange}
     />

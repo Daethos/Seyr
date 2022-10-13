@@ -15,12 +15,11 @@ import ProfilePage from "../ProfilePage/ProfilePage"
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
-  const [monstahUrl, setMonstahUrl] = useState<string>('');
-  const [backgroundState, setBackgroundState] = useState<string>('');
+  // const [backgroundState, setBackgroundState] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   // const [submitting, setSubmitting] = useState(false);
   const [ascean, setAscean] = useState<object[]>([])
-  const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/seyr/';
+  //const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/seyr/';
 
 
   function handleSignUpOrLogin() {

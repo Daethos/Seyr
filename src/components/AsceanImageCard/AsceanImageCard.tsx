@@ -23,7 +23,7 @@ interface Props {
 const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket }: Props) => {
     const weaponOnePopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{weapon_one.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_one.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{weapon_one.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_one.imgURL} alt={weapon_one.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {weapon_one.type} [{weapon_one.grip}] <br />
                 {weapon_one.attack_type} [{weapon_one.damage_type}] <br />
@@ -37,7 +37,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const weaponTwoPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{weapon_two.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_two.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{weapon_two.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_two.imgURL} alt={weapon_two.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
             {weapon_two.type} [{weapon_two.grip}] <br />
                 {weapon_two.attack_type} [{weapon_two.damage_type}] <br />
@@ -51,7 +51,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const weaponThreePopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{weapon_three.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_three.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{weapon_three.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_three.imgURL} alt={weapon_three.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {weapon_three.type} [{weapon_three.grip}] <br />
                 {weapon_three.attack_type} [{weapon_three.damage_type}] <br />
@@ -65,7 +65,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const shieldPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL}  alt={shield.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {shield.type}<br />
                 Physical Defense: +{shield.physical_resistance}% <br />
@@ -81,7 +81,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const helmetPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{helmet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + helmet.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{helmet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + helmet.imgURL} alt={helmet.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {helmet.type}<br />
                 Physical Defense: +{helmet.physical_resistance}% <br />
@@ -97,7 +97,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const chestPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{chest.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + chest.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{chest.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + chest.imgURL} alt={chest.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {chest.type}<br />
                 Physical Defense: +{chest.physical_resistance}% <br />
@@ -113,7 +113,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const legsPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{legs.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + legs.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{legs.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + legs.imgURL} alt={legs.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {legs.type}<br />
                 Physical Defense: +{legs.physical_resistance}% <br />
@@ -129,7 +129,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const amuletPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{amulet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + amulet.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{amulet.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + amulet.imgURL} alt={amulet.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {amulet.type}<br />
                 Physical Defense: +{amulet.physical_resistance}% <br />
@@ -145,7 +145,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const ringOnePopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{ring_one.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_one.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{ring_one.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_one.imgURL} alt={ring_one.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {ring_one.type}<br />
                 Physical Defense: +{ring_one.physical_resistance}% <br />
@@ -161,7 +161,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const ringTwoPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{ring_two.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_two.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{ring_two.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_two.imgURL} alt={ring_two.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {ring_two.type}<br />
                 Physical Defense: +{ring_two.physical_resistance}% <br />
@@ -177,7 +177,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     const trinketPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{trinket.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{trinket.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket.imgURL} alt={trinket.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {trinket.type}<br />
                 Physical Defense: +{trinket.physical_resistance}% <br />

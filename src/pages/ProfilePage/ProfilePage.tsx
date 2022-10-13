@@ -3,8 +3,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import userService from "../../utils/userService";
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
 import SearchCard from '../../components/SearchCard/SearchCard'
@@ -65,8 +63,8 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
         <polyline points="0,0 400,2.5 0,5"></polyline>
         </svg>
         <img src={profileUser.photoUrl} id="profile-pic" />
-            <h1></h1>
-            <h2></h2>
+            {/* <h1></h1>
+            <h2></h2> */}
         </div> 
         <svg height="5" width="100%" className="tapered-rule">
         <polyline points="0,0 400,2.5 0,5"></polyline>

@@ -1,9 +1,6 @@
 import './CommunityFeed.css'
 import React, { useEffect, useState } from 'react'
 import Container from 'react-bootstrap/Container'
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import * as communityAPI from '../../utils/communityApi'
 import * as feelingAPI from '../../utils/feelingApi'
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
@@ -20,9 +17,7 @@ interface CommunityProps {
 
 const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout, handleAsceanCreate }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
-    const [isSaved, setIsSaved] = useState(true)
-    const [communityFeed, setCommunityFeed] = useState<boolean>(true)
-    const [error, setError] = useState<string>('');
+    // const [communityFeed, setCommunityFeed] = useState<boolean>(true)
 
     async function addFeeling(asceanID: any, feeling: string) {
         console.log('Ascean ID: ', asceanID, 'Feeling to Create: ', feeling)
@@ -62,13 +57,13 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
 
   return (
     <Container>
-        <SearchCard ascean={ascean} communityFeed={communityFeed} key={ascean._id} />
+        <SearchCard ascean={ascean} communityFeed={true} key={ascean._id} addFeeling={addFeeling} removeFeeling={removeFeeling} />
         {ascean.map((a: any) => {
             return (
                 <SolaAscean
                     ascean={a}
                     key={a._id}
-                    communityFeed={communityFeed}
+                    communityFeed={true}
                     addFeeling={addFeeling}
                     removeFeeling={removeFeeling}
                     loggedUser={loggedUser}

@@ -23,19 +23,6 @@ const CreateAscean = ({ ascean, setAscean, handleAsceanCreate }: CreateProps) =>
             }
             createAscean(); 
         }
-
-
-    // async function handleAsceanCreate(newAscean: Object) {
-    //     try {
-    //         console.log(newAscean, '<- newAscean in handleAsceanCreate start')
-    //         const response = await asceanAPI.create(newAscean);
-    //         console.log(response, '<- Response in handleAsceanCreate');
-    //         setAscean([response.data, ...ascean]);
-    //         setSaveState(true);
-    //     } catch (err) {
-    //         console.log(err, '<- This is the error in handleAsceanCreate')
-    //     }
-    // }
   return (
     <>
     {
