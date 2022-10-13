@@ -27,6 +27,11 @@ const asceanSchema = new Schema(
             enum : ["public", "private"],
             default: "public"
         },
+        shareable: {
+            type: String,
+            enum : ["public", "private", "none"],
+            default: "none"
+        },
         index: String,
         level: {type: Number, default: 1},
         experience: {type: Number, default: 0},

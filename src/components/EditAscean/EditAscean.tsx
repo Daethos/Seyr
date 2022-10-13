@@ -219,7 +219,7 @@ const EditAscean = ({ editAscean }: Props) => {
     }
     function handleVisibility(e: { target: { name: any; value: any; }; }) {
         const { name, value }  = e.target;
-        console.log(name, value, '<- Name and Value in Visibility Handler')
+        console.log(name, value, '<- Name and Value in Visibility / Shareable Handler')
         editState[name] = value;
         setEditState({...editState})
         console.log(editState)
@@ -1066,7 +1066,15 @@ const EditAscean = ({ editAscean }: Props) => {
                         <option value={editState.visibility}>Select Preference</option>
                         <option value="public" label="Public">public</option>
                         <option value="private" label="Private">private</option>
-                    </Form.Select> 
+                    </Form.Select>
+                    <div className='actions'>
+                <h3>Communal Sharibility</h3></div>
+                    <Form.Select onChange={handleVisibility} name="shareable" className="my-3">
+                        <option value={editState?.shareable}>Select Preference</option>
+                        <option value="public" label="Public">public</option>
+                        <option value="private" label="Private">private</option>
+                    </Form.Select>
+                     
 
 {/* ================= Submit to Create Ascean ================== */}
 
