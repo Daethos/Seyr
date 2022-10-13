@@ -108,10 +108,12 @@ html, body {
 	}
 	.stat-block.wide .section-left,
 	.stat-block.wide .section-right{
+        
         display: block;
         width: 100%;
 	}
 	.stat-block.wide .section-left{
+    
 	    margin: 0;
 	}
 	.stat-block.wide .section-right{

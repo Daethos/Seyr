@@ -7,17 +7,17 @@ import Container from 'react-bootstrap/Container'
 
 
 interface Props {
-    weapon_one: any;
-    weapon_two: any;
-    weapon_three: any;
-    shield: any;
-    helmet: any;
-    chest: any;
-    legs: any;
-    amulet: any;
-    ring_one: any;
-    ring_two: any;
-    trinket: any;
+    weapon_one?: any;
+    weapon_two?: any;
+    weapon_three?: any;
+    shield?: any;
+    helmet?: any;
+    chest?: any;
+    legs?: any;
+    amulet?: any;
+    ring_one?: any;
+    ring_two?: any;
+    trinket?: any;
 }
 
 const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket }: Props) => {

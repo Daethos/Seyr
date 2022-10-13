@@ -27,6 +27,7 @@ const asceanSchema = new Schema(
             enum : ["public", "private"],
             default: "public"
         },
+        index: String,
         level: {type: Number, default: 1},
         experience: {type: Number, default: 0},
         name: String,
@@ -55,8 +56,6 @@ const asceanSchema = new Schema(
         likes: [likeSchema],
         dislikes: [dislikeSchema],
         double_dislikes: [doubleDislikeSchema]
-        // adherent: Boolean,
-        // devoted: Boolean 
     },
     {
         timestamps: true,

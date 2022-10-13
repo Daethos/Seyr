@@ -60,25 +60,7 @@ const EditAscean = ({ editAscean }: Props) => {
     const [ringsModalShow, setRingsModalShow] = React.useState<boolean>(false)
     const [trinketModalShow, setTrinketModalShow] = React.useState<boolean>(false)
     const [editState, setEditState] = useState<any>({
-        // name: 'Ascean Name',
-        // description: 'Ascean Description',
-        // constitution: 8,
-        // strength: 8,
-        // agility: 8,
-        // achre: 8,
-        // caeren: 8,
-        // weapon_one: 'Weapon One',
-        // weapon_two: 'Weapon Two',
-        // weapon_three: 'Weapon Three',
-        // shield: 'Shield',
-        // helmet: 'Helmet',
-        // chest: 'Chest',
-        // legs: 'Legguards',
-        // ring_one: 'Rings',
-        // ring_two: 'Things',
-        // amulet: 'Amulet',
-        // trinket: 'Trinket',
-        // faith: 'none',
+
     })
     const conMinusButton = document.getElementById('con-minus');
     const conPlusButton = document.getElementById('con-plus');
@@ -103,6 +85,18 @@ const EditAscean = ({ editAscean }: Props) => {
     useEffect(() => {
       getAscean();
     }, [])
+
+    // useEffect(() => {
+    //     async function getBoth() {
+    //         try {
+    //             getAllEquipment();
+    //             getAscean();
+    //         } catch (err: any) {
+    //             console.log(err.message, '<- Error getting both!')
+    //         }
+    //     }
+    //     getBoth();
+    // }, [])
 
     async function getAscean() {
         setLoading(true);
@@ -533,7 +527,7 @@ const EditAscean = ({ editAscean }: Props) => {
 
     return (
         <Row className="justify-content-center my-5">
-    <Form className="stat-block wide my-5" onSubmit={handleSubmit}>
+        <Form className="stat-block wide my-5" onSubmit={handleSubmit}>
         <hr className="orange-border" />
         <div className="section-left">
             {/* <div className="character-heading"> */}
@@ -582,11 +576,11 @@ const EditAscean = ({ editAscean }: Props) => {
             </div>
             <div className="property-line">
                 <h4>Physical Damage</h4>
-                <p id="phys-dam"> {ascean.weapon_one.physical_damage} [{ascean.weapon_one.damage_type}], {ascean.weapon_two.physical_damage} [{ascean.weapon_two.damage_type}], {ascean.weapon_three.physical_damage} [{ascean.weapon_three.damage_type}]</p>
+                <p id="phys-dam"> {ascean?.weapon_one?.physical_damage} [{ascean?.weapon_one?.damage_type}], {ascean?.weapon_two?.physical_damage} [{ascean?.weapon_two?.damage_type}], {ascean?.weapon_three?.physical_damage} [{ascean?.weapon_three?.damage_type}]</p>
             </div>
             <div className="property-line">
                 <h4>Magical Damage</h4>
-                <p id="magi-dam"> {ascean.weapon_one.magical_damage} [{ascean.weapon_one.damage_type}], {ascean.weapon_two.magical_damage} [{ascean.weapon_two.damage_type}], {ascean.weapon_three.magical_damage} [{ascean.weapon_three.damage_type}]</p>
+                <p id="magi-dam"> {ascean?.weapon_one?.magical_damage} [{ascean?.weapon_one?.damage_type}], {ascean?.weapon_two?.magical_damage} [{ascean?.weapon_two?.damage_type}], {ascean?.weapon_three?.magical_damage} [{ascean?.weapon_three?.damage_type}]</p>
             </div>
             <div className="property-line">
                 <h4>Physical Defense</h4>

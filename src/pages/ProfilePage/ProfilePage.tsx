@@ -18,6 +18,7 @@ interface ProfileProps {
 
 const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
+    const [communityFeed, setcommunityFeed] = useState<boolean>(false)
 
     const [profileUser, setProfileUser] = useState<any>({});
     const [error, setError] = useState("");
@@ -87,6 +88,7 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
                 <SolaAscean
                     ascean={a}
                     key={a._id}
+                    communityFeed={communityFeed}
                 />
             )
         })}

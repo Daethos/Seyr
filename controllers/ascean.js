@@ -37,6 +37,7 @@ async function create(req, res) {
             const ascean = await Ascean.create({
                 user: req.user,
                 name: req.body.name,
+                index: req.body.name,
                 description: req.body.description,
                 constitution: req.body.constitution,
                 strength: req.body.strength,

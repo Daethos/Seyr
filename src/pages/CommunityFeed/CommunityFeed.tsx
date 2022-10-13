@@ -18,7 +18,7 @@ interface CommunityProps {
 const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [searchText, setSearchText] = useState<string>('');
-    const [allAscean, setAllAscean] = useState<any[]>(ascean);
+    const [allAscean, setAllAscean] = useState<any>(ascean);
     const [isSaved, setIsSaved] = useState(true)
     const [communityFeed, setCommunityFeed] = useState<boolean>(true)
     const [error, setError] = useState<string>('');
@@ -47,7 +47,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
     
 
     async function filterAscean(results: any) {
-        console.log(results, '<- Results in filterMonsters')
+        console.log(results, '<- Results in filtering the Ascean')
         console.log(results.length, '<- The amount of search results!')
         let finalResults = [];
             for (let i = 0; i < results.length; i++){
@@ -75,9 +75,9 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
         return (views)
     }
 
-    function handleChange(event: { preventDefault: () => void; target: { value: React.SetStateAction<string>; }; }) {
-        event.preventDefault()
-        setSearchText(event.target.value);
+    function handleChange(e: any) {
+        e.preventDefault()
+        setSearchText(e.target.value);
     }
 
     useEffect(() => {
@@ -86,7 +86,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
             setAllAscean([]);
             return
         }
-        const filteredResults = ascean.filter((a: any) => a['name'].includes(searchText))        
+        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText))        
         filterAscean(filteredResults)
         console.log(searchText, '<- the changing search text')
         return filteredResults
@@ -100,7 +100,6 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
         try {
             const response = await communityAPI.getEveryone();
             console.log(response, ' <- the response in getAscean')
-            
             setAscean([...response.data].reverse())
         } catch (err: any) {
             console.log(err.message);
@@ -135,7 +134,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
                     addFeeling={addFeeling}
                     removeFeeling={removeFeeling}
                     loggedUser={loggedUser}
-                    />
+                />
             )
         })}
     </Container>
