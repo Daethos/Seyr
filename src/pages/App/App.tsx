@@ -109,7 +109,7 @@ async function editAscean(vaEsai: Object) {
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
         
-        <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
+        <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/:username" element={<ProfilePage user={user} handleLogout={handleLogout} />} />
         {/* <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />
         <Route path="/Monsters/Data" element={<ApiMonsterData user={user} handleLogout={handleLogout} />} />

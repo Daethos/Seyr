@@ -9,14 +9,16 @@ import * as feelingAPI from '../../utils/feelingApi'
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
 
+
 interface CommunityProps {
     loggedUser: any;
     setUser: React.Dispatch<any>;
     handleSignUpOrLogin: () => any;
     handleLogout: () => void;
+    handleAsceanCreate?: any;
 }
 
-const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }: CommunityProps) => {
+const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout, handleAsceanCreate }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [isSaved, setIsSaved] = useState(true)
     const [communityFeed, setCommunityFeed] = useState<boolean>(true)
@@ -70,6 +72,8 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout 
                     addFeeling={addFeeling}
                     removeFeeling={removeFeeling}
                     loggedUser={loggedUser}
+                    setAscean={setAscean}
+                    handleAsceanCreate={handleAsceanCreate}
                 />
             )
         })}

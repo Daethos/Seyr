@@ -5,10 +5,12 @@ import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
 import Form from 'react-bootstrap/Form';
 import FeelingsCard from '../FeelingsCard/FeelingsCard'
+import CreateAscean from '../../components/CreateAscean/CreateAscean'
 
 
 interface Props {
     ascean: any;
+    setAscean?: React.Dispatch<any>;
     userProfile?: boolean;
     deleteAscean?: any;
     communityFeed?: boolean;
@@ -16,9 +18,10 @@ interface Props {
     removeFeeling?: any;
     loggedUser?: any;
     profilePage?: boolean;
+    handleAsceanCreate?: any;
 }
 
-const SolaAscean = ({ ascean, userProfile, deleteAscean, communityFeed, addFeeling, loggedUser, removeFeeling, profilePage }: Props) => {
+const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, communityFeed, addFeeling, loggedUser, removeFeeling, profilePage, handleAsceanCreate }: Props) => {
 
   return (
     <React.Fragment>
@@ -221,6 +224,11 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, communityFeed, addFeeli
             </button>
             
             </>
+            : ''
+        }
+        {
+            communityFeed
+            ? <CreateAscean ascean={ascean} setAscean={setAscean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} />
             : ''
         }
          <hr className='orange-border bottom' />
