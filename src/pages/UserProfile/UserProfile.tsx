@@ -9,6 +9,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import * as asceanAPI from '../../utils/asceanApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
+import SearchCard from '../../components/SearchCard/SearchCard'
 
 interface UserProps {
     loggedUser: any;
@@ -18,7 +19,7 @@ interface UserProps {
 }
 
 const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }: UserProps) => {
-const [asceanVaEsai, setAsceanVaEsai] = useState<any[]>([]);
+const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
 const [loading, setLoading] = useState<boolean>(false);
 const [userProfile, setUserProfile] = useState<boolean>(true);
 
@@ -52,9 +53,10 @@ if (loading) {
 }
   return (
     <Container>
+      <SearchCard ascean={asceanVaEsai} communityFeed={false} key={asceanVaEsai._id} />
         {
           asceanVaEsai
-          ? asceanVaEsai.map((ascean) => {
+          ? asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {
             return (
               <SolaAscean
                 ascean={ascean}

@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import userService from "../../utils/userService";
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
+import SearchCard from '../../components/SearchCard/SearchCard'
 import Loading from "../../components/Loading/Loading";
 import { useParams } from "react-router-dom";
 
@@ -18,7 +19,7 @@ interface ProfileProps {
 
 const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
-    const [communityFeed, setcommunityFeed] = useState<boolean>(false)
+    //const [communityFeed, setcommunityFeed] = useState<boolean>(false)
 
     const [profileUser, setProfileUser] = useState<any>({});
     const [error, setError] = useState("");
@@ -50,6 +51,7 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
 
   return (
     <Container className="my-5">
+        
         <Row 
             className="justify-content-center" 
             // xs={1 | 'auto'} sm={1 | 'auto'} md={2 | 'auto'} lg={2 | 'auto'} xl={2 | 'auto'} xxl={3 | 'auto'}
@@ -82,13 +84,13 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
         <hr className="orange-border bottom" />
         </Col>
         </Row>
-
+        <SearchCard ascean={ascean} communityFeed={false} key={ascean._id} />
         {ascean.map((a: any) => {
             return (
                 <SolaAscean
                     ascean={a}
                     key={a._id}
-                    communityFeed={communityFeed}
+                    communityFeed={false}
                 />
             )
         })}
