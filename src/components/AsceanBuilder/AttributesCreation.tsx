@@ -7,7 +7,7 @@ interface Props {
     setAsceanState: any;
 }
 
-const Attributes = ({ asceanState, setAsceanState }: Props) => {
+const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     const conMinusButton = document.getElementById('con-minus');
     const conPlusButton = document.getElementById('con-plus');
     const strMinusButton = document.getElementById('str-minus');
@@ -67,9 +67,131 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         }
     }, [caerenOutput])
+    useEffect(() => {
+        setPoolTotal(0)
+    }, [])
 
     // Pool Total Use Effect
     useEffect(() => {
+        checkPoolTotal()
+        // if (poolOutput != null) {
+        //     poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
+        // }
+        // if (poolTotal >= 25) {
+        //     conPlusButton!.style.display = 'none';
+        //     strPlusButton!.style.display = 'none';
+        //     agiPlusButton!.style.display = 'none';
+        //     achPlusButton!.style.display = 'none';
+        //     caerPlusButton!.style.display = 'none';
+        //     conMinusButton!.style.display = 'inline-block';
+        //     strMinusButton!.style.display = 'inline-block';
+        //     agiMinusButton!.style.display = 'inline-block';
+        //     achMinusButton!.style.display = 'inline-block';
+        //     caerMinusButton!.style.display = 'inline-block';
+        // }
+        // if (poolTotal < 25 && constitutionOutput >= 18) {
+        //     if (conPlusButton !== null) {
+        //         conPlusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal < 25 && strengthOutput >= 18) {
+        //     if (strPlusButton !== null) {
+        //         strPlusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal < 25 && agilityOutput >= 18) {
+        //     if (agiPlusButton !== null) {
+        //         agiPlusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal < 25 && achreOutput >= 18) {
+        //     if (achPlusButton !== null) {
+        //         achPlusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal < 25 && caerenOutput >= 18) {
+        //     if (caerPlusButton !== null) {
+        //         caerPlusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal < 25 && constitutionOutput < 18) {
+        //     if (conPlusButton !== null) {
+        //         conPlusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal < 25 && strengthOutput < 18) {
+        //     if (strPlusButton !== null) {
+        //         strPlusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal < 25 && agilityOutput < 18) {
+        //     if (agiPlusButton !== null) {
+        //         agiPlusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal < 25 && achreOutput < 18) {
+        //     if (achPlusButton !== null) {
+        //         achPlusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal < 25 && caerenOutput < 18) {
+        //     if (caerPlusButton !== null) {
+        //         caerPlusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal <= 25 && constitutionOutput > 8) {
+        //     if (conMinusButton !== null) {
+        //         conMinusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal <= 25 && strengthOutput > 8) {
+        //     if (strMinusButton !== null) {
+        //         strMinusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal <= 25 && agilityOutput > 8) {
+        //     if (agiMinusButton !== null) {
+        //         agiMinusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal <= 25 && achreOutput > 8) {
+        //     if (achMinusButton !== null) {
+        //         achMinusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal <= 25 && caerenOutput > 8) {
+        //     if (caerMinusButton !== null) {
+        //         caerMinusButton!.style.display = 'inline-block';
+        //     }
+        // }
+        // if (poolTotal <= 25 && constitutionOutput <= 8) {
+        //     if (conMinusButton !== null) {
+        //         conMinusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal <= 25 && strengthOutput <= 8) {
+        //     if (strMinusButton !== null) {
+        //         strMinusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal <= 25 && agilityOutput <= 8) {
+        //     if (agiMinusButton !== null) {
+        //         agiMinusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal <= 25 && achreOutput <= 8) {
+        //     if (achMinusButton !== null) {
+        //         achMinusButton!.style.display = 'none';
+        //     }
+        // }
+        // if (poolTotal <= 25 && caerenOutput <= 8) {
+        //     if (caerMinusButton !== null) {
+        //         caerMinusButton!.style.display = 'none';
+        //     }
+        // }
+    }, [poolTotal])
+
+    async function checkPoolTotal() {
         if (poolOutput != null) {
             poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
         }
@@ -185,7 +307,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 caerMinusButton!.style.display = 'none';
             }
         }
-    }, [poolTotal])
+    }
+    checkPoolTotal()
 
     function handleConMinus(e: any) {
         e.preventDefault();
@@ -411,4 +534,4 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
   )
 }
 
-export default Attributes
+export default AttributesCreate
