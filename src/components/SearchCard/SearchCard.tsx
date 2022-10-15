@@ -37,7 +37,6 @@ const SearchCard = ({ ascean, communityFeed, addFeeling, removeFeeling }: Search
                     <SolaAscean
                         ascean={allAscean[i]}
                         key={allAscean[i]._id}
-                        communityFeed={communityFeed}
                         addFeeling={addFeeling}
                         removeFeeling={removeFeeling}
                     />

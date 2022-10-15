@@ -88,7 +88,6 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
                 <SolaAscean
                     ascean={a}
                     key={a._id}
-                    communityFeed={false}
                 />
             )
         })}

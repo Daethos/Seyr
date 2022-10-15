@@ -11,10 +11,9 @@ import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/As
 
 
 interface Props {
-    ascean: any;
+    ascean?: any;
     setAscean?: React.Dispatch<any>;
     userProfile?: boolean;
-    deleteAscean?: any;
     addFeeling?: any;
     removeFeeling?: any;
     loggedUser?: any;
@@ -22,30 +21,43 @@ interface Props {
     handleAsceanCreate?: any;
 }
 
-const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, loggedUser, removeFeeling, profilePage, handleAsceanCreate }: Props) => {
+const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, removeFeeling, profilePage, handleAsceanCreate }: Props) => {
 
   return (
     <React.Fragment>
-    <Row className="justify-content-center my-5">
     <Col className="stat-block wide">
     <hr className="orange-border" />
-        <div className="section-left">
+        
+                <div className="section-left">
+                <div className="actions">
+                    <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}>
+                        <h3>
+                            <img 
+                                src={ascean?.user?.photoUrl ? ascean?.user?.photoUrl : ''} 
+                                alt={ascean?.user?.username ? ascean?.user?.username : ''} 
+                                id="community-pic"
+                            />
+                            {
+                                ascean?.user?.username
+                                ? ascean?.user?.username
+                                : ''
+                            } 
+                        </h3>
+                    </Link>
+                </div>
+               
             <div className="actions">
                 <h3>Character</h3>
             </div>
             <div className="creature-heading">
-                    <h1>{ascean.name}</h1>
-                    <h2>{ascean.description}</h2>
+                <h1>{ascean.name}</h1>
+                <h2>{ascean.description}</h2>
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <div className="actions">
                 <h3>Player Statistics</h3>
-            </div>
-            <div className="property-line first">
-                <h4>Experience</h4>
-                <p> {ascean.experience}</p>
             </div>
             <div className="property-line first">
                 <h4>Level</h4>
@@ -71,7 +83,7 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg> */}
             <div className="top-stats">
-            <AsceanAttributeCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} />
+            <AsceanAttributeCompiler communityFeed={false} communityFocus={true} ascean={ascean} key={ascean._id} />
             
             {/* <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -94,7 +106,6 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                     : 'No fucking way man'
                 }
                 </p>
-                
             </div>
             <div className="property-line first">
                 <h4>Devotion ?{' '}</h4>
@@ -107,31 +118,11 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                 
             </div>
             
-            {
-                userProfile
-                ? 
-                <>
-                <svg height="5" width="100%" className="tapered-rule mt-3">
-                    <polyline points="0,0 400,2.5 0,5"></polyline>
-                </svg>
-                <div className="actions">
-                <h3>Communal</h3>
-                </div>
-                <div className="property-line first">
-                <h4>Visible to the Community ? </h4>
-                <p>{ascean.visibility.charAt(0).toUpperCase() + ascean.visibility.slice(1)}</p>
-                </div>
-                <div className="property-line first">
-                <h4>Shareable to the Community ? </h4>
-                <p>{ascean.shareable.charAt(0).toUpperCase() + ascean.shareable.slice(1)}</p>
-                </div>
-                </>
-                : ''
-            }
-            
             </div>
-        </div>
-        <div className="section-right">
+        
+            </div>
+            <div className="section-right">
+             <FeelingsCard loggedUser={loggedUser} addFeeling={addFeeling} removeFeeling={removeFeeling} ascean={ascean} key={ascean._id} />
             
             <div className="actions">
                 <h3>Eccentricities & Equipment</h3>
@@ -153,40 +144,16 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
             <div className='property-block'>
             
             </div>
-            <AsceanStatCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} />
+            <AsceanStatCompiler ascean={ascean} communityFeed={false} communityFocus={true} key={ascean._id} />
             </div>
             
         </div>
-        {
-            userProfile
-            ? <>
-            <Link to={{ pathname: `/edit/${ascean._id}` }}>
-                <button 
-                className="btn" 
-                value={ascean._id} 
-                style={{ color: 'blue', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    Update {ascean.name}
-                </button>
-            </Link>
-            
-            <button 
-                className="btn" 
-                value={ascean._id} 
-                onClick={deleteAscean}
-                style={{ color: 'red', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    Delete {ascean.name}
-            </button>
-            
-            </>
-            : ''
-        }
+        <CreateAscean ascean={ascean} setAscean={setAscean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} />
         
          <hr className='orange-border bottom' />
     </Col>
-    
-    </Row>
     </React.Fragment>
   )
 }
 
-export default SolaAscean
+export default FocusAscean

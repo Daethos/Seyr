@@ -15,3 +15,17 @@ export async function getEveryone() {
         })
     });
 }
+
+export async function getOneAscean(asceanID: string | undefined) {
+    return fetch(BASE_URL + asceanID, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err)
+        })
+    })
+}

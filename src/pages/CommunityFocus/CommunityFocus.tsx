@@ -1,25 +1,27 @@
-import './CommunityFeed.css'
+import './CommunityFocus.css'
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import * as communityAPI from '../../utils/communityApi'
 import * as feelingAPI from '../../utils/feelingApi'
-import CommunityAscean from '../../components/CommunityAscean/CommunityAscean'
-import SearchCard from '../../components/SearchCard/SearchCard'
+import FocusAscean from '../../components/FocusAscean/FocusAscean';
 
 
 interface CommunityProps {
-    loggedUser: any;
-    setUser: React.Dispatch<any>;
-    handleSignUpOrLogin: () => any;
-    handleLogout: () => void;
+    loggedUser?: any;
+    setUser?: React.Dispatch<any>;
+    handleSignUpOrLogin?: () => any;
+    handleLogout?: () => void;
     handleAsceanCreate?: any;
 }
 
-const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout, handleAsceanCreate }: CommunityProps) => {
+const CommunityFocus = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout, handleAsceanCreate }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
-    // const [communityFeed, setCommunityFeed] = useState<boolean>(true)
+    const [loading, setLoading] = useState(true);
+    const { focusID } = useParams();
+    // const [communityFocus, setCommunityFocus] = useState<boolean>(true)
 
     async function addFeeling(asceanID: any, feeling: string) {
         console.log('Ascean ID: ', asceanID, 'Feeling to Create: ', feeling)
@@ -48,43 +50,42 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
     }, [])
 
     async function getAscean() {
+        setLoading(true);
         try {
-            const response = await communityAPI.getEveryone();
+            const response = await communityAPI.getOneAscean(focusID);
             console.log(response, ' <- the response in getAscean')
-            setAscean([...response.data].reverse())
+            setAscean(response.data)
+            setLoading(false)
+            console.log(ascean, '<- Ascean focused upon.')
         } catch (err: any) {
+            setLoading(false)
             console.log(err.message);
         }
     }
-    //xs={ 1 } sm={ 1 } md={ 1 } lg={ 2 } xl={ 3 } xxl={ 4 } 
+
+    if (loading) {
+        return (
+        <>
+            <Loading />
+        </>
+        );
+    }
 
   return (
-    <Container fluid>
-        <Row>
-        <SearchCard ascean={ascean} communityFeed={true} key={ascean._id} addFeeling={addFeeling} removeFeeling={removeFeeling} />
-        </Row>
-
+    <Container>
         <Row className="justify-content-center my-5">
-        
-        {ascean.map((a: any) => {
-            return (
-                <CommunityAscean
-                    ascean={a}
-                    key={a._id}
-                    communityFeed={true}
-                    addFeeling={addFeeling}
-                    removeFeeling={removeFeeling}
-                    loggedUser={loggedUser}
-                    setAscean={setAscean}
-                    handleAsceanCreate={handleAsceanCreate}
-                />
-            )
-        })}
-       
+        <FocusAscean
+            ascean={ascean}
+            key={ascean?._id}
+            addFeeling={addFeeling}
+            removeFeeling={removeFeeling}
+            loggedUser={loggedUser}
+            setAscean={setAscean}
+            handleAsceanCreate={handleAsceanCreate}
+        />
         </Row>
-    
     </Container>
   )
 }
 
-export default CommunityFeed
+export default CommunityFocus

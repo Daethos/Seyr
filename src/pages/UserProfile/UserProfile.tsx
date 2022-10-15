@@ -24,7 +24,7 @@ useEffect(() => {
 async function getAscean() {
   try {
     const response = await asceanAPI.getAllAscean();
-    console.log(response, '<- the response in Get All Ascean');
+    console.log(response.data, '<- the response in Get All Ascean');
     setAsceanVaEsai([...response.data])
   } catch (err) {
     console.log(err);

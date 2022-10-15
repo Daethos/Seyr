@@ -11,6 +11,7 @@ import EditAscean from "../../components/EditAscean/EditAscean";
 import AuthPage from "../AuthPage/AuthPage";
 import Loading from "../../components/Loading/Loading";
 import CommunityFeed from "../CommunityFeed/CommunityFeed";
+import CommunityFocus from "../CommunityFocus/CommunityFocus";
 import ProfilePage from "../ProfilePage/ProfilePage"
 
 function App() {
@@ -109,6 +110,7 @@ async function editAscean(vaEsai: Object) {
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
         
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/:username" element={<ProfilePage user={user} handleLogout={handleLogout} />} />
         {/* <Route path="/Monsters" element={<ApiMonsters user={user} handleLogout={handleLogout} />} />
         <Route path="/Monsters/Data" element={<ApiMonsterData user={user} handleLogout={handleLogout} />} />
