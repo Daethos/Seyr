@@ -74,7 +74,7 @@ export async function edit(vaEsai: any) {
         method: 'PUT',
         body: JSON.stringify(vaEsai),
         headers: {
-            'COntent-Type': 'application/json',
+            'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         },
     }).then((res) => {

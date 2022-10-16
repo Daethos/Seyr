@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import userService from '../../utils/userService';
+import * as friendAPI from '../../utils/friendApi';
 import { Nav } from 'react-bootstrap';
 
 interface NavProps {

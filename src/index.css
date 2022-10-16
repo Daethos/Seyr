@@ -297,3 +297,6 @@ html, body {
 .feeling-icon:hover {
   transform: scale(3.5);
 }
+.friend-popover:hover {
+  transform: scale(1.1);
+}

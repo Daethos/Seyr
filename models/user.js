@@ -3,12 +3,20 @@ const bcrypt = require('bcrypt');
 
 const SALT_ROUNDS = 6;
 
+const friendSchema = new mongoose.Schema({
+  username: String,
+  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+}, {
+  timestamps: true
+});
+
 const userSchema = new mongoose.Schema({
   username: {type: String, required: true, lowercase: true, unique: true},
   email: {type: String, required: true, lowercase: true, unique: true},
   password: String,
   bio: String,
   photoUrl: String,  // string from aws!
+  friends: [friendSchema]
   // color: String,
 }, {
   timestamps: true
@@ -58,5 +66,7 @@ userSchema.methods.comparePassword = function(tryPassword, cb) {
     cb(null, isMatch);
   });
 };
+
+
 
 module.exports = mongoose.model('User', userSchema);
