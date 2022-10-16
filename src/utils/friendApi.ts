@@ -33,17 +33,18 @@ export function friendDecline(userID: any, friend: any) {
 }
 
 export function friendAccept(userId: any, friend: any) {
-    return fetch (`${BASE_URL}${userId}/${friend}`, {
+    return fetch (`${BASE_URL}accept/${userId}/${friend.userId._id}`, {
         method: 'PUT',
         body: JSON.stringify(friend),
         headers:  {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    })
-    .then((res: any) => {
+    }).then((res) => {
         if (res.ok) return res.json();
-        throw new Error(res.error);
+        return res.json().then(response => {
+            console.log(response, '<- Response in Friend Accept Utility Return')
+        })
     })
 }
 

@@ -63,11 +63,13 @@ async function friends() {
 }
 
 
-async function sendFriendRequest(friend: any) {
+async function acceptFriendRequest(friend: any) {
+  //console.log(friend.target, '<- Did you make it over to accept as a friend?')
   try {
-      const response = await friendAPI.friendAccept(loggedUser._id, friend)
-      console.log(response, '<- Response in Friend Request')
-      setFriendRequest(true)
+    console.log(friend, '<- Did you make it over to accept as a friend?')
+    const response = await friendAPI.friendAccept(loggedUser._id, friend)
+    console.log(response.data, '<- Response in Friend Request')
+    setFriendRequest(true)
   } catch (err: any) {
       setFriendRequest(true)
       console.log(err.message, '<- Error handling Friend Request')
@@ -87,6 +89,24 @@ async function declineFriendRequest(friend: any) {
   }
 }
 
+const areWeFriends = async () => loggedUser.friends.find((userId: any, index: number) => console.log(index, 'From That Index to this User ', userId))
+//userId?.friends?.username === loggedUser?.username)
+console.log(areWeFriends(), '<- Are we friends?');
+console.log(loggedUser?.friends, '<- THe logged user');
+
+useEffect(() => {
+  findYourRequests();
+}, [])
+
+async function findYourRequests() {
+  try {
+    const response = await areWeFriends();
+    console.log(response, '<- Response finding Requests');
+  } catch (err: any) {
+    console.log(err.message, '<- Error Finding Requests')
+  }
+}
+
 if (loading) {
   return (
   <>
@@ -98,8 +118,8 @@ if (loading) {
     <Container>
       <h3 className='text-white'>New Friend Requests!</h3>
       {
-        loggedUser?.friends 
-        ? <FriendsCard loggedUser={loggedUser} sendFriendRequest={sendFriendRequest} declineFriendRequest={declineFriendRequest} />
+        loggedUser?.friends
+        ? <FriendsCard loggedUser={loggedUser} acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} />
         : ''
       }
       <SearchCard ascean={asceanVaEsai} communityFeed={false} key={asceanVaEsai._id} />

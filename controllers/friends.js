@@ -24,16 +24,14 @@ async function send(req, res) {
 }
 
 async function accept(req, res){
-    console.log(req.params.userId, 'User in Friend Controller [Accept Request]');
-    console.log(req.body, '<- The friend you are accepting in the controller')
     try {
-        const user = await Ascean.findById(req.params.userId);
+        const user = await User.findById(req.params.friendId);
         user.friends.push({ 
-            username: req.body.username,
-            userId: req.body._id
+            username: req.user.username,
+            userId: req.user._id
          })
         user.save();
-        res.status(201).json({ user })
+        res.status(201).json({ data: user })
     } catch(err){
         res.status(400).json({error: err})
     }

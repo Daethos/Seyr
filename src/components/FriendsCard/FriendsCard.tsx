@@ -8,11 +8,11 @@ import FriendPopover from '../FriendPopover/FriendPopover';
 
 interface Props {
     loggedUser: any;
-    sendFriendRequest: any;
+    acceptFriendRequest: any;
     declineFriendRequest: any;
 }
 
-const FriendsCard = ({ loggedUser, sendFriendRequest, declineFriendRequest }: Props) => {
+const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest }: Props) => {
     const [friendState, setFriendState] = useState<any>([])
     const [loading, setLoading] = useState(false)
 
@@ -54,7 +54,7 @@ const FriendsCard = ({ loggedUser, sendFriendRequest, declineFriendRequest }: Pr
                         <FriendPopover 
                             friend={friend} 
                             loggedUser={loggedUser} 
-                            sendFriendRequest={sendFriendRequest} 
+                            acceptFriendRequest={acceptFriendRequest} 
                             declineFriendRequest={declineFriendRequest}
                             key={friend.userId} 
                         />
@@ -63,7 +63,6 @@ const FriendsCard = ({ loggedUser, sendFriendRequest, declineFriendRequest }: Pr
                 })
                 : ''
             }
-        {loggedUser?.friends?.[0]?.username}
         </div>
     )
 }
