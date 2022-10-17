@@ -1,11 +1,12 @@
 const User = require('../models/user')
+const Ascean = require('../models/ascean')
 
 module.exports = {
     send,
     accept,
     delete: decline,
     index,
-    status
+    requests
 }
 
 async function send(req, res) {
@@ -13,7 +14,7 @@ async function send(req, res) {
     console.log(req.user, '<- Request User')
     try {
         const user = await User.findById(req.params.userId);
-        user.friends.push({ 
+        user.requests.push({ 
             username: req.user.username,
             userId: req.user._id
          })
@@ -25,14 +26,20 @@ async function send(req, res) {
 }
 
 async function accept(req, res){
+    console.log(req.params.friendId, 'Friend in Friend Controller [Accept Request]');
     try {
         const user = await User.findById(req.params.friendId);
         user.friends.push({ 
             username: req.user.username,
             userId: req.user._id
          })
-        user.save();
-        res.status(201).json({ data: user })
+         console.log(user, '<- Fren in Controller Post-Push Fren')
+         const you = await User.findById(req.user._id);
+
+        you.requests.remove(req.params.requestId);
+        await user.save();
+        await you.save()
+        res.status(201).json({ data: user, you })
     } catch(err){
         res.status(400).json({error: err})
     }
@@ -42,8 +49,8 @@ async function decline(req, res) {
     console.log(req.params.userId, 'User in Friend Controller [Decline Request]');
     console.log(req.params.friendId, 'Friend in Friend Controller [Decline Request]');
     try {
-        const user = await User.findOne({ 'friends._id': req.params.friendId })
-        user.friends.remove(req.params.friendId);
+        const user = await User.findOne({ 'requests._id': req.params.friendId })
+        user.requests.remove(req.params.friendId);
         await user.save();
         res.json({ data: user })
     } catch (err) {
@@ -57,33 +64,21 @@ async function index(req, res) {
                                 .populate('friends')
                                 .populate('friends.userId')
                                 .exec();
+
         res.status(200).json({ data: user })
     } catch (err) {
         res.status(400).json({ err })
     }
 }
 
-async function status(req, res){
+async function requests(req, res){
     try {
-        const yourSelf = req.user.username
-        console.log(yourSelf, '<- Who are you in the controller?', req.params.friendName, 'And who is your fren?')
-        const user = await User.findOne({ 'username': req.params.friendName })
-                                .populate('friends')
-                                .exec()
-        console.log(user, '<- Who is this fren REALLY?')
+        const user = await User.findById(req.params.id)
+                                .populate('requests')
+                                .populate('requests.userId')
+                                .exec();
 
-        // if ( 
-
-        const data = user.friends.find( (friend) => friend.username === req.user.username )
-        //( { yourSelf : { $in: username } } ) 
-            
-        //     ) {
-        //     data = true;
-        // } else {
-        //     data = false;
-        // }
-        console.log(data, '<- What is teh data from status controller?')
-        res.status(201).json({ data, user })
+        res.status(201).json({ data: user })
     } catch(err){
         res.status(400).json({error: err})
     }

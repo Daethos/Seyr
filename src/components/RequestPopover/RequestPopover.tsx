@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import './FriendPopover.css'
+import './RequestPopover.css'
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Form from 'react-bootstrap/Form'
-import * as friendAPI from '../../utils/friendApi'
 
 interface Props {
     friend: any;
@@ -14,25 +13,22 @@ interface Props {
     declineFriendRequest: any;
 }
 
-const FriendPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendRequest }: Props) => {
+const RequestPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendRequest }: Props) => {
     const [friendRequest, setFriendRequest] = useState<boolean>(false)
     const [friendDecline, setFriendDecline] = useState<boolean>(false)
-    const [friendState, setFriendState] = useState<any>(friend)
-    //console.log(friendState, '<- Friend in Friend Popover')
-    const friendArray = {...friend.userId.friends}
+    const [requestState, setRequestState] = useState<any>(friend)
     
     function handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
         console.log('Editing underway!')
         async function asceanVaEsai() {
             try {
-                acceptFriendRequest(friendState)
+                acceptFriendRequest(requestState)
             } catch (err: any) {
                 console.log(err.message, '<- Error initiating Ascean Edit')
             }
         }
         asceanVaEsai();
-        //getAscean();
     }
 
 
@@ -40,11 +36,11 @@ const FriendPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendR
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2"><Link to={'/' + friend?.username} style={{ textDecoration: 'none' }}>{friend!.username}</Link> <span id="popover-image"><img src={friend.userId.photoUrl} id="fren-pic" alt={friend.username}  /></span></Popover.Header>
             <Popover.Body id="popover-body" className="popover-body">
-                {friend?.userId.bio}
-                    {/* <Form onSubmit={handleSubmit}>
-                    <Button variant="success" value={friendState} type="submit" onClick={acceptFriendRequest}>Accept</Button> <br /><br />
+                
+                    <Form onSubmit={handleSubmit}>
+                    <Button variant="success" value={requestState} type="submit" onClick={acceptFriendRequest}>Accept</Button> <br /><br />
                     </Form>
-                    <Button variant="danger" value={friend._id} type="submit" onClick={declineFriendRequest}>Decline</Button> */}
+                    <Button variant="danger" value={friend._id} type="submit" onClick={declineFriendRequest}>Decline</Button>
                 
             </Popover.Body>
         </Popover>
@@ -57,4 +53,4 @@ const FriendPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendR
   )
 }
 
-export default FriendPopover
+export default RequestPopover

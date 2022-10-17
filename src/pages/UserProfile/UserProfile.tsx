@@ -5,8 +5,10 @@ import Container from 'react-bootstrap/Container';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as friendAPI from '../../utils/friendApi';
 import FriendsCard from '../../components/FriendsCard/FriendsCard';
+import RequestsCard from '../../components/RequestsCard/RequestsCard'
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
+import FriendsCarousel from '../../components/FriendsCarousel/FriendsCarousel'
 
 interface UserProps {
     loggedUser: any;
@@ -22,9 +24,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
   const [friendRequest, setFriendRequest] = useState<boolean>(false)
   const [friendDecline, setFriendDecline] = useState<boolean>(false)
   const [friendState, setFriendState] = useState<any>([])
-  const [friendNames, setFriendNames] = useState<any>([])
-  const [friendStatusMutual, setFriendStatusMutual] = useState<any>([])
-  const [friendStatusRequest, setFriendStatusRequest] = useState<any>([])
+  const [requestState, setRequestState] = useState<any>([])
 
   useEffect(() => {
     getAscean();
@@ -49,7 +49,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
 
   useEffect(() => {
     friends();
-  }, [])
+  }, [friendRequest])
 
   async function friends() {
     setLoading(true);
@@ -63,11 +63,15 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     }
   }
 
+  //TODO: Derp, it's still not 'mutual' for cross-friending. You only did one side, kek.
+  //FIXME: Fix the other side tomorrow! ^_^
   async function acceptFriendRequest(friend: any) {
+    setFriendRequest(false)
     try {
       console.log(friend, '<- Did you make it over to accept as a friend?')
       const response = await friendAPI.friendAccept(loggedUser._id, friend)
-      console.log(response.data, '<- Response in Friend Request')
+      console.log(response.data, '<- Newly Forged Friend')
+      console.log(response.you, '<- Checking you out to see your removed request')
       setFriendRequest(true)
     } catch (err: any) {
         setFriendRequest(true)
@@ -76,90 +80,39 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
   }
 
   async function declineFriendRequest(friend: any) {
+    setFriendDecline(false)
     console.log('Declining: ', friend.target.value,' in USER PROFILE!')
     try {
         const response = await friendAPI.friendDecline(loggedUser._id, friend.target.value)
         console.log(response, '<- Response in Friend Decline')
         setFriendDecline(true)
-        friends();
+        friendStatus();
     } catch (err: any) {
         setFriendDecline(true)
         console.log(err.message, '<- Error handling Friend Decline')
     }
   }
 
-  async function fetchFriendNames() {
-    
-    let frens: any = [];
-    friendState.find((userId: any) => { 
-      console.log(userId.username, '<- Fren Reques??')
-      frens.push(userId.username)
-    })
-    return (
-      frens
-    )
-  }
-
   useEffect(() => {
     friendStatus();
-  }, [])
+  }, [friendDecline, friendRequest])
 
   async function friendStatus() {
     setLoading(true);
     try {
-      const responseArray = await Promise.all(friendNames?.map(async (name: string) => friendAPI.friendStatus(name)))
-      console.log(responseArray, '<- Finding out Frenship Status!')
-      let requests: any = [];
-      let mutuals: any = [];
-      responseArray.map(async (response) => {
-        console.log(response, '<- If you are their Fren, you are here!')
-            console.log(response.user?.username, '<- Who are you?!')
-
-            if (response?.data?.username === loggedUser?.username) {
-              mutuals.push(response.user?.username)
-            } 
-
-            if (!response.data) {
-              requests.push(response.user?.username)
-            }
-        return ({
-          mutuals,
-          requests
-        })
-      })
-      setFriendStatusMutual(mutuals)
-      setFriendStatusRequest(requests)
-      //setFriendStatusRequest([...friendStatusRequest, response.user?.username])
+      const response = await friendAPI.getAllRequests(loggedUser._id)
+      //Promise.all(friendNames?.map(async (name: string) => friendAPI.getAllRequests(name)))
+      console.log(response.data.requests, '<- Finding out REques Frenship Status!')
+      setRequestState(response.data.requests)
       setLoading(false);
+
     } catch (err: any) {
       setLoading(false);
       console.log(err.message, '<- Error Finding Status')
+
     }
   }
-
-  useEffect(() => {
-    findYourRequests();
-  }, [])
-
-  async function findYourRequests() {
-
-    setLoading(true);
-
-    try {
-      const response = await fetchFriendNames()
-      console.log(response, '<- Fetching Friend Requests');
-      setFriendNames(response)
-      console.log(friendNames, '<- Names of Potential Friends')
-      await friendStatus()
-      console.log(friendStatusMutual, '<- Who are the mutuals? Request Func')
-      console.log(friendStatusRequest, '<- Who are the requests? Request Func')
-      setLoading(false);
-    } catch (err: any) {
-      setLoading(false);
-      console.log(err.message, '<- Error Finding Requests')
-    }
-
-  }
+  
 
   if (loading) {
     return (
@@ -168,36 +121,41 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     </>
     );
   }
+
   return (
+
     <Container>
-      <h3 className='text-white'>New Friend Potentials!</h3>
+      <h3 className='text-white mt-5'>New Friend Requests!</h3>
+
       {
-        loggedUser?.friends
-        ? <FriendsCard loggedUser={loggedUser} acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} />
+        requestState
+        ? 
+        <RequestsCard 
+          loggedUser={loggedUser} 
+          requestState={requestState}
+          acceptFriendRequest={acceptFriendRequest} 
+          declineFriendRequest={declineFriendRequest}
+
+        />
+        : 'No Requests At This Time'
+      }
+
+      <h3 className='text-white'>Mutual Friends!</h3>
+      
+
+      {
+        friendState
+        ? 
+        <FriendsCard 
+          loggedUser={loggedUser} 
+          friendState={friendState}
+          acceptFriendRequest={acceptFriendRequest} 
+          declineFriendRequest={declineFriendRequest} 
+        />
+            // <FriendsCarousel user={loggedUser} friends={friendStatusMutual} />
         : ''
       }
 
-      <h3 className='text-white'>Friend Mutuals!</h3>
-      {
-        friendStatusMutual
-        ? friendStatusMutual.map((mutual: any) => {
-          return (
-            <h5 className="text-white">{mutual}</h5>
-          )
-        })
-        : ''
-      }
-
-      <h3 className='text-white'>New Friend Requests!</h3>
-      {
-        friendStatusRequest
-        ? friendStatusRequest.map((request: any) => {
-          return (
-            <h5 className="text-white">{request}</h5>
-          )
-        })
-        : ''
-      }
       <SearchCard ascean={asceanVaEsai} communityFeed={false} key={asceanVaEsai._id} />
         {
           asceanVaEsai

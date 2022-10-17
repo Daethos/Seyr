@@ -4,36 +4,18 @@ import Loading from '../Loading/Loading'
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import FriendPopover from '../FriendPopover/FriendPopover';
+import RequestPopover from '../RequestPopover/RequestPopover';
 
 interface Props {
     loggedUser: any;
     acceptFriendRequest: any;
     declineFriendRequest: any;
-    friendState: any;
+    requestState: any;
 }
 
-const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, friendState }: Props) => {
-    const [requestState, setRequestState] = useState<any>(loggedUser.requests)
+const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, requestState }: Props) => {
     const [friendAscean, setFriendAscean] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
-
-    // useEffect(() => {
-    //     friends();
-    // }, [])
-
-    // async function friends() {
-    //     setLoading(true);
-    //     try {
-    //         const response = await friendAPI.getAllFriends(loggedUser._id)
-    //         console.log(response.data.friends, '<- Response in Getting All Friends')
-    //         setFriendState(response.data.friends)
-    //         setLoading(false)
-    //     } catch (err: any) {
-    //         setLoading(false)
-    //         console.log(err.message, '<- Error Fetch Friends in Friend Card')
-    //     }
-    // }
 
     if (loading) {
         return (
@@ -46,13 +28,13 @@ const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, fr
     return (
         <div className='text-white'>
             {
-                friendState
+                requestState
                 ? 
-                friendState.map((friend: any) => {
-
+                requestState.map((friend: any) => {
+                    console.log(friend, '<- The friend request')
                     return (
                        <>
-                        <FriendPopover 
+                        <RequestPopover 
                             friend={friend} 
                             loggedUser={loggedUser} 
                             acceptFriendRequest={acceptFriendRequest} 
@@ -68,4 +50,4 @@ const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, fr
     )
 }
 
-export default FriendsCard
+export default RequestsCard

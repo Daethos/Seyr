@@ -14,10 +14,10 @@ import { useParams } from "react-router-dom";
 
 interface ProfileProps {
     user: any;
-    handleLogout: () => void;
+    friends?: any
 }
 
-const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
+const ProfilePage = ({ user }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
     //const [communityFeed, setcommunityFeed] = useState<boolean>(false)
 
@@ -46,10 +46,6 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
     }, [username, getProfile]);
 
     async function sendFriendRequest() {
-
-        //TODO: Maybe a POST via COMMUNITY API? CREATE THE MODEL FRIEND REQUEST?
-        //FIXME: A model that is MANY:MANY??
-
         try {
             const response = await friendAPI.friendRequest(profileUser._id, user._id)
             console.log(response, '<- Response in Friend Request')
@@ -57,14 +53,6 @@ const ProfilePage = ({ user, handleLogout }: ProfileProps) => {
         } catch (err: any) {
             setFriendRequest(true)
             console.log(err.message, '<- Error handling Friend Request')
-        }
-    }
-
-    async function fetchFriendRequest() {
-        try {
-            // TODO: callback, maybe?
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Fetching Friend Request')    
         }
     }
 
