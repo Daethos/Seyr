@@ -109,30 +109,28 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     try {
       const responseArray = await Promise.all(friendNames?.map(async (name: string) => friendAPI.friendStatus(name)))
       console.log(responseArray, '<- Finding out Frenship Status!')
+      let requests: any = [];
+      let mutuals: any = [];
       responseArray.map(async (response) => {
         console.log(response, '<- If you are their Fren, you are here!')
-        //await Promise.all(
-          friendNames?.map(async (name: any, index: any) => {
-          console.log(name, '<- Which name is getting checked?', index, '<- And the Index')
-
             console.log(response.user?.username, '<- Who are you?!')
 
-          if (response?.data?.username === loggedUser?.username) {
-            setFriendStatusMutual([...friendStatusMutual, response.user?.username])
-            console.log(friendStatusMutual, '<- Who are the mutuals? In Internal Log')
-          } 
+            if (response?.data?.username === loggedUser?.username) {
+              mutuals.push(response.user?.username)
+            } 
 
-          if (!response.data) {
-            setFriendStatusRequest([...friendStatusRequest, response.user?.username])
-            console.log(friendStatusRequest, '<- Who are the requests? In Internal Log')
-          }
-
-         })
-
-        console.log(friendStatusMutual, '<- Who are the mutuals? In External Log')
-        console.log(friendStatusRequest, '<- Who are the requests? In External Log')
+            if (!response.data) {
+              requests.push(response.user?.username)
+            }
+        return ({
+          mutuals,
+          requests
+        })
       })
-      // setLoading(false);
+      setFriendStatusMutual(mutuals)
+      setFriendStatusRequest(requests)
+      //setFriendStatusRequest([...friendStatusRequest, response.user?.username])
+      setLoading(false);
     } catch (err: any) {
       setLoading(false);
       console.log(err.message, '<- Error Finding Status')
@@ -143,22 +141,24 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     findYourRequests();
   }, [])
 
- 
-
   async function findYourRequests() {
+
     setLoading(true);
+
     try {
       const response = await fetchFriendNames()
       console.log(response, '<- Fetching Friend Requests');
       setFriendNames(response)
       console.log(friendNames, '<- Names of Potential Friends')
-      // const yourSelf = await friendStatus()
-      // console.log(yourSelf, '<- You there, buddy?')
+      await friendStatus()
+      console.log(friendStatusMutual, '<- Who are the mutuals? Request Func')
+      console.log(friendStatusRequest, '<- Who are the requests? Request Func')
       setLoading(false);
     } catch (err: any) {
       setLoading(false);
       console.log(err.message, '<- Error Finding Requests')
     }
+
   }
 
   if (loading) {
@@ -170,10 +170,32 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
   }
   return (
     <Container>
-      <h3 className='text-white'>New Friend Requests!</h3>
+      <h3 className='text-white'>New Friend Potentials!</h3>
       {
         loggedUser?.friends
         ? <FriendsCard loggedUser={loggedUser} acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} />
+        : ''
+      }
+
+      <h3 className='text-white'>Friend Mutuals!</h3>
+      {
+        friendStatusMutual
+        ? friendStatusMutual.map((mutual: any) => {
+          return (
+            <h5 className="text-white">{mutual}</h5>
+          )
+        })
+        : ''
+      }
+
+      <h3 className='text-white'>New Friend Requests!</h3>
+      {
+        friendStatusRequest
+        ? friendStatusRequest.map((request: any) => {
+          return (
+            <h5 className="text-white">{request}</h5>
+          )
+        })
         : ''
       }
       <SearchCard ascean={asceanVaEsai} communityFeed={false} key={asceanVaEsai._id} />
