@@ -63,6 +63,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     }
   }
 
+  
   //TODO: Derp, it's still not 'mutual' for cross-friending. You only did one side, kek.
   //FIXME: Fix the other side tomorrow! ^_^
   async function acceptFriendRequest(friend: any) {
