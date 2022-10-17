@@ -104,6 +104,7 @@ async function editAscean(vaEsai: Object) {
       // className="user-background"
       > 
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
+      
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} handleLogout={handleLogout} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />

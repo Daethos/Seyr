@@ -1,3 +1,11 @@
 #placeholder {
     margin-top: 0vh;
 }
+#loading-spinner {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20%;
+    width: 50%;
+    padding: 300px 0;
+}

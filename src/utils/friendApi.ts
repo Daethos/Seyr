@@ -1,6 +1,21 @@
 import tokenService from './tokenService';
 const BASE_URL = '/api/friends/';
 
+export function friendStatus(friend: string) {
+    return fetch (`${BASE_URL}status/${friend}`, {
+        // body: JSON.stringify(friend),
+        // body: friend,
+        headers:  {
+            //'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+}
+
 export function friendRequest(userID: any, friend: string) {
     console.log('Friend in API Utility', friend)
     return fetch (`${BASE_URL}${userID}/${friend}`, {
@@ -49,7 +64,7 @@ export function friendAccept(userId: any, friend: any) {
 }
 
 export function getAllFriends(userID: any) {
-    console.log('Getting Friends in API Utility', userID)
+    // console.log('Getting Friends in API Utility', userID)
     return fetch (`${BASE_URL}${userID}`, {
         headers:  {
             //'Content-Type': 'application/json',

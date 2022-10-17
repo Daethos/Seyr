@@ -175,19 +175,25 @@ const EditAscean = ({ editAscean }: Props) => {
         <div className="actions">
                 <h3>Eccentricities & Equipment</h3>
             <div className='property-block'>
-            <AsceanImageCard
-                weapon_one={ascean?.weapon_one}
-                weapon_two={ascean?.weapon_two}
-                weapon_three={ascean?.weapon_three}
-                shield={ascean?.shield}
-                helmet={ascean?.helmet}
-                chest={ascean?.chest}
-                legs={ascean?.legs}
-                amulet={ascean?.amulet}
-                ring_one={ascean?.ring_one}
-                ring_two={ascean?.ring_two}
-                trinket={ascean?.trinket}
-            />
+                {
+                    ascean
+                    ? 
+                <AsceanImageCard
+                    weapon_one={ascean?.weapon_one}
+                    weapon_two={ascean?.weapon_two}
+                    weapon_three={ascean?.weapon_three}
+                    shield={ascean?.shield}
+                    helmet={ascean?.helmet}
+                    chest={ascean?.chest}
+                    legs={ascean?.legs}
+                    amulet={ascean?.amulet}
+                    ring_one={ascean?.ring_one}
+                    ring_two={ascean?.ring_two}
+                    trinket={ascean?.trinket}
+                />
+                    : ''
+                }
+            
             </div>
         </div>
             <div className="actions">

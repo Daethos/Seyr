@@ -4,6 +4,7 @@ const friendsCtrl = require('../../controllers/friends');
 
 /*---------- Public Routes ----------*/
 router.get('/:id', friendsCtrl.index);
+router.get('/status/:friendName', friendsCtrl.status)
 router.post('/:userId/:friendId', friendsCtrl.send);
 router.put('/accept/:userId/:friendId', friendsCtrl.accept);
 router.delete('/:userId/:friendId', friendsCtrl.delete);

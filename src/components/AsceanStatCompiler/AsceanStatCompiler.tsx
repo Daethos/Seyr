@@ -69,14 +69,14 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
 
     async function physicalDefenseCompiler() {
         let defense = physicalDefenseModifer;
-        console.log('Physical Defense: ', defense)
+        //console.log('Physical Defense: ', defense)
         setPhysicalDefense(defense);
         setPhysicalPosture(defense + asceanState.shield.physical_resistance);
     }
 
     async function magicalDefenseCompiler() {
         let defense = magicalDefenseModifer;
-        console.log('Magical Defense: ', defense)
+        //console.log('Magical Defense: ', defense)
         setMagicalDefense(defense);
         setMagicalPosture(defense + asceanState.shield.magical_resistance);
     }
@@ -85,38 +85,54 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
         let health = healthState;
         health += (constitutionMod + caerenMod) * 2;
         setHealthState(health)
-        console.log(health, '<- Health Total!')
+        //console.log(health, '<- Health Total!')
     }
 
-    async function faithCompiler() {
+    // useEffect(() => {
+    //     faithCompiler(weapon);
+    // }, [])
+
+    async function faithCompiler(weapon: any) {
         if (asceanState.faith === 'adherent') {
-            if (weaponOne.damage_type?.[0] === 'Earth' || weaponOne.damage_type?.[0] === 'Fire' || weaponOne.damage_type?.[0] === 'Frost' || weaponOne.damage_type?.[0] === 'Lightning' || weaponOne.damage_type?.[0] === 'Wind') {
-                weaponOne.magical_damage *= 1.1;
+            if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
+                weapon.magical_damage *= 1.1;
+                weapon.critical_chance += 3;
             }
-            if (weaponOne.type === 'Bow' || weaponOne.type === 'Greataxe' || weaponOne.type === 'Greatsword' || weaponOne.type === 'Greatmace') {
-                weaponOne.physical_damage *= 1.15;
+            if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatsword' || weapon.type === 'Greatmace') {
+                weapon.physical_damage *= 1.15;
             }
-            if (weaponOne.type === 'Axe' || weaponOne.type === 'Mace') {
-                weaponOne.physical_damage *= 1.05;
+            if (weapon.type === 'Axe' || weapon.type === 'Mace') {
+                weapon.physical_damage *= 1.05;
             }
-            if (weaponOne.grip === 'Two Hand') {
-                weaponOne.physical_damage *= 1.1;
-                weaponOne.magical_damage *= 1.1;
+            if (weapon.grip === 'Two Hand') {
+                weapon.physical_damage *= 1.1;
+                weapon.magical_damage *= 1.1;
+                weapon.critical_damage *= 1.1
             }
-            weaponOne.critical_chance *= 1.1;
+            weapon.critical_chance *= 1.1;
+            weapon.roll += 3;
+
         }
         if (asceanState.faith === 'devoted') {
-            if (weaponOne.damage_type?.[0] === 'Faith' || weaponOne.damage_type?.[0] === 'Spooky' || weaponOne.damage_type?.[0] === 'Sorcery') {
-                weaponOne.physical_damage *= 1.1;
-                weaponOne.magical_damage *= 1.1;
+            if (weapon.damage_type?.[0] === 'Faith' || weapon.damage_type?.[0] === 'Spooky' || weapon.damage_type?.[0] === 'Sorcery') {
+                weapon.physical_damage *= 1.1;
+                weapon.magical_damage *= 1.1;
             }
-            if (weaponOne.type === 'Short Sword' || weaponOne.type === 'Dagger' || weaponOne.type === 'Scythe' || weaponOne.type === 'Polearm') {
-                weaponOne.physical_damage *= 1.1;
-                weaponOne.magical_damage *= 1.1;
+            if (weapon.type === 'Short Sword' || weapon.type === 'Dagger' || weapon.type === 'Scythe' || weapon.type === 'Polearm') {
+                weapon.physical_damage *= 1.1;
+                weapon.magical_damage *= 1.1;
+                weapon.critical_damage *= 1.1;
             }
-            weaponOne.critical_damage *= 1.1;
-            
+            if (weapon.grip === 'One Hand') {
+                weapon.physical_damage *= 1.05;
+                weapon.magical_damage *= 1.05;
+                weapon.critical_chance *= 1.1;
+            }
+            weapon.critical_damage *= 1.1;
+            weapon.dodge -= 3;
+
         }
+        return weapon
     }
 
     async function weaponOneCompiler() {
@@ -134,33 +150,9 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
         weapon.critical_damage *= critDamageModifer;
         weapon.dodge += dodgeMofier;
         weapon.roll += rollMofier;
-        console.log(asceanState.faith, '<- What is your faith?')
-        console.log(weapon.damage_type[0], '<- What is your damage type?')
-        // if (asceanState.faith === 'adherent') {
-        //     if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
-        //         weapon.magical_damage *= 1.1;
-        //     }
-        //     if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatsword' || weapon.type === 'Greatmace') {
-        //         weapon.physical_damage *= 1.15;
-        //     }
-        //     if (weapon.grip === 'Two Hand') {
-        //         weapon.physical_damage *= 1.1;
-        //         weapon.magical_damage *= 1.1;
-        //     }
-        //     weapon.critical_chance *= 1.1;
-        // }
-        // if (asceanState.faith === 'devoted') {
-        //     if (weapon.damage_type?.[0] === 'Faith' || weapon.damage_type?.[0] === 'Spooky' || weapon.damage_type?.[0] === 'Sorcery') {
-        //         weapon.physical_damage *= 1.1;
-        //         weapon.magical_damage *= 1.1;
-        //     }
-        //     if (weapon.type === 'Short Sword' || weapon.type === 'Dagger' || weapon.type === 'Scythe' || weapon.type === 'Polearm') {
-        //         weapon.physical_damage *= 1.1;
-        //         weapon.magical_damage *= 1.1;
-        //     }
-        //     weapon.critical_damage *= 1.1;
-            
-        // }
+
+        faithCompiler(weapon)
+
         setWeaponOne(weapon)
     }
 
@@ -179,7 +171,8 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
         weapon.critical_damage *= critDamageModifer;
         weapon.dodge += dodgeMofier;
         weapon.roll += rollMofier;
-        console.log(weapon.damage_type, '<- What is your damage type?')
+        //console.log(weapon.damage_type, '<- What is your damage type?')
+        faithCompiler(weapon)
         setWeaponTwo(weapon)
     }
     async function weaponThreeCompiler() {
@@ -197,9 +190,10 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
         weapon.critical_damage *= critDamageModifer;
         weapon.dodge += dodgeMofier;
         weapon.roll += rollMofier;
-        console.log(weapon.damage_type, '<- What is your damage type?')
+        //console.log(weapon.damage_type, '<- What is your damage type?')
+        faithCompiler(weapon)
         setWeaponThree(weapon)
-        console.log(critChanceModifer)
+        //console.log(critChanceModifer)
     }
 
     return (

@@ -1,11 +1,14 @@
 import Placeholder from 'react-bootstrap/Placeholder';
+import Spinner from 'react-bootstrap/Spinner';
 import './Loading.css';
 
 export default function Loading() {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
         <div className="" id="placeholder"> 
-        <Placeholder as="h1" animation="glow">
+        {/* <Spinner animation="grow" variant="warning" id="loading-spinner" /> */}
+        <Spinner animation="border" variant="warning" id="loading-spinner" />
+        {/* <Placeholder as="h1" animation="glow">
             <Placeholder className="" xs={12} bg="danger" size="lg"  />
         </Placeholder>
         <Placeholder as="h1" animation="wave">
@@ -64,7 +67,10 @@ export default function Loading() {
         </Placeholder>
         <Placeholder as="h1" animation="wave">
             <Placeholder className="" xs={12} bg="info" size="lg" />
-        </Placeholder>
+        </Placeholder> */}
+
+
+
         {/* <Placeholder as="h1" animation="glow">
             <Placeholder xs={12} bg="danger" size="lg"  />
         </Placeholder> */}

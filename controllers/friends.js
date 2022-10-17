@@ -5,6 +5,7 @@ module.exports = {
     accept,
     delete: decline,
     index,
+    status
 }
 
 async function send(req, res) {
@@ -59,5 +60,31 @@ async function index(req, res) {
         res.status(200).json({ data: user })
     } catch (err) {
         res.status(400).json({ err })
+    }
+}
+
+async function status(req, res){
+    try {
+        const yourSelf = req.user.username
+        console.log(yourSelf, '<- Who are you in the controller?', req.params.friendName, 'And who is your fren?')
+        const user = await User.findOne({ 'username': req.params.friendName })
+                                .populate('friends')
+                                .exec()
+        console.log(user, '<- Who is this fren REALLY?')
+
+        // if ( 
+
+        const data = user.friends.find( (friend) => friend.username === req.user.username )
+        //( { yourSelf : { $in: username } } ) 
+            
+        //     ) {
+        //     data = true;
+        // } else {
+        //     data = false;
+        // }
+        console.log(data, '<- What is teh data from status controller?')
+        res.status(201).json({ data, user })
+    } catch(err){
+        res.status(400).json({error: err})
     }
 }

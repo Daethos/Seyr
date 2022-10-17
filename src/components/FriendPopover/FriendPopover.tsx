@@ -18,7 +18,7 @@ const FriendPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendR
     const [friendRequest, setFriendRequest] = useState<boolean>(false)
     const [friendDecline, setFriendDecline] = useState<boolean>(false)
     const [friendState, setFriendState] = useState<any>(friend)
-    console.log(friendState, '<- Friend in Friend Popover')
+    //console.log(friendState, '<- Friend in Friend Popover')
     const friendArray = {...friend.userId.friends}
     
     function handleSubmit(e: { preventDefault: () => void; }) {
