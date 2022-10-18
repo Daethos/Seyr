@@ -34,7 +34,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     try {
       const response = await asceanAPI.getAllAscean();
       console.log(response.data, '<- the response in Get All Ascean');
-      setAsceanVaEsai([...response.data])
+      setAsceanVaEsai([...response.data.reverse()])
     } catch (err) {
       console.log(err);
     }
@@ -63,9 +63,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     }
   }
 
-  
-  //TODO: Derp, it's still not 'mutual' for cross-friending. You only did one side, kek.
-  //FIXME: Fix the other side tomorrow! ^_^
+
   async function acceptFriendRequest(friend: any) {
     setFriendRequest(false)
     try {
@@ -132,7 +130,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
         requestState
         ? 
         <RequestsCard 
-          loggedUser={loggedUser} 
+          loggedUser={loggedUser}
           requestState={requestState}
           acceptFriendRequest={acceptFriendRequest} 
           declineFriendRequest={declineFriendRequest}
@@ -157,7 +155,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
         : ''
       }
 
-      <SearchCard ascean={asceanVaEsai} communityFeed={false} key={asceanVaEsai._id} />
+      <SearchCard ascean={asceanVaEsai} key={loggedUser._id}  />
         {
           asceanVaEsai
           ? asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {

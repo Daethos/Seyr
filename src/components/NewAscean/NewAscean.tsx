@@ -9,6 +9,7 @@ import Faith from '../AsceanBuilder/Faith'
 import Weapons from '../AsceanBuilder/Weapons'
 import Shields from '../AsceanBuilder/Shields'
 import Armor from '../AsceanBuilder/Armor'
+import Origin from '../AsceanBuilder/Origin';
 
 interface AsceanProps {
     loggedUser: any;
@@ -28,6 +29,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [amulets, setAmulets] = useState<any[]>([]);
     const [trinkets, setTrinkets] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [originModalShow, setOriginModalShow] = React.useState<boolean>(false)
     const [weaponModalShow, setWeaponModalShow] = React.useState<boolean>(false)
     const [shieldModalShow, setShieldModalShow] = React.useState<boolean>(false)
     const [helmetModalShow, setHelmetModalShow] = React.useState<boolean>(false)
@@ -39,6 +41,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [asceanState, setAsceanState] = useState<any>({
         name: '',
         description: '',
+        origin: "Ashtre",
         constitution: 8,
         strength: 8,
         agility: 8,
@@ -162,142 +165,24 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         }
     }, [caerenOutput])
 
-    // Pool Total Use Effect
-    // useEffect(() => {
-    //     if (poolOutput != null) {
-    //         poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
-    //     }
-    //     if (poolTotal >= 25) {
-    //         conPlusButton!.style.display = 'none';
-    //         strPlusButton!.style.display = 'none';
-    //         agiPlusButton!.style.display = 'none';
-    //         achPlusButton!.style.display = 'none';
-    //         caerPlusButton!.style.display = 'none';
-    //         conMinusButton!.style.display = 'inline-block';
-    //         strMinusButton!.style.display = 'inline-block';
-    //         agiMinusButton!.style.display = 'inline-block';
-    //         achMinusButton!.style.display = 'inline-block';
-    //         caerMinusButton!.style.display = 'inline-block';
-    //     }
-    //     if (poolTotal < 25 && constitutionOutput >= 18) {
-    //         if (conPlusButton !== null) {
-    //             conPlusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && strengthOutput >= 18) {
-    //         if (strPlusButton !== null) {
-    //             strPlusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && agilityOutput >= 18) {
-    //         if (agiPlusButton !== null) {
-    //             agiPlusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && achreOutput >= 18) {
-    //         if (achPlusButton !== null) {
-    //             achPlusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && caerenOutput >= 18) {
-    //         if (caerPlusButton !== null) {
-    //             caerPlusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && constitutionOutput < 18) {
-    //         if (conPlusButton !== null) {
-    //             conPlusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && strengthOutput < 18) {
-    //         if (strPlusButton !== null) {
-    //             strPlusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && agilityOutput < 18) {
-    //         if (agiPlusButton !== null) {
-    //             agiPlusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && achreOutput < 18) {
-    //         if (achPlusButton !== null) {
-    //             achPlusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal < 25 && caerenOutput < 18) {
-    //         if (caerPlusButton !== null) {
-    //             caerPlusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && constitutionOutput > 8) {
-    //         if (conMinusButton !== null) {
-    //             conMinusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && strengthOutput > 8) {
-    //         if (strMinusButton !== null) {
-    //             strMinusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && agilityOutput > 8) {
-    //         if (agiMinusButton !== null) {
-    //             agiMinusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && achreOutput > 8) {
-    //         if (achMinusButton !== null) {
-    //             achMinusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && caerenOutput > 8) {
-    //         if (caerMinusButton !== null) {
-    //             caerMinusButton!.style.display = 'inline-block';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && constitutionOutput <= 8) {
-    //         if (conMinusButton !== null) {
-    //             conMinusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && strengthOutput <= 8) {
-    //         if (strMinusButton !== null) {
-    //             strMinusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && agilityOutput <= 8) {
-    //         if (agiMinusButton !== null) {
-    //             agiMinusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && achreOutput <= 8) {
-    //         if (achMinusButton !== null) {
-    //             achMinusButton!.style.display = 'none';
-    //         }
-    //     }
-    //     if (poolTotal <= 25 && caerenOutput <= 8) {
-    //         if (caerMinusButton !== null) {
-    //             caerMinusButton!.style.display = 'none';
-    //         }
-    //     }
-    // }, [poolTotal])
-
     return (
         <Row className="justify-content-center">
         <Form className="form-block wide" onSubmit={handleSubmit}>
             <hr className="orange-border" />
             <div className="section-left">
-                <Character asceanState={asceanState} setAsceanState={setAsceanState} />
-                <svg height="5" width="100%" className="tapered-rule">
-                    <polyline points="0,0 400,2.5 0,5"></polyline>
-                </svg>
-                <div className="top-stats">
-                <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
-                <svg height="5" width="100%" className="tapered-rule">
-                    <polyline points="0,0 400,2.5 0,5"></polyline>
-                </svg>
-                <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
-                <Weapons asceanState={asceanState} setAsceanState={setAsceanState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
-                </div>
+            <Character asceanState={asceanState} setAsceanState={setAsceanState} />
+            <svg height="5" width="100%" className="tapered-rule">
+                <polyline points="0,0 400,2.5 0,5"></polyline>
+            </svg>
+            <div className="top-stats">
+            <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
+            <svg height="5" width="100%" className="tapered-rule">
+                <polyline points="0,0 400,2.5 0,5"></polyline>
+            </svg>
+            <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
+            <Origin asceanState={asceanState} setAsceanState={setAsceanState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
+            <Weapons asceanState={asceanState} setAsceanState={setAsceanState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
+            </div>
             </div>
             <div className="section-right">
                 <div className="actions">

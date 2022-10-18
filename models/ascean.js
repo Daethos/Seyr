@@ -32,6 +32,11 @@ const asceanSchema = new Schema(
             enum : ["public", "private", "none"],
             default: "none"
         },
+        origin: {
+            type: String,
+            enum : ["Ashtre", "Fyers", "Li'ivi", "Notheo", "Nothoos", "Quor'eite", "Sedyreal"],
+            default: "Ashtre"
+        },
         index: String,
         level: {type: Number, default: 1},
         experience: {type: Number, default: 0},

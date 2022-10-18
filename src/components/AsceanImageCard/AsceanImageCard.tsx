@@ -195,14 +195,14 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <>
             <Row 
             // className="justify-content-center"
-            className="align-items-center"
+            className="justify-content-center"
             
             >
                 <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
-            // style={{marginLeft: 15 + 'px'}}
+            style={{marginLeft: -50 + 'px', marginRight: 10 + 'px'}}
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
-            className="my-4 mx-4">
+            className="my-4">
             <OverlayTrigger trigger="click" placement="right" overlay={weaponOnePopover}>
             <img src={weapon_one?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>

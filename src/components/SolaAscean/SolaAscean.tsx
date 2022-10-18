@@ -72,7 +72,33 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
             </svg> */}
             <div className="top-stats">
             <AsceanAttributeCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} />
-            
+            {
+                userProfile
+                ? 
+                <>
+                <div className="property-line first">
+                    <h4>Constitution</h4>
+                    <p> Increases Crit Damage, Defense, Health, Posturing</p>
+                </div>
+                <div className="property-line">
+                    <h4>Strength</h4>
+                    <p> Increases Crit Damage, Phys Damage, Posturing</p>
+                </div>
+                <div className="property-line">
+                    <h4>Agility</h4>
+                    <p> Increases Crit Chance, Dodge, Phys Damage, Roll</p>
+                </div>
+                <div className="property-line">
+                    <h4>Achre</h4>
+                    <p> Increases Crit Chance, Dodge, Spell Damage, Roll</p>
+                </div>
+                <div className="property-line last">
+                    <h4>Caeren</h4>
+                    <p> Increases Crit Damage, Defense, Health, Spell Damage</p>
+                </div>
+                </>
+                : ''
+            }
             {/* <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg> */}
@@ -148,10 +174,10 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                 ring_one={ascean.ring_one}
                 ring_two={ascean.ring_two}
                 trinket={ascean.trinket}
+                key={ascean._id}
             />
             </div>
             <div className='property-block'>
-            
             </div>
             <AsceanStatCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} />
             </div>

@@ -9,6 +9,8 @@ const ringSchema = new Schema(
         magical_damage: Number,
         critical_chance: Number,
         critical_damage: Number,
+        physical_penetration: Number,
+        magical_penetration: Number,
         physical_resistance: Number,
         magical_resistance: Number,
         dodge: Number,

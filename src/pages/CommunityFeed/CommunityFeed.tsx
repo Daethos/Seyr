@@ -73,14 +73,17 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
 
   return (
     <Container fluid>
-        <Row>
-        <SearchCard ascean={ascean} communityFeed={true} key={loggedUser._id} addFeeling={addFeeling} removeFeeling={removeFeeling} />
+        <Row >
+        {/* <SearchCard ascean={ascean} key={loggedUser._id} addFeeling={addFeeling} removeFeeling={removeFeeling} /> */}
         </Row>
 
-        <Row className="justify-content-center my-5">
+        <Row className="justify-content-center my-5" 
+        //xs={ 1 } sm={ 2 } md={ 4 } lg={ 6 } xl={ 6 } xxl={ 6 }
+        >
         
         {ascean.map((a: any) => {
             return (
+                // <Col className="stat-block wide">
                 <CommunityAscean
                     ascean={a}
                     key={a.index}
@@ -91,6 +94,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
                     setAscean={setAscean}
                     handleAsceanCreate={handleAsceanCreate}
                 />
+                // </Col>
             )
         })}
        

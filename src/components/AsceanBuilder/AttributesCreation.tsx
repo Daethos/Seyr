@@ -432,7 +432,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     </div>
                     <div className="property-line first">
                         <h4>Constitution</h4>
-                        <p> Defense, Magic, Health, Posture</p>
+                        <p> Increases Health, Defense, Posturing, Crit Damage</p>
                         <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
                         <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
                             <input 
@@ -452,7 +452,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     </div>
                     <div className="property-line">
                         <h4>Strength</h4>
-                        <p> Crit Damage, Physical, Posture</p>
+                        <p> Increases Crit Damage, Physical Damage, Posturing</p>
                         <InputGroup className="mb-1">
                         <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
                         <input 
@@ -472,7 +472,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     </div>
                     <div className="property-line">
                         <h4>Agility</h4>
-                        <p> Crit Chance, Dodge, Physical, Roll</p>
+                        <p> Increases Crit Damage, Dodge, Phys Damage, Roll</p>
                         <InputGroup className="mb-1">
                         <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
                         <input 
@@ -492,7 +492,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     </div>
                     <div className="property-line">
                         <h4>Achre</h4>
-                        <p> Spell Damage, Crit, Dodge, Magic, Roll</p>
+                        <p> Increases Crit Chance, Dodge, Spell Damage, Roll</p>
                         <InputGroup className="mb-1">
                         <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
                         <input 
@@ -512,7 +512,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     </div>
                     <div className="property-line last">
                         <h4>Caeren</h4>
-                        <p> Spell Damage, Defense, Health, Magic, Posture</p>
+                        <p> Increases Crit Damage, Defense, Health, Spell Damage</p>
                         <InputGroup className="mb-1">
                         <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
                         <input 

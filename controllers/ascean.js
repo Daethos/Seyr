@@ -11,6 +11,11 @@ module.exports = {
     delete: deleteAscean
 }
 
+//TODO: Make a function to create the Ascean's 'stats' through the backend
+//FIXME: So they're simply 'on' the character I think. That way the rendering client-side
+//TODO: Will hopefully not mess around with the stats of the character
+//FIXME: Not sure but probably exploitable via the client somehow, like getting it to render so you multiply stats
+
 async function editAscean(req, res) {
     try {
         const ascean = await Ascean.findByIdAndUpdate(req.params.id, {
@@ -18,6 +23,7 @@ async function editAscean(req, res) {
             visibility: req.body.visibility,
             shareable: req.body.shareable,
             name: req.body.name,
+            origin: req.body.origin,
             index: req.body.name,
             description: req.body.description,
             constitution: req.body.constitution,
@@ -63,6 +69,7 @@ async function create(req, res) {
                 user: req.user,
                 name: req.body.name,
                 index: req.body.name,
+                origin: req.body.origin,
                 description: req.body.description,
                 constitution: req.body.constitution,
                 strength: req.body.strength,

@@ -8,12 +8,11 @@ import * as communityAPI from '../../utils/communityApi'
 
 interface SearchProps {
     ascean?: any;
-    communityFeed?: boolean;
     addFeeling?: any;
     removeFeeling?: any;
 }
 
-const SearchCard = ({ ascean, communityFeed, addFeeling, removeFeeling }: SearchProps) => {
+const SearchCard = ({ ascean, addFeeling, removeFeeling }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 

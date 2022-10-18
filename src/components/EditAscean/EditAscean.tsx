@@ -13,6 +13,9 @@ import WeaponsEdit from '../AsceanBuilder/WeaponsEdit'
 import Shields from '../AsceanBuilder/Shields'
 import Armor from '../AsceanBuilder/Armor'
 import Communal from '../AsceanBuilder/Communal'
+import Origin from '../AsceanBuilder/Origin';
+import AsceanAttributeCompiler from '../AsceanAttributeCompiler/AsceanAttributeCompiler';
+import AsceanStatCompiler from '../AsceanStatCompiler/AsceanStatCompiler';
 
 interface Props {
     editAscean: any;
@@ -30,6 +33,7 @@ const EditAscean = ({ editAscean }: Props) => {
     const [rings, setRings] = useState<any[]>([]);
     const [amulets, setAmulets] = useState<any[]>([]);
     const [trinkets, setTrinkets] = useState<any[]>([]);
+    const [originModalShow, setOriginModalShow] = React.useState<boolean>(false)
     const [weaponModalShow, setWeaponModalShow] = React.useState<boolean>(false)
     const [shieldModalShow, setShieldModalShow] = React.useState<boolean>(false)
     const [helmetModalShow, setHelmetModalShow] = React.useState<boolean>(false)
@@ -44,6 +48,7 @@ const EditAscean = ({ editAscean }: Props) => {
     const [agilityOutput, setAgilityOutput] = useState<number>(8)
     const [achreOutput, setAchreOutput] = useState<number>(8)
     const [caerenOutput, setCaerenOutput] = useState<number>(8)
+
 
     useEffect(() => {
       getAscean();
@@ -117,8 +122,7 @@ const EditAscean = ({ editAscean }: Props) => {
         <Form className="stat-block wide my-5" onSubmit={handleSubmit}>
         <hr className="orange-border" />
         <div className="section-left">
-
-            <Character asceanState={editState} setAsceanState={setEditState} />
+            <Character asceanState={editState} setAsceanState={setEditState} key={ascean._id} />
 
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -134,7 +138,11 @@ const EditAscean = ({ editAscean }: Props) => {
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
             </div>
-            <div className="property-line">
+            
+            {/* <div className="top-stats">
+                <AsceanAttributeCompiler communityFeed={false} communityFocus={false} ascean={editState} key={ascean._id} />
+            </div> */}
+            {/* <div className="property-line">
                 <h4>Health</h4>
                 <p> (Health Calculated)</p>
             </div>
@@ -157,16 +165,18 @@ const EditAscean = ({ editAscean }: Props) => {
             <div className="property-line">
                 <h4>Critical</h4>
                 <p id="magi-res"> (Crit Chance Calculated)% / (Crit Damage Calculated)x</p>
-            </div>
-            <svg height="5" width="100%" className="tapered-rule mt-3">
+            </div> */}
+            {/* <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
+            </svg> */}
+
             <div className="top-stats">
-            <AttributesEdit editState={editState} setEditState={setEditState} />
+            <AttributesEdit editState={editState} setEditState={setEditState} key={ascean._id} />
             <svg height="5" width="100%" className="tapered-rule mt-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <Faith asceanState={editState} setAsceanState={setEditState} />
+            <Origin asceanState={editState} setAsceanState={setEditState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <WeaponsEdit editState={editState} setEditState={setEditState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
             </div>
         </div>
@@ -190,11 +200,13 @@ const EditAscean = ({ editAscean }: Props) => {
                     ring_one={ascean?.ring_one}
                     ring_two={ascean?.ring_two}
                     trinket={ascean?.trinket}
+                    key={ascean._id}
                 />
                     : ''
                 }
             
             </div>
+            {/* <AsceanStatCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} /> */}
         </div>
             <div className="actions">
             <h3>Armor & Eccentricities</h3>

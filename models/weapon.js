@@ -11,9 +11,10 @@ const weaponSchema = new Schema(
             type: [],
             default: null
         },
-        minimum_physical_damage: Number,
         physical_damage: Number,
         magical_damage: Number,
+        physical_penetration: Number,
+        magical_penetration: Number,
         critical_chance: Number,
         critical_damage: Number,
         physical_resistance: Number,

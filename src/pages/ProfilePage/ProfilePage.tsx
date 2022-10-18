@@ -22,7 +22,9 @@ const ProfilePage = ({ user }: ProfileProps) => {
     //const [communityFeed, setcommunityFeed] = useState<boolean>(false)
 
     const [profileUser, setProfileUser] = useState<any>({});
+    const [friendState, setFriendState] = useState<any>([])
     const [friendRequest, setFriendRequest] = useState<boolean>(false)
+    const [friendStatus, setFriendStatus] = useState<any>(false)
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
@@ -55,6 +57,34 @@ const ProfilePage = ({ user }: ProfileProps) => {
             console.log(err.message, '<- Error handling Friend Request')
         }
     }
+
+    useEffect(() => {
+        friends();
+      }, [username, getProfile])
+
+    async function friends() {
+        setLoading(true);
+        try {
+            const response = await friendAPI.getAllFriends(user._id)
+            console.log(response.data.friends, '<- Response Finding a Friend on a Profile')
+            setFriendState(response.data.friends)
+            const areWeFriends = response?.data?.friends.map((friend: any) => {
+                console.log(friend, '<- Who are you, friend?')
+                return (
+                    friend.username.includes(profileUser?.username)
+                )
+            })
+            console.log(areWeFriends, '<- So, are we friends?')
+            setLoading(false)
+            setFriendStatus(areWeFriends)
+            
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, '<- Error Fetch Friends in Friend Card')
+        }
+      }
+
+    
 
     if (loading) {
         return (
@@ -105,13 +135,17 @@ const ProfilePage = ({ user }: ProfileProps) => {
         </div>
         {/* <span style={{ float: 'right' }}> */}
         {
-            user.friends.find((friend: any) => friend === profileUser.username) 
-            ? ''
+            // user.friends.find((friend: any) => friend === profileUser.username)
+            friendStatus?.[0] === true
+            ? <h3 
+            className="my-3"
+            style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+            >You're friends with {profileUser?.username}</h3>
             : 
                 friendRequest 
                 ? <h3 
                 className="my-3"
-                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                style={{ color: 'yellow', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
                 >Sent to {profileUser.username} !
                 </h3>
                 :    
@@ -131,7 +165,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
         <hr className="orange-border bottom" />
         </Col>
         </Row>
-        <SearchCard ascean={ascean} communityFeed={false} key={ascean._id} />
+        <SearchCard ascean={ascean} key={ascean._id} />
         {ascean.map((a: any) => {
             return (
                 <SolaAscean
