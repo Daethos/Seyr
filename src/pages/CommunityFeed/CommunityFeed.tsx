@@ -8,6 +8,7 @@ import * as communityAPI from '../../utils/communityApi'
 import * as feelingAPI from '../../utils/feelingApi'
 import CommunityAscean from '../../components/CommunityAscean/CommunityAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
+import CommunitySearch from '../../components/CommunitySearch/CommunitySearch'
 
 
 interface CommunityProps {
@@ -73,8 +74,8 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
 
   return (
     <Container fluid>
-        <Row >
-        {/* <SearchCard ascean={ascean} key={loggedUser._id} addFeeling={addFeeling} removeFeeling={removeFeeling} /> */}
+        <Row className="justify-content-center my-5">
+        <CommunitySearch ascean={ascean} key={loggedUser._id} addFeeling={addFeeling} removeFeeling={removeFeeling} />
         </Row>
 
         <Row className="justify-content-center my-5" 
