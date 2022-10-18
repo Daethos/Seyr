@@ -7,47 +7,19 @@ interface Props {
 }
 
 const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) => {
-    let totalStrength: number = 0
-    let totalAgility: number = 0
-    let totalConstitution: number = 0
-    let totalAchre: number = 0
-    let totalCaeren: number =0
-
-    if (ascean.origin === "Ashtre") {
-        totalStrength += 2;
-        totalAgility += 2;
-    }
-    if (ascean.origin === "Fyers") {
-        totalAchre += 2;
-        totalCaeren += 2;
-    }
-    if (ascean.origin === "Li'ivi") {
-        totalStrength += 1;
-        totalAgility += 1;
-        totalAchre += 1;
-        totalCaeren += 1;
-    }
-    if (ascean.origin === "Notheo") {
-        totalConstitution *= 2;
-        totalAchre += 2;
-    }
-    if (ascean.origin === "Nothos") {
-        totalConstitution += 2;
-        totalCaeren += 2;
-    }
-    if (ascean.origin === "Quorieite") {
-         totalAgility += 2;
-         totalAchre += 2;
-    }
-    if (ascean.origin === "Sedyreal") {
-        totalStrength += 2;
-        totalCaeren += 2;
-    }
-    totalStrength= ascean.strength + ascean.shield.strength + ascean.helmet.strength + ascean.chest.strength + ascean.legs.strength + ascean.ring_one.strength + ascean.ring_two.strength + ascean.amulet.strength + ascean.trinket.strength;
-    totalAgility= ascean.agility + ascean.shield.agility + ascean.helmet.agility + ascean.chest.agility + ascean.legs.agility + ascean.ring_one.agility + ascean.ring_two.agility + ascean.amulet.agility + ascean.trinket.agility;
-    totalConstitution = ascean.constitution + ascean.shield.constitution + ascean.helmet.constitution + ascean.chest.constitution + ascean.legs.constitution + ascean.ring_one.constitution + ascean.ring_two.constitution + ascean.amulet.constitution + ascean.trinket.constitution;
-    totalAchre = ascean.achre + ascean.shield.achre + ascean.helmet.achre + ascean.chest.achre + ascean.legs.achre + ascean.ring_one.achre + ascean.ring_two.achre + ascean.amulet.achre + ascean.trinket.achre;
-    totalCaeren = ascean.caeren + ascean.shield.caeren + ascean.helmet.caeren + ascean.chest.caeren + ascean.legs.caeren + ascean.ring_one.caeren + ascean.ring_two.caeren + ascean.amulet.caeren + ascean.trinket.caeren;
+    
+    const displayConstitution = ascean.constitution + (ascean.origin === "Notheo" || ascean.origin === 'Nothos' ? 2 : 0)
+    const displayStrength = ascean.strength + (ascean.origin === 'Sedyreal' || ascean.origin === 'Ashtre' ? 2 : 0) + (ascean.origin === "Li'ivi" ? 1 : 0)
+    const displayAgility = ascean.agility + (ascean.origin === "Quor'eite" || ascean.origin === 'Ashtre' ? 2 : 0) + (ascean.origin === "Li'ivi" ? 1 : 0)
+    const displayAchre = ascean.achre + (ascean.origin === "Quor'eite" || ascean.origin === 'Notheo' || ascean.origin === 'Fyers' ? 2 : 0) + (ascean.origin === "Li'ivi" ? 1 : 0)
+    const displayCaeren = ascean.caeren + (ascean.origin === "Fyers" || ascean.origin === 'Nothos' || ascean.origin === 'Sedyreal' ? 2 : 0) + (ascean.origin === "Li'ivi" ? 1 : 0)
+    
+    const totalStrength= displayStrength + ascean.shield.strength + ascean.helmet.strength + ascean.chest.strength + ascean.legs.strength + ascean.ring_one.strength + ascean.ring_two.strength + ascean.amulet.strength + ascean.trinket.strength;
+    const totalAgility= displayAgility + ascean.shield.agility + ascean.helmet.agility + ascean.chest.agility + ascean.legs.agility + ascean.ring_one.agility + ascean.ring_two.agility + ascean.amulet.agility + ascean.trinket.agility;
+    const totalConstitution = displayConstitution + ascean.shield.constitution + ascean.helmet.constitution + ascean.chest.constitution + ascean.legs.constitution + ascean.ring_one.constitution + ascean.ring_two.constitution + ascean.amulet.constitution + ascean.trinket.constitution;
+    const totalAchre = displayAchre + ascean.shield.achre + ascean.helmet.achre + ascean.chest.achre + ascean.legs.achre + ascean.ring_one.achre + ascean.ring_two.achre + ascean.amulet.achre + ascean.trinket.achre;
+    const totalCaeren = displayCaeren + ascean.shield.caeren + ascean.helmet.caeren + ascean.chest.caeren + ascean.legs.caeren + ascean.ring_one.caeren + ascean.ring_two.caeren + ascean.amulet.caeren + ascean.trinket.caeren;
+    
     const strengthMod: number = Math.floor((totalStrength - 10) / 2);
     const agilityMod: number = Math.floor((totalAgility - 10) / 2);
     const constitutionMod: number = Math.floor((totalConstitution - 10) / 2);
@@ -59,26 +31,29 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
     const critDamageModifier: number = ascean.helmet.critical_damage * ascean.chest.critical_damage * ascean.legs.critical_damage * ascean.ring_one.critical_damage * ascean.ring_two.critical_damage * ascean.amulet.critical_damage * ascean.trinket.critical_damage;
     const dodgeModifier: number = ascean.shield.dodge + ascean.helmet.dodge + ascean.chest.dodge + ascean.legs.dodge + ascean.ring_one.dodge + ascean.ring_two.dodge + ascean.amulet.dodge + ascean.trinket.dodge - Math.round(((agilityMod + achreMod) / 2));
     const rollModifier: number = ascean.shield.roll + ascean.helmet.roll + ascean.chest.roll + ascean.legs.roll + ascean.ring_one.roll + ascean.ring_two.roll + ascean.amulet.roll + ascean.trinket.roll + Math.round(((agilityMod + achreMod) / 2));
-    const physicalPenetration: number = ascean.ring_one.physical_penetration + ascean.ring_two.physical_penetration + ascean.amulet.physical_penetration + ascean.trinket.physical_penetration;
-    const magicalPenetration: number = ascean.ring_one.magical_penetration + ascean.ring_two.magical_penetration + ascean.amulet.magical_penetration + ascean.trinket.magical_penetration;;
+    
+    const originPhysPenMod: number = (ascean.origin === 'Fyers' || ascean.origin === 'Notheo' ? 3 : 0)
+    const originMagPenMod: number = (ascean.origin === 'Fyers' || ascean.origin === 'Nothos' ? 3 : 0)
+    const physicalPenetration: number = ascean.ring_one.physical_penetration + ascean.ring_two.physical_penetration + ascean.amulet.physical_penetration + ascean.trinket.physical_penetration + originPhysPenMod;
+    const magicalPenetration: number = ascean.ring_one.magical_penetration + ascean.ring_two.magical_penetration + ascean.amulet.magical_penetration + ascean.trinket.magical_penetration + originMagPenMod;
 
+    const healthTotal: number = (totalConstitution * 3) + ((constitutionMod + caerenMod) * 2)
 
     const [asceanState, setAsceanState] = useState<any>(ascean)
-    const [healthState, setHealthState] = useState<number>(totalConstitution * 3)
     const [weaponOne, setWeaponOne] = useState<any>({})
     const [weaponTwo, setWeaponTwo] = useState<any>({})
     const [weaponThree, setWeaponThree] = useState<any>({})
 
-    const physicalDefenseModifier = ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance + Math.round(((constitutionMod + caerenMod) / 2));
-    const magicalDefenseModifier = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((constitutionMod + caerenMod) / 2));
+    const originPhysDefMod = (ascean.origin === 'Sedyreal' || ascean.origin === 'Nothos' ? 3 : 0);
+    const originMagDefMod = (ascean.origin === 'Sedyreal' || ascean.origin === 'Notheo' ? 3 : 0);
+
+    const physicalDefenseModifier = ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance + Math.round(((constitutionMod + caerenMod) / 2)) + originPhysDefMod;
+    
+    const magicalDefenseModifier = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((constitutionMod + caerenMod) / 2)) + originMagDefMod;
     const [physicalDefense, setPhysicalDefense] = useState<number>(0)
     const [magicalDefense, setMagicalDefense] = useState<number>(0)
     const [physicalPosture, setPhysicalPosture] = useState<number>(0)
     const [magicalPosture, setMagicalPosture] = useState<number>(0)
-
-    useEffect(() => {
-      healthCompiler()
-    }, [])
 
     useEffect(() => {
         weaponOneCompiler()
@@ -102,28 +77,18 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
 
     async function physicalDefenseCompiler() {
         let defense = physicalDefenseModifier;
-        //console.log('Physical Defense: ', defense)
         setPhysicalDefense(defense);
         setPhysicalPosture(defense + asceanState.shield.physical_resistance);
     }
 
     async function magicalDefenseCompiler() {
         let defense = magicalDefenseModifier;
-        //console.log('Magical Defense: ', defense)
         setMagicalDefense(defense);
         setMagicalPosture(defense + asceanState.shield.magical_resistance);
     }
 
-    async function healthCompiler() {
-        let health = healthState;
-        health += (constitutionMod + caerenMod) * 2;
-        setHealthState(health)
-        //console.log(health, '<- Health Total!')
-    }
-
-
     async function faithCompiler(weapon: any) {
-        if (asceanState.faith === 'adherent') {
+        if (ascean.faith === 'adherent') {
             if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
                 weapon.magical_damage *= 1.07;
                 weapon.critical_chance += 2;
@@ -141,9 +106,8 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
             }
             weapon.critical_chance *= 1.07;
             weapon.roll += 2;
-
         }
-        if (asceanState.faith === 'devoted') {
+        if (ascean.faith === 'devoted') {
             if (weapon.damage_type?.[0] === 'Faith' || weapon.damage_type?.[0] === 'Spooky' || weapon.damage_type?.[0] === 'Sorcery') {
                 weapon.physical_damage *= 1.07;
                 weapon.magical_damage *= 1.07;
@@ -169,7 +133,8 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
         if (weapon.grip === 'One Hand') {
             weapon.physical_damage += weapon.agility + weapon.strength + (agilityMod * 1.5) + (strengthMod / 2);
             weapon.magical_damage += weapon.achre + weapon.caeren + achreMod + caerenMod;
-        } else {
+        } 
+        if (weapon.grip === 'Two Hand') {
             weapon.physical_damage += weapon.agility + weapon.strength + (strengthMod * 2) + (agilityMod);
             weapon.magical_damage += weapon.achre + weapon.caeren + (achreMod * 1.5) +  (caerenMod * 1.5);
         }
@@ -178,7 +143,7 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
     async function penetrationCompiler(weapon: any) {
         weapon.magical_penetration += magicalPenetration;
         weapon.physical_penetration += physicalPenetration;
-        console.log(weapon)
+        //console.log(weapon)
     }
 
     async function critCompiler(weapon: any) {
@@ -275,7 +240,7 @@ const AsceanStatCompiler = ({ ascean, communityFeed, communityFocus }: Props) =>
     <h3>Combat Statistics</h3>
     </div>
     <div className="property-line">
-    <h4>Health: </h4> <p>{healthState}</p>
+    <h4>Health: </h4> <p>{healthTotal}</p>
     </div>
     <div className="property-line">
     <h4>Magical Defense: </h4> <p>{magicalDefense}% [{magicalPosture}% Postured]</p>

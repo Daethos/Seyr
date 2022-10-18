@@ -28,6 +28,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
+    let yourFriend: any = ''
 
 
     const getProfile = useCallback(async () => {
@@ -62,28 +63,55 @@ const ProfilePage = ({ user }: ProfileProps) => {
         friends();
       }, [username, getProfile])
 
+    // useEffect (() => {
+    //     friendChecker()
+    // }, [])
+
     async function friends() {
         setLoading(true);
         try {
             const response = await friendAPI.getAllFriends(user._id)
             console.log(response.data.friends, '<- Response Finding a Friend on a Profile')
             setFriendState(response.data.friends)
-            const areWeFriends = response?.data?.friends.map((friend: any) => {
-                console.log(friend, '<- Who are you, friend?')
-                return (
-                    friend.username.includes(profileUser?.username)
-                )
-            })
-            console.log(areWeFriends, '<- So, are we friends?')
+            // let friends: string = ''
+            // const areWeFriends = response?.data?.friends.map((friend: any) => {
+            //     console.log(friend.username, '<- Who are you, friend?')
+            //     friend.username.includes(profileUser?.username)
+            //     ? friends = (friend.username)
+            //     : friends = ('Not Friends')
+            //     return (
+            //         friends
+            //     )
+            // })
+            //console.log(areWeFriends, '<- So, are we friends?')
             setLoading(false)
-            setFriendStatus(areWeFriends)
-            
+            //setFriendStatus(areWeFriends)
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error Fetch Friends in Friend Card')
         }
       }
 
+    async function friendChecker() {
+        setLoading(true);
+        try {
+            let friends: string = ''
+            const areWeFriends = await friendState.map((friend: any) => {
+                console.log(friend.username, '<- Who are you, friend?')
+                friend.username.includes(profileUser?.username)
+                ? friends = (friend.username)
+                : friends = ('Not Friends')
+                return (
+                    friends
+                )
+            })
+            setFriendStatus(areWeFriends)
+            console.log(areWeFriends, '<- So, are we friends?')
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, '<- Error Checking Friendship')
+        }
+    }
     
 
     if (loading) {
@@ -135,8 +163,38 @@ const ProfilePage = ({ user }: ProfileProps) => {
         </div>
         {/* <span style={{ float: 'right' }}> */}
         {
-            // user.friends.find((friend: any) => friend === profileUser.username)
-            friendStatus?.[0] === true
+            friendState 
+            ? 
+                <>
+                {
+                friendState.map((friend: any) => { friend.username.includes(profileUser?.username) 
+                    ? yourFriend = friend.username 
+                    : yourFriend = null })}
+                {
+                yourFriend
+                ? 
+                <h3 
+                className="my-3"
+                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                >You're friends with {profileUser?.username}</h3>
+                : friendRequest 
+                    ? 
+                    <h3 
+                    className="my-3"
+                    style={{ color: 'yellow', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                    >Sent to {profileUser.username} !
+                    </h3>
+                    :    
+                    <button 
+                    className="btn"
+                    onClick={sendFriendRequest}
+                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                    >Friend {profileUser.username} ?
+                    </button>
+                }
+
+                </> 
+            : ''
             ? <h3 
             className="my-3"
             style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}

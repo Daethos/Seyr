@@ -16,6 +16,8 @@ module.exports = {
 //TODO: Will hopefully not mess around with the stats of the character
 //FIXME: Not sure but probably exploitable via the client somehow, like getting it to render so you multiply stats
 
+//TODO: Seem to be able to run the equations through a 'const' at the beginning and it holds the value through re-rendering
+
 async function editAscean(req, res) {
     try {
         const ascean = await Ascean.findByIdAndUpdate(req.params.id, {

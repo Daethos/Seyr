@@ -19,7 +19,7 @@ const AsceanAttributeCompiler = ({ ascean, communityFeed, communityFocus }: Prop
     const totalAchre: number = displayAchre + ascean?.shield?.achre + ascean?.helmet?.achre + ascean?.chest?.achre + ascean?.legs.achre + ascean?.ring_one.achre + ascean?.ring_two.achre + ascean?.amulet.achre + ascean?.trinket.achre;
     const totalCaeren: number = displayCaeren + ascean?.shield?.caeren + ascean?.helmet?.caeren + ascean?.chest?.caeren + ascean?.legs.caeren + ascean?.ring_one.caeren + ascean?.ring_two.caeren + ascean?.amulet.caeren + ascean?.trinket.caeren;
     
-    console.log(ascean.name, ascean.origin, 'Con:', displayConstitution, 'Str:', displayStrength, 'Agi:', displayAgility, 'Ach:', displayAchre, 'Caer:', displayCaeren)
+    //console.log(ascean.name, ascean.origin, 'Con:', displayConstitution, 'Str:', displayStrength, 'Agi:', displayAgility, 'Ach:', displayAchre, 'Caer:', displayCaeren)
     
     const strengthMod = Math.floor((totalStrength - 10) / 2);
     const agilityMod = Math.floor((totalAgility - 10) / 2);
