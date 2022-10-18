@@ -10,9 +10,10 @@ interface SearchProps {
     ascean?: any;
     addFeeling?: any;
     removeFeeling?: any;
+    loggedUser?: any;
 }
 
-const SearchCard = ({ ascean, addFeeling, removeFeeling }: SearchProps) => {
+const SearchCard = ({ ascean, addFeeling, removeFeeling, loggedUser }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 
@@ -67,7 +68,7 @@ const SearchCard = ({ ascean, addFeeling, removeFeeling }: SearchProps) => {
     <InputGroup className="bg-black">
     <InputGroup.Text className="bg-black">
     <img 
-        src={ascean?.helmet?.imgUrl} 
+        src={loggedUser.photoUrl} 
         alt="User" 
         style={{maxWidth: 5 + 'vw', maxHeight: 5 + 'vh'}}
     />

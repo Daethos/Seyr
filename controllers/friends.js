@@ -25,13 +25,6 @@ async function send(req, res) {
     }
 }
 
-
-//TODO: I think my logic is off in how I push friends and what not
-//FIXME: Probably need to make sure I'm pushing myself as a friend via userID and username
-//TODO: Into the accepted friend's friends array, and then likewise use his information
-//FIXME: To push their userID/username into my searched for user profile
-//TODO: The you.requests.remove is already good, meaning I've already been fetched, and
-//FIXME: the accepted friend has been fetched, so the interal logic needs refactoring
 async function accept(req, res){
     console.log(req.params.friendId, 'Friend in Friend Controller [Accept Request]');
     try {

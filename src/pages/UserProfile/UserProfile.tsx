@@ -155,7 +155,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
         : ''
       }
 
-      <SearchCard ascean={asceanVaEsai} key={loggedUser._id}  />
+      <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} key={loggedUser._id}  />
         {
           asceanVaEsai
           ? asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {

@@ -22,13 +22,17 @@ const ProfilePage = ({ user }: ProfileProps) => {
     //const [communityFeed, setcommunityFeed] = useState<boolean>(false)
 
     const [profileUser, setProfileUser] = useState<any>({});
+
     const [friendState, setFriendState] = useState<any>([])
+    const [requestState, setRequestState] = useState<any>([])
+
     const [friendRequest, setFriendRequest] = useState<boolean>(false)
     const [friendStatus, setFriendStatus] = useState<any>(false)
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
     let yourFriend: any = ''
+    let yourRequest: any = ''
 
 
     const getProfile = useCallback(async () => {
@@ -61,11 +65,11 @@ const ProfilePage = ({ user }: ProfileProps) => {
 
     useEffect(() => {
         friends();
-      }, [username, getProfile])
+    }, [username, getProfile])
 
-    // useEffect (() => {
-    //     friendChecker()
-    // }, [])
+    // useEffect(() => {
+    //     requests();
+    // }, [username, getProfile])
 
     async function friends() {
         setLoading(true);
@@ -73,46 +77,27 @@ const ProfilePage = ({ user }: ProfileProps) => {
             const response = await friendAPI.getAllFriends(user._id)
             console.log(response.data.friends, '<- Response Finding a Friend on a Profile')
             setFriendState(response.data.friends)
-            // let friends: string = ''
-            // const areWeFriends = response?.data?.friends.map((friend: any) => {
-            //     console.log(friend.username, '<- Who are you, friend?')
-            //     friend.username.includes(profileUser?.username)
-            //     ? friends = (friend.username)
-            //     : friends = ('Not Friends')
-            //     return (
-            //         friends
-            //     )
-            // })
-            //console.log(areWeFriends, '<- So, are we friends?')
             setLoading(false)
-            //setFriendStatus(areWeFriends)
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error Fetch Friends in Friend Card')
         }
-      }
+    }
 
-    async function friendChecker() {
+
+    async function requests() {
         setLoading(true);
         try {
-            let friends: string = ''
-            const areWeFriends = await friendState.map((friend: any) => {
-                console.log(friend.username, '<- Who are you, friend?')
-                friend.username.includes(profileUser?.username)
-                ? friends = (friend.username)
-                : friends = ('Not Friends')
-                return (
-                    friends
-                )
-            })
-            setFriendStatus(areWeFriends)
-            console.log(areWeFriends, '<- So, are we friends?')
+            const response = await friendAPI.getAllRequests(profileUser?._id)
+            console.log(response.data.requests, '<- Finding out Reques Frenship Status!')
+            setRequestState(response.data.requests)
+            setLoading(false);
         } catch (err: any) {
-            setLoading(false)
-            console.log(err.message, '<- Error Checking Friendship')
+            setRequestState(null)
+            setLoading(false);
+            console.log(err.message, '<- Error Finding Status')
         }
     }
-    
 
     if (loading) {
         return (
@@ -122,11 +107,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
 
   return (
     <Container className="my-5">
-        
-        <Row 
-            className="justify-content-center" 
-            // xs={1 | 'auto'} sm={1 | 'auto'} md={2 | 'auto'} lg={2 | 'auto'} xl={2 | 'auto'} xxl={3 | 'auto'}
-        >
+        <Row className="justify-content-center">
         <Col className="stat-block wide">
         <hr className="orange-border" />
         
@@ -136,8 +117,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
         <polyline points="0,0 400,2.5 0,5"></polyline>
         </svg>
         <img src={profileUser.photoUrl} id="profile-pic" />
-            {/* <h1></h1>
-            <h2></h2> */}
         </div> 
         <svg height="5" width="100%" className="tapered-rule">
         <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -153,19 +132,15 @@ const ProfilePage = ({ user }: ProfileProps) => {
                     >Send Friend Request</button>
                 </span> */}
                 </h3>
-                
                 <div className="property-block">
                 <h4 className="m-4">{profileUser.bio}</h4>
                 </div> 
-                
             </div>
              
         </div>
-        {/* <span style={{ float: 'right' }}> */}
         {
             friendState 
-            ? 
-                <>
+            ? <>
                 {
                 friendState.map((friend: any) => { friend.username.includes(profileUser?.username) 
                     ? yourFriend = friend.username 
@@ -177,42 +152,40 @@ const ProfilePage = ({ user }: ProfileProps) => {
                 className="my-3"
                 style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
                 >You're friends with {profileUser?.username}</h3>
-                : friendRequest 
-                    ? 
-                    <h3 
-                    className="my-3"
-                    style={{ color: 'yellow', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                    >Sent to {profileUser.username} !
-                    </h3>
-                    :    
-                    <button 
-                    className="btn"
-                    onClick={sendFriendRequest}
-                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                    >Friend {profileUser.username} ?
-                    </button>
+                : <>
+                    {
+                    profileUser?.requests?.map((request: any) => { request.username.includes(user?.username) 
+                        ? yourRequest = user.username
+                        : yourRequest = null })
+                    }
+                    {
+                        yourRequest
+                        ? 
+                            <h3 
+                            className="my-3"
+                            style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                            >Sent to {profileUser.username} !
+                            </h3>
+                        :
+                            friendRequest
+                            ?
+                                <h3 
+                                className="my-3"
+                                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                                >Sent to {profileUser.username} !
+                                </h3>
+                            :
+                                <button 
+                                className="btn my-3"
+                                onClick={sendFriendRequest}
+                                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                                >Friend {profileUser.username} ?
+                                </button>
+                    }
+                </>
                 }
-
                 </> 
             : ''
-            ? <h3 
-            className="my-3"
-            style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-            >You're friends with {profileUser?.username}</h3>
-            : 
-                friendRequest 
-                ? <h3 
-                className="my-3"
-                style={{ color: 'yellow', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                >Sent to {profileUser.username} !
-                </h3>
-                :    
-                <button 
-                className="btn"
-                onClick={sendFriendRequest}
-                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                >Friend {profileUser.username} ?
-                </button>
         }
 
                     {/* <button 
@@ -223,7 +196,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
         <hr className="orange-border bottom" />
         </Col>
         </Row>
-        <SearchCard ascean={ascean} key={ascean._id} />
+        <SearchCard ascean={ascean} loggedUser={user} key={ascean._id} />
         {ascean.map((a: any) => {
             return (
                 <SolaAscean
