@@ -18,6 +18,7 @@ const chestSchema = new Schema(
         agility: Number,
         achre: Number,
         caeren: Number,
+        kyosir: Number,
         imgURL: String
     },
 );

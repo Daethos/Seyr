@@ -16,6 +16,7 @@ import Communal from '../AsceanBuilder/Communal'
 import Origin from '../AsceanBuilder/Origin';
 import AsceanAttributeCompiler from '../AsceanAttributeCompiler/AsceanAttributeCompiler';
 import AsceanStatCompiler from '../AsceanStatCompiler/AsceanStatCompiler';
+import Mastery from '../AsceanBuilder/Mastery';
 
 interface Props {
     editAscean: any;
@@ -48,6 +49,7 @@ const EditAscean = ({ editAscean }: Props) => {
     const [agilityOutput, setAgilityOutput] = useState<number>(8)
     const [achreOutput, setAchreOutput] = useState<number>(8)
     const [caerenOutput, setCaerenOutput] = useState<number>(8)
+    const [kyosirOutput, setkyosirOutput] = useState<number>(8)
 
 
     useEffect(() => {
@@ -66,6 +68,7 @@ const EditAscean = ({ editAscean }: Props) => {
             setAgilityOutput(response.data.agility)
             setAchreOutput(response.data.achre)
             setCaerenOutput(response.data.caeren)
+            setkyosirOutput(response.data.kyosir)
             setLoading(false)
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
@@ -138,43 +141,13 @@ const EditAscean = ({ editAscean }: Props) => {
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
             </div>
-            
-            {/* <div className="top-stats">
-                <AsceanAttributeCompiler communityFeed={false} communityFocus={false} ascean={editState} key={ascean._id} />
-            </div> */}
-            {/* <div className="property-line">
-                <h4>Health</h4>
-                <p> (Health Calculated)</p>
-            </div>
-            <div className="property-line">
-                <h4>Physical Damage</h4>
-                <p id="phys-dam"> {ascean?.weapon_one?.physical_damage} [{ascean?.weapon_one?.damage_type}], {ascean?.weapon_two?.physical_damage} [{ascean?.weapon_two?.damage_type}], {ascean?.weapon_three?.physical_damage} [{ascean?.weapon_three?.damage_type}]</p>
-            </div>
-            <div className="property-line">
-                <h4>Magical Damage</h4>
-                <p id="magi-dam"> {ascean?.weapon_one?.magical_damage} [{ascean?.weapon_one?.damage_type}], {ascean?.weapon_two?.magical_damage} [{ascean?.weapon_two?.damage_type}], {ascean?.weapon_three?.magical_damage} [{ascean?.weapon_three?.damage_type}]</p>
-            </div>
-            <div className="property-line">
-                <h4>Physical Defense</h4>
-                <p id="phys-res"> (Armor Calculated)% / (Armor Calculated)% Postured</p>
-            </div>
-            <div className="property-line">
-                <h4>Magical Defense</h4>
-                <p id="magi-res"> (Armor Calculated)% / (Armor Calculated)% Postured</p>
-            </div>
-            <div className="property-line">
-                <h4>Critical</h4>
-                <p id="magi-res"> (Crit Chance Calculated)% / (Crit Damage Calculated)x</p>
-            </div> */}
-            {/* <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg> */}
 
             <div className="top-stats">
             <AttributesEdit editState={editState} setEditState={setEditState} key={ascean._id} />
             <svg height="5" width="100%" className="tapered-rule mt-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
+            <Mastery asceanState={editState} setAsceanState={setEditState} />
             <Faith asceanState={editState} setAsceanState={setEditState} />
             <Origin asceanState={editState} setAsceanState={setEditState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <WeaponsEdit editState={editState} setEditState={setEditState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />

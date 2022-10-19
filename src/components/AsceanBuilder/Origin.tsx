@@ -23,13 +23,13 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             name: "Fyers",
             bio: "Fair folk from the Firelands, these people enjoy mild weather and bountiful harvest, leaving themselves to leisure time in pursuit of broad body and mind, often advancing both fields in competition and technology. The Fyers Lord Protectorate Theogeni Spiras, the Ghost Hawk of Greyrock, came to govern the land, siezing power after civil warring against House Ashfyre whose lineage held the title for centuries. To note, also a former Ascean in 130 AE.",
             index: 'fyers',
-            bonus: '+2 ACH, +2 CAER, +3% Mag Pen, +3% Phys Pen'
+            bonus: '+2 ACH, +2 KYO, +3% Mag Pen, +3% Phys Pen'
         },
         {
             name: "Li'ivi",
             bio: "In the centralands of Licivitas live a keen and practical people whose ambition and drive has helped economically enhance and ensnare the other cultures. Whether bartering or brokering, peacemaking or warring, a Li'ivi excels. The One Above, Daethos, is founded and worshiped at the Seyr in its oldest city, Lor, and while not a theocracy, heavily leans on its teachings for guidance. Its governance is currently run by a loose-affiliate of city-states. Highest general Evrio Lorian Peroumes, current va'Esai, is waging a 10 years long war in the Northren border against the monstrous Cragore.",
             index: "li'ivi",
-            bonus: '+1 STR, +1 AGI, +1 ACH, +1 CAER, +1% Crit, +1% Roll, -1s Dodge, +1% Phys Dam, +1% Mag Dam, +1% Mag Pen, +1% Phys Pen'
+            bonus: '+1 STR, +1 AGI, +1 ACH, +1 CAER, +1 KYO, +1% Crit, +1% Roll, -1s Dodge, +1% Phys Dam, +1% Mag Dam, +1% Mag Pen, +1% Phys Pen'
         },
         {
             name: "Notheo",
@@ -47,7 +47,7 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             name: "Quor'eite",
             bio: "Relaxed folk of the southernmost tip of the land, they owed much of their pleasure in life to the hospitable regions affording luxurious living and supply, thus Quor'ei, the Ancient of Earth, garnerning the most appreciation. This became disrupted during the invasion of the Sedyreal post-Sedyren War agianst Licivitas, culminating in the loss of life for many Quor'eite, many losing faith and seeking the word of Daethos as a means to calm their spirit.",
             index: "quor'eite",
-            bonus: '+2 AGI, +2 ACH, -3s Dodge, +3% Roll'
+            bonus: '+2 AGI, +2 KYO, -3s Dodge, +3% Roll'
         },
         {
             name: "Sedyreal",

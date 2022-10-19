@@ -23,12 +23,11 @@ const FriendPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendR
     
     function handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
-        console.log('Editing underway!')
         async function asceanVaEsai() {
             try {
                 acceptFriendRequest(friendState)
             } catch (err: any) {
-                console.log(err.message, '<- Error initiating Ascean Edit')
+                console.log(err.message, '<- Error Accepting Friend')
             }
         }
         asceanVaEsai();

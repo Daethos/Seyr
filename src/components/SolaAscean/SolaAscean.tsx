@@ -8,6 +8,8 @@ import FeelingsCard from '../FeelingsCard/FeelingsCard'
 import CreateAscean from '../../components/CreateAscean/CreateAscean'
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
+import Delete from '../AsceanBuilder/Delete';
+import Update from '../AsceanBuilder/Update';
 
 
 interface Props {
@@ -38,12 +40,12 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                     <h2>{ascean.description}</h2>
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
+                <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
             <div className="actions">
                 <h3>Player Statistics</h3>
             </div>
-            <div className="property-line first">
+            <div className="property-line first" style={{ marginTop: -10 + 'px' }}>
                 <h4>Experience</h4>
                 <p> {ascean.experience}</p>
             </div>
@@ -52,7 +54,7 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                 <p> {ascean.level}</p>
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
+                <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
             {/* <AsceanImageCard
                 weapon_one={ascean.weapon_one}
@@ -68,10 +70,10 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                 trinket={ascean.trinket}
             />
             <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
+                <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg> */}
             <div className="top-stats">
-            <AsceanAttributeCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} />
+            <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
             {
                 userProfile
                 ? 
@@ -92,21 +94,25 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                     <h4>Achre</h4>
                     <p> Increases Crit Chance, Dodge, Spell Damage, Roll</p>
                 </div>
-                <div className="property-line last">
+                <div className="property-line">
                     <h4>Caeren</h4>
                     <p> Increases Crit Damage, Defense, Health, Spell Damage</p>
+                </div>
+                <div className="property-line last">
+                    <h4>Kyosir</h4>
+                    <p> Increases Defense, Penetration</p>
                 </div>
                 </>
                 : ''
             }
             {/* <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
+                <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg> */}
             {/* FIXME: Check in the morning, ES Lint is complaining! */}
             
 
             <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
+                <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
             <div className="actions">
                 <h3>Faith</h3>
@@ -138,7 +144,7 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
                 ? 
                 <>
                 <svg height="5" width="100%" className="tapered-rule mt-3">
-                    <polyline points="0,0 400,2.5 0,5"></polyline>
+                    <polyline points="0,0 550,2.5 0,5"></polyline>
                 </svg>
                 <div className="actions">
                 <h3>Communal</h3>
@@ -179,29 +185,16 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
             </div>
             <div className='property-block'>
             </div>
-            <AsceanStatCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} />
+            <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id} />
             </div>
             
         </div>
+        
         {
             userProfile
             ? <>
-            <Link to={{ pathname: `/edit/${ascean._id}` }}>
-                <button 
-                className="btn" 
-                value={ascean._id} 
-                style={{ color: 'blue', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    Update {ascean.name}
-                </button>
-            </Link>
-            
-            <button 
-                className="btn" 
-                value={ascean._id} 
-                onClick={deleteAscean}
-                style={{ color: 'red', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    Delete {ascean.name}
-            </button>
+            <Update ascean={ascean} />
+            <Delete ascean={ascean} deleteAscean={deleteAscean} />
             
             </>
             : ''

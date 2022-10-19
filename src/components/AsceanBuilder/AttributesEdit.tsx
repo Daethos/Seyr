@@ -18,6 +18,8 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     const achPlusButton = document.getElementById('ach-plus');
     const caerMinusButton = document.getElementById('caer-minus');
     const caerPlusButton = document.getElementById('caer-plus');
+    const kyoMinusButton = document.getElementById('kyo-minus');
+    const kyoPlusButton = document.getElementById('kyo-plus');
 
     let poolOutput = document.getElementById('pool-output') as HTMLOutputElement | null;
     const [poolTotal, setPoolTotal] = useState<number>(0);
@@ -27,6 +29,7 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     const [agilityOutput, setAgilityOutput] = useState<number>(0)
     const [achreOutput, setAchreOutput] = useState<number>(0)
     const [caerenOutput, setCaerenOutput] = useState<number>(0)
+    const [kyosirOutput, setKyosirOutput] = useState<number>(8)
 
     const conOut = document?.getElementById('con-box') as HTMLOutputElement | null;
     useEffect(() => { 
@@ -67,6 +70,15 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         }
     }, [caerenOutput])
+
+    const kyoOut = document.getElementById('kyo-box');
+    useEffect(() => {
+        console.log(kyosirOutput, '<- New Kyosir Point Total');
+        if (kyoOut !== null) {
+            kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
+        }
+    }, [kyosirOutput])
+
     useEffect(() => {
         setPoolTotal(25)
         setConstitutionOutput(editState?.constitution)
@@ -74,6 +86,7 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         setAgilityOutput(editState?.agility)
         setAchreOutput(editState?.achre)
         setCaerenOutput(editState?.caeren)
+        setKyosirOutput(editState?.kyosir)
     }, [])
     // useEffect(() => {
     //     setStrengthOutput(editState?.strength)
@@ -105,6 +118,10 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             if (caerPlusButton != null) {
                 caerPlusButton!.style.display = 'none';
             }
+            if (kyoPlusButton != null) {
+                kyoPlusButton!.style.display = 'none';
+            }
+
             if (conMinusButton != null) {
                 conMinusButton!.style.display = 'inline-block';
             }
@@ -119,6 +136,9 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             }
             if (caerMinusButton != null) {
                 caerMinusButton!.style.display = 'inline-block';
+            }
+            if (kyoMinusButton !== null) {
+                kyoMinusButton!.style.display = 'inline-block';
             }
         }
         if (poolTotal < 25 && constitutionOutput >= 18) {
@@ -146,6 +166,11 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
                 caerPlusButton!.style.display = 'none';
             }
         }
+        if (poolTotal < 25 && kyosirOutput >= 18) {
+            if (kyoPlusButton !== null) {
+                kyoPlusButton!.style.display = 'none';
+            }
+        }
         if (poolTotal < 25 && constitutionOutput < 18) {
             if (conPlusButton !== null) {
                 conPlusButton!.style.display = 'inline-block';
@@ -169,6 +194,11 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         if (poolTotal < 25 && caerenOutput < 18) {
             if (caerPlusButton !== null) {
                 caerPlusButton!.style.display = 'inline-block';
+            }
+        }
+        if (poolTotal < 25 && kyosirOutput < 18) {
+            if (kyoPlusButton !== null) {
+                kyoPlusButton!.style.display = 'inline-block';
             }
         }
         if (poolTotal <= 25 && constitutionOutput > 8) {
@@ -196,6 +226,11 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
                 caerMinusButton!.style.display = 'inline-block';
             }
         }
+        if (poolTotal <= 25 && kyosirOutput > 8) {
+            if (kyoMinusButton !== null) {
+                kyoMinusButton!.style.display = 'inline-block';
+            }
+        }
         if (poolTotal <= 25 && constitutionOutput <= 8) {
             if (conMinusButton !== null) {
                 conMinusButton!.style.display = 'none';
@@ -219,6 +254,11 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         if (poolTotal <= 25 && caerenOutput <= 8) {
             if (caerMinusButton !== null) {
                 caerMinusButton!.style.display = 'none';
+            }
+        }
+        if (poolTotal <= 25 && kyosirOutput <= 8) {
+            if (kyoMinusButton !== null) {
+                kyoMinusButton!.style.display = 'none';
             }
         }
     }
@@ -339,6 +379,30 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         setCaerenOutput(e.target.value)
         setPoolTotal(poolTotal + 1)
     }
+
+    function handleKyosirMinus(e: any) {
+        e.preventDefault();
+        e.target.value -= 1;
+        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        setEditState({
+            ...editState,
+            [e.target.name]: e.target.value,
+        })
+        setKyosirOutput(e.target.value)
+        setPoolTotal(poolTotal - 1)
+    }
+    function handleKyosirPlus(e: any) {
+        e.preventDefault();
+        e.target.value = Number(e.target.value) + 1;
+        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        setEditState({
+            ...editState,
+            [e.target.name]: e.target.value,
+        })
+        setKyosirOutput(e.target.value)
+        setPoolTotal(poolTotal + 1)
+    }
+
   return (
     <>
 
@@ -444,6 +508,26 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             ></input>
             <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={editState.caeren}>+</button>
             <h4 className="" style={{ marginLeft: 15 + '%' }} id="caer-box">
+            </h4>
+        </InputGroup>
+    </div>
+    <div className="property-line last">
+        <h4>Kyosir</h4>
+        <p> Increases Defense, Penetration</p>
+        <InputGroup className="mb-1">
+        <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={editState.kyosir}>−</button>
+        <input 
+                id="con-slider" 
+                className="form-control-number" 
+                type="number" 
+                name="kyosir" 
+                value={editState.kyosir} 
+                min="8" max="18"
+                step="1"
+                readOnly 
+            ></input>
+            <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={editState.kyosir}>+</button>
+            <h4 className="" style={{ marginLeft: 15 + '%' }} id="kyo-box">
             </h4>
         </InputGroup>
     </div>

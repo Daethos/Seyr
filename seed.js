@@ -35,11 +35,13 @@ const seedWeapons = [
         critical_damage: 1.5,
         dodge: 3,
         roll: 3,
-        constitution: 1,
+        constitution: 0,
         strength: 1,
         agility: 1,
-        achre: 0,
-        caeren: 0,
+        achre: 1,
+        caeren: 1,
+        kyosir: 1,
+        influences: ["Daethos"],
         imgURL: '/images/gladius.png'
     },
     {
@@ -58,9 +60,11 @@ const seedWeapons = [
         roll: 7,
         constitution: 0,
         strength: 0,
-        agility: 3,
+        agility: 4,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Daethos"],
         imgURL: '/images/pugio.png'
     },
     {
@@ -78,10 +82,12 @@ const seedWeapons = [
         dodge: 0,
         roll: 5,
         constitution: 0,
-        strength: 1,
+        strength: 2,
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Ma'anre, Ancient of the Moon"],
         imgURL: '/images/scythe.png'
     },
     {
@@ -98,11 +104,13 @@ const seedWeapons = [
         critical_damage: 1.75,
         dodge: 3,
         roll: 5,
-        constitution: 1,
+        constitution: 0,
         strength: 1,
         agility: 1,
-        achre: 0,
-        caeren: 0,
+        achre: 1,
+        caeren: 1,
+        kyosir: 1,
+        influences: ["Daethos"],
         imgURL: '/images/spear.png'
     },
     {
@@ -120,10 +128,12 @@ const seedWeapons = [
         dodge: 5,
         roll: 3,
         constitution: 0,
-        strength: 1,
-        agility: 3,
+        strength: 2,
+        agility: 4,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas, Ancient of War"],
         imgURL: '/images/halberd.png'
     },
     {
@@ -141,10 +151,12 @@ const seedWeapons = [
         dodge: 5,
         roll: 3,
         constitution: 0,
-        strength: 2,
-        agility: 2,
+        strength: 3,
+        agility: 3,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas, Ancient of War"],
         imgURL: '/images/claymore.png'
     },
     {
@@ -162,10 +174,12 @@ const seedWeapons = [
         dodge: 5,
         roll: 3,
         constitution: 0,
-        strength: 3,
-        agility: 1,
+        strength: 4,
+        agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas, Ancient of War"],
         imgURL: '/images/battleaxe.png'
     },
     {
@@ -183,10 +197,12 @@ const seedWeapons = [
         dodge: 5,
         roll: 3,
         constitution: 0,
-        strength: 4,
+        strength: 6,
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas, Ancient of War"],
         imgURL: '/images/warhammer.png'
     },
     {
@@ -203,11 +219,13 @@ const seedWeapons = [
         critical_damage: 2,
         dodge: 3,
         roll: 5,
-        constitution: 1,
+        constitution: 2,
         strength: 1,
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas, Ancient of War"],
         imgURL: '/images/morningstar.png'
     },
     {
@@ -225,10 +243,12 @@ const seedWeapons = [
         dodge: 3,
         roll: 3,
         constitution: 1,
-        strength: 1,
+        strength: 2,
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas, Ancient of War"],
         imgURL: '/images/mace.png'
     },
     {
@@ -247,9 +267,11 @@ const seedWeapons = [
         roll: 7,
         constitution: 1,
         strength: 1,
-        agility: 1,
+        agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'dyro, Ancient of Iron"],
         imgURL: '/images/godHand.png'
     },
     {
@@ -271,6 +293,8 @@ const seedWeapons = [
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 2,
+        influences: ["Ilios, Ancient of the Sun"],
         imgURL: '/images/whirlwind.png'
     },
     {
@@ -291,7 +315,9 @@ const seedWeapons = [
         strength: 0,
         agility: 0,
         achre: 1,
-        caeren: 2,
+        caeren: 3,
+        kyosir: 0,
+        influences: ["Fyero, Ancient of Fire"],
         imgURL: '/images/fire.png'
     },
     {
@@ -311,8 +337,10 @@ const seedWeapons = [
         constitution: 0,
         strength: 0,
         agility: 0,
-        achre: 2,
+        achre: 3,
         caeren: 1,
+        kyosir: 0,
+        influences: ["Astra, Ancient of Lightning"],
         imgURL: '/images/astral-spear.png'
     },
     {
@@ -332,8 +360,10 @@ const seedWeapons = [
         constitution: 0,
         strength: 0,
         agility: 0,
-        achre: 3,
+        achre: 4,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Cambire, Ancient of Potential"],
         imgURL: '/images/sorcery.png'
     },
     {
@@ -350,11 +380,13 @@ const seedWeapons = [
         critical_damage: 1.5,
         dodge: 0,
         roll: 5,
-        constitution: 2,
+        constitution: 1,
         strength: 0,
         agility: 0,
         achre: 0,
         caeren: 2,
+        kyosir: 2,
+        influences: ["Nyrolus, Ancient of Water"],
         imgURL: '/images/frost.png'
     },
     {
@@ -371,11 +403,13 @@ const seedWeapons = [
         critical_damage: 1.5,
         dodge: 0,
         roll: 5,
-        constitution: 2,
+        constitution: 1,
         strength: 0,
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 2,
+        influences: ["Quor'ei, Ancient of Earth"],
         imgURL: '/images/earth.png'
     },
     {
@@ -383,7 +417,7 @@ const seedWeapons = [
         type: 'Spell',
         grip: 'One Hand',
         attack_type: 'Magic',
-        damage_type: ['Faith'],
+        damage_type: ['Righteous'],
         physical_damage: 5,
         magical_damage: 5,
         physical_penetration: 5,
@@ -397,6 +431,8 @@ const seedWeapons = [
         agility: 0,
         achre: 1,
         caeren: 2,
+        kyosir: 1,
+        influences: ["Daethos"],
         imgURL: '/images/faith.png'
     },
     {
@@ -418,6 +454,8 @@ const seedWeapons = [
         agility: 0,
         achre: 2,
         caeren: 1,
+        kyosir: 1,
+        influences: ["Daethos"],
         imgURL: '/images/tendrils.png'
     },
     {
@@ -438,7 +476,9 @@ const seedWeapons = [
         strength: 0,
         agility: 0,
         achre: 0,
-        caeren: 3,
+        caeren: 4,
+        kyosir: 0,
+        influences: ["Ahn've, Ancient of Wind"],
         imgURL: '/images/windfury.png'
     },
     {
@@ -457,9 +497,11 @@ const seedWeapons = [
         roll: 3,
         constitution: 0,
         strength: 0,
-        agility: 3,
+        agility: 4,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Kyn'gi, Ancient of Hunt"],
         imgURL: '/images/bow-long.png'
     },
     {
@@ -478,9 +520,11 @@ const seedWeapons = [
         roll: 3,
         constitution: 0,
         strength: 0,
-        agility: 3,
+        agility: 4,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Kyn'gi, Ancient of Hunt"],
         imgURL: '/images/bow-reflex.png'
     },
     {
@@ -499,9 +543,11 @@ const seedWeapons = [
         roll: 5,
         constitution: 0,
         strength: 0,
-        agility: 3,
+        agility: 4,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Kyn'gi, Ancient of Hunt"],
         imgURL: '/images/bow-recurve.png'
     }
 ];
@@ -523,6 +569,7 @@ const seedHelmets = [
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/knight-helm.png'
     },
     
@@ -542,6 +589,7 @@ const seedHelmets = [
         agility: 0,
         achre: 0,
         caeren: 2,
+        kyosir: 0,
         imgURL: '/images/daethic-helm.png'
     },
     {
@@ -560,6 +608,7 @@ const seedHelmets = [
         agility: 2,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/achreon-helm.png'
     },
     {
@@ -578,6 +627,7 @@ const seedHelmets = [
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/legion-helm.png'
     },
     {
@@ -596,11 +646,13 @@ const seedHelmets = [
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         constitution: 0,
         strength: 2,
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/ashtre-helm.png'
     },
     {
@@ -619,6 +671,7 @@ const seedHelmets = [
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/chain-helm.png'
     },
     {
@@ -637,6 +690,7 @@ const seedHelmets = [
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/fang-helm.png'
     },
     {
@@ -652,9 +706,10 @@ const seedHelmets = [
         roll: 1,
         constitution: 0,
         strength: 0,
-        agility: 4,
-        achre: 0,
+        agility: 2,
+        achre: 1,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/fireland-helm.png'
     },
     {
@@ -673,6 +728,7 @@ const seedHelmets = [
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/marauder-helm.png'
     },
     {
@@ -691,6 +747,7 @@ const seedHelmets = [
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/soverain-helm.png'
     },
     {
@@ -709,6 +766,7 @@ const seedHelmets = [
         agility: 0,
         achre: 2,
         caeren: 2,
+        kyosir: 0,
         imgURL: '/images/occult-helm.png'
     },
     {
@@ -727,6 +785,7 @@ const seedHelmets = [
         agility: 0,
         achre: 1,
         caeren: 3,
+        kyosir: 0,
         imgURL: '/images/fyers-hood.png'
     },
     {
@@ -745,6 +804,7 @@ const seedHelmets = [
         agility: 0,
         achre: 3,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/astral-hood.png'
     },
     {
@@ -758,11 +818,12 @@ const seedHelmets = [
         critical_damage: 1.1,
         dodge: 1,
         roll: 5,
-        constitution: 1,
+        constitution: 0,
         strength: 1,
         agility: 1,
         achre: 1,
         caeren: 1,
+        kyosir: 1,
         imgURL: '/images/dae-hood.png'
     },
     {
@@ -781,6 +842,7 @@ const seedHelmets = [
         agility: 0,
         achre: 2,
         caeren: 2,
+        kyosir: 0,
         imgURL: '/images/sage-hood.png'
     },
     {
@@ -799,6 +861,7 @@ const seedHelmets = [
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/earth-hood.png'
     },
 ];
@@ -820,6 +883,7 @@ const seedChests = [
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/knight-armor.png'
     },
     {
@@ -838,6 +902,7 @@ const seedChests = [
         agility: 0,
         achre: 0,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/daethic-armor.png'
     },
     {
@@ -856,6 +921,7 @@ const seedChests = [
         agility: 1,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/achreon-armor.png'
     },
     {
@@ -874,6 +940,7 @@ const seedChests = [
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/daethic-armor.png'
     },
     {
@@ -892,6 +959,7 @@ const seedChests = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/ashtre-armor.png'
     },
     {
@@ -910,6 +978,7 @@ const seedChests = [
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/chain-armor.png'
     },
     {
@@ -928,6 +997,7 @@ const seedChests = [
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/fang-armor.png'
     },
     {
@@ -943,9 +1013,10 @@ const seedChests = [
         roll: 3,
         constitution: 0,
         strength: 0,
-        agility: 3,
-        achre: 0,
+        agility: 1,
+        achre: 1,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/fireland-armor.png'
     },
     {
@@ -964,6 +1035,7 @@ const seedChests = [
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/marauder-armor.png'
     },
     {
@@ -982,6 +1054,7 @@ const seedChests = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/soverain-armor.png'
     },
     {
@@ -1000,6 +1073,7 @@ const seedChests = [
         agility: 0,
         achre: 1,
         caeren: 2,
+        kyosir: 0,
         imgURL: '/images/occult-armor.png'
     },  
     {
@@ -1018,6 +1092,7 @@ const seedChests = [
         agility: 0,
         achre: 2,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/fyers-robes.png'
     },
     {
@@ -1036,6 +1111,7 @@ const seedChests = [
         agility: 0,
         achre: 3,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/astral-robes.png'
     },
     {
@@ -1050,10 +1126,11 @@ const seedChests = [
         dodge: 3,
         roll: 7,
         constitution: 0,
-        strength: 1,
+        strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 1,
         imgURL: '/images/dae-robes.png'
     },
     {
@@ -1072,6 +1149,7 @@ const seedChests = [
         agility: 0,
         achre: 2,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/sage-robes.png'
     },
     {
@@ -1090,6 +1168,7 @@ const seedChests = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/earth-robes.png'
     },
 ];
@@ -1111,6 +1190,7 @@ const seedLegs = [
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/knight-legs.png'
     },
     {
@@ -1129,6 +1209,7 @@ const seedLegs = [
         agility: 0,
         achre: 0,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/daethic-legs.png'
     },
     {
@@ -1147,6 +1228,7 @@ const seedLegs = [
         agility: 1,
         achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/achreon-legs.png'
     },
     {
@@ -1165,6 +1247,7 @@ const seedLegs = [
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/daethic-legs.png'
     },
     {
@@ -1183,6 +1266,7 @@ const seedLegs = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/ashtre-legs.png'
     },
     {
@@ -1201,6 +1285,7 @@ const seedLegs = [
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/chain-legs.png'
     },
     {
@@ -1219,6 +1304,7 @@ const seedLegs = [
         agility: 0,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/fang-legs.png'
     },
     {
@@ -1237,6 +1323,7 @@ const seedLegs = [
         agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/fireland-legs.png'
     },
     {
@@ -1255,6 +1342,7 @@ const seedLegs = [
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/marauder-legs.png'
     },
     {
@@ -1273,6 +1361,7 @@ const seedLegs = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/soverain-legs.png'
     },
     {
@@ -1291,6 +1380,7 @@ const seedLegs = [
         agility: 0,
         achre: 0,
         caeren: 2,
+        kyosir: 0,
         imgURL: '/images/occult-legs.png'
     },  
     {
@@ -1309,6 +1399,7 @@ const seedLegs = [
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/fyers-legs.png'
     },
     {
@@ -1327,6 +1418,7 @@ const seedLegs = [
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/astral-legs.png'
     },
     {
@@ -1341,10 +1433,11 @@ const seedLegs = [
         dodge: 0,
         roll: 3,
         constitution: 0,
-        strength: 1,
+        strength: 0,
         agility: 0,
         achre: 1,
-        caeren: 0,
+        caeren: 1,
+        kyosir: 0,
         imgURL: '/images/dae-legs.png'
     },
     {
@@ -1363,6 +1456,7 @@ const seedLegs = [
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/sage-legs.png'
     },
     {
@@ -1376,11 +1470,12 @@ const seedLegs = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 2,
+        constitution: 1,
         strength: 0,
         agility: 0,
-        achre: 0,
+        achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/earth-legs.png'
     },
 ];
@@ -1402,6 +1497,7 @@ const seedShields = [
         agility: 2,
         achre: 2,
         caeren: 0,
+        kyosir: 2,
         imgURL: '/images/buckler.png'
     },
     {
@@ -1418,8 +1514,9 @@ const seedShields = [
         constitution: 2,
         strength: 0,
         agility: 0,
-        achre: 1,
-        caeren: 1,
+        achre: 2,
+        caeren: 2,
+        kyosir: 0,
         imgURL: '/images/heater-shield.png'
     },
     {
@@ -1438,6 +1535,7 @@ const seedShields = [
         agility: 0,
         achre: 0,
         caeren: 2,
+        kyosir: 0,
         imgURL: '/images/scutum.png'
     },
     {
@@ -1452,10 +1550,11 @@ const seedShields = [
         dodge: 0,
         roll: 0,
         constitution: 2,
-        strength: 1,
-        agility: 1,
+        strength: 0,
+        agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 2,
         imgURL: '/images/pavise.png'
     }
 ];
@@ -1474,11 +1573,12 @@ const seedRings = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 0,
+        constitution: 1,
         strength: 1,
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/knight-ring.png'
     },
     {
@@ -1497,8 +1597,9 @@ const seedRings = [
         constitution: 0,
         strength: 1,
         agility: 1,
-        achre: 0,
+        achre: 1,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/ashtre-ring.png'
     },
     {
@@ -1514,11 +1615,12 @@ const seedRings = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 0,
+        constitution: 1,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/soverain-ring.png'
     },
     {
@@ -1534,11 +1636,12 @@ const seedRings = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 2,
-        constitution: 1,
+        constitution: 0,
         strength: 1,
         agility: 1,
-        achre: 0,
-        caeren: 0,
+        achre: 1,
+        caeren: 1,
+        kyosir: 0,
         imgURL: '/images/daethic-ring.png'
     },
     {
@@ -1559,6 +1662,7 @@ const seedRings = [
         agility: 0,
         achre: 2,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/achre-ring.png'
     },
     {
@@ -1579,6 +1683,7 @@ const seedRings = [
         agility: 0,
         achre: 0,
         caeren: 2,
+        kyosir: 1,
         imgURL: '/images/caeren-ring.png'
     },
     {
@@ -1594,11 +1699,12 @@ const seedRings = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 5,
-        constitution: 0,
+        constitution: 1,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
         imgURL: '/images/sage-ring.png'
     },
     {
@@ -1619,6 +1725,7 @@ const seedRings = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/earth-ring.png'
     },
     {
@@ -1636,9 +1743,10 @@ const seedRings = [
         roll: 1,
         constitution: 0,
         strength: 2,
-        agility: 0,
+        agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/fang-ring.png'
     },
     {
@@ -1656,9 +1764,10 @@ const seedRings = [
         roll: 3,
         constitution: 0,
         strength: 0,
-        agility: 2,
-        achre: 0,
+        agility: 1,
+        achre: 1,
         caeren: 0,
+        kyosir: 1,
         imgURL: '/images/fireland-ring.png'
     },
     {
@@ -1676,9 +1785,10 @@ const seedRings = [
         roll: 2,
         constitution: 0,
         strength: 1,
-        agility: 1,
+        agility: 2,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/marauder-ring.png'
     },
     {
@@ -1699,6 +1809,7 @@ const seedRings = [
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 1,
         imgURL: '/images/occult-ring.png'
     },  
     {
@@ -1718,7 +1829,8 @@ const seedRings = [
         strength: 0,
         agility: 0,
         achre: 0,
-        caeren: 2,
+        caeren: 3,
+        kyosir: 0,
         imgURL: '/images/fyers-ring.png'
     },
     {
@@ -1737,8 +1849,9 @@ const seedRings = [
         constitution: 0,
         strength: 0,
         agility: 0,
-        achre: 2,
+        achre: 3,
         caeren: 0,
+        kyosir: 0,
         imgURL: '/images/astral-ring.png'
     },
     {
@@ -1759,6 +1872,7 @@ const seedRings = [
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 1,
         imgURL: '/images/dae-ring.png'
     },
 ];
@@ -1777,11 +1891,13 @@ const seedAmulets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 0,
+        constitution: 2,
         strength: 1,
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas"],
         imgURL: '/images/knight-amulet.png'
     },
     {
@@ -1798,10 +1914,12 @@ const seedAmulets = [
         dodge: 0,
         roll: 3,
         constitution: 0,
-        strength: 1,
+        strength: 2,
         agility: 1,
-        achre: 0,
+        achre: 1,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Astra"],
         imgURL: '/images/ashtre-amulet.png'
     },
     {
@@ -1817,11 +1935,13 @@ const seedAmulets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 0,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
+        influences: ["Ilios"],
         imgURL: '/images/soverain-amulet.png'
     },
     {
@@ -1840,8 +1960,10 @@ const seedAmulets = [
         constitution: 1,
         strength: 1,
         agility: 1,
-        achre: 0,
-        caeren: 0,
+        achre: 1,
+        caeren: 1,
+        kyosir: 0,
+        influences: ["Daethos"],
         imgURL: '/images/daethic-amulet.png'
     },
     {
@@ -1860,8 +1982,10 @@ const seedAmulets = [
         constitution: 0,
         strength: 0,
         agility: 0,
-        achre: 2,
+        achre: 3,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Achreo"],
         imgURL: '/images/achre-amulet.png'
     },
     {
@@ -1881,7 +2005,9 @@ const seedAmulets = [
         strength: 0,
         agility: 0,
         achre: 0,
-        caeren: 2,
+        caeren: 3,
+        kyosir: 1,
+        influences: ["Cambire"],
         imgURL: '/images/caeren-amulet.png'
     },
     {
@@ -1897,11 +2023,13 @@ const seedAmulets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 5,
-        constitution: 0,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
+        influences: ["Senari"],
         imgURL: '/images/sage-amulet.png'
     },
     {
@@ -1917,11 +2045,13 @@ const seedAmulets = [
         critical_damage: 1.1,
         dodge: 0,
         roll: 3,
-        constitution: 1,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Quor'ei"],
         imgURL: '/images/earth-amulet.png'
     },
     {
@@ -1938,10 +2068,12 @@ const seedAmulets = [
         dodge: 0,
         roll: 1,
         constitution: 0,
-        strength: 2,
-        agility: 0,
+        strength: 3,
+        agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas"],
         imgURL: '/images/fang-amulet.png'
     },
     {
@@ -1960,8 +2092,10 @@ const seedAmulets = [
         constitution: 0,
         strength: 0,
         agility: 2,
-        achre: 0,
+        achre: 1,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Fyero"],
         imgURL: '/images/fireland-amulet.png'
     },
     {
@@ -1979,9 +2113,11 @@ const seedAmulets = [
         roll: 2,
         constitution: 0,
         strength: 1,
-        agility: 1,
+        agility: 2,
         achre: 0,
-        caeren: 0,
+        caeren: 1,
+        kyosir: 0,
+        influences: ["Se'vas"],
         imgURL: '/images/marauder-amulet.png'
     },
     {
@@ -2000,8 +2136,10 @@ const seedAmulets = [
         constitution: 0,
         strength: 0,
         agility: 0,
-        achre: 1,
-        caeren: 1,
+        achre: 2,
+        caeren: 2,
+        kyosir: 0,
+        influences: ["Ma'anre"],
         imgURL: '/images/occult-amulet.png'
     },  
     {
@@ -2021,7 +2159,9 @@ const seedAmulets = [
         strength: 0,
         agility: 0,
         achre: 0,
-        caeren: 2,
+        caeren: 3,
+        kyosir: 1,
+        influences: ["Fyero"],
         imgURL: '/images/fyers-amulet.png'
     },
     {
@@ -2040,8 +2180,10 @@ const seedAmulets = [
         constitution: 0,
         strength: 0,
         agility: 0,
-        achre: 2,
+        achre: 3,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Astra"],
         imgURL: '/images/astral-amulet.png'
     },
     {
@@ -2057,11 +2199,13 @@ const seedAmulets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 2,
-        constitution: 1,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 1,
+        influences: ["Daethos"],
         imgURL: '/images/dae-amulet.png'
     },
 ];
@@ -2080,11 +2224,13 @@ const seedTrinkets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 1,
+        constitution: 2,
         strength: 1,
         agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas"],
         imgURL: '/images/knight-trinket.png'
     },
     {
@@ -2101,10 +2247,12 @@ const seedTrinkets = [
         dodge: 0,
         roll: 3,
         constitution: 0,
-        strength: 1,
+        strength: 2,
         agility: 1,
         achre: 1,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Astra"],
         imgURL: '/images/ashtre-trinket.png'
     },
     {
@@ -2120,11 +2268,13 @@ const seedTrinkets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 3,
-        constitution: 1,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
+        influences: ["Ilios"],
         imgURL: '/images/soverain-trinket.png'
     },
     {
@@ -2143,8 +2293,10 @@ const seedTrinkets = [
         constitution: 1,
         strength: 1,
         agility: 1,
-        achre: 0,
-        caeren: 0,
+        achre: 1,
+        caeren: 1,
+        kyosir: 0,
+        influences: ["Daethos"],
         imgURL: '/images/daethic-trinket.png'
     },
     {
@@ -2165,6 +2317,8 @@ const seedTrinkets = [
         agility: 0,
         achre: 3,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Achreo"],
         imgURL: '/images/achre-trinket.png'
     },
     {
@@ -2185,6 +2339,8 @@ const seedTrinkets = [
         agility: 0,
         achre: 0,
         caeren: 3,
+        kyosir: 1,
+        influences: ["Cambire"],
         imgURL: '/images/caeren-trinket.png'
     },
     {
@@ -2200,11 +2356,13 @@ const seedTrinkets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 5,
-        constitution: 1,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 0,
+        influences: ["Senari"],
         imgURL: '/images/sage-trinket.png'
     },
     {
@@ -2225,6 +2383,8 @@ const seedTrinkets = [
         agility: 0,
         achre: 1,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Quor'ei"],
         imgURL: '/images/earth-trinket.png'
     },
     {
@@ -2242,9 +2402,11 @@ const seedTrinkets = [
         roll: 1,
         constitution: 0,
         strength: 3,
-        agility: 0,
+        agility: 1,
         achre: 0,
         caeren: 0,
+        kyosir: 0,
+        influences: ["Se'vas"],
         imgURL: '/images/fang-trinket.png'
     },
     {
@@ -2262,9 +2424,11 @@ const seedTrinkets = [
         roll: 3,
         constitution: 0,
         strength: 0,
-        agility: 3,
-        achre: 0,
+        agility: 2,
+        achre: 1,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Fyero"],
         imgURL: '/images/fireland-trinket.png'
     },
     {
@@ -2282,9 +2446,11 @@ const seedTrinkets = [
         roll: 2,
         constitution: 0,
         strength: 1,
-        agility: 1,
+        agility: 2,
         achre: 0,
         caeren: 1,
+        kyosir: 0,
+        influences: ["Se'vas"],
         imgURL: '/images/marauder-trinket.png'
     },
     {
@@ -2301,10 +2467,12 @@ const seedTrinkets = [
         dodge: 0,
         roll: 2,
         constitution: 0,
-        strength: 1,
+        strength: 0,
         agility: 0,
-        achre: 1,
-        caeren: 1,
+        achre: 2,
+        caeren: 2,
+        kyosir: 0,
+        influences: ["Ma'anre"],
         imgURL: '/images/occult-trinket.png'
     },  
     {
@@ -2325,6 +2493,8 @@ const seedTrinkets = [
         agility: 0,
         achre: 0,
         caeren: 3,
+        kyosir: 1,
+        influences: ["Fyero"],
         imgURL: '/images/fyers-trinket.png'
     },
     {
@@ -2345,6 +2515,8 @@ const seedTrinkets = [
         agility: 0,
         achre: 3,
         caeren: 0,
+        kyosir: 1,
+        influences: ["Astra"],
         imgURL: '/images/astral-trinket.png'
     },
     {
@@ -2360,11 +2532,13 @@ const seedTrinkets = [
         critical_damage: 1.05,
         dodge: 0,
         roll: 2,
-        constitution: 1,
+        constitution: 2,
         strength: 0,
         agility: 0,
         achre: 1,
         caeren: 1,
+        kyosir: 1,
+        influences: ["Daethos"],
         imgURL: '/images/dae-trinket.png'
     },
 ];
@@ -2402,7 +2576,7 @@ const seedDB = async () => {
     await Trinkets.deleteMany({});
     await Trinkets.insertMany(seedTrinkets);
     // await Trinkets.updateMany(seedTrinkets);
-
+    console.log(seedTrinkets, "Here are the seeded trinkets");
 };
 seedDB().then(() => {
     mongoose.connection.close();

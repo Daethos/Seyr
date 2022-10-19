@@ -15,7 +15,13 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{trinket.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-                {trinket.type}<br />
+                {trinket.constitution > 0 ? 'CON: +' + trinket.constitution + ' ' : ''}
+                {trinket.strength > 0 ? 'STR: +' + trinket.strength + ' ' : ''}
+                {trinket.agility > 0 ? 'AGI: +' + trinket.agility + ' ' : ''}
+                {trinket.achre > 0 ? 'ACH: +' + trinket.achre + ' ' : ''}
+                {trinket.caeren > 0 ? 'CAER: +' + trinket.caeren + ' ' : ''}
+                {trinket.kyosir > 0 ? 'KYO: +' + trinket.kyosir + ' ' : ''}
+                <br />
                 Physical Defense: +{trinket.physical_resistance}% <br />
                 Magical Defense: +{trinket.magical_resistance}% <br />
                 Physical Damage: {trinket.physical_damage}x <br />
@@ -24,6 +30,7 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
                 Critical Damage: {trinket.critical_damage}x <br />
                 Dodge Timer: +{trinket.dodge}s <br />
                 Roll Chance: +{trinket.roll}% <br />
+                Influences: {trinket.influences}
             </Popover.Body>
         </Popover>
     )

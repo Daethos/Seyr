@@ -15,6 +15,13 @@ const ChestsCard = ({ chest, index, userProfile }: ChestProps) => {
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{chest.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + chest.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {chest.constitution > 0 ? 'CON: +' + chest.constitution + ' ' : ''}
+                {chest.strength > 0 ? 'STR: +' + chest.strength + ' ' : ''}
+                {chest.agility > 0 ? 'AGI: +' + chest.agility + ' ' : ''}
+                {chest.achre > 0 ? 'ACH: +' + chest.achre + ' ' : ''}
+                {chest.caeren > 0 ? 'CAER: +' + chest.caeren + ' ' : ''}
+                {chest.kyosir > 0 ? 'KYO: +' + chest.kyosir + ' ' : ''}
+                <br />
                 {chest.type}<br />
                 Physical Defense: +{chest.physical_resistance}% <br />
                 Magical Defense: +{chest.magical_resistance}% <br />

@@ -36,7 +36,7 @@ const SearchCard = ({ ascean, addFeeling, removeFeeling, loggedUser }: SearchPro
                 <Col className="results" >
                     <SolaAscean
                         ascean={allAscean[i]}
-                        key={allAscean[i]._id}
+                        key={allAscean[i].index}
                         addFeeling={addFeeling}
                         removeFeeling={removeFeeling}
                     />

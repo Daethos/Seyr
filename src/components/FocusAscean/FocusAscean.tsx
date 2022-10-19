@@ -83,7 +83,7 @@ const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, r
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg> */}
             <div className="top-stats">
-            <AsceanAttributeCompiler communityFeed={false} communityFocus={true} ascean={ascean} key={ascean._id} />
+            <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
             
             {/* <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -144,7 +144,7 @@ const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, r
             <div className='property-block'>
             
             </div>
-            <AsceanStatCompiler ascean={ascean} communityFeed={false} communityFocus={true} key={ascean._id} />
+            <AsceanStatCompiler ascean={ascean} communityFocus={true} key={ascean._id} />
             </div>
             
         </div>

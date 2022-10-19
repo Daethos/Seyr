@@ -13,9 +13,10 @@ interface Props {
 }
 
 const Equipment = ({ editState, setEditState, weapons, weaponModalShow, setWeaponModalShow }: Props) => {
+    console.log(editState, '<- What is the current state?')
+
     function handleEquipment(equipment: any) {
         console.log(equipment.target.value, '<- the Equipment value being handled?')
-        console.log([equipment.target.innerText], '<- the Equipment name being handled?')
         let name = ''
         name = equipment.target.innerText;
         name = name.split('\n')[2];
@@ -59,7 +60,7 @@ const Equipment = ({ editState, setEditState, weapons, weaponModalShow, setWeapo
             </Modal>
             </div>
     <div className="property-block">
-    <Form.Select value={editState.weapon_one}  onChange={handleEquipment}>
+    <Form.Select value={editState.weapon_one?.name}  onChange={handleEquipment}>
                 <option>Weapon or Spell One</option>
             {weapons.map((w: any) => {
                 return (

@@ -75,7 +75,12 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
   return (
     <Container fluid>
         <Row className="justify-content-center my-5">
-        <CommunitySearch ascean={ascean} loggedUser={loggedUser} key={loggedUser._id} addFeeling={addFeeling} removeFeeling={removeFeeling} />
+        <CommunitySearch 
+            ascean={ascean} 
+            loggedUser={loggedUser} 
+            // key={loggedUser._id} 
+            addFeeling={addFeeling} 
+            removeFeeling={removeFeeling} />
         </Row>
 
         <Row className="justify-content-center my-5" 
@@ -87,7 +92,7 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
                 // <Col className="stat-block wide">
                 <CommunityAscean
                     ascean={a}
-                    key={a.index}
+                    key={a._id}
                     communityFeed={true}
                     addFeeling={addFeeling}
                     removeFeeling={removeFeeling}

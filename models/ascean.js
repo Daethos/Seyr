@@ -34,12 +34,31 @@ const asceanSchema = new Schema(
         },
         origin: {
             type: String,
-            enum : ["Ashtre", "Fyers", "Li'ivi", "Notheo", "Nothoos", "Quor'eite", "Sedyreal"],
+            enum : ["Ashtre", "Fyers", "Li'ivi", "Notheo", "Nothos", "Quor'eite", "Sedyreal"],
             default: "Ashtre"
+        },
+        mastery: {
+            type: String,
+            enum : ["Constitution", "Strength", "Agility", "Achre", "Caeren", "Kyosir"],
+            default: "Constitution"
         },
         index: String,
         level: {type: Number, default: 1},
         experience: {type: Number, default: 0},
+        currency: [
+            {
+                silver: Number,
+                default: 0
+            },
+            {
+                gold: Number,
+                default: 0
+            },
+        ],
+        inventory: {
+            type: [],
+            default: null
+        },
         name: String,
         description: String,
         constitution: Number,
@@ -47,6 +66,7 @@ const asceanSchema = new Schema(
         agility: Number,
         achre: Number,
         caeren: Number,
+        kyosir: Number,
         weapon_one: {type: Schema.Types.ObjectId, ref: 'Weapons'},
         weapon_two: {type: Schema.Types.ObjectId, ref: 'Weapons'},
         weapon_three: {type: Schema.Types.ObjectId, ref: 'Weapons'},

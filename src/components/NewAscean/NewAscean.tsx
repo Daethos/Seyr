@@ -10,6 +10,7 @@ import Weapons from '../AsceanBuilder/Weapons'
 import Shields from '../AsceanBuilder/Shields'
 import Armor from '../AsceanBuilder/Armor'
 import Origin from '../AsceanBuilder/Origin';
+import Mastery from '../AsceanBuilder/Mastery';
 
 interface AsceanProps {
     loggedUser: any;
@@ -47,6 +48,8 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
         agility: 8,
         achre: 8,
         caeren: 8,
+        kyosir: 8,
+        mastery: 'Constitution',
         weapon_one: '',
         weapon_two: '',
         weapon_three: '',
@@ -82,6 +85,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [agilityOutput, setAgilityOutput] = useState<number>(8)
     const [achreOutput, setAchreOutput] = useState<number>(8)
     const [caerenOutput, setCaerenOutput] = useState<number>(8)
+    const [kyosirOutput, setkyosirOutput] = useState<number>(8)
 
     // Equipment Function Use Effect
     useEffect(() => {
@@ -143,7 +147,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
     const agiOut = document.getElementById('agi-box');
     useEffect(() => {
-        console.log(agilityOutput, '<- New Strength Point Total');
+        console.log(agilityOutput, '<- New Agility Point Total');
         if (agiOut !== null) {
             agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
         }
@@ -151,7 +155,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
     const achOut = document.getElementById('ach-box');
     useEffect(() => {
-        console.log(achreOutput, '<- New Strength Point Total');
+        console.log(achreOutput, '<- New Achre Point Total');
         if (achOut !== null) {
             achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
         }
@@ -159,15 +163,23 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
 
     const caerOut = document.getElementById('caer-box');
     useEffect(() => {
-        console.log(caerenOutput, '<- New Strength Point Total');
+        console.log(caerenOutput, '<- New Caeren Point Total');
         if (caerOut !== null) {
             caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         }
     }, [caerenOutput])
 
+    const kyoOut = document.getElementById('kyo-box');
+    useEffect(() => {
+        console.log(kyosirOutput, '<- New Kyosir Point Total');
+        if (kyoOut !== null) {
+            kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
+        }
+    }, [kyosirOutput])
+
     return (
-        <Row className="justify-content-center">
-        <Form className="form-block wide" onSubmit={handleSubmit}>
+        <Row className="justify-content-center my-5">
+        <Form className="stat-block wide" onSubmit={handleSubmit}>
             <hr className="orange-border" />
             <div className="section-left">
             <Character asceanState={asceanState} setAsceanState={setAsceanState} />
@@ -179,12 +191,14 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
+            <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
             <Origin asceanState={asceanState} setAsceanState={setAsceanState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
-            <Weapons asceanState={asceanState} setAsceanState={setAsceanState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
             </div>
             </div>
             <div className="section-right">
+            <Weapons asceanState={asceanState} setAsceanState={setAsceanState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
+
                 <div className="actions">
                 <h3>Armor & Eccentricities</h3>
                 <div className='property-block'>
@@ -219,10 +233,15 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             </svg>
 {/* ================= Submit to Create Ascean ================== */}
 
-            <button className="btn btn-outline-success btn-lg" value={asceanState} type="submit">Create Ascean</button>
             </div>
             </div>
             </div>
+            <button 
+                className="btn mt-4" 
+                value={asceanState} 
+                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                type="submit">Create Ascean</button>
+
             <hr className="orange-border bottom" />
         </Form>
         </Row>

@@ -18,23 +18,6 @@ const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, fr
     const [friendAscean, setFriendAscean] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
 
-    // useEffect(() => {
-    //     friends();
-    // }, [])
-
-    // async function friends() {
-    //     setLoading(true);
-    //     try {
-    //         const response = await friendAPI.getAllFriends(loggedUser._id)
-    //         console.log(response.data.friends, '<- Response in Getting All Friends')
-    //         setFriendState(response.data.friends)
-    //         setLoading(false)
-    //     } catch (err: any) {
-    //         setLoading(false)
-    //         console.log(err.message, '<- Error Fetch Friends in Friend Card')
-    //     }
-    // }
-
     if (loading) {
         return (
         <>
@@ -48,20 +31,20 @@ const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, fr
             {
                 friendState
                 ? 
-                friendState.map((friend: any) => {
+                    friendState.map((friend: any) => {
 
-                    return (
-                       <>
-                        <FriendPopover 
-                            friend={friend} 
-                            loggedUser={loggedUser} 
-                            acceptFriendRequest={acceptFriendRequest} 
-                            declineFriendRequest={declineFriendRequest}
-                            key={friend.userId} 
-                        />
-                       </>
-                    )
-                })
+                        return (
+                        <>
+                            <FriendPopover 
+                                friend={friend} 
+                                loggedUser={loggedUser} 
+                                acceptFriendRequest={acceptFriendRequest} 
+                                declineFriendRequest={declineFriendRequest}
+                                key={friend.userId} 
+                            />
+                        </>
+                        )
+                    })
                 : ''
             }
         </div>

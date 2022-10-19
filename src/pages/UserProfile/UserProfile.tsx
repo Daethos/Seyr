@@ -17,6 +17,8 @@ interface UserProps {
     handleLogout: () => void;
 }
 
+// TODO: Inventory, Currency, Special Effects--Perhaps 'Influences' tied to gear itself, What does Leveling Really Mean?
+
 const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }: UserProps) => {
 
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);

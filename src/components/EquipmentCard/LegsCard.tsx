@@ -15,6 +15,13 @@ const LegsCard = ({ leg, index, userProfile }: LegProps) => {
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{leg.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + leg.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {leg.constitution > 0 ? 'CON: +' + leg.constitution + ' ' : ''}
+                {leg.strength > 0 ? 'STR: +' + leg.strength + ' ' : ''}
+                {leg.agility > 0 ? 'AGI: +' + leg.agility + ' ' : ''}
+                {leg.achre > 0 ? 'ACH: +' + leg.achre + ' ' : ''}
+                {leg.caeren > 0 ? 'CAER: +' + leg.caeren + ' ' : ''}
+                {leg.kyosir > 0 ? 'KYO: +' + leg.kyosir + ' ' : ''}
+                <br />
                 {leg.type}<br />
                 Physical Defense: +{leg.physical_resistance}% <br />
                 Magical Defense: +{leg.magical_resistance}% <br />

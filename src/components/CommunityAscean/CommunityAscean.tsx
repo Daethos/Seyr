@@ -48,13 +48,14 @@ const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, addFee
             ring_one={ascean.ring_one}
             ring_two={ascean.ring_two}
             trinket={ascean.trinket}
+            key={ascean._id}
         />
         <svg height="5" width="100%" className="tapered-rule">
             <polyline points="0,0 600,2.5 0,5"></polyline>
         </svg>
         <div className="top-stats">
-        <AsceanAttributeCompiler communityFeed={communityFeed} communityFocus={false} ascean={ascean} key={ascean._id} />
-        <AsceanStatCompiler communityFeed={true} communityFocus={false} ascean={ascean} key={ascean._id} />
+        <AsceanAttributeCompiler ascean={ascean} />
+        <AsceanStatCompiler communityFocus={false} ascean={ascean}  />
         {/* <svg height="5" width="100%" className="tapered-rule mt-3">
             <polyline points="0,0 600,2.5 0,5"></polyline>
         </svg> */}
