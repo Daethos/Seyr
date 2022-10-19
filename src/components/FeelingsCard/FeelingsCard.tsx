@@ -57,7 +57,8 @@ const FeelingsCard = ({ loggedUser, addFeeling, removeFeeling, ascean }: Props) 
                     <h3 
                     // style={{ textDecoration: 'none' }} 
                     id="feelings" 
-                    className='svg-wrapper mt-4'>
+                    className='svg-wrapper'
+                    style={{ marginTop: 40 + 'px' }}>
                     <svg 
                         onClick={likeHandler} 
                         color={likeColor} xmlns="http://www.w3.org/2000/svg" 

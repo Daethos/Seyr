@@ -42,8 +42,11 @@ const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, r
                                 ? ascean?.user?.username
                                 : ''
                             } 
+                        
                         </h3>
+                        
                     </Link>
+                    
                 </div>
                
             <div className="actions">
