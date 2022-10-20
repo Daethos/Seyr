@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 
 interface Props {
   asceanState?: any;
-  setAsceanState?: any;
+  setAsceanState?: React.Dispatch<any>;
 }
 
 const Mastery = ({ asceanState, setAsceanState }: Props) => {
@@ -32,7 +32,7 @@ const Mastery = ({ asceanState, setAsceanState }: Props) => {
 
   function handleMastery(origin: any) {
     console.log(origin.target.value, '<- the origin value being handled?')
-    setAsceanState({
+    setAsceanState!({
         ...asceanState,
         'mastery': origin.target.value,
     })

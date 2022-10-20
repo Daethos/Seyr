@@ -15,14 +15,11 @@ interface Props {
     setAscean?: React.Dispatch<any>;
     userProfile?: boolean;
     communityFeed?: boolean;
-    addFeeling?: any;
-    removeFeeling?: any;
     loggedUser?: any;
     profilePage?: boolean;
-    handleAsceanCreate?: any;
 }
 
-const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, addFeeling, loggedUser, removeFeeling, profilePage, handleAsceanCreate }: Props) => {
+const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, loggedUser, profilePage }: Props) => {
 
   return (
     <Col className="stat-block wide" style={{ maxWidth: 24 + '%' }}>
@@ -33,7 +30,7 @@ const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, addFee
         <h2>{ascean.description}</h2>
         </div>
         <svg height="5" width="100%" className="tapered-rule mt-3">
-            <polyline points="0,0 600,2.5 0,5"></polyline>
+            <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         
         <AsceanImageCard
@@ -51,14 +48,11 @@ const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, addFee
             key={ascean._id}
         />
         <svg height="5" width="100%" className="tapered-rule">
-            <polyline points="0,0 600,2.5 0,5"></polyline>
+            <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         <div className="top-stats">
         <AsceanAttributeCompiler ascean={ascean} />
         <AsceanStatCompiler communityFocus={false} ascean={ascean}  />
-        {/* <svg height="5" width="100%" className="tapered-rule mt-3">
-            <polyline points="0,0 600,2.5 0,5"></polyline>
-        </svg> */}
         <div className="actions"><h3> </h3></div>
         </div>
         <hr className='orange-border bottom' />

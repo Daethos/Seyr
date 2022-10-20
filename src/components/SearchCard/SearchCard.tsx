@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
-import * as communityAPI from '../../utils/communityApi'
 
 interface SearchProps {
     ascean?: any;
-    addFeeling?: any;
-    removeFeeling?: any;
     loggedUser?: any;
 }
 
-const SearchCard = ({ ascean, addFeeling, removeFeeling, loggedUser }: SearchProps) => {
+const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 
@@ -37,8 +33,6 @@ const SearchCard = ({ ascean, addFeeling, removeFeeling, loggedUser }: SearchPro
                     <SolaAscean
                         ascean={allAscean[i]}
                         key={allAscean[i].index}
-                        addFeeling={addFeeling}
-                        removeFeeling={removeFeeling}
                     />
                 </Col>
             )

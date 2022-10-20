@@ -1,30 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import * as friendAPI from '../../utils/friendApi'
-import Loading from '../Loading/Loading'
-import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
+import React from 'react';
 import FriendPopover from '../FriendPopover/FriendPopover';
 
 interface Props {
-    loggedUser: any;
-    acceptFriendRequest: any;
-    declineFriendRequest: any;
     friendState: any;
 }
 
-const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, friendState }: Props) => {
-    const [requestState, setRequestState] = useState<any>(loggedUser.requests)
-    const [friendAscean, setFriendAscean] = useState<any>([])
-    const [loading, setLoading] = useState<boolean>(false)
-
-    if (loading) {
-        return (
-        <>
-            <Loading />
-        </>
-        );
-      }
+const FriendsCard = ({ friendState }: Props) => {
 
     return (
         <div className='text-white'>
@@ -32,17 +13,11 @@ const FriendsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, fr
                 friendState
                 ? 
                     friendState.map((friend: any) => {
-
                         return (
-                        <>
                             <FriendPopover 
-                                friend={friend} 
-                                loggedUser={loggedUser} 
-                                acceptFriendRequest={acceptFriendRequest} 
-                                declineFriendRequest={declineFriendRequest}
+                                friend={friend}
                                 key={friend.userId} 
                             />
-                        </>
                         )
                     })
                 : ''

@@ -4,11 +4,10 @@ import * as asceanAPI from '../../utils/asceanApi';
 
 interface CreateProps {
     ascean?: any;
-    setAscean?: any;
-    handleAsceanCreate?: any;
+    handleAsceanCreate: (newAscean: Object) => Promise<void>;
 }
 
-const CreateAscean = ({ ascean, setAscean, handleAsceanCreate }: CreateProps) => {
+const CreateAscean = ({ ascean, handleAsceanCreate }: CreateProps) => {
     const [saveState, setSaveState] = useState<boolean>(false)
 
     function handleSubmit(e: any) {

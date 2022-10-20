@@ -11,13 +11,10 @@ import FocusAscean from '../../components/FocusAscean/FocusAscean';
 
 interface CommunityProps {
     loggedUser?: any;
-    setUser?: React.Dispatch<any>;
-    handleSignUpOrLogin?: () => any;
-    handleLogout?: () => void;
-    handleAsceanCreate?: any;
+    handleAsceanCreate: (newAscean: Object) => Promise<void>;
 }
 
-const CommunityFocus = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout, handleAsceanCreate }: CommunityProps) => {
+const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const { focusID } = useParams();

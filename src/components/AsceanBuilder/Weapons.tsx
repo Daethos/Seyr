@@ -6,10 +6,10 @@ import WeaponsCard from '../EquipmentCard/WeaponsCard';
 
 interface Props {
     asceanState?: any;
-    setAsceanState?: any;
+    setAsceanState: React.Dispatch<any>;
     weapons?: any;
     weaponModalShow?: boolean;
-    setWeaponModalShow?: any;
+    setWeaponModalShow: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Equipment = ({ asceanState, setAsceanState, weapons, weaponModalShow, setWeaponModalShow }: Props) => {

@@ -8,12 +8,10 @@ import CommunityAscean from '../CommunityAscean/CommunityAscean';
 
 interface SearchProps {
     ascean?: any;
-    addFeeling?: any;
-    removeFeeling?: any;
     loggedUser?: any;
 }
 
-const CommunitySearch = ({ ascean, addFeeling, removeFeeling, loggedUser }: SearchProps) => {
+const CommunitySearch = ({ ascean, loggedUser }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 
@@ -37,8 +35,6 @@ const CommunitySearch = ({ ascean, addFeeling, removeFeeling, loggedUser }: Sear
                     <CommunityAscean
                         ascean={allAscean[i]}
                         key={allAscean[i]._id}
-                        addFeeling={addFeeling}
-                        removeFeeling={removeFeeling}
                     />
                 //</Col>
             )

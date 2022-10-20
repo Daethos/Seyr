@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './RequestPopover.css'
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
@@ -9,13 +9,11 @@ import Form from 'react-bootstrap/Form'
 interface Props {
     friend: any;
     loggedUser: any
-    acceptFriendRequest: any;
-    declineFriendRequest: any;
+    acceptFriendRequest: (friend: object) => Promise<void>;
+    declineFriendRequest: (friend: any) => Promise<void>;
 }
 
 const RequestPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriendRequest }: Props) => {
-    const [friendRequest, setFriendRequest] = useState<boolean>(false)
-    const [friendDecline, setFriendDecline] = useState<boolean>(false)
     const [requestState, setRequestState] = useState<any>(friend)
     
     function handleSubmit(e: { preventDefault: () => void; }) {

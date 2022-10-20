@@ -4,7 +4,7 @@ import FormCheck from 'react-bootstrap/FormCheck'
 
 interface Props {
     asceanState: any;
-    setAsceanState: any;
+    setAsceanState: React.Dispatch<any>;
 }
 
 const Faith = ({ asceanState, setAsceanState }: Props) => {

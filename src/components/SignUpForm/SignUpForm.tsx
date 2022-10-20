@@ -1,14 +1,9 @@
 import React, { useState } from "react";
 import './SignUpForm.css'
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import userService from "../../utils/userService";
 import { useNavigate } from "react-router-dom";
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Card from 'react-bootstrap/Card';
-import { FunctionExpression, JsxAttribute } from "typescript";
 
 
 function isPasswordMatch(passwordOne: string, passwordConf: string) {
@@ -36,7 +31,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
   });
 
   const [selectedFile, setSelectedFile] = useState("");
-  const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/dungeons/';
   const navigate = useNavigate();
 
   function handleChange(e: { target: { name: string; value: string; }; }) {
@@ -46,21 +40,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
     });
   }
 
-  // async function handleColor(e) {
-  //   //setLoading(true);
-  //   e.preventDefault();
-  //   console.log(e.target.name, '<- New Png?')
-  //   const background = BUCKET_START + e.target.name + ".png";
-  //   console.log(background, '<- New background selected!')
-  //   try {
-  //     //await colores(background);
-  //     //console.log(backgroundState, '<- And what is the state of the background at the end?')
-  //     //setLoading(false);
-  //   } catch (err) {
-  //     console.log(err.message, ' <- Error handling Color!')
-  //     //setLoading(false);
-  //   }
-  // }
 
   async function handleSubmit(e: { preventDefault: () => void; }) {
     e.preventDefault(); // this stop the browser from submitting the form!

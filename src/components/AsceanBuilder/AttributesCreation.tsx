@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 
 interface Props {
     asceanState: any;
-    setAsceanState: any;
+    setAsceanState: React.Dispatch<any>;
 }
 
 const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {

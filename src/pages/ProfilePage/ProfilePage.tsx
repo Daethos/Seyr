@@ -6,7 +6,6 @@ import Row from 'react-bootstrap/Row';
 import userService from "../../utils/userService";
 import * as friendAPI from '../../utils/friendApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
-import FriendsCard from '../../components/FriendsCard/FriendsCard';
 import SearchCard from '../../components/SearchCard/SearchCard'
 import Loading from "../../components/Loading/Loading";
 import { useParams } from "react-router-dom";
@@ -14,20 +13,16 @@ import { useParams } from "react-router-dom";
 
 interface ProfileProps {
     user: any;
-    friends?: any
 }
 
 const ProfilePage = ({ user }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
-    //const [communityFeed, setcommunityFeed] = useState<boolean>(false)
-
     const [profileUser, setProfileUser] = useState<any>({});
 
     const [friendState, setFriendState] = useState<any>([])
     const [requestState, setRequestState] = useState<any>([])
 
     const [friendRequest, setFriendRequest] = useState<boolean>(false)
-    const [friendStatus, setFriendStatus] = useState<any>(false)
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
@@ -67,10 +62,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
         friends();
     }, [username, getProfile])
 
-    // useEffect(() => {
-    //     requests();
-    // }, [username, getProfile])
-
     async function friends() {
         setLoading(true);
         try {
@@ -81,21 +72,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error Fetch Friends in Friend Card')
-        }
-    }
-
-
-    async function requests() {
-        setLoading(true);
-        try {
-            const response = await friendAPI.getAllRequests(profileUser?._id)
-            console.log(response.data.requests, '<- Finding out Reques Frenship Status!')
-            setRequestState(response.data.requests)
-            setLoading(false);
-        } catch (err: any) {
-            setRequestState(null)
-            setLoading(false);
-            console.log(err.message, '<- Error Finding Status')
         }
     }
 
@@ -125,18 +101,11 @@ const ProfilePage = ({ user }: ProfileProps) => {
         <div className="section-right">
             <div className="actions">
                 <h3>{profileUser.username}
-                {/* <span style={{ float: 'right' }}>
-                    <button 
-                    className="btn" 
-                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                    >Send Friend Request</button>
-                </span> */}
                 </h3>
                 <div className="property-block">
                 <h4 className="m-4">{profileUser.bio}</h4>
                 </div> 
             </div>
-             
         </div>
         {
             friendState 
@@ -188,11 +157,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
             : ''
         }
 
-                    {/* <button 
-                    className="btn" 
-                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                    >Friend {profileUser.username} ?</button> */}
-                {/* </span> */}
         <hr className="orange-border bottom" />
         </Col>
         </Row>

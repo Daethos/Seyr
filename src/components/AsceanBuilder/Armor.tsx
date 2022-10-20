@@ -11,7 +11,7 @@ import TrinketsCard from '../EquipmentCard/TrinketsCard';
 
 interface Props {
     asceanState?: any;
-    setAsceanState?: any;
+    setAsceanState?: React.Dispatch<any>;
     helmets?: any;
     chests?: any;
     legs?: any;
@@ -19,17 +19,17 @@ interface Props {
     rings?: any;
     trinkets?: any;
     helmetModalShow?: boolean;
-    setHelmetModalShow?: any;
+    setHelmetModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     chestModalShow?: boolean;
-    setChestModalShow?: any;
+    setChestModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     legsModalShow?: boolean;
-    setLegsModalShow?: any;
+    setLegsModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     amuletModalShow?: boolean;
-    setAmuletModalShow?: any;
+    setAmuletModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     ringsModalShow?: boolean;
-    setRingsModalShow?: any;
+    setRingsModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     trinketModalShow?: boolean;
-    setTrinketModalShow?: any;
+    setTrinketModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     
 }
 
@@ -41,7 +41,7 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         name = equipment.target.innerText;
         name = name.split('\n')[2];
         console.log(name, '<- What is the new name?')
-        setAsceanState({
+        setAsceanState!({
             ...asceanState,
             [name]: equipment.target.value,
         })
@@ -54,10 +54,10 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             size="lg" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
             className="my-2" 
-            onClick={() => setHelmetModalShow(true)}
+            onClick={() => setHelmetModalShow!(true)}
         >Helmets and Hoods</Button>
         <Modal show={helmetModalShow}
-            onHide={() => setHelmetModalShow(false)}
+            onHide={() => setHelmetModalShow!(false)}
             centered
             id="modal-weapon">
         <Modal.Body id="modal-weapon">
@@ -88,10 +88,10 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             size="lg" 
             className="my-2" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setChestModalShow(true)}
+            onClick={() => setChestModalShow!(true)}
         >Cuirasses and Robes</Button>
         <Modal show={chestModalShow}
-            onHide={() => setChestModalShow(false)}
+            onHide={() => setChestModalShow!(false)}
             centered
             id="modal-weapon">
         <Modal.Body id="modal-weapon">
@@ -122,10 +122,10 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             className="my-2" 
             size="lg" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setLegsModalShow(true)}
+            onClick={() => setLegsModalShow!(true)}
         >Greaves and Pants</Button>
         <Modal show={legsModalShow}
-            onHide={() => setLegsModalShow(false)}
+            onHide={() => setLegsModalShow!(false)}
             centered
             id="modal-weapon">
         <Modal.Body id="modal-weapon">
@@ -156,10 +156,10 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             className="my-2" 
             size="lg" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setAmuletModalShow(true)}
+            onClick={() => setAmuletModalShow!(true)}
         >Amulets and Chokers</Button>
         <Modal show={amuletModalShow}
-            onHide={() => setAmuletModalShow(false)}
+            onHide={() => setAmuletModalShow!(false)}
             centered
             id="modal-weapon">
         <Modal.Body id="modal-weapon">
@@ -190,10 +190,10 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             className="my-2" 
             size="lg" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setRingsModalShow(true)}
+            onClick={() => setRingsModalShow!(true)}
         >Rings and Things</Button>
         <Modal show={ringsModalShow}
-            onHide={() => setRingsModalShow(false)}
+            onHide={() => setRingsModalShow!(false)}
             centered
             id="modal-weapon">
         <Modal.Body id="modal-weapon">
@@ -233,10 +233,10 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             className="my-2" 
             size="lg" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setTrinketModalShow(true)}
+            onClick={() => setTrinketModalShow!(true)}
         >Trinkets</Button>
         <Modal show={trinketModalShow}
-            onHide={() => setTrinketModalShow(false)}
+            onHide={() => setTrinketModalShow!(false)}
             centered
             id="modal-weapon">
         <Modal.Body id="modal-weapon">

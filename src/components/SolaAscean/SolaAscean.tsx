@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
-import { Link } from "react-router-dom";
-import Form from 'react-bootstrap/Form';
-import FeelingsCard from '../FeelingsCard/FeelingsCard'
-import CreateAscean from '../../components/CreateAscean/CreateAscean'
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
 import Delete from '../AsceanBuilder/Delete';
@@ -14,17 +10,12 @@ import Update from '../AsceanBuilder/Update';
 
 interface Props {
     ascean: any;
-    setAscean?: React.Dispatch<any>;
     userProfile?: boolean;
-    deleteAscean?: any;
-    addFeeling?: any;
-    removeFeeling?: any;
+    deleteAscean?: (ascean: any) => Promise<void>;
     loggedUser?: any;
-    profilePage?: boolean;
-    handleAsceanCreate?: any;
 }
 
-const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, loggedUser, removeFeeling, profilePage, handleAsceanCreate }: Props) => {
+const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
 
   return (
     <React.Fragment>
@@ -56,22 +47,6 @@ const SolaAscean = ({ ascean, setAscean, userProfile, deleteAscean, addFeeling, 
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
-            {/* <AsceanImageCard
-                weapon_one={ascean.weapon_one}
-                weapon_two={ascean.weapon_two}
-                weapon_three={ascean.weapon_three}
-                shield={ascean.shield}
-                helmet={ascean.helmet}
-                chest={ascean.chest}
-                legs={ascean.legs}
-                amulet={ascean.amulet}
-                ring_one={ascean.ring_one}
-                ring_two={ascean.ring_two}
-                trinket={ascean.trinket}
-            />
-            <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg> */}
             <div className="top-stats">
             <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
             {

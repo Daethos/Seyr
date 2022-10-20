@@ -1,53 +1,40 @@
-import React, { useEffect, useState } from 'react'
-import Row from 'react-bootstrap/Row';
+import React from 'react'
 import Col from 'react-bootstrap/Col';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
-import Form from 'react-bootstrap/Form';
 import FeelingsCard from '../FeelingsCard/FeelingsCard'
 import CreateAscean from '../../components/CreateAscean/CreateAscean'
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
 
-
 interface Props {
     ascean?: any;
     setAscean?: React.Dispatch<any>;
-    userProfile?: boolean;
-    addFeeling?: any;
-    removeFeeling?: any;
+    addFeeling?: (asceanID: any, feeling: string) => Promise<void>;
+    removeFeeling?: (asceanID: any, feeling: string) => Promise<void>;
     loggedUser?: any;
-    profilePage?: boolean;
-    handleAsceanCreate?: any;
+    handleAsceanCreate: ((newAscean: Object) => Promise<void>);
 }
 
-const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, removeFeeling, profilePage, handleAsceanCreate }: Props) => {
+const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling, handleAsceanCreate }: Props) => {
 
-  return (
-    <React.Fragment>
-    <Col className="stat-block wide">
-    <hr className="orange-border" />
-        
-                <div className="section-left">
-                <div className="actions">
-                    <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}>
-                        <h3>
-                            <img 
-                                src={ascean?.user?.photoUrl ? ascean?.user?.photoUrl : ''} 
-                                alt={ascean?.user?.username ? ascean?.user?.username : ''} 
-                                id="community-pic"
-                            />
-                            {
-                                ascean?.user?.username
-                                ? ascean?.user?.username
-                                : ''
-                            } 
-                        
-                        </h3>
-                        
-                    </Link>
-                    
-                </div>
+    return (
+        <React.Fragment>
+        <Col className="stat-block wide">
+        <hr className="orange-border" />
+        <div className="section-left">
+            <div className="actions">
+                <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}>
+                    <h3>
+                        <img 
+                            src={ascean?.user?.photoUrl ? ascean?.user?.photoUrl : ''} 
+                            alt={ascean?.user?.username ? ascean?.user?.username : ''} 
+                            id="community-pic"
+                        />
+                        {ascean?.user?.username ? ascean.user.username : '' } 
+                    </h3>
+                </Link>
+            </div>
                
             <div className="actions">
                 <h3>Character</h3>
@@ -69,30 +56,8 @@ const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, r
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            {/* <AsceanImageCard
-                weapon_one={ascean.weapon_one}
-                weapon_two={ascean.weapon_two}
-                weapon_three={ascean.weapon_three}
-                shield={ascean.shield}
-                helmet={ascean.helmet}
-                chest={ascean.chest}
-                legs={ascean.legs}
-                amulet={ascean.amulet}
-                ring_one={ascean.ring_one}
-                ring_two={ascean.ring_two}
-                trinket={ascean.trinket}
-            />
-            <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg> */}
             <div className="top-stats">
             <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
-            
-            {/* <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg> */}
-            {/* FIXME: Check in the morning, ES Lint is complaining! */}
-            
 
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -103,30 +68,20 @@ const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, r
             <div className="property-line first">
                 <h4>Adherence ?{' '}</h4>
                 <p id="adherence"> {' '}
-                {
-                    ascean.faith === 'adherent'
-                    ? 'You bet your ass'
-                    : 'No fucking way man'
-                }
+                { ascean.faith === 'adherent' ? 'You bet your ass' : 'No fucking way man' }
                 </p>
             </div>
             <div className="property-line first">
                 <h4>Devotion ?{' '}</h4>
                 <p>{' '}
-                {
-                    ascean.faith === 'devoted'
-                    ? 'You bet your ass'
-                    : 'No fucking way man'
-                }</p>
-                
+                { ascean.faith === 'devoted' ? 'You bet your ass' : 'No fucking way man' }
+                </p>
             </div>
-            
             </div>
         
-            </div>
-            <div className="section-right">
-             <FeelingsCard loggedUser={loggedUser} addFeeling={addFeeling} removeFeeling={removeFeeling} ascean={ascean} key={ascean._id} />
-            
+        </div>
+        <div className="section-right">
+            <FeelingsCard loggedUser={loggedUser} addFeeling={addFeeling} removeFeeling={removeFeeling} ascean={ascean} key={ascean._id} />
             <div className="actions">
                 <h3>Eccentricities & Equipment</h3>
             <div className='property-block'>
@@ -151,12 +106,11 @@ const FocusAscean = ({ ascean, setAscean, userProfile, addFeeling, loggedUser, r
             </div>
             
         </div>
-        <CreateAscean ascean={ascean} setAscean={setAscean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} />
-        
-         <hr className='orange-border bottom' />
-    </Col>
-    </React.Fragment>
-  )
+        <CreateAscean ascean={ascean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} />
+        <hr className='orange-border bottom' />
+        </Col>
+        </React.Fragment>
+    )
 }
 
 export default FocusAscean

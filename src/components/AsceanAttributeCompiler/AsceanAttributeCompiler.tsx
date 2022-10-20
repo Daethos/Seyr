@@ -19,7 +19,6 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
     const totalCaeren: number = displayCaeren + ascean?.shield?.caeren + ascean?.helmet?.caeren + ascean?.chest?.caeren + ascean?.legs?.caeren + ascean?.ring_one?.caeren + ascean?.ring_two?.caeren + ascean?.amulet?.caeren + ascean?.trinket?.caeren;
     const totalKyosir: number = displayKyosir + ascean?.shield?.kyosir + ascean?.helmet?.kyosir + ascean?.chest?.kyosir + ascean?.legs?.kyosir + ascean?.ring_one?.kyosir + ascean?.ring_two?.kyosir + ascean?.amulet?.kyosir + ascean?.trinket?.kyosir;
     
-
     console.log(ascean.name, ascean.origin, 'Con:', displayConstitution, 'Str:', displayStrength, 'Agi:', displayAgility, 'Ach:', displayAchre, 'Caer:', displayCaeren, 'Kyo:', displayKyosir)
     
     const strengthMod: number = Math.floor((totalStrength - 10) / 2);

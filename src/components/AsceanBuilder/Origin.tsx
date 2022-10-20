@@ -8,7 +8,7 @@ interface Props {
     asceanState?: any;
     setAsceanState?: any;
     originModalShow?: boolean;
-    setOriginModalShow?: any;
+    setOriginModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalShow }: Props) => {
@@ -72,11 +72,11 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             className="my-2" 
             size="lg" 
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setOriginModalShow(true)}
+            onClick={() => setOriginModalShow!(true)}
         >Origins</Button>
         <Modal 
             show={originModalShow}
-            onHide={() => setOriginModalShow(false)}
+            onHide={() => setOriginModalShow!(false)}
             centered
             
             aria-labelledby="contained-modal-title-vcenter"
@@ -93,7 +93,6 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
                 <OriginsCard 
                     origin={origin} 
                     key={origin.index} 
-                    index={index} 
                 />
         )})}
         </Modal.Body>

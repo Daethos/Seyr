@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 interface Props {
     ascean: any;
-    communityFocus: any;
+    communityFocus: boolean;
 }
 
 const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
@@ -62,23 +62,27 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
 
     useEffect(() => {
         weaponOneCompiler()
-    }, [])
-
-    useEffect(() => {
         weaponTwoCompiler()
-    }, [])
-
-    useEffect(() => {
         weaponThreeCompiler()
-    }, [])
-
-    useEffect(() => {
         physicalDefenseCompiler()
-    }, [])
-
-    useEffect(() => {
         magicalDefenseCompiler()
     }, [])
+
+    // useEffect(() => {
+    //     weaponTwoCompiler()
+    // }, [])
+
+    // useEffect(() => {
+    //     weaponThreeCompiler()
+    // }, [])
+
+    // useEffect(() => {
+    //     physicalDefenseCompiler()
+    // }, [])
+
+    // useEffect(() => {
+    //     magicalDefenseCompiler()
+    // }, [])
 
     async function physicalDefenseCompiler() {
         let defense = physicalDefenseModifier;
@@ -131,7 +135,6 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
             weapon.dodge -= 2;
 
         }
-        return weapon
     }
 
     async function gripCompiler(weapon: any) {
@@ -194,18 +197,18 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     }
 
     async function weaponOneCompiler() {
-        let weapon = asceanState.weapon_one;
-        originCompiler(weapon)
-        gripCompiler(weapon)
-        penetrationCompiler(weapon)
-        weapon.physical_damage *= physicalDamageModifier;
-        weapon.magical_damage *= magicalDamageModifier;
-        critCompiler(weapon)
-        weapon.dodge += dodgeModifier;
-        weapon.roll += rollModifier;
+        let weapon_one = asceanState.weapon_one;
+        originCompiler(weapon_one)
+        gripCompiler(weapon_one)
+        penetrationCompiler(weapon_one)
+        weapon_one.physical_damage *= physicalDamageModifier;
+        weapon_one.magical_damage *= magicalDamageModifier;
+        critCompiler(weapon_one)
+        weapon_one.dodge += dodgeModifier;
+        weapon_one.roll += rollModifier;
 
-        faithCompiler(weapon)
-        setWeaponOne(weapon)
+        faithCompiler(weapon_one)
+        setWeaponOne(weapon_one)
     }
 
     async function weaponTwoCompiler() {

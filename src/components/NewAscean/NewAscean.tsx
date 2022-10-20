@@ -15,20 +15,20 @@ import Mastery from '../AsceanBuilder/Mastery';
 interface AsceanProps {
     loggedUser: any;
     setUser: React.Dispatch<any>;
-    handleAsceanCreate: any;
+    handleAsceanCreate: (newAscean: Object) => Promise<void>;
 }
 
 const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => {
 
-    const [equipment, setEquipment] = useState<any[]>([]);
-    const [weapons, setWeapons] = useState<any[]>([]);
-    const [shields, setShields] = useState<any[]>([]);
-    const [helmets, setHelmets] = useState<any[]>([]);
-    const [chests, setChests] = useState<any[]>([]);
-    const [legs, setLegs] = useState<any[]>([]);
-    const [rings, setRings] = useState<any[]>([]);
-    const [amulets, setAmulets] = useState<any[]>([]);
-    const [trinkets, setTrinkets] = useState<any[]>([]);
+    const [equipment, setEquipment] = useState<object[]>([]);
+    const [weapons, setWeapons] = useState<object[]>([]);
+    const [shields, setShields] = useState<object[]>([]);
+    const [helmets, setHelmets] = useState<object[]>([]);
+    const [chests, setChests] = useState<object[]>([]);
+    const [legs, setLegs] = useState<object[]>([]);
+    const [rings, setRings] = useState<object[]>([]);
+    const [amulets, setAmulets] = useState<object[]>([]);
+    const [trinkets, setTrinkets] = useState<object[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [originModalShow, setOriginModalShow] = React.useState<boolean>(false)
     const [weaponModalShow, setWeaponModalShow] = React.useState<boolean>(false)

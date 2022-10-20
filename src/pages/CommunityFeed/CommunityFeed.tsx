@@ -14,12 +14,9 @@ import CommunitySearch from '../../components/CommunitySearch/CommunitySearch'
 interface CommunityProps {
     loggedUser: any;
     setUser: React.Dispatch<any>;
-    handleSignUpOrLogin: () => any;
-    handleLogout: () => void;
-    handleAsceanCreate?: any;
 }
 
-const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout, handleAsceanCreate }: CommunityProps) => {
+const CommunityFeed = ({ loggedUser, setUser }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     // const [communityFeed, setCommunityFeed] = useState<boolean>(true)
@@ -78,9 +75,8 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
         <CommunitySearch 
             ascean={ascean} 
             loggedUser={loggedUser} 
-            // key={loggedUser._id} 
-            addFeeling={addFeeling} 
-            removeFeeling={removeFeeling} />
+            // key={loggedUser._id}  
+            />
         </Row>
 
         <Row className="justify-content-center my-5" 
@@ -89,18 +85,13 @@ const CommunityFeed = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout,
         
         {ascean.map((a: any) => {
             return (
-                // <Col className="stat-block wide">
                 <CommunityAscean
                     ascean={a}
                     key={a._id}
                     communityFeed={true}
-                    addFeeling={addFeeling}
-                    removeFeeling={removeFeeling}
                     loggedUser={loggedUser}
                     setAscean={setAscean}
-                    handleAsceanCreate={handleAsceanCreate}
                 />
-                // </Col>
             )
         })}
        

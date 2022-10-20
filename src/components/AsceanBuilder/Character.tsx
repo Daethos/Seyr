@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 
 interface Props {
     asceanState: any;
-    setAsceanState: any;
+    setAsceanState: React.Dispatch<any>;
 }
 
 const Character = ({ asceanState, setAsceanState }: Props) => {

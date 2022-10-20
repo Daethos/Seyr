@@ -12,21 +12,16 @@ import FriendsCarousel from '../../components/FriendsCarousel/FriendsCarousel'
 
 interface UserProps {
     loggedUser: any;
-    setUser: React.Dispatch<any>;
-    handleSignUpOrLogin: () => any;
-    handleLogout: () => void;
 }
 
-// TODO: Inventory, Currency, Special Effects--Perhaps 'Influences' tied to gear itself, What does Leveling Really Mean?
-
-const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }: UserProps) => {
+const UserProfile = ({ loggedUser }: UserProps) => {
 
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [friendRequest, setFriendRequest] = useState<boolean>(false)
   const [friendDecline, setFriendDecline] = useState<boolean>(false)
-  const [friendState, setFriendState] = useState<any>([])
-  const [requestState, setRequestState] = useState<any>([])
+  const [friendState, setFriendState] = useState<any[]>([])
+  const [requestState, setRequestState] = useState<object[]>([])
 
   useEffect(() => {
     getAscean();
@@ -66,7 +61,7 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
   }
 
 
-  async function acceptFriendRequest(friend: any) {
+  async function acceptFriendRequest(friend: object) {
     setFriendRequest(false)
     try {
       console.log(friend, '<- Did you make it over to accept as a friend?')
@@ -102,18 +97,14 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
     setLoading(true);
     try {
       const response = await friendAPI.getAllRequests(loggedUser._id)
-      //Promise.all(friendNames?.map(async (name: string) => friendAPI.getAllRequests(name)))
       console.log(response.data.requests, '<- Finding out REques Frenship Status!')
       setRequestState(response.data.requests)
       setLoading(false);
-
     } catch (err: any) {
       setLoading(false);
       console.log(err.message, '<- Error Finding Status')
-
     }
   }
-  
 
   if (loading) {
     return (
@@ -127,7 +118,6 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
 
     <Container>
       <h3 className='text-white mt-5'>New Friend Requests!</h3>
-
       {
         requestState
         ? 
@@ -142,18 +132,10 @@ const UserProfile = ({ loggedUser, setUser, handleSignUpOrLogin, handleLogout }:
       }
 
       <h3 className='text-white'>Mutual Friends!</h3>
-      
-
       {
         friendState
-        ? 
-        <FriendsCard 
-          loggedUser={loggedUser} 
-          friendState={friendState}
-          acceptFriendRequest={acceptFriendRequest} 
-          declineFriendRequest={declineFriendRequest} 
-        />
-            // <FriendsCarousel user={loggedUser} friends={friendStatusMutual} />
+        ? <FriendsCard friendState={friendState} />
+          // <FriendsCarousel user={loggedUser} friends={friendStatusMutual} />
         : ''
       }
 

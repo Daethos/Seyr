@@ -1,29 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import * as friendAPI from '../../utils/friendApi'
+import React, { useState } from 'react';
 import Loading from '../Loading/Loading'
-import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import RequestPopover from '../RequestPopover/RequestPopover';
 
 interface Props {
     loggedUser: any;
-    acceptFriendRequest: any;
-    declineFriendRequest: any;
-    requestState: any;
+    acceptFriendRequest: (friend: object) => Promise<void>;
+    declineFriendRequest: (friend: any) => Promise<void>;
+    requestState: object[];
 }
 
 const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, requestState }: Props) => {
-    const [friendAscean, setFriendAscean] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
 
     if (loading) {
         return (
-        <>
             <Loading />
-        </>
         );
-      }
+    }
 
     return (
         <div className='text-white'>
