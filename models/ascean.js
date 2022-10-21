@@ -37,6 +37,11 @@ const asceanSchema = new Schema(
             enum : ["Ashtre", "Fyers", "Li'ivi", "Notheo", "Nothos", "Quor'eite", "Sedyreal"],
             default: "Ashtre"
         },
+        sex:  {
+            type: String,
+            enum: ["Man", "Woman"],
+            default: "Man"
+        },
         mastery: {
             type: String,
             enum : ["Constitution", "Strength", "Agility", "Achre", "Caeren", "Kyosir"],

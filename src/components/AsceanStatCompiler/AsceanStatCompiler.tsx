@@ -1,5 +1,4 @@
-import { table } from 'console';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props {
     ascean: any;
@@ -9,11 +8,11 @@ interface Props {
 const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     
     const displayConstitution: number = Math.round((ascean?.constitution + (ascean?.origin === "Notheo" || ascean?.origin === 'Nothos' ? 2 : 0)) * (ascean?.mastery === 'Constitution' ? 1.1 : 1))
-    const displayStrength: number = Math.round((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) * (ascean?.mastery === 'Strength' ? 1.15 : 1))
+    const displayStrength: number = Math.round((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0) * (ascean?.mastery === 'Strength' ? 1.15 : 1))
     const displayAgility: number = Math.round((ascean?.agility + (ascean?.origin === "Quor'eite" || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) * (ascean?.mastery === 'Agility' ? 1.15 : 1))
-    const displayAchre: number = Math.round((ascean?.achre + (ascean?.origin === 'Notheo' || ascean?.origin === 'Fyers' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) * (ascean?.mastery === 'Achre' ? 1.15 : 1))
-    const displayCaeren: number = Math.round((ascean?.caeren + (ascean?.origin === 'Nothos' || ascean?.origin === 'Sedyreal' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) * (ascean?.mastery === 'Caeren' ? 1.15 : 1))
-    const displayKyosir: number = Math.round((ascean?.kyosir + (ascean?.origin === "Fyers" || ascean?.origin === "Quor'eite" ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) * (ascean?.mastery === 'Kyosir' ? 1.15 : 1))
+    const displayAchre: number = Math.round((ascean?.achre + (ascean?.origin === 'Notheo' || ascean?.origin === 'Fyers' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0) * (ascean?.mastery === 'Achre' ? 1.15 : 1))
+    const displayCaeren: number = Math.round((ascean?.caeren + (ascean?.origin === 'Nothos' || ascean?.origin === 'Sedyreal' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0) * (ascean?.mastery === 'Caeren' ? 1.15 : 1))
+    const displayKyosir: number = Math.round((ascean?.kyosir + (ascean?.origin === "Fyers" || ascean?.origin === "Quor'eite" ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0) * (ascean.mastery === 'Kyosir' ? 1.15 : 1))
 
     const totalStrength: number = displayStrength + ascean?.shield?.strength + ascean?.helmet?.strength + ascean?.chest?.strength + ascean?.legs?.strength + ascean?.ring_one?.strength + ascean?.ring_two?.strength + ascean?.amulet?.strength + ascean?.trinket?.strength;
     const totalAgility: number = displayAgility + ascean?.shield?.agility + ascean?.helmet?.agility + ascean?.chest?.agility + ascean?.legs?.agility + ascean?.ring_one?.agility + ascean?.ring_two?.agility + ascean?.amulet?.agility + ascean?.trinket?.agility;
@@ -48,6 +47,9 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     const [weaponOne, setWeaponOne] = useState<any>({})
     const [weaponTwo, setWeaponTwo] = useState<any>({})
     const [weaponThree, setWeaponThree] = useState<any>({})
+    const [weaponOneCompiled, setWeaponOneCompiled] = useState<boolean>(false)
+    const [weaponTwoCompiled, setWeaponTwoCompiled] = useState<boolean>(false)
+    const [weaponThreeCompiled, setWeaponThreeCompiled] = useState<boolean>(false)
 
     const originPhysDefMod: number = (ascean.origin === 'Sedyreal' || ascean.origin === 'Nothos' ? 3 : 0);
     const originMagDefMod: number = (ascean.origin === 'Sedyreal' || ascean.origin === 'Notheo' ? 3 : 0);
@@ -67,22 +69,6 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
         physicalDefenseCompiler()
         magicalDefenseCompiler()
     }, [])
-
-    // useEffect(() => {
-    //     weaponTwoCompiler()
-    // }, [])
-
-    // useEffect(() => {
-    //     weaponThreeCompiler()
-    // }, [])
-
-    // useEffect(() => {
-    //     physicalDefenseCompiler()
-    // }, [])
-
-    // useEffect(() => {
-    //     magicalDefenseCompiler()
-    // }, [])
 
     async function physicalDefenseCompiler() {
         let defense = physicalDefenseModifier;
@@ -197,23 +183,26 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     }
 
     async function weaponOneCompiler() {
-        let weapon_one = asceanState.weapon_one;
-        originCompiler(weapon_one)
-        gripCompiler(weapon_one)
-        penetrationCompiler(weapon_one)
-        weapon_one.physical_damage *= physicalDamageModifier;
-        weapon_one.magical_damage *= magicalDamageModifier;
-        critCompiler(weapon_one)
-        weapon_one.dodge += dodgeModifier;
-        weapon_one.roll += rollModifier;
+        let weapon; 
+        weapon = ascean.weapon_one;
+        originCompiler(weapon)
+        gripCompiler(weapon)
+        
+        penetrationCompiler(weapon)
+        weapon.physical_damage *= physicalDamageModifier;
+        weapon.magical_damage *= magicalDamageModifier;
+        critCompiler(weapon)
+        weapon.dodge += dodgeModifier;
+        weapon.roll += rollModifier;
 
-        faithCompiler(weapon_one)
-        setWeaponOne(weapon_one)
+        faithCompiler(weapon)
+        setWeaponOne(weapon)
     }
 
     async function weaponTwoCompiler() {
 
-        let weapon = asceanState.weapon_two;
+        let weapon;
+        weapon = ascean.weapon_two;
         originCompiler(weapon)
         gripCompiler(weapon)
         penetrationCompiler(weapon)
@@ -228,7 +217,8 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     }
     async function weaponThreeCompiler() {
 
-        let weapon = asceanState.weapon_three;
+        let weapon;
+        weapon = ascean.weapon_three;
         originCompiler(weapon)
         gripCompiler(weapon)
         penetrationCompiler(weapon)

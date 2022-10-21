@@ -10,8 +10,8 @@ import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/As
 interface Props {
     ascean?: any;
     setAscean?: React.Dispatch<any>;
-    addFeeling?: (asceanID: any, feeling: string) => Promise<void>;
-    removeFeeling?: (asceanID: any, feeling: string) => Promise<void>;
+    addFeeling: (asceanID: any, feeling: string) => Promise<void>;
+    removeFeeling: (asceanID: any, feeling: string) => Promise<void>;
     loggedUser?: any;
     handleAsceanCreate: ((newAscean: Object) => Promise<void>);
 }
@@ -42,6 +42,7 @@ const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling,
             <div className="creature-heading">
                 <h1>{ascean.name}</h1>
                 <h2>{ascean.description}</h2>
+                <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" />
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -52,6 +53,10 @@ const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling,
             <div className="property-line first">
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
+            </div>
+            <div className="property-line last">
+                <h4>Mastery</h4>
+                <p> {ascean.mastery}</p>
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>

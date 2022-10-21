@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from '../../components/NavBar/NavBar';
@@ -55,20 +55,17 @@ function App() {
     return (
         <Loading />
     );
-}
+  }
 
   if (user) {
     return (
-      <div 
-      > 
+      <div> 
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
-      
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
-        
-        <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} setUser={setUser} />} />
+        <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/:username" element={<ProfilePage user={user} />} />
         <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />

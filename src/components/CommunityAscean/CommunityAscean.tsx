@@ -22,12 +22,13 @@ interface Props {
 const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, loggedUser, profilePage }: Props) => {
 
   return (
-    <Col className="stat-block wide" style={{ maxWidth: 24 + '%' }}>
+    <Col className="stat-block wide" >
         <>
         <hr className="orange-border" />
         <div className="creature-heading">
         <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><h1>{ascean.name}</h1></Link>
         <h2>{ascean.description}</h2>
+        <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" />
         </div>
         <svg height="5" width="100%" className="tapered-rule mt-3">
             <polyline points="0,0 550,2.5 0,5"></polyline>
@@ -45,14 +46,14 @@ const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, logged
             ring_one={ascean.ring_one}
             ring_two={ascean.ring_two}
             trinket={ascean.trinket}
-            key={ascean._id}
+            key={ascean._id + 2}
         />
         <svg height="5" width="100%" className="tapered-rule">
             <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         <div className="top-stats">
-        <AsceanAttributeCompiler ascean={ascean} />
-        <AsceanStatCompiler communityFocus={false} ascean={ascean}  />
+        <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
+        <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id}  />
         <div className="actions"><h3> </h3></div>
         </div>
         <hr className='orange-border bottom' />

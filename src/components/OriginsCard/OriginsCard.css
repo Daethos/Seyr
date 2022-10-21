@@ -19,3 +19,8 @@
     border: 1.5px solid orangered;
     
 }
+#origin-pic {
+    max-width: 5vw;
+    border: 2px solid purple;
+    border-radius: 50%;
+}

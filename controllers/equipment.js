@@ -12,10 +12,10 @@ const Trinket = require('../models/trinket');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports = {
-    index
+    indexEquipment
 }
 
-async function index(req, res) {
+async function indexEquipment(req, res) {
     console.log('%c We have made it to the Index in the Equipment Controller!', 'color: blue')
     try {
         const weapons = await Weapon.find({}).populate().exec();

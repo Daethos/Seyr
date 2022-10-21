@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const eqpCtrl = require('../../controllers/equipment');
+const eqpCtrl = require('../../controllers/equipment.js');
 
 /*---------- Public Routes ----------*/
-router.get('/', eqpCtrl.index);
+router.get('/', eqpCtrl.indexEquipment);
 
 /*---------- Protected Routes ----------*/
 

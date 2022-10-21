@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import * as communityAPI from '../../utils/communityApi'
 import CommunityAscean from '../CommunityAscean/CommunityAscean';
 
 interface SearchProps {
@@ -31,12 +29,7 @@ const CommunitySearch = ({ ascean, loggedUser }: SearchProps) => {
         let views = [];
         for (let i = 0; i < allAscean.length; i++) {
             views.push(
-                //<Col className="results">
-                    <CommunityAscean
-                        ascean={allAscean[i]}
-                        key={allAscean[i]._id}
-                    />
-                //</Col>
+                <CommunityAscean ascean={allAscean[i]} key={allAscean[i]._id} />
             )
         }
         return (views)

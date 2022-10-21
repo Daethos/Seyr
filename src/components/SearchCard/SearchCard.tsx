@@ -29,12 +29,7 @@ const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
         let views = [];
         for (let i = 0; i < allAscean.length; i++) {
             views.push(
-                <Col className="results" >
-                    <SolaAscean
-                        ascean={allAscean[i]}
-                        key={allAscean[i].index}
-                    />
-                </Col>
+                <SolaAscean ascean={allAscean[i]} key={allAscean[i].index} />
             )
         }
         return (views)
@@ -57,7 +52,7 @@ const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
     }, [searchText, ascean])
 
   return (
-    <div>
+    <React.Fragment>
         <Col md={{span: 8, offset: 2}} className="my-5">
     <InputGroup className="bg-black">
     <InputGroup.Text className="bg-black">
@@ -79,7 +74,8 @@ const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
         ascean.length > 0
         ? <>{displayResults()}</>
         : ''
-    }</div>
+    }
+    </React.Fragment>
   )
 }
 

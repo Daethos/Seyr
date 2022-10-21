@@ -15,6 +15,7 @@ import Armor from '../AsceanBuilder/Armor'
 import Communal from '../AsceanBuilder/Communal'
 import Origin from '../AsceanBuilder/Origin';
 import Mastery from '../AsceanBuilder/Mastery';
+import Sex from '../AsceanBuilder/Sex';
 
 interface Props {
     editAscean: (vaEsai: Object) => Promise<void>;
@@ -124,7 +125,7 @@ const EditAscean = ({ editAscean }: Props) => {
         <hr className="orange-border" />
         <div className="section-left">
             <Character asceanState={editState} setAsceanState={setEditState} key={ascean._id} />
-
+            <Sex asceanState={editState} setAsceanState={setEditState} />
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
@@ -148,7 +149,8 @@ const EditAscean = ({ editAscean }: Props) => {
             <Mastery asceanState={editState} setAsceanState={setEditState} />
             <Faith asceanState={editState} setAsceanState={setEditState} />
             <Origin asceanState={editState} setAsceanState={setEditState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
-            <WeaponsEdit editState={editState} setEditState={setEditState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
+            <img src={process.env.PUBLIC_URL + '/images/' + editState.origin + '-' + editState.sex + '.jpg'} id="ascean-pic" />
+            
             </div>
         </div>
         <div className="section-right">
@@ -179,6 +181,7 @@ const EditAscean = ({ editAscean }: Props) => {
             </div>
             {/* <AsceanStatCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} /> */}
         </div>
+        <WeaponsEdit editState={editState} setEditState={setEditState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
             <div className="actions">
             <h3>Armor & Eccentricities</h3>
             <div className='property-block'>

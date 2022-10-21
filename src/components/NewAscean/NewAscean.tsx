@@ -11,6 +11,7 @@ import Shields from '../AsceanBuilder/Shields'
 import Armor from '../AsceanBuilder/Armor'
 import Origin from '../AsceanBuilder/Origin';
 import Mastery from '../AsceanBuilder/Mastery';
+import Sex from '../AsceanBuilder/Sex';
 
 interface AsceanProps {
     loggedUser: any;
@@ -42,6 +43,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
     const [asceanState, setAsceanState] = useState<any>({
         name: '',
         description: '',
+        sex: 'Woman',
         origin: "Ashtre",
         constitution: 8,
         strength: 8,
@@ -183,6 +185,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <hr className="orange-border" />
             <div className="section-left">
             <Character asceanState={asceanState} setAsceanState={setAsceanState} />
+            <Sex asceanState={asceanState} setAsceanState={setAsceanState} />
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
@@ -194,6 +197,7 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
             <Origin asceanState={asceanState} setAsceanState={setAsceanState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
+            <img src={process.env.PUBLIC_URL + '/images/' + asceanState.origin + '-' + asceanState.sex + '.jpg'} id="ascean-pic" />
             </div>
             </div>
             <div className="section-right">
