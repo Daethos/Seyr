@@ -1,3 +1,10 @@
+#request-banner {
+    border-radius: 10px;
+    width: 25%;
+    height: 100px;
+    background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100);
+}
+
 #banner-request-accept {
     float: left;
     margin-top: 4%;

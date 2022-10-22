@@ -6,7 +6,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as friendAPI from '../../utils/friendApi';
 import FriendsCard from '../../components/FriendsCard/FriendsCard';
-import RequestsCard from '../../components/RequestsCard/RequestsCard'
+import RequestsCard from '../../components/RequestsCarousel/RequestsCarousel'
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
 import FriendsCarousel from '../../components/FriendsCarousel/FriendsCarousel'

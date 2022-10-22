@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './RequestsCard.css'
+import './RequestsCarousel.css'
 import * as friendAPI from '../../utils/friendApi';
 import Carousel from 'react-bootstrap/Carousel';
 import { Link } from "react-router-dom";
@@ -49,11 +49,9 @@ const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, r
     return (
         <>
         <Carousel activeIndex={index} onSelect={handleSelect} className="" indicators={false}>
-        <Col className="stat-block wide my-1" id="ascean-banner">
+        <Col className="stat-block wide my-1" id="request-banner">
         
-            
-        
-        <div className="creature-heading" id='banner-ascean-pic'>
+        <div className="creature-heading">
         <span id='banner-request-pic'>
             <Link to={`/${request?.userId?.username}`} ><img src={request.userId.photoUrl} alt="" id="request-pic" className='my-1'/></Link>
         </span>

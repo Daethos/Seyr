@@ -2,10 +2,11 @@ import './FriendsCarousel.css'
 import React, { useEffect, useState } from 'react';
 import * as friendAPI from '../../utils/friendApi';
 import Carousel from 'react-bootstrap/Carousel';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 import Loading from '../Loading/Loading';
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
-import Col from 'react-bootstrap/Col';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
 
@@ -52,43 +53,30 @@ const FriendsCarousel = ({ user, fren }: Props) => {
     );
   }
 
-//   <Carousel.Caption>
-//                     <h3>{friendProfile.username}</h3>
-//                     <p>{friendProfile.bio}</p>
-//                 </Carousel.Caption>
   return (
     <>
     {
         friendProfile
         ? 
-        <Carousel activeIndex={index} onSelect={handleSelect} className="" indicators={false}>
-           
-         
+        <Carousel activeIndex={index} onSelect={handleSelect} className="mx-5" indicators={false}>
         {
         asceanState.map((ascean: any) => {
             return (
                 
-                <Carousel.Item>
-                <Col className="stat-block wide my-1" id="ascean-banner">
-                    {/* <hr className="orange-border" /> */}
-                    
+                <Carousel.Item className="my-1 d-block w-100" id="profile-banner">
+                <Col className="stat-block wide" id="ascean-banner">
+                   
                     <span id='banner-profile-pic'>
-                    <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt="" id="nav-pic" className='my-1'/></Link>
+                        <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt="" id="nav-pic" className='my-1'/></Link>
                     </span>
                     
-                    
-                    <span id='banner-ascean-profile'>
-                    <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" className='my-1'/></Link>
-                    </span>
                     <div className="creature-heading" id='banner-ascean-pic'>
-                    <h1 className='text-danger' style={{ fontSize: '', color: '' }} id='ascean-name'>{ascean.name}</h1>
-                    <h2 className="text-white" id="ascean-bio">{ascean.description}</h2>
-                    
+                        <h1 className='text-danger' style={{ fontSize: '', color: '' }} id='ascean-name'>{ascean.name}</h1>
+                        <h2 className="text-white" id="ascean-bio">{ascean.description}</h2>
                     </div>
-                    
-                    <div className="top-stats">
-                    
-                    </div>
+                    <span id='banner-ascean-profile'>
+                        <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-banner-pic" className='my-1'/></Link>
+                    </span>
                 </Col>
                 </Carousel.Item>
             )

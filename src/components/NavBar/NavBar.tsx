@@ -10,7 +10,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as friendAPI from '../../utils/friendApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import FriendsCarousel from '../../components/FriendsCarousel/FriendsCarousel'
-import RequestsCard from '../../components/RequestsCard/RequestsCard'
+import RequestsCarousel from '../RequestsCarousel/RequestsCarousel'
 import { Nav } from 'react-bootstrap';
 import Carousel from 'react-bootstrap/Carousel';
 import Update from '../AsceanBuilder/Update';
@@ -154,7 +154,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
       {
       friendState.map((fren: any, index: any) => {
         return (
-          <Carousel.Item>
+          <Carousel.Item className="d-block w-100">
           <FriendsCarousel user={user} key={index} fren={fren}/>
           </Carousel.Item>
         )
@@ -171,13 +171,15 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
       {
       requestState.map((request: any, index: any) => {
           return (
-              <RequestsCard 
-              loggedUser={user}
-              request={request}
-              key={index}
-              acceptFriendRequest={acceptFriendRequest} 
-              declineFriendRequest={declineFriendRequest}
-            />
+            <Carousel.Item className="d-block w-100">
+              <RequestsCarousel 
+                loggedUser={user}
+                request={request}
+                key={index}
+                acceptFriendRequest={acceptFriendRequest} 
+                declineFriendRequest={declineFriendRequest}
+              />
+            </Carousel.Item>
           )
       })
       }
