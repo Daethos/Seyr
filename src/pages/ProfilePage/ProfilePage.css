@@ -5,6 +5,8 @@
 }
 #profile-pic {
     border-radius: 5px;
-    max-width: 25vw;
-    max-height: 25vh;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }

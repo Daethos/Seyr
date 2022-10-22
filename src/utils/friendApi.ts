@@ -73,3 +73,17 @@ export function getAllFriends(userID: any) {
         throw new Error(res.error);
     });
 }
+
+export function getOneFriend(friendID: any) {
+    // console.log('Getting Friends in API Utility', userID)
+    return fetch (`${BASE_URL}solo/${friendID}`, {
+        headers:  {
+            //'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+}

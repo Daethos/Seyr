@@ -66,8 +66,8 @@ const ProfilePage = ({ user }: ProfileProps) => {
         setLoading(true);
         try {
             const response = await friendAPI.getAllFriends(user._id)
-            console.log(response.data.friends, '<- Response Finding a Friend on a Profile')
-            setFriendState(response.data.friends)
+            console.log(response.data.user.friends, '<- Response Finding a Friend on a Profile')
+            setFriendState(response.data.user.friends)
             setLoading(false)
         } catch (err: any) {
             setLoading(false)
@@ -90,12 +90,12 @@ const ProfilePage = ({ user }: ProfileProps) => {
         <div className="section-left">
         <div className="creature-heading">
         <svg height="5" width="100%" className="tapered-rule my-3">
-        <polyline points="0,0 400,2.5 0,5"></polyline>
+        <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         <img src={profileUser.photoUrl} id="profile-pic" />
         </div> 
         <svg height="5" width="100%" className="tapered-rule">
-        <polyline points="0,0 400,2.5 0,5"></polyline>
+        <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         </div> 
         <div className="section-right">
@@ -120,7 +120,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
                 <h3 
                 className="my-3"
                 style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                >You're friends with {profileUser?.username}</h3>
+                >You're friends with {profileUser?.username} !</h3>
                 : <>
                     {
                     profileUser?.requests?.map((request: any) => { request.username.includes(user?.username) 
@@ -133,7 +133,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
                             <h3 
                             className="my-3"
                             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                            >Sent to {profileUser.username} !
+                            >Friend request sent to {profileUser.username} !
                             </h3>
                         :
                             friendRequest
@@ -141,20 +141,34 @@ const ProfilePage = ({ user }: ProfileProps) => {
                                 <h3 
                                 className="my-3"
                                 style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                                >Sent to {profileUser.username} !
+                                >Friend request sent to {profileUser.username} !
                                 </h3>
                             :
                                 <button 
                                 className="btn my-3"
                                 onClick={sendFriendRequest}
                                 style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                                >Friend {profileUser.username} ?
+                                >Send friend request to {profileUser.username} ?
                                 </button>
                     }
                 </>
                 }
                 </> 
-            : ''
+            : 
+                friendRequest
+                ?
+                    <h3 
+                    className="my-3"
+                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                    >Friend request sent to {profileUser.username} !
+                    </h3>
+                :
+                    <button 
+                    className="btn my-3"
+                    onClick={sendFriendRequest}
+                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                    >Send friend request to {profileUser.username} ?
+                    </button>
         }
 
         <hr className="orange-border bottom" />

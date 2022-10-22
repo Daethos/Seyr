@@ -6,7 +6,8 @@ module.exports = {
     accept,
     delete: decline,
     index,
-    requests
+    requests,
+    soloFriend
 }
 
 async function send(req, res) {
@@ -61,14 +62,92 @@ async function decline(req, res) {
     }
 }
 
+async function soloFriend(req, res) {
+    try {
+        const user = await User.findById(req.params.id)
+
+        const ascean = await Ascean.find({ user: user._id, visibility: 'public' })
+                                .populate("user")
+                                .populate("weapon_one")
+                                .populate("weapon_two")
+                                .populate("weapon_three")
+                                .populate("shield")
+                                .populate("helmet")
+                                .populate("chest")
+                                .populate("legs")
+                                .populate("ring_one")
+                                .populate("ring_two")
+                                .populate("amulet")
+                                .populate("trinket")
+                                .exec();
+        
+        // res.status(201).json({ data: user })
+
+        res.status(201).json({ data: {
+            user: user,
+            ascean: ascean,
+        }})
+
+    } catch (err) {
+        res.status(400).json({ err })
+    }
+}
+
 async function index(req, res) {
     try {
         const user = await User.findById(req.params.id)
                                 .populate('friends')
                                 .populate('friends.userId')
-                                .exec();
+                                .exec()
+        const asceans = await Promise.all(user.friends.map(async (friend) => {
+            //console.log(friend.userId._id, '<- Hello, fren in Controller')
+            let asceanFrens = []
+            const ascean = await Ascean.find({ user: friend.userId._id, visibility: 'public' })
+                                .populate("user")
+                                .populate("weapon_one")
+                                .populate("weapon_two")
+                                .populate("weapon_three")
+                                .populate("shield")
+                                .populate("helmet")
+                                .populate("chest")
+                                .populate("legs")
+                                .populate("ring_one")
+                                .populate("ring_two")
+                                .populate("amulet")
+                                .populate("trinket")
+                                .exec()
 
-        res.status(200).json({ data: user })
+            //console.log(ascean, '<- Hello, Ascean of Fren!')       
+            asceanFrens.push(ascean)     
+            console.log(ascean, '<- Hello, Ascean Frens!')       
+            return (
+                ascean
+            );
+        }))
+        const asceanFrens = await asceans
+        console.log(asceanFrens, '<- Are you here, asceans?')
+        // const ascean = await Ascean.find({ user: user._id, visibility: 'public' })
+        //                         .populate("user")
+        //                         .populate("weapon_one")
+        //                         .populate("weapon_two")
+        //                         .populate("weapon_three")
+        //                         .populate("shield")
+        //                         .populate("helmet")
+        //                         .populate("chest")
+        //                         .populate("legs")
+        //                         .populate("ring_one")
+        //                         .populate("ring_two")
+        //                         .populate("amulet")
+        //                         .populate("trinket")
+        //                         .exec();
+        
+        // res.status(201).json({ data: user })
+
+        res.status(201).json({ data: {
+            user: user,
+            asceans: asceans,
+          } })
+
     } catch (err) {
         res.status(400).json({ err })
     }

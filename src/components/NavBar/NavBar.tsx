@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import './NavBar.css'
 import { Link, NavLink } from 'react-router-dom';
+import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import userService from '../../utils/userService';
 import * as friendAPI from '../../utils/friendApi';
+import FriendsCarousel from '../../components/FriendsCarousel/FriendsCarousel'
+import RequestsCard from '../../components/RequestsCard/RequestsCard'
 import { Nav } from 'react-bootstrap';
+import Carousel from 'react-bootstrap/Carousel';
 
 interface NavProps {
     user: any;
@@ -16,7 +20,86 @@ interface NavProps {
 
 const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
 
+    const [loading, setLoading] = useState<boolean>(false);
+    const [friendRequest, setFriendRequest] = useState<boolean>(false)
+    const [friendDecline, setFriendDecline] = useState<boolean>(false)
+    const [friendState, setFriendState] = useState<any[]>([])
+    const [requestState, setRequestState] = useState<object[]>([])
 
+    const [index, setIndex] = useState(0);
+
+    const handleSelect = (selectedIndex: React.SetStateAction<number>, e: any) => {
+        setIndex(selectedIndex);
+    };
+
+    useEffect(() => {
+        friends();
+      }, [friendRequest])
+    
+      async function friends() {
+        setLoading(true);
+        try {
+            const response = await friendAPI.getAllFriends(user._id)
+            setLoading(false)
+            setFriendState(response.data.user.friends)
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, '<- Error Fetch Friends in Friend Card')
+        }
+      }
+
+      async function acceptFriendRequest(friend: object) {
+        setFriendRequest(false)
+        try {
+          console.log(friend, '<- Did you make it over to accept as a friend?')
+          const response = await friendAPI.friendAccept(user._id, friend)
+          console.log(response.data, '<- Newly Forged Friend')
+          console.log(response.you, '<- Checking you out to see your removed request')
+          setFriendRequest(true)
+        } catch (err: any) {
+            setFriendRequest(true)
+            console.log(err.message, '<- Error handling Friend Request')
+        }
+      }
+    
+      async function declineFriendRequest(friend: any) {
+        setFriendDecline(false)
+        console.log('Declining: ', friend.target.value,' in USER PROFILE!')
+        try {
+            const response = await friendAPI.friendDecline(user._id, friend.target.value)
+            console.log(response, '<- Response in Friend Decline')
+            setFriendDecline(true)
+            friendStatus();
+        } catch (err: any) {
+            setFriendDecline(true)
+            console.log(err.message, '<- Error handling Friend Decline')
+        }
+      }
+    
+      useEffect(() => {
+        friendStatus();
+      }, [friendDecline, friendRequest])
+    
+      async function friendStatus() {
+        setLoading(true);
+        try {
+          const response = await friendAPI.getAllRequests(user._id)
+          console.log(response.data.requests, '<- Finding out REques Frenship Status!')
+          setRequestState(response.data.requests)
+          setLoading(false);
+        } catch (err: any) {
+          setLoading(false);
+          console.log(err.message, '<- Error Finding Status')
+        }
+      }
+
+      if (loading) {
+        return (
+        <>
+            <Loading />
+        </>
+        );
+      }
 
     return (
 
@@ -51,6 +134,35 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
             : <Link to="/login" className="text-success btn btn-lg btn-outline-black">Log In</Link>
             }
             </span>
+            {
+        friendState
+        ? 
+        <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" indicators={false}>
+        {
+        friendState.map((fren: any) => {
+          return (
+            <Carousel.Item>
+            <FriendsCarousel user={user} key={user._id} fren={fren}/>
+            </Carousel.Item>
+          )
+        })
+        }
+        </Carousel>
+
+        : ''
+      }
+      {
+        requestState.length > 0
+        ? 
+        <RequestsCard 
+          loggedUser={user}
+          requestState={requestState}
+          acceptFriendRequest={acceptFriendRequest} 
+          declineFriendRequest={declineFriendRequest}
+
+        />
+        : <h5 className='text-info'> No New Friend Requests</h5>
+      }
         </Navbar.Collapse>
             </Container>
         </Navbar>

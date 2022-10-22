@@ -2,6 +2,7 @@ import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
+import Carousel from 'react-bootstrap/Carousel';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as friendAPI from '../../utils/friendApi';
 import FriendsCard from '../../components/FriendsCard/FriendsCard';
@@ -17,11 +18,18 @@ interface UserProps {
 const UserProfile = ({ loggedUser }: UserProps) => {
 
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
+  const [asceanFren, setAsceanFren] = useState<any>([])
+  const [completeFriend, setCompleteFriend] = useState<any>([])
   const [loading, setLoading] = useState<boolean>(false);
   const [friendRequest, setFriendRequest] = useState<boolean>(false)
   const [friendDecline, setFriendDecline] = useState<boolean>(false)
   const [friendState, setFriendState] = useState<any[]>([])
   const [requestState, setRequestState] = useState<object[]>([])
+  const [index, setIndex] = useState(0);
+
+  const handleSelect = (selectedIndex: React.SetStateAction<number>, e: any) => {
+    setIndex(selectedIndex);
+  };
 
   useEffect(() => {
     getAscean();
@@ -53,7 +61,10 @@ const UserProfile = ({ loggedUser }: UserProps) => {
     try {
         const response = await friendAPI.getAllFriends(loggedUser._id)
         setLoading(false)
-        setFriendState(response.data.friends)
+        setFriendState(response.data.user.friends)
+        //console.log(response.data, '<- All Your Frens!')
+        setAsceanFren(response.data.asceans)
+        setCompleteFriend(response.data)
     } catch (err: any) {
         setLoading(false)
         console.log(err.message, '<- Error Fetch Friends in Friend Card')
@@ -117,28 +128,6 @@ const UserProfile = ({ loggedUser }: UserProps) => {
   return (
 
     <Container>
-      <h3 className='text-white mt-5'>New Friend Requests!</h3>
-      {
-        requestState
-        ? 
-        <RequestsCard 
-          loggedUser={loggedUser}
-          requestState={requestState}
-          acceptFriendRequest={acceptFriendRequest} 
-          declineFriendRequest={declineFriendRequest}
-
-        />
-        : 'No Requests At This Time'
-      }
-
-      <h3 className='text-white'>Mutual Friends!</h3>
-      {
-        friendState
-        ? <FriendsCard friendState={friendState} />
-          // <FriendsCarousel user={loggedUser} friends={friendStatusMutual} />
-        : ''
-      }
-
       <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} key={loggedUser._id}  />
         {
           asceanVaEsai

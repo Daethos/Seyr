@@ -4,7 +4,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
-  overflow: auto;
+  overflow: scroll;
   /* justify-content: center; */
   font-family: 'Cinzel';
   -webkit-font-smoothing: antialiased;
