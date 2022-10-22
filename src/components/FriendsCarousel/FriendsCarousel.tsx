@@ -70,7 +70,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
                 
                 <Carousel.Item>
                 <Col className="stat-block wide my-1" id="ascean-banner">
-                    <hr className="orange-border" />
+                    {/* <hr className="orange-border" /> */}
                     <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}>
                     <span id='banner-profile-pic'><img src={friendProfile.photoUrl} alt="" id="nav-pic" className='my-1'/></span>
                     </Link>
