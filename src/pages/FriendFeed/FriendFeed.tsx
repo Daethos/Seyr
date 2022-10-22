@@ -17,7 +17,7 @@ interface FriendProps {
 }
 
 const FriendFeed = ({ loggedUser }: FriendProps) => {
-  const [asceans, setAsceans] = useState<any>([])
+  const [ascean, setAsceans] = useState<any>([])
   const [completeFriend, setCompleteFriend] = useState<any>([])
   const [friendState, setFriendState] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,6 +42,47 @@ const FriendFeed = ({ loggedUser }: FriendProps) => {
     }
   }
 
+  const [searchText, setSearchText] = useState<string>('');
+    const [allAscean, setAllAscean] = useState<any>(ascean);
+
+    async function filterAscean(results: any) {
+        console.log(results, '<- Results in filtering the Ascean')
+        console.log(results.length, '<- The amount of search results!')
+        let finalResults = [];
+            for (let i = 0; i < results.length; i++){
+                if (finalResults.length < ascean.length) {
+                        finalResults.push(results[i])
+                }        
+        }
+        setAllAscean(finalResults)
+    }
+
+    function displayResults() {
+        let views = [];
+        for (let i = 0; i < allAscean.length; i++) {
+            views.push(
+                <CommunityAscean ascean={allAscean[i]} key={allAscean[i]._id} />
+            )
+        }
+        return (views)
+    }
+
+    function handleChange(e: any) {
+        e.preventDefault()
+        setSearchText(e.target.value);
+    }
+
+    useEffect(() => {
+        setAllAscean([]);
+        if (searchText === '') {
+            setAllAscean([]);
+            return
+        }
+        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText))        
+        filterAscean(filteredResults)
+        console.log(searchText, '<- the changing search text')
+    }, [searchText, ascean])
+
   if (loading) {
     return (
     <>
@@ -53,10 +94,34 @@ const FriendFeed = ({ loggedUser }: FriendProps) => {
   return (
     <Container fluid>
       <Row className="justify-content-center my-5">
+        <Col md={{span: 8, offset: 2}} className="my-5">
+            <InputGroup className="bg-black">
+            <InputGroup.Text className="bg-black">
+            <img 
+                src={loggedUser.photoUrl} 
+                alt="User" 
+                style={{maxWidth: 5 + 'vw', maxHeight: 5 + 'vh'}}
+            />
+            </InputGroup.Text>
+            <Form.Control 
+                className="headerSearchInput bg-black text-white" 
+                placeholder="Names Are Case Sensitive, Beware!" 
+                type="text" value={searchText} 
+                onChange={handleChange}
+            />
+            </InputGroup>
+            </Col>
+            {
+                ascean.length > 0
+                ? <>{displayResults()}</>
+                : ''
+            }
+        </Row>
+      <Row className="justify-content-center my-5">
         {
-          asceans.map((ascean: any, index: any) => {
+          ascean.map((asc: any, index: any) => {
             return (
-              ascean.map((a: any, index: any) => 
+              asc.map((a: any, index: any) => 
               (
                 <CommunityAscean
                     ascean={a}
