@@ -173,7 +173,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
         {
             userProfile
             ? <>
-            <Update ascean={ascean} />
+            <Update ascean={ascean} NavBar={false} />
             <Delete ascean={ascean} deleteAscean={deleteAscean} />
             
             </>

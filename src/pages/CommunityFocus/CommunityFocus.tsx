@@ -1,5 +1,5 @@
 import './CommunityFocus.css'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -42,12 +42,8 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
         }
     }
 
-    useEffect(() => {
-        getAscean()
-    }, [])
-
-    async function getAscean() {
-        setLoading(true);
+   const getAscean = useCallback(async () => {
+    setLoading(true);
         try {
             const response = await communityAPI.getOneAscean(focusID);
             console.log(response, ' <- the response in getAscean')
@@ -58,7 +54,11 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
             setLoading(false)
             console.log(err.message);
         }
-    }
+   }, [focusID])
+
+    useEffect(() => {
+        getAscean()
+    }, [focusID, getAscean])
 
     if (loading) {
         return (

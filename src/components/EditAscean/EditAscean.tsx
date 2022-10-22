@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import * as asceanAPI from '../../utils/asceanApi';  
@@ -51,11 +51,9 @@ const EditAscean = ({ editAscean }: Props) => {
     const [kyosirOutput, setkyosirOutput] = useState<number>(8)
 
 
-    useEffect(() => {
-      getAscean();
-    }, [])
+    
 
-    async function getAscean() {
+    const getAscean = useCallback(async () => {
         setLoading(true);
         try {
             const response = await asceanAPI.getOneAscean(asceanID);
@@ -73,7 +71,12 @@ const EditAscean = ({ editAscean }: Props) => {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
             setLoading(false)
         }
-    }
+    }, [asceanID])
+
+    useEffect(() => {
+        getAscean();
+      }, [asceanID, getAscean])
+
     useEffect(() => {
         getAllEquipment();
     }, [])

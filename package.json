@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.186.0",
+    "@fortawesome/fontawesome-free": "^6.2.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -23,6 +24,7 @@
     "gh-pages": "^4.0.0",
     "jquery": "^3.6.1",
     "jsonwebtoken": "^8.5.1",
+    "mdb-react-ui-kit": "^4.2.0",
     "mongoose": "^6.6.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
