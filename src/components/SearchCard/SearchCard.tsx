@@ -64,7 +64,7 @@ const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
     </InputGroup.Text>
     <Form.Control 
         className="headerSearchInput bg-black text-white" 
-        placeholder="Names are case sensitive, beware!" 
+        placeholder="Names Are Case Sensitive, Beware!" 
         type="text" value={searchText} 
         onChange={handleChange}
     />

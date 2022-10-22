@@ -7,10 +7,9 @@ const Legs = require('./models/legs');
 const Rings = require('./models/ring');
 const Amulets = require('./models/amulet');
 const Trinkets = require('./models/trinket');
-const SNEED = process.env.SNEED;
 console.log('Are we feeding or are we seeding?')
 
-mongoose.connect(`mongodb+srv://${SNEED}@cluster0.ivsipz0.mongodb.net/seyr?retryWrites=true&w=majority`, 
+mongoose.connect(`mongodb+srv://@cluster0.ivsipz0.mongodb.net/seyr?retryWrites=true&w=majority`, 
     {
     useNewUrlParser: true, useUnifiedTopology: true })
         .then(() => {
