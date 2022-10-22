@@ -120,9 +120,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
                 <CommunityAscean
                     ascean={a}
                     key={a._id}
-                    communityFeed={true}
                     loggedUser={loggedUser}
-                    setAscean={setAscean}
                 />
         )})}
         </Row>

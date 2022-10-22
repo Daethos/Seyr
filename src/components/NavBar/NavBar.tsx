@@ -128,21 +128,16 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
                 <Nav.Link as={NavLink} to='/Rings' className="text-info btn btn-lg equipment-button">Rings</Nav.Link>
                 <Nav.Link as={NavLink} to='/Trinkets' className="text-info btn btn-lg equipment-button">Trinkets</Nav.Link>
             </NavDropdown>
-            <span className="logging-button">
-            {   user 
-            ? <Link to="" onClick={handleLogout} className="text-warning btn btn-lg btn-outline-black">Log Out</Link>
-            : <Link to="/login" className="text-success btn btn-lg btn-outline-black">Log In</Link>
-            }
-            </span>
+            
             {
         friendState
         ? 
         <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" indicators={false}>
         {
-        friendState.map((fren: any) => {
+        friendState.map((fren: any, index: any) => {
           return (
             <Carousel.Item>
-            <FriendsCarousel user={user} key={user._id} fren={fren}/>
+            <FriendsCarousel user={user} key={index} fren={fren}/>
             </Carousel.Item>
           )
         })
@@ -154,15 +149,29 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
       {
         requestState.length > 0
         ? 
-        <RequestsCard 
-          loggedUser={user}
-          requestState={requestState}
-          acceptFriendRequest={acceptFriendRequest} 
-          declineFriendRequest={declineFriendRequest}
-
-        />
-        : <h5 className='text-info'> No New Friend Requests</h5>
+        <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" indicators={false}>
+        {
+        requestState.map((request: any, index: any) => {
+            return (
+                <RequestsCard 
+                loggedUser={user}
+                request={request}
+                key={index}
+                acceptFriendRequest={acceptFriendRequest} 
+                declineFriendRequest={declineFriendRequest}
+              />
+            )
+        })
+        }
+       </Carousel>
+        : ''
       }
+      <span className="logging-button">
+            {   user 
+            ? <Link to="" onClick={handleLogout} className="text-warning btn btn-lg btn-outline-black">Log Out</Link>
+            : <Link to="/login" className="text-success btn btn-lg btn-outline-black">Log In</Link>
+            }
+            </span>
         </Navbar.Collapse>
             </Container>
         </Navbar>

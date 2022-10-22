@@ -13,6 +13,7 @@ import Loading from "../../components/Loading/Loading";
 import CommunityFeed from "../CommunityFeed/CommunityFeed";
 import CommunityFocus from "../CommunityFocus/CommunityFocus";
 import ProfilePage from "../ProfilePage/ProfilePage"
+import FriendFeed from "../FriendFeed/FriendFeed";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -67,6 +68,7 @@ function App() {
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/Friends" element={<FriendFeed loggedUser={user} />} />
         <Route path="/:username" element={<ProfilePage user={user} />} />
         <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>

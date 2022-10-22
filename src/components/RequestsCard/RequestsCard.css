@@ -1,0 +1,16 @@
+#banner-request-accept {
+    float: left;
+    margin-top: 4%;
+    margin-left: 15%;
+}
+
+#banner-request-decline {
+    float: right;
+    margin-top: 4%;
+    margin-right: 15%;
+}
+
+#request-pic {
+    max-width: 12%;
+    max-height: 12%;
+}

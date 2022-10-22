@@ -12,14 +12,10 @@ import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/As
 
 interface Props {
     ascean?: any;
-    setAscean?: React.Dispatch<any>;
-    userProfile?: boolean;
-    communityFeed?: boolean;
     loggedUser?: any;
-    profilePage?: boolean;
 }
 
-const CommunityAscean = ({ ascean, setAscean, userProfile, communityFeed, loggedUser, profilePage }: Props) => {
+const CommunityAscean = ({ ascean, loggedUser }: Props) => {
 
   return (
     <Col className="stat-block wide" >

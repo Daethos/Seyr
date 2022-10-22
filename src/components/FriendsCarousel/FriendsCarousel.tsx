@@ -15,7 +15,7 @@ interface Props {
 }
 
 const FriendsCarousel = ({ user, fren }: Props) => {
-    console.log(fren, '<- What are you, complete friend?')
+    //console.log(fren, '<- What are you, complete friend?')
     const [index, setIndex] = useState(0);
     const [loading, setLoading] = useState<boolean>(false);
     const [asceanState, setAsceanState] = useState<any>([])
@@ -35,7 +35,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
         const response = await friendAPI.getOneFriend(fren?.userId._id)
         setLoading(false)
         setAsceanState(response.data.user.friends)
-        console.log(response.data, '<- Your specific friend!')
+        //console.log(response.data, '<- Your specific friend!')
         setAsceanState(response.data.ascean)
         setFriendProfile(response.data.user)
     } catch (err: any) {
@@ -71,19 +71,18 @@ const FriendsCarousel = ({ user, fren }: Props) => {
                 <Carousel.Item>
                 <Col className="stat-block wide my-1" id="ascean-banner">
                     {/* <hr className="orange-border" /> */}
-                    <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}>
-                    <span id='banner-profile-pic'><img src={friendProfile.photoUrl} alt="" id="nav-pic" className='my-1'/></span>
-                    </Link>
+                    
+                    <span id='banner-profile-pic'>
+                    <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt="" id="nav-pic" className='my-1'/></Link>
+                    </span>
+                    
                     
                     <span id='banner-ascean-profile'>
-                    <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" className='my-1'/>
+                    <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" className='my-1'/></Link>
                     </span>
                     <div className="creature-heading" id='banner-ascean-pic'>
-                    
-                        {/* <h1>{friendProfile.username}</h1> */}
-                        
-                    <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><h1>{ascean.name}</h1></Link>
-                    <h2 className="text-white">{ascean.description}</h2>
+                    <h1 className='text-danger' style={{ fontSize: '', color: '' }} id='ascean-name'>{ascean.name}</h1>
+                    <h2 className="text-white" id="ascean-bio">{ascean.description}</h2>
                     
                     </div>
                     
