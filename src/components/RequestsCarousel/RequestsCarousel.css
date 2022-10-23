@@ -1,6 +1,5 @@
 #request-banner {
     border-radius: 10px;
-    width: 25%;
     height: 100px;
     background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100);
 }
@@ -8,16 +7,17 @@
 #banner-request-accept {
     float: left;
     margin-top: 4%;
-    margin-left: 15%;
+    margin-left: 10%;
 }
 
 #banner-request-decline {
     float: right;
     margin-top: 4%;
-    margin-right: 15%;
+    margin-right: 20%;
 }
 
 #request-pic {
-    max-width: 12%;
-    max-height: 12%;
+    max-width: 100%;
+    max-height: 100%;
 }
+

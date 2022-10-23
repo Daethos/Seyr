@@ -123,7 +123,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
 
   return (
 
-      <Navbar className="" expand="md" id="navbar">
+      <Navbar className="" expand="xxl" id="navbar">
           <Container fluid>
           <Link to="/" className="nav-item">
               <img src={user?.photoUrl} alt={user?.photoUrl} id="nav-pic" />

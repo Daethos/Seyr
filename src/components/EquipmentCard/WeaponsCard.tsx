@@ -111,18 +111,18 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
         userProfile
         ? 
         <>
-        <OverlayTrigger trigger="click" placement="right" overlay={weaponOnePopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponOnePopover}>
                 <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{weapon_one?.name}</Button>
         </OverlayTrigger>
-        <OverlayTrigger trigger="click" placement="right" overlay={weaponTwoPopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponTwoPopover}>
                 <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{weapon_two?.name}</Button>
         </OverlayTrigger>
-        <OverlayTrigger trigger="click" placement="right" overlay={weaponThreePopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponThreePopover}>
                 <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{weapon_three?.name}</Button>
         </OverlayTrigger>
         </>
         : 
-            <OverlayTrigger trigger="click" placement="right" overlay={weaponPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponPopover}>
                 <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{weapon?.name}</Button>
             </OverlayTrigger>
     } 

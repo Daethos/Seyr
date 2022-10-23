@@ -76,11 +76,11 @@ const NavBarRequests = ({ user }: Props) => {
     {
       requestState.length > 0
       ? 
-      <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" indicators={false}>
+      <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover req-car" indicators={false}>
       {
       requestState.map((request: any, index: any) => {
           return (
-            <Carousel.Item className="d-block w-100">
+            <Carousel.Item className="d-block w-100" id="">
               <RequestsCarousel 
                 loggedUser={user}
                 request={request}

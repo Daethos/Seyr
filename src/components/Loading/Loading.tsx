@@ -2,7 +2,7 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Spinner from 'react-bootstrap/Spinner';
 import Col from 'react-bootstrap/Col'
 import './Loading.css';
-import { Row } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 
 interface Props {
     NavBar?: boolean
@@ -10,6 +10,7 @@ interface Props {
 export default function Loading({ NavBar }: Props) {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
+        <Container>
         <Row className="justify-content-center my-5">
             {
                 NavBar
@@ -161,5 +162,6 @@ export default function Loading({ NavBar }: Props) {
             }
         
         </Row>
+        </Container>
     );
 }

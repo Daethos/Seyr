@@ -35,7 +35,7 @@ const ShieldsCard = ({ shield, index, userProfile }: ShieldProps) => {
         </Popover>
     )
   return (
-    <OverlayTrigger trigger="click" placement="right" overlay={shieldPopover}>
+    <OverlayTrigger trigger="click" placement="auto-start" overlay={shieldPopover}>
         <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{shield.name}</Button>
     </OverlayTrigger>
   )

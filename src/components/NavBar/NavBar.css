@@ -9,6 +9,33 @@
     max-width: 6.5vw;
     max-height: 6.5vh;
 }
+@media screen and (max-width: 675px) {
+    #request-banner, #profile-banner,
+    .req-car {
+        min-width: 280px;
+        
+    }
+    #request-banner, #profile-banner,
+    .req-car {
+        width: 100%;
+        
+    }
+
+}
+
+/* @media screen and (min-width: 676px) {
+    #request-banner, #profile-banner,
+    .req-car {
+        min-width: 280px;
+        
+    }
+    #request-banner,
+    .req-car {
+        width: 100%;
+        
+    }
+
+} */
 
 .links {
     font-weight: 900;

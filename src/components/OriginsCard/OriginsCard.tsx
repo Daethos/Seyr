@@ -25,7 +25,7 @@ const OriginsCard = ({ origin }: OriginProps) => {
         </Popover>
     )
   return (
-        <OverlayTrigger trigger="click" placement="right" overlay={originPopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={originPopover}>
             <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{origin.name}</Button>
         </OverlayTrigger>
   )

@@ -35,7 +35,7 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
         </Popover>
     )
   return (
-    <OverlayTrigger trigger="click" placement="right" overlay={trinketPopover}>
+    <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
         <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{trinket.name}</Button>
     </OverlayTrigger>
   )

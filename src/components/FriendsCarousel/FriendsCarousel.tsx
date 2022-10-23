@@ -63,7 +63,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
         asceanState.map((ascean: any) => {
             return (
                 
-                <Carousel.Item className="my-1 d-block w-100" id="profile-banner">
+                <Carousel.Item className="my-1 d-block w-100 justify content center" id="profile-banner">
                 <Col className="stat-block wide" id="ascean-banner">
                    
                     <span id='banner-profile-pic'>

@@ -112,7 +112,7 @@ const UserProfile = ({ loggedUser }: UserProps) => {
       const response = await friendAPI.getAllRequests(loggedUser._id)
       console.log(response.data.requests, '<- Finding out REques Frenship Status!')
       setRequestState(response.data.requests)
-      setLoading(false);
+      //setLoading(false);
     } catch (err: any) {
       setLoading(false);
       console.log(err.message, '<- Error Finding Status')

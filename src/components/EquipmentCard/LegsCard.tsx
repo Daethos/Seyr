@@ -35,7 +35,7 @@ const LegsCard = ({ leg, index, userProfile }: LegProps) => {
         </Popover>
     )
   return (
-    <OverlayTrigger trigger="click" placement="right" overlay={legPopover}>
+    <OverlayTrigger trigger="click" placement="auto-start" overlay={legPopover}>
         <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{leg.name}</Button>
     </OverlayTrigger>
   )

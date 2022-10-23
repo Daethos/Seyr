@@ -85,15 +85,15 @@ const RingsCard = ({ ring, index, ring_one, ring_two, userProfile }: RingProps) 
         userProfile
         ?
         <>
-        <OverlayTrigger trigger="click" placement="right" overlay={ringOnePopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={ringOnePopover}>
             <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{ring_one.name}</Button>
         </OverlayTrigger>
-        <OverlayTrigger trigger="click" placement="right" overlay={ringTwoPopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={ringTwoPopover}>
             <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{ring_two.name}</Button>
         </OverlayTrigger>
         </>
         :
-        <OverlayTrigger trigger="click" placement="right" overlay={ringPopover}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={ringPopover}>
             <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{ring.name}</Button>
         </OverlayTrigger>
     }

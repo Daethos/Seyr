@@ -48,10 +48,8 @@ const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, r
 
     return (
         <>
-        <Carousel activeIndex={index} onSelect={handleSelect} className="" indicators={false}>
-        <Col className="stat-block wide my-1" id="request-banner">
         
-        <div className="creature-heading">
+        <Col className="stat-block wide d-block w-100 my-1" id="request-banner">
         <span id='banner-request-pic'>
             <Link to={`/${request?.userId?.username}`} ><img src={request.userId.photoUrl} alt="" id="request-pic" className='my-1'/></Link>
         </span>
@@ -59,17 +57,14 @@ const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, r
             <h2 className="text-white" id="ascean-bio">{request.userId.bio}</h2> */}
         <span id='banner-request-accept'>
         <Form onSubmit={handleSubmit}>
-            <Button variant="outline-success" size="lg" style={{ textDecoration: 'none' }} className="" value={requestState} type="submit" onClick={acceptFriendRequest}>Accept</Button>
+            <Button variant="outline-success" style={{ textDecoration: 'none' }} className="btn-outline-black" value={requestState} type="submit" onClick={acceptFriendRequest}>Accept</Button>
         </Form>
         </span>
         
         <span id='banner-request-decline'>
-            <Button variant="outline-warning" size="lg" value={request._id} type="submit" onClick={declineFriendRequest}>Decline</Button>
+            <Button variant="outline-warning" value={request._id} type="submit" onClick={declineFriendRequest}>Decline</Button>
         </span>
-        </div>
-                
         </Col>
-        </Carousel>
         </>
     )
 }
