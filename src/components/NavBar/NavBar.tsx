@@ -14,6 +14,8 @@ import RequestsCarousel from '../RequestsCarousel/RequestsCarousel'
 import { Nav } from 'react-bootstrap';
 import Carousel from 'react-bootstrap/Carousel';
 import Update from '../AsceanBuilder/Update';
+import NavBarFriends from '../NavBarComponents/NavBarFriends';
+import NavBarRequests from '../NavBarComponents/NavBarRequests';
 
 interface NavProps {
     user: any;
@@ -53,13 +55,12 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
 
   useEffect(() => {
       friends();
-    }, [friendRequest])
+    }, [])
   
   async function friends() {
     setLoading(true);
     try {
         const response = await friendAPI.getAllFriends(user._id)
-        setLoading(false)
         setFriendState(response.data.user.friends)
     } catch (err: any) {
         setLoading(false)
@@ -115,7 +116,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
   if (loading) {
     return (
     <>
-        <Loading />
+        <Loading NavBar={true} />
     </>
     );
   }
@@ -147,45 +148,9 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
               <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Friends</Nav.Link>
           </NavDropdown>
           &nbsp;&nbsp;
-          {
-      friendState
-      ? 
-      <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" indicators={false}>
-      {
-      friendState.map((fren: any, index: any) => {
-        return (
-          <Carousel.Item className="d-block w-100">
-          <FriendsCarousel user={user} key={index} fren={fren}/>
-          </Carousel.Item>
-        )
-      })
-      }
-      </Carousel>
+          <NavBarFriends user={user} />
+          <NavBarRequests user={user} />
 
-      : ''
-    }
-    {
-      requestState.length > 0
-      ? 
-      <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" indicators={false}>
-      {
-      requestState.map((request: any, index: any) => {
-          return (
-            <Carousel.Item className="d-block w-100">
-              <RequestsCarousel 
-                loggedUser={user}
-                request={request}
-                key={index}
-                acceptFriendRequest={acceptFriendRequest} 
-                declineFriendRequest={declineFriendRequest}
-              />
-            </Carousel.Item>
-          )
-      })
-      }
-      </Carousel>
-      : ''
-    }
     <span className="logging-button">
           {   user 
           ? <Link to="" onClick={handleLogout} className="text-warning btn btn-lg btn-outline-black">Log Out</Link>

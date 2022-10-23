@@ -36,11 +36,13 @@ const UserProfile = ({ loggedUser }: UserProps) => {
   }, [])
 
   async function getAscean() {
+    setLoading(true)
     try {
       const response = await asceanAPI.getAllAscean();
       console.log(response.data, '<- the response in Get All Ascean');
       setAsceanVaEsai([...response.data.reverse()])
     } catch (err) {
+      setLoading(false)
       console.log(err);
     }
   }
@@ -60,11 +62,11 @@ const UserProfile = ({ loggedUser }: UserProps) => {
     setLoading(true);
     try {
         const response = await friendAPI.getAllFriends(loggedUser._id)
-        setLoading(false)
         setFriendState(response.data.user.friends)
         //console.log(response.data, '<- All Your Frens!')
         setAsceanFren(response.data.asceans)
         setCompleteFriend(response.data)
+        //setLoading(false)
     } catch (err: any) {
         setLoading(false)
         console.log(err.message, '<- Error Fetch Friends in Friend Card')
