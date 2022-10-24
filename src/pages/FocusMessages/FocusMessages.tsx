@@ -78,34 +78,10 @@ const FocusMessages = ({ user }: Props) => {
     }
   }
 
-//   function handleChange(e: { target: { name: any; value: any; }; }) {
-//     console.log('Name:', e.target.name, 'Value:', e.target.value)
-//     setMessageDraft({
-//         ...messageDraft,
-//         [e.target.name]: e.target.value,
-//     })
-// }
-
-// async function handleSubmit(e: any) {
-//   e.preventDefault(); // this stop the browser from submitting the form!
-//   console.log(messageDraft, '<- New Message Being Created!')
-//   setLoading(true)
-//   try {
-//     const response = await messageAPI.createMessage(user._id, friendProfile._id, messageDraft);
-//     console.log(response, '<- Response creating message')
-//     setMessaging(true)
-//     setMessageDraft({message: ''})
-//     setLoading(false)
-//   } catch (err: any) {
-//     setLoading(false)
-//     console.log(err.message, '<- Error Creating Message');
-//   }
-// }
-
   if (loading) {
       return (
       <>
-          <Loading Chat={true} />
+          <Loading Messages={true} />
       </>
       );
   }

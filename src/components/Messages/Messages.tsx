@@ -149,7 +149,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
     if (loading) {
         return (
         <>
-            <Loading Messages={true} />
+            <Loading Chat={true} />
         </>
         );
     }
