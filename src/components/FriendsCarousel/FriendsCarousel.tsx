@@ -67,7 +67,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
                 <Col className="stat-block wide" id="ascean-banner">
                    
                     <span id='banner-profile-pic'>
-                        <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt="" id="nav-pic" className='my-1'/></Link>
+                        <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt={friendProfile.username} id="nav-pic" className='my-1'/></Link>
                     </span>
                     
                     <div className="creature-heading" id='banner-ascean-pic'>
@@ -75,7 +75,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
                         <h2 className="text-white" id="ascean-bio">{ascean.description}</h2>
                     </div>
                     <span id='banner-ascean-profile'>
-                        <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-banner-pic" className='my-1'/></Link>
+                        <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ' ' + ascean.sex} id="ascean-banner-pic" className='my-1'/></Link>
                     </span>
                 </Col>
                 </Carousel.Item>

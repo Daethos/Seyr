@@ -21,23 +21,23 @@
         width: 100%;
         
     }
-
-}
-
-/* @media screen and (min-width: 676px) {
-    #request-banner, #profile-banner,
-    .req-car {
-        min-width: 280px;
-        
-    }
-    #request-banner,
-    .req-car {
+    #friend-carousel {
+        height: 50%;
         width: 100%;
-        
     }
-
-} */
-
+    /* #banner-ascean-pic {
+        width: 50%;
+    } */
+    #ascean-bio {
+        font-size: 10px;
+    }
+    .link-header {
+        font-size: 12px;
+    }
+}
+.logging-button {
+    float: right
+}
 .links {
     font-weight: 900;
 }
@@ -57,12 +57,3 @@
 .equipment-button {
     margin-top: 5px;
 }
-/* .logging-button {
-    float: right;
-    
-} */
-
-/* .nav-carousel {
-    max-height: 50%;
-    max-width: 100%;
-} */

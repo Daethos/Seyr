@@ -43,9 +43,9 @@ async function friends() {
   return (
     <>
     {
-      friendState
+      friendState.length > 0
       ? 
-      <Carousel activeIndex={index} onSelect={handleSelect} className="nav-carousel carousel-fade hover" style={{ maxWidth: 100 + '%' }} indicators={false}>
+      <Carousel activeIndex={index} onSelect={handleSelect} id="friend-carousel" className="nav-carousel carousel-fade hover" style={{ maxWidth: 100 + '%' }} indicators={false}>
       {
       friendState.map((fren: any, index: any) => {
         return (

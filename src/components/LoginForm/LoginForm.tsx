@@ -17,7 +17,6 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
     email: "",
     password: "",
   });
-  const BUCKET_START = 'https://collectionbucketman.s3.amazonaws.com/dungeons/';
   const navigate = useNavigate();
 
   function handleChange(e: { target: { name: any; value: any; }; }) {
@@ -33,9 +32,11 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
     try {
       await userService.login(state);
       // Route to wherever you want!
+      console.log('Did we log in?')
       handleSignUpOrLogin();
       navigate("/");
     } catch (err: any) {
+      console.log('Did we fail log in?')
       // Invalid user data (probably duplicate email)
       // this is from the throw block in the userService.login first then function
       setError(err.message);

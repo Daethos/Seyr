@@ -137,20 +137,23 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
           </Link>
           <Navbar.Toggle type="button" aria-controls="basic-navbar-nav" className="" />
           <Navbar.Collapse id="basic-navbar-nav" className="links">
-          &nbsp;&nbsp;
-          <NavDropdown title="Characters" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
-              <Nav.Link as={NavLink} to='/Ascean' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg btn-outline-black">Create Ascean</Nav.Link>
+          
+          <NavDropdown title="Characters" className="text-info btn btn-lg btn-outline-black link-header" id="basic-nav-dropdown">
+              <Nav.Link as={NavLink} to='/Ascean' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg btn-outline-black">Create</Nav.Link>
               <ul>
-              <NavDropdown title="Update" className="text-info btn btn-lg btn-outline-black" id="submenu-nav-dropdown">
-                {asceanVaEsai.map((ascean: any, index: number) => (<Nav.Link as={NavLink} to={'/edit/' + ascean._id} key={ascean._id} className='text-info btn btn-lg btn-outline-black mb-1'>{ascean.name}</Nav.Link>))}
+              <NavDropdown title="Update" className="text-info btn btn-lg btn-outline-black" id="submenu-nav-dropdown" style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px', marginLeft: -15 + 'px' }}>
+                {asceanVaEsai.map((ascean: any, index: number) => 
+                  (<Nav.Link as={NavLink} to={'/edit/' + ascean._id} key={index} 
+                    className='text-info btn btn-lg btn-outline-black mb-1'
+                    
+                  >
+                    {ascean.name}
+                  </Nav.Link>))}
               </NavDropdown>
               </ul>
           </NavDropdown>
-          {/* &nbsp;&nbsp;
-          <Link to="/Ascean" className="text-info btn btn-lg btn-outline-black">New Ascean</Link> */}
-          &nbsp;&nbsp;
-          <NavDropdown title="Friends" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
-          <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Feed</Nav.Link>
+          <NavDropdown title="Social" className="text-info btn btn-lg btn-outline-black link-header" id="basic-nav-dropdown">
+          {/* <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Feed</Nav.Link> */}
               {/* <Nav.Link as={NavLink} to='/Forums' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Forums</Nav.Link> */}
               <Nav.Link style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} 
               className="text-info btn btn-lg btn-outline-black"><button onClick={handleShow} className="text-info btn btn-lg btn-outline-black">Messages</button>
@@ -172,23 +175,30 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
             }
             </Offcanvas.Body>
         </Offcanvas></Nav.Link>
-          </NavDropdown>
-          &nbsp;&nbsp;
-          <NavDropdown title="Feed" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
+        <ul>
+        <NavDropdown title="Feed" className="text-info btn btn-lg btn-outline-black link-header" id="basic-nav-dropdown">
               <Nav.Link as={NavLink} to='/CommunityFeed' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Community</Nav.Link>
               {/* <Nav.Link as={NavLink} to='/Forums' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Forums</Nav.Link> */}
               <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Friends</Nav.Link>
           </NavDropdown>
-          &nbsp;&nbsp;
-          <NavBarFriends user={user} />
-          <NavBarRequests user={user} />
-
-    <span className="logging-button">
+        </ul>
+          </NavDropdown>
+          
+          {/* <NavDropdown title="Feed" className="text-info btn btn-lg btn-outline-black link-header" id="basic-nav-dropdown">
+              <Nav.Link as={NavLink} to='/CommunityFeed' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Community</Nav.Link>
+              
+              <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Friends</Nav.Link>
+          </NavDropdown> */}
+          <span className="logging-button">
           {   user 
-          ? <Link to="" onClick={handleLogout} className="text-warning btn btn-lg btn-outline-black">Log Out</Link>
+          ? <Link to="" onClick={handleLogout} className="text-warning btn btn-lg btn-outline-black link-header">Log Out</Link>
           : <Link to="/login" className="text-success btn btn-lg btn-outline-black">Log In</Link>
           }
           </span>
+          <NavBarFriends user={user} />
+          <NavBarRequests user={user} />
+
+          
       </Navbar.Collapse>
           </Container>
       </Navbar>

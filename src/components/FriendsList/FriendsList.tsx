@@ -9,15 +9,28 @@ interface Props {
 
 const FriendsList = ({ user, friend }: Props) => {
 
-
-
     return (
 
         <div className="friend-block mb-2">
         <div className="actions">
-            
             <Link to={'/Messages/' + friend.userId._id} className='btn'>
-            <span id="friend-pic"><img src={friend.userId.photoUrl} alt={friend.username} style={{ maxWidth: 10 + '%', textDecoration: 'none' }} /></span> <h3 style={{ fontWeight: 500, fontSize: 25 + 'px' }}>{friend.username}</h3>
+            <span id="friend-pic"><h3 style={{ fontWeight: 500, fontSize: 25 + 'px' }}>
+            <img 
+                    src={friend.userId.photoUrl} 
+                    alt={friend.username} 
+                    style={{ 
+                        maxWidth: 20 + '%', 
+                        textDecoration: 'none', 
+                        borderRadius: 50 + '%', 
+                        marginLeft: -15 + 'px',
+                        marginRight: 50 + 'px' 
+                    }} 
+                    className=""
+                />
+                {friend.username}</h3>
+                
+            </span> 
+            
         </Link>
         </div>
         </div>

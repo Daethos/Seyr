@@ -59,8 +59,8 @@ async function getPersonal(req, res) {
         const friend = await User.findById(req.params.friendID)
                                     // .populate('messages')
 
-        console.log(user, 'User in Personal Controller');
-        console.log(friend, 'Friend in Personal Controller');
+        // console.log(user, 'User in Personal Controller');
+        // console.log(friend, 'Friend in Personal Controller');
 
         res.status(200).json(
             { data: {

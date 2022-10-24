@@ -1,5 +1,6 @@
 #friend-pic {
     float: left;
+    border-radius: 50%;
 }
 .friend-block {
     width: 100%;

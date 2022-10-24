@@ -21,12 +21,12 @@ const FormMessage = ({ user, friendProfile, friendID, handleChange, handleSubmit
     return (
         <>
         
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} id="chat-form">
         <InputGroup className="mt-1" id="chat-input" size="lg">
             <Form.Control
             className='stat-block wide'
             name='message'
-            placeholder='Warning! There is No Profanity Filter!'
+            placeholder={'Text ' + friendProfile.username.charAt(0).toUpperCase() + friendProfile.username.slice(1) + '!'}
             aria-label="Large"
             value={messageDraft.message}
             onChange={handleChange}
