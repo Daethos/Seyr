@@ -274,47 +274,47 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             style={{marginLeft: -50 + 'px', marginRight: 10 + 'px'}}
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
             className="my-4">
-            <OverlayTrigger trigger="click" placement="right" overlay={weaponOnePopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponOnePopover}>
             <img src={weapon_one?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
-            <OverlayTrigger trigger="click" placement="right" overlay={weaponTwoPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponTwoPopover}>
             <img src={weapon_two?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
-            <OverlayTrigger trigger="click" placement="right" overlay={weaponThreePopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponThreePopover}>
             <img src={weapon_three?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
-            <OverlayTrigger trigger="click" placement="right" overlay={shieldPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={shieldPopover}>
             <img src={shield?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
-            <OverlayTrigger trigger="click" placement="top" overlay={helmetPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={helmetPopover}>
             <img src={helmet?.imgURL} className="m-3 eqp-popover" />
             </OverlayTrigger>
             
-            <OverlayTrigger trigger="click" placement="right" overlay={chestPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={chestPopover}>
             <img src={chest?.imgURL} className="m-3 eqp-popover" />
             </OverlayTrigger>
             
-            <OverlayTrigger trigger="click" placement="bottom" overlay={legsPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={legsPopover}>
             <img src={legs?.imgURL} className="m-3 eqp-popover" />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
-            <OverlayTrigger trigger="click" placement="left" overlay={amuletPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={amuletPopover}>
             <img src={amulet?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
             
-            <OverlayTrigger trigger="click" placement="left" overlay={ringOnePopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={ringOnePopover}>
             <img src={ring_one?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
-            <OverlayTrigger trigger="click" placement="left" overlay={ringTwoPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={ringTwoPopover}>
             <img src={ring_two?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
             
-            <OverlayTrigger trigger="click" placement="left" overlay={trinketPopover}>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
             <img src={trinket?.imgURL} className="m-2 eqp-popover" />
             </OverlayTrigger>
             </Col>

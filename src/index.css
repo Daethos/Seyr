@@ -12,7 +12,7 @@ html, body {
 }
 
 #community-pic{
-  border-radius: 5px;
+  border-radius: 50%;
   max-width: 5vw;
   max-height: 5vh;
   margin-right: 1.5vw;

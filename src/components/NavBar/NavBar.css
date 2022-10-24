@@ -8,6 +8,7 @@
 #nav-pic {
     max-width: 6.5vw;
     max-height: 6.5vh;
+    border-radius: 50%;
 }
 @media screen and (max-width: 675px) {
     #request-banner, #profile-banner,

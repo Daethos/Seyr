@@ -15,11 +15,12 @@ import Sex from '../AsceanBuilder/Sex';
 
 interface AsceanProps {
     loggedUser: any;
+    createSuccess: boolean;
     setUser: React.Dispatch<any>;
     handleAsceanCreate: (newAscean: Object) => Promise<void>;
 }
 
-const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => {
+const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: AsceanProps) => {
 
     const [equipment, setEquipment] = useState<object[]>([]);
     const [weapons, setWeapons] = useState<object[]>([]);
@@ -240,11 +241,20 @@ const NewAscean = ({ loggedUser, setUser, handleAsceanCreate }: AsceanProps) => 
             </div>
             </div>
             </div>
-            <button 
+            {
+                createSuccess
+                ? <button 
+                className="btn mt-4" 
+                value={asceanState} 
+                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textDecoration: 'none' }}
+                type="submit" disabled>Created {asceanState.name}!</button>
+                : <button 
                 className="btn mt-4" 
                 value={asceanState} 
                 style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
                 type="submit">Create Ascean</button>
+            }
+            
 
             <hr className="orange-border bottom" />
         </Form>

@@ -21,6 +21,7 @@ function App() {
   const [user, setUser] = useState(userService.getUser());
   const [loading, setLoading] = useState<boolean>(false);
   const [ascean, setAscean] = useState<object[]>([])
+  const [createSuccess, setCreateSuccess] = useState<boolean>(false)
 
 
   function handleSignUpOrLogin() {
@@ -38,6 +39,7 @@ function App() {
         const response = await asceanAPI.create(newAscean);
         console.log(response, '<- Response in handleAsceanCreate');
         setAscean([response.data, ...ascean]);
+        setCreateSuccess(true)
     } catch (err) {
         console.log(err, '<- This is the error in handleAsceanCreate')
     }
@@ -66,7 +68,7 @@ function App() {
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} />} />
-        <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />

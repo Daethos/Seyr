@@ -41,6 +41,7 @@ const UserProfile = ({ loggedUser }: UserProps) => {
       const response = await asceanAPI.getAllAscean();
       console.log(response.data, '<- the response in Get All Ascean');
       setAsceanVaEsai([...response.data.reverse()])
+      setLoading(false)
     } catch (err) {
       setLoading(false)
       console.log(err);
