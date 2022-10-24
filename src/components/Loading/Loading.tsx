@@ -6,8 +6,9 @@ import { Container, Row } from 'react-bootstrap';
 
 interface Props {
     NavBar?: boolean
+    Messages?: boolean
 }
-export default function Loading({ NavBar }: Props) {
+export default function Loading({ NavBar, Messages }: Props) {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
         <Container>
@@ -15,7 +16,90 @@ export default function Loading({ NavBar }: Props) {
             {
                 NavBar
                 ? <Spinner animation="border" variant="warning" id="loading-spinner-nav" />
-                : <Col className="stat-block wide">
+                : Messages ?
+<Col className="stat-block wide">
+                <hr className="orange-border" />
+                <div className="section-left">
+                <div className="actions">
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={7} /> <Placeholder bg="danger" xs={4} /> 
+                          <Placeholder bg="danger" xs={3} /> <Placeholder xs={6} bg="danger" />{' '}
+                        <Placeholder xs={4} bg="danger" />  <Placeholder bg="danger" xs={2} /> <Placeholder xs={4} bg="danger" />
+                    </Placeholder><br /><br /><br /><br />
+
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} />{' '}
+                        <Placeholder xs={2} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" />
+                        {' '}
+                    </Placeholder><br /><br /><br /><br />
+                
+                
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={5} /> <Placeholder bg="danger" xs={2} /> <Placeholder bg="danger" xs={3} />{' '}
+                        <Placeholder xs={6} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" />
+                        
+                    </Placeholder><br /><br /><br /><br />
+
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} />{' '}
+                          <Placeholder bg="danger" xs={4} /> <Placeholder xs={3} bg="danger" />
+                        {' '}  <Placeholder bg="danger" xs={5} /> <Placeholder bg="danger" xs={6} />
+                    </Placeholder><br /><br /><br /><br />
+                    
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={2} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} />{' '}
+                        <Placeholder xs={2} bg="danger" /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" />
+                        <Placeholder bg="danger" xs={5} />{' '}<Placeholder xs={5} bg="danger" />
+                    </Placeholder><br /><br /><br /><br />
+    
+                </div>
+                </div>
+    
+    
+                <div className="section-right">
+                <div className="actions">
+                
+                </div>
+                <div className="actions">
+                <div className='property-block'><br /><br />
+                <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" /> <Placeholder bg="danger" xs={3} />{' '}
+                        <Placeholder xs={2} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder xs={5} bg="danger" />{' '}
+                        <Placeholder bg="danger" xs={2} />
+                    </Placeholder><br /><br /><br />
+                
+                <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" />
+                         <Placeholder bg="danger" xs={3} />{' '}
+                        <Placeholder xs={2} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" />{' '}
+                        
+                    </Placeholder><br /><br /><br /><br />
+
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} />{' '}
+                         <Placeholder xs={4} bg="danger" />{' '}
+                        <Placeholder bg="danger" xs={6} /> <Placeholder xs={2} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder bg="danger" xs={5} />
+                    </Placeholder><br /><br /><br /><br /><br />
+
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} />  <Placeholder bg="danger" xs={3} />{' '}
+                          <Placeholder bg="danger" xs={3} /> <Placeholder xs={4} bg="danger" />{' '}
+                        <Placeholder bg="danger" xs={6} /> {' '} 
+                    </Placeholder><br /><br /><br /><br /><br />
+
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="danger" xs={3} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={3} />{' '}
+                        <Placeholder xs={2} bg="danger" />  <Placeholder bg="danger" xs={3} />{' '}
+                         <Placeholder bg="danger" xs={5} />{' '}<Placeholder bg="danger" xs={3} /> <Placeholder xs={2} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder xs={2} bg="danger" />
+                    </Placeholder>
+                </div>
+                </div>
+                </div>
+    
+                <hr className="orange-border bottom" />
+            </Col>
+                :
+                <Col className="stat-block wide">
                 <hr className="orange-border" />
                 <div className="section-left">
                 <div className="actions">
