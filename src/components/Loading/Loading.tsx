@@ -1,23 +1,27 @@
 import Placeholder from 'react-bootstrap/Placeholder';
 import Spinner from 'react-bootstrap/Spinner';
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import './Loading.css';
-import { Container, Row } from 'react-bootstrap';
 
 interface Props {
     NavBar?: boolean
     Messages?: boolean
+    Chat?: boolean
 }
-export default function Loading({ NavBar, Messages }: Props) {
+export default function Loading({ NavBar, Messages, Chat }: Props) {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
         <Container>
-        <Row className="justify-content-center my-5">
+        <Row className="justify-content-center">
             {
                 NavBar
                 ? <Spinner animation="border" variant="warning" id="loading-spinner-nav" />
+                : Chat 
+                ? <Spinner animation="border" variant="warning" id="loading-spinner-chat"  />
                 : Messages ?
-<Col className="stat-block wide">
+                <Col className="stat-block wide" id="message-loading">
                 <hr className="orange-border" />
                 <div className="section-left">
                 <div className="actions">

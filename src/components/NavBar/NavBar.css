@@ -25,9 +25,9 @@
         height: 50%;
         width: 100%;
     }
-    /* #banner-ascean-pic {
-        width: 50%;
-    } */
+    #ascean-name {
+        font-size: 20px;
+    }
     #ascean-bio {
         font-size: 10px;
     }

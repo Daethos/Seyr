@@ -35,10 +35,8 @@
 
 #ascean-name {
     font-style: oblique;
+    margin-top: 5px;
 }
-/* #ascean-bio {
-    font-size: 14px;
-} */
 
 #ascean-banner-pic {
     width: 50%;

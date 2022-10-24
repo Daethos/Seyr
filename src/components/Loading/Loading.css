@@ -23,3 +23,18 @@
     margin-right: auto;
     width: 80%;
 }
+
+@media screen and (max-width: 675px) {
+    #message-loading {
+        height: 50%;
+        width: 50%;
+    }
+}
+
+#loading-spinner-chat {
+    position: absolute;
+    top: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px 0;
+}

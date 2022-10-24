@@ -71,7 +71,7 @@ const FocusMessages = ({ user }: Props) => {
       console.log(response, '<- Response Updating Messages')
       setUserMessages(response.data.user.messages)
       setFriendMessages(response.data.friend.messages)
-      setLoading(false)
+      //setLoading(false)
     } catch (err: any) {
       setLoading(false)
       console.log(err.message, '<- Error Retrieving Messages')
@@ -105,7 +105,7 @@ const FocusMessages = ({ user }: Props) => {
   if (loading) {
       return (
       <>
-          <Loading Messages={true} />
+          <Loading Chat={true} />
       </>
       );
   }

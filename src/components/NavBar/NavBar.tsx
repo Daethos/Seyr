@@ -176,7 +176,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
             </Offcanvas.Body>
         </Offcanvas></Nav.Link>
         <ul>
-        <NavDropdown title="Feed" className="text-info btn btn-lg btn-outline-black link-header" id="basic-nav-dropdown">
+        <NavDropdown title="Feed" className="text-info btn btn-lg btn-outline-black " id="basic-nav-dropdown">
               <Nav.Link as={NavLink} to='/CommunityFeed' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Community</Nav.Link>
               {/* <Nav.Link as={NavLink} to='/Forums' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Forums</Nav.Link> */}
               <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Friends</Nav.Link>

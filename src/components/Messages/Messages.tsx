@@ -47,7 +47,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
             setUsersMessages(data)
             setDMstate([...response,
                 ...data])
-            setLoading(false)
+            //setLoading(false)
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error getting DMs')
@@ -69,7 +69,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
           setFriendsMessages(response.data.friend.messages)
           setDMstate([...response.data.user.messages,
             ...response.data.friend.messages])
-          setLoading(false)
+          //setLoading(false)
         } catch (err: any) {
           setLoading(false)
           console.log(err.message, '<- Error Retrieving Messages')
@@ -118,7 +118,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
     useEffect(() => {
         const interval = setInterval(() => {
             updateDMs()
-            console.log('This will run every second!');
         }, 10000);
         return () => clearInterval(interval);
       }, []);
@@ -173,14 +172,16 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                                     <div className="section-left">
                                     {
                                         message.username === friend.username
-                                        ? <span className="friend-message" style={{color: 'red'}}>[{message.createdAt.substring(11, 16)}] {message.message} <br/> </span>
+                                        ? <><span className="friend-message" style={{color: 'red'}}>[{message.createdAt.substring(11, 16)}] {message.message}
+                                        
+                                        </span>{' '}</>
                                         : ''
                                     }
                                     </div>
                                     <div className="section-right">
                                     {
                                         message.username === user.username
-                                        ? <span className="user-message" style={{color: 'blue'}}>[{message.createdAt.substring(11, 16)}] {message.message} <br /> </span>
+                                        ? <span className="user-message" style={{color: 'blue'}}>[{message.createdAt.substring(11, 16)}] {message.message}{' '}</span>
                                         : ''
                                     }
                                     </div>
