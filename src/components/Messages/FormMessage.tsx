@@ -4,6 +4,7 @@ import * as messageAPI from '../../utils/messageApi'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 interface Props {
@@ -19,8 +20,9 @@ const FormMessage = ({ user, friendProfile, friendID, handleChange, handleSubmit
       
     return (
         <>
+        
         <Form onSubmit={handleSubmit}>
-        <InputGroup className="mb-3" id="chat-input" size="lg">
+        <InputGroup className="mt-1" id="chat-input" size="lg">
             <Form.Control
             className='stat-block wide'
             name='message'
@@ -29,6 +31,7 @@ const FormMessage = ({ user, friendProfile, friendID, handleChange, handleSubmit
             value={messageDraft.message}
             onChange={handleChange}
             />
+        <Button type="submit" variant="" className="text-success">Submit</Button>
         </InputGroup>
         </Form>
         </>

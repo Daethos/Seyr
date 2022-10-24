@@ -1,3 +1,7 @@
 #message-block {
-    max-height: 87.5vh;
+    max-height: 90vh;
+    /* background: rgb(255, 255, 255); */
+}
+#chat-pic {
+    max-width: 5vw;
 }
