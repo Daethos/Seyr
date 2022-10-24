@@ -35,6 +35,7 @@ app.use('/api/equipment', require('./routes/api/equipment'));
 app.use('/api/ascean', require('./routes/api/ascean'));
 app.use('/api/community', require('./routes/api/community'));
 app.use('/api/friends', require('./routes/api/friends'));
+app.use('/api/message', require('./routes/api/message'));
 app.use('/api', require('./routes/api/feelings'));
 
 // "catch all" route

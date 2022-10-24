@@ -60,10 +60,10 @@ const FriendsCarousel = ({ user, fren }: Props) => {
         ? 
         <Carousel activeIndex={index} onSelect={handleSelect} className="mx-5" indicators={false}>
         {
-        asceanState.map((ascean: any) => {
+        asceanState.map((ascean: any, index: number) => {
             return (
                 
-                <Carousel.Item className="my-1 d-block w-100 justify content center" id="profile-banner">
+                <Carousel.Item className="my-1 d-block w-100 justify content center" id="profile-banner" key={index}>
                 <Col className="stat-block wide" id="ascean-banner">
                    
                     <span id='banner-profile-pic'>

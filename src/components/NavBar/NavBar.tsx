@@ -16,6 +16,9 @@ import Carousel from 'react-bootstrap/Carousel';
 import Update from '../AsceanBuilder/Update';
 import NavBarFriends from '../NavBarComponents/NavBarFriends';
 import NavBarRequests from '../NavBarComponents/NavBarRequests';
+import FriendsList from '../../components/FriendsList/FriendsList';
+import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 
 interface NavProps {
     user: any;
@@ -31,6 +34,10 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
   const [friendDecline, setFriendDecline] = useState<boolean>(false)
   const [friendState, setFriendState] = useState<any[]>([])
   const [requestState, setRequestState] = useState<object[]>([])
+
+  const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
   const [index, setIndex] = useState(0);
 
@@ -135,12 +142,37 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
               <Nav.Link as={NavLink} to='/Ascean' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg btn-outline-black">Create Ascean</Nav.Link>
               <ul>
               <NavDropdown title="Update" className="text-info btn btn-lg btn-outline-black" id="submenu-nav-dropdown">
-                {asceanVaEsai.map((ascean: any, index: number) => (<Nav.Link as={NavLink} to={'/edit/' + ascean._id} className='text-info btn btn-lg btn-outline-black mb-1'>{ascean.name}</Nav.Link>))}
+                {asceanVaEsai.map((ascean: any, index: number) => (<Nav.Link as={NavLink} to={'/edit/' + ascean._id} key={ascean._id} className='text-info btn btn-lg btn-outline-black mb-1'>{ascean.name}</Nav.Link>))}
               </NavDropdown>
               </ul>
           </NavDropdown>
           {/* &nbsp;&nbsp;
           <Link to="/Ascean" className="text-info btn btn-lg btn-outline-black">New Ascean</Link> */}
+          &nbsp;&nbsp;
+          <NavDropdown title="Friends" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
+          <Nav.Link as={NavLink} to='/Friends' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Feed</Nav.Link>
+              {/* <Nav.Link as={NavLink} to='/Forums' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Forums</Nav.Link> */}
+              <Nav.Link style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} 
+              className="text-info btn btn-lg btn-outline-black"><button onClick={handleShow} className="text-info btn btn-lg btn-outline-black">Messages</button>
+
+        <Offcanvas show={show} onHide={handleClose} id="offcanvas">
+            <Offcanvas.Header closeButton>
+            <Offcanvas.Title className='text-white'>Direct Messages</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+            {
+            friendState
+            ?
+            friendState.map((friend: any, index: number) => {
+                return (
+                    <FriendsList user={user} friend={friend} key={index} />
+                )
+            })
+            : ''
+            }
+            </Offcanvas.Body>
+        </Offcanvas></Nav.Link>
+          </NavDropdown>
           &nbsp;&nbsp;
           <NavDropdown title="Feed" className="text-info btn btn-lg btn-outline-black" id="basic-nav-dropdown">
               <Nav.Link as={NavLink} to='/CommunityFeed' style={{ fontWeight: 400, fontVariant: 'small-caps', fontSize: 23 + 'px' }} className="text-info btn btn-lg community-button">Community</Nav.Link>

@@ -49,8 +49,8 @@ async function friends() {
       {
       friendState.map((fren: any, index: any) => {
         return (
-          <Carousel.Item className="d-block w-100">
-          <FriendsCarousel user={user} key={index} fren={fren}/>
+          <Carousel.Item className="d-block w-100" key={index}>
+          <FriendsCarousel user={user} key={fren._id} fren={fren}/>
           </Carousel.Item>
         )
       })

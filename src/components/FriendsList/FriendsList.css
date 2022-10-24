@@ -1,0 +1,10 @@
+#friend-pic {
+    float: left;
+}
+.friend-block {
+    width: 100%;
+    background-color: #eee3f6;
+    border-radius: 20px;
+    padding: 5px 10px 20px; 
+    box-shadow: 0 0 1.5em #5101ff;
+}

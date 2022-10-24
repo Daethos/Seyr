@@ -119,13 +119,13 @@ async function index(req, res) {
 
             //console.log(ascean, '<- Hello, Ascean of Fren!')       
             asceanFrens.push(ascean)     
-            console.log(ascean, '<- Hello, Ascean Frens!')       
+            //console.log(ascean, '<- Hello, Ascean Frens!')       
             return (
                 ascean
             );
         }))
         const asceanFrens = await asceans
-        console.log(asceanFrens, '<- Are you here, asceans?')
+        //console.log(asceanFrens, '<- Are you here, asceans?')
         // const ascean = await Ascean.find({ user: user._id, visibility: 'public' })
         //                         .populate("user")
         //                         .populate("weapon_one")

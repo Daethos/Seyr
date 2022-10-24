@@ -17,6 +17,14 @@ const requestSchema = new mongoose.Schema({
   timestamps: true
 });
 
+const messageSchema = new mongoose.Schema({
+  message: { type: String, required: true},
+  userID: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}, // Sender
+  username: String,
+}, {
+  timestamps: true
+});
+
 const userSchema = new mongoose.Schema({
   username: {type: String, required: true, lowercase: true, unique: true},
   email: {type: String, required: true, lowercase: true, unique: true},
@@ -24,6 +32,7 @@ const userSchema = new mongoose.Schema({
   bio: String,
   photoUrl: String,  // string from aws!
   friends: [friendSchema],
+  messages: [messageSchema],
   requests: [requestSchema]
   // color: String,
 }, {

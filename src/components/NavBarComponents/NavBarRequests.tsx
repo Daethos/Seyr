@@ -55,7 +55,7 @@ const NavBarRequests = ({ user }: Props) => {
     setLoading(true);
     try {
       const response = await friendAPI.getAllRequests(user._id)
-      console.log(response.data.requests, '<- Finding out REques Frenship Status!')
+      //console.log(response.data.requests, '<- Finding out REques Frenship Status!')
       setRequestState(response.data.requests)
       setLoading(false);
     } catch (err: any) {
@@ -80,11 +80,11 @@ const NavBarRequests = ({ user }: Props) => {
       {
       requestState.map((request: any, index: any) => {
           return (
-            <Carousel.Item className="d-block w-100" id="">
+            <Carousel.Item className="d-block w-100" id="" key={index}>
               <RequestsCarousel 
                 loggedUser={user}
                 request={request}
-                key={index}
+                key={request._id}
                 acceptFriendRequest={acceptFriendRequest} 
                 declineFriendRequest={declineFriendRequest}
               />

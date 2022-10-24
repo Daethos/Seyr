@@ -58,13 +58,6 @@ async function deleteFeeling(req, res){
             await ascean.save() // after you mutate a document you must save
             res.json({ data: ascean })
         }
-        // const ascean = await Ascean.findOne({'likes._id': req.params.id, 'likes.username': req.user.username});
-        // ascean.likes.remove(req.params.id) // mutating a document
-        // ascean.dislikes.remove(req.params.id)
-        //ascean.double_dislikes.remove(req.params.id)
-        // req.params.id is the like id 
-        // await ascean.save() // after you mutate a document you must save
-        // res.json({ data: ascean })
     } catch(err){
         res.status(400).json({error: err})
     }

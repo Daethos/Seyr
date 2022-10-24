@@ -14,6 +14,8 @@ import CommunityFeed from "../CommunityFeed/CommunityFeed";
 import CommunityFocus from "../CommunityFocus/CommunityFocus";
 import ProfilePage from "../ProfilePage/ProfilePage"
 import FriendFeed from "../FriendFeed/FriendFeed";
+import FriendMessages from "../FriendMessages/FriendMessages";
+import FocusMessages from "../FocusMessages/FocusMessages";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -69,6 +71,8 @@ function App() {
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Friends" element={<FriendFeed loggedUser={user} />} />
+        <Route path="/Messages" element={<FriendMessages user={user} />} />
+        <Route path="/Messages/:friendID" element={<FocusMessages user={user} />} />
         <Route path="/:username" element={<ProfilePage user={user} />} />
         <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>

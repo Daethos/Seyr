@@ -30,9 +30,9 @@ const Sex = ({ asceanState, setAsceanState }: Props) => {
     <div className="actions">
       <Form.Select value={asceanState.sex} onChange={handleSex} className="mt-4">
         <option>Sex Selection Here</option>
-          {sexState.map((sex: any) => {
+          {sexState.map((sex: any, index: number) => {
               return (
-                  <option value={sex.name}>{sex.name}</option>
+                  <option value={sex.name} key={index}>{sex.name}</option>
               )
           })}
       </Form.Select>
