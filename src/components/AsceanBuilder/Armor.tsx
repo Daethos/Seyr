@@ -36,7 +36,7 @@ interface Props {
 const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, rings, trinkets, helmetModalShow, setHelmetModalShow, chestModalShow, setChestModalShow, legsModalShow, setLegsModalShow, amuletModalShow, setAmuletModalShow, ringsModalShow, setRingsModalShow, trinketModalShow, setTrinketModalShow }: Props) => {
     function handleEquipment(equipment: any) {
         console.log(equipment.target.value, '<- the Equipment value being handled?')
-        console.log([equipment.target.innerText], '<- the Equipment name being handled?')
+        console.log([equipment.target], '<- the Equipment name being handled?')
         let name = ''
         name = equipment.target.innerText;
         name = name.split('\n')[2];
@@ -44,6 +44,48 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         setAsceanState!({
             ...asceanState,
             [name]: equipment.target.value,
+        })
+    }
+    function handleHelmet(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'helmet': equipment.target.value,
+        })
+    }
+    function handleChest(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'chest': equipment.target.value,
+        })
+    }
+    function handleLegs(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'legs': equipment.target.value,
+        })
+    }
+    function handleAmulet(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'amulet': equipment.target.value,
+        })
+    }
+    function handleRing_One(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'ring_one': equipment.target.value,
+        })
+    }
+    function handleRing_Two(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'ring_two': equipment.target.value,
+        })
+    }
+    function handleTrinket(equipment: any) {
+        setAsceanState!({
+            ...asceanState,
+            'trinket': equipment.target.value,
         })
     }
   return (
@@ -68,7 +110,7 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         </Modal.Body>
         </Modal>
         </div>
-        <Form.Select value={asceanState.helmet}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.helmet}  onChange={handleHelmet}>
             <option>Helmet and Hood Options</option>
         {helmets.map((h: any) => {
             return (
@@ -102,11 +144,11 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         </Modal.Body>
         </Modal>
         </div>
-        <Form.Select value={asceanState.chest}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.chest}  onChange={handleChest}>
             <option>Cuirass and Robe Options</option>
         {chests.map((c: any) => {
             return (
-                <option value={c._id} label={c.name} key={c._id}>chest</option>
+                <option value={c._id} key={c._id}>{c.name}</option>
             )
         })}
         </Form.Select>
@@ -136,11 +178,11 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         </Modal.Body>
         </Modal>
         </div>
-        <Form.Select value={asceanState.leg}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.leg}  onChange={handleLegs}>
             <option>Greaves and Pant Options</option>
         {legs.map((l: any) => {
             return (
-                <option value={l._id} label={l.name} key={l._id}>legs</option>
+                <option value={l._id} key={l._id}>{l.name}</option>
             )
         })}
         </Form.Select>
@@ -170,11 +212,11 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         </Modal.Body>
         </Modal>
         </div>
-        <Form.Select value={asceanState.amulet}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.amulet}  onChange={handleAmulet}>
             <option>Amulet and Choker Options</option>
         {amulets.map((a: any) => {
             return (
-                <option value={a._id} label={a.name} key={a._id}>amulet</option>
+                <option value={a._id} key={a._id}>{a.name}</option>
             )
         })}
         </Form.Select>
@@ -204,19 +246,19 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         </Modal.Body>
         </Modal>
         </div>
-        <Form.Select value={asceanState.ring_one}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.ring_one}  onChange={handleRing_One}>
             <option>Ring One</option>
         {rings.map((r: any) => {
             return (
-                <option value={r._id} label={r.name} key={r._id}>ring_one</option>
+                <option value={r._id} key={r._id}>{r.name}</option>
             )
         })}
         </Form.Select>
-        <Form.Select value={asceanState.ring_two}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.ring_two}  onChange={handleRing_Two}>
             <option>Ring Two</option>
         {rings.map((r: any) => {
             return (
-                <option value={r._id} label={r.name} key={r._id}>ring_two</option>
+                <option value={r._id} key={r._id}>{r.name}</option>
             )
         })}
         </Form.Select>
@@ -247,11 +289,11 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
         </Modal.Body>
         </Modal>
         </div>
-        <Form.Select value={asceanState.trinket}  onChange={handleEquipment}>
+        <Form.Select value={asceanState.trinket}  onChange={handleTrinket}>
             <option>Trinket Options</option>
         {trinkets.map((t: any) => {
             return (
-                <option value={t._id} label={t.name} key={t._id}>trinket</option>
+                <option value={t._id} key={t._id}>{t.name}</option>
             )
         })}
         </Form.Select>

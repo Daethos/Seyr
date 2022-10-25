@@ -14,15 +14,9 @@ interface Props {
 
 const Shields = ({ asceanState, setAsceanState, shields, shieldModalShow, setShieldModalShow }: Props) => {
     function handleEquipment(equipment: any) {
-        console.log(equipment.target.value, '<- the Equipment value being handled?')
-        console.log([equipment.target.innerText], '<- the Equipment name being handled?')
-        let name = ''
-        name = equipment.target.innerText;
-        name = name.split('\n')[2];
-        console.log(name, '<- What is the new name?')
         setAsceanState({
             ...asceanState,
-            [name]: equipment.target.value,
+            'shield': equipment.target.value,
         })
     }
   return (
@@ -50,7 +44,7 @@ const Shields = ({ asceanState, setAsceanState, shields, shieldModalShow, setShi
         <option>Shield Options</option>
     {shields.map((s: any) => {
         return (
-            <option value={s._id} label={s.name} key={s._id}>shield</option>
+            <option value={s._id} key={s._id}>{s.name}</option>
         )
     })}
     </Form.Select>

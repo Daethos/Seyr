@@ -13,16 +13,22 @@ interface Props {
 }
 
 const Equipment = ({ asceanState, setAsceanState, weapons, weaponModalShow, setWeaponModalShow }: Props) => {
-    function handleEquipment(equipment: any) {
-        console.log(equipment.target.value, '<- the Equipment value being handled?')
-        console.log([equipment.target.innerText], '<- the Equipment name being handled?')
-        let name = ''
-        name = equipment.target.innerText;
-        name = name.split('\n')[2];
-        console.log(name, '<- What is the new name?')
+    function handleWeaponOne(equipment: any) {
         setAsceanState({
             ...asceanState,
-            [name]: equipment.target.value,
+            'weapon_one': equipment.target.value,
+        })
+    }
+    function handleWeaponTwo(equipment: any) {
+        setAsceanState({
+            ...asceanState,
+            'weapon_two': equipment.target.value,
+        })
+    }
+    function handleWeaponThree(equipment: any) {
+        setAsceanState({
+            ...asceanState,
+            'weapon_three': equipment.target.value,
         })
     }
   return (
@@ -44,11 +50,6 @@ const Equipment = ({ asceanState, setAsceanState, weapons, weaponModalShow, setW
             aria-labelledby="contained-modal-title-vcenter"
             id="modal-weapon"
             >
-                {/* <Modal.Header closeButton>
-                    <Modal.Title >
-                    Weapons & Spells
-                    </Modal.Title>
-                </Modal.Header> */}
         <Modal.Body id="modal-weapon" className="equipment-modal">
         {weapons.map((w: any, index: any) => {
             return (
@@ -66,27 +67,27 @@ const Equipment = ({ asceanState, setAsceanState, weapons, weaponModalShow, setW
         </Modal>
     </div>
     <div className="property-block">
-    <Form.Select value={asceanState.weapon_one}  onChange={handleEquipment}>
+    <Form.Select value={asceanState.weapon_one}  onChange={handleWeaponOne}>
         <option>Weapon or Spell One</option>
     {weapons.map((w: any) => {
         return (
-            <option value={w._id} label={w.name} key={w._id}>weapon_one</option>
+            <option value={w._id} key={w._id}>{w.name}</option>
         )
     })}
     </Form.Select>
-    <Form.Select value={asceanState.weapon_two}  onChange={handleEquipment}>
+    <Form.Select value={asceanState.weapon_two}  onChange={handleWeaponTwo}>
         <option>Weapon or Spell Two</option>
     {weapons.map((w: any) => {
         return (
-            <option value={w._id} label={w.name} key={w._id}>weapon_two</option>
+            <option value={w._id} key={w._id}>{w.name}</option>
         )
     })}
     </Form.Select>
-    <Form.Select value={asceanState.weapon_three}  onChange={handleEquipment}>
+    <Form.Select value={asceanState.weapon_three}  onChange={handleWeaponThree}>
         <option>Weapon or Spell Three</option>
     {weapons.map((w: any) => {
         return (
-            <option value={w._id} label={w.name} key={w._id}>weapon_three</option>
+            <option value={w._id} key={w._id}>{w.name}</option>
         )
     })}
     </Form.Select>
