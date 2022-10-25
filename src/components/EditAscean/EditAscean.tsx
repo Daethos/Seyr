@@ -124,7 +124,7 @@ const EditAscean = ({ editAscean }: Props) => {
 
     return (
         <Row className="justify-content-center my-5">
-        <Form className="stat-block wide my-5" onSubmit={handleSubmit}>
+        <Form className="stat-block wide my-5" id="new-ascean" onSubmit={handleSubmit}>
         <hr className="orange-border" />
         <div className="section-left">
             <Character asceanState={editState} setAsceanState={setEditState} key={ascean._id} />

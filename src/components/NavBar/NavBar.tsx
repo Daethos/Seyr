@@ -36,14 +36,9 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
   const [requestState, setRequestState] = useState<object[]>([])
 
   const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-  const [index, setIndex] = useState(0);
-
-  const handleSelect = (selectedIndex: React.SetStateAction<number>, e: any) => {
-      setIndex(selectedIndex);
-  };
 
   useEffect(() => {
     getAscean();
@@ -72,34 +67,6 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
     } catch (err: any) {
         setLoading(false)
         console.log(err.message, '<- Error Fetch Friends in Friend Card')
-    }
-  }
-
-  async function acceptFriendRequest(friend: object) {
-    setFriendRequest(false)
-    try {
-      console.log(friend, '<- Did you make it over to accept as a friend?')
-      const response = await friendAPI.friendAccept(user._id, friend)
-      console.log(response.data, '<- Newly Forged Friend')
-      console.log(response.you, '<- Checking you out to see your removed request')
-      setFriendRequest(true)
-    } catch (err: any) {
-        setFriendRequest(true)
-        console.log(err.message, '<- Error handling Friend Request')
-    }
-  }
-
-  async function declineFriendRequest(friend: any) {
-    setFriendDecline(false)
-    console.log('Declining: ', friend.target.value,' in USER PROFILE!')
-    try {
-        const response = await friendAPI.friendDecline(user._id, friend.target.value)
-        console.log(response, '<- Response in Friend Decline')
-        setFriendDecline(true)
-        friendStatus();
-    } catch (err: any) {
-        setFriendDecline(true)
-        console.log(err.message, '<- Error handling Friend Decline')
     }
   }
 
@@ -168,7 +135,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
             ?
             friendState.map((friend: any, index: number) => {
                 return (
-                    <FriendsList user={user} friend={friend} key={index} />
+                    <FriendsList user={user} friend={friend} handleClose={handleClose} key={index} />
                 )
             })
             : ''

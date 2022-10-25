@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import './Modal.css'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -48,7 +49,7 @@ const Equipment = ({ asceanState, setAsceanState, weapons, weaponModalShow, setW
             centered
             
             aria-labelledby="contained-modal-title-vcenter"
-            id="modal-weapon"
+            id=""
             >
         <Modal.Body id="modal-weapon" className="equipment-modal">
         {weapons.map((w: any, index: any) => {

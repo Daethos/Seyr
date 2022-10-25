@@ -94,7 +94,7 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
                     Weapons & Spells
                     </Modal.Title>
                 </Modal.Header> */}
-        <Modal.Body id="modal-origin" className="equipment-modal">
+        <Modal.Body id="modal-weapon" className="equipment-modal">
         {originState.map((origin: any, index: any) => {
             return (
                 <OriginsCard 

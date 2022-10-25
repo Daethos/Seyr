@@ -58,7 +58,7 @@ const FriendMessages = ({ user }: Props) => {
             friendState.map((friend: any, index: number) => {
                 console.log(friend, index)
                 return (
-                    <FriendsList user={user} friend={friend} key={index} />
+                    <FriendsList user={user} handleClose={handleClose} friend={friend} key={index} />
                 )
             })
             : ''

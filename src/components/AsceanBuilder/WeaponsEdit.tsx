@@ -15,17 +15,25 @@ interface Props {
 const Equipment = ({ editState, setEditState, weapons, weaponModalShow, setWeaponModalShow }: Props) => {
     console.log(editState, '<- What is the current state?')
 
-    function handleEquipment(equipment: any) {
-        console.log(equipment.target.value, '<- the Equipment value being handled?')
-        let name = ''
-        name = equipment.target.innerText;
-        name = name.split('\n')[2];
-        console.log(name, '<- What is the new name?')
+    function handleWeaponOne(equipment: any) {
         setEditState({
             ...editState,
-            [name]: equipment.target.value,
+            'weapon_one': equipment.target.value,
         })
     }
+    function handleWeaponTwo(equipment: any) {
+        setEditState({
+            ...editState,
+            'weapon_two': equipment.target.value,
+        })
+    }
+    function handleWeaponThree(equipment: any) {
+        setEditState({
+            ...editState,
+            'weapon_three': equipment.target.value,
+        })
+    }
+
   return (
     <>
     <div className="actions">
@@ -60,27 +68,27 @@ const Equipment = ({ editState, setEditState, weapons, weaponModalShow, setWeapo
             </Modal>
             </div>
     <div className="property-block">
-    <Form.Select value={editState.weapon_one?.name}  onChange={handleEquipment}>
+    <Form.Select value={editState.weapon_one?.name}  onChange={handleWeaponOne}>
                 <option>Weapon or Spell One</option>
             {weapons.map((w: any) => {
                 return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_one</option>
+                    <option value={w._id} key={w._id}>{w.name}</option>
                 )
             })}
             </Form.Select>
-            <Form.Select value={editState.weapon_two}  onChange={handleEquipment}>
+            <Form.Select value={editState.weapon_two}  onChange={handleWeaponTwo}>
                 <option>Weapon or Spell Two</option>
             {weapons.map((w: any) => {
                 return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_two</option>
+                    <option value={w._id} key={w._id}>{w.name}</option>
                 )
             })}
             </Form.Select>
-            <Form.Select value={editState.weapon_three}  onChange={handleEquipment}>
+            <Form.Select value={editState.weapon_three}  onChange={handleWeaponThree}>
                 <option>Weapon or Spell Three</option>
             {weapons.map((w: any) => {
                 return (
-                    <option value={w._id} label={w.name} key={w._id}>weapon_three</option>
+                    <option value={w._id} key={w._id}>{w.name}</option>
                 )
             })}
             </Form.Select>

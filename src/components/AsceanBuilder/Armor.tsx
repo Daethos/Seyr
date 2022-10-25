@@ -114,7 +114,7 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             <option>Helmet and Hood Options</option>
         {helmets.map((h: any) => {
             return (
-                <option value={h._id} label={h.name} key={h._id}>helmet</option>
+                <option value={h._id} key={h._id}>{h.name}</option>
             )
         })}
         </Form.Select>

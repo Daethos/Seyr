@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from '../../components/NavBar/NavBar';
 import UserProfile from '../UserProfile/UserProfile';
@@ -22,7 +22,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [ascean, setAscean] = useState<object[]>([])
   const [createSuccess, setCreateSuccess] = useState<boolean>(false)
-
+  const navigate = useNavigate();
 
   function handleSignUpOrLogin() {
     setUser(userService.getUser());
@@ -40,6 +40,7 @@ function App() {
         console.log(response, '<- Response in handleAsceanCreate');
         setAscean([response.data, ...ascean]);
         setCreateSuccess(true)
+        navigate("/");
     } catch (err) {
         console.log(err, '<- This is the error in handleAsceanCreate')
     }
