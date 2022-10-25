@@ -6,6 +6,7 @@ import { Link, NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import FriendsList from '../FriendsList/FriendsList';
+import NavBarSearch from './NavBarSearch';
 
 interface Props {
     user: any;
@@ -63,6 +64,7 @@ const NavBarMessages = ({ user, relayStatus, setRelayStatus }: Props) => {
             <Offcanvas.Title className='text-white'>Direct Messages</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
+            <NavBarSearch user={user} friends={friendMessenger} handleClose={handleClose} />
             {
             friendMessenger
             ?

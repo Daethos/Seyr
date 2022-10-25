@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 interface Props {
     user: any;
     friend: any
-    handleClose: any;
+    handleClose: () => void;
 }
 
 const FriendsList = ({ user, friend, handleClose }: Props) => {
+
+
 
     return (
 

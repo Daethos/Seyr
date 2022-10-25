@@ -1,7 +1,7 @@
 #profile-banner {
     border-radius: 5px;
     width: 25%;
-    background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100);
+    /* background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100); */
     height: 100px;
 }
 
@@ -13,7 +13,7 @@
     /* width: 25%; */
     height: 95px;
     margin-top: 0.1%;
-    background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100);
+    /* background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100); */
 }
 #banner-profile-pic {
     max-width: 22.5%;

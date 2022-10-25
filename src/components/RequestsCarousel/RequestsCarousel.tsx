@@ -61,7 +61,7 @@ const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, r
         </span>
         
         <span id='banner-request-decline'>
-            <Button variant="" className="btn btn-outline req-button" style={{ fontWeight: 600, color: 'black', textDecoration: 'none', fontSize: 20 + 'px' }} value={request._id} type="submit" onClick={declineFriendRequest}>Decline</Button>
+            <Button variant="" className="btn btn-outline req-button" style={{ fontWeight: 600, color: 'red', textDecoration: 'none', fontSize: 20 + 'px' }} value={request._id} type="submit" onClick={declineFriendRequest}>Decline</Button>
         </span>
         </Col>
         </>

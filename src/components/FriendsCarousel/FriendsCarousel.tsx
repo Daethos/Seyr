@@ -79,8 +79,8 @@ const FriendsCarousel = ({ user, fren, carouselUpdate, setCarouselUpdate }: Prop
                     </span>
                     
                     <div className="creature-heading" id='banner-ascean-pic'>
-                        <h1 className='' style={{ fontSize: '', color: 'blueviolet' }} id='ascean-name'>{ascean.name}</h1>
-                        <h2 className="text-white" id="ascean-bio">{ascean.description}</h2>
+                        <h1 className='' style={{ fontSize: '', color: 'purple' }} id='ascean-name'>{ascean.name}</h1>
+                        <h2 className="" id="ascean-bio">{ascean.description}</h2>
                     </div>
                     <span id='banner-ascean-profile'>
                         <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ' ' + ascean.sex} id="ascean-banner-pic" className='my-1'/></Link>
