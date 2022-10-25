@@ -12,12 +12,12 @@ interface OriginProps {
 const OriginsCard = ({ origin }: OriginProps) => {
 
     const originPopover = (
-        <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2"> 
+        <Popover className="origin-popover" id="popover">
+            <Popover.Header id="popover-header" className="header" as="h2"> 
             {origin.name}
             <span id="popover-image"><img src={process.env.PUBLIC_URL + origin.imgUrl} alt="Origin Culture Here" id="origin-pic" /></span>
             </Popover.Header>
-            <Popover.Body id="popover-body" className="">
+            <Popover.Body id="popover-body" className="body">
             
                 {origin.bio}<br /><br />
                 Bonuses: {origin.bonus}

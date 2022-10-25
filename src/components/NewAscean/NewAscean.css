@@ -25,6 +25,9 @@
     border: 2px solid purple;
     border-radius: 50%;
 }
+#new-ascean {
+    width: 85%;
+}
 
 .form-block {
     text-align: left; 

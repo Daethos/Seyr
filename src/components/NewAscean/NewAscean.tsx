@@ -3,6 +3,7 @@ import './NewAscean.css';
 import * as equipmentAPI from '../../utils/equipmentApi';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col'
 import Character from '../AsceanBuilder/Character';
 import AttributesCreate from '../AsceanBuilder/AttributesCreation'
 import Faith from '../AsceanBuilder/Faith'
@@ -182,7 +183,7 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
 
     return (
         <Row className="justify-content-center my-5">
-        <Form className="stat-block wide" onSubmit={handleSubmit}>
+        <Form className="stat-block wide" id="new-ascean" onSubmit={handleSubmit}>
             <hr className="orange-border" />
             <div className="section-left">
             <Character asceanState={asceanState} setAsceanState={setAsceanState} />

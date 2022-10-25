@@ -10,6 +10,9 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.signup-button {
+  width: 75%;
+}
 
 #community-pic{
   border-radius: 50%;

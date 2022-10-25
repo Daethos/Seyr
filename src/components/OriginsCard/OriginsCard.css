@@ -24,3 +24,10 @@
     border: 2px solid purple;
     border-radius: 50%;
 }
+
+@media screen and (max-width: 675px) {
+    .origin-popover {
+        font-size: 11px
+    }
+    
+}

@@ -31,15 +31,15 @@ export default function AuthPage({ setUser, handleSignUpOrLogin }: AuthProps) {
         <svg height="5" width="100%" className="tapered-rule my-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg> */}
-            <Row>
-        <Button variant="danger" className="btn-lg text-white" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
-        </Row>
+          
+        <Button variant="danger" style={{ maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg text-white mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
+    
         <SignUpForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
         </>
         :
         <>
         
-        <Button variant="danger" className="btn-lg text-white" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
+        <Button variant="danger" style={{ maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg text-white mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
         
         <LoginForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
         </>

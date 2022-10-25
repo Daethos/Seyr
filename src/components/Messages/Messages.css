@@ -16,6 +16,7 @@
 @media screen and (max-width: 675px){
     #chat-form {
         width: 100%;
+        margin-top: -25px;
     }
     .friend-message, .user-message {
         font-size: 10px;

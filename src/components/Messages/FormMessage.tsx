@@ -22,7 +22,7 @@ const FormMessage = ({ user, friendProfile, friendID, handleChange, handleSubmit
         <>
         
         <Form onSubmit={handleSubmit} id="chat-form" className=''>
-        <InputGroup className="mt-1" id="chat-input" size="lg">
+        <InputGroup className="" id="chat-input" size="lg">
             <Form.Control
             as="textarea"
             style={{ maxHeight: 50 + 'px' }}

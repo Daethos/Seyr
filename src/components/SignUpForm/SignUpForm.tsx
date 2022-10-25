@@ -149,7 +149,7 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <Form.Control
                     type="textarea"
                     name="bio"
-                    placeholder="Are you a DM or fledgling Player perhaps?"
+                    placeholder="Anything you'd like to say?"
                     value={state.bio}
                     onChange={handleChange}
                 />
