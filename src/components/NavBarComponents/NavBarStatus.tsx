@@ -66,7 +66,7 @@ const NavBarStatus = ({ user, setRelayStatus }: Props) => {
       async function acceptFriendRequest(friend: object) {
         setFriendAccept(false)
         try {
-          console.log(friend, '<- Did you make it over to accept as a friend?')
+          console.log(friend, '<- Did you make it over to accept as a friend in acceptFriendRequest?')
           const response = await friendAPI.friendAccept(user._id, friend)
           console.log(response.data, '<- Newly Forged Friend')
           console.log(response.you, '<- Checking you out to see your removed request')
@@ -92,23 +92,23 @@ const NavBarStatus = ({ user, setRelayStatus }: Props) => {
         }
       }
   
-      function handleSubmit(e: { preventDefault: () => void; }) {
-        e.preventDefault();
-        console.log('Editing underway!')
-        async function asceanVaEsai() {
-            try {
-                acceptFriendRequest(requestState)
-            } catch (err: any) {
-                console.log(err.message, '<- Error initiating Ascean Edit')
-            }
-        }
-        asceanVaEsai();
-    }
+    //   function handleSubmit(e: { preventDefault: () => void; }) {
+    //     e.preventDefault();
+    //     console.log('')
+    //     async function asceanVaEsai() {
+    //         try {
+    //             acceptFriendRequest(requestState)
+    //         } catch (err: any) {
+    //             console.log(err.message, '<- Error initiating Ascean Edit')
+    //         }
+    //     }
+    //     asceanVaEsai();
+    // }
 
     return (
         <>
         <NavBarFriends user={user} friendAccept={friendAccept} setFriendAccept={setFriendAccept} friendState={friendState} />
-        <NavBarRequests user={user} requestState={requestState} friendDecline={friendDecline} friendAccept={friendAccept} acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} handleSubmit={handleSubmit} />
+        <NavBarRequests user={user} requestState={requestState} friendDecline={friendDecline} friendAccept={friendAccept} acceptFriendRequest={acceptFriendRequest} declineFriendRequest={declineFriendRequest} />
         </>
     )
 }

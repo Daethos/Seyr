@@ -12,33 +12,37 @@ import { Link } from "react-router-dom";
 
 interface Props {
     user: any;
-    fren: any
+    fren: any;
+    carouselUpdate: boolean;
+    setCarouselUpdate: any;
 }
 
-const FriendsCarousel = ({ user, fren }: Props) => {
+const FriendsCarousel = ({ user, fren, carouselUpdate, setCarouselUpdate }: Props) => {
     //console.log(fren, '<- What are you, complete friend?')
     const [index, setIndex] = useState(0);
     const [loading, setLoading] = useState<boolean>(false);
     const [asceanState, setAsceanState] = useState<any>([])
-    const [friendProfile, setFriendProfile] = useState<any>([])
+    const [friendProfile, setFriendProfile] = useState<any>(fren)
 
     const handleSelect = (selectedIndex: React.SetStateAction<number>, e: any) => {
     setIndex(selectedIndex);
   };
 
   useEffect(() => {
-    friends();
+    getFriend();
   }, [])
 
-  async function friends() {
+  async function getFriend() {
     setLoading(true);
     try {
         const response = await friendAPI.getOneFriend(fren?.userId._id)
-        setLoading(false)
         setAsceanState(response.data.user.friends)
         //console.log(response.data, '<- Your specific friend!')
         setAsceanState(response.data.ascean)
         setFriendProfile(response.data.user)
+        // setCarouselUpdate(false)
+        setLoading(false)
+
     } catch (err: any) {
         setLoading(false)
         console.log(err.message, '<- Error Fetch Friends in Friend Card')
@@ -53,12 +57,16 @@ const FriendsCarousel = ({ user, fren }: Props) => {
     );
   }
 
+//   if (carouselUpdate) {
+//     getFriend()
+//   }
+
   return (
     <>
     {
-        friendProfile
+        friendProfile && asceanState
         ? 
-        <Carousel activeIndex={index} onSelect={handleSelect} className="mx-5" indicators={false}>
+        <Carousel activeIndex={index} onSelect={handleSelect} className="" id='friend-inside-carousel' indicators={false}>
         {
         asceanState.map((ascean: any, index: number) => {
             return (

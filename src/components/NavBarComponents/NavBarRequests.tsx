@@ -15,17 +15,17 @@ interface Props {
     requestState: any;
     acceptFriendRequest: any;
     declineFriendRequest: any;
-    handleSubmit: any;
+    // handleSubmit: any;
     friendAccept: boolean;
     friendDecline: boolean;
 }
 
-const NavBarRequests = ({ user, requestState, acceptFriendRequest, declineFriendRequest, handleSubmit, friendAccept, friendDecline }: Props) => {
+const NavBarRequests = ({ user, requestState, acceptFriendRequest, declineFriendRequest, friendAccept, friendDecline }: Props) => {
     // const [friendAccept, setFriendAccept] = useState<boolean>(false)
     // const [friendDecline, setFriendDecline] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false);
     // const [friendState, setFriendState] = useState<any[]>([])
-    const [requestStatus, setRequestStatus] = useState<object[]>(requestState)
+    const [requestStatus, setRequestStatus] = useState<any>(requestState)
     // const [show, setShow] = useState(false);
     // const handleClose = () => setShow(false);
     // const handleShow = () => setShow(true);
@@ -141,7 +141,7 @@ const NavBarRequests = ({ user, requestState, acceptFriendRequest, declineFriend
                   key={request._id}
                   acceptFriendRequest={acceptFriendRequest} 
                   declineFriendRequest={declineFriendRequest}
-                  handleSubmit={handleSubmit}
+                  // handleSubmit={handleSubmit}
                 />
               </Carousel.Item>
             )

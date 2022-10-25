@@ -1,7 +1,7 @@
 #navbar {
     font-family: 'Cinzel';
-    /* background-color: #191919; */
-    background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100);
+    /* background-color: #faddcf; */
+    /* background-image: linear-gradient(to right top, #500000, #7a0e0d, #a62210, #d2380e, #ff5100); */
     box-shadow: 10px 5px 20px 0 rgba(80, 0, 0, 0.55), 10px 6px 20px 0 rgba(80, 0, 0, 0.55);
     font-weight: 900;
 }
@@ -14,19 +14,35 @@
     /* font-size: 12px; */
     display: inline-block;
 }
+#update-pic {
+    border-radius: 50%;
+    max-width: 7vw;
+}
+/* .link-header:hover {
+    transform: scale(1.1);
+} */
+.collapse-button {
+    display: inline-block;
+}
 @media screen and (max-width: 675px) {
-    #request-banner, #profile-banner,
+
+    /* #request-banner, #profile-banner,
     .req-car {
         min-width: 280px;
         
-    }
+    } */
+
     #request-banner, #profile-banner,
     .req-car {
         width: 100%;
         
     }
+
     #friend-carousel {
         height: 50%;
+        width: 100%;
+    }
+    #friend-inside-carousel {
         width: 100%;
     }
     #ascean-name {
@@ -38,7 +54,15 @@
     .link-header {
         font-size: 10px;
     }
+    .update-links {
+        font-size: 12px;
+    }
 }
+
+.req-button:hover {
+    transform: scale(1.1);
+}
+
 .logging-button {
     float: right
 }

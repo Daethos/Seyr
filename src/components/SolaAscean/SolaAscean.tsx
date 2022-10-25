@@ -30,7 +30,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                     <h1>{ascean.name}</h1>
                     <h2>{ascean.description}</h2>
             </div>
-            <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" />
+            <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-pic" />
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>

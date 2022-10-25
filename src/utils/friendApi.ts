@@ -46,7 +46,8 @@ export function friendDecline(userID: any, friend: any) {
 
 export function friendAccept(userId: any, friend: any) {
     console.log(friend, '<- Friend in UTILITY API')
-    return fetch (`${BASE_URL}accept/${userId}/${friend._id}/${friend?.userId._id}`, {
+    console.log(friend.id, '<- Friend ID in Utility')
+    return fetch (`${BASE_URL}accept/${userId}/${friend?._id}/${friend?.userId._id}`, {
         method: 'PUT',
         body: JSON.stringify(friend),
         headers:  {
