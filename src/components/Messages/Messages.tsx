@@ -169,7 +169,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                             //console.log(message, '<- The final, proper message!')
                             return (
                                 <>
-                                    <div className="section-left">
+                                    <div className="section-left" key={index}>
                                     {
                                         message.username === friend.username
                                         ? <><span className="friend-message" style={{color: 'red'}}>[{message.createdAt.substring(11, 16)}] {message.message}
@@ -178,7 +178,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                                         : ''
                                     }
                                     </div>
-                                    <div className="section-right">
+                                    <div className="section-right" key={index}>
                                     {
                                         message.username === user.username
                                         ? <span className="user-message" style={{color: 'blue'}}>[{message.createdAt.substring(11, 16)}] {message.message}{' '}</span>

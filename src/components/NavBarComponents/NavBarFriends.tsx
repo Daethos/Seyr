@@ -6,26 +6,29 @@ import Carousel from 'react-bootstrap/Carousel';
 
 interface Props {
     user: any;
+    friendState: any
+    friendAccept: boolean;
+    setFriendAccept: any;
 }
 
-const NavBarFriends = ({ user }: Props) => {
-    const [friendState, setFriendState] = useState<any[]>([])
+const NavBarFriends = ({ user, friendState, friendAccept, setFriendAccept }: Props) => {
+    const [friendCarousel, setFriendCarousel] = useState<any[]>(friendState)
     const [loading, setLoading] = useState<boolean>(false);
     const [index, setIndex] = useState(0);
 
-  const handleSelect = (selectedIndex: React.SetStateAction<number>, e: any) => {
-      setIndex(selectedIndex);
-  };
+    const handleSelect = (selectedIndex: React.SetStateAction<number>, e: any) => {
+        setIndex(selectedIndex);
+    };
 
   useEffect(() => {
     friends();
-  }, [])
+  }, [friendState, friendAccept])
 
 async function friends() {
   setLoading(true);
   try {
       const response = await friendAPI.getAllFriends(user._id)
-      setFriendState(response.data.user.friends)
+      setFriendCarousel(response.data.user.friends)
       setLoading(false)
   } catch (err: any) {
       setLoading(false)
@@ -40,14 +43,19 @@ async function friends() {
     </>
     );
   }
+
+  // if (friendAccept) {
+  //   friends()
+  //   setFriendAccept(false)
+  // }
   return (
     <>
     {
-      friendState.length > 0
+      friendCarousel.length > 0
       ? 
       <Carousel activeIndex={index} onSelect={handleSelect} id="friend-carousel" className="nav-carousel carousel-fade hover" style={{ maxWidth: 100 + '%' }} indicators={false}>
       {
-      friendState.map((fren: any, index: any) => {
+      friendCarousel.map((fren: any, index: any) => {
         return (
           <Carousel.Item className="d-block w-100" key={index}>
           <FriendsCarousel user={user} key={fren._id} fren={fren}/>

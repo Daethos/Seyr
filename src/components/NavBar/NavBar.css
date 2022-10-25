@@ -10,6 +10,10 @@
     max-height: 6.5vh;
     border-radius: 50%;
 }
+.link-header {
+    /* font-size: 12px; */
+    display: inline-block;
+}
 @media screen and (max-width: 675px) {
     #request-banner, #profile-banner,
     .req-car {
@@ -32,7 +36,7 @@
         font-size: 10px;
     }
     .link-header {
-        font-size: 12px;
+        font-size: 10px;
     }
 }
 .logging-button {

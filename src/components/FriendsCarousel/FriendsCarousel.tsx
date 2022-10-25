@@ -48,7 +48,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
   if (loading) {
     return (
     <>
-        <Loading />
+        <Loading NavBar={true} />
     </>
     );
   }
@@ -71,7 +71,7 @@ const FriendsCarousel = ({ user, fren }: Props) => {
                     </span>
                     
                     <div className="creature-heading" id='banner-ascean-pic'>
-                        <h1 className='text-danger' style={{ fontSize: '', color: '' }} id='ascean-name'>{ascean.name}</h1>
+                        <h1 className='' style={{ fontSize: '', color: 'blueviolet' }} id='ascean-name'>{ascean.name}</h1>
                         <h2 className="text-white" id="ascean-bio">{ascean.description}</h2>
                     </div>
                     <span id='banner-ascean-profile'>

@@ -29,9 +29,7 @@ const FriendsList = ({ user, friend, handleClose }: Props) => {
                     className=""
                 />
                 {friend.username}</h3>
-                
             </span> 
-            
         </Link>
         </div>
         </div>
