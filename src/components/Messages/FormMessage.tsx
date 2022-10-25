@@ -21,9 +21,11 @@ const FormMessage = ({ user, friendProfile, friendID, handleChange, handleSubmit
     return (
         <>
         
-        <Form onSubmit={handleSubmit} id="chat-form">
+        <Form onSubmit={handleSubmit} id="chat-form" className=''>
         <InputGroup className="mt-1" id="chat-input" size="lg">
             <Form.Control
+            as="textarea"
+            style={{ maxHeight: 50 + 'px' }}
             className='stat-block wide'
             name='message'
             placeholder={'Text ' + friendProfile.username.charAt(0).toUpperCase() + friendProfile.username.slice(1) + '!'}

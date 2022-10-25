@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import './Messages.css'
-import { Col } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading';
 import * as messageAPI from '../../utils/messageApi'
 import Direct from './Direct';
