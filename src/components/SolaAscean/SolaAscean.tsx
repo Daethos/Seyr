@@ -23,9 +23,9 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
     <Col className="stat-block wide">
     <hr className="orange-border" />
         <div className="section-left">
-            <div className="actions">
+            {/* <div className="actions">
                 <h3>Character</h3>
-            </div>
+            </div> */}
             <div className="creature-heading">
                     <h1>{ascean.name}</h1>
                     <h2>{ascean.description}</h2>
@@ -34,10 +34,12 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
-            <div className="actions">
+            {/* <div className="actions">
                 <h3>Player Statistics</h3>
-            </div>
-            <div className="property-line first" style={{ marginTop: -10 + 'px' }}>
+            </div> */}
+            <div className="property-line first" 
+            // style={{ marginTop: -10 + 'px' }}
+            >
                 <h4>Experience</h4>
                 <p> {ascean.experience}</p>
             </div>
@@ -49,48 +51,80 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 <h4>Mastery</h4>
                 <p> {ascean.mastery}</p>
             </div>
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
-            <div className="top-stats">
-            <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
             {
                 userProfile
                 ? 
                 <>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                    <polyline points="0,0 550,2.5 0,5"></polyline>
+                </svg>
                 <div className="property-line first">
                     <h4>Constitution</h4>
-                    <p> Increases Crit Damage, Defense, Health, Posturing</p>
+                    <p> Crit Damage, Defense, Health, Posturing</p>
                 </div>
                 <div className="property-line">
                     <h4>Strength</h4>
-                    <p> Increases Crit Damage, Phys Damage, Posturing</p>
+                    <p> Crit Damage, Phys Damage, Posturing</p>
                 </div>
                 <div className="property-line">
                     <h4>Agility</h4>
-                    <p> Increases Crit Chance, Dodge, Phys Damage, Roll</p>
+                    <p> Crit Chance, Dodge, Phys Damage, Roll</p>
                 </div>
                 <div className="property-line">
                     <h4>Achre</h4>
-                    <p> Increases Crit Chance, Dodge, Spell Damage, Roll</p>
+                    <p> Crit Chance, Dodge, Spell Damage, Roll</p>
                 </div>
                 <div className="property-line">
                     <h4>Caeren</h4>
-                    <p> Increases Crit Damage, Defense, Health, Spell Damage</p>
+                    <p> Crit Damage, Defense, Health, Spell Damage</p>
                 </div>
                 <div className="property-line last">
                     <h4>Kyosir</h4>
-                    <p> Increases Defense, Penetration</p>
+                    <p> Defense, Penetration</p>
                 </div>
                 </>
                 : ''
             }
+            <svg height="5" width="100%" className="tapered-rule mt-3">
+                <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+            <div className="actions mt-1">
+            <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
+            {/* <h3>Eccentricities & Equipment</h3> */}
+            <svg height="5" width="100%" className="tapered-rule mt-3">
+                <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+        <AsceanImageCard
+            weapon_one={ascean.weapon_one}
+            weapon_two={ascean.weapon_two}
+            weapon_three={ascean.weapon_three}
+            shield={ascean.shield}
+            helmet={ascean.helmet}
+            chest={ascean.chest}
+            legs={ascean.legs}
+            amulet={ascean.amulet}
+            ring_one={ascean.ring_one}
+            ring_two={ascean.ring_two}
+            trinket={ascean.trinket}
+            key={ascean._id}
+        />
+            </div>
+            <div className="top-stats">
             {/* <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg> */}
             {/* FIXME: Check in the morning, ES Lint is complaining! */}
             
 
+            <svg height="5" width="100%" className="tapered-rule mt-3">
+                <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+            
+            </div>
+        </div>
+        <div className="section-right">
+            
+            <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
@@ -140,32 +174,11 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 </>
                 : ''
             }
-            
             </div>
-        </div>
-        <div className="section-right">
-            
+            <div className='property-block'>
+            </div>
             <div className="actions">
-                <h3>Eccentricities & Equipment</h3>
             <div className='property-block'>
-            <AsceanImageCard
-                weapon_one={ascean.weapon_one}
-                weapon_two={ascean.weapon_two}
-                weapon_three={ascean.weapon_three}
-                shield={ascean.shield}
-                helmet={ascean.helmet}
-                chest={ascean.chest}
-                legs={ascean.legs}
-                amulet={ascean.amulet}
-                ring_one={ascean.ring_one}
-                ring_two={ascean.ring_two}
-                trinket={ascean.trinket}
-                key={ascean._id}
-            />
-            </div>
-            <div className='property-block'>
-            </div>
-            <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id} />
             </div>
             
         </div>

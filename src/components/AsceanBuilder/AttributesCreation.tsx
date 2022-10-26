@@ -457,8 +457,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     <div className="property-line last">
                         <h4>Caeren: </h4>
                         <p> Of Cambiren, the Ancient Potential.
-                                <br />Adj. 1. An idealized person or thing. <br />{' '}2. A specter or phantom. <br />[Pronounced: Serr-En]
-                                <br /> The Caer: Nickname, synonymous to ‘the will.’ [Pronounced Serr.]
+                                <br />An idealized person or thing. A specter or phantom. Inspired from Eidolon..<br />
+                                <br /> The Caer: synonymous to 'the will.'
 
                             <br />Increases Crit Damage, Defense, Health, Spell Damage</p>
                         <InputGroup className="mb-1">

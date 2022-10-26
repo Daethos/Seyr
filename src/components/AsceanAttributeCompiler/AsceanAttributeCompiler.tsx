@@ -38,40 +38,40 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
 
   return (
     <>
-    <div className="actions">
+    {/* <div className="actions">
         <h3>Attributes</h3>
-    </div>
+    </div> */}
     <div className="abilities">
     <div className="ability-strength">
         <h4>CON</h4>
-            <p className="mt-2" id="con-box">{totalConstitution} ({displayConstitution} + {constitutionEquipment})</p>
+            <p className="mt-2" id="con-box">{totalConstitution}<br /> ({displayConstitution} + {constitutionEquipment})</p>
             <p className="" id="">[ {totalConstitution < 10 ? '- ' + constitutionMod : '+ ' + constitutionMod} ]</p>
     </div>
     <div className="ability-dexterity">
         <h4>STR</h4>
-        <p className="mt-2" id="str-box">{totalStrength} ({displayStrength} + {strengthEquipment})</p>
+        <p className="mt-2" id="str-box">{totalStrength}<br /> ({displayStrength} + {strengthEquipment})</p>
         <p className="" id="">[ {totalStrength < 10 ? '- ' + strengthMod : '+ ' + strengthMod} ]</p>
     </div>
     <div className="ability-constitution">
         <h4>AGI</h4>
-        <p className="mt-2" id="">{totalAgility} ({displayAgility} + {agilityEquipment})</p>
+        <p className="mt-2" id="">{totalAgility}<br /> ({displayAgility} + {agilityEquipment})</p>
         <p className="" id="">[ {totalAgility < 10 ? '- ' + agilityMod : '+ ' + agilityMod} ]</p>
         
     </div>
     <div className="ability-intelligence">
         <h4>ACH</h4>
-        <p className="mt-2" id="ach-box">{totalAchre} ({displayAchre} + {achreEquipment})</p>
+        <p className="mt-2" id="ach-box">{totalAchre}<br /> ({displayAchre} + {achreEquipment})</p>
         <p className="" id="">[ {totalAchre < 10 ? '- ' + achreMod : '+ ' + achreMod} ]</p>
         
     </div>
     <div className="ability-wisdom">
         <h4>CAER</h4>
-        <p className="mt-2" id="caer-box">{totalCaeren} ({displayCaeren} + {caerenEquipment})</p>
+        <p className="mt-2" id="caer-box">{totalCaeren}<br /> ({displayCaeren} + {caerenEquipment})</p>
         <p className="" id="">[ {totalCaeren < 10 ? '- ' + caerenMod : '+ ' + caerenMod} ]</p>
     </div>
     <div className="ability-wisdom">
         <h4>KYO</h4>
-        <p className="mt-2" id="kyo-box">{totalKyosir} ({displayKyosir} + {kyosirEquipment})</p>
+        <p className="mt-2" id="kyo-box">{totalKyosir}<br /> ({displayKyosir} + {kyosirEquipment})</p>
         <p className="" id="">[ {totalKyosir < 10 ? '- ' + kyosirMod : '+ ' + kyosirMod} ]</p>
     </div>
     </div>
