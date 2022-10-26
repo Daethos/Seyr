@@ -14,7 +14,7 @@ const OriginsCard = ({ origin }: OriginProps) => {
         <Popover className="origin-popover" id="popover">
             <Popover.Header id="popover-header" className="header" as="h2"> 
             {origin.name}
-            <span id="popover-image"><img src={process.env.PUBLIC_URL + origin.imgUrl} alt="Origin Culture Here" id="origin-pic" /></span>
+            <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + origin.imgUrl} alt="Origin Culture Here" id="origin-pic" /></span>
             </Popover.Header>
             <Popover.Body id="popover-body" className="body">
             

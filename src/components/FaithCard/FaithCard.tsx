@@ -13,7 +13,7 @@ const FaithCard = ({ faith }: FaithProps) => {
         <Popover className="origin-popover" id="popover">
             <Popover.Header id="popover-header" className="header" as="h2"> 
             {faith.name}
-            <span id="popover-image"><img src={faith.iconography} alt={faith.name} id="origin-pic" /></span>
+            <span id="popover-spec-image"><img src={faith.iconography} alt={faith.name} id="origin-pic" /></span>
             </Popover.Header>
             <Popover.Body id="popover-body" className="body">
             {faith.origin}

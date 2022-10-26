@@ -17,8 +17,11 @@
 .eqp-popover {
     font-size: 20px;
     border: 1.5px solid orangered;
-    
 }
+.eqp-popover.spec {
+    border: 2px solid purple;
+}
+
 #origin-pic {
     width: 10vw;
     border: 2px solid purple;
@@ -32,7 +35,7 @@
     #popover-body {
         max-height: 80vh;
     }
-    #popover-image {
+    #popover-spec-image {
         float: right;
         margin-top: 4%;
         margin-right: 10%;
