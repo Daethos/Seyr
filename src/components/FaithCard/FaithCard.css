@@ -20,7 +20,7 @@
     
 }
 #origin-pic {
-    width: 10vw;
+    max-width: 5vw;
     border: 2px solid purple;
     border-radius: 50%;
 }
@@ -28,19 +28,10 @@
 @media screen and (max-width: 675px) {
     .origin-popover {
         font-size: 10px;
+        
     }
     #popover-body {
         max-height: 80vh;
     }
-    #popover-image {
-        float: right;
-        margin-top: 4%;
-        margin-right: 10%;
-        transform: scale(2.75);
-    }
-    #origin-pic {
-        /* width: 20vw; */
-        border: 1px solid purple;
-        /* border-radius: 50%; */
-    }
+    
 }

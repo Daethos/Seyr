@@ -1520,7 +1520,7 @@ const seedShields = [
     },
     {
         name: 'Scutum',
-        type: 'Leather-Mail',
+        type: 'Large Shield',
         physical_damage: 1,
         magical_damage: 1,
         physical_resistance: 20,

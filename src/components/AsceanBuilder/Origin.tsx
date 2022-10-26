@@ -87,7 +87,7 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             centered
             
             aria-labelledby="contained-modal-title-vcenter"
-            id="modal-origin"
+            id="modal-weapon"
             >
                 {/* <Modal.Header closeButton>
                     <Modal.Title >

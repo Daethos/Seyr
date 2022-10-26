@@ -33,6 +33,7 @@ const EditAscean = ({ editAscean }: Props) => {
     const [rings, setRings] = useState<object[]>([]);
     const [amulets, setAmulets] = useState<object[]>([]);
     const [trinkets, setTrinkets] = useState<object[]>([]);
+    const [faithModalShow, setFaithModalShow] = React.useState<boolean>(false)
     const [originModalShow, setOriginModalShow] = React.useState<boolean>(false)
     const [weaponModalShow, setWeaponModalShow] = React.useState<boolean>(false)
     const [shieldModalShow, setShieldModalShow] = React.useState<boolean>(false)
@@ -150,7 +151,7 @@ const EditAscean = ({ editAscean }: Props) => {
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <Mastery asceanState={editState} setAsceanState={setEditState} />
-            <Faith asceanState={editState} setAsceanState={setEditState} />
+            <Faith asceanState={editState} setAsceanState={setEditState} faithModalShow={faithModalShow} setFaithModalShow={setFaithModalShow} />
             <Origin asceanState={editState} setAsceanState={setEditState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <img src={process.env.PUBLIC_URL + '/images/' + editState.origin + '-' + editState.sex + '.jpg'} id="ascean-pic" />
             
