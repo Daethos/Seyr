@@ -43,7 +43,7 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
         },
         {
             name: "Nothos",
-            bio: "The Soverain people of the northreast have kept to their own culturally and spiritually, passionately rejecting advances of the Daethic word with blood and bile. As the name states, this tentative collection of Soverains form a coalition in name only, having banded together to stop encroachment of King Caderyn after having seen many short-sighted 'lords' succumbing to the Arctic Fox--as the King came to be known for successfully sieging a tundra stronghold inside a single winter.",
+            bio: "The Soverain people of the nothren'eas have kept to their own culturally and spiritually, passionately rejecting advances of the Daethic word with blood and bile. As the name states, this tentative collection of Soverains form a coalition in name only, having banded together to stop encroachment of King Caderyn after having seen many short-sighted 'lords' succumbing to the Arctic Fox--as the King came to be known for successfully sieging a tundra stronghold inside a single winter.",
             index: "noth'os",
             bonus: '+2 CON, +2 CAER, +3% Mag Dam, +3% Mag Pen, +3% Phys Def',
             imgUrl: '/images/Nothos-Woman.jpg'

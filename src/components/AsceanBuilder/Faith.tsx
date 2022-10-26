@@ -62,7 +62,11 @@ const Faith = ({ asceanState, setAsceanState }: Props) => {
             id="adherentID" 
             value='adherent' 
             onChange={handleFaith}
-        />
+        /><br />
+        <p>The Ancients were figures of fantastic might existing before historical recording of time, commanding worship of all peoples of this world. 
+            These godlike beings interacted with humans at their leisure, whether distantly ala Achreo of the Wild, or heavily involved in the daily lives
+            of their worshipers: Ilios of the Sun, and Ma'anre of the Moon. Some time a thousand years past, a great war between the Ancients--heavily involing
+            humans broke out and wiped out the majority of both. It's unknown at this time who remains, and in what form they may be existing. </p>
     </div>
     <div className="property-line first">
         <h4>Devotion</h4>
@@ -74,7 +78,12 @@ const Faith = ({ asceanState, setAsceanState }: Props) => {
             id="devotedID" 
             value='devoted' 
             onChange={handleFaith} 
-        />
+        /><br />
+        <p>Founded by Laetrois Ath'Shaorah, mythic general during the War of the Ancients. Of unknown origin, Laetrois and his army of soliders descended from
+            obscure lands in the nothren'eas, seen as a force entering in the later stages of the war against both armies led by Ilios and Ma'anre, respectively.
+            Seen as saving humanity, the death of the general during the aftermath of the war led to his faithful companion, the Good Lorian to establish
+            the Seyr in the City of Lor, later codifying the oratory nature of its principles in the Daethica.
+        </p>
     </div>
 </>
   )

@@ -434,8 +434,9 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                         </InputGroup>
                     </div>
                     <div className="property-line">
-                        <h4>Achre</h4>
-                        <p> Increases Crit Chance, Dodge, Spell Damage, Roll</p>
+                        <h4>Achre: </h4>
+                        <p>Synonymous with being an Arbiter, they are measured by the quality of their achre, catchall for discernment, poise, sagacity, and existence above error.<br />
+ Increases Crit Chance, Dodge, Spell Damage, Roll</p>
                         <InputGroup className="mb-1">
                         <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
                         <input 
@@ -454,8 +455,12 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                         </InputGroup>
                     </div>
                     <div className="property-line last">
-                        <h4>Caeren</h4>
-                        <p> Increases Crit Damage, Defense, Health, Spell Damage</p>
+                        <h4>Caeren: </h4>
+                        <p> Of Cambiren, the Ancient Potential.
+                                <br />Adj. 1. An idealized person or thing. <br />{' '}2. A specter or phantom. <br />[Pronounced: Serr-En]
+                                <br /> The Caer: Nickname, synonymous to ‘the will.’ [Pronounced Serr.]
+
+                            <br />Increases Crit Damage, Defense, Health, Spell Damage</p>
                         <InputGroup className="mb-1">
                         <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
                         <input 
@@ -474,8 +479,10 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                         </InputGroup>
                     </div>
                     <div className="property-line last">
-                        <h4>Kyosir</h4>
-                        <p> Increases Defense, Penetration</p>
+                        <h4>Kyosir: </h4>
+                        <p> Compulsion concocted through the Gold Veins of Kyrisos mixed with blood and phlegm of Chiomyr, Ancient of Humor.
+                            A charisma that warps those regardless of their caer, capable of quelling the most quality strikes, it grants a sure sight that shears shields.
+                            <br />Increases Defense, Penetration</p>
                         <InputGroup className="mb-1">
                         <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={asceanState.kyosir}>−</button>
                         <input 
