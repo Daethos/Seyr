@@ -7,11 +7,14 @@
 .friend-message {
     float: left;
     margin: 1%;
+    /* white-space: pre-wrap; */
 }
 .user-message {
     float: right;
     margin: 1%;
+    /* white-space: pre-wrap; */
 }
+
 
 @media screen and (max-width: 675px){
     #chat-form {

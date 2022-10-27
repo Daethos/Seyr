@@ -6,6 +6,9 @@ import * as messageAPI from '../../utils/messageApi'
 import Direct from './Direct';
 import MessagesCard from './MessagesCard';
 import FormMessage from '../../components/Messages/FormMessage';
+import UserMessageCard from './UserMessageCard';
+import FriendMessageCard from './FriendMessageCard';
+import NewLine from './NewLine';
 
 interface Props {
     user: any;
@@ -166,25 +169,21 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                     sortedDMs
                     ? 
                         sortedDMs.map((message: any, index: number) => {
-                            //console.log(message, '<- The final, proper message!')
                             return (
                                 <>
-                                    <div className="section-left">
-                                    {
-                                        message.username === friend.username
-                                        ? <><span className="friend-message" style={{color: 'red'}} key={index}>[{message.createdAt.substring(11, 16)}] {message.message}
-                                        
-                                        </span>{' '}</>
-                                        : ''
-                                    }
-                                    </div>
-                                    <div className="section-right">
-                                    {
-                                        message.username === user.username
-                                        ? <span className="user-message" style={{color: 'blue'}} key={index}>[{message.createdAt.substring(11, 16)}] {message.message}{' '}</span>
-                                        : ''
-                                    }
-                                    </div>
+                                    {/* <div className="section-left">  */}
+
+                                    <FriendMessageCard friend={friend} message={message} key={index} />
+                                    <NewLine spaceCount={1} />
+
+                                    {/* </div> */}
+
+                                    {/* <div className="section-right"> */}
+
+                                        <UserMessageCard user={user} message={message} key={index} />
+                                        <NewLine spaceCount={1} />
+
+                                    {/* </div> */}
                                 </>
                             )
                         })
