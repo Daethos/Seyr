@@ -24,11 +24,21 @@ export default function AuthPage({ setUser, handleSignUpOrLogin }: AuthProps) {
       <h3 className='welcome-explanation'>
         Welcome one and all to the greatest spectacle this world has seen, a coliseum holding tests of triumph between the steeliest souls across
         the land, arriving in the beautiful fields of Licivitas to have a hand at capturing glory and renown, with the winner achieving the title
-        known as the <br /><br /> 'Ascean va'Esai.'<br /><br />
-        Test your will against others in turn-based, rpg combat utilizing a series of weapons and skills to prove you are<br /><br /> 'worthy of the preservation of being.'
+        known as the <br /><br /> 
+        <div className='ascean'>
+        'Ascean va'Esai.'
+        </div>
+        <br />
+        <div className="game">
+        Test your will against others in turn-based, rpg combat utilizing a series of weapons and skills to prove you are
+        </div>
+        <br />
+        <div className="aenservaesai">
+        'worthy of the preservation of being.'
+        </div>
       </h3>
       </Row>
-    <Row className="auth my-5 justify-content-center" xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }>
+    <Row className="auth mt-3 justify-content-center" xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }>
       { 
         showSignUp 
         ?

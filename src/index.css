@@ -84,10 +84,19 @@ html, body {
   animation: fade 1.5s ease-in 2s forwards;
 }
 .auth {
-  pointer-events: none;
+  /* pointer-events: none; */
   opacity: 0;
   animation: fade 1.5s ease-in 3.5s forwards;
 }
+/* .ascean {
+  animation: fade 1s ease-in 2.5s forwards;
+}
+.game {
+  animation: fade 1.5s ease-in 3.5s forwards;
+}
+.aenservaesai {
+  animation: fade 1s ease-in 5s forwards;
+} */
 @keyframes fade {
   0%{
     opacity: 0;
