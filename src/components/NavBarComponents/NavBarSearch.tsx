@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import FriendsList from '../FriendsList/FriendsList';
 
 interface SearchProps {

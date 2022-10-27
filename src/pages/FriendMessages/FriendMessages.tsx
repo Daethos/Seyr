@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './FriendMessages.css'
 import * as friendAPI from '../../utils/friendApi';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
-import Messages from '../../components/Messages/Messages';
 import FriendsList from '../../components/FriendsList/FriendsList';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import { Link } from "react-router-dom";
 
 interface Props {
     user: any;

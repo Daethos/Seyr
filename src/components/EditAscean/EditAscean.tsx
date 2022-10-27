@@ -19,9 +19,11 @@ import Sex from '../AsceanBuilder/Sex';
 
 interface Props {
     editAscean: (vaEsai: Object) => Promise<void>;
+    createSuccess: boolean;
+    setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditAscean = ({ editAscean }: Props) => {
+const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
     const [ascean, setAscean] = useState<any>({})
     const [loading, setLoading] = useState(true);
     const { asceanID } = useParams();
@@ -67,6 +69,7 @@ const EditAscean = ({ editAscean }: Props) => {
             setAchreOutput(response.data.achre)
             setCaerenOutput(response.data.caeren)
             setkyosirOutput(response.data.kyosir)
+            setCreateSuccess(false)
             setLoading(false)
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
@@ -76,7 +79,7 @@ const EditAscean = ({ editAscean }: Props) => {
 
     useEffect(() => {
         getAscean();
-      }, [asceanID, getAscean])
+      }, [asceanID, getAscean, createSuccess])
 
     useEffect(() => {
         getAllEquipment();
@@ -111,7 +114,6 @@ const EditAscean = ({ editAscean }: Props) => {
             }
         }
         asceanVaEsai();
-        getAscean();
     }
 
 

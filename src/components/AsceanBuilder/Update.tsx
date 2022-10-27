@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import { Link } from 'react-router-dom'
 
 interface Props {
@@ -15,7 +14,6 @@ const Update = ({ ascean, NavBar }: Props) => {
     <>
     {
         NavBar
-
         ? <Button variant="outline" 
         className="my-1 text-info" 
         size="lg" 

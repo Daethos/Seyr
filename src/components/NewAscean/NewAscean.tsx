@@ -3,7 +3,6 @@ import './NewAscean.css';
 import * as equipmentAPI from '../../utils/equipmentApi';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col'
 import Character from '../AsceanBuilder/Character';
 import AttributesCreate from '../AsceanBuilder/AttributesCreation'
 import Faith from '../AsceanBuilder/Faith'

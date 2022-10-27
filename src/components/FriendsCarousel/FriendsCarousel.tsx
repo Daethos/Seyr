@@ -2,12 +2,8 @@ import './FriendsCarousel.css'
 import React, { useEffect, useState } from 'react';
 import * as friendAPI from '../../utils/friendApi';
 import Carousel from 'react-bootstrap/Carousel';
-import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Loading from '../Loading/Loading';
-import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
-import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
-import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -37,10 +33,8 @@ const FriendsCarousel = ({ user, fren, carouselUpdate, setCarouselUpdate }: Prop
     try {
         const response = await friendAPI.getOneFriend(fren?.userId._id)
         setAsceanState(response.data.user.friends)
-        //console.log(response.data, '<- Your specific friend!')
         setAsceanState(response.data.ascean)
         setFriendProfile(response.data.user)
-        // setCarouselUpdate(false)
         setLoading(false)
 
     } catch (err: any) {
@@ -56,10 +50,6 @@ const FriendsCarousel = ({ user, fren, carouselUpdate, setCarouselUpdate }: Prop
     </>
     );
   }
-
-//   if (carouselUpdate) {
-//     getFriend()
-//   }
 
   return (
     <>

@@ -1,5 +1,3 @@
-import React from 'react'
-import NewLine from './NewLine';
 
 interface Props {
     friend: any;

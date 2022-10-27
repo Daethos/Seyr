@@ -55,6 +55,49 @@ html, body {
 		margin: 0;
 	}
 }
+.welcome-text {
+  font-size: 15vw;
+  text-align: center;
+  font-variant: small-caps;
+  font-weight: 500;
+  background-image: linear-gradient(to right top, #fdfd00, #ffdd00, #ffa600, #ff8800, #ff5c00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  pointer-events: none;
+  opacity: 0;
+
+  animation: fade 1.5s ease-in 0.5s forwards;
+
+}
+.welcome-explanation {
+  font-size: 4vw;
+  text-align: center;
+  font-variant: small-caps;
+  background-image: linear-gradient(to right top, #fdfd00, #ffdd00, #ffa600, #ff8800, #ff5c00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  pointer-events: none;
+  opacity: 0;
+
+  animation: fade 1.5s ease-in 2s forwards;
+}
+.auth {
+  pointer-events: none;
+  opacity: 0;
+  animation: fade 1.5s ease-in 3.5s forwards;
+}
+@keyframes fade {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
+
 #community-column {
   width: 25%;
 }

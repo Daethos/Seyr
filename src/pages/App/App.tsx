@@ -53,6 +53,7 @@ function App() {
       const response = await asceanAPI.edit(vaEsai);
       console.log(response, '<- Response in editAscean')
       setAscean([response.data, ...ascean]);
+      setCreateSuccess(true)
     } catch (err: any)  {
       console.log(err.message, '<- You are having an error in the editAscean function in App.jsx')
     }
@@ -72,7 +73,7 @@ function App() {
         <Route path="/" element={<UserProfile loggedUser={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
-        <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
+        <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Friends" element={<FriendFeed loggedUser={user} />} />

@@ -4,44 +4,11 @@ const User = require('../models/user');
 
 // ================================== HELPER CONSTANTS =================================== \\
 
-const attributeStats = {
-    // Starting Attribute
-    rawConstitution:  Number,
-    rawAgility:  Number,
-    rawAchre:  Number,
-    rawCaeren:  Number,
-    rawKyosir:  Number,
-
-    // Total Attributes
-    totalStrength: Number,
-    totalAgility: Number,
-    totalConstitution: Number,
-    totalAchre: Number,
-    totalCaeren: Number,
-    totalKyosir: Number,
-        
-    // Attribute Modifier
-    strengthMod:  Number,
-    agilityMod:  Number,
-    constitutionMod:  Number,
-    achreMod:  Number,
-    caerenMod:  Number,
-    kyosirMod:  Number,
-    
-    // Equipment Attributes
-    equipStrength: Number,
-    equipConstitution: Number,
-    equipAgility: Number,
-    equipAchre: Number,
-    equipCaeren: Number,
-    equipKyosir: Number,
-}
-
-const defenseStats = {};
+const attributeStats = {}
 
 // ================================== HELPER FUNCTIONS =================================== \\
 
-const attributeCompiler = async (ascean) => { // FIXME: Solved!
+const attributeCompiler = async (ascean) => {
 
     const newAttributes = await Object.create(attributeStats);
         
@@ -76,12 +43,15 @@ const attributeCompiler = async (ascean) => { // FIXME: Solved!
     newAttributes.equipCaeren = newAttributes.totalCaeren - newAttributes.rawCaeren;
     newAttributes.equipKyosir = newAttributes.totalKyosir - newAttributes.rawKyosir;
 
+    newAttributes.healthTotal = (newAttributes.totalConstitution * 3) + ((newAttributes.constitutionMod + newAttributes.caerenMod) * 2);
+    newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2)
+
     return (
         newAttributes
     )
 }
   
-async function originCompiler(weapon, ascean) { // TODO: Does this work?
+async function originCompiler(weapon, ascean) { 
     console.log(weapon, 'Are we in the Origin Compiler?')
     if (ascean.origin === "Ashtre") {
         weapon.critical_chance += 3;
@@ -119,7 +89,7 @@ async function originCompiler(weapon, ascean) { // TODO: Does this work?
     }
 }
 
-async function gripCompiler(weapon, attributes) { // TODO: Does this work?
+async function gripCompiler(weapon, attributes) { 
     console.log(weapon, attributes, 'Are we in the Grip Compiler?')
     if (weapon.grip === 'One Hand') {
         weapon.physical_damage += weapon.agility + weapon.strength + (attributes.agilityMod * 1.5) + (attributes.strengthMod / 2);
@@ -131,19 +101,19 @@ async function gripCompiler(weapon, attributes) { // TODO: Does this work?
     }
 }
 
-async function penetrationCompiler(weapon, attributes, combatStats) { // TODO: Does this work?
+async function penetrationCompiler(weapon, attributes, combatStats) { 
     console.log(weapon, 'Are we in the Penetration Compiler?')
     weapon.magical_penetration += combatStats.penetrationMagical + attributes.kyosirMod;
     weapon.physical_penetration += combatStats.penetrationPhysical + attributes.kyosirMod;
 }
 
-async function critCompiler(weapon, attributes, combatStats) { // TODO: Does this work?
+async function critCompiler(weapon, attributes, combatStats) { 
     console.log(weapon, 'Are we in the Crit Compiler?')
     weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod) / 2);
     weapon.critical_damage *= combatStats.criticalDamage + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod) / 10);
 }
 
-async function faithCompiler(weapon, ascean) { // TODO: Does this work?
+async function faithCompiler(weapon, ascean) { 
     console.log(weapon, 'Are we in the Faith Compiler?')
     if (ascean.faith === 'adherent') {
         if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
@@ -188,7 +158,7 @@ async function faithCompiler(weapon, ascean) { // TODO: Does this work?
 
 // =============================== COMPILER FUNCTIONS ================================== \\
 
-const weaponOne = async (weapon, ascean, attributes, combatStats) => { // TODO: Does this work?
+const weaponCompiler = async (weapon, ascean, attributes, combatStats) => { 
     const weaponOne = {
         name: weapon.name,
         type: weapon.type,
@@ -226,81 +196,7 @@ const weaponOne = async (weapon, ascean, attributes, combatStats) => { // TODO: 
     return weaponOne
 }
 
-const weaponTwo = async (weapon, ascean, attributes, combatStats) => { // TODO: Does this work?
-    const weaponTwo = {
-        name: weapon.name,
-        type: weapon.type,
-        grip: weapon.grip,
-        attack_type: weapon.attack_type,
-        damage_type: weapon.damage_type,
-        physical_damage: weapon.physical_damage,
-        magical_damage: weapon.magical_damage,
-        physical_penetration: weapon.physical_penetration,
-        magical_penetration: weapon.magical_penetration,
-        critical_chance: weapon.critical_chance,
-        critical_damage: weapon.critical_damage,
-        dodge: weapon.dodge,
-        roll: weapon.roll,
-        constitution: weapon.constitution,
-        strength: weapon.strength,
-        agility: weapon.agility,
-        achre: weapon.achre,
-        caeren: weapon.caeren,
-        kyosir: weapon.kyosir,
-        influences: weapon.influences,
-        imgURL: weapon.imgURL,
-    }
-    originCompiler(weaponTwo, ascean)
-    gripCompiler(weaponTwo, attributes)
-    penetrationCompiler(weaponTwo, attributes, combatStats)
-    weaponTwo.physical_damage *= combatStats.damagePhysical;
-    weaponTwo.magical_damage *= combatStats.damageMagical;
-    critCompiler(weaponTwo, attributes, combatStats)
-    weaponTwo.dodge += combatStats.dodgeCombat;
-    weaponTwo.roll += combatStats.rollCombat;
-    faithCompiler(weaponTwo, ascean)
-    
-    return weaponTwo
-}
-
-const weaponThree = async (weapon, ascean, attributes, combatStats) => { // TODO: Does this work?
-    const weaponThree = {
-        name: weapon.name,
-        type: weapon.type,
-        grip: weapon.grip,
-        attack_type: weapon.attack_type,
-        damage_type: weapon.damage_type,
-        physical_damage: weapon.physical_damage,
-        magical_damage: weapon.magical_damage,
-        physical_penetration: weapon.physical_penetration,
-        magical_penetration: weapon.magical_penetration,
-        critical_chance: weapon.critical_chance,
-        critical_damage: weapon.critical_damage,
-        dodge: weapon.dodge,
-        roll: weapon.roll,
-        constitution: weapon.constitution,
-        strength: weapon.strength,
-        agility: weapon.agility,
-        achre: weapon.achre,
-        caeren: weapon.caeren,
-        kyosir: weapon.kyosir,
-        influences: weapon.influences,
-        imgURL: weapon.imgURL,
-    }
-    originCompiler(weaponThree, ascean)
-    gripCompiler(weaponThree, attributes)
-    penetrationCompiler(weaponThree, attributes, combatStats)
-    weaponThree.physical_damage *= combatStats.damagePhysical;
-    weaponThree.magical_damage *= combatStats.damageMagical;
-    critCompiler(weaponThree, attributes, combatStats)
-    weaponThree.dodge += combatStats.dodgeCombat;
-    weaponThree.roll += combatStats.rollCombat;
-    faithCompiler(weaponThree, ascean)
-    
-    return weaponThree
-}
-
-const defenseCompiler = async (ascean, attributes, combatStats) => { // TODO: Does this work?
+const defenseCompiler = async (ascean, attributes, combatStats) => { 
     console.log(attributes, 'Are we in the Defense Compiler?')
     //const defense = await Object.create(defenseStats)
     const defense = {
@@ -363,9 +259,9 @@ const asceanCompiler = async (ascean) => {
 
         }
         console.log(combatStats, 'Are the combat stats loaded?')
-        const combat_weapon_one = await weaponOne(ascean.weapon_one, ascean, attributes, combatStats)
-        const combat_weapon_two = await weaponTwo(ascean.weapon_two, ascean, attributes, combatStats)
-        const combat_weapon_three = await weaponThree(ascean.weapon_three, ascean, attributes, combatStats)
+        const combat_weapon_one = await weaponCompiler(ascean.weapon_one, ascean, attributes, combatStats)
+        const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats)
+        const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats)
         const defense = await defenseCompiler(ascean, attributes, combatStats)
         console.log(combat_weapon_one, 'Did the first weapon compile?')
         return {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import './FocusMessages.css'
 import * as messageAPI from '../../utils/messageApi'
 import Loading from '../../components/Loading/Loading'; 
@@ -7,10 +7,7 @@ import { useParams, Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Messages from '../../components/Messages/Messages';
-import FormMessage from '../../components/Messages/FormMessage';
 
 interface Props {
   user: any;

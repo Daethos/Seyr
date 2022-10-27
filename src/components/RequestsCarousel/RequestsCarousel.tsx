@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './RequestsCarousel.css'
-import * as friendAPI from '../../utils/friendApi';
-import Carousel from 'react-bootstrap/Carousel';
 import { Link } from "react-router-dom";
 import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading'
-import RequestPopover from '../RequestPopover/RequestPopover';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
 
@@ -14,18 +11,13 @@ interface Props {
     acceptFriendRequest: (friend: object) => Promise<void>;
     declineFriendRequest: (friend: any) => Promise<void>;
     request: any;
-    // handleSubmit: any;
 }
 
 const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, request }: Props) => {
-    //console.log(request, '<- REquest?')
     const [loading, setLoading] = useState<boolean>(false)
-
-    // const [requestState, setRequestState] = useState<any>(request)
     
     function handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
-        console.log('')
         async function asceanVaEsai() {
             try {
                 acceptFriendRequest(request)

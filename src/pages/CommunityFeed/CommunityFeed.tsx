@@ -1,13 +1,11 @@
 import './CommunityFeed.css'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Loading from '../../components/Loading/Loading'; 
 import * as communityAPI from '../../utils/communityApi'
-import * as feelingAPI from '../../utils/feelingApi'
 import CommunityAscean from '../../components/CommunityAscean/CommunityAscean'
-import CommunitySearch from '../../components/CommunitySearch/CommunitySearch'
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 

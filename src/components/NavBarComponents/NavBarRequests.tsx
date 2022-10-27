@@ -33,7 +33,6 @@ const NavBarRequests = ({ user, requestState, acceptFriendRequest, declineFriend
       setLoading(true);
       try {
         const response = await friendAPI.getAllRequests(user._id)
-        console.log(response.data.requests, '<- Finding out REques Frenship Status!')
         setRequestStatus(response.data.requests)
         setLoading(false);
       } catch (err: any) {

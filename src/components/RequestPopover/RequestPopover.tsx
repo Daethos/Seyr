@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import './RequestPopover.css'
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
@@ -18,7 +18,6 @@ const RequestPopover = ({ friend, loggedUser, acceptFriendRequest, declineFriend
     
     function handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
-        console.log('Editing underway!')
         async function asceanVaEsai() {
             try {
                 acceptFriendRequest(requestState)

@@ -1,12 +1,7 @@
-import React from 'react'
 import './EquipmentCard.css';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row'
-
 
 interface WeaponProps {
     weapon?: any;

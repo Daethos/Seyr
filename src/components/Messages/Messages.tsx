@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import './Messages.css'
 import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading';
 import * as messageAPI from '../../utils/messageApi'
-import Direct from './Direct';
-import MessagesCard from './MessagesCard';
 import FormMessage from '../../components/Messages/FormMessage';
 import UserMessageCard from './UserMessageCard';
 import FriendMessageCard from './FriendMessageCard';

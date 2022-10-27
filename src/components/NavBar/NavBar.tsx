@@ -30,22 +30,13 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
     setLoading(true);
     try {
       const response = await asceanAPI.getAllAscean();
-      console.log(response.data, '<- the response in Get All Ascean');
+      // console.log(response.data, '<- the response in Get All Ascean');
       setAsceanVaEsai([...response.data.reverse()])
       setLoading(false)
     } catch (err) {
       console.log(err);
     }
   }
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-
-  //       // friends();
-  //       // friendStatus();
-  //   }, 10000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   if (loading) {
     return (
