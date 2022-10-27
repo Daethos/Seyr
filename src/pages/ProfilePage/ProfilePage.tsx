@@ -33,12 +33,13 @@ const ProfilePage = ({ user }: ProfileProps) => {
     const [profileRequests, setProfileRequests] = useState<any>(0)
 
     const getProfile = useCallback(async () => {
+        // setLoading(true);
         try {
         const response = await userService.getProfile(username);
-        setLoading(false);
         setProfileUser(response.data.user);
         setAscean(response.data.ascean);
         console.log(response);
+        setLoading(false)
         } catch (err: any) {
         console.log(err.message);
         setError("Profile does not exist! You are in the wrong in place"); 
@@ -47,13 +48,16 @@ const ProfilePage = ({ user }: ProfileProps) => {
 
     useEffect(() => {
         getProfile();
-    }, [username, getProfile]);
+    }, [username, getProfile, friendRequest]);
 
     async function sendFriendRequest() {
+        setLoading(true);
         try {
             const response = await friendAPI.friendRequest(profileUser._id, user._id)
             console.log(response, '<- Response in Friend Request')
             setFriendRequest(true)
+            // await friends()
+            setLoading(false)
         } catch (err: any) {
             setFriendRequest(true)
             console.log(err.message, '<- Error handling Friend Request')
@@ -77,25 +81,32 @@ const ProfilePage = ({ user }: ProfileProps) => {
         }
     }
 
-    useEffect(() => {queryProfile()}, [profileUser, friendRequest])
+    useEffect(() => {queryProfile()}, [friends, friendRequest])
 
     async function queryProfile() {
+        console.log('Querying Profile For Friends / Requests')
         setLoading(true)
         try {
-            const yourFriendIndex = profileUser?.friends.findIndex(
+            const yourFriendIndex = await profileUser?.friends.findIndex(
                 (friend: { username: any }) => friend?.username === user.username
             );
-            const yourRequestIndex = profileUser?.requests.findIndex(
+            const yourRequestIndex = await profileUser?.requests.findIndex(
                 (request: { username: any }) => request?.username === user.username
             );
-            const profileRequestIndex = user?.requests.findIndex(
+            const profileRequestIndex = await user?.requests.findIndex(
                 (request: { username: any }) => request?.username === profileUser?.username
             );
+            console.log('Querying Profile For Friends / Requests',
+                yourFriendIndex, '<- Are you Friends?', 
+                yourRequestIndex, '<- Have you sent this Profile a Request?', 
+                profileRequestIndex, '<- Has this Profile Sent you a Request?')
             setYourRequests(yourRequestIndex)
             setYourFriends(yourFriendIndex)
             setProfileRequests(profileRequestIndex)
             setFriendRequest(false)
+            setLoading(false)
         } catch (err: any) {
+            setLoading(false)
             console.log(err.message, '<- Error querying profile for friends / requests')
         }
     }
