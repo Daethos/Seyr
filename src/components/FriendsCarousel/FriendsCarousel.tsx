@@ -75,7 +75,7 @@ const FriendsCarousel = ({ user, fren, carouselUpdate, setCarouselUpdate }: Prop
                 <Col className="stat-block wide" id="ascean-banner">
                    
                     <span id='banner-profile-pic'>
-                        <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt={friendProfile.username} id="nav-pic" className='my-1'/></Link>
+                        <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}><img src={friendProfile.photoUrl} alt={friendProfile.username} id="profile-banner-pic" className='my-1'/></Link>
                     </span>
                     
                     <div className="creature-heading" id='banner-ascean-pic'>
