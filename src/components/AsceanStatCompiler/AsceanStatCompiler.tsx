@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import * as asceanAPI from '../../utils/asceanApi'
+import Loading from '../Loading/Loading'
 
 interface Props {
     ascean: any;
@@ -6,6 +8,7 @@ interface Props {
 }
 
 const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
+    const [loading, setLoading] = useState<boolean>(false);
     
     const displayConstitution: number = Math.round((ascean?.constitution + (ascean?.origin === "Notheo" || ascean?.origin === 'Nothos' ? 2 : 0)) * (ascean?.mastery === 'Constitution' ? 1.1 : 1))
     const displayStrength: number = Math.round((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0) * (ascean?.mastery === 'Strength' ? 1.15 : 1))
@@ -56,186 +59,53 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
 
     const physicalDefenseModifier: number = ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance + Math.round(((constitutionMod + caerenMod + kyosirMod) / 2)) + originPhysDefMod;
     
-    const magicalDefenseModifier = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((constitutionMod + caerenMod + kyosirMod) / 2)) + originMagDefMod;
+    const magicalDefenseModifier: number = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((constitutionMod + caerenMod + kyosirMod) / 2)) + originMagDefMod;
+    
     const [physicalDefense, setPhysicalDefense] = useState<number>(0)
     const [magicalDefense, setMagicalDefense] = useState<number>(0)
     const [physicalPosture, setPhysicalPosture] = useState<number>(0)
     const [magicalPosture, setMagicalPosture] = useState<number>(0)
 
+    const [attributes, setAttributes] = useState<any>([])
+    const [defense, setDefense] = useState<any>([])
+
     useEffect(() => {
-        weaponOneCompiler()
-        weaponTwoCompiler()
-        weaponThreeCompiler()
-        physicalDefenseCompiler()
-        magicalDefenseCompiler()
+      asceanStatCompiler()
     }, [])
+    
 
-    async function physicalDefenseCompiler() {
-        let defense = physicalDefenseModifier;
-        setPhysicalDefense(defense);
-        setPhysicalPosture(defense + asceanState.shield.physical_resistance);
-    }
-
-    async function magicalDefenseCompiler() {
-        let defense = magicalDefenseModifier;
-        setMagicalDefense(defense);
-        setMagicalPosture(defense + asceanState.shield.magical_resistance);
-    }
-
-    async function faithCompiler(weapon: any) {
-        if (ascean.faith === 'adherent') {
-            if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
-                weapon.magical_damage *= 1.07;
-                weapon.critical_chance += 2;
-            }
-            if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatsword' || weapon.type === 'Greatmace') {
-                weapon.physical_damage *= 1.1;
-            }
-            if (weapon.type === 'Axe' || weapon.type === 'Mace') {
-                weapon.physical_damage *= 1.03;
-            }
-            if (weapon.grip === 'Two Hand') {
-                weapon.physical_damage *= 1.07;
-                weapon.magical_damage *= 1.07;
-                weapon.critical_damage *= 1.07
-            }
-            weapon.critical_chance *= 1.07;
-            weapon.roll += 2;
-        }
-        if (ascean.faith === 'devoted') {
-            if (weapon.damage_type?.[0] === 'Righteous' || weapon.damage_type?.[0] === 'Spooky' || weapon.damage_type?.[0] === 'Sorcery') {
-                weapon.physical_damage *= 1.07;
-                weapon.magical_damage *= 1.07;
-            }
-            if (weapon.type === 'Short Sword' || weapon.type === 'Dagger' || weapon.type === 'Scythe' || weapon.type === 'Polearm') {
-                weapon.physical_damage *= 1.07;
-                weapon.magical_damage *= 1.07;
-                weapon.critical_damage *= 1.07;
-            }
-            if (weapon.grip === 'One Hand') {
-                weapon.physical_damage *= 1.03;
-                weapon.magical_damage *= 1.03;
-                weapon.critical_chance *= 1.07;
-            }
-            weapon.critical_damage *= 1.07;
-            weapon.dodge -= 2;
-
+    async function asceanStatCompiler() {
+        setLoading(true)
+        try {
+            const response = await asceanAPI.getAsceanStats(ascean._id)
+            console.log(response.data.data.attributes, 'Response Compiling Stats')
+            setWeaponOne(response.data.data.combat_weapon_one)
+            setWeaponTwo(response.data.data.combat_weapon_two)
+            setWeaponThree(response.data.data.combat_weapon_three)
+            setDefense(response.data.data.defense)
+            setAttributes(response.data.data.attributes)
+            setPhysicalDefense(response.data.data.defense.physicalDefenseModifier)
+            setMagicalDefense(response.data.data.defense.magicalDefenseModifier)
+            setPhysicalPosture(response.data.data.defense.physicalPosture)
+            setMagicalPosture(response.data.data.defense.magicalPosture)
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, 'Error Compiling Ascean Stats')
         }
     }
 
-    async function gripCompiler(weapon: any) {
-        if (weapon.grip === 'One Hand') {
-            weapon.physical_damage += weapon.agility + weapon.strength + (agilityMod * 1.5) + (strengthMod / 2);
-            weapon.magical_damage += weapon.achre + weapon.caeren + achreMod + caerenMod;
-        } 
-        if (weapon.grip === 'Two Hand') {
-            weapon.physical_damage += weapon.agility + weapon.strength + (strengthMod * 2) + (agilityMod);
-            weapon.magical_damage += weapon.achre + weapon.caeren + (achreMod * 1.5) +  (caerenMod * 1.5);
-        }
-    }
-
-    async function penetrationCompiler(weapon: any) {
-        weapon.magical_penetration += magicalPenetration + kyosirMod;
-        weapon.physical_penetration += physicalPenetration + kyosirMod;
-        //console.log(weapon)
-    }
-
-    async function critCompiler(weapon: any) {
-        weapon.critical_chance += critChanceModifier + ((agilityMod + achreMod) / 2);
-        weapon.critical_damage *= critDamageModifier + ((constitutionMod + strengthMod + caerenMod) / 10);
-    }
-
-    async function originCompiler(weapon: any) {
-        if (ascean.origin === "Ashtre") {
-            weapon.critical_chance += 3;
-            weapon.physical_damage *= 1.03;
-        }
-        if (ascean.origin === "Fyers") {
-            weapon.magical_penetration += 3;
-            weapon.physical_penetration += 3;
-        }
-        if (ascean.origin === "Li'ivi") {
-            weapon.magical_penetration += 1;
-            weapon.physical_penetration += 1;
-            weapon.magical_damage *= 1.01;
-            weapon.physical_damage *= 1.01;
-            weapon.critical_chance += 1;
-            weapon.dodge -= 1;
-            weapon.roll += 1;
-        }
-        if (ascean.origin === "Notheo") {
-            weapon.physical_damage *= 1.03;
-            weapon.physical_penetration += 3;
-        }
-        if (ascean.origin === "Nothos") {
-            weapon.magical_penetration += 3;
-            weapon.magical_damage *= 1.03;
-            // weapon.physical_resistance += 3;
-        }
-        if (ascean.origin === "Quorieite") {
-            weapon.dodge -= 3;
-            weapon.roll += 3;
-        }
-        if (ascean.origin === "Sedyreal") {
-            // weapon.magical_resistance += 3;
-            // weapon.physical_resistance += 3;
-        }
-    }
-
-    async function weaponOneCompiler() {
-        let weapon; 
-        weapon = ascean.weapon_one;
-        originCompiler(weapon)
-        gripCompiler(weapon)
-        
-        penetrationCompiler(weapon)
-        weapon.physical_damage *= physicalDamageModifier;
-        weapon.magical_damage *= magicalDamageModifier;
-        critCompiler(weapon)
-        weapon.dodge += dodgeModifier;
-        weapon.roll += rollModifier;
-
-        faithCompiler(weapon)
-        setWeaponOne(weapon)
-    }
-
-    async function weaponTwoCompiler() {
-
-        let weapon;
-        weapon = ascean.weapon_two;
-        originCompiler(weapon)
-        gripCompiler(weapon)
-        penetrationCompiler(weapon)
-        weapon.physical_damage *= physicalDamageModifier;
-        weapon.magical_damage *= magicalDamageModifier;
-        critCompiler(weapon)
-        weapon.dodge += dodgeModifier;
-        weapon.roll += rollModifier;
-
-        faithCompiler(weapon)
-        setWeaponTwo(weapon)
-    }
-    async function weaponThreeCompiler() {
-
-        let weapon;
-        weapon = ascean.weapon_three;
-        originCompiler(weapon)
-        gripCompiler(weapon)
-        penetrationCompiler(weapon)
-        weapon.physical_damage *= physicalDamageModifier;
-        weapon.magical_damage *= magicalDamageModifier;
-        critCompiler(weapon)
-        weapon.dodge += dodgeModifier;
-        weapon.roll += rollModifier;
-
-        faithCompiler(weapon)
-        setWeaponThree(weapon)
+    if (loading) {
+        return (
+            <Loading NavBar={true} />
+        )
     }
 
     return (
     <>
     <div className="actions">
     <h3>Combat Statistics</h3>
+    <button className='btn btn-outline' onClick={asceanStatCompiler} style={{ fontSize: 25 + 'px', fontWeight: 400, color: 'red' }}>Console Stats</button>
     </div>
     <div className="property-line" style={{ marginTop: -15 + 'px' }}>
     <h4>Health: </h4> <p>{healthTotal}</p>
@@ -258,15 +128,20 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
         <polyline points="0,0 550,2.5 0,5"></polyline>
     </svg>
     }
+    {
+        weaponOne
+        ?
     <div className="property-line">
-    <h4>{weaponOne.name} [{weaponOne.type}]</h4><br /> 
-    <h4>{Math.round(weaponOne.physical_damage)}</h4><p> Physical /</p> <h4> {Math.round(weaponOne.magical_damage)}</h4> <p>Magical Damage</p><br />
-    <h4>Attack Type:</h4> <p>{weaponOne.attack_type} [{weaponOne?.damage_type?.[0]}{weaponOne?.damage_type?.[1] ? ' / ' + weaponOne.damage_type[1] : '' }]</p><br />
-    <h4>Critical:</h4>  <p>+{Math.round(weaponOne.critical_chance)}% / x{weaponOne.critical_damage?.toFixed(2)} Damage </p><br />
-    <h4>Dodge:</h4>  <p>+{weaponOne.dodge}s Timer </p><br />
-    <h4>Penetration:</h4>  <p>+{weaponOne.magical_penetration} Mag /  +{weaponOne.physical_penetration} Phys</p><br />
-    <h4>Roll:</h4>  <p>+{weaponOne.roll}% </p>
+    <h4>{weaponOne?.name} [{weaponOne?.type}]</h4><br /> 
+    <h4>{Math.round(weaponOne?.physical_damage)}</h4><p> Physical /</p> <h4> {Math.round(weaponOne?.magical_damage)}</h4> <p>Magical Damage</p><br />
+    <h4>Attack Type:</h4> <p>{weaponOne?.attack_type} [{weaponOne?.damage_type?.[0]}{weaponOne?.damage_type?.[1] ? ' / ' + weaponOne.damage_type[1] : '' }]</p><br />
+    <h4>Critical:</h4>  <p>+{Math.round(weaponOne?.critical_chance)}% / x{weaponOne?.critical_damage?.toFixed(2)} Damage </p><br />
+    <h4>Dodge:</h4>  <p>+{weaponOne?.dodge}s Timer </p><br />
+    <h4>Penetration:</h4>  <p>+{weaponOne?.magical_penetration} Mag /  +{weaponOne?.physical_penetration} Phys</p><br />
+    <h4>Roll:</h4>  <p>+{weaponOne?.roll}% </p>
     </div>
+        : ''
+    }
 
    { 
     communityFocus ?
@@ -278,15 +153,20 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     </svg>
     }
 
+    {
+        weaponTwo
+        ?
     <div className="property-line">
-    <h4>{weaponTwo.name} [{weaponTwo.type}]</h4><br />
-    <h4> {Math.round(weaponTwo.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponTwo.magical_damage)}</h4> <p>Magical Damage</p><br />
-    <h4>Attack Type:</h4> <p>{weaponTwo.attack_type} [{weaponTwo?.damage_type?.[0]}{weaponTwo?.damage_type?.[1] ? ' / ' + weaponTwo.damage_type[1] : ''}]</p><br />
-    <h4>Critical:</h4>  <p>+{Math.round(weaponTwo.critical_chance)}% / x{weaponTwo.critical_damage?.toFixed(2)} Damage </p><br />
-    <h4>Dodge:</h4>  <p>+{weaponTwo.dodge}s Timer </p><br />
-    <h4>Penetration:</h4>  <p>+{weaponTwo.magical_penetration} Mag /  +{weaponTwo.physical_penetration} Phys</p><br />
-    <h4>Roll:</h4>  <p>+{weaponTwo.roll}% </p><br />
+    <h4>{weaponTwo?.name} [{weaponTwo?.type}]</h4><br />
+    <h4> {Math.round(weaponTwo?.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponTwo?.magical_damage)}</h4> <p>Magical Damage</p><br />
+    <h4>Attack Type:</h4> <p>{weaponTwo?.attack_type} [{weaponTwo?.damage_type?.[0]}{weaponTwo?.damage_type?.[1] ? ' / ' + weaponTwo.damage_type[1] : ''}]</p><br />
+    <h4>Critical:</h4>  <p>+{Math.round(weaponTwo?.critical_chance)}% / x{weaponTwo?.critical_damage?.toFixed(2)} Damage </p><br />
+    <h4>Dodge:</h4>  <p>+{weaponTwo?.dodge}s Timer </p><br />
+    <h4>Penetration:</h4>  <p>+{weaponTwo?.magical_penetration} Mag /  +{weaponTwo?.physical_penetration} Phys</p><br />
+    <h4>Roll:</h4>  <p>+{weaponTwo?.roll}% </p><br />
     </div>
+        : ''
+    }
     { 
     communityFocus ?
     <svg height="5" width="100%" className="tapered-rule my-1">
@@ -296,15 +176,20 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
         <polyline points="0,0 550,2.5 0,5"></polyline>
     </svg>
     }
+    {
+        weaponThree
+        ?
     <div className="property-line">
-    <h4>{weaponThree.name} [{weaponThree.type}]</h4><br /> 
-    <h4> {Math.round(weaponThree.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponThree.magical_damage)}</h4> <p>Magical Damage</p> <br />
-    <h4>Attack Type:</h4> <p>{weaponThree.attack_type} [{weaponThree?.damage_type?.[0]}{weaponThree?.damage_type?.[1] ? ' / ' + weaponThree.damage_type[1] : '' }]</p><br />
-    <h4>Critical:</h4>  <p>+{Math.round(weaponThree.critical_chance)}% / x{weaponThree.critical_damage?.toFixed(2)} Damage </p><br />
-    <h4>Dodge:</h4>  <p>+{weaponThree.dodge}s Timer </p><br />
-    <h4>Penetration:</h4>  <p>+{weaponThree.magical_penetration} Mag /  +{weaponThree.physical_penetration} Phys</p><br />
-    <h4>Roll:</h4>  <p>+{weaponThree.roll}% </p>
+    <h4>{weaponThree?.name} [{weaponThree?.type}]</h4><br /> 
+    <h4> {Math.round(weaponThree?.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponThree?.magical_damage)}</h4> <p>Magical Damage</p> <br />
+    <h4>Attack Type:</h4> <p>{weaponThree?.attack_type} [{weaponThree?.damage_type?.[0]}{weaponThree?.damage_type?.[1] ? ' / ' + weaponThree.damage_type[1] : '' }]</p><br />
+    <h4>Critical:</h4>  <p>+{Math.round(weaponThree?.critical_chance)}% / x{weaponThree?.critical_damage?.toFixed(2)} Damage </p><br />
+    <h4>Dodge:</h4>  <p>+{weaponThree?.dodge}s Timer </p><br />
+    <h4>Penetration:</h4>  <p>+{weaponThree?.magical_penetration} Mag /  +{weaponThree?.physical_penetration} Phys</p><br />
+    <h4>Roll:</h4>  <p>+{weaponThree?.roll}% </p>
     </div>
+        : ''
+    }
     </>
   )
 }

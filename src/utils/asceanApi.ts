@@ -53,6 +53,24 @@ export async function getOneAscean(asceanID: string | undefined) {
     })
 }
 
+export async function getAsceanStats(ascean: any) {
+    return fetch(BASE_URL + 'stats/' + ascean, {
+        // method: 'POST',
+        // body: JSON.stringify(ascean),
+        headers: {
+            // 'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err)
+        })
+    })
+}
+   
+
 export async function deleteAscean(ascean: string) {
     return fetch(BASE_URL + ascean, {
         method: 'DELETE',

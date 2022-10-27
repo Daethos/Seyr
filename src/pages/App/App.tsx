@@ -16,6 +16,7 @@ import ProfilePage from "../ProfilePage/ProfilePage"
 import FriendFeed from "../FriendFeed/FriendFeed";
 import FriendMessages from "../FriendMessages/FriendMessages";
 import FocusMessages from "../FocusMessages/FocusMessages";
+import GameSolo from "../GameSolo/GameSolo";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -70,6 +71,7 @@ function App() {
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />

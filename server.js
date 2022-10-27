@@ -33,6 +33,7 @@ app.use(require('./config/auth'));
 app.use('/api/users', require('./routes/api/users')); // USERS IS NOW LIVE!
 app.use('/api/equipment', require('./routes/api/equipment'));
 app.use('/api/ascean', require('./routes/api/ascean'));
+app.use('/api/game', require('./routes/api/game'));
 app.use('/api/community', require('./routes/api/community'));
 app.use('/api/friends', require('./routes/api/friends'));
 app.use('/api/message', require('./routes/api/message'));

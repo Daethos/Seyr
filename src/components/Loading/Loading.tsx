@@ -108,10 +108,11 @@ export default function Loading({ NavBar, Messages, Chat }: Props) {
                 <div className="section-left">
                 <div className="actions">
                     <h3>Character</h3>
-                    <Placeholder  animation="glow">
-                        <Placeholder bg="danger" xs={7} /> <Placeholder bg="danger" xs={4} /> <Placeholder bg="danger" xs={4} />{' '}
-                        <Placeholder xs={5} bg="danger" />  <Placeholder bg="danger" xs={3} /> <Placeholder xs={8} bg="danger" />
-                        <Placeholder xs={4} bg="danger" />  <Placeholder bg="danger" xs={2} /> <Placeholder xs={4} bg="danger" />
+                    <Placeholder  animation="glow" className="loading-header" >
+                        <Placeholder bg="danger" xs={7}  /><br /> 
+                        <Placeholder bg="danger" xs={4} size="sm" /> <Placeholder bg="danger" size="sm" xs={4} />{' '}
+                        <Placeholder xs={5} size="sm" bg="danger" />  <Placeholder  size="sm"bg="danger" xs={3} /> <Placeholder size="sm" xs={8} bg="danger" />
+                        {/* <Placeholder xs={4} bg="danger" />  <Placeholder bg="danger" xs={2} /> <Placeholder xs={4} bg="danger" /> */}
                     </Placeholder><br />
                     <Spinner animation="grow" variant="danger" id="loading-spinner-pic" className='my-5' />
                     <h3>Statistics</h3>

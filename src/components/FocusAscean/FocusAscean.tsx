@@ -36,9 +36,9 @@ const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling,
                 </Link>
             </div>
                
-            <div className="actions">
+            {/* <div className="actions">
                 <h3>Character</h3>
-            </div>
+            </div> */}
             <div className="creature-heading">
                 <h1>{ascean.name}</h1>
                 <h2>{ascean.description}</h2>
@@ -47,16 +47,28 @@ const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling,
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            <div className="actions">
+            {/* <div className="actions">
                 <h3>Player Statistics</h3>
-            </div>
+            </div> */}
             <div className="property-line first">
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
             </div>
-            <div className="property-line last">
+            <div className="property-line">
                 <h4>Mastery</h4>
                 <p> {ascean.mastery}</p>
+            </div>
+            <div className="property-line">
+                <h4>Adherence ?{' '}</h4>
+                <p id="adherence"> {' '}
+                { ascean.faith === 'adherent' ? 'You bet your ass' : 'No fucking way man' }
+                </p>
+            </div>
+            <div className="property-line last">
+                <h4>Devotion ?{' '}</h4>
+                <p>{' '}
+                { ascean.faith === 'devoted' ? 'You bet your ass' : 'No fucking way man' }
+                </p>
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
@@ -67,21 +79,9 @@ const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling,
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            <div className="actions">
+            {/* <div className="actions">
                 <h3>Faith</h3>
-            </div>
-            <div className="property-line first">
-                <h4>Adherence ?{' '}</h4>
-                <p id="adherence"> {' '}
-                { ascean.faith === 'adherent' ? 'You bet your ass' : 'No fucking way man' }
-                </p>
-            </div>
-            <div className="property-line first">
-                <h4>Devotion ?{' '}</h4>
-                <p>{' '}
-                { ascean.faith === 'devoted' ? 'You bet your ass' : 'No fucking way man' }
-                </p>
-            </div>
+            </div> */}
             </div>
         
         </div>

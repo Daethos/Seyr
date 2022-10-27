@@ -16,6 +16,13 @@
     width: 50%;
     padding: 100px 0;
 }
+.loading-header {
+    display: block;
+    margin-left: 25%;
+    margin-right: auto;
+    width: 75%;
+    /* padding: 100px 0; */
+}
 
 .equip-loading {
     display: block;

@@ -1,22 +1,24 @@
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Ascean = require('../models/ascean');
-const bcrypt = require('bcrypt');
+const asceanService = require('../services/asceanServices')
 
 module.exports = {
     create,
     index,
     editAscean,
     getOneAscean,
-    delete: deleteAscean
+    delete: deleteAscean,
+    getAsceanStats
 }
+
+
 
 //TODO: Make a function to create the Ascean's 'stats' through the backend
 //FIXME: So they're simply 'on' the character I think. That way the rendering client-side
 //TODO: Will hopefully not mess around with the stats of the character
 //FIXME: Not sure but probably exploitable via the client somehow, like getting it to render so you multiply stats
 
-//TODO: Seem to be able to run the equations through a 'const' at the beginning and it holds the value through re-rendering
+//TODO: Note: Seem to be able to run the equations through a 'const' at the beginning and it holds the value through re-rendering
 
 async function editAscean(req, res) {
     try {
@@ -143,6 +145,30 @@ async function getOneAscean(req, res) {
                                     .populate("trinket")
                                     .exec();
         res.status(200).json({ data: ascean })
+    } catch (err) {
+        res.status(400).json({ err });
+    }
+}
+
+async function getAsceanStats(req, res) {
+    try {
+        const ascean = await Ascean.findById({ _id: req.params.id })
+                                    .populate("user")
+                                    .populate("weapon_one")
+                                    .populate("weapon_two")
+                                    .populate("weapon_three")
+                                    .populate("shield")
+                                    .populate("helmet")
+                                    .populate("chest")
+                                    .populate("legs")
+                                    .populate("ring_one")
+                                    .populate("ring_two")
+                                    .populate("amulet")
+                                    .populate("trinket")
+                                    .exec();
+        const data = await asceanService.asceanCompiler(ascean)
+        console.log(data)
+        res.status(200).json({ data })
     } catch (err) {
         res.status(400).json({ err });
     }

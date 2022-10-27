@@ -15,20 +15,22 @@ interface ProfileProps {
     user: any;
 }
 
+// TODO: Fix Friend Request Check, someone friended can still send a request
+
 const ProfilePage = ({ user }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [profileUser, setProfileUser] = useState<any>({});
 
     const [friendState, setFriendState] = useState<any>([])
-    const [requestState, setRequestState] = useState<any>([])
 
     const [friendRequest, setFriendRequest] = useState<boolean>(false)
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
-    let yourFriend: any = ''
-    let yourRequest: any = ''
 
+    const [yourRequests, setYourRequests] = useState<any>(0)
+    const [yourFriends, setYourFriends] = useState<any>(0)
+    const [profileRequests, setProfileRequests] = useState<any>(0)
 
     const getProfile = useCallback(async () => {
         try {
@@ -75,6 +77,29 @@ const ProfilePage = ({ user }: ProfileProps) => {
         }
     }
 
+    useEffect(() => {queryProfile()}, [profileUser, friendRequest])
+
+    async function queryProfile() {
+        setLoading(true)
+        try {
+            const yourFriendIndex = profileUser?.friends.findIndex(
+                (friend: { username: any }) => friend?.username === user.username
+            );
+            const yourRequestIndex = profileUser?.requests.findIndex(
+                (request: { username: any }) => request?.username === user.username
+            );
+            const profileRequestIndex = user?.requests.findIndex(
+                (request: { username: any }) => request?.username === profileUser?.username
+            );
+            setYourRequests(yourRequestIndex)
+            setYourFriends(yourFriendIndex)
+            setProfileRequests(profileRequestIndex)
+            setFriendRequest(false)
+        } catch (err: any) {
+            console.log(err.message, '<- Error querying profile for friends / requests')
+        }
+    }
+
     if (loading) {
         return (
             <Loading />
@@ -108,67 +133,30 @@ const ProfilePage = ({ user }: ProfileProps) => {
             </div>
         </div>
         {
-            friendState 
-            ? <>
-                {
-                friendState.map((friend: any) => { friend.username.includes(profileUser?.username) 
-                    ? yourFriend = friend.username 
-                    : yourFriend = null })}
-                {
-                yourFriend
-                ? 
-                <h3 
-                className="my-3"
-                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                >You're friends with {profileUser?.username} !</h3>
-                : <>
-                    {
-                    profileUser?.requests?.map((request: any) => { request.username.includes(user?.username) 
-                        ? yourRequest = user.username
-                        : yourRequest = null })
-                    }
-                    {
-                        yourRequest
-                        ? 
-                            <h3 
-                            className="my-3"
-                            style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                            >Friend request sent to {profileUser.username} !
-                            </h3>
-                        :
-                            friendRequest
-                            ?
-                                <h3 
-                                className="my-3"
-                                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                                >Friend request sent to {profileUser.username} !
-                                </h3>
-                            :
-                                <button 
-                                className="btn my-3"
-                                onClick={sendFriendRequest}
-                                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                                >Send friend request to {profileUser.username} ?
-                                </button>
-                    }
-                </>
-                }
-                </> 
-            : 
-                friendRequest
-                ?
-                    <h3 
+            yourFriends > -1
+            ? <h3 
+            className="my-3"
+            style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+            >You are friends with {profileUser.username} !
+            </h3>
+            : yourRequests > -1 
+                ? <h3 
                     className="my-3"
                     style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
                     >Friend request sent to {profileUser.username} !
                     </h3>
-                :
-                    <button 
-                    className="btn my-3"
-                    onClick={sendFriendRequest}
-                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                    >Send friend request to {profileUser.username} ?
-                    </button>
+                : profileRequests > -1
+                    ? <h3 
+                        className="my-3"
+                        style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                        >{profileUser.username} has sent you a friend request !
+                        </h3>
+                    : <button 
+                        className="btn my-3"
+                        onClick={sendFriendRequest}
+                        style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
+                        >Send friend request to {profileUser.username} ?
+                        </button>
         }
 
         <hr className="orange-border bottom" />
