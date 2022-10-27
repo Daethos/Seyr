@@ -105,7 +105,6 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <>
     <div className="actions">
     <h3>Combat Statistics</h3>
-    <button className='btn btn-outline' onClick={asceanStatCompiler} style={{ fontSize: 25 + 'px', fontWeight: 400, color: 'red' }}>Console Stats</button>
     </div>
     <div className="property-line" style={{ marginTop: -15 + 'px' }}>
     <h4>Health: </h4> <p>{healthTotal}</p>

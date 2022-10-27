@@ -18,14 +18,22 @@ interface Props {
 const CommunityAscean = ({ ascean, loggedUser }: Props) => {
 
   return (
-    <Col className="stat-block wide" >
+    <Col className="stat-block wide" id="" >
         <>
         <hr className="orange-border" />
         <div className="creature-heading">
         <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><h1>{ascean.name}</h1></Link>
         <h2>{ascean.description}</h2>
-        <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" />
+        <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}>
+            <img 
+            src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
+            id="ascean-pic" />
+        </Link>
         </div>
+        <svg height="5" width="100%" className="tapered-rule mt-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
+        <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
         <svg height="5" width="100%" className="tapered-rule mt-3">
             <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
@@ -44,13 +52,12 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             trinket={ascean.trinket}
             key={ascean._id + 2}
         />
-        <svg height="5" width="100%" className="tapered-rule">
+        {/* <svg height="5" width="100%" className="tapered-rule">
             <polyline points="0,0 550,2.5 0,5"></polyline>
-        </svg>
+        </svg> */}
         <div className="top-stats">
-        <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
-        <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id}  />
-        <div className="actions"><h3> </h3></div>
+        {/* <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id}  /> */}
+        {/* <div className="actions"><h3> </h3></div> */}
         </div>
         <hr className='orange-border bottom' />
         </>
