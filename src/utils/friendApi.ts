@@ -63,7 +63,7 @@ export function friendAccept(userId: any, friend: any) {
 }
 
 export function getAllFriends(userID: any) {
-    // console.log('Getting Friends in API Utility', userID)
+    console.log('Getting Friends in API Utility', userID)
     return fetch (`${BASE_URL}${userID}`, {
         headers:  {
             //'Content-Type': 'application/json',

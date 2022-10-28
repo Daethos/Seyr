@@ -94,13 +94,14 @@ async function soloFriend(req, res) {
 }
 
 async function index(req, res) {
+    console.log(req.params.id, 'User in Controller')
     try {
         const user = await User.findById(req.params.id)
                                 .populate('friends')
                                 .populate('friends.userId')
                                 .exec()
         const asceans = await Promise.all(user.friends.map(async (friend) => {
-            //console.log(friend.userId._id, '<- Hello, fren in Controller')
+            console.log(friend.userId._id, '<- Hello, fren in Controller')
             let asceanFrens = []
             const ascean = await Ascean.find({ user: friend.userId._id, visibility: 'public' })
                                 .populate("user")

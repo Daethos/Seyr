@@ -167,7 +167,7 @@ async function getAsceanStats(req, res) {
                                     .populate("trinket")
                                     .exec();
         const data = await asceanService.asceanCompiler(ascean)
-        console.log(data)
+        //console.log(data)
         res.status(200).json({ data })
     } catch (err) {
         res.status(400).json({ err });

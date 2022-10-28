@@ -3,7 +3,7 @@ import * as asceanAPI from '../../utils/asceanApi'
 import Loading from '../Loading/Loading'
 
 interface Props {
-    ascean?: any;
+    ascean: any;
 }
 
 const AsceanAttributeCompiler = ({ ascean }: Props) => {

@@ -73,7 +73,7 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
         <Row className="justify-content-center my-5">
         <FocusAscean
             ascean={ascean}
-            key={ascean?._id}
+            key={ascean._id}
             addFeeling={addFeeling}
             removeFeeling={removeFeeling}
             loggedUser={loggedUser}

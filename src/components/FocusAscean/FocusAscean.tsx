@@ -8,11 +8,11 @@ import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCo
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
 
 interface Props {
-    ascean?: any;
-    setAscean?: React.Dispatch<any>;
+    ascean: any;
+    setAscean: React.Dispatch<any>;
     addFeeling: (asceanID: any, feeling: string) => Promise<void>;
     removeFeeling: (asceanID: any, feeling: string) => Promise<void>;
-    loggedUser?: any;
+    loggedUser: any;
     handleAsceanCreate: ((newAscean: Object) => Promise<void>);
 }
 
