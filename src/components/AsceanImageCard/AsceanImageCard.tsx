@@ -15,9 +15,10 @@ interface Props {
     ring_one?: any;
     ring_two?: any;
     trinket?: any;
+    gameDisplay?: boolean;
 }
 
-const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket }: Props) => {
+const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay }: Props) => {
     const weaponOnePopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_one?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_one?.imgURL} alt={weapon_one?.name} /></span></Popover.Header>
@@ -261,10 +262,69 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     )
     return (
         <>
+            {
+                gameDisplay
+                ? 
+                <Row 
+            // className="justify-content-center"
+            className="justify-content-center"
+            style={{ marginTop: -15 + '%', marginBottom: -25 + '%' }}
+            >
+                <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
+            <Col 
+            style={{marginLeft: -60 + 'px', marginRight: 10 + 'px'}}
+            xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
+            className="my-4">
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponOnePopover}>
+            <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponTwoPopover}>
+            <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponThreePopover}>
+            <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={shieldPopover}>
+            <img src={shield?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            </Col>
+
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-2">
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={helmetPopover}>
+            <img src={helmet?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={chestPopover}>
+            <img src={chest?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={legsPopover}>
+            <img src={legs?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            </Col>
+
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-2">
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={amuletPopover}>
+            <img src={amulet?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={ringOnePopover}>
+            <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={ringTwoPopover}>
+            <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            
+            <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
+            <img src={trinket?.imgURL} className="m-1 eqp-popover spec" />
+            </OverlayTrigger>
+            </Col>
+
+            </Row>
+                :
             <Row 
             // className="justify-content-center"
             className="justify-content-center"
-            
             >
                 <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
@@ -317,6 +377,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </Col>
 
             </Row>
+            }
         </>
   )
 }

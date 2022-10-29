@@ -147,7 +147,7 @@ async function faithCompiler(weapon, ascean) {
             weapon.magical_damage *= 1.03;
             weapon.critical_damage *= 1.03;
         }
-        weapon.critical_damage *= 1.05;
+        weapon.critical_damage = weapon.critical_damage.toFixed(2) * 1.05;
         weapon.dodge -= 2;
 
     }
@@ -182,12 +182,12 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
     originCompiler(weaponOne, ascean)
     gripCompiler(weaponOne, attributes)
     penetrationCompiler(weaponOne, attributes, combatStats)
-    weaponOne.physical_damage *= combatStats.damagePhysical;
-    weaponOne.magical_damage *= combatStats.damageMagical;
     critCompiler(weaponOne, attributes, combatStats)
+    faithCompiler(weaponOne, ascean)
     weaponOne.dodge += combatStats.dodgeCombat;
     weaponOne.roll += combatStats.rollCombat;
-    faithCompiler(weaponOne, ascean)
+    weaponOne.physical_damage = Math.round(weaponOne.physical_damage * combatStats.damagePhysical);
+    weaponOne.magical_damage = Math.round(weaponOne.magical_damage * combatStats.damageMagical);
     // console.log(weaponOne.critical_damage, 'Crit Damage After Compiling')
     return weaponOne
 }
@@ -255,7 +255,7 @@ const asceanCompiler = async (ascean) => {
         const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats)
         const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats)
         const defense = await defenseCompiler(ascean, attributes, combatStats)
-        //console.log(combat_weapon_one, 'Did the first weapon compile?')
+        console.log(combat_weapon_one.name, combat_weapon_one.critical_damage, 'Did the weapon compile?')
         return {
     
             data: {

@@ -128,15 +128,15 @@ const ProfilePage = ({ user }: ProfileProps) => {
         <svg height="5" width="100%" className="tapered-rule my-3">
         <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
-        <img src={profileUser.photoUrl} id="profile-pic" />
+        <img src={profileUser.photoUrl} alt={profileUser.username} id="profile-pic" />
         </div> 
-        <svg height="5" width="100%" className="tapered-rule">
+        <svg height="5" width="100%" className="tapered-rule my-3">
         <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         </div> 
         <div className="section-right">
             <div className="actions">
-                <h3>{profileUser.username}
+                <h3 className='profile-name'>{profileUser.username}
                 </h3>
                 <div className="property-block">
                 <h4 className="m-4">{profileUser.bio}</h4>
