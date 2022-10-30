@@ -20,23 +20,64 @@ html, body {
   max-height: 5vh;
   margin-right: 1.5vw;
 }
+.text-box {
+  border: 1px solid purple;
+  background-color: black;
+  color: white;
+  font-size: 10px;
+  text-align: center;
+  width: 45%;
+  height: 20%;
+  position: absolute;
+  bottom: 1%;
+  right: 1%;
+  /* display: inline-block; */
+  font-family: monospace;
+  float: right;
+  
+}
 .game-block {
+  display: inline-block;
   text-align: left;
   background: #000000;
   min-width: 150px;
   width: 65%;
   height: 65%;
-  float: left;
+  position: absolute;
+  bottom: 1%;
+  left: 1%;
+}
+.action-buttons {
+  display: block;
+  /* display: grid; */
+  position: absolute;
+  margin-left: 45%;
+  margin-top: 85%;
+  /* grid-column-start: 6;
+  grid-row-start: 7; */
+  float: right;
+  font-size: 14px;
+}
+#action-button {
+  font-size: 9px;
+  color: purple;
+  padding: 2px;
+  display: inline-block;
 }
 @media screen and (max-width: 675px) {
   .game-block {
     width: 35%;
+    min-height: 40%;
+    max-height: 45%;
   }
   .game-stat h4,
   .game-stat p {
     font-size: 10px;
   } 
-
+  .text-box {
+    height: 15%;
+    width: 50%;
+  }
 }
 .game-stat h4,
 .game-stat p{
@@ -360,3 +401,4 @@ html, body {
 .friend-popover:hover {
   transform: scale(1.1);
 }
+
