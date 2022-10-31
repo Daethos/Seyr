@@ -171,12 +171,12 @@ const GameSolo = ({ user }: GameProps) => {
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
         try {
+            setCurrentPlayerHealth(currentPlayerHealth - 1)
             // const response = gameAPI.initiateAction(ascean._id, combatData)
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         }
     }
-
 
     if (loading) {
         return (

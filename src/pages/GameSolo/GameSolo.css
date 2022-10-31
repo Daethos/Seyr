@@ -46,7 +46,7 @@
     text-align: left;
     min-width: 150px;
     height: 65%;
-    bottom: 4%;
+    bottom: -25%;
     left: 0%;
   }
   .action-buttons {
@@ -81,6 +81,25 @@
     height: 10%;
     width: 100%;
   }
+  #player-health {
+    background-color: red;
+    font-size: 10px;
+}
+.progress {
+    position: absolute;
+    /* justify-content: center; */
+    overflow: hidden;
+    width: 100%;
+    font-size: 10px;
+    color: white;
+    font-weight: 700;
+    background: transparent;
+}
+.progress-text {
+    justify-content: center;
+    align-items: center;
+    margin-left: 25%;
+}
   #attack-options {
     background-color: black;
     /* color: purple */

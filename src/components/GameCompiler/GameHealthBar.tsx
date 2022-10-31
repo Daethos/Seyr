@@ -17,12 +17,16 @@ const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) =>
 
     useEffect(() => {
         updatePlayerHealthPercentage();
+        // console.log(playerHealthPercentage, 'Current Player Health %')
     }, [currentPlayerHealth])
 
     const updatePlayerHealthPercentage = async () => {
+        setLoading(true)
         try {
-            console.log(currentPlayerHealth)
-            setPlayerHealthPercentage(Math.round(currentPlayerHealth/totalPlayerHealth) * 100)
+            console.log(currentPlayerHealth, 'Current Player Health')
+            const newHealthPercentage = Math.round((currentPlayerHealth/totalPlayerHealth) * 100);
+            console.log(newHealthPercentage, 'New Health %')
+            setPlayerHealthPercentage(newHealthPercentage)
             setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error updating Health Percentage')
@@ -39,13 +43,23 @@ const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) =>
     }
 
     return (
-        <>
+        <div className=''>
         {/* <canvas ref={computerCanvasRef} /> */}
 
         {/* <canvas ref={playerRef} /> */}
 
-        <ProgressBar variant="success" id="player-health" now={playerHealthPercentage} label={`${currentPlayerHealth}/${totalPlayerHealth}[${playerHealthPercentage}%]`} />
-        </>
+        <ProgressBar 
+            variant="success" 
+            id="player-health" 
+            now={playerHealthPercentage} 
+            // label={`${currentPlayerHealth} / ${totalPlayerHealth} [${playerHealthPercentage}%]`} 
+        />
+        <div className="progress">
+            <p className='progress-text'>
+                {`${currentPlayerHealth} / ${totalPlayerHealth} [${playerHealthPercentage}%]`}
+            </p>
+        </div>
+        </div>
     )
 }
 
