@@ -61,15 +61,25 @@ const GameSolo = ({ user }: GameProps) => {
     const [playerDefense, setPlayerDefense] = useState<any>([])
 
     const [combatData, setCombatData] = useState<any>({
+        player: ascean,
         action: '',
         player_health: currentPlayerHealth,
         weapon_one: weaponOne,
         weapon_two: weaponTwo,
         weapon_three: weaponThree,
         player_defense: playerDefense,
-        player_attributes: attributes
-        
+        player_attributes: attributes,
+        computer: '',
+        computer_defense: '',
+        computer_action: '',
+        computer_weapons: [],
+        new_player_health: currentPlayerHealth,
+        new_computer_health: 0
     })
+
+    // UseEffect -> Enemy Function Getter
+    // Function -> Get Computer Enemy
+    // Essentially reverse engineer everything done for player, for the computer.
 
     useEffect(() => {
       asceanStatCompiler()
@@ -84,7 +94,7 @@ const GameSolo = ({ user }: GameProps) => {
         setLoading(true)
         try {
             const response = await asceanAPI.getAsceanStats(asceanID)
-            console.log(response.data.data.attributes, 'Response Compiling Stats')
+            console.log(response.data.data, 'Response Compiling Stats')
             setWeaponOne(response.data.data.combat_weapon_one)
             setWeaponTwo(response.data.data.combat_weapon_two)
             setWeaponThree(response.data.data.combat_weapon_three)
@@ -99,6 +109,7 @@ const GameSolo = ({ user }: GameProps) => {
             setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
             setCombatData({
                 ...combatData,
+                'player': response.data.data.ascean,
                 'player_health': response.data.data.attributes.healthTotal,
                 'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
                 'weapon_one': response.data.data.combat_weapon_one,

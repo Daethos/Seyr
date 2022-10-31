@@ -4,6 +4,7 @@ const User = require('../models/user');
 module.exports = {
     init,
     render,
+    initiate,
     attack,
     dodge,
     roll,
@@ -21,6 +22,12 @@ async function init(req, res) {
 async function render(req, res) {
     // Renders the Game State   
 }
+
+async function initiate(req, res) {
+    console.log(req.body, 'Combat Data')
+    // const data = await gameService.actionCompiler(req.body)
+}
+
 async function attack(req, res) {
     // Runs the Attack Function
 }

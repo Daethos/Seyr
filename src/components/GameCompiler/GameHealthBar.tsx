@@ -43,7 +43,7 @@ const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) =>
     }
 
     return (
-        <div className=''>
+        <div className='mb-4'>
         {/* <canvas ref={computerCanvasRef} /> */}
 
         {/* <canvas ref={playerRef} /> */}

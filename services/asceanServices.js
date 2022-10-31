@@ -105,6 +105,8 @@ async function penetrationCompiler(weapon, attributes, combatStats) {
 async function critCompiler(weapon, attributes, combatStats) { 
     weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod) / 2);
     weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod) / 25);
+    weapon.critical_chance = weapon.critical_chance.toFixed(2)
+    weapon.critical_damage = weapon.critical_damage.toFixed(2)
 }
 
 async function faithCompiler(weapon, ascean) { 
@@ -130,6 +132,7 @@ async function faithCompiler(weapon, ascean) {
             weapon.critical_chancee += 2
         }
         weapon.critical_chance *= 1.05;
+        weapon.critical_chance = weapon.critical_chance.toFixed(2)
         weapon.roll += 2;
     }
     if (ascean.faith === 'devoted') {
