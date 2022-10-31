@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
+import './GameSolo.css'
 import * as asceanAPI from '../../utils/asceanApi';  
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -12,6 +13,8 @@ import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard'
 import GameHealthBar from '../../components/GameCompiler/GameHealthBar';
 import GamePlayerStats from '../../components/GameCompiler/GamePlayerStats';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
+import GameAscean from '../../components/GameCompiler/GameAscean';
+import GameActions from '../../components/GameCompiler/GameActions';
 
 interface GameProps {
     user: any;
@@ -81,7 +84,7 @@ const GameSolo = ({ user }: GameProps) => {
         setLoading(true)
         try {
             const response = await asceanAPI.getAsceanStats(asceanID)
-            //console.log(response.data.data.attributes, 'Response Compiling Stats')
+            console.log(response.data.data.attributes, 'Response Compiling Stats')
             setWeaponOne(response.data.data.combat_weapon_one)
             setWeaponTwo(response.data.data.combat_weapon_two)
             setWeaponThree(response.data.data.combat_weapon_three)
@@ -97,6 +100,7 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatData({
                 ...combatData,
                 'player_health': response.data.data.attributes.healthTotal,
+                'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
                 'weapon_one': response.data.data.combat_weapon_one,
                 'weapon_two': response.data.data.combat_weapon_two,
                 'weapon_three': response.data.data.combat_weapon_three,
@@ -115,6 +119,7 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatData({
                 ...combatData,
                 'player_health': currentPlayerHealth,
+                'weapons': [weaponOne, weaponTwo, weaponThree],
                 'weapon_one': weaponOne,
                 'weapon_two': weaponTwo,
                 'weapon_three': weaponThree,
@@ -135,6 +140,34 @@ const GameSolo = ({ user }: GameProps) => {
         console.log(combatData)
     }
 
+    async function setWeaponOrder(weapon: any) {
+        const findWeapon = combatData.weapons.filter(
+            (weap: { name: any; }) => weap?.name === weapon.target.value
+        );
+        const findWeaponIndex = combatData.weapons.findIndex(
+            (weap: { name: any; }) => weap?.name === weapon.target.value
+        );
+        console.log(findWeapon[0], 'Weapon!')
+        const newWeaponOrder = async () => combatData?.weapons.sort((a: any, b: any) => {
+            return (
+                // console.log(a, b)
+                a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
+            )
+        })
+        const response = await newWeaponOrder()
+        console.log(response, '<- Response re-ordering weapons')
+        setCombatData({...combatData, 'weapons': response})
+        // const weaponSplice = combatData.weapons.splice(findWeaponIndex, findWeaponIndex +1)
+        // let newWeaponOrder = combatData.weapons;
+        // newWeaponOrder = newWeaponOrder.splice(findWeaponIndex, findWeaponIndex +1);
+        // console.log(newWeaponOrder(), '<- Weapon being handled')
+        // setCombatData({
+        //     ...combatData,
+        //     'weapon_one': findWeapon
+        // })
+        // console.log(combatData)
+    }
+
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
         try {
@@ -153,45 +186,11 @@ const GameSolo = ({ user }: GameProps) => {
         );
     }
     return (
-        <Container fluid>
-            <h1 className='text-white' style={{ textAlign: 'center' }}>Work in Progress! In the meantime, checkout {ascean.name}!</h1>
+        <Container fluid id="game-container">
             
-
-            <div className="game-block">
-                <div className="actions">
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-                <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
-                </div>
-                <AsceanImageCard
-                    weapon_one={weaponOne}
-                    weapon_two={weaponTwo}
-                    weapon_three={weaponThree}
-                    shield={ascean.shield}
-                    helmet={ascean.helmet}
-                    chest={ascean.chest}
-                    legs={ascean.legs}
-                    amulet={ascean.amulet}
-                    ring_one={ascean.ring_one}
-                    ring_two={ascean.ring_two}
-                    trinket={ascean.trinket}
-                    gameDisplay={true}
-                    key={ascean._id}
-                />
-                <div className="actions">
-                <GamePlayerStats attributes={attributes} magicalDefense={magicalDefense} magicalPosture={magicalPosture} physicalDefense={physicalDefense} physicalPosture={physicalPosture} />
-                </div>
-            </div>
-                <div className="action-buttons">
-                    <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
-                    <button value='dodge' onClick={handleAction} className='btn btn-outline' id='action-button'>Dodge</button>
-                    <button value='parry' onClick={handleAction} className='btn btn-outline' id='action-button'>Parry</button>
-                    <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
-                    <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
-                        <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
-                        <button value='initiate' type='submit' className='btn btn-outline text-info' id='action-button'>Initiate</button>
-                        </Form>
-                </div>
-                <GameCombatText ascean={ascean} user={user} />
+            <GameAscean ascean={ascean} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
+            <GameActions combatData={combatData} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} setCombatData={setCombatData} />
+            <GameCombatText ascean={ascean} user={user} />
         </Container>
     )
 }

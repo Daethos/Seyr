@@ -13,23 +13,21 @@ const FriendsList = ({ user, friend, handleClose }: Props) => {
 
     return (
 
-        <div className="friend-block mb-2">
-        <div className="actions">
+        <div className="friend-block mb-3">
+        <div className="">
             <Link to={'/Messages/' + friend.userId._id} className='btn' onClick={handleClose}>
-            <span id="friend-pic"><h3 style={{ fontWeight: 500, fontSize: 25 + 'px' }}>
+            <span id="friend-card" className=''><h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'purple', fontVariant: 'small-caps' }}>
             <img 
                     src={friend.userId.photoUrl} 
                     alt={friend.username} 
                     style={{ 
-                        maxWidth: 20 + '%', 
                         textDecoration: 'none', 
-                        borderRadius: 50 + '%', 
-                        marginLeft: -15 + 'px',
-                        marginRight: 50 + 'px' 
+                        marginLeft: 30 + 'px',
+                        marginRight: 30 + 'px' 
                     }} 
-                    className=""
+                    className="friend-pic"
                 />
-                {friend.username}</h3>
+                <u>{friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}</u></h3>
             </span> 
         </Link>
         </div>

@@ -52,9 +52,9 @@ const GameCombatText = ({ user, ascean }: Props) => {
     }
 
   return (
-    <>
+    <div id="textarea">
         <textarea className="text-box" id="console" value={combatText} readOnly></textarea>
-    </>
+    </div>
   )
 }
 
