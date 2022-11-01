@@ -1,8 +1,10 @@
 import tokenService from './tokenService';
 const BASE_URL = '/api/game/'
 
-export function initiateAction(actionType: string, combatData: any) {
-    return fetch(BASE_URL + actionType, { // actionType = combatData.action !
+export function initiateAction(combatData: any) {
+    console.log(combatData, 'Combat Data in the Game API Utility');
+    
+    return fetch(BASE_URL + 'initiate', { //  = combatData.action !
         method: 'PUT',
         body: JSON.stringify(combatData),
         headers: {

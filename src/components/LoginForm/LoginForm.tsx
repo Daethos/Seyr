@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./LoginForm.css";
 import userService from "../../utils/userService";
 import { useNavigate } from "react-router-dom";
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -57,6 +58,11 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                 <div className="property-line first">
                     <h3>Email Address</h3>
                 <Form.Group className="my-2" controlId="formBasicEmail">
+                <FloatingLabel
+                  controlId="floatingInput"
+                  label="Email address"
+                  className="mb-3"
+                >
                 <Form.Control
                     type="email"
                     name="email"
@@ -65,11 +71,13 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                     onChange={handleChange}
                     required
                 />
+                </FloatingLabel>
                 </Form.Group>
                 </div>
                 <div className="property-line last">
                     <h3>Password</h3>
                 <Form.Group className="my-2" controlId="formBasicPassword">
+                <FloatingLabel controlId="floatingPassword" label="Password">
                 <Form.Control
                     name="password"
                     type="password"
@@ -78,6 +86,7 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                     onChange={handleChange}
                     required
                 />
+                </FloatingLabel>
                 </Form.Group>
                 </div> 
                 <svg height="5" width="100%" className="tapered-rule mt-4">

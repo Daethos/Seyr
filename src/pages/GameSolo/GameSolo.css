@@ -113,6 +113,7 @@
   #action-button {
     font-size: 8.5px;
     color: purple;
+    background-color: black;
     padding: 2px;
     display: inline-block;
   }

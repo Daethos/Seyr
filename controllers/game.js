@@ -1,17 +1,11 @@
 const Ascean = require('../models/ascean');
 const User = require('../models/user');
+const gameService = require('../services/gameServices')
 
 module.exports = {
     init,
     render,
     initiate,
-    attack,
-    dodge,
-    roll,
-    parry,
-    posture,
-    playerAttack,
-    computerAttack,
     playerWin,
     playerLoss
 }
@@ -24,31 +18,15 @@ async function render(req, res) {
 }
 
 async function initiate(req, res) {
-    console.log(req.body, 'Combat Data')
-    // const data = await gameService.actionCompiler(req.body)
+    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
+    try {
+        const data = await gameService.actionCompiler(req.body)
+        res.status(200).json({ data })
+    } catch (err) {
+        res.status(400).json({ err })
+    }
 }
 
-async function attack(req, res) {
-    // Runs the Attack Function
-}
-async function dodge(req, res) {
-    // Runs the Dodge Function
-}
-async function roll(req, res) {
-    // Runs the Roll Function
-}
-async function parry(req, res) {
-    // Runs the Parry Function
-}
-async function posture(req, res) {
-    // Runs the Posture Function
-}
-async function playerAttack(req, res) {
-    // Calculates the player's attack
-}
-async function computerAttack(req, res) {
-    // Calculates the computer's attack
-}
 async function playerWin(req, res) {
     // Renders Game State if the Player Wins
 }

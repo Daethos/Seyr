@@ -3,8 +3,10 @@ import Form from 'react-bootstrap/Form'
 
 interface Props {
     handleAction: (action: any) => void;
+    handleCounter: (action: any) => void;
     handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
     currentAction: string;
+    currentCounter: string;
     combatData: any;
     setCombatData: (value: any) => void;
     currentWeapon: any;
@@ -12,12 +14,17 @@ interface Props {
     weapons: any;
 }
 
-const GameActions = ({ handleAction, handleInitiate, currentAction, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const GameActions = ({ handleAction, handleCounter, handleInitiate, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([])
+  const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
   useEffect(() => {
     console.log('Displaying new action: ', currentAction)
-    setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1))
-  }, [currentAction])
+    if (currentAction === 'counter') {
+      setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1))
+    } else {
+      setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1))
+    }
+  }, [currentAction, currentCounter])
 
   useEffect(() => {
     console.log('Displaying new weapon ', currentWeapon.name)
@@ -36,7 +43,12 @@ const GameActions = ({ handleAction, handleInitiate, currentAction, combatData, 
       </select>
     <div className="action-buttons">
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
-      <button value='counter' onClick={handleAction} className='btn btn-outline' id='action-button'>Counter</button>
+      <select onChange={handleCounter} className='btn btn-outline' id='action-button'>
+        <option>Counter</option>
+        {counters.map((counter: string, index: number) => ( 
+          <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
+        ))}
+      </select>
       <button value='dodge' onClick={handleAction} className='btn btn-outline' id='action-button'>Dodge</button>
       <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
       <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>

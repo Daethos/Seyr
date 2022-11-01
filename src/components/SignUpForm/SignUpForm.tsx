@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import userService from "../../utils/userService";
 import { useNavigate } from "react-router-dom";
 import Col from 'react-bootstrap/Col';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
 
 function isPasswordMatch(passwordOne: string, passwordConf: string) {
@@ -87,7 +88,8 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <div className="actions">
                 <div className="property-line first">
                     <h3>Username</h3>
-                <Form.Group className="my-2 display-6" controlId="formBasicUsername">
+                <Form.Group className="my-2" controlId="formBasicUsername">
+                <FloatingLabel controlId="floatingPassword" label="Username">
                     <Form.Control
                     type="text"
                     name="username"
@@ -96,11 +98,17 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     onChange={handleChange}
                     required
                     />
+                </FloatingLabel>
                 </Form.Group>
                 </div>
                 <div className="property-line last">
                     <h3>Email</h3>
-                <Form.Group className="my-2 display-6" controlId="formBasicEmail">
+                <Form.Group className="my-2" controlId="formBasicEmail">
+                <FloatingLabel
+                  controlId="floatingInput"
+                  label="Email address"
+                  className=""
+                >
                 <Form.Control
                     type="email"
                     name="email"
@@ -109,6 +117,7 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     onChange={handleChange}
                     required
                 />
+                </FloatingLabel>
                 </Form.Group>
                 </div> 
                 <svg height="5" width="100%" className="tapered-rule mt-4">
@@ -116,20 +125,23 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 </svg>
                 <div className="property-line first">
                     <h3>Password</h3>
-                <Form.Group className="my-2 display-6" controlId="formBasicPassword">
-                    <Form.Control
-                    name="password"
-                    type="password"
-                    placeholder="password"
-                    value={state.password}
-                    onChange={handleChange}
-                    required
-                    />
+                <Form.Group className="my-2" controlId="formBasicPassword">
+                <FloatingLabel controlId="floatingPassword" label="Password">
+                  <Form.Control
+                  name="password"
+                  type="password"
+                  placeholder="password"
+                  value={state.password}
+                  onChange={handleChange}
+                  required
+                  />
+                </FloatingLabel>
                 </Form.Group>
                 </div>
                 <div className="property-line last">
                     <h3>Confirmation</h3>
-                <Form.Group className="my-2 display-6" controlId="formBasicPasswordConfirm">
+                <Form.Group className="my-2" controlId="formBasicPasswordConfirm">
+                <FloatingLabel controlId="" label="Confirm Password">
                     <Form.Control
                     name="passwordConf"
                     type="password"
@@ -138,6 +150,7 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     onChange={handleChange}
                     required
                     />
+                </FloatingLabel>
                 </Form.Group>
                 </div>  
                 <svg height="5" width="100%" className="tapered-rule mt-4">
@@ -145,7 +158,8 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 </svg>
                 <div className="property-line first">
                     <h3>Profile Bio</h3>
-                <Form.Group className="my-2 display-6" controlId="formBasicUser">
+                <Form.Group className="my-2" controlId="formBasicUser">
+                <FloatingLabel controlId="" label="A Little About Yourself">
                 <Form.Control
                     type="textarea"
                     name="bio"
@@ -153,11 +167,12 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     value={state.bio}
                     onChange={handleChange}
                 />
+                </FloatingLabel>
                 </Form.Group>
                 </div>
                 <div className="property-line last">
                     <h3>Profile Picture</h3>
-                <Form.Group className="my-2 display-6" controlId="formBasicPhoto">
+                <Form.Group className="my-2" controlId="formBasicPhoto">
                     <Form.Control
                     type="file"
                     name="photoUrl"

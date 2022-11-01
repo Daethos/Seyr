@@ -9,9 +9,6 @@ import Stack from 'react-bootstrap/Stack';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import * as gameAPI from '../../utils/gameApi'
-import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard'
-import GameHealthBar from '../../components/GameCompiler/GameHealthBar';
-import GamePlayerStats from '../../components/GameCompiler/GamePlayerStats';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
@@ -49,11 +46,6 @@ const GameSolo = ({ user }: GameProps) => {
     const [weaponThree, setWeaponThree] = useState<any>({})
     const [playerWeapons, setPlayerWeapons] = useState<any>([])
 
-    const [physicalDefense, setPhysicalDefense] = useState<number>(0)
-    const [magicalDefense, setMagicalDefense] = useState<number>(0)
-    const [physicalPosture, setPhysicalPosture] = useState<number>(0)
-    const [magicalPosture, setMagicalPosture] = useState<number>(0)
-
     const [totalPlayerHealth, setTotalPlayerHealth] = useState<number>(0)
     const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(0)
 
@@ -63,6 +55,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [combatData, setCombatData] = useState<any>({
         player: ascean,
         action: '',
+        counter_guess: '',
         player_health: currentPlayerHealth,
         weapon_one: weaponOne,
         weapon_two: weaponTwo,
@@ -72,6 +65,7 @@ const GameSolo = ({ user }: GameProps) => {
         computer: '',
         computer_defense: '',
         computer_action: '',
+        computer_counter_guess: '',
         computer_weapons: [],
         new_player_health: currentPlayerHealth,
         new_computer_health: 0
@@ -83,8 +77,8 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
       asceanStatCompiler()
-    }, [getAscean])
-
+    }, [getAscean]) // Says to remove it?
+    // TODO: FIXME: Check if removing it affects refreh at all or it's good without those dependencies TODO: FIXME:
     useEffect(() => {
         combatDataCompiler()
     }, [getAscean])
@@ -100,10 +94,6 @@ const GameSolo = ({ user }: GameProps) => {
             setWeaponThree(response.data.data.combat_weapon_three)
             setPlayerDefense(response.data.data.defense)
             setAttributes(response.data.data.attributes)
-            setPhysicalDefense(response.data.data.defense.physicalDefenseModifier)
-            setMagicalDefense(response.data.data.defense.magicalDefenseModifier)
-            setPhysicalPosture(response.data.data.defense.physicalPosture)
-            setMagicalPosture(response.data.data.defense.magicalPosture)
             setTotalPlayerHealth(response.data.data.attributes.healthTotal)
             setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
             setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
@@ -146,9 +136,19 @@ const GameSolo = ({ user }: GameProps) => {
         console.log(action.target.value, '<- Action being handled')
         setCombatData({
             ...combatData,
-            'action': action.target.value
+            'action': action.target.value,
+            'counter_guess': ''
         })
         console.log(combatData)
+    }
+
+    function handleCounter(counter: any) {
+        console.log(counter.target.value, 'New Counter')
+        setCombatData({
+            ...combatData,
+            'action': 'counter',
+            'counter_guess': counter.target.value
+        })
     }
 
     async function setWeaponOrder(weapon: any) {
@@ -169,7 +169,9 @@ const GameSolo = ({ user }: GameProps) => {
         e.preventDefault()
         try {
             setCurrentPlayerHealth(currentPlayerHealth - 1)
-            // const response = gameAPI.initiateAction(ascean._id, combatData)
+            const response = await gameAPI.initiateAction(combatData)
+            console.log(response, 'Response Initiating Combat')
+            // setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         }
@@ -186,7 +188,7 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container">
             
             <GameAscean ascean={ascean} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
-            <GameActions combatData={combatData} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} setCombatData={setCombatData} />
+            <GameActions combatData={combatData} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} setCombatData={setCombatData} />
             <GameCombatText ascean={ascean} user={user} />
         </Container>
     )

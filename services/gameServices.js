@@ -1,23 +1,6 @@
 
 // =================================== HELPER CONSTANTS ======================================= \\
 
-// Helps to remember nested fields in CombatData
-// =============== COMBAT DATA ==============
-//     player: ascean,
-//     action: '',
-//     player_health: currentPlayerHealth,
-//     weapons: [],
-//     weapon_one: weaponOne,
-//     weapon_two: weaponTwo,
-//     weapon_three: weaponThree,
-//     player_defense: playerDefense,
-//     player_attributes: attributes,
-//     computer: '',
-//     computer_action: '',
-//     computer_weapons: [],
-//     new_player_health: currentPlayerHealth,
-//     new_computer_health: 0
-// })
 
 // =================================== HELPER FUNCTIONS ======================================= \\
 
@@ -105,8 +88,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
 // 
 
 const computerAttackCompiler = async (combatData) => {
-    const player_initiative = combatData.player_attributes.initiative;
-    const computer_initiative = combatData.computer_attributes.initiative;
+
     return (
         console.log(combatData)
     )
@@ -138,7 +120,7 @@ const computerRollCompiler = async (combatData) => {
 const attackCompiler = async (combatData) => {
    
     return (
-        console.log(combatData)
+        console.log(action, combatData)
     )
 }
 
@@ -170,10 +152,25 @@ const rollCompiler = async (combatData) => {
     )
 }
 
-const actionSplitter = async (action, combatData) => {
+const doublePostureCompiler = async (combatData, player_initiative, computer_initiative) => {
+    
+    return (
+        console.log(combatData)
+    )
+}
+
+const doubleRollCompiler = async (combatData, player_initiative, computer_initiative) => {
+    
+    return (
+        console.log(combatData)
+    )
+}
+
+const actionSplitter = async (combatData) => {
     const newData = {
         player: combatData.player, // The player's Ascean
         action: combatData.action, // The player's action
+        counter_guess: combatData.counter_guess, // The action chosen believed to be 
         player_health: combatData.player_health, // Current Player Health
         weapons: [...combatData.weapons], // All 3 Weapons
         player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
@@ -182,6 +179,7 @@ const actionSplitter = async (action, combatData) => {
         computer_attributes: combatData.computer_attributes, // Possesses compiled Attributes, Initiative
         computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
         computer_action: combatData.computer_action, // Action Chosen By Computer
+        computer_counter_guess: combatData.computer_counter_guess, // Comp's Counter Guess if Action === 'Counter'
         computer_weapons: [...combatData.computer_weapons],  // All 3 Weapons
         potential_player_damage: 0, // All the Damage that is possible on hit for a player
         potential_computer_damage: 0, // All the Damage that is possible on hit for a computer
@@ -192,14 +190,17 @@ const actionSplitter = async (action, combatData) => {
         new_player_health: combatData.new_player_health, // New player health post-combat action
         new_computer_health: combatData.new_computer_health, // New computer health post-combat action
     }
+
     const player_initiative = combatData.player_attributes.initiative;
     const computer_initiative = combatData.computer_attributes.initiative;
     const player_action = combatData.action;
+    const player_counter = combatData.counter_guess;
+    const computer_counter = combatData.computer_counter_guess;
     const computer_action = combatData.computer_action;
 
     // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
 
-    if (player_action === 'attack' && computer_action === 'attack') {
+    if (player_action === 'attack' && computer_action === 'attack') { // If both choose Attack
         if (player_initiative > computer_initiative) {
             await attackCompiler(newData)
             await computerAttackCompiler(newData)
@@ -208,65 +209,53 @@ const actionSplitter = async (action, combatData) => {
             await attackCompiler(newData)
         }
     }
-    if (player_action === 'counter' && computer_action === 'counter') {
-        if (player_initiative > computer_initiative) {
-            await counterCompiler(newData)
-            await computerCounterCompiler(newData)
-        } else {
-            await computerCounterCompiler(newData)
-            await counterCompiler(newData)
-        }
-    }
-    if (player_action === 'dodge' && computer_action === 'dodge') {
-        if (player_initiative > computer_initiative) {
-            await dodgeCompiler(newData)
-            await computerDodgeCompiler(newData)
-        } else {
-            await computerDodgeCompiler(newData)
-            await dodgeCompiler(newData)
-        }
-    }
-    if (player_action === 'posture' && computer_action === 'posture') {
-        if (player_initiative > computer_initiative) {
-            await postureCompiler(newData)
-            await computerPostureCompiler(newData)
-        } else {
-            await computerPostureCompiler(newData)
-            await postureCompiler(newData)
-        }
-    }
-    if (player_action === 'roll' && computer_action === 'roll') {
-        if (player_initiative > computer_initiative) {
-            await rollCompiler(newData)
-            await computerRollCompiler(newData)
-        } else {
-            await computerRollCompiler(newData)
-            await rollCompiler(newData)
+
+    if (player_action === 'counter' && computer_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
+        if (player_counter === computer_counter) {
+            if (player_initiative > computer_initiative) {
+                await counterCompiler(newData)
+            } else {
+                await computerCounterCompiler(newData)
+            }    
         }
     }
 
+    if (player_action === 'dodge' && computer_action === 'dodge') { // If both choose Dodge
+        if (player_initiative > computer_initiative) {
+            await dodgeCompiler(newData)
+        } else {
+            await computerDodgeCompiler(newData)
+        }
+    }
+    if (player_action === 'posture' && computer_action === 'posture') { // If both choose Posture
+        // If both Posture, maybe just boost the defenses and treat like regular attacks?
+        await doublePostureCompiler(newData, player_initiative, computer_initiative)
+        // if (player_initiative > computer_initiative) {
+        //     await postureCompiler(newData)
+        //     await computerPostureCompiler(newData)
+        // } else {
+        //     await computerPostureCompiler(newData)
+        //     await postureCompiler(newData)
+        // }
+    }
+    if (player_action === 'roll' && computer_action === 'roll') { // If both choose Roll
+        await doubleRollCompiler(newData, player_initiative, computer_initiative)
+        // if (player_initiative > computer_initiative) {
+        //     await rollCompiler(newData)
+        //     await computerRollCompiler(newData)
+        // } else {
+        //     await computerRollCompiler(newData)
+        //     await rollCompiler(newData)
+        // }
+    }
 
-    if (action === 'attack') {
-        attackCompiler(newData)
-    }
-    if (action === 'dodge') {
-        dodgeCompiler(newData)
-    }
-    if (action === 'counter') {
-        counterCompiler(newData)
-    }
-    if (action === 'posture') {
-        postureCompiler(newData)
-    }
-    if (action === 'roll') {
-        rollCompiler(newData)
-    }
     return newData
 }
 
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
 const actionCompiler = async (combatData) => {
+    console.log(combatData, 'Combat Data in the Action Compiler of Game Services')
     try {
         const result = await actionSplitter(combatData)
         console.log(result, 'Combat Result')
