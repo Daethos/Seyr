@@ -59,10 +59,18 @@
     margin-top: 22%;
     grid-column-start: 3;
     grid-row-start: 7;
+    padding: 1%;
     border: 1px solid purple;
     background: black;
     /* float: right; */
-    font-size: 12px;
+  }
+  #action-button {
+    font-size: 8.5px;
+    color: purple;
+    background-color: black;
+    padding: 1.5px;
+    display: inline-block;
+    margin-bottom: 4px;
   }
   .action-reader {
     display: block;
@@ -70,7 +78,7 @@
     display: inline-block;
     text-align: center;
     border: 1px solid purple;
-    padding: 6px;
+    padding: 8px;
     background: black;
     grid-column-start: 4;
     grid-column-end: 5;
@@ -110,13 +118,7 @@
     grid-column-start: 4;
     grid-row-start: 6;
   }
-  #action-button {
-    font-size: 8.5px;
-    color: purple;
-    background-color: black;
-    padding: 2px;
-    display: inline-block;
-  }
+  
   @media screen and (max-width: 675px) {
     .game-block {
       /* width: 40%; */

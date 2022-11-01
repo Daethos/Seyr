@@ -54,15 +54,16 @@ const GameSolo = ({ user }: GameProps) => {
 
     const [combatData, setCombatData] = useState<any>({
         player: ascean,
+        player_health: currentPlayerHealth,
         action: '',
         counter_guess: '',
-        player_health: currentPlayerHealth,
         weapon_one: weaponOne,
         weapon_two: weaponTwo,
         weapon_three: weaponThree,
         player_defense: playerDefense,
         player_attributes: attributes,
         computer: '',
+        computer_health: 0,
         computer_defense: '',
         computer_action: '',
         computer_counter_guess: '',
