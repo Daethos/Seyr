@@ -88,7 +88,7 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <h4>{weaponOne?.name} [{weaponOne?.type}]</h4><br /> 
     <h4>{Math.round(weaponOne?.physical_damage)}</h4><p> Physical /</p> <h4> {Math.round(weaponOne?.magical_damage)}</h4> <p>Magical Damage</p><br />
     <h4>Attack Type:</h4> <p>{weaponOne?.attack_type} [{weaponOne?.damage_type?.[0]}{weaponOne?.damage_type?.[1] ? ' / ' + weaponOne.damage_type[1] : '' }]</p><br />
-    <h4>Critical:</h4>  <p>+{Math.round(weaponOne?.critical_chance)}% / x{weaponOne?.critical_damage?.toFixed(2)} Damage </p><br />
+    <h4>Critical:</h4>  <p>+{Math.round(weaponOne?.critical_chance)}% / x{weaponOne?.critical_damage} Damage </p><br />
     <h4>Dodge:</h4>  <p>+{weaponOne?.dodge}s Timer </p><br />
     <h4>Penetration:</h4>  <p>+{weaponOne?.magical_penetration} Mag /  +{weaponOne?.physical_penetration} Phys</p><br />
     <h4>Roll:</h4>  <p>+{weaponOne?.roll}% </p>
@@ -113,7 +113,7 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <h4>{weaponTwo?.name} [{weaponTwo?.type}]</h4><br />
     <h4> {Math.round(weaponTwo?.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponTwo?.magical_damage)}</h4> <p>Magical Damage</p><br />
     <h4>Attack Type:</h4> <p>{weaponTwo?.attack_type} [{weaponTwo?.damage_type?.[0]}{weaponTwo?.damage_type?.[1] ? ' / ' + weaponTwo.damage_type[1] : ''}]</p><br />
-    <h4>Critical:</h4>  <p>+{Math.round(weaponTwo?.critical_chance)}% / x{weaponTwo?.critical_damage?.toFixed(2)} Damage </p><br />
+    <h4>Critical:</h4>  <p>+{Math.round(weaponTwo?.critical_chance)}% / x{weaponTwo?.critical_damage} Damage </p><br />
     <h4>Dodge:</h4>  <p>+{weaponTwo?.dodge}s Timer </p><br />
     <h4>Penetration:</h4>  <p>+{weaponTwo?.magical_penetration} Mag /  +{weaponTwo?.physical_penetration} Phys</p><br />
     <h4>Roll:</h4>  <p>+{weaponTwo?.roll}% </p><br />
@@ -136,7 +136,7 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <h4>{weaponThree?.name} [{weaponThree?.type}]</h4><br /> 
     <h4> {Math.round(weaponThree?.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponThree?.magical_damage)}</h4> <p>Magical Damage</p> <br />
     <h4>Attack Type:</h4> <p>{weaponThree?.attack_type} [{weaponThree?.damage_type?.[0]}{weaponThree?.damage_type?.[1] ? ' / ' + weaponThree.damage_type[1] : '' }]</p><br />
-    <h4>Critical:</h4>  <p>+{Math.round(weaponThree?.critical_chance)}% / x{weaponThree?.critical_damage?.toFixed(2)} Damage </p><br />
+    <h4>Critical:</h4>  <p>+{Math.round(weaponThree?.critical_chance)}% / x{weaponThree?.critical_damage} Damage </p><br />
     <h4>Dodge:</h4>  <p>+{weaponThree?.dodge}s Timer </p><br />
     <h4>Penetration:</h4>  <p>+{weaponThree?.magical_penetration} Mag /  +{weaponThree?.physical_penetration} Phys</p><br />
     <h4>Roll:</h4>  <p>+{weaponThree?.roll}% </p>

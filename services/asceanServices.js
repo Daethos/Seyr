@@ -150,7 +150,8 @@ async function faithCompiler(weapon, ascean) {
             weapon.magical_damage *= 1.03;
             weapon.critical_damage *= 1.03;
         }
-        weapon.critical_damage = weapon.critical_damage.toFixed(2) * 1.05;
+        weapon.critical_damage *= 1.05;
+        weapon.critical_damage = weapon.critical_damage.toFixed(2)
         weapon.dodge -= 2;
 
     }

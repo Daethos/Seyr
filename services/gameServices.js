@@ -21,6 +21,91 @@
 
 // =================================== HELPER FUNCTIONS ======================================= \\
 
+const faithFinder = async (combatData) => { // The influence will add a chance to have a special effect occur
+
+    if (combatData.weapons[0].influences === 'Daethos') { // God
+
+    }
+    if (combatData.weapons[0].influences === 'Achreo') { // Wild
+        
+    }
+    if (combatData.weapons[0].influences === "Ahn've") { // Wind
+
+    }
+    if (combatData.weapons[0].influences === 'Astra') { // Lightning
+        
+    }
+    if (combatData.weapons[0].influences === 'Cambire') { // Potential
+
+    }
+    if (combatData.weapons[0].influences === 'Chiomyr') { // Humor
+        
+    }
+    if (combatData.weapons[0].influences === 'Fyer') { // Fire
+
+    }
+    if (combatData.weapons[0].influences === 'Ilios') { // Sun
+        
+    }
+    if (combatData.weapons[0].influences === "Kyn'gi") { // Hunt
+
+    }
+    if (combatData.weapons[0].influences === "Kyrisos") { // Gold
+
+    }
+    if (combatData.weapons[0].influences === "Kyr'na") { // Time
+
+    }
+    if (combatData.weapons[0].influences === "Lilos") { // Life
+
+    }
+    if (combatData.weapons[0].influences === "Ma'anre") { // Moon
+
+    }
+    if (combatData.weapons[0].influences === "Nyrolus") { // Water
+
+    }
+    if (combatData.weapons[0].influences === "Quor'ei") { // Earth
+
+    }
+    if (combatData.weapons[0].influences === "Rahvre") { // Dreams
+
+    }
+    if (combatData.weapons[0].influences === "Senari") { // Wisdom
+
+    }
+    if (combatData.weapons[0].influences === "Se'dyro") { // Iron
+
+    }
+    if (combatData.weapons[0].influences === "Se'vas") { // War
+
+    }
+    if (combatData.weapons[0].influences === "Shrygei") { // Song
+
+    }
+    if (combatData.weapons[0].influences === "Tshaer") { // Animal
+
+    }
+}
+
+// TODO: QueryFunctions -------
+// FIXME: Weapon -> Grip / Attack Type / Damage Type
+// FIXME: Attack ? Weapon[0].grip: 1h ? weapon[0].attack_type === 'Physical' ?  
+// So I need to do some wild nesting and if statements which suck unfortunately
+// So what's the first thing that needs to be resolved? Presumably who goes first!
+// This is solved with initiative, but what if someone with low initiative rolls against high?
+// Should initiative be used as the trump card if the actions are the same?
+// Sort of like if both parties guessed the other was parrying, the person with first initiative gets priority?
+// 
+// 
+// 
+// 
+// 
+// 
+
+
+// ================================== COMPILER FUNCTIONS ====================================== \\
+
 const attackCompiler = async (combatData) => {
     
     return (
@@ -56,28 +141,27 @@ const rollCompiler = async (combatData) => {
     )
 }
 
-// ================================== COMPILER FUNCTIONS ====================================== \\
-
 const actionSplitter = async (action, combatData) => {
     const newData = {
-        player: combatData.player,
-        action: combatData.action,
-        player_health: combatData.player_health,
-        weapons: [...combatData.weapons],
-        player_defense: combatData.player_defense,
-        player_attributes: combatData.player_attributes,
-        computer: combatData.computer,
-        computer_defense: combatData.computer_defense,
-        computer_action: combatData.computer_action,
-        computer_weapons: [...combatData.computer_weapons],
-        new_player_health: combatData.new_player_health,
-        new_computer_health: combatData.new_computer_health,
-        potential_player_damage: 0,
-        potential_computer_damage: 0,
-        realized_player_damage: 0,
-        realized_computer_damage: 0,
-        player_action_description: '',
-        computer_action_description: ''
+        player: combatData.player, // The player's Ascean
+        action: combatData.action, // The player's action
+        player_health: combatData.player_health, // Current Player Health
+        weapons: [...combatData.weapons], // All 3 Weapons
+        player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
+        player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
+        computer: combatData.computer, // Computer Enemy
+        computer_attributes: combatData.computer_attributes, // Possesses compiled Attributes, Initiative
+        computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
+        computer_action: combatData.computer_action, // Action Chosen By Computer
+        computer_weapons: [...combatData.computer_weapons],  // All 3 Weapons
+        potential_player_damage: 0, // All the Damage that is possible on hit for a player
+        potential_computer_damage: 0, // All the Damage that is possible on hit for a computer
+        realized_player_damage: 0, // Player Damage - Computer Defenses
+        realized_computer_damage: 0, // Computer Damage - Player Defenses
+        player_action_description: '', // The combat text to inject from the player
+        computer_action_description: '', // The combat text to inject from the computer
+        new_player_health: combatData.new_player_health, // New player health post-combat action
+        new_computer_health: combatData.new_computer_health, // New computer health post-combat action
     }
 
     if (action === 'attack') {
