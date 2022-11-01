@@ -95,18 +95,54 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
 // So what's the first thing that needs to be resolved? Presumably who goes first!
 // This is solved with initiative, but what if someone with low initiative rolls against high?
 // Should initiative be used as the trump card if the actions are the same?
-// Sort of like if both parties guessed the other was parrying, the person with first initiative gets priority?
-// 
-// 
-// 
+// Sort of like if both parties guessed the other was countering, the person with first initiative gets priority?
+// So at beginning of action splitter, it'll evaluate player and computer action
+// Hierarchy is... 
+// COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
+// Add difference between Initiatives for roll % ONLY IF person not rolling has higher?
 // 
 // 
 // 
 
+const computerAttackCompiler = async (combatData) => {
+    const player_initiative = combatData.player_attributes.initiative;
+    const computer_initiative = combatData.computer_attributes.initiative;
+    return (
+        console.log(combatData)
+    )
+}
+
+const computerCounterCompiler = async (combatData) => {
+    
+    return (
+        console.log(combatData)
+    )
+}
+
+const computerPostureCompiler = async (combatData) => {
+    
+    return (
+        console.log(combatData)
+    )
+}
+
+const computerRollCompiler = async (combatData) => {
+    
+    return (
+        console.log(combatData)
+    )
+}
 
 // ================================== COMPILER FUNCTIONS ====================================== \\
 
 const attackCompiler = async (combatData) => {
+   
+    return (
+        console.log(combatData)
+    )
+}
+
+const counterCompiler = async (combatData) => {
     
     return (
         console.log(combatData)
@@ -114,13 +150,6 @@ const attackCompiler = async (combatData) => {
 }
 
 const dodgeCompiler = async (combatData) => {
-    
-    return (
-        console.log(combatData)
-    )
-}
-
-const parryCompiler = async (combatData) => {
     
     return (
         console.log(combatData)
@@ -163,6 +192,59 @@ const actionSplitter = async (action, combatData) => {
         new_player_health: combatData.new_player_health, // New player health post-combat action
         new_computer_health: combatData.new_computer_health, // New computer health post-combat action
     }
+    const player_initiative = combatData.player_attributes.initiative;
+    const computer_initiative = combatData.computer_attributes.initiative;
+    const player_action = combatData.action;
+    const computer_action = combatData.computer_action;
+
+    // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
+
+    if (player_action === 'attack' && computer_action === 'attack') {
+        if (player_initiative > computer_initiative) {
+            await attackCompiler(newData)
+            await computerAttackCompiler(newData)
+        } else {
+            await computerAttackCompiler(newData)
+            await attackCompiler(newData)
+        }
+    }
+    if (player_action === 'counter' && computer_action === 'counter') {
+        if (player_initiative > computer_initiative) {
+            await counterCompiler(newData)
+            await computerCounterCompiler(newData)
+        } else {
+            await computerCounterCompiler(newData)
+            await counterCompiler(newData)
+        }
+    }
+    if (player_action === 'dodge' && computer_action === 'dodge') {
+        if (player_initiative > computer_initiative) {
+            await dodgeCompiler(newData)
+            await computerDodgeCompiler(newData)
+        } else {
+            await computerDodgeCompiler(newData)
+            await dodgeCompiler(newData)
+        }
+    }
+    if (player_action === 'posture' && computer_action === 'posture') {
+        if (player_initiative > computer_initiative) {
+            await postureCompiler(newData)
+            await computerPostureCompiler(newData)
+        } else {
+            await computerPostureCompiler(newData)
+            await postureCompiler(newData)
+        }
+    }
+    if (player_action === 'roll' && computer_action === 'roll') {
+        if (player_initiative > computer_initiative) {
+            await rollCompiler(newData)
+            await computerRollCompiler(newData)
+        } else {
+            await computerRollCompiler(newData)
+            await rollCompiler(newData)
+        }
+    }
+
 
     if (action === 'attack') {
         attackCompiler(newData)
@@ -170,8 +252,8 @@ const actionSplitter = async (action, combatData) => {
     if (action === 'dodge') {
         dodgeCompiler(newData)
     }
-    if (action === 'parry') {
-        parryCompiler(newData)
+    if (action === 'counter') {
+        counterCompiler(newData)
     }
     if (action === 'posture') {
         postureCompiler(newData)
@@ -186,7 +268,7 @@ const actionSplitter = async (action, combatData) => {
 
 const actionCompiler = async (combatData) => {
     try {
-        const result = await actionSplitter(combatData.action, combatData)
+        const result = await actionSplitter(combatData)
         console.log(result, 'Combat Result')
         return result
     } catch (err) {

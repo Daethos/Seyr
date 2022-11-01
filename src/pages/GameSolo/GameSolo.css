@@ -62,7 +62,7 @@
     border: 1px solid purple;
     background: black;
     /* float: right; */
-    font-size: 14px;
+    font-size: 12px;
   }
   .action-reader {
     display: block;
@@ -70,13 +70,14 @@
     display: inline-block;
     text-align: center;
     border: 1px solid purple;
+    padding: 6px;
     background: black;
     grid-column-start: 4;
     grid-column-end: 5;
     /* margin-left: 50%; */
     margin-top: 18%;
     grid-row-start: 7;
-    font-size: 10px;
+    font-size: 7px;
     color: white;
     height: 10%;
     width: 100%;
@@ -110,7 +111,7 @@
     grid-row-start: 6;
   }
   #action-button {
-    font-size: 9px;
+    font-size: 8.5px;
     color: purple;
     padding: 2px;
     display: inline-block;

@@ -155,28 +155,14 @@ const GameSolo = ({ user }: GameProps) => {
         const findWeapon = combatData.weapons.filter(
             (weap: { name: any; }) => weap?.name === weapon.target.value
         );
-        const findWeaponIndex = combatData.weapons.findIndex(
-            (weap: { name: any; }) => weap?.name === weapon.target.value
-        );
-        console.log(findWeapon[0], 'Weapon!')
         const newWeaponOrder = async () => combatData?.weapons.sort((a: any, b: any) => {
             return (
-                // console.log(a, b)
                 a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
             )
         })
         const response = await newWeaponOrder()
         console.log(response, '<- Response re-ordering weapons')
         setCombatData({...combatData, 'weapons': response})
-        // const weaponSplice = combatData.weapons.splice(findWeaponIndex, findWeaponIndex +1)
-        // let newWeaponOrder = combatData.weapons;
-        // newWeaponOrder = newWeaponOrder.splice(findWeaponIndex, findWeaponIndex +1);
-        // console.log(newWeaponOrder(), '<- Weapon being handled')
-        // setCombatData({
-        //     ...combatData,
-        //     'weapon_one': findWeapon
-        // })
-        // console.log(combatData)
     }
 
     async function handleInitiate(e: { preventDefault: () => void; }) {

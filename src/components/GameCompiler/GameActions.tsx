@@ -21,29 +21,28 @@ const GameActions = ({ handleAction, handleInitiate, currentAction, combatData, 
 
   useEffect(() => {
     console.log('Displaying new weapon ', currentWeapon.name)
-    setDisplayedAction(currentWeapon.name)
+    setDisplayedAction(`Main Weapon: ${currentWeapon.name}`)
   }, [currentWeapon])
   return (
     <>
     <textarea className='action-reader' value={displayedAction} readOnly></textarea>
-          <select name="Attacks" id="attack-options" style={{ color: 'purple' }} value={combatData.weapons[0]} onChange={setWeaponOrder}>
-            <option value="">Weapon Order</option>
-            {
-            weapons ?
-            weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )
-            : ''
-            }
-          </select>
+      <select name="Attacks" id="attack-options" style={{ color: 'purple' }} value={combatData.weapons[0]} onChange={setWeaponOrder}>
+        <option value="">Weapon Order</option>
+        {
+        weapons ?
+        weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )
+        : ''
+        }
+      </select>
     <div className="action-buttons">
-        <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack
-        </button>
-        <button value='dodge' onClick={handleAction} className='btn btn-outline' id='action-button'>Dodge</button>
-        <button value='parry' onClick={handleAction} className='btn btn-outline' id='action-button'>Parry</button>
-        <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
-        <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
-        <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
-            <button value='initiate' type='submit' className='btn btn-outline text-info' id='action-button'>Initiate</button>
-        </Form>
+      <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
+      <button value='counter' onClick={handleAction} className='btn btn-outline' id='action-button'>Counter</button>
+      <button value='dodge' onClick={handleAction} className='btn btn-outline' id='action-button'>Dodge</button>
+      <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
+      <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
+      <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
+          <button value='initiate' type='submit' className='btn btn-outline text-info' id='action-button'>Initiate</button>
+      </Form>
     </div>
     </>
   )
