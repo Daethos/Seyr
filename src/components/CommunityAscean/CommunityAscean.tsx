@@ -3,6 +3,7 @@ import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
+import FeelingsCard from '../FeelingsCard/FeelingsCard';
 
 
 interface Props {
@@ -54,6 +55,8 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
         {/* <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id}  /> */}
         {/* <div className="actions"><h3> </h3></div> */}
         </div>
+        <div className="actions" style={{ marginTop: -6 + '%', marginBottom: -1 + '%' }}><h3> </h3></div>
+        <FeelingsCard ascean={ascean} loggedUser={loggedUser} />
         <hr className='orange-border bottom' />
         </>
     </Col>

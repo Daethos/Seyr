@@ -5,7 +5,6 @@ import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import * as communityAPI from '../../utils/communityApi'
-import * as feelingAPI from '../../utils/feelingApi'
 import FocusAscean from '../../components/FocusAscean/FocusAscean';
 
 
@@ -20,27 +19,7 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
     const { focusID } = useParams();
     // const [communityFocus, setCommunityFocus] = useState<boolean>(true)
 
-    async function addFeeling(asceanID: any, feeling: string) {
-        console.log('Ascean ID: ', asceanID, 'Feeling to Create: ', feeling)
-        try {
-            const response = await feelingAPI.createFeeling(asceanID, feeling);
-            console.log(response.data, 'Response in Adding a Feeling')
-            getAscean()
-        } catch (err: any) {
-            console.log(err.message, '<- Error adding a feeling!')
-        }
-    }
-
-    async function removeFeeling(asceanID: any, feeling: string) {
-        console.log('Ascean ID: ', asceanID, 'Feeling to Remove: ', feeling)
-        try {
-            const response = await feelingAPI.removeFeeling(asceanID, feeling);
-            console.log(response.data, 'Response in Removing a Feeling')
-            getAscean()
-        } catch (err: any) {
-            console.log(err.message, '<- Error adding a feeling!')
-        }
-    }
+    
 
    const getAscean = useCallback(async () => {
     setLoading(true);
@@ -74,8 +53,6 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
         <FocusAscean
             ascean={ascean}
             key={ascean._id}
-            addFeeling={addFeeling}
-            removeFeeling={removeFeeling}
             loggedUser={loggedUser}
             setAscean={setAscean}
             handleAsceanCreate={handleAsceanCreate}

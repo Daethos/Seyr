@@ -10,13 +10,11 @@ import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/As
 interface Props {
     ascean: any;
     setAscean: React.Dispatch<any>;
-    addFeeling: (asceanID: any, feeling: string) => Promise<void>;
-    removeFeeling: (asceanID: any, feeling: string) => Promise<void>;
     loggedUser: any;
     handleAsceanCreate: ((newAscean: Object) => Promise<void>);
 }
 
-const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling, handleAsceanCreate }: Props) => {
+const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Props) => {
 
     return (
         <React.Fragment>
@@ -86,7 +84,7 @@ const FocusAscean = ({ ascean, setAscean, addFeeling, loggedUser, removeFeeling,
         
         </div>
         <div className="section-right">
-            <FeelingsCard loggedUser={loggedUser} addFeeling={addFeeling} removeFeeling={removeFeeling} ascean={ascean} key={ascean._id} />
+            <FeelingsCard loggedUser={loggedUser} ascean={ascean} key={ascean._id} />
             <div className="actions">
                 <h3>Eccentricities & Equipment</h3>
             <div className='property-block'>

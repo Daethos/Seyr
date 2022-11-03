@@ -54,9 +54,10 @@ const GameSolo = ({ user }: GameProps) => {
 
     const [combatData, setCombatData] = useState<any>({
         player: ascean,
-        player_health: currentPlayerHealth,
         action: '',
         counter_guess: '',
+        player_health: currentPlayerHealth,
+        weapons: [],
         weapon_one: weaponOne,
         weapon_two: weaponTwo,
         weapon_three: weaponThree,
@@ -64,12 +65,24 @@ const GameSolo = ({ user }: GameProps) => {
         player_attributes: attributes,
         computer: '',
         computer_health: 0,
-        computer_defense: '',
+        computer_defense: [],
         computer_action: '',
         computer_counter_guess: '',
         computer_weapons: [],
+        player_action_description: '',
+        computer_action_description: '',
         new_player_health: currentPlayerHealth,
-        new_computer_health: 0
+        new_computer_health: 0,
+        attack_weight: 0,
+        counter_weight: 0,
+        dodge_weight: 0,
+        posture_weight: 0,
+        roll_weight: 0,
+        counter_attack_weight: 0,
+        counter_counter_weight: 0,
+        counter_dodge_weight: 0,
+        counter_posture_weight: 0,
+        counter_roll_weight: 0,
     })
 
     // UseEffect -> Enemy Function Getter
@@ -133,6 +146,11 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
+    useEffect(() => {
+      console.log(combatData)
+    }, [combatData])
+    
+
     function handleAction(action: any) {
         console.log(action.target.value, '<- Action being handled')
         setCombatData({
@@ -140,7 +158,6 @@ const GameSolo = ({ user }: GameProps) => {
             'action': action.target.value,
             'counter_guess': ''
         })
-        console.log(combatData)
     }
 
     function handleCounter(counter: any) {
