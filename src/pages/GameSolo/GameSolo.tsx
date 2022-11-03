@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import './GameSolo.css'
 import * as asceanAPI from '../../utils/asceanApi';  
+import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
@@ -19,6 +20,7 @@ interface GameProps {
 
 const GameSolo = ({ user }: GameProps) => {
     const [ascean, setAscean] = useState<any>({})
+    const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
     
     const [combatText, setCombatText] = useState<any>([])
@@ -39,7 +41,10 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         getAscean();
+        getOpponent();
     }, [asceanID, getAscean])
+
+    
 
     const [weaponOne, setWeaponOne] = useState<any>({})
     const [weaponTwo, setWeaponTwo] = useState<any>({})
@@ -51,6 +56,16 @@ const GameSolo = ({ user }: GameProps) => {
 
     const [attributes, setAttributes] = useState<any>([])
     const [playerDefense, setPlayerDefense] = useState<any>([])
+
+    const [computerWeapons, setComputerWeapons] = useState<any>({})
+    const [computerWeaponOne, setComputerWeaponOne] = useState<object>({})
+    const [computerWeaponTwo, setComputerWeaponTwo] = useState<object>({})
+    const [computerWeaponThree, setComputerWeaponThree] = useState<object>({})
+
+    const [computerAttributes, setComputerAttributes] = useState<any>([])
+    const [computerDefense, setComputerDefense] = useState<any>([])
+    const [currentComputerHealth, setCurrentComputerHealth] = useState<number>(0)
+    const [totalComputerHealth, setTotalComputerHealth] = useState<number>(0)
 
     const [combatData, setCombatData] = useState<any>({
         player: ascean,
@@ -65,14 +80,18 @@ const GameSolo = ({ user }: GameProps) => {
         player_attributes: attributes,
         computer: '',
         computer_health: 0,
-        computer_defense: [],
         computer_action: '',
         computer_counter_guess: '',
         computer_weapons: [],
+        computer_weapon_one: computerWeaponOne,
+        computer_weapon_two: computerWeaponTwo,
+        computer_weapon_three: computerWeaponThree,
+        computer_defense: computerDefense,
+        computer_attributes: computerAttributes,
         player_action_description: '',
         computer_action_description: '',
         new_player_health: currentPlayerHealth,
-        new_computer_health: 0,
+        new_computer_health: currentComputerHealth,
         attack_weight: 0,
         counter_weight: 0,
         dodge_weight: 0,
@@ -86,6 +105,74 @@ const GameSolo = ({ user }: GameProps) => {
         player_win: false,
         computer_win: false,
     })
+
+    useEffect(() => {
+        opponentStatCompiler()
+    }, [opponent])
+
+    useEffect(() => {
+        opponentDataCompiler();
+      }, [opponent])
+      
+
+    const getOpponent = async () => {
+        setLoading(true)
+        try {
+            const response = await userService.getProfile('daethos')
+            const randomOpponent = Math.floor(Math.random() * response.data.ascean.length)
+            setOpponent(response.data.ascean[randomOpponent])
+            console.log(response.data.ascean[randomOpponent], '<- New Opponent');
+            
+        } catch (err: any) {
+            console.log(err.message, 'Error retrieving Enemies')
+        }
+    }
+
+    const opponentStatCompiler = async () => {
+        setLoading(true)
+        try {
+            const response = await asceanAPI.getAsceanStats(opponent._id)
+            console.log(response.data.data, 'Response Compiling Stats')
+            setComputerDefense(response.data.data.defense)
+            setComputerAttributes(response.data.data.attributes)
+            setTotalComputerHealth(response.data.data.attributes.healthTotal)
+            setCurrentComputerHealth(response.data.data.attributes.healthTotal)
+            setComputerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
+            setCombatData({
+                ...combatData,
+                'computer': response.data.data.ascean,
+                'computer_health': response.data.data.attributes.healthTotal,
+                'computer_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+                'computer_weapon_one': response.data.data.combat_weapon_one,
+                'computer_weapon_two': response.data.data.combat_weapon_two,
+                'computer_weapon_three': response.data.data.combat_weapon_three,
+                'computer_defense': response.data.data.defense,
+                'computer_attributes': response.data.data.attributes
+            })
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, 'Error Compiling Ascean Stats')
+        }
+    }
+
+    async function opponentDataCompiler() {
+        setLoading(true)
+        try {
+            setCombatData({
+                ...combatData,
+                'computer_health': currentComputerHealth,
+                'computer_weapons': [computerWeaponOne, computerWeaponTwo, computerWeaponThree],
+                'computer_weapon_one': computerWeaponOne,
+                'computer_weapon_two': computerWeaponTwo,
+                'computer_weapon_three': computerWeaponThree,
+                'computer_defense': computerDefense,
+                'computer_attributes': computerAttributes
+            })
+        } catch (err: any) {
+            console.log(err.message, 'Error compiling combat data')
+        }
+    }
 
     // UseEffect -> Enemy Function Getter
     // Function -> Get Computer Enemy
@@ -206,8 +293,8 @@ const GameSolo = ({ user }: GameProps) => {
     }
     return (
         <Container fluid id="game-container">
-            
-            <GameAscean ascean={ascean} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
+            <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
             <GameActions combatData={combatData} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} setCombatData={setCombatData} />
             <GameCombatText ascean={ascean} user={user} />
         </Container>

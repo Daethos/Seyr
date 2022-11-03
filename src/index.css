@@ -16,8 +16,10 @@ html, body {
 
 #community-pic{
   border-radius: 50%;
-  max-width: 5vw;
-  max-height: 5vh;
+  width: 35px;
+  height: 35px;
+  overflow: hidden;
+  border: 1px solid purple;
   margin-right: 1.5vw;
 }
 

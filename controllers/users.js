@@ -26,7 +26,9 @@ async function profile(req, res) {
     // Find the Post's by the user
     //.populate('user') <- user comes from the key on the post model 
     //   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'}, // referencing a model < which replaces the id with the userdocument
-    const ascean = await Ascean.find({ user: user._id, visibility: 'public' })
+    const ascean = await Ascean.find({ user: user._id
+      // , visibility: 'public' 
+    })
                                 .populate("user")
                                 .populate("weapon_one")
                                 .populate("weapon_two")

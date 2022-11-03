@@ -89,8 +89,8 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
 
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
-const computerActionCompiler = async (newData, computer_action, computer_counter) => {
-
+const computerActionCompiler = async (newData, player_action, computer_action, computer_counter) => {
+    
     const computerActions = {
         attack: 30 + newData.attack_weight,
         counter: 10 + newData.counter_weight,
@@ -173,15 +173,17 @@ const computerActionCompiler = async (newData, computer_action, computer_counter
             computer_counter = 'roll'
         }
     }
+    newData.computer_action = computer_action;
+    newData.computer_counter_guess = computer_counter;
+    console.log(newData.computer_action, newData.computer_counter_guess, 'New Computer Action')
 
     return (
-        newData,
-        computer_action,
-        computer_counter
+        newData
     )
 }
 
 const computerDualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+    console.log('Computer Dual Wield Firing')
     const player = combatData.player;
     const computer = combatData.computer;
     const weapons = combatData.computer_weapons;
@@ -227,7 +229,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     
     combatData.computer_action_description = 
         `${computer.name} attacks You with ${weapons[0].name} and ${weapons[1].name} for 
-        ${combatData.realized_computer_damage} ${weapons[0].damage_type} and ${weapons[1].damage_type}
+        ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type} and ${weapons[1].damage_type}
         ${firstWeaponCrit === true && secondWeaponCrit === true 
             ? 'Critical Strike' 
             : firstWeaponCrit === true || secondWeaponCrit === true 
@@ -239,6 +241,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 }
 
 const computerAttackCompiler = async (combatData, computer_action) => {
+    console.log('Computer Attack Compiler Firing')
     let computer_physical_damage = combatData.computer_weapons[0].physical_damage;
     let computer_magical_damage = combatData.computer_weapons[0].magical_damage;
     let computer_total_damage;
@@ -341,11 +344,13 @@ const computerAttackCompiler = async (combatData, computer_action) => {
 
     combatData.computer_action_description = 
         `${combatData.computer.name} attacks You with their ${combatData.computer_weapons[0].name} for 
-        ${computer_total_damage} ${combatData.computer_weapons[0].damage_type} Damage.`    
+        ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type} Damage.`    
 
     if (combatData.new_player_health < 0) {
         combatData.new_player_health = 0;
     }
+
+    console.log(computer_total_damage, 'Total Computer Damage')
 
     return (
         combatData
@@ -363,6 +368,7 @@ const computerCriticalCompiler = async (combatData, weapon, computer_physical_da
 }
 
 const computerCounterCompiler = async (combatData, player_action, computer_action) => {
+    console.log('Computer Counter Firing')
     computer_action = 'attack';
     await attackCompiler(combatData, computer_action)
     return (
@@ -371,6 +377,7 @@ const computerCounterCompiler = async (combatData, player_action, computer_actio
 }
     
 const computerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
+    console.log(computer_action, 'Computer Roll Firing')
     const computer_roll = combatData.computer_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.player_attributes.kyosirMod;
     if (computer_roll > roll_catch) {
@@ -393,6 +400,7 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
 // ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
 const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+    
     const player = combatData.player;
     const computer = combatData.computer;
     const weapons = combatData.weapons;
@@ -441,19 +449,20 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     
     combatData.player_action_description = 
         `You attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for 
-        ${combatData.realized_player_damage} ${weapons[0].damage_type} and ${weapons[1].damage_type}
+        ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type} and ${weapons[1].damage_type}
         ${firstWeaponCrit === true && secondWeaponCrit === true 
             ? 'Critical Strike' 
             : firstWeaponCrit === true || secondWeaponCrit === true 
             ? 'Partial Crit'
             : ''} Damage.`    
+    console.log(combatData.realized_player_damage)
     return (
         combatData
     )
 }
     
 const attackCompiler = async (combatData, player_action) => {
-    
+    console.log('In the Player Attack Compiler')
     let player_physical_damage = combatData.weapons[0].physical_damage;
     let player_magical_damage = combatData.weapons[0].magical_damage;
     let player_total_damage;
@@ -560,16 +569,19 @@ const attackCompiler = async (combatData, player_action) => {
 
     combatData.player_action_description = 
         `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for 
-        ${player_total_damage} ${combatData.weapons[0].damage_type} Damage.`    
+        ${Math.round(player_total_damage)} ${combatData.weapons[0].damage_type} Damage.`    
 
     if (combatData.new_computer_health < 0) {
         combatData.new_computer_health = 0;
     }
 
+    console.log(player_total_damage, 'Total Player Damage');
+
     return combatData
 }
 
 const criticalCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
+    console.log('Player Critical Firing')
     player_physical_damage *= weapon.critical_damage;
     player_magical_damage *= weapon.critical_damage;
     return (
@@ -580,6 +592,7 @@ const criticalCompiler = async (combatData, weapon, player_physical_damage, play
 }
 
 const counterCompiler = async (combatData, player_action, computer_action) => {
+    console.log('Player Counter Firing')
     player_action = 'attack';
     await attackCompiler(combatData, player_action)
     // if (computer_action === 'attack') {
@@ -604,6 +617,7 @@ const counterCompiler = async (combatData, player_action, computer_action) => {
 }
 
 const playerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
+    console.log('Player Roll Firing')
     const player_roll = combatData.weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
     if (player_roll > roll_catch) {
@@ -624,6 +638,7 @@ const playerRollCompiler = async (combatData, player_initiative, computer_initia
 
 // Resolves both Player and Computer Rolling
 const doubleRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
+    console.log('Double Roll Firing')
     const player_roll = combatData.weapons[0].roll;
     const computer_roll = combatData.computer_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
@@ -649,13 +664,13 @@ const doubleRollCompiler = async (combatData, player_initiative, computer_initia
 
 // Action Splitter Determines the Action Payload and Sorts the Resolution of the Action Round
 const actionSplitter = async (combatData) => {
-
+    
     const newData = {
         player: combatData.player, // The player's Ascean
         action: combatData.action, // The player's action
         counter_guess: combatData.counter_guess, // The action chosen believed to be 
         player_health: combatData.player_health, // Current Player Health
-        weapons: [...combatData.weapons], // All 3 Weapons
+        weapons: combatData.weapons, // All 3 Weapons
         player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
         player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
         computer: combatData.computer, // Computer Enemy
@@ -663,7 +678,7 @@ const actionSplitter = async (combatData) => {
         computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
         computer_action: combatData.computer_action, // Action Chosen By Computer
         computer_counter_guess: combatData.computer_counter_guess, // Comp's Counter Guess if Action === 'Counter'
-        computer_weapons: [...combatData.computer_weapons],  // All 3 Weapons
+        computer_weapons: combatData.computer_weapons,  // All 3 Weapons
         potential_player_damage: 0, // All the Damage that is possible on hit for a player
         potential_computer_damage: 0, // All the Damage that is possible on hit for a computer
         realized_player_damage: 0, // Player Damage - Computer Defenses
@@ -685,7 +700,7 @@ const actionSplitter = async (combatData) => {
         player_win: false,
         computer_win: false,
     }
-
+    // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = combatData.player_attributes.initiative;
     const computer_initiative = combatData.computer_attributes.initiative;
     const player_action = combatData.action;
@@ -694,9 +709,11 @@ const actionSplitter = async (combatData) => {
     let computer_action = combatData.computer_action;
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
-    await computerActionCompiler(newData, computer_action, computer_counter)
-    console.log(computer_action, 'Computer Action', computer_counter, 'Counter if Countering')
+    await computerActionCompiler(newData, player_action, computer_action, computer_counter)
     // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
+    computer_counter = newData.computer_counter_guess;
+    computer_action = newData.computer_action;
+    console.log(newData.computer_action, 'Computer Action', newData.computer_counter_guess, 'Counter if Countering')
     
     // If both Player and Computer Counter -> Counter [Fastest Resolution]
     if (player_action === 'counter' && computer_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
@@ -756,12 +773,18 @@ const actionSplitter = async (combatData) => {
         await computerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
     }
     
-    if (player_action === 'attack' && computer_action === 'attack') { // If both choose Attack
+
+
+    if (player_action === 'attack' || player_action === 'posture') { // If both choose Attack
         if (player_initiative > computer_initiative) {
             await attackCompiler(newData, player_action)
-            await computerAttackCompiler(newData, computer_action)
+            if (computer_action === 'attack' || computer_action === 'posture') {
+                await computerAttackCompiler(newData, computer_action)
+            }
         } else {
-            await computerAttackCompiler(newData, computer_action)
+            if (computer_action === 'attack' || computer_action === 'posture') {
+                await computerAttackCompiler(newData, computer_action)
+            }
             await attackCompiler(newData, player_action)
         }
     }
@@ -779,10 +802,10 @@ const actionSplitter = async (combatData) => {
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
 const actionCompiler = async (combatData) => {
-    console.log(combatData, 'Combat Data in the Action Compiler of Game Services')
+    // console.log(combatData, 'Combat Data in the Action Compiler of Game Services')
     try {
         const result = await actionSplitter(combatData)
-        console.log(result, 'Combat Result')
+        // console.log(result, 'Combat Result')
         return result
     } catch (err) {
         res.status(400).json({ err })

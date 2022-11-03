@@ -7,9 +7,10 @@ import SolaAscean from '../../components/SolaAscean/SolaAscean'
 interface SearchProps {
     ascean?: any;
     loggedUser?: any;
+    userProfile?: boolean;
 }
 
-const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
+const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 
@@ -29,7 +30,7 @@ const SearchCard = ({ ascean, loggedUser }: SearchProps) => {
         let views = [];
         for (let i = 0; i < allAscean.length; i++) {
             views.push(
-                <SolaAscean ascean={allAscean[i]} key={allAscean[i].index} />
+                <SolaAscean ascean={allAscean[i]} key={allAscean[i].index} userProfile={userProfile} />
             )
         }
         return (views)
