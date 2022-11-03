@@ -86,6 +86,9 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
 // 
 // 
 // 
+
+// ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
+
 const computerActionCompiler = async (newData, computer_action, computer_counter) => {
 
     const computerActions = {
@@ -178,26 +181,216 @@ const computerActionCompiler = async (newData, computer_action, computer_counter
     )
 }
 
-const computerAttackCompiler = async (combatData) => {
+const computerDualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+    const player = combatData.player;
+    const computer = combatData.computer;
+    const weapons = combatData.computer_weapons;
+
+    let computer_weapon_one_physical_damage = combatData.weapons[0].physical_damage;
+    let computer_weapon_one_magical_damage = combatData.weapons[0].magical_damage;
+    let computer_weapon_two_physical_damage = combatData.weapons[1].physical_damage;
+    let computer_weapon_two_magical_damage = combatData.weapons[1].magical_damage;
+    let computer_weapon_one_total_damage;
+    let computer_weapon_two_total_damage;
+    let firstWeaponCrit = false;
+    let secondWeaponCrit = false;
+
+    // This is for Critical Strikes
+    if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
+        if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
+            await computerCriticalCompiler(combatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
+            await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
+            firstWeaponCrit = true;
+            secondWeaponCrit = true;
+        } else {
+            await computerCriticalCompiler(combatDatacombatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
+            firstWeaponCrit = true;
+        }
+    }
+
+    if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
+        await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
+        secondWeaponCrit = true;
+    }
+
+    computer_weapon_one_physical_damage *= player_physical_defense_multiplier;
+    computer_weapon_one_magical_damage *= player_magical_defense_multiplier;
+
+    computer_weapon_two_physical_damage *= player_physical_defense_multiplier;
+    computer_weapon_two_magical_damage *= player_magical_defense_multiplier;
+
+    computer_weapon_one_total_damage = computer_weapon_one_physical_damage + computer_weapon_one_magical_damage;
+    computer_weapon_two_total_damage = computer_weapon_two_physical_damage + computer_weapon_two_magical_damage;
+
+    combatData.realized_computer_damage = computer_weapon_one_total_damage + computer_weapon_two_total_damage;
+    combatData.new_computer_health = combatData.computer_health - combatData.realized_computer_damage;
+    
+    combatData.computer_action_description = 
+        `${computer.name} attacks You with ${weapons[0].name} and ${weapons[1].name} for 
+        ${combatData.realized_computer_damage} ${weapons[0].damage_type} and ${weapons[1].damage_type}
+        ${firstWeaponCrit === true && secondWeaponCrit === true 
+            ? 'Critical Strike' 
+            : firstWeaponCrit === true || secondWeaponCrit === true 
+            ? 'Partial Crit'
+            : ''} Damage.`    
+    return (
+        combatData
+    )
+}
+
+const computerAttackCompiler = async (combatData, computer_action) => {
+    let computer_physical_damage = combatData.computer_weapons[0].physical_damage;
+    let computer_magical_damage = combatData.computer_weapons[0].magical_damage;
+    let computer_total_damage;
+
+    let player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalDefenseModifier / 100);
+    let player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalDefenseModifier / 100);
+
+    // This is for Players's who are Posturing
+    if (combatData.action === 'posture') {
+        player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
+        player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
+    }
+
+    if (combatData.computer_action === 'attack') {
+        if (combatData.computer_weapons[0].grip === 'One Hand') {
+            if (combatData.computer_weapons[0].attack_type === 'Physical') {
+                if (combatData.computer.mastery === 'Agility') {
+                    if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        // Computer Dual Wield Compiler
+                        return combatData
+                    } else {
+                        // Computer Double Attack Compiler
+                        await computerDoubleAttackCompiler(combatData)
+                        return combatData
+                    }
+                } else {
+                    computer_physical_damage *= 1.3;
+                    computer_magical_damage *= 1.1;
+                }
+            } else {
+                // If Focus + 1h But Magic
+                if (combatData.computer.mastery === 'Achre') {
+                    if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        return combatData
+                    }
+                } else {
+                    computer_physical_damage *= 1.15;
+                    computer_magical_damage *= 1.35;
+                }
+            }
+        } else { // Weapon is TWO HAND
+            if (combatData.computer.mastery === 'Strength') {
+                if (combatData.computer_attributes.totalStrength > 40) { // Might be a dual-wield compiler instead to take the rest of it
+                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                    return combatData
+                } else { // Less than 40 Srength 
+                    computer_physical_damage *= 1.5;
+                    computer_magical_damage *= 1.25;
+                }
+            }
+            if (combatData.computer.mastery === 'Caeren') {
+                if (combatData.computer_attributes.totalCaeren > 40) {
+                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        return combatData
+                } else {
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.5;
+                }
+            }
+            
+        }
+    }
+
+    // Checking For Player Actions
+    if (computer_action === 'counter') {
+        computer_physical_damage *= 0.9;
+        computer_magical_damage *= 0.9;
+    }
+
+    if (computer_action === 'dodge') {
+        computer_physical_damage *= 0.9;
+        computer_magical_damage *= 0.9;
+    }
+
+    if (computer_action === 'posture') {
+        computer_physical_damage *= 0.8;
+        computer_magical_damage *= 0.8;
+    }
+
+    if (computer_action === 'roll' ) {
+        computer_physical_damage *= 0.8;
+        computer_magical_damage *= 0.8;
+    }
+
+    // This is for Critical Strikes
+    if (combatData.computer_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
+        computerCriticalCompiler(combatData, combatData.weapons[0], computer_physical_damage, computer_magical_damage)
+        // return combatData
+    }
+
+    // If you made it here, your basic attack now resolves itself
+    computer_physical_damage *= player_physical_defense_multiplier;
+    computer_magical_damage *= player_magical_defense_multiplier;
+
+    computer_total_damage = computer_physical_damage + computer_magical_damage;
+    combatData.realized_computer_damage = computer_total_damage;
+    combatData.new_player_health = combatData.computer_health - combatData.realized_computer_damage;
+
+    combatData.computer_action_description = 
+        `${combatData.computer.name} attacks You with their ${combatData.computer_weapons[0].name} for 
+        ${computer_total_damage} ${combatData.computer_weapons[0].damage_type} Damage.`    
+
+    if (combatData.new_player_health < 0) {
+        combatData.new_player_health = 0;
+    }
 
     return (
-        console.log(combatData)
+        combatData
     )
 }
 
-const computerCounterCompiler = async (combatData) => {
-    
+const computerCriticalCompiler = async (combatData, weapon, computer_physical_damage, computer_magical_damage) => {
+    computer_physical_damage *= weapon.critical_damage;
+    computer_magical_damage *= weapon.critical_damage
     return (
-        console.log(combatData)
+        comabtData,
+        computer_physical_damage,
+        computer_magical_damage
+    )
+}
+
+const computerCounterCompiler = async (combatData, player_action, computer_action) => {
+    computer_action = 'attack';
+    await attackCompiler(combatData, computer_action)
+    return (
+        combatData
     )
 }
     
-const computerRollCompiler = async (combatData) => {
-    
+const computerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
+    const computer_roll = combatData.computer_weapons[0].roll;
+    let roll_catch = Math.floor(Math.random() * 101) + combatData.player_attributes.kyosirMod;
+    if (computer_roll > roll_catch) {
+        await computerAttackCompiler(combatData, computer_action)
+    } else {
+        if (player_initiative > computer_initiative) {
+            await computerAttackCompiler(combatData, computer_action)
+            await attackCompiler(combatData, player_action)
+        } else {
+            await attackCompiler(combatData, player_action)
+            await computerAttackCompiler(combatData, computer_action)
+        }
+    }
     return (
-        console.log(combatData)
+        combatData
     )
 }
+
+
+// ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
 const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const player = combatData.player;
@@ -216,19 +409,21 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     let computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalDefenseModifier / 100);
     let computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalDefenseModifier / 100);
 
-    // TODO:FIXME: This is for Critical Strikes
+    // This is for Critical Strikes
     if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
         if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-            await dualCriticalCompiler(combatData)
-            return combatData
+            await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
+            await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
+            firstWeaponCrit = true;
+            secondWeaponCrit = true;
         } else {
-            await criticalCompiler(combatData)
+            await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
             firstWeaponCrit = true;
         }
     }
 
     if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        await secondWeaponCriticalCompiler(combatData)
+        await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
         secondWeaponCrit = true;
     }
 
@@ -252,31 +447,12 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
             : firstWeaponCrit === true || secondWeaponCrit === true 
             ? 'Partial Crit'
             : ''} Damage.`    
-
-    
-
     return (
-        console.log(combatData)
-    )
-}
-
-const damageCompiler = async (combatData) => {
-    let player_physical_damage = combatData.weapons[0].physical_damage;
-    let player_magical_damage = combatData.weapons[0].magical_damage;
-    let player_total_damage;
-    
-    let computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalDefenseModifier / 100);
-    let computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalDefenseModifier / 100);
-
-
-    return (
-        console.log(combatData)
+        combatData
     )
 }
     
-    // ================================== COMPILER FUNCTIONS ====================================== \\
-    
-const attackCompiler = async (combatData) => {
+const attackCompiler = async (combatData, player_action) => {
     
     let player_physical_damage = combatData.weapons[0].physical_damage;
     let player_magical_damage = combatData.weapons[0].magical_damage;
@@ -286,7 +462,7 @@ const attackCompiler = async (combatData) => {
     let computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalDefenseModifier / 100);
     
     // This is for Opponent's who are Posturing
-    if (combatData.computer.computer_action === 'posture') {
+    if (combatData.computer_action === 'posture') {
         computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalPosture / 100);
         computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalPosture / 100);
     }
@@ -331,6 +507,7 @@ const attackCompiler = async (combatData) => {
                     player_physical_damage *= 1.5;
                     player_magical_damage *= 1.25;
                 }
+
             }
             if (combatData.player.mastery === 'Caeren') {
                 if (combatData.player_attributes.totalCaeren > 40) {
@@ -357,21 +534,20 @@ const attackCompiler = async (combatData) => {
     }
 
     if (player_action === 'posture') {
-        player_physical_damage *= 0.75;
-        player_magical_damage *= 0.75;
+        player_physical_damage *= 0.8;
+        player_magical_damage *= 0.8;
     }
 
-    if (player_action === 'roll' ) { // && the roll failed. 
-        // TODO:FIXME: Make a variable to check if you failed the roll attempt
-        player_physical_damage *= 0.75;
-        player_magical_damage *= 0.75;
+    if (player_action === 'roll' ) {
+        player_physical_damage *= 0.8;
+        player_magical_damage *= 0.8;
     }
 
 
     // This is for Critical Strikes
     if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        criticalCompiler(combatData)
-        return combatData
+        criticalCompiler(combatData, combatData.weapons[0], player_physical_damage, player_magical_damage)
+        // return combatData
     }
 
     // If you made it here, your basic attack now resolves itself
@@ -383,7 +559,7 @@ const attackCompiler = async (combatData) => {
     combatData.new_computer_health = combatData.computer_health - combatData.realized_player_damage;
 
     combatData.player_action_description = 
-        `You attack ${combatData.computer.name} with ${combatData.weapons[0].name} for 
+        `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for 
         ${player_total_damage} ${combatData.weapons[0].damage_type} Damage.`    
 
     if (combatData.new_computer_health < 0) {
@@ -393,54 +569,81 @@ const attackCompiler = async (combatData) => {
     return combatData
 }
 
-const criticalCompiler = async (combatData) => {
-    
-
+const criticalCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
+    player_physical_damage *= weapon.critical_damage;
+    player_magical_damage *= weapon.critical_damage;
     return (
-        console.log(combatData)
+        combatData,
+        player_physical_damage,
+        player_magical_damage
     )
 }
 
-const counterCompiler = async (combatData, computer_action) => {
-    if (computer_action === 'attack') {
-
-    }
-    if (computer_action === 'counter') {
+const counterCompiler = async (combatData, player_action, computer_action) => {
+    player_action = 'attack';
+    await attackCompiler(combatData, player_action)
+    // if (computer_action === 'attack') {
+    //     combatData.action = 'attack';
+    //     await attackCompiler(combatData)
+    // }
+    // if (computer_action === 'counter') {
         
-    }
-    if (computer_action === 'dodge') {
+    // }
+    // if (computer_action === 'dodge') {
         
-    }
-    if (computer_action === 'posture') {
+    // }
+    // if (computer_action === 'posture') {
         
-    }
-    if (computer_action === 'roll') {
+    // }
+    // if (computer_action === 'roll') {
         
-    }
+    // }
     return (
-        console.log(combatData)
+        combatData
     )
 }
 
-const dodgeCompiler = async (combatData) => {
-    
+const playerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
+    const player_roll = combatData.weapons[0].roll;
+    let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
+    if (player_roll > roll_catch) {
+        await attackCompiler(combatData, player_action)
+    } else {
+        if (player_initiative > computer_initiative) {
+            await attackCompiler(combatData, player_action)
+            await computerAttackCompiler(combatData, computer_action)
+        } else {
+            await computerAttackCompiler(combatData, computer_action)
+            await attackCompiler(combatData, player_action)
+        }
+    }
     return (
-        console.log(combatData)
-    )
-}
-
-const playerRollCompiler = async (combatData) => {
-    
-    return (
-        console.log(combatData)
+        combatData
     )
 }
 
 // Resolves both Player and Computer Rolling
-const doubleRollCompiler = async (combatData, player_initiative, computer_initiative) => {
-    
+const doubleRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
+    const player_roll = combatData.weapons[0].roll;
+    const computer_roll = combatData.computer_weapons[0].roll;
+    let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
+    if (player_initiative > computer_initiative) {
+        if (player_roll > roll_catch) {
+            await attackCompiler(combatData, player_action)
+        } else {
+            await attackCompiler(combatData, player_action)
+            await computerAttackCompiler(combatData, computer_action)
+        }
+    } else {
+        if (computer_roll > roll_catch) {
+            await computerAttackCompiler(combatData, computer_action)
+        } else {
+            await computerAttackCompiler(combatData, computer_action)
+            await attackCompiler(combatData, player_action)
+        }
+    }
     return (
-        console.log(combatData)
+        combatData
     )
 }
 
@@ -479,6 +682,8 @@ const actionSplitter = async (combatData) => {
         counter_dodge_weight: combatData.counter_dodge_weight,
         counter_posture_weight: combatData.counter_posture_weight,
         counter_roll_weight: combatData.counter_roll_weight,
+        player_win: false,
+        computer_win: false,
     }
 
     const player_initiative = combatData.player_attributes.initiative;
@@ -490,14 +695,14 @@ const actionSplitter = async (combatData) => {
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
     await computerActionCompiler(newData, computer_action, computer_counter)
-
+    console.log(computer_action, 'Computer Action', computer_counter, 'Counter if Countering')
     // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
     
     // If both Player and Computer Counter -> Counter [Fastest Resolution]
     if (player_action === 'counter' && computer_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
         if (player_counter === computer_counter && player_counter === 'counter') {
             if (player_initiative > computer_initiative) {
-                await counterCompiler(newData, computer_action)
+                await counterCompiler(newData, player_action, computer_action)
             } else {
                 await computerCounterCompiler(newData, player_counter)
             }    
@@ -505,70 +710,67 @@ const actionSplitter = async (combatData) => {
     }
 
     // Partially Resolves Player: Counter + Countering the Computer
-    if (player_initiative > computer_initiative ) { // If the Player is Faster
         // If Player Counters the Computer w/o the Enemy Countering
-        if (player_action === 'counter' && computer_action !== 'counter') {
-            if (player_counter === computer_action) {
-                await counterCompiler(newData, computer_action)
-            }
+    if (player_action === 'counter' && computer_action !== 'counter') {
+        if (player_counter === computer_action) {
+            await counterCompiler(newData, player_action, computer_action)
         }
     }
 
-    if (computer_initiative > player_initiative) {
-        if (computer_action === 'counter' && player_action !== 'counter') {
-            if (computer_counter === player_action) {
-                await computerCounterCompiler(newData, player_counter)
-            }
+    if (computer_action === 'counter' && player_action !== 'counter') {
+        if (computer_counter === player_action) {
+            await computerCounterCompiler(newData, player_counter)
         }
     }
+
 
     
     if (player_action === 'dodge' && computer_action === 'dodge') { // If both choose Dodge
         if (player_initiative > computer_initiative) {
-            await dodgeCompiler(newData)
+            await attackCompiler(newData, player_action)
         } else {
-            await computerDodgeCompiler(newData)
+            await computerAttackCompiler(newData, computer_action)
         }
     }
 
     // If the Player Dodges and the Computer does not *Counter or Dodge  *Checked for success
     if (player_action === 'dodge' && computer_action !== 'dodge') {
-        await dodgeCompiler(newData)
+        await attackCompiler(newData, player_action)
     }
 
     // If the Computer Dodges and the Player does not *Counter or Dodge *Checked for success
     if (computer_action === 'dodge' && player_action !== 'dodge') {
-        await computerDodgeCompiler(newData)
+        await computerAttackCompiler(newData, computer_action)
     }
 
 
     if (player_action === 'roll' && computer_action === 'roll') { // If both choose Roll
-        await doubleRollCompiler(newData, player_initiative, computer_initiative)
-                // if (player_initiative > computer_initiative) {
-        //     await rollCompiler(newData)
-        //     await computerRollCompiler(newData)
-        // } else {
-            //     await computerRollCompiler(newData)
-            //     await rollCompiler(newData)
-        // }
+        await doubleRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
     }
 
     if (player_action === 'roll' && computer_action !== 'roll') {
-        await playerRollCompiler(newData)
+        await playerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
     }
 
     if (computer_action === 'roll' && player_action !== 'roll') {
-        await computerRollCompiler(newData)
+        await computerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
     }
     
     if (player_action === 'attack' && computer_action === 'attack') { // If both choose Attack
         if (player_initiative > computer_initiative) {
-            await attackCompiler(newData)
-            await computerAttackCompiler(newData)
+            await attackCompiler(newData, player_action)
+            await computerAttackCompiler(newData, computer_action)
         } else {
-            await computerAttackCompiler(newData)
-            await attackCompiler(newData)
+            await computerAttackCompiler(newData, computer_action)
+            await attackCompiler(newData, player_action)
         }
+    }
+
+    if (newData.new_computer_health = 0) {
+        newData.player_win = true;
+    }
+    if (newData.new_player_health = 0) {
+        newData.computer_win = true;
     }
 
     return newData

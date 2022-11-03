@@ -83,6 +83,8 @@ const GameSolo = ({ user }: GameProps) => {
         counter_dodge_weight: 0,
         counter_posture_weight: 0,
         counter_roll_weight: 0,
+        player_win: false,
+        computer_win: false,
     })
 
     // UseEffect -> Enemy Function Getter
