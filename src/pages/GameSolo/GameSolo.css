@@ -133,6 +133,7 @@
     .text-box {
       height: 20%;
       width: 100%;
+      font-size: 7.5px;
     }
   }
   .game-stat h4,

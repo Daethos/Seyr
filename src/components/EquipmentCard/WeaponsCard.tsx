@@ -64,7 +64,7 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_two?.name} [{weapon_two?.type}] <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_two.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-                {weapon_two?.attack_type} [{weapon_two?.damage_type}] <br />
+                {weapon_two?.attack_type} [{weapon_two?.damage_type?.[0]} {weapon_two?.damage_type?.[1] ? ' / ' + weapon_two.damage_type[1] : '' }] <br />
                 {weapon_two.constitution > 0 ? 'CON: +' + weapon_two.constitution + ' ' : ''}
                 {weapon_two.strength > 0 ? 'STR: +' + weapon_two.strength + ' ' : ''}
                 {weapon_two.agility > 0 ? 'AGI: +' + weapon_two.agility + ' ' : ''}
@@ -84,7 +84,7 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_three?.name} [{weapon_three?.type}] <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_three.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-                {weapon_three?.attack_type} [{weapon_three?.damage_type}] <br />
+                {weapon_three?.attack_type} [{weapon_three?.damage_type?.[0]} {weapon_three?.damage_type?.[1] ? ' / ' + weapon_three.damage_type[1] : '' }] <br />
                 {weapon_three.constitution > 0 ? 'CON: +' + weapon_three.constitution + ' ' : ''}
                 {weapon_three.strength > 0 ? 'STR: +' + weapon_three.strength + ' ' : ''}
                 {weapon_three.agility > 0 ? 'AGI: +' + weapon_three.agility + ' ' : ''}

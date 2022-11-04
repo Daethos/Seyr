@@ -43,7 +43,7 @@ const attributeCompiler = async (ascean) => {
     newAttributes.equipCaeren = newAttributes.totalCaeren - newAttributes.rawCaeren;
     newAttributes.equipKyosir = newAttributes.totalKyosir - newAttributes.rawKyosir;
 
-    newAttributes.healthTotal = (newAttributes.totalConstitution * 3) + ((newAttributes.constitutionMod + newAttributes.caerenMod) * 2);
+    newAttributes.healthTotal = ((newAttributes.totalConstitution * 3) + ((newAttributes.constitutionMod + newAttributes.caerenMod) * 2)) * 10;
     newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2)
 
     return (

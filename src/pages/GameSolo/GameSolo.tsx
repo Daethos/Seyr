@@ -22,6 +22,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
+    let compAttackTimer: NodeJS.Timer;
+    let playAttackTimer;
     
     const [combatText, setCombatText] = useState<any>([])
     const { asceanID } = useParams();
@@ -50,12 +52,16 @@ const GameSolo = ({ user }: GameProps) => {
     const [weaponTwo, setWeaponTwo] = useState<any>({})
     const [weaponThree, setWeaponThree] = useState<any>({})
     const [playerWeapons, setPlayerWeapons] = useState<any>([])
+    const [dodgeStatus, setDodgeStatus] = useState<boolean>(false)
 
     const [totalPlayerHealth, setTotalPlayerHealth] = useState<number>(0)
     const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(0)
 
     const [attributes, setAttributes] = useState<any>([])
     const [playerDefense, setPlayerDefense] = useState<any>([])
+
+    const [playerCombatText, setPlayerCombatText] = useState('')
+    const [computerCombatText, setComputerCombatText] = useState('')
 
     const [computerWeapons, setComputerWeapons] = useState<any>({})
     const [computerWeaponOne, setComputerWeaponOne] = useState<object>({})
@@ -70,6 +76,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [combatData, setCombatData] = useState<any>({
         player: ascean,
         action: '',
+        player_action: '',
         counter_guess: '',
         player_health: currentPlayerHealth,
         weapons: [],
@@ -88,8 +95,14 @@ const GameSolo = ({ user }: GameProps) => {
         computer_weapon_three: computerWeaponThree,
         computer_defense: computerDefense,
         computer_attributes: computerAttributes,
+        player_start_description: '',
+        computer_start_description: '',
+        player_special_description: '',
+        computer_special_description: '',
         player_action_description: '',
         computer_action_description: '',
+        current_player_health: currentPlayerHealth,
+        current_computer_health: currentComputerHealth,
         new_player_health: currentPlayerHealth,
         new_computer_health: currentComputerHealth,
         attack_weight: 0,
@@ -102,8 +115,14 @@ const GameSolo = ({ user }: GameProps) => {
         counter_dodge_weight: 0,
         counter_posture_weight: 0,
         counter_roll_weight: 0,
+        roll_success: false,
+        counter_success: false,
+        computer_roll_success: false,
+        computer_counter_success: false,
         player_win: false,
         computer_win: false,
+        critical_success: false,
+        computer_critical_success: false
     })
 
     useEffect(() => {
@@ -142,6 +161,8 @@ const GameSolo = ({ user }: GameProps) => {
                 ...combatData,
                 'computer': response.data.data.ascean,
                 'computer_health': response.data.data.attributes.healthTotal,
+                'current_computer_health': response.data.data.attributes.healthTotal,
+                'new_computer_health': response.data.data.attributes.healthTotal,
                 'computer_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
                 'computer_weapon_one': response.data.data.combat_weapon_one,
                 'computer_weapon_two': response.data.data.combat_weapon_two,
@@ -162,6 +183,8 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatData({
                 ...combatData,
                 'computer_health': currentComputerHealth,
+                'current_computer_health': currentComputerHealth,
+                'new_computer_health': currentComputerHealth,
                 'computer_weapons': [computerWeaponOne, computerWeaponTwo, computerWeaponThree],
                 'computer_weapon_one': computerWeaponOne,
                 'computer_weapon_two': computerWeaponTwo,
@@ -204,6 +227,8 @@ const GameSolo = ({ user }: GameProps) => {
                 ...combatData,
                 'player': response.data.data.ascean,
                 'player_health': response.data.data.attributes.healthTotal,
+                'current_player_health': response.data.data.attributes.healthTotal,
+                'new_player_health': response.data.data.attributes.healthTotal,
                 'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
                 'weapon_one': response.data.data.combat_weapon_one,
                 'weapon_two': response.data.data.combat_weapon_two,
@@ -219,10 +244,13 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     async function combatDataCompiler() {
+        setLoading(true)
         try {
             setCombatData({
                 ...combatData,
                 'player_health': currentPlayerHealth,
+                'current_player_health': currentPlayerHealth,
+                'new_player_health': currentPlayerHealth,
                 'weapons': [weaponOne, weaponTwo, weaponThree],
                 'weapon_one': weaponOne,
                 'weapon_two': weaponTwo,
@@ -275,13 +303,61 @@ const GameSolo = ({ user }: GameProps) => {
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
         try {
+            console.log(combatData.action, 'Combat Action Being Initiated')
+            if (combatData.action === 'dodge') { 
+                setDodgeStatus(true) 
+            }
             setCurrentPlayerHealth(currentPlayerHealth - 1)
             const response = await gameAPI.initiateAction(combatData)
-            console.log(response, 'Response Initiating Combat')
-            // setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
+            console.log(response.data, 'Response Initiating Combat')
+            setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
+            setCurrentPlayerHealth(response.data.new_player_health)
+            setCurrentComputerHealth(response.data.new_computer_health)
+            setPlayerCombatText(response.data.player_action_description)
+            setComputerCombatText(response.data.computer_action_description)
+            // setCombatData({
+            //     ...combatData,
+            //     'action': '',
+            //     'counter_guess': '',
+            //     'computer_counter_guess': ''
+            // })
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         }
+    }
+
+    // useEffect(() => {
+    //     compTimer()
+    // }, [])
+
+    async function compTimer() { 
+        if (!compAttackTimer) {
+            console.log('Auto Attack Firing')
+            compAttackTimer = setInterval(autoAttack, 30000);
+            return
+        }
+    }
+
+    async function autoAttack() {
+        combatData.action = 'attack';
+        combatData.computer_action = 'attack';
+        // await setCombatData({
+        //     ...combatText,
+        //     'action': 'attack',
+        //     'computer_action': 'attack'
+        // })
+        try {
+            const response = await gameAPI.initiateAction(combatData)
+            console.log(response, 'Response Auto Attacking')
+        } catch (err: any) {
+            console.log(err.message, 'Error Auto Attacking')
+        }
+    }
+
+    function sleep(ms: number) {
+        return new Promise(
+            resolve => setTimeout(resolve, ms)
+        );
     }
 
     if (loading) {
@@ -295,8 +371,14 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container">
             <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
-            <GameActions combatData={combatData} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} setCombatData={setCombatData} />
-            <GameCombatText ascean={ascean} user={user} />
+            <GameActions combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} setCombatData={setCombatData} />
+            <GameCombatText 
+                ascean={ascean} user={user} combatData={combatData} 
+                playerAction={combatData.player_action} computerAction={combatData.computer_action} 
+                playerCombatText={combatData.player_action_description} computerCombatText={combatData.computer_action_description} 
+                playerActionText={combatData.player_start_description} computerActionText={combatData.computer_start_description}
+                playerSpecialText={combatData.player_special_description} computerSpecialText={combatData.computer_special_description}
+            />
         </Container>
     )
 }

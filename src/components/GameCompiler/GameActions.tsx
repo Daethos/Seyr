@@ -1,3 +1,4 @@
+import { isDisabled } from '@testing-library/user-event/dist/utils';
 import { useEffect, useState } from 'react'
 import Form from 'react-bootstrap/Form'
 
@@ -12,9 +13,11 @@ interface Props {
     currentWeapon: any;
     setWeaponOrder: any;
     weapons: any;
+    dodgeStatus: boolean;
+    sleep: (ms: number) => Promise<unknown>;
 }
 
-const GameActions = ({ handleAction, handleCounter, handleInitiate, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const GameActions = ({ handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([])
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
   useEffect(() => {
@@ -30,6 +33,15 @@ const GameActions = ({ handleAction, handleCounter, handleInitiate, currentActio
     console.log('Displaying new weapon ', currentWeapon.name)
     setDisplayedAction(`Main Weapon: ${currentWeapon.name}`)
   }, [currentWeapon])
+
+  function updateDodgeStatus() {
+    dodgeStatus = false;
+  }
+
+  if (dodgeStatus) {
+    console.log(dodgeStatus, 'Dodge Used')
+    setTimeout(updateDodgeStatus, 40000 + (1000 * weapons[0].dodge))
+  }
   return (
     <>
     <textarea className='action-reader' value={displayedAction} readOnly></textarea>
@@ -49,7 +61,8 @@ const GameActions = ({ handleAction, handleCounter, handleInitiate, currentActio
           <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
         ))}
       </select>
-      <button value='dodge' onClick={handleAction} className='btn btn-outline' id='action-button'>Dodge</button>
+      <button value='dodge' onClick={handleAction} className='btn btn-outline' id='action-button'
+      disabled={dodgeStatus ? true : false}>Dodge</button>
       <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
       <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                

@@ -12,7 +12,7 @@ interface Props {
 
 const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) => {
   const [playerCharacter, setPlayerCharacter] = useState<boolean>(player)
-  console.log(playerCharacter, 'Player Status in Game Ascean')
+  // console.log(playerCharacter, 'Player Status in Game Ascean')
 
   return (
     <>

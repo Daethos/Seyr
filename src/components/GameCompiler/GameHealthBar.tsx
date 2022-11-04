@@ -23,9 +23,9 @@ const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) =>
     const updatePlayerHealthPercentage = async () => {
         setLoading(true)
         try {
-            console.log(currentPlayerHealth, 'Current Player Health')
+            // console.log(currentPlayerHealth, 'Current Player Health')
             const newHealthPercentage = Math.round((currentPlayerHealth/totalPlayerHealth) * 100);
-            console.log(newHealthPercentage, 'New Health %')
+            // console.log(newHealthPercentage, 'New Health %')
             setPlayerHealthPercentage(newHealthPercentage)
             setLoading(false)
         } catch (err: any) {
@@ -56,7 +56,7 @@ const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) =>
         />
         <div className="progress">
             <p className='progress-text'>
-                {`${currentPlayerHealth} / ${totalPlayerHealth} [${playerHealthPercentage}%]`}
+                {`${Math.round(currentPlayerHealth)} / ${totalPlayerHealth} [${playerHealthPercentage}%]`}
             </p>
         </div>
         </div>
