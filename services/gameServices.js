@@ -357,7 +357,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
 
     combatData.computer_action_description = 
-        `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ?  + ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ? ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
     if (combatData.new_player_health < 0) {
         combatData.new_player_health = 0;
@@ -400,18 +400,18 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
     console.log(computer_roll, 'Computer Roll %', roll_catch, 'Roll # To Beat')
     if (computer_roll > roll_catch) {
         combatData.computer_special_description = 
-                `${combatData.computer.name} successfully rolls against you, avoiding your ${player_action.charAt(0).toUpperCase() + player_action.slice(1)} Attack`
+                `${combatData.computer.name} successfully rolls against you, avoiding your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
         await computerAttackCompiler(combatData, computer_action)
     } else {
         if (player_initiative > computer_initiative) {
             combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${player_action.charAt(0).toUpperCase() + player_action.slice(1)} Attack`
+                `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
             await computerAttackCompiler(combatData, computer_action)
             await attackCompiler(combatData, player_action)
         } else {
             console.log('Computer failed yet had higher initiative')
             combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${player_action.charAt(0).toUpperCase() + player_action.slice(1)} Attack`
+                `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
             await attackCompiler(combatData, player_action)
             await computerAttackCompiler(combatData, computer_action)
         }
@@ -645,18 +645,21 @@ const playerRollCompiler = async (combatData, player_initiative, computer_initia
     console.log('Player Roll Firing')
     const player_roll = combatData.weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
+    console.log(player_roll, 'Player Roll %', roll_catch, 'Roll # To Beat')
     if (player_roll > roll_catch) {
         combatData.roll_success = true;
         combatData.player_special_description = 
-                `You successfully roll against ${combatData.computer.name}, avoiding their ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack`
+                `You successfully roll against ${combatData.computer.name}, avoiding their ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
         await attackCompiler(combatData, player_action)
     } else {
         if (player_initiative > computer_initiative) {
-            `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack`
+            combatData.player_special_description =
+            `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
             await attackCompiler(combatData, player_action)
             await computerAttackCompiler(combatData, computer_action)
         } else {
-            `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack`
+            combatData.player_special_description =
+            `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
             await computerAttackCompiler(combatData, computer_action)
             await attackCompiler(combatData, player_action)
         }
@@ -732,18 +735,18 @@ const actionSplitter = async (combatData) => {
         computer_attributes: combatData.computer_attributes, // Possesses compiled Attributes, Initiative
         computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
         computer_action: combatData.computer_action, // Action Chosen By Computer
-        computer_counter_guess: combatData.computer_counter_guess, // Comp's Counter Guess if Action === 'Counter'
+        computer_counter_guess: '', // Comp's Counter Guess if Action === 'Counter'
         computer_weapons: combatData.computer_weapons,  // All 3 Weapons
         potential_player_damage: 0, // All the Damage that is possible on hit for a player
         potential_computer_damage: 0, // All the Damage that is possible on hit for a computer
         realized_player_damage: 0, // Player Damage - Computer Defenses
         realized_computer_damage: 0, // Computer Damage - Player Defenses
-        player_start_description: combatData.player_start_description,
-        computer_start_description: combatData.computer_start_description,
-        player_special_description: combatData.player_special_description,
-        computer_special_description: combatData.computer_special_description,
-        player_action_description: combatData.player_action_description, // The combat text to inject from the player
-        computer_action_description: combatData.computer_action_description, // The combat text to inject from the computer
+        player_start_description: '',
+        computer_start_description: '',
+        player_special_description: '',
+        computer_special_description: '',
+        player_action_description: '', // The combat text to inject from the player
+        computer_action_description: '', // The combat text to inject from the computer
         current_player_health: combatData.current_player_health, // New player health post-combat action
         current_computer_health: combatData.current_computer_health, // New computer health post-combat action
         new_player_health: combatData.new_player_health, // New player health post-combat action

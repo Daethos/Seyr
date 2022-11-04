@@ -56,9 +56,9 @@ const GameCombatText = ({ user, ascean, playerActionText, computerActionText, pl
         // textBoxScroll();
     }, [playerCombatText, computerCombatText])
 
-    // useEffect(() => {
-    //     chatInterval()
-    // }, [combatText])
+    useEffect(() => {
+        chatTestTwo()
+    }, [playerActionText])
 
     const updateCombatText = async () => {
         console.log(actionOrder[playerAction], actionOrder[computerAction]);
@@ -90,7 +90,13 @@ const GameCombatText = ({ user, ascean, playerActionText, computerActionText, pl
 
     const chatInterval = async () => { setInterval(chatTestTwo, 5000) }
     
-    const chatTestTwo = async () => { setCombatText([`Welcome ${user?.username}, `  + `${ascean?.name}\n`, ...combatText]) }
+    const chatTestTwo = async () => { setCombatText([`${playerActionText}\n` 
+                                                    + `${computerActionText}\n`,
+                                                    + `${playerSpecialText}\n`,
+                                                    + `${computerSpecialText}\n`,
+                                                    + `${playerCombatText}\n`,
+                                                    + `${computerCombatText}\n`,
+                                                    ]) }
     
     function sleep(ms: number) {
         return new Promise(
@@ -104,6 +110,7 @@ const GameCombatText = ({ user, ascean, playerActionText, computerActionText, pl
             className="text-box" id="console" 
             value={
                 playerActionText + `\n` + computerActionText + `\n` +
+                playerSpecialText + `\n` + computerSpecialText + `\n` +
                     // playerSpecialText ? playerSpecialText : ''  + 
                     // computerSpecialText ? computerSpecialText + `\n` : '' + 
                 playerCombatText + `\n` +  computerCombatText
