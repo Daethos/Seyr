@@ -26,6 +26,7 @@ const GameActions = ({ handleAction, handleCounter, handleInitiate, sleep, curre
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1))
     } else {
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1))
+      setCombatData({ ...combatData, 'counter_guess': '' })
     }
   }, [currentAction, currentCounter])
 

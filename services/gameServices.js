@@ -319,23 +319,28 @@ const computerAttackCompiler = async (combatData, computer_action) => {
 
     // Checking For Player Actions
     if (computer_action === 'counter') {
-        computer_physical_damage *= 0.9;
-        computer_magical_damage *= 0.9;
+        if (combatData.computer_counter_success === true) {
+            computer_physical_damage *= 2.5;
+            computer_magical_damage *= 2.5;    
+        } else {
+            computer_physical_damage *= 0.9;
+            computer_magical_damage *= 0.9;
+        }
     }
 
     if (computer_action === 'dodge') {
-        computer_physical_damage *= 0.9;
-        computer_magical_damage *= 0.9;
+        computer_physical_damage *= 0.95;
+        computer_magical_damage *= 0.95;
     }
 
     if (computer_action === 'posture') {
-        computer_physical_damage *= 0.8;
-        computer_magical_damage *= 0.8;
+        computer_physical_damage *= 0.85;
+        computer_magical_damage *= 0.85;
     }
 
     if (computer_action === 'roll' ) {
-        computer_physical_damage *= 0.8;
-        computer_magical_damage *= 0.8;
+        computer_physical_damage *= 0.85;
+        computer_magical_damage *= 0.85;
     }
 
     // This is for Critical Strikes
@@ -399,6 +404,7 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
     let roll_catch = Math.floor(Math.random() * 101) + combatData.player_attributes.kyosirMod;
     console.log(computer_roll, 'Computer Roll %', roll_catch, 'Roll # To Beat')
     if (computer_roll > roll_catch) {
+        combatData.computer_roll_success = true;
         combatData.computer_special_description = 
                 `${combatData.computer.name} successfully rolls against you, avoiding your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
         await computerAttackCompiler(combatData, computer_action)
@@ -554,8 +560,13 @@ const attackCompiler = async (combatData, player_action) => {
 
     // Checking For Player Actions
     if (player_action === 'counter') {
-        player_physical_damage *= 0.9;
-        player_magical_damage *= 0.9;
+        if (combatData.counter_success === true) {
+            player_physical_damage *= 2.5;
+            player_magical_damage *= 2.5;
+        } else {
+            player_physical_damage *= 0.9;
+            player_magical_damage *= 0.9;
+        }
     }
 
     if (player_action === 'dodge') {
@@ -675,6 +686,7 @@ const doubleRollCompiler = async (combatData, player_initiative, computer_initia
     const player_roll = combatData.weapons[0].roll;
     const computer_roll = combatData.computer_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
+    console.log(player_roll, 'Player Roll %', computer_roll, 'Computer Roll %', roll_catch, 'Number to Beat')
     if (player_initiative > computer_initiative) { // You have Higher Initiative
         if (player_roll > roll_catch) { // The Player Succeeds the Roll
             combatData.player_special_description = 
@@ -734,7 +746,7 @@ const actionSplitter = async (combatData) => {
         computer: combatData.computer, // Computer Enemy
         computer_attributes: combatData.computer_attributes, // Possesses compiled Attributes, Initiative
         computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
-        computer_action: combatData.computer_action, // Action Chosen By Computer
+        computer_action: '', // Action Chosen By Computer
         computer_counter_guess: '', // Comp's Counter Guess if Action === 'Counter'
         computer_weapons: combatData.computer_weapons,  // All 3 Weapons
         potential_player_damage: 0, // All the Damage that is possible on hit for a player
@@ -771,19 +783,19 @@ const actionSplitter = async (combatData) => {
         computer_critical_success: false
     }
     // console.log(newData, 'Combat Data in the Action Splitter')
-    const player_initiative = combatData.player_attributes.initiative;
-    const computer_initiative = combatData.computer_attributes.initiative;
-    const player_action = combatData.action;
-    const player_counter = combatData.counter_guess;
-    let computer_counter = combatData.computer_counter_guess;
-    let computer_action = combatData.computer_action;
+    const player_initiative = newData.player_attributes.initiative;
+    const computer_initiative = newData.computer_attributes.initiative;
+    const player_action = newData.action;
+    const player_counter = newData.counter_guess;
+    let computer_counter = newData.computer_counter_guess;
+    let computer_action = newData.computer_action;
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
     await computerActionCompiler(newData, player_action, computer_action, computer_counter)
     // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
     computer_counter = newData.computer_counter_guess;
     computer_action = newData.computer_action;
-    console.log(newData.computer_action, 'Computer Action', newData.computer_counter_guess, 'Counter if Countering')
+    console.log(newData.computer_action, 'Computer Action', newData.computer_counter_guess, '<- If Countering')
 
     newData.computer_start_description = 
         `${newData.computer.name} sets to ${computer_action.charAt(0).toUpperCase() + computer_action.slice(1)}${computer_counter ? '-' + computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1) : ''} against you.`
@@ -795,36 +807,78 @@ const actionSplitter = async (combatData) => {
     if (player_action === 'counter' && computer_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
         if (player_counter === computer_counter && player_counter === 'counter') {
             if (player_initiative > computer_initiative) {
-                combatData.player_special_description = 
-                    `You successfully Countered ${combatData.computer.name}'s Counter-Counter! Absolutely Brutal`
+                newData.counter_success = true;
+                newData.player_special_description = 
+                    `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`
                 await counterCompiler(newData, player_action, computer_action)
                 return newData
             } else {
-                combatData.computer_special_description = 
-                    `${combatData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`
+                newData.computer_counter_success = true;
+                newData.computer_special_description = 
+                    `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`
                 await computerCounterCompiler(newData, player_counter)
                 return newData
             }    
         }
-    }
+        // If the Player Guesses Right and the Computer Guesses Wrong
+        if (player_counter === computer_action && computer_counter !== player_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`
+            await counterCompiler(newData, player_action, computer_action)
+            return newData
+        }
+    
+        // If the Computer Guesses Right and the Player Guesses Wrong
+        if (computer_counter === player_action && player_counter !== computer_action) {
+            newData.computer_counter_success = true;
+            newData.computer_special_description = 
+                `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`
+            await computerCounterCompiler(newData, player_counter)
+            return newData
+        } 
+    
+        if (player_counter !== computer_action && computer_counter !== player_action) {
+            newData.player_special_description = 
+                `You failed to Counter ${newData.computer.name}'s Counter! Heartbreaking`
+            newData.computer_special_description = 
+                `${newData.computer.name} fails to Counter your Counter! Heartbreaking`
+                if (player_initiative > computer_initiative) {
+                    await attackCompiler(newData, player_action);
+                    await computerAttackCompiler(newData, computer_action);
+                } else {
+                    await computerAttackCompiler(newData, computer_action);
+                    await attackCompiler(newData, player_action);
+                }
+        }
+    } 
+
 
     // Partially Resolves Player: Counter + Countering the Computer
         // If Player Counters the Computer w/o the Enemy Countering
     if (player_action === 'counter' && computer_action !== 'counter') {
         if (player_counter === computer_action) {
-            combatData.player_special_description = 
-                `You successfully Countered ${combatData.computer.name}'s ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack`
-            await counterCompiler(newData, player_action, computer_action)
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `You successfully Countered ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack.`
+            await attackCompiler(newData, player_action)
             return newData
+        } else {
+            newData.player_special_description = 
+                `You failed to Counter ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
     if (computer_action === 'counter' && player_action !== 'counter') {
         if (computer_counter === player_action) {
-            combatData.computer_special_description = 
-                `${combatData.computer.name} successfully Countered your ${ combatData.action === 'attack' ? 'Focused' : combatData.action.charAt(0).toUpperCase() + combatData.action.slice(1) } Attack`
-            await computerCounterCompiler(newData, player_counter)
+            newData.computer_counter_success = true;
+            newData.computer_special_description = 
+                `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
+            await computerAttackCompiler(newData, computer_action)
             return newData
+        } else {
+            newData.computer_special_description = 
+                `${newData.computer.name} fails to Counter your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
@@ -832,30 +886,29 @@ const actionSplitter = async (combatData) => {
     
     if (player_action === 'dodge' && computer_action === 'dodge') { // If both choose Dodge
         if (player_initiative > computer_initiative) {
-            combatData.player_special_description = 
-                `You successfully Dodge ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack`
+            newData.player_special_description = 
+                `You successfully Dodge ${newData.computer.name}'s ${  newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack`
             await attackCompiler(newData, player_action)
         } else {
-            `${combatData.computer.name} successfully Dodges your ${  combatData.action === 'attack' ? 'Focused' : combatData.action.charAt(0).toUpperCase() + combatData.action.slice(1) } Attack`
+            `${newData.computer.name} successfully Dodges your ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
             await computerAttackCompiler(newData, computer_action)
         }
     }
 
     // If the Player Dodges and the Computer does not *Counter or Dodge  *Checked for success
     if (player_action === 'dodge' && computer_action !== 'dodge') {
-        combatData.player_special_description = 
-            `You successfully Dodge ${combatData.computer.name}'s ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack`
+        newData.player_special_description = 
+            `You successfully Dodge ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack`
         await attackCompiler(newData, player_action)
         return newData
     }
 
     // If the Computer Dodges and the Player does not *Counter or Dodge *Checked for success
     if (computer_action === 'dodge' && player_action !== 'dodge') {
-        `${combatData.computer.name} successfully Dodges your ${ combatData.action === 'attack' ? 'Focused' : combatData.action.charAt(0).toUpperCase() + combatData.action.slice(1) } Attack`
+        `${newData.computer.name} successfully Dodges your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
         await computerAttackCompiler(newData, computer_action)
         return newData
     }
-
 
     if (player_action === 'roll' && computer_action === 'roll') { // If both choose Roll
         await doubleRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
@@ -874,19 +927,17 @@ const actionSplitter = async (combatData) => {
             return newData
         }
     }
-    
 
-
-    if (player_action === 'attack' || player_action === 'posture') { // If both choose Attack
+    if (player_action === 'attack' || player_action === 'posture' || computer_action === 'attack' || computer_action === 'posture') { // If both choose Attack
         if (player_initiative > computer_initiative) {
             await attackCompiler(newData, player_action)
-            if (computer_action === 'attack' || computer_action === 'posture') {
+            // if (computer_action === 'attack' || computer_action === 'posture') {
                 await computerAttackCompiler(newData, computer_action)
-            }
+            // }
         } else {
-            if (computer_action === 'attack' || computer_action === 'posture') {
+            // if (computer_action === 'attack' || computer_action === 'posture') {
                 await computerAttackCompiler(newData, computer_action)
-            }
+            // }
             await attackCompiler(newData, player_action)
         }
     }
