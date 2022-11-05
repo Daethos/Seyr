@@ -202,7 +202,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 
     // This is for Critical Strikes
     if (weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        console.log('Comp DW1 Critical Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
+        // console.log('Comp DW1 Critical Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
         computer_weapon_one_physical_damage *= weapons[0].critical_damage;
         computer_weapon_one_magical_damage *= weapons[0].critical_damage;
         // if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
@@ -219,7 +219,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     }
 
     if (weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
+        // console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
         computer_weapon_two_physical_damage *= weapons[1].critical_damage;
         computer_weapon_two_magical_damage *= weapons[1].critical_damage;
         //await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
@@ -431,7 +431,7 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
 // ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
 const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
-    
+    console.log('Dual Wielding')
     const player = combatData.player;
     const computer = combatData.computer;
     const weapons = combatData.weapons;
@@ -450,23 +450,27 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     // This is for Critical Strikes
     if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-            await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
-            await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
+        // if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
+            player_weapon_one_physical_damage *= combatData.weapons[0].critical_damage;
+            player_weapon_one_magical_damage *= combatData.weapons[0].critical_damage;
+            // await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
+            // await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
             firstWeaponCrit = true;
-            secondWeaponCrit = true;
-        } else {
-            await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
-            firstWeaponCrit = true;
-        }
+            // secondWeaponCrit = true;
+        // } else {
+            // await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
+            // firstWeaponCrit = true;
+        // }
+        console.log(player_weapon_one_physical_damage, player_weapon_one_magical_damage, 'Weapon 1 Post-Crit Modifier')
     }
 
     if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
+        player_weapon_two_physical_damage *= combatData.weapons[1].critical_damage;
+        player_weapon_two_magical_damage *= combatData.weapons[1].critical_damage;
+        // await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
         secondWeaponCrit = true;
+        console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
-
-    console.log('Player Post-Crit Multiplier Inside Dual Wield', player_physical_damage, player_magical_damage)
 
     player_weapon_one_physical_damage *= computer_physical_defense_multiplier;
     player_weapon_one_magical_damage *= computer_magical_defense_multiplier;
@@ -534,9 +538,12 @@ const attackCompiler = async (combatData, player_action) => {
                     player_magical_damage *= 1.35;
                 }
             }
-        } else { // Weapon is TWO HAND
+        } 
+        if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
+            console.log(combatData.weapons[0].grip, combatData.player.mastery, combatData.player_attributes.totalStrength)
             if (combatData.player.mastery === 'Strength') {
-                if (combatData.player_attributes.totalStrength > 40) { // Might be a dual-wield compiler instead to take the rest of it
+                if (combatData.player_attributes.totalStrength >= 40) { // Might be a dual-wield compiler instead to take the rest of it
+                    console.log('Did we make it here?')
                     await dualWieldCompiler(combatData)
                     return combatData
                 } else { // Less than 40 Srength 
@@ -546,7 +553,7 @@ const attackCompiler = async (combatData, player_action) => {
 
             }
             if (combatData.player.mastery === 'Caeren') {
-                if (combatData.player_attributes.totalCaeren > 40) {
+                if (combatData.player_attributes.totalCaeren >= 40) {
                     await dualWieldCompiler(combatData)
                         return combatData
                 } else {

@@ -12,9 +12,10 @@ interface Props {
     combatData: any;
     playerSpecialText: string;
     computerSpecialText: string;
+    emergencyText: any[] | (() => any[]);
 }
 
-const GameCombatText = ({ user, ascean, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerAction, computerAction, playerCombatText, computerCombatText, combatData }: Props) => {
+const GameCombatText = ({ user, ascean, emergencyText, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerAction, computerAction, playerCombatText, computerCombatText, combatData }: Props) => {
     console.log(playerCombatText, computerCombatText);
     
     const [combatText, setCombatText] = useState<any>({
@@ -104,6 +105,8 @@ const GameCombatText = ({ user, ascean, playerActionText, computerActionText, pl
         )
     }
 
+    
+
   return (
     <div id="textarea">
         <textarea 
@@ -113,7 +116,8 @@ const GameCombatText = ({ user, ascean, playerActionText, computerActionText, pl
                 playerSpecialText + `\n` + computerSpecialText + `\n` +
                     // playerSpecialText ? playerSpecialText : ''  + 
                     // computerSpecialText ? computerSpecialText + `\n` : '' + 
-                playerCombatText + `\n` +  computerCombatText
+                playerCombatText + `\n` +  computerCombatText + `\n` +
+                emergencyText
             } 
             readOnly>
         </textarea>
