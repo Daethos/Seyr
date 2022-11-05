@@ -13,6 +13,7 @@ import * as gameAPI from '../../utils/gameApi'
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
+import GameAnimations from '../../components/GameCompiler/GameAnimations';
 
 interface GameProps {
     user: any;
@@ -22,6 +23,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
+    const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
     let compAttackTimer: NodeJS.Timer;
     let playAttackTimer;
     
@@ -309,6 +311,7 @@ const GameSolo = ({ user }: GameProps) => {
             }
             setCurrentPlayerHealth(currentPlayerHealth - 1)
             const response = await gameAPI.initiateAction(combatData)
+            setCombatInitiated(true)
             console.log(response.data, 'Response Initiating Combat')
             setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
             setCurrentPlayerHealth(response.data.new_player_health)
@@ -369,6 +372,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
     return (
         <Container fluid id="game-container">
+            <GameAnimations sleep={sleep} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} playerAction={combatData.player_action} computerAction={combatData.computer_action} playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} />
             <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
             <GameActions combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} setCombatData={setCombatData} />
