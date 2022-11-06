@@ -64,8 +64,6 @@ const GameSolo = ({ user }: GameProps) => {
     const [attributes, setAttributes] = useState<any>([])
     const [playerDefense, setPlayerDefense] = useState<any>([])
 
-    const [playerCombatText, setPlayerCombatText] = useState('')
-    const [computerCombatText, setComputerCombatText] = useState('')
 
     const [computerWeapons, setComputerWeapons] = useState<any>({})
     const [computerWeaponOne, setComputerWeaponOne] = useState<object>({})
@@ -306,19 +304,18 @@ const GameSolo = ({ user }: GameProps) => {
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
+        if (combatData.action === 'dodge') { 
+            setDodgeStatus(true) 
+        }
+        if (combatData.action === '') {
+            setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`
+            // , ...emergencyText
+        ])
+            return
+        }
         try {
             console.log(combatData.action, 'Combat Action Being Initiated')
-            if (combatData.action === 'dodge') { 
-                setDodgeStatus(true) 
-            }
-            if (combatData.action === '') {
-                setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`
-                // , ...emergencyText
-            ])
-                return
-            }
             setEmergencyText([``])
-            setCurrentPlayerHealth(currentPlayerHealth - 1)
             const response = await gameAPI.initiateAction(combatData)
             setCombatInitiated(true)
             setActionBarStatus(true)
@@ -326,8 +323,8 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
             setCurrentPlayerHealth(response.data.new_player_health)
             setCurrentComputerHealth(response.data.new_computer_health)
-            setPlayerCombatText(response.data.player_action_description)
-            setComputerCombatText(response.data.computer_action_description)
+            // setPlayerCombatText(response.data.player_action_description)
+            // setComputerCombatText(response.data.computer_action_description)
             // setCombatData({
             //     ...combatData,
             //     'action': '',
@@ -353,7 +350,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     async function autoAttack() {
         combatData.action = 'attack';
-        combatData.computer_action = 'attack';
+        // combatData.computer_action = 'attack';
         // await setCombatData({
         //     ...combatText,
         //     'action': 'attack',

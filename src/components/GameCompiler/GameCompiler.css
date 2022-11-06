@@ -18,7 +18,7 @@
     opacity: 0;
 }
 .hidden {
-    animation: slide 3s ease-out;
+    animation: slide 6s ease-out infinite alternate;
 }
 @keyframes slide {
     from {
@@ -52,7 +52,7 @@
     opacity: 0;
 }
 .pulse {
-    animation: mymove 3s ease-out;
+    animation: mymove 6s ease-out infinite alternate;
 }  
 @keyframes mymove {
     from {

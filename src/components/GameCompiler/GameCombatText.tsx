@@ -16,11 +16,8 @@ interface Props {
 }
 
 const GameCombatText = ({ user, ascean, emergencyText, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerAction, computerAction, playerCombatText, computerCombatText, combatData }: Props) => {
-    console.log(playerCombatText, computerCombatText);
     
-    const [combatText, setCombatText] = useState<any>({
-        playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText
-    })
+    const [combatText, setCombatText] = useState<any>({})
     let textBoxArea = document.querySelector('.text-box');
     const textBox = document.getElementById('console') as HTMLInputElement;
     const actionOrder: { [key: string]: any } = {
@@ -52,14 +49,6 @@ const GameCombatText = ({ user, ascean, emergencyText, playerActionText, compute
         return
     }
 
-    useEffect(() => {
-        updateCombatText();
-        // textBoxScroll();
-    }, [playerCombatText, computerCombatText])
-
-    useEffect(() => {
-        chatTestTwo()
-    }, [playerActionText])
 
     const updateCombatText = async () => {
         console.log(actionOrder[playerAction], actionOrder[computerAction]);
@@ -68,42 +57,8 @@ const GameCombatText = ({ user, ascean, emergencyText, playerActionText, compute
         setCombatText({
             playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText
         })
-        // if (playerOrder > computerOrder) {
-        //     setCombatText({
-        //         playerCombatText, computerCombatText
-        //     })
-        // } else if (playerOrder === computerOrder) {
-        //     if (combatData.player_attributes.initiative > combatData.computer_attributes.initiative) {
-        //         setCombatText({
-        //             playerCombatText,
-        //             computerCombatText,
-        //             ...combatText
-        //         })
-        //     }
-        // } else {
-        //     setCombatText({
-        //         computerCombatText,
-        //         playerCombatText,
-        //         ...combatText
-        //     })
-        // }
     }
 
-    const chatInterval = async () => { setInterval(chatTestTwo, 5000) }
-    
-    const chatTestTwo = async () => { setCombatText([`${playerActionText}\n` 
-                                                    + `${computerActionText}\n`,
-                                                    + `${playerSpecialText}\n`,
-                                                    + `${computerSpecialText}\n`,
-                                                    + `${playerCombatText}\n`,
-                                                    + `${computerCombatText}\n`,
-                                                    ]) }
-    
-    function sleep(ms: number) {
-        return new Promise(
-            resolve => setTimeout(resolve, ms)
-        )
-    }
 
     
 
