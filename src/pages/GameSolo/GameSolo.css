@@ -195,3 +195,16 @@
         margin: 0 0 10px;
         line-height: 1.2em;
   }
+  .win-condition {
+    grid-column-start: 2;
+    grid-column-end: 4;
+    text-align: center;
+    grid-row-start: 5;
+    color: rgb(255, 255, 0);
+    font-size: 24px;
+    font-variant: small-caps;
+    font-weight: 500;
+    /* margin-left: -25%; */
+    margin-top: 25%;
+    /* border: 1px solid white; */
+  }

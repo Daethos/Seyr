@@ -26,6 +26,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
     const [actionBarStatus, setActionBarStatus] = useState<boolean>(false)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
+    const [playerWin, setPlayerWin] = useState<boolean>(false)
+    const [computerWin, setComputerWin] = useState<boolean>(false)
     let compAttackTimer: NodeJS.Timer;
     let playAttackTimer;
     
@@ -323,6 +325,8 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
             setCurrentPlayerHealth(response.data.new_player_health)
             setCurrentComputerHealth(response.data.new_computer_health)
+            setPlayerWin(response.data.player_win)
+            setComputerWin(response.data.computer_win)
             // setPlayerCombatText(response.data.player_action_description)
             // setComputerCombatText(response.data.computer_action_description)
             // setCombatData({
@@ -381,7 +385,13 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container">
             <GameAnimations sleep={sleep} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} playerAction={combatData.player_action} computerAction={combatData.computer_action} playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} />
             <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+            {playerWin ? <div className="win-condition">You Win!</div> : ''}
+            {computerWin ? <div className="win-condition">You Lose!</div> : ''}
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
+            {
+                playerWin || computerWin
+                ? ''
+                :
             <GameActions 
             setDodgeStatus={setDodgeStatus} actionBarStatus={actionBarStatus} setActionBarStatus={setActionBarStatus} 
             combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
@@ -389,6 +399,8 @@ const GameSolo = ({ user }: GameProps) => {
             handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
             currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
             setCombatData={setCombatData} />
+            }
+
             <GameCombatText 
                 ascean={ascean} user={user} combatData={combatData} emergencyText={emergencyText}
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 

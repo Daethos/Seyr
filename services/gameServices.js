@@ -242,6 +242,12 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 
     combatData.realized_computer_damage = computer_weapon_one_total_damage + computer_weapon_two_total_damage;
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    if (combatData.new_player_health < 0) {
+        combatData.new_player_health = 0;
+        combatData.computer_win = true;
+    }
     
     combatData.computer_action_description = 
         `${computer.name} attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
@@ -251,6 +257,11 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 }
 
 const computerAttackCompiler = async (combatData, computer_action) => {
+    if (combatData.player_win === true) {
+        combatData.computer_action_description = 
+        `${combatData.computer.name} has been defeated. Hail ${combatData.player.name}, you are the new va'Esai!`
+        return
+    }
     console.log('Computer Attack Compiler Firing')
     let computer_physical_damage = combatData.computer_weapons[0].physical_damage;
     let computer_magical_damage = combatData.computer_weapons[0].magical_damage;
@@ -360,12 +371,14 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     computer_total_damage = computer_physical_damage + computer_magical_damage;
     combatData.realized_computer_damage = computer_total_damage;
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
     combatData.computer_action_description = 
         `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ? ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
     if (combatData.new_player_health < 0) {
         combatData.new_player_health = 0;
+        combatData.computer_win = true;
     }
 
     console.log(computer_total_damage, 'Total Computer Damage')
@@ -483,6 +496,12 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     combatData.realized_player_damage = player_weapon_one_total_damage + player_weapon_two_total_damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    if (combatData.new_computer_health <= 0) {
+        combatData.new_computer_health = 0;
+        combatData.player_win = true;
+    }
     
     combatData.player_action_description = 
         `You attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
@@ -493,6 +512,11 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 }
     
 const attackCompiler = async (combatData, player_action) => {
+    if (combatData.computer_win === true) {
+        combatData.player_action_description = 
+        `You have been defeated. Hail ${combatData.computer.name}, the new va'Esai!`
+        return
+    }
     console.log('In the Player Attack Compiler')
     let player_physical_damage = combatData.weapons[0].physical_damage;
     let player_magical_damage = combatData.weapons[0].magical_damage;
@@ -610,12 +634,14 @@ const attackCompiler = async (combatData, player_action) => {
     player_total_damage = player_physical_damage + player_magical_damage;
     combatData.realized_player_damage = player_total_damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
 
     combatData.player_action_description = 
         `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.weapons[0].damage_type[0] ? combatData.weapons[0].damage_type[0] : ''}${combatData.weapons[0].damage_type[1] ? ' / ' + combatData.weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
-    if (combatData.new_computer_health < 0) {
+    if (combatData.new_computer_health <= 0) {
         combatData.new_computer_health = 0;
+        combatData.player_win = true;
     }
 
     console.log(player_total_damage, 'Total Player Damage');
@@ -817,13 +843,13 @@ const actionSplitter = async (combatData) => {
                 newData.counter_success = true;
                 newData.player_special_description = 
                     `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`
-                await counterCompiler(newData, player_action, computer_action)
+                await attackCompiler(newData, player_action)
                 return newData
             } else {
                 newData.computer_counter_success = true;
                 newData.computer_special_description = 
                     `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`
-                await computerCounterCompiler(newData, player_counter)
+                await computerAttackCompiler(newData, computer_action);
                 return newData
             }    
         }
@@ -832,7 +858,7 @@ const actionSplitter = async (combatData) => {
             newData.counter_success = true;
             newData.player_special_description = 
                 `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`
-            await counterCompiler(newData, player_action, computer_action)
+            await attackCompiler(newData, player_action)
             return newData
         }
     
@@ -841,7 +867,7 @@ const actionSplitter = async (combatData) => {
             newData.computer_counter_success = true;
             newData.computer_special_description = 
                 `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`
-            await computerCounterCompiler(newData, player_counter)
+            await computerAttackCompiler(newData, computer_action);
             return newData
         } 
     
