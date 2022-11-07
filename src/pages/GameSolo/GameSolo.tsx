@@ -14,6 +14,7 @@ import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
+import GameConditions from '../../components/GameCompiler/GameConditions';
 
 interface GameProps {
     user: any;
@@ -25,10 +26,11 @@ const GameSolo = ({ user }: GameProps) => {
     const [loading, setLoading] = useState(true);
     const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
     const [actionBarStatus, setActionBarStatus] = useState<boolean>(false)
+    const [winStreak, setWinStreak] = useState<number>(0)
+    const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
-    let compAttackTimer: NodeJS.Timer;
     let playAttackTimer;
     
     const [combatText, setCombatText] = useState<any>([])
@@ -145,7 +147,8 @@ const GameSolo = ({ user }: GameProps) => {
             const randomOpponent = Math.floor(Math.random() * response.data.ascean.length)
             setOpponent(response.data.ascean[randomOpponent])
             console.log(response.data.ascean[randomOpponent], '<- New Opponent');
-            
+            setComputerWin(false)
+            setPlayerWin(false)
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         }
@@ -327,6 +330,16 @@ const GameSolo = ({ user }: GameProps) => {
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
+            if (response.data.player_win === true) {
+                console.log('The Player Won!')
+                setWinStreak(winStreak + 1)
+                setLoseStreak(0)
+            }
+            if (response.data.computer_win === true) {
+                console.log('The Computer Won!')
+                setLoseStreak(loseStreak + 1)
+                setWinStreak(0)
+            }
             // setPlayerCombatText(response.data.player_action_description)
             // setComputerCombatText(response.data.computer_action_description)
             // setCombatData({
@@ -340,31 +353,22 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-    // useEffect(() => {
-    //     compTimer()
-    // }, [])
-
-    async function compTimer() { 
-        if (!compAttackTimer) {
-            console.log('Auto Attack Firing')
-            compAttackTimer = setInterval(autoAttack, 30000);
-            return
-        }
-    }
-
-    async function autoAttack() {
-        combatData.action = 'attack';
-        // combatData.computer_action = 'attack';
-        // await setCombatData({
-        //     ...combatText,
-        //     'action': 'attack',
-        //     'computer_action': 'attack'
-        // })
+    const resetAscean = async () => {
         try {
-            const response = await gameAPI.initiateAction(combatData)
-            console.log(response, 'Response Auto Attacking')
+            // getAscean();
+            getOpponent();
+            setCombatData({
+                ...combatData,
+                'current_player_health': totalPlayerHealth,
+                'new_player_health': totalPlayerHealth,
+                'player_win': false,
+                'computer_win': false
+            })
+            setCurrentPlayerHealth(totalPlayerHealth)
+            setComputerWin(false)
+            setPlayerWin(false)
         } catch (err: any) {
-            console.log(err.message, 'Error Auto Attacking')
+            console.log(err.message, 'Error Resetting Ascean')
         }
     }
 
@@ -385,8 +389,15 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container">
             <GameAnimations sleep={sleep} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} playerAction={combatData.player_action} computerAction={combatData.computer_action} playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} />
             <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
-            {playerWin ? <div className="win-condition">You Win!</div> : ''}
-            {computerWin ? <div className="win-condition">You Lose!</div> : ''}
+            <GameConditions 
+                combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
+                setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
+                setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
+                setWinStreak={setWinStreak} setLoseStreak={setLoseStreak}
+                playerWin={playerWin} computerWin={computerWin} 
+                winStreak={winStreak} loseStreak={loseStreak} 
+                getOpponent={getOpponent} resetAscean={resetAscean} />
+
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
             {
                 playerWin || computerWin

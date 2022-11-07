@@ -196,8 +196,8 @@
         line-height: 1.2em;
   }
   .win-condition {
-    grid-column-start: 2;
-    grid-column-end: 4;
+    grid-column-start: 1;
+    grid-column-end: 5;
     text-align: center;
     grid-row-start: 5;
     color: rgb(255, 255, 0);
@@ -205,6 +205,6 @@
     font-variant: small-caps;
     font-weight: 500;
     /* margin-left: -25%; */
-    margin-top: 25%;
+    /* margin-top: 25%; */
     /* border: 1px solid white; */
   }

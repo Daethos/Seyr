@@ -9,8 +9,9 @@ interface Props {
     NavBar?: boolean
     Messages?: boolean
     Chat?: boolean
+    Combat?: boolean;
 }
-export default function Loading({ NavBar, Messages, Chat }: Props) {
+export default function Loading({ NavBar, Messages, Chat, Combat }: Props) {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
         <Container>
@@ -102,7 +103,7 @@ export default function Loading({ NavBar, Messages, Chat }: Props) {
     
                 <hr className="orange-border bottom" />
             </Col>
-                :
+                : Combat ? <Spinner animation="border" variant="warning" id="loading-spinner-combat" /> :
                 <Col className="stat-block wide">
                 <hr className="orange-border" />
                 <div className="section-left">

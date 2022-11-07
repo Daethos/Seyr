@@ -107,7 +107,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     if (player_action === 'attack') { 
         newData.posture_weight += 1
         newData.roll_weight += 1
-        newData.attack_weight -= 2
+        newData.dodge_weight += 1 
+        newData.attack_weight -= 3
         newData.counter_attack_weight += 2
         newData.counter_counter_weight -= 1
         newData.counter_dodge_weight -= 1
@@ -120,8 +121,6 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_dodge_weight -= 1
     }
     if (player_action === 'dodge') { 
-        newData.dodge_weight += 3  
-        newData.attack_weight -= 3
         newData.counter_dodge_weight += 4
         newData.counter_attack_weight -= 1
         newData.counter_counter_weight -= 1
@@ -244,7 +243,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
-    if (combatData.new_player_health < 0) {
+    if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
         combatData.computer_win = true;
     }
@@ -290,8 +289,8 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                         return combatData
                     }
                 } else {
-                    computer_physical_damage *= 1.3;
-                    computer_magical_damage *= 1.1;
+                    computer_physical_damage *= 1.5;
+                    computer_magical_damage *= 1.25;
                 }
             } else {
                 // If Focus + 1h But Magic
@@ -301,27 +300,27 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                         return combatData
                     }
                 } else {
-                    computer_physical_damage *= 1.15;
-                    computer_magical_damage *= 1.35;
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.5;
                 }
             }
         } else { // Weapon is TWO HAND
             if (combatData.computer.mastery === 'Strength') {
-                if (combatData.computer_attributes.totalStrength > 40) { // Might be a dual-wield compiler instead to take the rest of it
+                if (combatData.computer_attributes.totalStrength >= 50) { // Might be a dual-wield compiler instead to take the rest of it
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
-                } else { // Less than 40 Srength 
-                    computer_physical_damage *= 1.5;
-                    computer_magical_damage *= 1.25;
+                } else { // Less than 50 Srength 
+                    computer_physical_damage *= 1.75;
+                    computer_magical_damage *= 1.5;
                 }
             }
             if (combatData.computer.mastery === 'Caeren') {
-                if (combatData.computer_attributes.totalCaeren > 40) {
+                if (combatData.computer_attributes.totalCaeren >= 50) {
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         return combatData
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.5;
+                    computer_physical_damage *= 1.5;
+                    computer_magical_damage *= 1.75;
                 }
             }
             
@@ -376,7 +375,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     combatData.computer_action_description = 
         `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ? ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
-    if (combatData.new_player_health < 0) {
+    if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
         combatData.computer_win = true;
     }
@@ -498,7 +497,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
 
-    if (combatData.new_computer_health <= 0) {
+    if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
     }
@@ -547,8 +546,8 @@ const attackCompiler = async (combatData, player_action) => {
                         return combatData
                     }
                 } else {
-                    player_physical_damage *= 1.3;
-                    player_magical_damage *= 1.1;
+                    player_physical_damage *= 1.5;
+                    player_magical_damage *= 1.25;
                 }
             } else {
                 // If Focus + 1h But Magic
@@ -558,31 +557,31 @@ const attackCompiler = async (combatData, player_action) => {
                         return combatData
                     }
                 } else {
-                    player_physical_damage *= 1.15;
-                    player_magical_damage *= 1.35;
+                    player_physical_damage *= 1.25;
+                    player_magical_damage *= 1.5;
                 }
             }
         } 
         if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             console.log(combatData.weapons[0].grip, combatData.player.mastery, combatData.player_attributes.totalStrength)
             if (combatData.player.mastery === 'Strength') {
-                if (combatData.player_attributes.totalStrength >= 40) { // Might be a dual-wield compiler instead to take the rest of it
+                if (combatData.player_attributes.totalStrength >= 50) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
                     await dualWieldCompiler(combatData)
                     return combatData
                 } else { // Less than 40 Srength 
-                    player_physical_damage *= 1.5;
-                    player_magical_damage *= 1.25;
+                    player_physical_damage *= 1.75;
+                    player_magical_damage *= 1.5;
                 }
 
             }
             if (combatData.player.mastery === 'Caeren') {
-                if (combatData.player_attributes.totalCaeren >= 40) {
+                if (combatData.player_attributes.totalCaeren >= 50) {
                     await dualWieldCompiler(combatData)
                         return combatData
                 } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.5;
+                    player_physical_damage *= 1.5;
+                    player_magical_damage *= 1.75;
                 }
             }
             
@@ -639,7 +638,7 @@ const attackCompiler = async (combatData, player_action) => {
     combatData.player_action_description = 
         `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.weapons[0].damage_type[0] ? combatData.weapons[0].damage_type[0] : ''}${combatData.weapons[0].damage_type[1] ? ' / ' + combatData.weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
-    if (combatData.new_computer_health <= 0) {
+    if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
     }
@@ -818,10 +817,15 @@ const actionSplitter = async (combatData) => {
     // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;
     const computer_initiative = newData.computer_attributes.initiative;
-    const player_action = newData.action;
+    let player_action = newData.action;
     const player_counter = newData.counter_guess;
     let computer_counter = newData.computer_counter_guess;
     let computer_action = newData.computer_action;
+    if (player_action === '') {
+        newData.action = 'attack';
+        newData.play_action = 'attack';
+        player_action = 'attack';
+    }
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
     await computerActionCompiler(newData, player_action, computer_action, computer_counter)

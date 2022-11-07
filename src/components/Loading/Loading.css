@@ -45,3 +45,11 @@
     margin-right: auto;
     padding: 0px 0;
 }
+
+#loading-spinner-combat {
+    position: absolute;
+    left: 50%;
+    margin-left: -3.5%;
+    margin-top: -12.5%;
+    top: 50%;
+}

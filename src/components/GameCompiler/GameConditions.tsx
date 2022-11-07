@@ -1,0 +1,85 @@
+import { useEffect, useState } from 'react'
+import * as gameAPI from '../../utils/gameApi'
+import Loading from '../Loading/Loading';
+
+
+interface Props {
+    playerWin: boolean;
+    computerWin: boolean;
+    winStreak: number;
+    loseStreak: number;
+    getOpponent: () => Promise<void>;
+    resetAscean: () => Promise<void>;
+    combatData: any;
+    setCombatData: React.Dispatch<any>;
+    setCurrentPlayerHealth: React.Dispatch<React.SetStateAction<number>>;
+    setCurrentComputerHealth: React.Dispatch<React.SetStateAction<number>>;
+    setPlayerWin: React.Dispatch<React.SetStateAction<boolean>>;
+    setComputerWin: React.Dispatch<React.SetStateAction<boolean>>;
+    setWinStreak: React.Dispatch<React.SetStateAction<number>>;
+    setLoseStreak: React.Dispatch<React.SetStateAction<number>>;
+    setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+const GameConditions = ({ combatData, setCombatData, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+    const [loading, setLoading] = useState<boolean>(false)
+    // let compAttackTimer: NodeJS.Timer | null | string | number | undefined;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            autoAttack();
+        }, 30000);
+      
+        return () => clearInterval(interval);
+      }, []);
+
+
+    const autoAttack = async () => {
+        setLoading(true)
+        try {
+            setEmergencyText([`Auto Response Engaging`])
+            const response = await gameAPI.initiateAction(combatData)
+
+            console.log(response.data, 'Response Auto Engaging')
+            setCombatData(response.data)
+            setCurrentPlayerHealth(response.data.new_player_health)
+            setCurrentComputerHealth(response.data.new_computer_health)
+            setPlayerWin(response.data.player_win)
+            setComputerWin(response.data.computer_win)
+
+            if (response.data.player_win === true) {
+                console.log('The Player Won!')
+                setWinStreak(winStreak + 1)
+                setLoseStreak(0)
+            }
+            if (response.data.computer_win === true) {
+                console.log('The Computer Won!')
+                setLoseStreak(loseStreak + 1)
+                setWinStreak(0)
+            }
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, 'Error Initiating Action')
+        }
+    }
+
+    if (loading) {
+        return (
+            <Loading Combat={true} />
+        )
+    }
+  return (
+    <>            
+    {playerWin ? <div className="win-condition">
+    You Win! Hot Streak: {winStreak}!<br /> 
+    <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button> 
+    <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button></div> : ''}
+    {computerWin ? <div className="win-condition">
+    You Lose! Cold Streak: {loseStreak}! <br /> 
+    <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
+    </>
+  )
+}
+
+export default GameConditions
