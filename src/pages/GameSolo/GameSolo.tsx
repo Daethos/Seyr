@@ -5,10 +5,6 @@ import * as asceanAPI from '../../utils/asceanApi';
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
-import Form from 'react-bootstrap/Form'
-import Stack from 'react-bootstrap/Stack';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import * as gameAPI from '../../utils/gameApi'
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import GameAscean from '../../components/GameCompiler/GameAscean';
@@ -31,16 +27,14 @@ const GameSolo = ({ user }: GameProps) => {
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
-    let playAttackTimer;
+    const [gameIsLive, setGameIsLive] = useState<boolean>(true)
     
-    const [combatText, setCombatText] = useState<any>([])
     const { asceanID } = useParams();
 
     const getAscean = useCallback(async () => {
         setLoading(true);
         try {
             const response = await asceanAPI.getOneAscean(asceanID);
-            // console.log(response, '<- Response in Getting an Ascean to Edit')
             setAscean(response.data);
             setLoading(false)
         } catch (err: any) {
@@ -54,8 +48,6 @@ const GameSolo = ({ user }: GameProps) => {
         getOpponent();
     }, [asceanID, getAscean])
 
-    
-
     const [weaponOne, setWeaponOne] = useState<any>({})
     const [weaponTwo, setWeaponTwo] = useState<any>({})
     const [weaponThree, setWeaponThree] = useState<any>({})
@@ -67,7 +59,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     const [attributes, setAttributes] = useState<any>([])
     const [playerDefense, setPlayerDefense] = useState<any>([])
-
 
     const [computerWeapons, setComputerWeapons] = useState<any>({})
     const [computerWeaponOne, setComputerWeaponOne] = useState<object>({})
@@ -204,14 +195,10 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-    // UseEffect -> Enemy Function Getter
-    // Function -> Get Computer Enemy
-    // Essentially reverse engineer everything done for player, for the computer.
 
     useEffect(() => {
       asceanStatCompiler()
     }, [getAscean]) // Says to remove it?
-    // TODO: FIXME: Check if removing it affects refreh at all or it's good without those dependencies TODO: FIXME:
     useEffect(() => {
         combatDataCompiler()
     }, [getAscean])
@@ -314,7 +301,6 @@ const GameSolo = ({ user }: GameProps) => {
         }
         if (combatData.action === '') {
             setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`
-            // , ...emergencyText
         ])
             return
         }
@@ -340,14 +326,6 @@ const GameSolo = ({ user }: GameProps) => {
                 setLoseStreak(loseStreak + 1)
                 setWinStreak(0)
             }
-            // setPlayerCombatText(response.data.player_action_description)
-            // setComputerCombatText(response.data.computer_action_description)
-            // setCombatData({
-            //     ...combatData,
-            //     'action': '',
-            //     'counter_guess': '',
-            //     'computer_counter_guess': ''
-            // })
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         }
@@ -355,7 +333,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     const resetAscean = async () => {
         try {
-            // getAscean();
             getOpponent();
             setCombatData({
                 ...combatData,
@@ -378,45 +355,6 @@ const GameSolo = ({ user }: GameProps) => {
         );
     }
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         autoAttack();
-    //     }, 6000);
-      
-    //     return () => clearInterval(interval);
-    //   }, []);
-
-
-    const autoAttack = async () => {
-        // setLoading(true)
-        try {
-            setEmergencyText([`Auto Response Engaging`])
-            const response = await gameAPI.initiateAction(combatData)
-
-            console.log(response.data, 'Response Auto Engaging')
-            setCombatData(response.data)
-            setCurrentPlayerHealth(response.data.new_player_health)
-            setCurrentComputerHealth(response.data.new_computer_health)
-            setPlayerWin(response.data.player_win)
-            setComputerWin(response.data.computer_win)
-
-            if (response.data.player_win === true) {
-                console.log('The Player Won!')
-                setWinStreak(winStreak + 1)
-                setLoseStreak(0)
-            }
-            if (response.data.computer_win === true) {
-                console.log('The Computer Won!')
-                setLoseStreak(loseStreak + 1)
-                setWinStreak(0)
-            }
-            setLoading(false)
-        } catch (err: any) {
-            setLoading(false)
-            console.log(err.message, 'Error Initiating Action')
-        }
-    }
-
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -433,22 +371,19 @@ const GameSolo = ({ user }: GameProps) => {
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak}
                 playerWin={playerWin} computerWin={computerWin} 
                 winStreak={winStreak} loseStreak={loseStreak} 
-                getOpponent={getOpponent} resetAscean={resetAscean} />
+                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
-            {
-                playerWin || computerWin
-                ? ''
-                :
+            { playerWin || computerWin ? '' :
             <GameActions 
-            setDodgeStatus={setDodgeStatus} actionBarStatus={actionBarStatus} setActionBarStatus={setActionBarStatus} 
-            combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
-            weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
-            handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
-            currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
-            setCombatData={setCombatData} />
+                setDodgeStatus={setDodgeStatus} actionBarStatus={actionBarStatus} setActionBarStatus={setActionBarStatus} 
+                combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
+                weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
+                handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
+                currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
+                setCombatData={setCombatData} 
+            />
             }
-
             <GameCombatText 
                 ascean={ascean} user={user} combatData={combatData} emergencyText={emergencyText}
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 

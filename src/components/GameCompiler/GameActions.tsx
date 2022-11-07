@@ -81,7 +81,7 @@ const GameActions = ({ setDodgeStatus, actionBarStatus, setActionBarStatus, hand
   return (
     <>
     <textarea className='action-reader' value={displayedAction} readOnly></textarea>
-      <select name="Attacks" id="attack-options" style={{ color: 'purple' }} value={combatData.weapons[0]} onChange={setWeaponOrder}>
+      <select name="Attacks" id="attack-options" value={combatData.weapons[0]} onChange={setWeaponOrder}>
         <option value="">Weapon Order</option>
         {
         weapons ?
@@ -91,7 +91,7 @@ const GameActions = ({ setDodgeStatus, actionBarStatus, setActionBarStatus, hand
       </select>
     <div className="actionButtons">
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
-          <button value='initiate' type='submit' className='btn btn-outline text-info' id='action-button'>Initiate</button>
+          <button value='initiate' type='submit' className='btn btn-outline ' id='initiate-button'>Initiate</button>
       </Form>
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button'>

@@ -15,6 +15,7 @@
     gap: 10px;
     */
     /* grid-auto-rows: repeat(8, 1fr);  */
+    /* border: 1px solid purple; */
   }
 #textarea {
     grid-column-start: 3;
@@ -26,12 +27,13 @@
     /* width: 90vw; */
     height: 100vh;
     display: inline-block;
+    
 }
 .text-box {
     font-family: monospace;
     border: 1px solid purple;
     background-color: black;
-    color: white;
+    color: #fdf6d8;
     /* grid-column-start: 4;
     grid-column-end: 5; */
     /* height: 100%;  */
@@ -51,34 +53,41 @@
 }
 .actionButtons {
     display: block;
-    /* display: grid; */
     position: absolute;
     display: inline-block;
-    /* margin-left: 45%;
-    margin-top: 85%; */
     margin-top: 16.5%;
     grid-column-start: 3;
+    grid-column-end: 5;
+    width: 100%;
     grid-row-start: 7;
     padding: 1%;
     border: 1px solid purple;
     background: black;
-    /* float: right; */
 }
 #action-button {
-    font-size: 8.5px;
-    color: purple;
+    font-size: 8px;
+    color: #fdf6d8;
     background-color: black;
     padding: 1.5px;
     display: inline-block;
     margin-bottom: 4px;
   }
   #dodge-button {
-    font-size: 8.5px;
-    color: purple;
+    font-size: 8px;
+    color: #fdf6d8;
     background-color: black;
     padding: 1.5px;
     display: inline-block;
     margin-bottom: 4px;
+  }
+  #initiate-button {
+    font-size: 9px;
+    background-color: black;
+    color:blueviolet;
+    padding: 1.5px;
+    display: inline-block;
+    margin-bottom: 4px;
+    /* font-weight: 650; */
   }
   .action-reader {
     display: block;
@@ -90,11 +99,9 @@
     background: black;
     grid-column-start: 4;
     grid-column-end: 5;
-    /* margin-left: 50%; */
-    /* margin-top: 18%; */
     grid-row-start: 7;
     font-size: 7px;
-    color: white;
+    color: #fdf6d8;
     height: 10%;
     width: 100%;
   }
@@ -104,7 +111,6 @@
 }
 .progress {
     position: absolute;
-    /* justify-content: center; */
     overflow: hidden;
     width: 100%;
     font-size: 10px;
@@ -118,10 +124,14 @@
     margin-left: 25%;
 }
 #attack-options {
-    background-color: black;
+    background-color: rgb(0, 0, 0);
     /* color: purple */
     font-size: 10px;
-    border: purple;
+    text-align: center;
+    justify-content: center;
+    color: purple;
+    font-weight: 600;
+    border: 1px solid purple;
     height: 50%;
     grid-column-start: 4;
     grid-row-start: 6;

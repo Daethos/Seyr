@@ -19,7 +19,9 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
     {
       playerCharacter
       ?
-    <div className="game-block" style={{ marginLeft: 25 + '%' }}>
+    <div className="game-block" 
+    style={{ marginLeft: 12.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}
+    >
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
     <GameHealthBar totalPlayerHealth={combatData.player_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
@@ -45,7 +47,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
     </div>
     : 
     <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, 
-    marginLeft: 25 + '%' 
+    marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' 
     }}>
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
