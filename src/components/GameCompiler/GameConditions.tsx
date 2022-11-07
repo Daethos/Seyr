@@ -27,14 +27,14 @@ const GameConditions = ({ combatData, setCombatData, setEmergencyText, setPlayer
 
     useEffect(() => {
         const interval = setInterval(() => {
-            autoAttack();
-        }, 30000);
+            autoAttack(combatData)
+        }, 10000);
       
         return () => clearInterval(interval);
-      }, []);
+      }, [combatData]);
 
 
-    const autoAttack = async () => {
+    const autoAttack = async (combatData: any) => {
         setLoading(true)
         try {
             setEmergencyText([`Auto Response Engaging`])
@@ -69,6 +69,7 @@ const GameConditions = ({ combatData, setCombatData, setEmergencyText, setPlayer
             <Loading Combat={true} />
         )
     }
+
   return (
     <>            
     {playerWin ? <div className="win-condition">

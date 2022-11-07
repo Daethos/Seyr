@@ -378,12 +378,49 @@ const GameSolo = ({ user }: GameProps) => {
         );
     }
 
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         autoAttack();
+    //     }, 6000);
+      
+    //     return () => clearInterval(interval);
+    //   }, []);
+
+
+    const autoAttack = async () => {
+        // setLoading(true)
+        try {
+            setEmergencyText([`Auto Response Engaging`])
+            const response = await gameAPI.initiateAction(combatData)
+
+            console.log(response.data, 'Response Auto Engaging')
+            setCombatData(response.data)
+            setCurrentPlayerHealth(response.data.new_player_health)
+            setCurrentComputerHealth(response.data.new_computer_health)
+            setPlayerWin(response.data.player_win)
+            setComputerWin(response.data.computer_win)
+
+            if (response.data.player_win === true) {
+                console.log('The Player Won!')
+                setWinStreak(winStreak + 1)
+                setLoseStreak(0)
+            }
+            if (response.data.computer_win === true) {
+                console.log('The Computer Won!')
+                setLoseStreak(loseStreak + 1)
+                setWinStreak(0)
+            }
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, 'Error Initiating Action')
+        }
+    }
+
     if (loading) {
         return (
-        <>
-            <Loading />
-        </>
-        );
+            <Loading Combat={true} />
+        )
     }
     return (
         <Container fluid id="game-container">
