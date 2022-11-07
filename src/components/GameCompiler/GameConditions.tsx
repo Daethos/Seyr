@@ -28,7 +28,7 @@ const GameConditions = ({ combatData, setCombatData, setEmergencyText, setPlayer
     useEffect(() => {
         const interval = setInterval(() => {
             autoAttack(combatData)
-        }, 30000);
+        }, 10000);
       
         return () => clearInterval(interval);
       }, [combatData]);

@@ -19,7 +19,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
     {
       playerCharacter
       ?
-    <div className="game-block">
+    <div className="game-block" style={{ marginLeft: 25 + '%' }}>
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
     <GameHealthBar totalPlayerHealth={combatData.player_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
