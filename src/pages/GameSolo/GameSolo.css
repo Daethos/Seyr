@@ -22,6 +22,7 @@
     grid-column-end: 5;
     grid-row-start: 8;
     grid-row-end: 10; 
+    margin-left: -12.5%;
     /* position: relative; */
     /* float: right; */
     /* width: 90vw; */
@@ -58,7 +59,8 @@
     margin-top: 16.5%;
     grid-column-start: 3;
     grid-column-end: 5;
-    width: 100%;
+    width: 112.5%;
+    margin-left: -12.5%;
     grid-row-start: 7;
     padding: 1%;
     border: 1px solid purple;
@@ -81,7 +83,7 @@
     margin-bottom: 4px;
   }
   #initiate-button {
-    font-size: 9px;
+    font-size: 8px;
     background-color: black;
     color:blueviolet;
     padding: 1.5px;
@@ -103,7 +105,8 @@
     font-size: 7px;
     color: #fdf6d8;
     height: 10%;
-    width: 100%;
+    margin-left: -12.5%;
+    width: 112.5%;
   }
 #player-health {
     background-color: red;
@@ -133,6 +136,7 @@
     font-weight: 600;
     border: 1px solid purple;
     height: 50%;
+    margin-left: -12.5%;
     grid-column-start: 4;
     grid-row-start: 6;
 }

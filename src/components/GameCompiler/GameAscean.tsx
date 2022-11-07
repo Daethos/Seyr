@@ -20,7 +20,10 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
       playerCharacter
       ?
     <div className="game-block" 
-    style={{ marginLeft: 12.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}
+    style={{ 
+      // marginLeft: 12.5 + '%', 
+      transform: 'scale(' + 1.1 + ')', 
+      marginTop: -20 + '%' }}
     >
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
