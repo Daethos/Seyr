@@ -826,6 +826,11 @@ const actionSplitter = async (combatData) => {
         newData.play_action = 'attack';
         player_action = 'attack';
     }
+    let newComputerWeaponOrder = newData.computer_weapons.sort(function() {
+        return Math.random() - 0.5;
+    })
+    console.log(newComputerWeaponOrder)
+    newData.computer_weapons = newComputerWeaponOrder
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
     await computerActionCompiler(newData, player_action, computer_action, computer_counter)
