@@ -107,8 +107,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     if (player_action === 'attack') { 
         newData.posture_weight += 1
         newData.roll_weight += 1
-        newData.dodge_weight += 1 
-        newData.attack_weight -= 3
+        // newData.dodge_weight += 1 
+        newData.attack_weight -= 2
         newData.counter_attack_weight += 2
         newData.counter_counter_weight -= 1
         newData.counter_dodge_weight -= 1

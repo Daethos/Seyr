@@ -134,12 +134,13 @@ const GameSolo = ({ user }: GameProps) => {
     const getOpponent = async () => {
         setLoading(true)
         try {
-            const response = await userService.getProfile('daethos')
-            const randomOpponent = Math.floor(Math.random() * response.data.ascean.length)
-            setOpponent(response.data.ascean[randomOpponent])
+            const response = await userService.getProfile('daethos');
+            const randomOpponent = Math.floor(Math.random() * response.data.ascean.length);
+            setOpponent(response.data.ascean[randomOpponent]);
             console.log(response.data.ascean[randomOpponent], '<- New Opponent');
-            setComputerWin(false)
-            setPlayerWin(false)
+            setComputerWin(false);
+            setPlayerWin(false);
+            setGameIsLive(true);
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         }
@@ -320,11 +321,13 @@ const GameSolo = ({ user }: GameProps) => {
                 console.log('The Player Won!')
                 setWinStreak(winStreak + 1)
                 setLoseStreak(0)
+                setGameIsLive(false)
             }
             if (response.data.computer_win === true) {
                 console.log('The Computer Won!')
                 setLoseStreak(loseStreak + 1)
                 setWinStreak(0)
+                setGameIsLive(false)
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -340,10 +343,11 @@ const GameSolo = ({ user }: GameProps) => {
                 'new_player_health': totalPlayerHealth,
                 'player_win': false,
                 'computer_win': false
-            })
-            setCurrentPlayerHealth(totalPlayerHealth)
-            setComputerWin(false)
-            setPlayerWin(false)
+            });
+            setCurrentPlayerHealth(totalPlayerHealth);
+            setComputerWin(false);
+            setPlayerWin(false);
+            setGameIsLive(true);
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
         }
@@ -370,7 +374,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak}
                 playerWin={playerWin} computerWin={computerWin} 
-                winStreak={winStreak} loseStreak={loseStreak} 
+                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive}
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />

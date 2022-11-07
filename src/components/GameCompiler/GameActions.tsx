@@ -41,7 +41,7 @@ const GameActions = ({ setDodgeStatus, actionBarStatus, setActionBarStatus, hand
 
 
   const dodgeButton = document.querySelector('#dodge-button');
-  const actionButton = document.querySelector('#action-button')
+  const actionButton = document.querySelector('#initiate-button')
 
   async function hideDodge() {
     try {

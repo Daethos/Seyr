@@ -20,18 +20,22 @@ interface Props {
     setLoseStreak: React.Dispatch<React.SetStateAction<number>>;
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
     gameIsLive: boolean;
+    setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameConditions = ({ combatData, setCombatData, gameIsLive, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     if (gameIsLive) {
         
     }
     useEffect(() => {
+        if (!gameIsLive) {
+            return
+        }
         const interval = setInterval(() => {
             autoAttack(combatData)
-        }, 10000);
+        }, 6000);
       
         return () => clearInterval(interval);
       }, [combatData]);
@@ -54,11 +58,13 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setEmergencyTex
                 console.log('The Player Won!')
                 setWinStreak((winStreak) => winStreak + 1)
                 setLoseStreak(0)
+                setGameIsLive(false)
             }
             if (response.data.computer_win === true) {
                 console.log('The Computer Won!')
                 setLoseStreak((loseStreak) => loseStreak + 1)
                 setWinStreak(0)
+                setGameIsLive(false)
             }
             setLoading(false)
         } catch (err: any) {
