@@ -178,8 +178,8 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
 
                                     {/* <div className="section-right"> */}
 
-                                        <UserMessageCard user={user} message={message} key={index} />
-                                        <NewLine spaceCount={1} />
+                                    <UserMessageCard user={user} message={message} key={index} />
+                                    <NewLine spaceCount={1} />
 
                                     {/* </div> */}
                                 </>

@@ -35,7 +35,7 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, 
         }
         const interval = setInterval(() => {
             autoAttack(combatData)
-        }, 6000);
+        }, 10000);
       
         return () => clearInterval(interval);
       }, [combatData]);
@@ -48,7 +48,7 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, 
             const response = await gameAPI.initiateAction(combatData)
 
             console.log(response.data, 'Response Auto Engaging')
-            setCombatData(response.data)
+            setCombatData({...response.data, 'action': ''})
             setCurrentPlayerHealth(response.data.new_player_health)
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)

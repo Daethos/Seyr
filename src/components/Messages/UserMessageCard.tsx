@@ -1,3 +1,4 @@
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 interface Props {
     user: any;
@@ -14,9 +15,10 @@ const UserMessageCard = ({ user, message }: Props) => {
                     
             <span className="user-message" style={{color: 'blue'}}>
                 {/* <div> */}
-                [{message.createdAt.substring(11, 16)}] 
+                [{formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}]
+                {' '} 
                 {message.message}
-                {'\n'}
+                {/* {'\n'} */}
                 {/* </div> */}
             </span>
         // </>

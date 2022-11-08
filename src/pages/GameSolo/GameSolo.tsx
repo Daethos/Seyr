@@ -11,6 +11,7 @@ import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
+import useSound from 'use-sound'
 
 interface GameProps {
     user: any;
@@ -348,6 +349,7 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerWin(false);
             setPlayerWin(false);
             setGameIsLive(true);
+            setWinStreak(0);
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
         }

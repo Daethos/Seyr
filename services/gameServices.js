@@ -821,15 +821,19 @@ const actionSplitter = async (combatData) => {
     const player_counter = newData.counter_guess;
     let computer_counter = newData.computer_counter_guess;
     let computer_action = newData.computer_action;
+    let possible_choices = ['attack', 'posture', 'roll']
+    let new_choice = Math.floor(Math.random() * possible_choices.length)
+    console.log(new_choice, 'New Choice Number')
     if (player_action === '') {
-        newData.action = 'attack';
-        newData.play_action = 'attack';
-        player_action = 'attack';
+        newData.action = possible_choices[new_choice];
+        newData.player_action = possible_choices[new_choice];
+        player_action = possible_choices[new_choice];
+        console.log(player_action, 'New Choice')
     }
     let newComputerWeaponOrder = newData.computer_weapons.sort(function() {
         return Math.random() - 0.5;
     })
-    console.log(newComputerWeaponOrder)
+    // console.log(newComputerWeaponOrder)
     newData.computer_weapons = newComputerWeaponOrder
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)

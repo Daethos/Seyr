@@ -21,7 +21,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
       ?
     <div className="game-block" 
     style={{ 
-      // marginLeft: 12.5 + '%', 
+      marginLeft: 7.5 + '%', 
       transform: 'scale(' + 1.1 + ')', 
       marginTop: -20 + '%' }}
     >
