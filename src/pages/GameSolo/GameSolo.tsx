@@ -33,6 +33,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
     const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
     const [playCounter] = useSound(counterSfx, { volume: 0.5 })
+    const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`
+    const [playRoll] = useSound(rollSfx, { volume: 0.5 })
     const { asceanID } = useParams();
 
     const getAscean = useCallback(async () => {
@@ -322,6 +324,9 @@ const GameSolo = ({ user }: GameProps) => {
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
+            if (response.data.roll_success === true || response.data.computer_roll_success === true) {
+                {playRoll()}
+            }
             if (response.data.counter_success === true || response.data.computer_counter_success === true) {
                 {playCounter()}
             }
@@ -383,7 +388,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
                 setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak}
-                playerWin={playerWin} computerWin={computerWin} playCounter={playCounter}
+                playerWin={playerWin} computerWin={computerWin} playCounter={playCounter} playRoll={playRoll}
                 winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive}
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} />
 

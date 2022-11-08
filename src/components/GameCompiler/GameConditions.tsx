@@ -22,9 +22,10 @@ interface Props {
     gameIsLive: boolean;
     setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
     playCounter: Function;
+    playRoll: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, playCounter, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, playCounter, playRoll, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     if (gameIsLive) {
@@ -54,6 +55,9 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, 
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
+            if (response.data.roll_success === true || response.data.computer_roll_success === true) {
+                {playRoll()}
+            }
             if (response.data.counter_success === true || response.data.computer_counter_success === true) {
                 {playCounter()}
             }
