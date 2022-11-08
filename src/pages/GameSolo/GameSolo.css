@@ -67,7 +67,7 @@
     background: black;
 }
 #action-button {
-    font-size: 8px;
+    font-size: 9px;
     color: #fdf6d8;
     background-color: black;
     padding: 1.5px;
@@ -75,7 +75,7 @@
     margin-bottom: 4px;
   }
   #dodge-button {
-    font-size: 8px;
+    font-size: 9px;
     color: #fdf6d8;
     background-color: black;
     padding: 1.5px;
@@ -83,7 +83,7 @@
     margin-bottom: 4px;
   }
   #initiate-button {
-    font-size: 8px;
+    font-size: 9px;
     background-color: black;
     color:blueviolet;
     padding: 1.5px;

@@ -17,11 +17,11 @@ interface Props {
     dodgeStatus: boolean;
     setDodgeStatus: React.Dispatch<React.SetStateAction<boolean>>;
     sleep: (ms: number) => Promise<unknown>;
-    actionBarStatus: boolean;
-    setActionBarStatus: React.Dispatch<React.SetStateAction<boolean>>;
+    actionStatus: boolean;
+    setActionStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameActions = ({ setDodgeStatus, actionBarStatus, setActionBarStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([])
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
   useEffect(() => {
@@ -43,40 +43,44 @@ const GameActions = ({ setDodgeStatus, actionBarStatus, setActionBarStatus, hand
   const dodgeButton = document.querySelector('#dodge-button');
   const actionButton = document.querySelector('#initiate-button')
 
-  async function hideDodge() {
-    try {
-      // await sleep(250)
-      dodgeButton?.classList.add('hide');
-      console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
-      await sleep(40000 + combatData.weapons[0].dodge)
-      dodgeButton?.classList.remove('hide')
-      setDodgeStatus(false)
-    } catch (err: any) {
-      console.log(err.message, 'Error Hiding Action Bar')
-  }
-  }
+  useEffect(() => {
+    dodgeButton?.classList.add('hide');
+    console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
+    const dodgeTimer = setTimeout(() => {
+      dodgeButton?.classList.remove('hide');
+      setDodgeStatus(false);
+    }, 40000 + combatData.weapons[0].dodge)
+    return () => clearTimeout(dodgeTimer)
+  }, [dodgeStatus])
+
+  // useEffect(() => {
+  //   actionButton?.classList.add('hide');
+  //   setCombatData({ ...combatData, 'action': '' })
+  //   const initiateTimer = setTimeout(() => {
+  //     actionButton?.classList.remove('hide')
+  //     setActionStatus(false)
+  //   }, 4000)
+  //   return () => clearTimeout(initiateTimer);
+  // }, [actionStatus])
+  
+
   async function hideInitiate() {
     try {
       // await sleep(250)
       actionButton?.classList.add('hide');
       await sleep(3500)
       actionButton?.classList.remove('hide')
-      setActionBarStatus(false)
       setCombatData({ ...combatData, 'action': '' })
+      setActionStatus(false)
     } catch (err: any) {
       console.log(err.message, 'Error Hiding Action Bar')
   }
   }
-  if (dodgeStatus) {
-    console.log('Dodge Hiding')
-    hideDodge()
-  }
-
-  if (actionBarStatus) {
+  if (actionStatus) {
     console.log('Initiate Hiding')
     hideInitiate()
     // actionBar?.classList.toggle('hide')
-    // setActionBarStatus(false)
+    // setActionStatus(false)
   }
   return (
     <>
@@ -100,9 +104,7 @@ const GameActions = ({ setDodgeStatus, actionBarStatus, setActionBarStatus, hand
           <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
         ))}
       </select>
-      <button value='dodge' onClick={handleAction} className='btn btn-outline' id='dodge-button'
-      // disabled={dodgeStatus ? true : false}
-      >Dodge</button>
+      {/* <button value='dodge' onClick={handleAction} className='btn btn-outline' id='dodge-button'>Dodge</button> */}
       <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
       <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
     </div>

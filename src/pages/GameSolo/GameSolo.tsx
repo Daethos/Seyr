@@ -22,14 +22,17 @@ const GameSolo = ({ user }: GameProps) => {
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
     const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
-    const [actionBarStatus, setActionBarStatus] = useState<boolean>(false)
+    const [actionStatus, setActionStatus] = useState<boolean>(false)
     const [winStreak, setWinStreak] = useState<number>(0)
     const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
     const [gameIsLive, setGameIsLive] = useState<boolean>(true)
-    
+    const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
+    const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
+    const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
+    const [playCounter] = useSound(counterSfx, { volume: 0.5 })
     const { asceanID } = useParams();
 
     const getAscean = useCallback(async () => {
@@ -291,7 +294,8 @@ const GameSolo = ({ user }: GameProps) => {
                 a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
             )
         })
-        const response = await newWeaponOrder()
+        const response = await newWeaponOrder();
+        {playWO()}
         console.log(response, '<- Response re-ordering weapons')
         setCombatData({...combatData, 'weapons': response})
     }
@@ -311,13 +315,16 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``])
             const response = await gameAPI.initiateAction(combatData)
             setCombatInitiated(true)
-            setActionBarStatus(true)
+            setActionStatus(true)
             console.log(response.data, 'Response Initiating Combat')
             setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
             setCurrentPlayerHealth(response.data.new_player_health)
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
+            if (response.data.counter_success === true || response.data.computer_counter_success === true) {
+                {playCounter()}
+            }
             if (response.data.player_win === true) {
                 console.log('The Player Won!')
                 setWinStreak(winStreak + 1)
@@ -366,6 +373,7 @@ const GameSolo = ({ user }: GameProps) => {
             <Loading Combat={true} />
         )
     }
+
     return (
         <Container fluid id="game-container">
             <GameAnimations sleep={sleep} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} playerAction={combatData.player_action} computerAction={combatData.computer_action} playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} />
@@ -375,14 +383,14 @@ const GameSolo = ({ user }: GameProps) => {
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
                 setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak}
-                playerWin={playerWin} computerWin={computerWin} 
+                playerWin={playerWin} computerWin={computerWin} playCounter={playCounter}
                 winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive}
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
             { playerWin || computerWin ? '' :
             <GameActions 
-                setDodgeStatus={setDodgeStatus} actionBarStatus={actionBarStatus} setActionBarStatus={setActionBarStatus} 
+                setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
                 weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 

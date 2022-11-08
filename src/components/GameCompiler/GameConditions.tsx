@@ -21,9 +21,10 @@ interface Props {
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
     gameIsLive: boolean;
     setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
+    playCounter: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, playCounter, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     if (gameIsLive) {
@@ -53,7 +54,9 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, 
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
-
+            if (response.data.counter_success === true || response.data.computer_counter_success === true) {
+                {playCounter()}
+            }
             if (response.data.player_win === true) {
                 console.log('The Player Won!')
                 setWinStreak((winStreak) => winStreak + 1)
