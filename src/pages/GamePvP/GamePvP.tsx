@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
-import './GameSolo.css'
+import { StreamChat } from 'stream-chat'
+import { Chat } from 'stream-chat-react'
+import './GamePvP.css'
 import * as asceanAPI from '../../utils/asceanApi';  
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
@@ -17,7 +19,11 @@ interface GameProps {
     user: any;
 }
 
-const GameSolo = ({ user }: GameProps) => {
+const GamePvP = ({ user }: GameProps) => {
+    const STREAM_API: any = process.env.REACT_APP_STREAM_API;
+    const client = StreamChat.getInstance(STREAM_API)
+
+
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
@@ -418,4 +424,4 @@ const GameSolo = ({ user }: GameProps) => {
     )
 }
 
-export default GameSolo
+export default GamePvP

@@ -23,9 +23,10 @@ interface Props {
     setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
     playCounter: Function;
     playRoll: Function;
+    playDeath: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, playCounter, playRoll, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     if (gameIsLive) {
