@@ -1,7 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
-import { StreamChat } from 'stream-chat'
-import { Chat } from 'stream-chat-react'
 import './GamePvP.css'
 import * as asceanAPI from '../../utils/asceanApi';  
 import userService from "../../utils/userService";
@@ -20,9 +18,6 @@ interface GameProps {
 }
 
 const GamePvP = ({ user }: GameProps) => {
-    const STREAM_API: any = process.env.REACT_APP_STREAM_API;
-    const client = StreamChat.getInstance(STREAM_API)
-
 
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})

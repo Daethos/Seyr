@@ -1,8 +1,4 @@
-const STREAM_API = process.env.STREAM_API;
-const STREAM_SECRET = process.env.STREAM_SECRET;
 const cors = require('cors')
-const { StreamChat } = require('stream-chat')
-const serverClient = StreamChat.getInstance(STREAM_API, STREAM_SECRET)
 const gameService = require('../services/gameServices')
 
 module.exports = {

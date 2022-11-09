@@ -64,12 +64,14 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, 
             }
             if (response.data.player_win === true) {
                 console.log('The Player Won!')
+                {playDeath()}
                 setWinStreak((winStreak) => winStreak + 1)
                 setLoseStreak(0)
                 setGameIsLive(false)
             }
             if (response.data.computer_win === true) {
                 console.log('The Computer Won!')
+                {playDeath()}
                 setLoseStreak((loseStreak) => loseStreak + 1)
                 setWinStreak(0)
                 setGameIsLive(false)
