@@ -31,9 +31,10 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_one?.achre > 0 ? 'ACH: +' + weapon_one?.achre + ' ' : ''}
                 {weapon_one?.caeren > 0 ? 'CAER: +' + weapon_one?.caeren + ' ' : ''}
                 {weapon_one?.kyosir > 0 ? 'KYO: +' + weapon_one?.kyosir + ' ' : ''}<br />
-                Damage: {weapon_one?.physical_damage} Physical | {weapon_one?.magical_damage} Magical <br />
-                Critical Chance: +{weapon_one?.critical_chance}% <br />
-                Critical Damage: {weapon_one?.critical_damage}x <br />
+                Damage: {weapon_one?.physical_damage} Phys | {weapon_one?.magical_damage} Magi <br />
+                Penetration: {weapon_one?.physical_penetration} Phys | {weapon_one?.magical_penetration} Magi <br />
+                Crit Chance: +{weapon_one?.critical_chance}% <br />
+                Crit Damage: {weapon_one?.critical_damage}x <br />
                 Dodge Timer: +{weapon_one?.dodge}s <br />
                 Roll Chance: +{weapon_one?.roll}% <br />
             </Popover.Body>
@@ -51,9 +52,10 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_two?.achre > 0 ? 'ACH: +' + weapon_two?.achre + ' ' : ''}
                 {weapon_two?.caeren > 0 ? 'CAER: +' + weapon_two?.caeren + ' ' : ''}
                 {weapon_two?.kyosir > 0 ? 'KYO: +' + weapon_two?.kyosir + ' ' : ''}<br />
-                Damage: {weapon_two?.physical_damage} Physical | {weapon_two?.magical_damage} Magical <br />
-                Critical Chance: +{weapon_two?.critical_chance}% <br />
-                Critical Damage: {weapon_two?.critical_damage}x <br />
+                Damage: {weapon_two?.physical_damage} Phys | {weapon_two?.magical_damage} Magi <br />
+                Penetration: {weapon_two?.physical_penetration} Phys | {weapon_two?.magical_penetration} Magi <br />
+                Crit Chance: +{weapon_two?.critical_chance}% <br />
+                Crit Damage: {weapon_two?.critical_damage}x <br />
                 Dodge Timer: +{weapon_two?.dodge}s <br />
                 Roll Chance: +{weapon_two?.roll}% <br />
             </Popover.Body>
@@ -71,9 +73,10 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_three?.achre > 0 ? 'ACH: +' + weapon_three?.achre + ' ' : ''}
                 {weapon_three?.caeren > 0 ? 'CAER: +' + weapon_three?.caeren + ' ' : ''}
                 {weapon_three?.kyosir > 0 ? 'KYO: +' + weapon_three?.kyosir + ' ' : ''}<br />
-                Damage: {weapon_three?.physical_damage} Physical | {weapon_three?.magical_damage} Magical <br />
-                Critical Chance: +{weapon_three?.critical_chance}% <br />
-                Critical Damage: {weapon_three?.critical_damage}x <br />
+                Damage: {weapon_three?.physical_damage} Phys | {weapon_three?.magical_damage} Magi <br />
+                Penetration: {weapon_three?.physical_penetration} Phys | {weapon_three?.magical_penetration} Magi <br />
+                Crit Chance: +{weapon_three?.critical_chance}% <br />
+                Crit Damage: {weapon_three?.critical_damage}x <br />
                 Dodge Timer: +{weapon_three?.dodge}s <br />
                 Roll Chance: +{weapon_three?.roll}% <br />
             </Popover.Body>
@@ -95,8 +98,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{shield?.magical_resistance}% <br />
                 Physical Damage: {shield?.physical_damage}x <br />
                 Magical Damage: {shield?.magical_damage}x <br />
-                Critical Chance: +{shield?.critical_chance}% <br />
-                Critical Damage: {shield?.critical_damage}x <br />
+                Crit Chance: +{shield?.critical_chance}% <br />
+                Crit Damage: {shield?.critical_damage}x <br />
                 Dodge Timer: +{shield?.dodge}s <br />
                 Roll Chance: +{shield?.roll}% <br />
             </Popover.Body>
@@ -118,8 +121,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{helmet?.magical_resistance}% <br />
                 Physical Damage: {helmet?.physical_damage}x <br />
                 Magical Damage: {helmet?.magical_damage}x <br />
-                Critical Chance: +{helmet?.critical_chance}% <br />
-                Critical Damage: {helmet?.critical_damage}x <br />
+                Crit Chance: +{helmet?.critical_chance}% <br />
+                Crit Damage: {helmet?.critical_damage}x <br />
                 Dodge Timer: +{helmet?.dodge}s <br />
                 Roll Chance: +{helmet?.roll}% <br />
             </Popover.Body>
@@ -142,8 +145,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{chest?.magical_resistance}% <br />
                 Physical Damage: {chest?.physical_damage}x <br />
                 Magical Damage: {chest?.magical_damage}x <br />
-                Critical Chance: +{chest?.critical_chance}% <br />
-                Critical Damage: {chest?.critical_damage}x <br />
+                Crit Chance: +{chest?.critical_chance}% <br />
+                Crit Damage: {chest?.critical_damage}x <br />
                 Dodge Timer: +{chest?.dodge}s <br />
                 Roll Chance: +{chest?.roll}% <br />
             </Popover.Body>
@@ -165,8 +168,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{legs?.magical_resistance}% <br />
                 Physical Damage: {legs?.physical_damage}x <br />
                 Magical Damage: {legs?.magical_damage}x <br />
-                Critical Chance: +{legs?.critical_chance}% <br />
-                Critical Damage: {legs?.critical_damage}x <br />
+                Crit Chance: +{legs?.critical_chance}% <br />
+                Crit Damage: {legs?.critical_damage}x <br />
                 Dodge Timer: +{legs?.dodge}s <br />
                 Roll Chance: +{legs?.roll}% <br />
             </Popover.Body>
@@ -187,8 +190,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{amulet?.magical_resistance}% <br />
                 Physical Damage: {amulet?.physical_damage}x <br />
                 Magical Damage: {amulet?.magical_damage}x <br />
-                Critical Chance: +{amulet?.critical_chance}% <br />
-                Critical Damage: {amulet?.critical_damage}x <br />
+                Crit Chance: +{amulet?.critical_chance}% <br />
+                Crit Damage: {amulet?.critical_damage}x <br />
                 Dodge Timer: +{amulet?.dodge}s <br />
                 Roll Chance: +{amulet?.roll}% <br />
             </Popover.Body>
@@ -209,8 +212,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{ring_one?.magical_resistance}% <br />
                 Physical Damage: {ring_one?.physical_damage}x <br />
                 Magical Damage: {ring_one?.magical_damage}x <br />
-                Critical Chance: +{ring_one?.critical_chance}% <br />
-                Critical Damage: {ring_one?.critical_damage}x <br />
+                Crit Chance: +{ring_one?.critical_chance}% <br />
+                Crit Damage: {ring_one?.critical_damage}x <br />
                 Dodge Timer: +{ring_one?.dodge}s <br />
                 Roll Chance: +{ring_one?.roll}% <br />
             </Popover.Body>
@@ -231,8 +234,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{ring_two?.magical_resistance}% <br />
                 Physical Damage: {ring_two?.physical_damage}x <br />
                 Magical Damage: {ring_two?.magical_damage}x <br />
-                Critical Chance: +{ring_two?.critical_chance}% <br />
-                Critical Damage: {ring_two?.critical_damage}x <br />
+                Crit Chance: +{ring_two?.critical_chance}% <br />
+                Crit Damage: {ring_two?.critical_damage}x <br />
                 Dodge Timer: +{ring_two?.dodge}s <br />
                 Roll Chance: +{ring_two?.roll}% <br />
             </Popover.Body>
@@ -253,8 +256,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Magical Defense: +{trinket?.magical_resistance}% <br />
                 Physical Damage: {trinket?.physical_damage}x <br />
                 Magical Damage: {trinket?.magical_damage}x <br />
-                Critical Chance: +{trinket?.critical_chance}% <br />
-                Critical Damage: {trinket?.critical_damage}x <br />
+                Crit Chance: +{trinket?.critical_chance}% <br />
+                Crit Damage: {trinket?.critical_damage}x <br />
                 Dodge Timer: +{trinket?.dodge}s <br />
                 Roll Chance: +{trinket?.roll}% <br />
             </Popover.Body>

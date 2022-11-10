@@ -24,9 +24,18 @@ interface Props {
     playCounter: Function;
     playRoll: Function;
     playDeath: Function;
+    playDaethic: Function;
+    playEarth: Function;
+    playFire: Function;
+    playBow: Function;
+    playFrost: Function;
+    playLightning: Function;
+    playSorcery: Function;
+    playWind: Function;
+    playPierce: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     if (gameIsLive) {
@@ -56,6 +65,35 @@ const GameConditions = ({ combatData, setCombatData, gameIsLive, setGameIsLive, 
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
+            if (response.data.critical_success === true) {
+                if (response.data.weapons[0].damage_type[0] === 'Spooky' || response.data.weapons[0].damage_type[0] === 'Righteous') {
+                    {playDaethic()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Earth') {
+                    {playEarth()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Fire') {
+                    {playFire()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Frost') {
+                    {playFrost()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Lightning') {
+                    {playLightning()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Sorcery') {
+                    {playSorcery()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Wind') {
+                    {playWind()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
+                    {playPierce()}
+                }
+                if (response.data.weapons[0].type === 'Bow') {
+                    {playBow()}
+                }
+            }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
                 {playRoll()}
             }

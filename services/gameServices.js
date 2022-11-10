@@ -4,71 +4,83 @@
 
 // =================================== HELPER FUNCTIONS ======================================= \\
 
-const faithFinder = async (combatData) => { // The influence will add a chance to have a special effect occur
-
-    if (combatData.weapons[0].influences === 'Daethos') { // God
-
+const faithFinder = async (combatData, player_action) => { // The influence will add a chance to have a special effect occur
+    let faith_number = Math.floor(Math.random() * 101);
+    let faith_check = Math.floor(Math.random() * 101);
+    if (combatData.player.faith === 'devoted' && combatData.weapons[0].influences === 'Daethos') {
+        faith_number += 5;
     }
-    if (combatData.weapons[0].influences === 'Achreo') { // Wild
-        
+    if (combatData.player.faith === 'adherent' && combatData.weapons[0].influences !== 'Daethos') {
+        faith_number += 5;
     }
-    if (combatData.weapons[0].influences === "Ahn've") { // Wind
-
+    console.log(combatData.player.name, `'s Faith #`, faith_number)
+    if (faith_number > 85) {
+        if (combatData.weapons[0].influences === 'Daethos') { // God
+    
+        }
+        if (combatData.weapons[0].influences === 'Achreo') { // Wild
+            
+        }
+        if (combatData.weapons[0].influences === "Ahn've") { // Wind
+    
+        }
+        if (combatData.weapons[0].influences === 'Astra') { // Lightning
+            
+        }
+        if (combatData.weapons[0].influences === 'Cambire') { // Potential
+    
+        }
+        if (combatData.weapons[0].influences === 'Chiomyr') { // Humor
+            
+        }
+        if (combatData.weapons[0].influences === 'Fyer') { // Fire
+    
+        }
+        if (combatData.weapons[0].influences === 'Ilios') { // Sun
+            
+        }
+        if (combatData.weapons[0].influences === "Kyn'gi") { // Hunt
+    
+        }
+        if (combatData.weapons[0].influences === "Kyrisos") { // Gold
+    
+        }
+        if (combatData.weapons[0].influences === "Kyr'na") { // Time
+    
+        }
+        if (combatData.weapons[0].influences === "Lilos") { // Life
+    
+        }
+        if (combatData.weapons[0].influences === "Ma'anre") { // Moon
+    
+        }
+        if (combatData.weapons[0].influences === "Nyrolus") { // Water
+    
+        }
+        if (combatData.weapons[0].influences === "Quor'ei") { // Earth
+    
+        }
+        if (combatData.weapons[0].influences === "Rahvre") { // Dreams
+    
+        }
+        if (combatData.weapons[0].influences === "Senari") { // Wisdom
+    
+        }
+        if (combatData.weapons[0].influences === "Se'dyro") { // Iron
+            await attackCompiler(combatData, player_action)
+            await attackCompiler(combatData, player_action)
+        }
+        if (combatData.weapons[0].influences === "Se'vas") { // War
+    
+        }
+        if (combatData.weapons[0].influences === "Shrygei") { // Song
+    
+        }
+        if (combatData.weapons[0].influences === "Tshaer") { // Animal
+    
+        }
     }
-    if (combatData.weapons[0].influences === 'Astra') { // Lightning
-        
-    }
-    if (combatData.weapons[0].influences === 'Cambire') { // Potential
-
-    }
-    if (combatData.weapons[0].influences === 'Chiomyr') { // Humor
-        
-    }
-    if (combatData.weapons[0].influences === 'Fyer') { // Fire
-
-    }
-    if (combatData.weapons[0].influences === 'Ilios') { // Sun
-        
-    }
-    if (combatData.weapons[0].influences === "Kyn'gi") { // Hunt
-
-    }
-    if (combatData.weapons[0].influences === "Kyrisos") { // Gold
-
-    }
-    if (combatData.weapons[0].influences === "Kyr'na") { // Time
-
-    }
-    if (combatData.weapons[0].influences === "Lilos") { // Life
-
-    }
-    if (combatData.weapons[0].influences === "Ma'anre") { // Moon
-
-    }
-    if (combatData.weapons[0].influences === "Nyrolus") { // Water
-
-    }
-    if (combatData.weapons[0].influences === "Quor'ei") { // Earth
-
-    }
-    if (combatData.weapons[0].influences === "Rahvre") { // Dreams
-
-    }
-    if (combatData.weapons[0].influences === "Senari") { // Wisdom
-
-    }
-    if (combatData.weapons[0].influences === "Se'dyro") { // Iron
-
-    }
-    if (combatData.weapons[0].influences === "Se'vas") { // War
-
-    }
-    if (combatData.weapons[0].influences === "Shrygei") { // Song
-
-    }
-    if (combatData.weapons[0].influences === "Tshaer") { // Animal
-
-    }
+    return combatData
 }
 
 // TODO: QueryFunctions -------
@@ -92,22 +104,27 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
 const computerActionCompiler = async (newData, player_action, computer_action, computer_counter) => {
     
     const computerActions = {
-        attack: 30 + newData.attack_weight,
+        attack: 50 + newData.attack_weight,
         counter: 10 + newData.counter_weight,
         dodge: 10 + newData.dodge_weight,
-        posture: 25 + newData.posture_weight,
-        roll: 25 + newData.roll_weight,
+        posture: 15 + newData.posture_weight,
+        roll: 15 + newData.roll_weight,
         counter_attack: 20 + newData.counter_attack_weight,
         counter_counter: 20 + newData.counter_counter_weight,
         counter_dodge: 20 + newData.counter_dodge_weight,
         counter_posture: 20 + newData.counter_posture_weight,
         counter_roll: 20 + newData.counter_roll_weight,
+        roll_rating: newData.computer_weapons[0].roll,
+        armor_rating: (newData.computer_defense.physicalPosture + newData.computer_defense.magicalPosture / 2),
     }
 
     if (player_action === 'attack') { 
-        newData.posture_weight += 1
-        newData.roll_weight += 1
-        // newData.dodge_weight += 1 
+        if (computerActions.roll_rating > computerActions.armor_rating) {
+            newData.roll_weight += 2
+        } else {
+            newData.posture_weight += 2
+        }
+        // newData.counter_weight += 1 
         newData.attack_weight -= 2
         newData.counter_attack_weight += 2
         newData.counter_counter_weight -= 1
@@ -115,7 +132,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     }
     if (player_action === 'counter') { 
         newData.counter_weight += 2  
-        newData.attack_weight -= 2
+        newData.posture_weight -= 1
+        newData.roll_weight -= 1
         newData.counter_counter_weight += 2
         newData.counter_attack_weight -= 1
         newData.counter_dodge_weight -= 1
@@ -128,19 +146,21 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_roll_weight -= 1
     }
     if (player_action === 'posture') { 
-        newData.attack_weight += 1  
-        newData.posture_weight -= 1
+        newData.attack_weight += 2  
+        newData.posture_weight -= 3
+        newData.counter_weight += 1
         newData.counter_posture_weight += 3
         newData.counter_roll_weight -= 2
-        newData.counter_dodge_weight -= 1
+        newData.counter_attack_weight -= 1
     }
 
     if (player_action === 'roll') { 
-        newData.attack_weight += 1  
-        newData.roll_weight -= 1
+        newData.attack_weight += 2  
+        newData.roll_weight -= 3
+        newData.counter_weight += 1
         newData.counter_roll_weight += 3
         newData.counter_posture_weight -= 2
-        newData.counter_dodge_weight -= 1
+        newData.counter_attack_weight -= 1
     }
 
     // const computerAction = async (computerActions) => {
@@ -214,6 +234,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
         // await computerCriticalCompiler(combatDatacombatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
         console.log('Comp DW1 Post-Crit Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
         firstWeaponCrit = true;
+        combatData.computer_critical_success = true;
         // }
     }
 
@@ -224,15 +245,16 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
         //await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
         console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
         secondWeaponCrit = true;
+        combatData.computer_critical_success = true;
     }
     
     console.log(firstWeaponCrit, secondWeaponCrit)
 
-    computer_weapon_one_physical_damage *= (player_physical_defense_multiplier + ((weapons[0].physical_penetration) / 100 ));
-    computer_weapon_one_magical_damage *= (player_magical_defense_multiplier + ((weapons[0].magical_penetration ) / 100 ));
+    computer_weapon_one_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100 )));
+    computer_weapon_one_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[0].magical_penetration  / 100 )));
 
-    computer_weapon_two_physical_damage *= (player_physical_defense_multiplier + ((weapons[1].physical_penetration) / 100 ));
-    computer_weapon_two_magical_damage *= (player_magical_defense_multiplier + ((weapons[1].magical_penetration) / 100 ));
+    computer_weapon_two_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100 )));
+    computer_weapon_two_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100 )));
 
     computer_weapon_one_total_damage = computer_weapon_one_physical_damage + computer_weapon_one_magical_damage;
     computer_weapon_two_total_damage = computer_weapon_two_physical_damage + computer_weapon_two_magical_damage;
@@ -240,6 +262,9 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     console.log(computer_weapon_one_total_damage, computer_weapon_two_total_damage);
 
     combatData.realized_computer_damage = computer_weapon_one_total_damage + computer_weapon_two_total_damage;
+    if (combatData.realized_computer_damage < 0) {
+        combatData.realized_computer_damage = 0;
+    }
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
@@ -249,7 +274,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     }
     
     combatData.computer_action_description = 
-        `${computer.name} attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
     return (
         combatData
     )
@@ -306,24 +331,29 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             }
         } else { // Weapon is TWO HAND
             if (combatData.computer.mastery === 'Strength') {
-                if (combatData.computer_attributes.totalStrength >= 50) { // Might be a dual-wield compiler instead to take the rest of it
+                if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
                 } else { // Less than 50 Srength 
-                    computer_physical_damage *= 1.75;
-                    computer_magical_damage *= 1.5;
-                }
-            }
-            if (combatData.computer.mastery === 'Caeren') {
-                if (combatData.computer_attributes.totalCaeren >= 50) {
-                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                        return combatData
-                } else {
-                    computer_physical_damage *= 1.5;
+                    computer_physical_damage *= 2.0;
                     computer_magical_damage *= 1.75;
                 }
             }
-            
+            if (combatData.computer.mastery === 'Caeren') {
+                if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 60) {
+                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        return combatData
+                } else {
+                    computer_physical_damage *= 1.75;
+                    computer_magical_damage *= 2.0;
+                }
+            }
+            if (combatData.computer_weapons[0].type === 'Bow') {
+                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre') {
+                    computer_physical_damage *= 2;
+                    computer_magical_damage *= 2;
+                }
+            }
         }
     }
 
@@ -364,10 +394,13 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     }
 
     // If you made it here, your basic attack now resolves itself
-    computer_physical_damage *= player_physical_defense_multiplier;
-    computer_magical_damage *= player_magical_defense_multiplier;
+    computer_physical_damage *= (player_physical_defense_multiplier * (1 - (combatData.computer_weapons[0].physical_penetration / 100)));
+    computer_magical_damage *= (player_magical_defense_multiplier * (1 - (combatData.computer_weapons[0].magical_penetration / 100)));
 
     computer_total_damage = computer_physical_damage + computer_magical_damage;
+    if (computer_total_damage < 0) {
+        computer_total_damage = 0;
+    }
     combatData.realized_computer_damage = computer_total_damage;
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
@@ -462,17 +495,10 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     // This is for Critical Strikes
     if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        // if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
             player_weapon_one_physical_damage *= combatData.weapons[0].critical_damage;
             player_weapon_one_magical_damage *= combatData.weapons[0].critical_damage;
-            // await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
-            // await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
             firstWeaponCrit = true;
-            // secondWeaponCrit = true;
-        // } else {
-            // await criticalCompiler(combatData, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage)
-            // firstWeaponCrit = true;
-        // }
+            combatData.critical_success = true;
         console.log(player_weapon_one_physical_damage, player_weapon_one_magical_damage, 'Weapon 1 Post-Crit Modifier')
     }
 
@@ -481,19 +507,23 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
         player_weapon_two_magical_damage *= combatData.weapons[1].critical_damage;
         // await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
         secondWeaponCrit = true;
+        combatData.critical_success = true;
         console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
 
-    player_weapon_one_physical_damage *= computer_physical_defense_multiplier;
-    player_weapon_one_magical_damage *= computer_magical_defense_multiplier;
+    player_weapon_one_physical_damage *= (computer_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= (computer_magical_defense_multiplier * (1 - (weapons[0].magical_penetration / 100)));
 
-    player_weapon_one_physical_damage *= computer_physical_defense_multiplier;
-    player_weapon_one_magical_damage *= computer_magical_defense_multiplier;
+    player_weapon_one_physical_damage *= (computer_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= (computer_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100)));
 
     player_weapon_one_total_damage = player_weapon_one_physical_damage + player_weapon_one_magical_damage;
     player_weapon_two_total_damage = player_weapon_two_physical_damage + player_weapon_two_magical_damage;
 
     combatData.realized_player_damage = player_weapon_one_total_damage + player_weapon_two_total_damage;
+    if (combatData.realized_player_damage < 0) {
+        combatData.realized_player_damage = 0;
+    }
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
 
@@ -503,7 +533,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     }
     
     combatData.player_action_description = 
-        `You attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
     console.log(combatData.realized_player_damage)
     return (
         combatData
@@ -565,26 +595,31 @@ const attackCompiler = async (combatData, player_action) => {
         if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             console.log(combatData.weapons[0].grip, combatData.player.mastery, combatData.player_attributes.totalStrength)
             if (combatData.player.mastery === 'Strength') {
-                if (combatData.player_attributes.totalStrength >= 50) { // Might be a dual-wield compiler instead to take the rest of it
+                if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
                     await dualWieldCompiler(combatData)
                     return combatData
                 } else { // Less than 40 Srength 
-                    player_physical_damage *= 1.75;
-                    player_magical_damage *= 1.5;
+                    player_physical_damage *= 2.0;
+                    player_magical_damage *= 1.75;
                 }
 
             }
             if (combatData.player.mastery === 'Caeren') {
-                if (combatData.player_attributes.totalCaeren >= 50) {
+                if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 60) {
                     await dualWieldCompiler(combatData)
                         return combatData
                 } else {
-                    player_physical_damage *= 1.5;
-                    player_magical_damage *= 1.75;
+                    player_physical_damage *= 1.75;
+                    player_magical_damage *= 2.0;
                 }
             }
-            
+            if (combatData.weapons[0].type === 'Bow') {
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre') {
+                    player_physical_damage *= 2;
+                    player_magical_damage *= 2;
+                }
+            }
         }
     }
 
@@ -600,18 +635,23 @@ const attackCompiler = async (combatData, player_action) => {
     }
 
     if (player_action === 'dodge') {
-        player_physical_damage *= 0.9;
-        player_magical_damage *= 0.9;
+        player_physical_damage *= 0.95;
+        player_magical_damage *= 0.95;
     }
 
     if (player_action === 'posture') {
-        player_physical_damage *= 0.8;
-        player_magical_damage *= 0.8;
+        player_physical_damage *= 0.85;
+        player_magical_damage *= 0.85;
     }
 
     if (player_action === 'roll' ) {
-        player_physical_damage *= 0.8;
-        player_magical_damage *= 0.8;
+        if (combatData.roll_success === true) {
+            player_physical_damage *= 1.1;
+            player_magical_damage *= 1.1;
+        } else {
+            player_physical_damage *= 0.75;
+            player_magical_damage *= 0.75;
+        }
     }
 
 
@@ -627,10 +667,13 @@ const attackCompiler = async (combatData, player_action) => {
     }
 
     // If you made it here, your basic attack now resolves itself
-    player_physical_damage *= computer_physical_defense_multiplier;
-    player_magical_damage *= computer_magical_defense_multiplier;
+    player_physical_damage *= (computer_physical_defense_multiplier * (1 - (combatData.weapons[0].physical_penetration / 100)));
+    player_magical_damage *= (computer_magical_defense_multiplier * (1 - (combatData.weapons[0].magical_penetration / 100)));
 
     player_total_damage = player_physical_damage + player_magical_damage;
+    if (player_total_damage < 0) {
+        player_total_damage = 0;
+    }
     combatData.realized_player_damage = player_total_damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
@@ -987,13 +1030,15 @@ const actionSplitter = async (combatData) => {
             await attackCompiler(newData, player_action)
         }
     }
-
+    
     if (newData.new_computer_health === 0) {
         newData.player_win = true;
     }
     if (newData.new_player_health === 0) {
         newData.computer_win = true;
     }
+    
+    // await faithFinder(newData);
 
     return newData
 }

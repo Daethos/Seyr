@@ -35,8 +35,37 @@ const GameSolo = ({ user }: GameProps) => {
     const [playCounter] = useSound(counterSfx, { volume: 0.5 })
     const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`
     const [playRoll] = useSound(rollSfx, { volume: 0.5 })
-    const deathSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`
+
+    const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
+    const [playPierce] = useSound(pierceSfx, { volume: 0.5 });
+
+    const deathSfx = process.env.PUBLIC_URL + `/sounds/metal-impact-9.mp3`
     const [playDeath] = useSound(deathSfx, { volume: 0.5 })
+
+    const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
+    const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
+
+    const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`
+    const [playEarth] = useSound(earthSfx, { volume: 0.5 })
+
+    const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`
+    const [playFire] = useSound(fireSfx, { volume: 0.5 })
+
+    const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`
+    const [playBow] = useSound(bowSfx, { volume: 0.5 })
+
+    const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`
+    const [playFrost] = useSound(frostSfx, { volume: 0.5 })
+
+    const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`
+    const [playLightning] = useSound(lightningSfx, { volume: 0.5 })
+
+    const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`
+    const [playSorcery] = useSound(sorcerySfx, { volume: 0.5 })
+
+    const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`
+    const [playWind] = useSound(windSfx, { volume: 0.5 })
+
     const { asceanID } = useParams();
 
     const getAscean = useCallback(async () => {
@@ -326,6 +355,35 @@ const GameSolo = ({ user }: GameProps) => {
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
+            if (response.data.critical_success === true) {
+                if (response.data.weapons[0].damage_type[0] === 'Spooky' || response.data.weapons[0].damage_type[0] === 'Righteous') {
+                    {playDaethic()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Earth') {
+                    {playEarth()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Fire') {
+                    {playFire()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Frost') {
+                    {playFrost()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Lightning') {
+                    {playLightning()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Sorcery') {
+                    {playSorcery()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Wind') {
+                    {playWind()}
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
+                    {playPierce()}
+                }
+                if (response.data.weapons[0].type === 'Bow') {
+                    {playBow()}
+                }
+            }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
                 {playRoll()}
             }
@@ -385,7 +443,12 @@ const GameSolo = ({ user }: GameProps) => {
 
     return (
         <Container fluid id="game-container">
-            <GameAnimations sleep={sleep} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} playerAction={combatData.player_action} computerAction={combatData.computer_action} playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} />
+            <GameAnimations 
+                sleep={sleep} playerCritical={combatData.critical_success} computerCritical={combatData.computer_critical_success}
+                combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} 
+                playerAction={combatData.player_action} computerAction={combatData.computer_action} 
+                playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} 
+            />
             <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
@@ -394,7 +457,10 @@ const GameSolo = ({ user }: GameProps) => {
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak} playDeath={playDeath}
                 playerWin={playerWin} computerWin={computerWin} playCounter={playCounter} playRoll={playRoll}
                 winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive}
-                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} />
+                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive}
+                playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
+                playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
+            />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
             { playerWin || computerWin ? '' :

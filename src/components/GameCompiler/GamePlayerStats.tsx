@@ -5,13 +5,28 @@ import Popover from 'react-bootstrap/Popover';
 
 interface Props {
     attributes: any;
+    weaponAttributes: any;
     magicalDefense: number;
     magicalPosture: number;
     physicalDefense: number;
     physicalPosture: number;
 }
 
-const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture }: Props) => {
+const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture }: Props) => {
+    let totalConstitution: number = attributes.totalConstitution + weaponAttributes?.constitution;
+    let totalStrength: number = attributes.totalStrength + weaponAttributes?.strength;
+    let totalAgility: number = attributes.totalAgility + weaponAttributes?.agility;
+    let totalAchre: number = attributes.totalAchre + weaponAttributes?.achre;
+    let totalCaeren: number = attributes.totalCaeren + weaponAttributes?.caeren;
+    let totalKyosir: number = attributes.totalKyosir + weaponAttributes?.kyosir;
+
+    let constitutionMod: number = Math.round((totalConstitution - 10) / 2); 
+    let strengthMod: number = Math.round((totalStrength - 10) / 2);
+    let agilityMod: number = Math.round((totalAgility - 10) / 2);
+    let achreMod: number = Math.round((totalAchre - 10) / 2);
+    let caerenMod: number = Math.round((totalCaeren - 10) / 2);
+    let kyosirMod: number = Math.round((totalKyosir - 10) / 2);
+
     const playerPopover = (
         <Popover id="popover">
             <Popover.Header id="popover-header" as="h2">Player Statistics</Popover.Header>

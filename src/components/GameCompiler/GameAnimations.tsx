@@ -9,9 +9,11 @@ interface Props {
     combatInitiated: boolean;
     setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
     sleep: (ms: number) => Promise<unknown>;
+    playerCritical: boolean;
+    computerCritical: boolean;
 }
 
-const GameAnimations = ({ sleep, playerAction, computerAction, playerDamageTotal, computerDamageTotal, combatInitiated, setCombatInitiated }: Props) => {
+const GameAnimations = ({ sleep, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, combatInitiated, setCombatInitiated }: Props) => {
     const computerDamage = document.querySelector('.computer');
     const playerDamage = document.querySelector('.player');
 
@@ -48,24 +50,56 @@ const GameAnimations = ({ sleep, playerAction, computerAction, playerDamageTotal
     //     combatTextScroll()
     // }
 
+    const critStyle = {
+        backgroundColor: 'red',
+        fontSize: 32 + 'px',
+    }
+
     return (
         <>
-        <div className="computer hidden">
+        {
+            computerCritical ?
+            <div className="computer hidden" style={critStyle} >
             {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
             <br />
             {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
         </div>
+        :
 
-        {/* <button className="btn-hide-computer">Hide Computer Damage</button> */}
+        <div className="computer hidden" >
+            {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
+            <br />
+            {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
+        </div>
+        }
+
         
         <br />
         
-        <div className="player pulse">
+        {playerCritical ? 
+        <div 
+            className="player pulse"
+            style={critStyle}
+        >
             {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
             <br />
-            {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
+            <p 
+            >
+                {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
+            </p>
         </div>
-            {/* <button className="btn-pulse-player">Hide Player Damage</button> */}
+        : 
+        <div 
+        className="player pulse"
+        >
+        {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
+        <br />
+        <p 
+        >
+            {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
+        </p>
+        </div>
+        }
         </>
     )
 }

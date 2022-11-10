@@ -5,6 +5,7 @@ import userService from "../../utils/userService";
 import { useNavigate } from "react-router-dom";
 import Col from 'react-bootstrap/Col';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Button from 'react-bootstrap/Button';
 
 
 function isPasswordMatch(passwordOne: string, passwordConf: string) {
@@ -53,10 +54,10 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
     for (let key in state) {
       formData.append(key, (state as any)[key]);
     }
-    console.log(
-      formData.forEach((item) => console.log(item)),
-      " < This lets you see the key values in formData"
-    );
+    // console.log(
+    //   formData.forEach((item) => console.log(item)),
+    //   " < This lets you see the key values in formData"
+    // );
 
     try {
       await userService.signup(formData); 
@@ -88,9 +89,11 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <div className="actions">
                 <div className="property-line first">
                     <h3>Username</h3>
-                <Form.Group className="my-2" controlId="formBasicUsername">
-                <FloatingLabel controlId="floatingPassword" label="Username">
-                    <Form.Control
+                  </div>
+                {/* <Form.Group className="my-2" controlId="formBasicUsername"> */}
+                <FloatingLabel controlId="floatingPassword" label="Username" className=''>
+                    <Form.Control 
+                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="text"
                     name="username"
                     placeholder="username"
@@ -99,17 +102,18 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     required
                     />
                 </FloatingLabel>
-                </Form.Group>
-                </div>
+                {/* </Form.Group> */}
                 <div className="property-line last">
                     <h3>Email</h3>
+                </div> 
                 <Form.Group className="my-2" controlId="formBasicEmail">
                 <FloatingLabel
                   controlId="floatingInput"
                   label="Email address"
                   className=""
                 >
-                <Form.Control
+                <Form.Control 
+                // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="email"
                     name="email"
                     placeholder="Email Address"
@@ -119,15 +123,16 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 />
                 </FloatingLabel>
                 </Form.Group>
-                </div> 
                 <svg height="5" width="100%" className="tapered-rule mt-4">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>
                 <div className="property-line first">
                     <h3>Password</h3>
+                </div>
                 <Form.Group className="my-2" controlId="formBasicPassword">
-                <FloatingLabel controlId="floatingPassword" label="Password">
-                  <Form.Control
+                <FloatingLabel controlId="floatingPassword" label="Password" >
+                  <Form.Control 
+                  // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                   name="password"
                   type="password"
                   placeholder="password"
@@ -137,12 +142,13 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                   />
                 </FloatingLabel>
                 </Form.Group>
-                </div>
                 <div className="property-line last">
                     <h3>Confirmation</h3>
+                </div>  
                 <Form.Group className="my-2" controlId="formBasicPasswordConfirm">
                 <FloatingLabel controlId="" label="Confirm Password">
-                    <Form.Control
+                    <Form.Control 
+                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     name="passwordConf"
                     type="password"
                     placeholder="Confirm Password"
@@ -152,15 +158,16 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     />
                 </FloatingLabel>
                 </Form.Group>
-                </div>  
                 <svg height="5" width="100%" className="tapered-rule mt-4">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>
                 <div className="property-line first">
                     <h3>Profile Bio</h3>
+                </div>
                 <Form.Group className="my-2" controlId="formBasicUser">
                 <FloatingLabel controlId="" label="A Little About Yourself">
-                <Form.Control
+                <Form.Control 
+                // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="textarea"
                     name="bio"
                     placeholder="Anything you'd like to say?"
@@ -169,11 +176,12 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 />
                 </FloatingLabel>
                 </Form.Group>
-                </div>
                 <div className="property-line last">
                     <h3>Profile Picture</h3>
+                </div> 
                 <Form.Group className="my-2" controlId="formBasicPhoto">
-                    <Form.Control
+                    <Form.Control 
+                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="file"
                     name="photoUrl"
                     placeholder="upload image"
@@ -181,13 +189,12 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     />
                 </Form.Group>
                 </div> 
-                </div> 
                 <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>
-                <button type="submit" className="btn btn-lg btn-outline-danger m-1">
+                <Button variant='' type="submit" style={{ color: 'red', fontSize: 25 + 'px', width: 100 + '%', marginLeft: 0 + '%' }} className="btn btn-lg">
                     Sign Up
-                </button>
+                </Button>
                 </div> 
                 {/* <img src={BUCKET_START + 'vampire-vampire.png'} alt="Vampire" id="" style={{ maxWidth: 50 + '%', maxHeight: 50 + '%'}} /> */}
             <hr className="orange-border bottom" />

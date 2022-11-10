@@ -171,7 +171,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                                 <>
                                     {/* <div className="section-left">  */}
 
-                                    <FriendMessageCard friend={friend} message={message} key={index} />
+                                    <FriendMessageCard friend={friend} message={message} key={message._id} />
                                     <NewLine spaceCount={1} />
 
                                     {/* </div> */}

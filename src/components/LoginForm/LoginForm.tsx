@@ -4,8 +4,8 @@ import userService from "../../utils/userService";
 import { useNavigate } from "react-router-dom";
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 interface LoginProps {
     setUser: React.Dispatch<any>;
@@ -57,13 +57,15 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                 <div className="actions">
                 <div className="property-line first">
                     <h3>Email Address</h3>
+                </div>
                 <Form.Group className="my-2" controlId="formBasicEmail">
                 <FloatingLabel
                   controlId="floatingInput"
-                  label="Email address"
+                  label={` Email Address`}
                   className="mb-3"
                 >
                 <Form.Control
+                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="email"
                     name="email"
                     placeholder="email"
@@ -73,12 +75,13 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                 />
                 </FloatingLabel>
                 </Form.Group>
-                </div>
                 <div className="property-line last">
                     <h3>Password</h3>
+                </div> 
                 <Form.Group className="my-2" controlId="formBasicPassword">
                 <FloatingLabel controlId="floatingPassword" label="Password">
                 <Form.Control
+                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     name="password"
                     type="password"
                     placeholder="password"
@@ -88,7 +91,6 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                 />
                 </FloatingLabel>
                 </Form.Group>
-                </div> 
                 <svg height="5" width="100%" className="tapered-rule mt-4">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>
@@ -97,12 +99,11 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                 <div className="property-line last">
                 </div>
                 </div>  
-                <button type="submit" className="btn btn-lg btn-outline-danger m-1">
+                <Button variant='' type="submit" style={{ color: 'red', fontSize: 25 + 'px', width: 100 + '%', marginLeft: 0 + '%' }} className="btn btn-lg">
                     Login
-                </button>
+                </Button>
             </div> 
             {/* <img src={BUCKET_START + 'ancient-red-dragon.png'} alt="Vampire" id="" style={{ maxWidth: 50 + '%', maxHeight: 50 + '%'}} /> */}
-            <p className="error-message">&nbsp;{error}</p>
             <hr className="orange-border bottom" />
         </Form>
         {/* <p className="error-message">&nbsp;{error}</p> */}

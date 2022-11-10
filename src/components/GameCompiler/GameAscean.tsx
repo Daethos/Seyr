@@ -45,7 +45,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
         key={ascean._id}
     />
     <div className="actions">
-    <GamePlayerStats attributes={combatData.player_attributes} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
+    <GamePlayerStats attributes={combatData.player_attributes} weaponAttributes={combatData.weapons[0]} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
     </div>
     </div>
     : 
@@ -72,7 +72,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
         key={ascean._id}
     />
     <div className="actions">
-    <GamePlayerStats attributes={combatData.computer_attributes} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
+    <GamePlayerStats attributes={combatData.computer_attributes} weaponAttributes={combatData.computer_weapons[0]} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
     </div>
     </div>
     }

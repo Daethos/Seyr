@@ -13,11 +13,11 @@ const attributeCompiler = async (ascean) => {
     const newAttributes = await Object.create(attributeStats);
         
     newAttributes.rawConstitution =  Math.round((ascean.constitution + (ascean?.origin === "Notheo" || ascean?.origin === 'Nothos' ? 2 : 0)) * (ascean?.mastery === 'Constitution' ? 1.1 : 1));
-    newAttributes.rawStrength =  Math.round((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0) * (ascean?.mastery === 'Strength' ? 1.15 : 1));
-    newAttributes.rawAgility =  Math.round((ascean?.agility + (ascean?.origin === "Quor'eite" || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) * (ascean?.mastery === 'Agility' ? 1.15 : 1));
-    newAttributes.rawAchre =  Math.round((ascean?.achre + (ascean?.origin === 'Notheo' || ascean?.origin === 'Fyers' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0) * (ascean?.mastery === 'Achre' ? 1.15 : 1));
-    newAttributes.rawCaeren =  Math.round((ascean?.caeren + (ascean?.origin === 'Nothos' || ascean?.origin === 'Sedyreal' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0) * (ascean?.mastery === 'Caeren' ? 1.15 : 1));
-    newAttributes.rawKyosir =  Math.round((ascean?.kyosir + (ascean?.origin === "Fyers" || ascean?.origin === "Quor'eite" ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0) * (ascean.mastery === 'Kyosir' ? 1.15 : 1));
+    newAttributes.rawStrength =  Math.round(((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0)) * (ascean?.mastery === 'Strength' ? 1.15 : 1));
+    newAttributes.rawAgility =  Math.round(((ascean?.agility + (ascean?.origin === "Quor'eite" || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0))) * (ascean?.mastery === 'Agility' ? 1.15 : 1));
+    newAttributes.rawAchre =  Math.round(((ascean?.achre + (ascean?.origin === 'Notheo' || ascean?.origin === 'Fyers' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0)) * (ascean?.mastery === 'Achre' ? 1.15 : 1));
+    newAttributes.rawCaeren =  Math.round(((ascean?.caeren + (ascean?.origin === 'Nothos' || ascean?.origin === 'Sedyreal' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0)) * (ascean?.mastery === 'Caeren' ? 1.15 : 1));
+    newAttributes.rawKyosir =  Math.round(((ascean?.kyosir + (ascean?.origin === "Fyers" || ascean?.origin === "Quor'eite" ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0)) * (ascean.mastery === 'Kyosir' ? 1.15 : 1));
 
     // // Total Attributes
     newAttributes.totalStrength = newAttributes.rawStrength + ascean?.shield?.strength + ascean?.helmet?.strength + ascean?.chest?.strength + ascean?.legs?.strength + ascean?.ring_one?.strength + ascean?.ring_two?.strength + ascean?.amulet?.strength + ascean?.trinket?.strength;
@@ -89,7 +89,7 @@ async function originCompiler(weapon, ascean) {
 async function gripCompiler(weapon, attributes) { 
     if (weapon.grip === 'One Hand') {
         weapon.physical_damage += (((weapon.agility / 2) * 1.5) + attributes.agilityMod * 1.5) + ((weapon.strength / 2) + attributes.strengthMod / 2);
-        weapon.magical_damage += weapon.achre + weapon.caeren + attributes.achreMod + attributes.caerenMod;
+        weapon.magical_damage += ((weapon.achre + weapon.caeren) / 2) + attributes.achreMod + attributes.caerenMod;
     } 
     if (weapon.grip === 'Two Hand') {
         weapon.physical_damage += ((weapon.strength) + attributes.strengthMod * 2) + ((weapon.agility / 2) + attributes.agilityMod);
@@ -98,13 +98,13 @@ async function gripCompiler(weapon, attributes) {
 }
 
 async function penetrationCompiler(weapon, attributes, combatStats) { 
-    weapon.magical_penetration += combatStats.penetrationMagical + attributes.kyosirMod;
-    weapon.physical_penetration += combatStats.penetrationPhysical + attributes.kyosirMod;
+    weapon.magical_penetration += combatStats.penetrationMagical + attributes.kyosirMod + (weapon.kyosir / 2);
+    weapon.physical_penetration += combatStats.penetrationPhysical + attributes.kyosirMod + (weapon.kyosir / 2);
 }
 
 async function critCompiler(weapon, attributes, combatStats) { 
-    weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod) / 2);
-    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod) / 25);
+    weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 2);
+    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 25);
     weapon.critical_chance = weapon.critical_chance.toFixed(2)
     weapon.critical_damage = weapon.critical_damage.toFixed(2)
 }
@@ -199,11 +199,11 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
 const defenseCompiler = async (ascean, attributes, combatStats) => { 
     const defense = {
         physicalDefenseModifier: ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance 
-            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 2)) 
+            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 4)) 
             + combatStats.originPhysDef, // Need to create these in the backend as well
         
         magicalDefenseModifier: ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance 
-            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 2)) 
+            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 4)) 
             + combatStats.originMagDef,
 
         physicalPosture: combatStats.defensePhysical + ascean.shield.physical_resistance,
@@ -233,8 +233,8 @@ const asceanCompiler = async (ascean) => {
         const magicalPenetration = ascean.ring_one.magical_penetration + ascean.ring_two.magical_penetration + ascean.amulet.magical_penetration + ascean.trinket.magical_penetration + originMagPenMod;
         const originPhysDefMod = (ascean.origin === 'Sedyreal' || ascean.origin === 'Nothos' ? 3 : 0);
         const originMagDefMod = (ascean.origin === 'Sedyreal' || ascean.origin === 'Notheo' ? 3 : 0);
-        const physicalDefenseModifier = ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 2)) + originPhysDefMod;
-        const magicalDefenseModifier = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 2)) + originMagDefMod;
+        const physicalDefenseModifier = ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 4)) + originPhysDefMod;
+        const magicalDefenseModifier = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 4)) + originMagDefMod;
     
         // console.log(critDamageModifier, '<- Crit Damage Modifier w/ Base EQP')
 
