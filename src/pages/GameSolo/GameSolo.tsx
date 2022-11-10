@@ -39,11 +39,26 @@ const GameSolo = ({ user }: GameProps) => {
     const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
     const [playPierce] = useSound(pierceSfx, { volume: 0.5 });
 
-    const deathSfx = process.env.PUBLIC_URL + `/sounds/metal-impact-9.mp3`
+    const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
+    const [playSlash] = useSound(slashSfx, { volume: 0.5 });
+
+    const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
+    const [playBlunt] = useSound(bluntSfx, { volume: 0.5 });
+
+    const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`
     const [playDeath] = useSound(deathSfx, { volume: 0.5 })
+
+    const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`
+    const [playWin] = useSound(winSfx, { volume: 0.5 })
+
+    const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
+    const [playReplay] = useSound(replaySfx, { volume: 0.5 })
 
     const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
     const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
+
+    const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`
+    const [playWild] = useSound(wildSfx, { volume: 0.5 })
 
     const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`
     const [playEarth] = useSound(earthSfx, { volume: 0.5 })
@@ -187,7 +202,7 @@ const GameSolo = ({ user }: GameProps) => {
         setLoading(true)
         try {
             const response = await asceanAPI.getAsceanStats(opponent._id)
-            console.log(response.data.data, 'Response Compiling Stats')
+            // console.log(response.data.data, 'Response Compiling Stats')
             setComputerDefense(response.data.data.defense)
             setComputerAttributes(response.data.data.attributes)
             setTotalComputerHealth(response.data.data.attributes.healthTotal)
@@ -246,7 +261,7 @@ const GameSolo = ({ user }: GameProps) => {
         setLoading(true)
         try {
             const response = await asceanAPI.getAsceanStats(asceanID)
-            console.log(response.data.data, 'Response Compiling Stats')
+            // console.log(response.data.data, 'Response Compiling Stats')
             setWeaponOne(response.data.data.combat_weapon_one)
             setWeaponTwo(response.data.data.combat_weapon_two)
             setWeaponThree(response.data.data.combat_weapon_three)
@@ -328,8 +343,8 @@ const GameSolo = ({ user }: GameProps) => {
             )
         })
         const response = await newWeaponOrder();
-        {playWO()}
-        console.log(response, '<- Response re-ordering weapons')
+        playWO()
+        // console.log(response, '<- Response re-ordering weapons')
         setCombatData({...combatData, 'weapons': response})
     }
 
@@ -357,49 +372,56 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerWin(response.data.computer_win)
             if (response.data.critical_success === true) {
                 if (response.data.weapons[0].damage_type[0] === 'Spooky' || response.data.weapons[0].damage_type[0] === 'Righteous') {
-                    {playDaethic()}
+                    playDaethic()
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Wild') {
+                    playWild()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Earth') {
-                    {playEarth()}
+                    playEarth()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Fire') {
-                    {playFire()}
+                    playFire()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Frost') {
-                    {playFrost()}
+                    playFrost()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Lightning') {
-                    {playLightning()}
+                    playLightning()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Sorcery') {
-                    {playSorcery()}
+                    playSorcery()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Wind') {
-                    {playWind()}
+                    playWind()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
-                    {playPierce()}
+                    playPierce()
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Blunt') {
+                    playBlunt()
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Slash') {
+                    playSlash()
                 }
                 if (response.data.weapons[0].type === 'Bow') {
-                    {playBow()}
+                    playBow()
                 }
             }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
-                {playRoll()}
+                playRoll()
             }
             if (response.data.counter_success === true || response.data.computer_counter_success === true) {
-                {playCounter()}
+                playCounter()
             }
             if (response.data.player_win === true) {
-                console.log('The Player Won!')
-                {playDeath()}
+                playWin()
                 setWinStreak(winStreak + 1)
                 setLoseStreak(0)
                 setGameIsLive(false)
             }
             if (response.data.computer_win === true) {
-                console.log('The Computer Won!')
-                {playDeath()}
+                playDeath()
                 setLoseStreak(loseStreak + 1)
                 setWinStreak(0)
                 setGameIsLive(false)
@@ -424,6 +446,7 @@ const GameSolo = ({ user }: GameProps) => {
             setPlayerWin(false);
             setGameIsLive(true);
             setWinStreak(0);
+            playReplay()
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
         }
@@ -460,6 +483,7 @@ const GameSolo = ({ user }: GameProps) => {
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive}
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
+                playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
             />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />

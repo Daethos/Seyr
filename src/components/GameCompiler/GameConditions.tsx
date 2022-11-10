@@ -33,9 +33,13 @@ interface Props {
     playSorcery: Function;
     playWind: Function;
     playPierce: Function;
+    playWin: Function;
+    playBlunt: Function;
+    playSlash: Function;
+    playWild: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     if (gameIsLive) {
@@ -67,49 +71,56 @@ const GameConditions = ({ combatData, setCombatData, playPierce, playDaethic, pl
             setComputerWin(response.data.computer_win)
             if (response.data.critical_success === true) {
                 if (response.data.weapons[0].damage_type[0] === 'Spooky' || response.data.weapons[0].damage_type[0] === 'Righteous') {
-                    {playDaethic()}
+                    playDaethic()
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Wild') {
+                    playWild()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Earth') {
-                    {playEarth()}
+                    playEarth()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Fire') {
-                    {playFire()}
+                    playFire()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Frost') {
-                    {playFrost()}
+                    playFrost()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Lightning') {
-                    {playLightning()}
+                    playLightning()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Sorcery') {
-                    {playSorcery()}
+                    playSorcery()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Wind') {
-                    {playWind()}
+                    playWind()
                 }
                 if (response.data.weapons[0].damage_type[0] === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
-                    {playPierce()}
+                    playPierce()
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Blunt') {
+                    playBlunt()
+                }
+                if (response.data.weapons[0].damage_type[0] === 'Slash') {
+                    playSlash()
                 }
                 if (response.data.weapons[0].type === 'Bow') {
-                    {playBow()}
+                    playBow()
                 }
             }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
-                {playRoll()}
+                playRoll()
             }
             if (response.data.counter_success === true || response.data.computer_counter_success === true) {
-                {playCounter()}
+                playCounter()
             }
             if (response.data.player_win === true) {
-                console.log('The Player Won!')
-                {playDeath()}
+                playWin()
                 setWinStreak((winStreak) => winStreak + 1)
                 setLoseStreak(0)
                 setGameIsLive(false)
             }
             if (response.data.computer_win === true) {
-                console.log('The Computer Won!')
-                {playDeath()}
+                playDeath()
                 setLoseStreak((loseStreak) => loseStreak + 1)
                 setWinStreak(0)
                 setGameIsLive(false)

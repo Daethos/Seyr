@@ -39,10 +39,26 @@ const GamePvP = ({ user }: GameProps) => {
     const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
     const [playPierce] = useSound(pierceSfx, { volume: 0.5 });
 
-    const deathSfx = process.env.PUBLIC_URL + `/sounds/metal-impact-9.mp3`
+    const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
+    const [playSlash] = useSound(slashSfx, { volume: 0.5 });
+
+    const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
+    const [playBlunt] = useSound(bluntSfx, { volume: 0.5 });
+
+    const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`
     const [playDeath] = useSound(deathSfx, { volume: 0.5 })
+
+    const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`
+    const [playWin] = useSound(winSfx, { volume: 0.5 })
+
+    const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
+    const [playReplay] = useSound(replaySfx, { volume: 0.5 })
+
     const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
     const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
+
+    const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`
+    const [playWild] = useSound(wildSfx, { volume: 0.5 })
 
     const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`
     const [playEarth] = useSound(earthSfx, { volume: 0.5 })
@@ -458,6 +474,7 @@ const GamePvP = ({ user }: GameProps) => {
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} 
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
+                playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
             />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />

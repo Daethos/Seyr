@@ -27,40 +27,6 @@ const GameCombatText = ({ user, ascean, emergencyText, playerActionText, compute
         posture: 2,
         roll: 3
     }
-    let areaText = textBox?.value;
-    let startScroll: any;
-    let stopScroll: any;
-    function textBoxScroll() {
-        if (!startScroll) {
-        startScroll = setInterval(textScroll, 2000);
-        return
-        }
-    }
-
-    function textScroll() {
-        areaText += Math.random() + '\n';
-        textBox!.scrollTop = textBox!.scrollHeight;
-        return
-    }
-
-    function stopTextScroll() {
-        clearInterval(startScroll);
-        startScroll = null;
-        return
-    }
-
-
-    const updateCombatText = async () => {
-        console.log(actionOrder[playerAction], actionOrder[computerAction]);
-        const playerOrder: number = actionOrder[playerAction];
-        const computerOrder: number = actionOrder[computerAction];
-        setCombatText({
-            playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText
-        })
-    }
-
-
-    
 
   return (
     <div id="textarea">
