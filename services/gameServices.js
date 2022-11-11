@@ -8,6 +8,19 @@ const faithFinder = async (combatData, player_action) => { // The influence will
     let faith_number = Math.floor(Math.random() * 101);
     let faith_number_two = Math.floor(Math.random() * 101);
     let faith_check = Math.floor(Math.random() * 101);
+
+    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
+    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
+
+    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
+    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+
+
+    // console.log(combatData.weapons[0].magical_penetration, typeof(combatData.weapons[0].magical_penetration))
+    // console.log(combatData.weapons[0].physical_penetration, typeof(combatData.weapons[0].physical_penetration))
+    // console.log(combatData.weapons[0].roll, typeof(combatData.weapons[0].roll))
+    // console.log(combatData.weapons[0].dodge, typeof(combatData.weapons[0].dodge))
+
     if (combatData.player.faith === 'devoted' && combatData.weapons[0].influences[0] === 'Daethos') {
         faith_number += 5;
         faith_number_two += 5;
@@ -17,8 +30,9 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         faith_number_two += 5;
     }
     console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0])
-    console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two)
+    console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two, `Dual Wielding?`, combatData.dual_wielding)
     if (faith_number > 85) {
+        combatData.religious_success = true;
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren) / 2;
@@ -30,8 +44,9 @@ const faithFinder = async (combatData, player_action) => { // The influence will
     }
         if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
+            // combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance + 1);
             combatData.player_influence_description = 
-                `Your fervor stirs Achreo, much to his own surprise.`
+                `Your Caer stirs Achreo, much to his own surprise.`
             combatData.weapons[0].physical_damage += 1;
             combatData.weapons[0].magical_damage += 1;
             combatData.weapons[0].critical_chance += 1;
@@ -40,20 +55,20 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
             console.log("Achreo!")
             combatData.player_influence_description = 
-                `Your fervor ushers forth Ahn've, a devastating storm posseses you.`
+                `Your Caer ushers forth Ahn've, a devastating storm posseses you.`
             player_action = 'attack';
             await attackCompiler(combatData, player_action)
         }
         if (combatData.weapons[0].influences[0] === 'Astra') { // Lightning
             console.log("Astra!")
             combatData.player_influence_description = 
-                `Your fervor ushers forth the favor of Astra's Lightning, quickening you.`
+                `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
             combatData.weapons[0].critical_chance += 3;
         }
         if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
             combatData.player_influence_description = 
-                `Your fervor ushers forth the Chance of Cambire.`
+                `Your Caer ushers forth the Chance of Cambire.`
             player_action = 'attack';
             await attackCompiler(combatData, player_action)    
         }
@@ -65,7 +80,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         if (combatData.weapons[0].influences[0] === 'Fyer') { // Fire
             console.log("Fyer!")
             combatData.player_influence_description = 
-                `Your fervor ushers forth the favor of Fyer igniting through you.`
+                `Your Caer ushers forth the favor of Fyer igniting through you.`
             combatData.weapons[0].critical_damage += 0.6;
         }
         if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
@@ -81,7 +96,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
             combatData.player_influence_description = 
-                `Your keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                `Your keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
             combatData.weapons[0].roll += 2;
             combatData.weapons[0].critical_chance += 2;
         }
@@ -131,7 +146,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         if (combatData.weapons[0].influences[0] === "Rahvre") { // Dreams
             console.log("Rahvre!")
             combatData.player_influence_description = 
-            `Your calming Cear reaches its tendrils to Rahvre, intertwining you.`
+            `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
         combatData.weapons[0].magical_damage += 3;
         }
         if (combatData.weapons[0].influences[0] === "Senari") { // Wisdom
@@ -167,6 +182,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
     }
     if (combatData.dual_wielding === true) {
         if (faith_number_two > 85) {
+            combatData.religious_success = true;
             if (combatData.weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren) / 2;
@@ -179,7 +195,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
                 combatData.player_influence_description = 
-                    `Your fervor stirs Achreo, much to his own surprise.`
+                    `Your Caer stirs Achreo, much to his own surprise.`
                 combatData.weapons[1].physical_damage += 1;
                 combatData.weapons[1].magical_damage += 1;
                 combatData.weapons[1].critical_chance += 1;
@@ -188,18 +204,18 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             if (combatData.weapons[1].influences[0] === "Ahn've") { // Wind
                 console.log("Ahn've!")
                 combatData.player_influence_description = 
-                    `Your fervor ushers forth Ahn've, a devastating storm posseses you.`
+                    `Your Caer ushers forth Ahn've, a devastating storm posseses you.`
                 player_action = 'attack';
                 await attackCompiler(combatData, player_action)
             }
             if (combatData.weapons[1].influences[0] === 'Astra') { // Lightning
                 combatData.player_influence_description = 
-                    `Your fervor ushers forth the favor of Astra's Lightning, quickening you.`
+                    `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
                 combatData.weapons[1].critical_chance += 3;
             }
             if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_influence_description = 
-                    `Your fervor ushers forth the Chance of Cambire.`
+                    `Your Caer ushers forth the Chance of Cambire.`
                 player_action = 'attack';
                 await attackCompiler(combatData, player_action)    
             }
@@ -209,7 +225,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             }
             if (combatData.weapons[1].influences[0] === 'Fyer') { // Fire
                 combatData.player_influence_description = 
-                    `Your fervor ushers forth the favor of Fyer igniting through you.`
+                    `Your Caer ushers forth the favor of Fyer igniting through you.`
                 combatData.weapons[1].critical_damage += 0.6;
             }
             if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
@@ -241,7 +257,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             if (combatData.weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 50 + combatData.player_attributes.totalCaeren;
                 combatData.player_influence_description = 
-                    `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
+                    `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`
                 combatData.new_player_health += lilos;
             }
             if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
@@ -266,7 +282,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             }
             if (combatData.weapons[1].influences[0] === "Rahvre") { // Dreams
                 combatData.player_influence_description = 
-                `Your calming Cear reaches its tendrils to Rahvre, intertwining you.`
+                `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
             combatData.weapons[1].magical_damage += 3;
             }
             if (combatData.weapons[1].influences[0] === "Senari") { // Wisdom
@@ -292,7 +308,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             }
             if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
                 combatData.player_influence_description = 
-                    `Your fervor unleashes the bestial nature of Tshaer within you.`
+                    `Your Caer unleashes the bestial nature of Tshaer within you.`
                 combatData.weapons[1].physical_damage += 3;
             }
         }
@@ -1039,6 +1055,9 @@ const actionSplitter = async (combatData) => {
         player_action: combatData.action,
         counter_guess: combatData.counter_guess, // The action chosen believed to be 
         player_health: combatData.player_health, // Current Player Health
+        weapon_one: combatData.weapon_one,
+        weapon_two: combatData.weapon_two,
+        weapon_three: combatData.weapon_three,
         weapons: combatData.weapons, // All 3 Weapons
         player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
         player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
@@ -1074,6 +1093,7 @@ const actionSplitter = async (combatData) => {
         counter_dodge_weight: combatData.counter_dodge_weight,
         counter_posture_weight: combatData.counter_posture_weight,
         counter_roll_weight: combatData.counter_roll_weight,
+        religious_success: false,
         dual_wielding: false,
         roll_success: false,
         counter_success: false,
@@ -1265,7 +1285,7 @@ const actionSplitter = async (combatData) => {
         newData.computer_win = true;
     }
     
-    // await faithFinder(newData, player_action);
+    await faithFinder(newData, player_action);
 
     return newData
 }

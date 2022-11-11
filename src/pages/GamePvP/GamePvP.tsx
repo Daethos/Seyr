@@ -30,14 +30,21 @@ const GamePvP = ({ user }: GameProps) => {
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
     const [gameIsLive, setGameIsLive] = useState<boolean>(true)
+
     const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
     const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
+
     const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
     const [playCounter] = useSound(counterSfx, { volume: 0.5 })
+
     const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`
     const [playRoll] = useSound(rollSfx, { volume: 0.5 })
+
     const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
     const [playPierce] = useSound(pierceSfx, { volume: 0.5 });
+
+    const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`
+    const [playOpponent] = useSound(opponentSfx, { volume: 0.5 })
 
     const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
     const [playSlash] = useSound(slashSfx, { volume: 0.5 });
@@ -53,6 +60,9 @@ const GamePvP = ({ user }: GameProps) => {
 
     const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
     const [playReplay] = useSound(replaySfx, { volume: 0.5 })
+
+    const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`
+    const [playReligion] = useSound(religiousSfx, { volume: 0.5 })
 
     const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
     const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
@@ -477,6 +487,7 @@ const GamePvP = ({ user }: GameProps) => {
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
+                playReligion={playReligion}
             />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />

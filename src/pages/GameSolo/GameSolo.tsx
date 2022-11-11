@@ -29,6 +29,10 @@ const GameSolo = ({ user }: GameProps) => {
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
     const [gameIsLive, setGameIsLive] = useState<boolean>(true)
+
+    const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`
+    const [playOpponent] = useSound(opponentSfx, { volume: 0.5 })
+
     const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
     const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
     const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
@@ -53,6 +57,9 @@ const GameSolo = ({ user }: GameProps) => {
 
     const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
     const [playReplay] = useSound(replaySfx, { volume: 0.5 })
+
+    const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`
+    const [playReligion] = useSound(religiousSfx, { volume: 0.5 })
 
     const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
     const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
@@ -166,6 +173,7 @@ const GameSolo = ({ user }: GameProps) => {
         counter_dodge_weight: 0,
         counter_posture_weight: 0,
         counter_roll_weight: 0,
+        religious_success: false,
         dual_wielding: false,
         roll_success: false,
         counter_success: false,
@@ -196,6 +204,7 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerWin(false);
             setPlayerWin(false);
             setGameIsLive(true);
+            playOpponent()
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         }
@@ -411,6 +420,9 @@ const GameSolo = ({ user }: GameProps) => {
                     playBow()
                 }
             }
+            if (response.data.religious_success === true) {
+                playReligion()
+            }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
                 playRoll()
             }
@@ -441,6 +453,7 @@ const GameSolo = ({ user }: GameProps) => {
                 ...combatData,
                 'current_player_health': totalPlayerHealth,
                 'new_player_health': totalPlayerHealth,
+                'weapons': [weaponOne, weaponTwo, weaponThree],
                 'player_win': false,
                 'computer_win': false
             });
@@ -487,6 +500,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
+                playReligion={playReligion}
             />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />

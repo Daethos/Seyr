@@ -108,6 +108,17 @@
     margin-left: -12.5%;
     width: 112.5%;
   }
+  #auto-engage {
+    grid-column-start: 3;
+    grid-row-start: 7;
+    border: 1px solid purple;
+    background: black;
+    font-size: 10px;
+    height: 40%;
+    width: 100%;
+    margin-left: -25%;
+    color: #fdf6d8;
+  }
 #player-health {
     background-color: red;
     font-size: 10px;
@@ -222,3 +233,4 @@
     margin-top: 4%;
     /* border: 1px solid white; */
   }
+  

@@ -37,14 +37,12 @@ interface Props {
     playBlunt: Function;
     playSlash: Function;
     playWild: Function;
+    playReligion: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
-    if (gameIsLive) {
-        
-    }
     useEffect(() => {
         if (!gameIsLive) {
             return
@@ -54,8 +52,22 @@ const GameConditions = ({ combatData, setCombatData, playWin, playBlunt, playSla
         }, 10000);
       
         return () => clearInterval(interval);
-      }, [combatData]);
+      }, [combatData, gameIsLive]);
 
+      
+
+    const autoEngage = () => {
+        setGameIsLive(liveGameplay => !liveGameplay)
+    }
+
+    useEffect(() => {
+        if (gameIsLive) {
+            setEmergencyText(['Auto Action Commencing'])
+        }
+        if (!gameIsLive) {
+            setEmergencyText(['Auto Action Disengaging'])
+        }
+      }, [gameIsLive])
 
     const autoAttack = async (combatData: any) => {
         setLoading(true)
@@ -107,6 +119,9 @@ const GameConditions = ({ combatData, setCombatData, playWin, playBlunt, playSla
                     playBow()
                 }
             }
+            if (response.data.religious_success === true) {
+                playReligion()
+            }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
                 playRoll()
             }
@@ -147,6 +162,9 @@ const GameConditions = ({ combatData, setCombatData, playWin, playBlunt, playSla
     {computerWin ? <div className="win-condition">
     You Lose! Cold Streak: {loseStreak}! <br /> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
+    <button className="btn" id='auto-engage' onClick={autoEngage}>
+        {!gameIsLive ? `Auto Engage` : `Disengage Auto`}
+    </button>
     </>
   )
 }
