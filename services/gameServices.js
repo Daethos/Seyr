@@ -6,80 +6,298 @@
 
 const faithFinder = async (combatData, player_action) => { // The influence will add a chance to have a special effect occur
     let faith_number = Math.floor(Math.random() * 101);
+    let faith_number_two = Math.floor(Math.random() * 101);
     let faith_check = Math.floor(Math.random() * 101);
-    if (combatData.player.faith === 'devoted' && combatData.weapons[0].influences === 'Daethos') {
+    if (combatData.player.faith === 'devoted' && combatData.weapons[0].influences[0] === 'Daethos') {
         faith_number += 5;
+        faith_number_two += 5;
     }
-    if (combatData.player.faith === 'adherent' && combatData.weapons[0].influences !== 'Daethos') {
+    if (combatData.player.faith === 'adherent' && combatData.weapons[0].influences[0] !== 'Daethos') {
         faith_number += 5;
+        faith_number_two += 5;
     }
-    console.log(combatData.player.name, `'s Faith #`, faith_number)
+    console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0])
+    console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two)
     if (faith_number > 85) {
-        if (combatData.weapons[0].influences === 'Daethos') { // God
-    
+        if (combatData.weapons[0].influences[0] === 'Daethos') { // God
+            console.log('Daethos!')
+            let daethos = (combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren) / 2;
+            combatData.new_player_health += combatData.realized_player_damage;
+            combatData.player_influence_description = 
+                `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+            combatData.new_player_health += daethos;
+            combatData.new_computer_health -= daethos;
+    }
+        if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
+            console.log('Achreo!')
+            combatData.player_influence_description = 
+                `Your fervor stirs Achreo, much to his own surprise.`
+            combatData.weapons[0].physical_damage += 1;
+            combatData.weapons[0].magical_damage += 1;
+            combatData.weapons[0].critical_chance += 1;
+            combatData.weapons[0].critical_damage += 0.1;
         }
-        if (combatData.weapons[0].influences === 'Achreo') { // Wild
-            
-        }
-        if (combatData.weapons[0].influences === "Ahn've") { // Wind
-    
-        }
-        if (combatData.weapons[0].influences === 'Astra') { // Lightning
-            
-        }
-        if (combatData.weapons[0].influences === 'Cambire') { // Potential
-    
-        }
-        if (combatData.weapons[0].influences === 'Chiomyr') { // Humor
-            
-        }
-        if (combatData.weapons[0].influences === 'Fyer') { // Fire
-    
-        }
-        if (combatData.weapons[0].influences === 'Ilios') { // Sun
-            
-        }
-        if (combatData.weapons[0].influences === "Kyn'gi") { // Hunt
-    
-        }
-        if (combatData.weapons[0].influences === "Kyrisos") { // Gold
-    
-        }
-        if (combatData.weapons[0].influences === "Kyr'na") { // Time
-    
-        }
-        if (combatData.weapons[0].influences === "Lilos") { // Life
-    
-        }
-        if (combatData.weapons[0].influences === "Ma'anre") { // Moon
-    
-        }
-        if (combatData.weapons[0].influences === "Nyrolus") { // Water
-    
-        }
-        if (combatData.weapons[0].influences === "Quor'ei") { // Earth
-    
-        }
-        if (combatData.weapons[0].influences === "Rahvre") { // Dreams
-    
-        }
-        if (combatData.weapons[0].influences === "Senari") { // Wisdom
-    
-        }
-        if (combatData.weapons[0].influences === "Se'dyro") { // Iron
-            await attackCompiler(combatData, player_action)
+        if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
+            console.log("Achreo!")
+            combatData.player_influence_description = 
+                `Your fervor ushers forth Ahn've, a devastating storm posseses you.`
+            player_action = 'attack';
             await attackCompiler(combatData, player_action)
         }
-        if (combatData.weapons[0].influences === "Se'vas") { // War
+        if (combatData.weapons[0].influences[0] === 'Astra') { // Lightning
+            console.log("Astra!")
+            combatData.player_influence_description = 
+                `Your fervor ushers forth the favor of Astra's Lightning, quickening you.`
+            combatData.weapons[0].critical_chance += 3;
+        }
+        if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
+            console.log("Cambire!")
+            combatData.player_influence_description = 
+                `Your fervor ushers forth the Chance of Cambire.`
+            player_action = 'attack';
+            await attackCompiler(combatData, player_action)    
+        }
+        if (combatData.weapons[0].influences[0] === 'Chiomyr') { // Humor
+            console.log("Chiomyr!")
+            combatData.weapons[0].physical_penetration += 2;
+            combatData.weapons[0].magical_penetration += 2;
+        }
+        if (combatData.weapons[0].influences[0] === 'Fyer') { // Fire
+            console.log("Fyer!")
+            combatData.player_influence_description = 
+                `Your fervor ushers forth the favor of Fyer igniting through you.`
+            combatData.weapons[0].critical_damage += 0.6;
+        }
+        if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
+            console.log("Ilios!")
+            combatData.player_influence_description = 
+                `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}.`
+            player_action = 'attack';   
+            combatData.weapons[0].magical_penetration += 1;
+            combatData.weapons[0].physical_penetration += 1;
+            combatData.player_defense.physicalDefenseModifier += 1;
+            combatData.player_defense.magicalDefenseModifier += 1;
+        }
+        if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
+            console.log("Kyn'gi!")
+            combatData.player_influence_description = 
+                `Your keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+            combatData.weapons[0].roll += 2;
+            combatData.weapons[0].critical_chance += 2;
+        }
+        if (combatData.weapons[0].influences[0] === "Kyrisos") { // Gold
+            console.log("Kyrisos!")
+            combatData.player_influence_description = 
+                `The Caer of Kyrisos imbues you with Kyosir!`
+            combatData.player_attributes.kyosirMod += 2;
+        }
+        if (combatData.weapons[0].influences[0] === "Kyr'na") { // Time
+            console.log("Kyr'na!")
+            let kyrna = 50 + combatData.player_attributes.totalAchre;
+            combatData.player_influence_description = 
+                `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
+            combatData.new_computer_health -= kyrna;
+        }
+        if (combatData.weapons[0].influences[0] === "Lilos") { // Life
+            console.log("Lilos!")
+            let lilos = 50 + combatData.player_attributes.totalCaeren;
+            combatData.player_influence_description = 
+                `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
+            combatData.new_player_health += lilos;
+        }
+        if (combatData.weapons[0].influences[0] === "Ma'anre") { // Moon
+            console.log("Ma'anre!")
+            combatData.player_influence_description = 
+                `Ma'anre wraps her tendrils about your ${combatData.weapons[0].name}, changing your perception of this world.` 
+            combatData.weapons[0].roll += 1;
+            combatData.weapons[0].dodge -= 1;
+            combatData.weapons[0].critical_chance += 1;
+            combatData.weapons[0].critical_damage += 0.1;
+        }
+        if (combatData.weapons[0].influences[0] === "Nyrolus") { // Water
+            console.log("Nyrolus!")
+            combatData.player_influence_description = 
+                `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer.`
+            combatData.player_defense.physicalDefenseModifier += 2;
+            combatData.player_defense.magicalDefenseModifier += 2;
+        }
+        if (combatData.weapons[0].influences[0] === "Quor'ei") { // Earth
+            console.log("Quor'ei!")
+            combatData.player_influence_description = 
+                `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer.`
+            combatData.player_defense.physicalDefenseModifier += 2;
+            combatData.player_defense.magicalDefenseModifier += 2;
+        }
+        if (combatData.weapons[0].influences[0] === "Rahvre") { // Dreams
+            console.log("Rahvre!")
+            combatData.player_influence_description = 
+            `Your calming Cear reaches its tendrils to Rahvre, intertwining you.`
+        combatData.weapons[0].magical_damage += 3;
+        }
+        if (combatData.weapons[0].influences[0] === "Senari") { // Wisdom
+            console.log("Senari!")
+            combatData.player_influence_description = 
+                `Your calm swirls with the favor of Senari, holding you in her Caer.`
+            combatData.weapons[0].roll += 2;
+            combatData.weapons[0].dodge -= 2;
+        }
+        if (combatData.weapons[0].influences[0] === "Se'dyro") { // Iron
+            console.log("Se'dyro!")
+            combatData.player_influence_description = 
+                `The Caer of Se'dyro sings into your ${combatData.weapons[0].name}, causing it to frenzy!`    
+            player_action = 'attack';
+            await attackCompiler(combatData, player_action)
+        }
+        if (combatData.weapons[0].influences[0] === "Se'vas") { // War
+            console.log("Se'vas!")
+            combatData.player_influence_description = 
+                `The Caer of Se'vas scorns your ${combatData.weapons[0].name}, scarring it with the beauty of war.` 
+            combatData.weapons[0].critical_chance += 2;
+            combatData.weapons[0].critical_damage += 0.2;
+        }
+        if (combatData.weapons[0].influences[0] === "Shrygei") { // Song
     
         }
-        if (combatData.weapons[0].influences === "Shrygei") { // Song
-    
-        }
-        if (combatData.weapons[0].influences === "Tshaer") { // Animal
-    
+        if (combatData.weapons[0].influences[0] === "Tshaer") { // Animal
+            console.log("Tshaer!")
+            combatData.player_influence_description = 
+                `Your fervor unleashes the bestial nature of Tshaer within you.`
+            combatData.weapons[0].physical_damage += 3;
         }
     }
+    if (combatData.dual_wielding === true) {
+        if (faith_number_two > 85) {
+            if (combatData.weapons[1].influences[0] === 'Daethos') { // God
+                console.log("Daethos!")
+                let daethos = (combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren) / 2;
+                combatData.new_player_health += combatData.realized_player_damage;
+                combatData.player_influence_description = 
+                    `Daethos wraps through your Caer, ${combatData.weapons[1].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+                combatData.new_player_health += daethos;
+                combatData.new_computer_health -= daethos;
+        }
+            if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
+                console.log("Achreo!")
+                combatData.player_influence_description = 
+                    `Your fervor stirs Achreo, much to his own surprise.`
+                combatData.weapons[1].physical_damage += 1;
+                combatData.weapons[1].magical_damage += 1;
+                combatData.weapons[1].critical_chance += 1;
+                combatData.weapons[1].critical_damage += 0.1;
+            }
+            if (combatData.weapons[1].influences[0] === "Ahn've") { // Wind
+                console.log("Ahn've!")
+                combatData.player_influence_description = 
+                    `Your fervor ushers forth Ahn've, a devastating storm posseses you.`
+                player_action = 'attack';
+                await attackCompiler(combatData, player_action)
+            }
+            if (combatData.weapons[1].influences[0] === 'Astra') { // Lightning
+                combatData.player_influence_description = 
+                    `Your fervor ushers forth the favor of Astra's Lightning, quickening you.`
+                combatData.weapons[1].critical_chance += 3;
+            }
+            if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
+                combatData.player_influence_description = 
+                    `Your fervor ushers forth the Chance of Cambire.`
+                player_action = 'attack';
+                await attackCompiler(combatData, player_action)    
+            }
+            if (combatData.weapons[1].influences[0] === 'Chiomyr') { // Humor
+                combatData.weapons[1].physical_penetration += 2;
+                combatData.weapons[1].magical_penetration += 2;
+            }
+            if (combatData.weapons[1].influences[0] === 'Fyer') { // Fire
+                combatData.player_influence_description = 
+                    `Your fervor ushers forth the favor of Fyer igniting through you.`
+                combatData.weapons[1].critical_damage += 0.6;
+            }
+            if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
+                combatData.player_influence_description = 
+                    `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}.`
+                player_action = 'attack';   
+                combatData.weapons[1].magical_penetration += 1;
+                combatData.weapons[1].physical_penetration += 1;
+                combatData.player_defense.physicalDefenseModifier += 1;
+                combatData.player_defense.magicalDefenseModifier += 1;
+            }
+            if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
+                combatData.player_influence_description = 
+                    `Your keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                combatData.weapons[1].roll += 2;
+                combatData.weapons[1].critical_chance += 2;
+            }
+            if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
+                combatData.player_influence_description = 
+                    `The Caer of Kyrisos imbues you with Kyosir!`
+                combatData.player_attributes.kyosirMod += 2;
+            }
+            if (combatData.weapons[1].influences[0] === "Kyr'na") { // Time
+                let kyrna = 50 + combatData.player_attributes.totalAchre;
+                combatData.player_influence_description = 
+                    `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
+                combatData.new_computer_health -= kyrna;
+            }
+            if (combatData.weapons[1].influences[0] === "Lilos") { // Life
+                let lilos = 50 + combatData.player_attributes.totalCaeren;
+                combatData.player_influence_description = 
+                    `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
+                combatData.new_player_health += lilos;
+            }
+            if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
+                combatData.player_influence_description = 
+                    `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world.` 
+                combatData.weapons[1].roll += 1;
+                combatData.weapons[1].dodge -= 1;
+                combatData.weapons[1].critical_chance += 1;
+                combatData.weapons[1].critical_damage += 0.1;
+            }
+            if (combatData.weapons[1].influences[0] === "Nyrolus") { // Water
+                combatData.player_influence_description = 
+                    `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer.`
+                combatData.player_defense.physicalDefenseModifier += 2;
+                combatData.player_defense.magicalDefenseModifier += 2;
+            }
+            if (combatData.weapons[1].influences[0] === "Quor'ei") { // Earth
+                combatData.player_influence_description = 
+                    `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer.`
+                combatData.player_defense.physicalDefenseModifier += 2;
+                combatData.player_defense.magicalDefenseModifier += 2;
+            }
+            if (combatData.weapons[1].influences[0] === "Rahvre") { // Dreams
+                combatData.player_influence_description = 
+                `Your calming Cear reaches its tendrils to Rahvre, intertwining you.`
+            combatData.weapons[1].magical_damage += 3;
+            }
+            if (combatData.weapons[1].influences[0] === "Senari") { // Wisdom
+                combatData.player_influence_description = 
+                    `Your calm swirls with the favor of Senari, holding you in her Caer.`
+                combatData.weapons[1].roll += 2;
+                combatData.weapons[1].dodge -= 2;
+            }
+            if (combatData.weapons[1].influences[0] === "Se'dyro") { // Iron
+                combatData.player_influence_description = 
+                    `The Caer of Se'dyro sings into your ${combatData.weapons[1].name}, causing it to frenzy!`    
+                player_action = 'attack';
+                await attackCompiler(combatData, player_action)
+            }
+            if (combatData.weapons[1].influences[0] === "Se'vas") { // War
+                combatData.player_influence_description = 
+                    `The Caer of Se'vas scorns your ${combatData.weapons[1].name}, scarring it with the beauty of war.` 
+                combatData.weapons[1].critical_chance += 2;
+                combatData.weapons[1].critical_damage += 0.2;
+            }
+            if (combatData.weapons[1].influences[0] === "Shrygei") { // Song
+        
+            }
+            if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
+                combatData.player_influence_description = 
+                    `Your fervor unleashes the bestial nature of Tshaer within you.`
+                combatData.weapons[1].physical_damage += 3;
+            }
+        }
+    }
+
     return combatData
 }
 
@@ -569,11 +787,14 @@ const attackCompiler = async (combatData, player_action) => {
             if (combatData.weapons[0].attack_type === 'Physical') {
                 if (combatData.player.mastery === 'Agility') {
                     if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                        combatData.dual_wielding = true;
                         await dualWieldCompiler(combatData)
                         return combatData
                     } else {
-                        await doubleAttackCompiler(combatData)
-                        return combatData
+                        player_physical_damage *= 1.5;
+                        player_magical_damage *= 1.25;
+                        // await doubleAttackCompiler(combatData)
+                        // return combatData
                     }
                 } else {
                     player_physical_damage *= 1.5;
@@ -583,6 +804,7 @@ const attackCompiler = async (combatData, player_action) => {
                 // If Focus + 1h But Magic
                 if (combatData.player.mastery === 'Achre') {
                     if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                        combatData.dual_wielding = true;
                         await dualWieldCompiler(combatData)
                         return combatData
                     }
@@ -597,21 +819,23 @@ const attackCompiler = async (combatData, player_action) => {
             if (combatData.player.mastery === 'Strength') {
                 if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
+                    combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
                     return combatData
                 } else { // Less than 40 Srength 
-                    player_physical_damage *= 2.0;
+                    player_physical_damage *= 2.25;
                     player_magical_damage *= 1.75;
                 }
 
             }
             if (combatData.player.mastery === 'Caeren') {
                 if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 60) {
+                    combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
                         return combatData
                 } else {
                     player_physical_damage *= 1.75;
-                    player_magical_damage *= 2.0;
+                    player_magical_damage *= 2.25;
                 }
             }
             if (combatData.weapons[0].type === 'Bow') {
@@ -834,6 +1058,8 @@ const actionSplitter = async (combatData) => {
         computer_special_description: '',
         player_action_description: '', // The combat text to inject from the player
         computer_action_description: '', // The combat text to inject from the computer
+        player_influence_description: '',
+        computer_influence_description: '',
         current_player_health: combatData.current_player_health, // New player health post-combat action
         current_computer_health: combatData.current_computer_health, // New computer health post-combat action
         new_player_health: combatData.new_player_health, // New player health post-combat action
@@ -848,6 +1074,7 @@ const actionSplitter = async (combatData) => {
         counter_dodge_weight: combatData.counter_dodge_weight,
         counter_posture_weight: combatData.counter_posture_weight,
         counter_roll_weight: combatData.counter_roll_weight,
+        dual_wielding: false,
         roll_success: false,
         counter_success: false,
         computer_roll_success: false,
@@ -1038,7 +1265,7 @@ const actionSplitter = async (combatData) => {
         newData.computer_win = true;
     }
     
-    // await faithFinder(newData);
+    // await faithFinder(newData, player_action);
 
     return newData
 }

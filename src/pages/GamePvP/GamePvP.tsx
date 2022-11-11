@@ -149,6 +149,8 @@ const GamePvP = ({ user }: GameProps) => {
         computer_special_description: '',
         player_action_description: '',
         computer_action_description: '',
+        player_influence_description: '',
+        computer_influence_description: '',
         current_player_health: currentPlayerHealth,
         current_computer_health: currentComputerHealth,
         new_player_health: currentPlayerHealth,
@@ -494,7 +496,8 @@ const GamePvP = ({ user }: GameProps) => {
                 playerCombatText={combatData.player_action_description} computerCombatText={combatData.computer_action_description} 
                 playerActionText={combatData.player_start_description} computerActionText={combatData.computer_start_description}
                 playerSpecialText={combatData.player_special_description} computerSpecialText={combatData.computer_special_description}
-            />
+                playerReligiousText={combatData.player_influence_description} computerReligiousText={combatData.computer_influence_description}
+           />
         </Container>
     )
 }

@@ -150,6 +150,8 @@ const GameSolo = ({ user }: GameProps) => {
         computer_special_description: '',
         player_action_description: '',
         computer_action_description: '',
+        player_influence_description: '',
+        computer_influence_description: '',
         current_player_health: currentPlayerHealth,
         current_computer_health: currentComputerHealth,
         new_player_health: currentPlayerHealth,
@@ -164,6 +166,7 @@ const GameSolo = ({ user }: GameProps) => {
         counter_dodge_weight: 0,
         counter_posture_weight: 0,
         counter_roll_weight: 0,
+        dual_wielding: false,
         roll_success: false,
         counter_success: false,
         computer_roll_success: false,
@@ -503,6 +506,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerCombatText={combatData.player_action_description} computerCombatText={combatData.computer_action_description} 
                 playerActionText={combatData.player_start_description} computerActionText={combatData.computer_start_description}
                 playerSpecialText={combatData.player_special_description} computerSpecialText={combatData.computer_special_description}
+                playerReligiousText={combatData.player_influence_description} computerReligiousText={combatData.computer_influence_description}
             />
         </Container>
     )
