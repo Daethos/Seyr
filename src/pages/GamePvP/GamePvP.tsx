@@ -13,11 +13,15 @@ import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
 
+
+
 interface GameProps {
     user: any;
 }
 
 const GamePvP = ({ user }: GameProps) => {
+    const { asceanID } = useParams();
+    
 
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
@@ -90,7 +94,7 @@ const GamePvP = ({ user }: GameProps) => {
 
     const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`
     const [playWind] = useSound(windSfx, { volume: 0.5 })
-    const { asceanID } = useParams();
+    
 
     const getAscean = useCallback(async () => {
         setLoading(true);
@@ -475,7 +479,7 @@ const GamePvP = ({ user }: GameProps) => {
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 
                 playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} 
             />
-            <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+            <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} loading={loading} />
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -490,7 +494,7 @@ const GamePvP = ({ user }: GameProps) => {
                 playReligion={playReligion}
             />
 
-            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
+            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />
             { playerWin || computerWin ? '' :
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 

@@ -41,6 +41,14 @@ const faithFinder = async (combatData, player_action) => { // The influence will
                 `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
             combatData.new_player_health += daethos;
             combatData.new_computer_health -= daethos;
+            combatData.current_player_health += daethos;
+            combatData.current_computer_health -= daethos;
+            if (combatData.current_computer_health < 0) {
+                combatData.current_computer_health = 0;
+            }
+            if (combatData.new_computer_health < 0) {
+                combatData.new_computer_health = 0;
+            }
     }
         if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
@@ -112,6 +120,13 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             combatData.player_influence_description = 
                 `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
             combatData.new_computer_health -= kyrna;
+            combatData.current_computer_health -= kyrna;
+            if (combatData.current_computer_health < 0) {
+                combatData.current_computer_health = 0;
+            }
+            if (combatData.new_computer_health < 0) {
+                combatData.new_computer_health = 0;
+            }
         }
         if (combatData.weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
@@ -119,6 +134,7 @@ const faithFinder = async (combatData, player_action) => { // The influence will
             combatData.player_influence_description = 
                 `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
             combatData.new_player_health += lilos;
+            combatData.current_player_health += lilos;
         }
         if (combatData.weapons[0].influences[0] === "Ma'anre") { // Moon
             console.log("Ma'anre!")
@@ -191,6 +207,14 @@ const faithFinder = async (combatData, player_action) => { // The influence will
                     `Daethos wraps through your Caer, ${combatData.weapons[1].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
                 combatData.new_player_health += daethos;
                 combatData.new_computer_health -= daethos;
+                combatData.current_player_health += daethos;
+                combatData.current_computer_health -= daethos;
+                if (combatData.current_computer_health < 0) {
+                    combatData.current_computer_health = 0;
+                }
+                if (combatData.new_computer_health < 0) {
+                    combatData.new_computer_health = 0;
+                }
         }
             if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
@@ -253,12 +277,20 @@ const faithFinder = async (combatData, player_action) => { // The influence will
                 combatData.player_influence_description = 
                     `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
                 combatData.new_computer_health -= kyrna;
+                combatData.current_computer_health -= kyrna;
+                if (combatData.current_computer_health < 0) {
+                    combatData.current_computer_health = 0;
+                }
+                if (combatData.new_computer_health < 0) {
+                    combatData.new_computer_health = 0;
+                }
             }
             if (combatData.weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 50 + combatData.player_attributes.totalCaeren;
                 combatData.player_influence_description = 
                     `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`
                 combatData.new_player_health += lilos;
+                combatData.current_player_health += lilos;
             }
             if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
                 combatData.player_influence_description = 
@@ -349,7 +381,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         counter_posture: 20 + newData.counter_posture_weight,
         counter_roll: 20 + newData.counter_roll_weight,
         roll_rating: newData.computer_weapons[0].roll,
-        armor_rating: (newData.computer_defense.physicalPosture + newData.computer_defense.magicalPosture / 2),
+        armor_rating: (newData.computer_defense.physicalPosture + newData.computer_defense.magicalPosture)  / 4,
     }
 
     if (player_action === 'attack') { 
@@ -380,8 +412,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_roll_weight -= 1
     }
     if (player_action === 'posture') { 
-        newData.attack_weight += 2  
-        newData.posture_weight -= 3
+        newData.attack_weight += 1  
+        newData.posture_weight -= 2
         newData.counter_weight += 1
         newData.counter_posture_weight += 3
         newData.counter_roll_weight -= 2
@@ -389,8 +421,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     }
 
     if (player_action === 'roll') { 
-        newData.attack_weight += 2  
-        newData.roll_weight -= 3
+        newData.attack_weight += 1  
+        newData.roll_weight -= 2
         newData.counter_weight += 1
         newData.counter_roll_weight += 3
         newData.counter_posture_weight -= 2
@@ -554,7 +586,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             } else {
                 // If Focus + 1h But Magic
                 if (combatData.computer.mastery === 'Achre') {
-                    if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                    if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                         await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         return combatData
                     }
@@ -576,7 +608,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             if (combatData.computer.mastery === 'Caeren') {
                 if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 60) {
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                        return combatData
+                    return combatData
                 } else {
                     computer_physical_damage *= 1.75;
                     computer_magical_damage *= 2.0;
@@ -829,8 +861,7 @@ const attackCompiler = async (combatData, player_action) => {
                     player_magical_damage *= 1.5;
                 }
             }
-        } 
-        if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
+        } else if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             console.log(combatData.weapons[0].grip, combatData.player.mastery, combatData.player_attributes.totalStrength)
             if (combatData.player.mastery === 'Strength') {
                 if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
@@ -860,6 +891,9 @@ const attackCompiler = async (combatData, player_action) => {
                     player_magical_damage *= 2;
                 }
             }
+        } else {
+            player_physical_damage *= 1.25;
+            player_magical_damage *= 1.25;
         }
     }
 
@@ -1079,8 +1113,8 @@ const actionSplitter = async (combatData) => {
         computer_action_description: '', // The combat text to inject from the computer
         player_influence_description: '',
         computer_influence_description: '',
-        current_player_health: combatData.current_player_health, // New player health post-combat action
-        current_computer_health: combatData.current_computer_health, // New computer health post-combat action
+        current_player_health: combatData.new_player_health, // New player health post-combat action
+        current_computer_health: combatData.new_computer_health, // New computer health post-combat action
         new_player_health: combatData.new_player_health, // New player health post-combat action
         new_computer_health: combatData.new_computer_health, // New computer health post-combat action
         attack_weight: combatData.attack_weight,
@@ -1277,6 +1311,8 @@ const actionSplitter = async (combatData) => {
             await attackCompiler(newData, player_action)
         }
     }
+
+    await faithFinder(newData, player_action);
     
     if (newData.new_computer_health === 0) {
         newData.player_win = true;
@@ -1285,7 +1321,6 @@ const actionSplitter = async (combatData) => {
         newData.computer_win = true;
     }
     
-    await faithFinder(newData, player_action);
 
     return newData
 }

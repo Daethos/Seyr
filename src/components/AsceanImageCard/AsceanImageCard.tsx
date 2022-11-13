@@ -2,6 +2,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Loading from '../Loading/Loading';
 
 interface Props {
     weapon_one: any;
@@ -16,9 +17,10 @@ interface Props {
     ring_two: any;
     trinket: any;
     gameDisplay?: boolean;
+    loading?: boolean;
 }
 
-const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay }: Props) => {
+const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay, loading }: Props) => {
     const weaponOnePopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_one?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_one?.imgURL} alt={weapon_one?.name} /></span></Popover.Header>
@@ -263,6 +265,11 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </Popover.Body>
         </Popover>
     )
+    if (loading) {
+        return (
+            <Loading Combat={true} />
+        )
+    }
     return (
         <>
             {

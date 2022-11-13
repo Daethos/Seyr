@@ -49,7 +49,7 @@ const GameConditions = ({ combatData, setCombatData, playReligion, playWin, play
         }
         const interval = setInterval(() => {
             autoAttack(combatData)
-        }, 10000);
+        }, 8000);
       
         return () => clearInterval(interval);
       }, [combatData, gameIsLive]);
@@ -162,9 +162,13 @@ const GameConditions = ({ combatData, setCombatData, playReligion, playWin, play
     {computerWin ? <div className="win-condition">
     You Lose! Cold Streak: {loseStreak}! <br /> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
+    { playerWin || computerWin ? '' : 
+    
     <button className="btn" id='auto-engage' onClick={autoEngage}>
         {!gameIsLive ? `Auto Engage` : `Disengage Auto`}
     </button>
+    
+    }
     </>
   )
 }

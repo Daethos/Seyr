@@ -95,7 +95,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const response = await asceanAPI.getOneAscean(asceanID);
             setAscean(response.data);
-            setLoading(false)
+            // setLoading(false)
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
             setLoading(false)
@@ -189,9 +189,9 @@ const GameSolo = ({ user }: GameProps) => {
         opponentStatCompiler()
     }, [opponent])
 
-    useEffect(() => {
-        opponentDataCompiler();
-      }, [opponent])
+    // useEffect(() => {
+    //     opponentDataCompiler();
+    //   }, [opponent])
       
 
     const getOpponent = async () => {
@@ -255,6 +255,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_defense': computerDefense,
                 'computer_attributes': computerAttributes
             })
+            setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
         }
@@ -264,12 +265,10 @@ const GameSolo = ({ user }: GameProps) => {
     useEffect(() => {
       asceanStatCompiler()
     }, [getAscean]) // Says to remove it?
-    useEffect(() => {
-        combatDataCompiler()
-    }, [getAscean])
+    
     
 
-    async function asceanStatCompiler() {
+    const asceanStatCompiler = async () => {
         setLoading(true)
         try {
             const response = await asceanAPI.getAsceanStats(asceanID)
@@ -295,14 +294,14 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': response.data.data.defense,
                 'player_attributes': response.data.data.attributes
             })
-            setLoading(false)
+            // setLoading(false)
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, 'Error Compiling Ascean Stats')
         }
     }
 
-    async function combatDataCompiler() {
+    const combatDataCompiler = useCallback(async () => {
         setLoading(true)
         try {
             setCombatData({
@@ -317,14 +316,15 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': playerDefense,
                 'player_attributes': attributes
             })
+            // setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
         }
-    }
+    }, [asceanStatCompiler])
 
     useEffect(() => {
-      console.log(combatData)
-    }, [combatData])
+        combatDataCompiler()
+    }, [])
     
 
     function handleAction(action: any) {
@@ -488,7 +488,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 
                 playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} 
             />
-            <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+            <GameAscean ascean={opponent} loading={loading} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -503,7 +503,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playReligion={playReligion}
             />
 
-            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} />
+            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />
             { playerWin || computerWin ? '' :
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 

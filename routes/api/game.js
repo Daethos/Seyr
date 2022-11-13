@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const gameCtrl = require('../../controllers/game');
+const app = express();
+const io = app.get('socketio')
+
 
 /*---------- Public Routes ----------*/
 router.get('/:id', gameCtrl.init);

@@ -46,6 +46,7 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             ring_one={ascean.ring_one}
             ring_two={ascean.ring_two}
             trinket={ascean.trinket}
+            loading={false}
             key={ascean._id + 2}
         />
         {/* <svg height="5" width="100%" className="tapered-rule">

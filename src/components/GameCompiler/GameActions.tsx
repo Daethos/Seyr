@@ -79,7 +79,7 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
 
   if (dodgeStatus) {
     dodgeButton?.classList.add('hide');
-    console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
+    // console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
     const dodgeTimer = setTimeout(() => {
       dodgeButton?.classList.remove('hide');
       setDodgeStatus(false);
@@ -88,10 +88,7 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
   }
 
   if (actionStatus) {
-    console.log('Initiate Hiding')
     hideInitiate()
-    // actionBar?.classList.toggle('hide')
-    // setActionStatus(false)
   }
   return (
     <>

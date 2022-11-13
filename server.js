@@ -10,6 +10,13 @@ require('./config/database');
 // Require controllers here
 
 const app = express();
+const http = require('http');
+const cors = require('cors');
+const { Server } = require('socket.io');
+app.use(cors());
+
+
+
 
 // add in when the app is ready to be deployed
 app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
@@ -43,6 +50,32 @@ app.use('/api', require('./routes/api/feelings'));
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+
+// const server = http.createServer(app);
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
+
+// io.on("connection", (socket) => {
+//   console.log(`User Connected: ${socket.id}`);
+
+//   socket.on("join_room", (data) => {
+//     socket.join(data);
+//     console.log(`User with ID: ${socket.id} joined room: ${data}`)
+//   })
+
+//   socket.on("disconnect", () => {
+//     console.log('User Disconnected', socket.id);
+//   });
+// });
+
+// server.listen(3002, () => {
+//   console.log('SERVER RUNNING')
+// });
 
 const port = process.env.PORT || 3001;
 

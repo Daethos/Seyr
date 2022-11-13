@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
+import Loading from '../Loading/Loading';
 import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
 
@@ -8,12 +9,18 @@ interface Props {
     currentPlayerHealth: number;
     combatData: any;
     player: boolean;
+    loading: boolean;
 }
 
-const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) => {
+const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }: Props) => {
   const [playerCharacter, setPlayerCharacter] = useState<boolean>(player)
   // console.log(playerCharacter, 'Player Status in Game Ascean')
 
+  if (loading) {
+    return (
+      <Loading Combat={true} />
+    )
+  }
   return (
     <>
     {
@@ -42,6 +49,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
         ring_two={ascean.ring_two}
         trinket={ascean.trinket}
         gameDisplay={true}
+        loading={loading}
         key={ascean._id}
     />
     <div className="actions">
@@ -69,6 +77,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData }: Props) 
         ring_two={ascean.ring_two}
         trinket={ascean.trinket}
         gameDisplay={true}
+        loading={loading}
         key={ascean._id}
     />
     <div className="actions">
