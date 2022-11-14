@@ -11,13 +11,20 @@ interface Props {
     sleep: (ms: number) => Promise<unknown>;
     playerCritical: boolean;
     computerCritical: boolean;
+    roll_success: boolean;
+    computer_roll_success: boolean;
 }
 
-const GameAnimations = ({ sleep, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, combatInitiated, setCombatInitiated }: Props) => {
+const GameAnimations = ({ sleep, roll_success, computer_roll_success, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, combatInitiated, setCombatInitiated }: Props) => {
 
     const critStyle = {
         backgroundColor: 'red',
         fontSize: 32 + 'px',
+    }
+
+    const rollStyle = {
+        backgroundColor: 'green',
+        fontSize: 28 + 'px',
     }
 
     return (
@@ -31,11 +38,19 @@ const GameAnimations = ({ sleep, playerAction, computerAction, playerDamageTotal
                     {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
                 </div>
             :
-                <div className="computer hidden" >
-                    {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
-                    <br />
-                    {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
-                </div>
+                computer_roll_success 
+                ?
+                    <div className="computer hidden" style={rollStyle} >
+                        {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
+                        <br />
+                        {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
+                    </div> 
+                :
+                    <div className="computer hidden" >
+                        {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
+                        <br />
+                        {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
+                    </div>
         }
         
         <br />
@@ -49,13 +64,21 @@ const GameAnimations = ({ sleep, playerAction, computerAction, playerDamageTotal
                     {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
                 </div>
             : 
-            <div 
-            className="player pulse"
-            >
-            {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
-            <br />
-                {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
-            </div>
+                roll_success
+                ?
+                    <div className="player pulse" style={rollStyle}>
+                        {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
+                        <br />
+                        {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
+                    </div>
+                :
+                    <div 
+                    className="player pulse"
+                    >
+                    {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
+                    <br />
+                        {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
+                    </div>
         }
         </>
     )

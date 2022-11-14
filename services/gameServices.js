@@ -4,16 +4,24 @@
 
 // =================================== HELPER FUNCTIONS ======================================= \\
 
-const faithFinder = async (combatData, player_action) => { // The influence will add a chance to have a special effect occur
+const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
     let faith_number = Math.floor(Math.random() * 101);
     let faith_number_two = Math.floor(Math.random() * 101);
     let faith_check = Math.floor(Math.random() * 101);
+    let computer_faith_number = Math.floor(Math.random() * 101);
+    let computer_faith_number_two = Math.floor(Math.random() * 101);
 
     combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
     combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
 
     combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
     combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+
+    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance)
+    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage)
+
+    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
+    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
 
 
     // console.log(combatData.weapons[0].magical_penetration, typeof(combatData.weapons[0].magical_penetration))
@@ -29,8 +37,20 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         faith_number += 5;
         faith_number_two += 5;
     }
+
+    if (combatData.computer.faith === 'devoted' && combatData.computer_weapons[0].influences[0] === 'Daethos') {
+        computer_faith_number += 5;
+        computer_faith_number_two += 5;
+    }
+    if (combatData.computer.faith === 'adherent' && combatData.computer_weapons[0].influences[0] !== 'Daethos') {
+        computer_faith_number += 5;
+        computer_faith_number_two += 5;
+    }
     console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0])
     console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two, `Dual Wielding?`, combatData.dual_wielding)
+
+    console.log(combatData.computer_weapons[0].influences[0], combatData.computer_weapons[1].influences[0])
+    console.log(combatData.computer.name, `'s Faith #`, computer_faith_number, `Faith #2`, computer_faith_number_two, `Dual Wielding?`, combatData.dual_wielding)
     if (faith_number > 85) {
         combatData.religious_success = true;
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
@@ -346,6 +366,320 @@ const faithFinder = async (combatData, player_action) => { // The influence will
         }
     }
 
+    if (computer_faith_number > 85) {
+        combatData.computer_religious_success = true;
+        if (combatData.computer_weapons[0].influences[0] === 'Daethos') { // God
+            console.log('Daethos!')
+            let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren) / 2;
+            combatData.new_computer_health += combatData.realized_computer_damage;
+            combatData.computer_influence_description = 
+                `Daethos wraps through ${combatData.computer.name}'s Caer, ${combatData.computer_weapons[0].name} healing them for ${Math.round(combatData.realized_computer_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+            combatData.new_computer_health += daethos;
+            combatData.new_player_health -= daethos;
+            combatData.current_computer_health += daethos;
+            combatData.current_player_health -= daethos;
+            if (combatData.current_player_health < 0) {
+                combatData.current_player_health = 0;
+            }
+            if (combatData.new_player_health < 0) {
+                combatData.new_player_health = 0;
+            }
+    }
+        if (combatData.computer_weapons[0].influences[0] === 'Achreo') { // Wild
+            console.log('Achreo!')
+            // combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance + 1);
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise.`
+            combatData.computer_weapons[0].physical_damage += 1;
+            combatData.computer_weapons[0].magical_damage += 1;
+            combatData.computer_weapons[0].critical_chance += 1;
+            combatData.computer_weapons[0].critical_damage += 0.1;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Ahn've") { // Wind
+            console.log("Achreo!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them.`
+            player_action = 'attack';
+            await attackCompiler(combatData, player_action)
+        }
+        if (combatData.computer_weapons[0].influences[0] === 'Astra') { // Lightning
+            console.log("Astra!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
+            combatData.computer_weapons[0].critical_chance += 3;
+        }
+        if (combatData.computer_weapons[0].influences[0] === 'Cambire') { // Potential
+            console.log("Cambire!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire.`
+            player_action = 'attack';
+            await attackCompiler(combatData, player_action)    
+        }
+        if (combatData.computer_weapons[0].influences[0] === 'Chiomyr') { // Humor
+            console.log("Chiomyr!")
+            combatData.computer_weapons[0].physical_penetration += 2;
+            combatData.computer_weapons[0].magical_penetration += 2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === 'Fyer') { // Fire
+            console.log("Fyer!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
+            combatData.computer_weapons[0].critical_damage += 0.6;
+        }
+        if (combatData.computer_weapons[0].influences[0] === 'Ilios') { // Sun
+            console.log("Ilios!")
+            combatData.computer_influence_description = 
+                `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[0].name}.`
+            player_action = 'attack';   
+            combatData.computer_weapons[0].magical_penetration += 1;
+            combatData.computer_weapons[0].physical_penetration += 1;
+            combatData.computer_defense.physicalDefenseModifier += 1;
+            combatData.computer_defense.magicalDefenseModifier += 1;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
+            console.log("Kyn'gi!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
+            combatData.computer_weapons[0].roll += 2;
+            combatData.computer_weapons[0].critical_chance += 2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Kyrisos") { // Gold
+            console.log("Kyrisos!")
+            combatData.computer_influence_description = 
+                `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
+            combatData.computer_attributes.kyosirMod += 2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Kyr'na") { // Time
+            console.log("Kyr'na!")
+            let kyrna = 50 + combatData.computer_attributes.totalAchre;
+            combatData.computer_influence_description = 
+                `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
+            combatData.new_player_health -= kyrna;
+            combatData.current_player_health -= kyrna;
+            if (combatData.current_player_health < 0) {
+                combatData.current_player_health = 0;
+            }
+            if (combatData.new_player_health < 0) {
+                combatData.new_player_health = 0;
+            }
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Lilos") { // Life
+            console.log("Lilos!")
+            let lilos = 50 + combatData.computer_attributes.totalCaeren;
+            combatData.computer_influence_description = 
+                `Lilos breathes her Cear into ${combatData.player.name}, healing ${combatData.computer.name} for ${lilos}.`
+            combatData.new_computer_health += lilos;
+            combatData.current_computer_health += lilos;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Ma'anre") { // Moon
+            console.log("Ma'anre!")
+            combatData.computer_influence_description = 
+                `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, changing their perception of this world.` 
+            combatData.computer_weapons[0].roll += 1;
+            combatData.computer_weapons[0].dodge -= 1;
+            combatData.computer_weapons[0].critical_chance += 1;
+            combatData.computer_weapons[0].critical_damage += 0.1;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Nyrolus") { // Water
+            console.log("Nyrolus!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer.`
+            combatData.computer_defense.physicalDefenseModifier += 2;
+            combatData.computer_defense.magicalDefenseModifier += 2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Quor'ei") { // Earth
+            console.log("Quor'ei!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer.`
+            combatData.computer_defense.physicalDefenseModifier += 2;
+            combatData.computer_defense.magicalDefenseModifier += 2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Rahvre") { // Dreams
+            console.log("Rahvre!")
+            combatData.computer_influence_description = 
+            `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
+        combatData.computer_weapons[0].magical_damage += 3;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Senari") { // Wisdom
+            console.log("Senari!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
+            combatData.computer_weapons[0].roll += 2;
+            combatData.computer_weapons[0].dodge -= 2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Se'dyro") { // Iron
+            console.log("Se'dyro!")
+            combatData.computer_influence_description = 
+                `The Caer of Se'dyro sings into their ${combatData.computer_weapons[0].name}, causing it to frenzy!`    
+            player_action = 'attack';
+            await attackCompiler(combatData, player_action)
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Se'vas") { // War
+            console.log("Se'vas!")
+            combatData.computer_influence_description = 
+                `The Caer of Se'vas scorns their ${combatData.computer_weapons[0].name}, scarring it with the beauty of war.` 
+            combatData.computer_weapons[0].critical_chance += 2;
+            combatData.computer_weapons[0].critical_damage += 0.2;
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Shrygei") { // Song
+    
+        }
+        if (combatData.computer_weapons[0].influences[0] === "Tshaer") { // Animal
+            console.log("Tshaer!")
+            combatData.computer_influence_description = 
+                `${combatData.computer.name}'s fervor unleashes the bestial nature of Tshaer within them.`
+            combatData.computer_weapons[0].physical_damage += 3;
+        }
+    }
+    if (combatData.computer_dual_wielding === true) {
+        if (computer_faith_number_two > 85) {
+            combatData.computer_religious_success = true;
+            if (combatData.computer_weapons[1].influences[0] === 'Daethos') { // God
+                console.log("Daethos!")
+                let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren) / 2;
+                combatData.new_computer_health += combatData.realized_computer_damage;
+                combatData.computer_influence_description = 
+                    `Daethos wraps through ${combatData.computer.name}'s Caer, ${combatData.computer_weapons[1].name} healing them for ${Math.round(combatData.realized_computer_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+                    combatData.new_computer_health += daethos;
+                    combatData.new_player_health -= daethos;
+                    combatData.current_computer_health += daethos;
+                    combatData.current_player_health -= daethos;
+                    if (combatData.current_player_health < 0) {
+                        combatData.current_player_health = 0;
+                    }
+                    if (combatData.new_player_health < 0) {
+                        combatData.new_player_health = 0;
+                    }
+        }
+            if (combatData.computer_weapons[1].influences[0] === 'Achreo') { // Wild
+                console.log("Achreo!")
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise.`
+                combatData.computer_weapons[1].physical_damage += 1;
+                combatData.computer_weapons[1].magical_damage += 1;
+                combatData.computer_weapons[1].critical_chance += 1;
+                combatData.computer_weapons[1].critical_damage += 0.1;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Ahn've") { // Wind
+                console.log("Ahn've!")
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them.`
+                player_action = 'attack';
+                await attackCompiler(combatData, player_action)
+            }
+            if (combatData.computer_weapons[1].influences[0] === 'Astra') { // Lightning
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
+                combatData.computer_weapons[1].critical_chance += 3;
+            }
+            if (combatData.computer_weapons[1].influences[0] === 'Cambire') { // Potential
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire.`
+                player_action = 'attack';
+                await attackCompiler(combatData, player_action)    
+            }
+            if (combatData.computer_weapons[1].influences[0] === 'Chiomyr') { // Humor
+                combatData.computer_weapons[1].physical_penetration += 2;
+                combatData.computer_weapons[1].magical_penetration += 2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === 'Fyer') { // Fire
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
+                combatData.computer_weapons[1].critical_damage += 0.6;
+            }
+            if (combatData.computer_weapons[1].influences[0] === 'Ilios') { // Sun
+                combatData.computer_influence_description = 
+                    `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[1].name}.`
+                player_action = 'attack';   
+                combatData.computer_weapons[1].magical_penetration += 1;
+                combatData.computer_weapons[1].physical_penetration += 1;
+                combatData.computer_defense.physicalDefenseModifier += 1;
+                combatData.computer_defense.magicalDefenseModifier += 1;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                combatData.computer_weapons[1].roll += 2;
+                combatData.computer_weapons[1].critical_chance += 2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Kyrisos") { // Gold
+                combatData.computer_influence_description = 
+                    `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
+                combatData.computer_attributes.kyosirMod += 2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Kyr'na") { // Time
+                let kyrna = 50 + combatData.computer_attributes.totalAchre;
+                combatData.computer_influence_description = 
+                    `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
+                combatData.new_player_health -= kyrna;
+                combatData.current_player_health -= kyrna;
+                if (combatData.current_player_health < 0) {
+                    combatData.current_player_health = 0;
+                }
+                if (combatData.new_player_health < 0) {
+                    combatData.new_player_health = 0;
+                }
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Lilos") { // Life
+                let lilos = 50 + combatData.computer_attributes.totalCaeren;
+                combatData.computer_influence_description = 
+                    `Lilos breathes her Caer into ${combatData.player.name}, healing ${combatData.computer.name} for ${lilos}.`
+                combatData.new_computer_health += lilos;
+                combatData.current_computer_health += lilos;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Ma'anre") { // Moon
+                combatData.computer_influence_description = 
+                    `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, changing their perception of this world.` 
+                combatData.computer_weapons[1].roll += 1;
+                combatData.computer_weapons[1].dodge -= 1;
+                combatData.computer_weapons[1].critical_chance += 1;
+                combatData.computer_weapons[1].critical_damage += 0.1;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Nyrolus") { // Water
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer.`
+                combatData.computer_defense.physicalDefenseModifier += 2;
+                combatData.computer_defense.magicalDefenseModifier += 2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Quor'ei") { // Earth
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer.`
+                combatData.computer_defense.physicalDefenseModifier += 2;
+                combatData.computer_defense.magicalDefenseModifier += 2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Rahvre") { // Dreams
+                combatData.computer_influence_description = 
+                `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
+            combatData.computer_weapons[1].magical_damage += 3;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Senari") { // Wisdom
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
+                combatData.computer_weapons[1].roll += 2;
+                combatData.computer_weapons[1].dodge -= 2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Se'dyro") { // Iron
+                combatData.computer_influence_description = 
+                    `The Caer of Se'dyro sings into their ${combatData.computer_weapons[1].name}, causing it to frenzy!`    
+                player_action = 'attack';
+                await attackCompiler(combatData, player_action)
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Se'vas") { // War
+                combatData.computer_influence_description = 
+                    `The Caer of Se'vas scorns their ${combatData.computer_weapons[1].name}, scarring it with the beauty of war.` 
+                combatData.computer_weapons[1].critical_chance += 2;
+                combatData.computer_weapons[1].critical_damage += 0.2;
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Shrygei") { // Song
+        
+            }
+            if (combatData.computer_weapons[1].influences[0] === "Tshaer") { // Animal
+                combatData.computer_influence_description = 
+                    `${combatData.computer.name}'s Caer unleashes the bestial nature of Tshaer within them.`
+                combatData.computer_weapons[1].physical_damage += 3;
+            }
+        }
+    }
     return combatData
 }
 
@@ -571,11 +905,13 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {
                 if (combatData.computer.mastery === 'Agility') {
                     if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                       combatData.computer_dual_wielding = true;
                         await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         // Computer Dual Wield Compiler
                         return combatData
                     } else {
                         // Computer Double Attack Compiler
+                        combatData.computer_dual_wielding = true;
                         await computerDoubleAttackCompiler(combatData)
                         return combatData
                     }
@@ -587,6 +923,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                 // If Focus + 1h But Magic
                 if (combatData.computer.mastery === 'Achre') {
                     if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                        combatData.computer_dual_wielding = true;
                         await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         return combatData
                     }
@@ -598,6 +935,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         } else { // Weapon is TWO HAND
             if (combatData.computer.mastery === 'Strength') {
                 if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
+                    combatData.computer_dual_wielding = true;
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
                 } else { // Less than 50 Srength 
@@ -607,6 +945,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             }
             if (combatData.computer.mastery === 'Caeren') {
                 if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 60) {
+                    combatData.computer_dual_wielding = true;
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
                 } else {
@@ -1129,6 +1468,7 @@ const actionSplitter = async (combatData) => {
         counter_roll_weight: combatData.counter_roll_weight,
         religious_success: false,
         dual_wielding: false,
+        computer_dual_wielding: false,
         roll_success: false,
         counter_success: false,
         computer_roll_success: false,
@@ -1181,12 +1521,14 @@ const actionSplitter = async (combatData) => {
                 newData.player_special_description = 
                     `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`
                 await attackCompiler(newData, player_action)
+                await faithFinder(newData, player_action, computer_action);
                 return newData
             } else {
                 newData.computer_counter_success = true;
                 newData.computer_special_description = 
                     `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`
                 await computerAttackCompiler(newData, computer_action);
+                await faithFinder(newData, player_action, computer_action);
                 return newData
             }    
         }
@@ -1196,6 +1538,7 @@ const actionSplitter = async (combatData) => {
             newData.player_special_description = 
                 `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`
             await attackCompiler(newData, player_action)
+            await faithFinder(newData, player_action, computer_action);
             return newData
         }
     
@@ -1205,6 +1548,7 @@ const actionSplitter = async (combatData) => {
             newData.computer_special_description = 
                 `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`
             await computerAttackCompiler(newData, computer_action);
+            await faithFinder(newData, player_action, computer_action);
             return newData
         } 
     
@@ -1232,6 +1576,7 @@ const actionSplitter = async (combatData) => {
             newData.player_special_description = 
                 `You successfully Countered ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack.`
             await attackCompiler(newData, player_action)
+            await faithFinder(newData, player_action, computer_action);
             return newData
         } else {
             newData.player_special_description = 
@@ -1245,6 +1590,7 @@ const actionSplitter = async (combatData) => {
             newData.computer_special_description = 
                 `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
             await computerAttackCompiler(newData, computer_action)
+            await faithFinder(newData, player_action, computer_action);
             return newData
         } else {
             newData.computer_special_description = 
@@ -1270,6 +1616,7 @@ const actionSplitter = async (combatData) => {
         newData.player_special_description = 
             `You successfully Dodge ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack`
         await attackCompiler(newData, player_action)
+        await faithFinder(newData, player_action, computer_action);
         return newData
     }
 
@@ -1277,6 +1624,7 @@ const actionSplitter = async (combatData) => {
     if (computer_action === 'dodge' && player_action !== 'dodge') {
         `${newData.computer.name} successfully Dodges your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
         await computerAttackCompiler(newData, computer_action)
+        await faithFinder(newData, player_action, computer_action);
         return newData
     }
 
@@ -1287,6 +1635,7 @@ const actionSplitter = async (combatData) => {
     if (player_action === 'roll' && computer_action !== 'roll') {
         await playerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
         if (newData.roll_success === true) {
+            await faithFinder(newData, player_action, computer_action);
             return newData
         }
     }
@@ -1294,6 +1643,7 @@ const actionSplitter = async (combatData) => {
     if (computer_action === 'roll' && player_action !== 'roll') {
         await computerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
         if (newData.computer_roll_success === true) {
+            await faithFinder(newData, player_action, computer_action);
             return newData
         }
     }
@@ -1312,7 +1662,7 @@ const actionSplitter = async (combatData) => {
         }
     }
 
-    await faithFinder(newData, player_action);
+    await faithFinder(newData, player_action, computer_action);
     
     if (newData.new_computer_health === 0) {
         newData.player_win = true;

@@ -478,6 +478,7 @@ const GamePvP = ({ user }: GameProps) => {
                 combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} 
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 
                 playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} 
+                roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
             />
             <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} loading={loading} />
             <GameConditions 
