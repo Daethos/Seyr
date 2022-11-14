@@ -43,15 +43,15 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
   const dodgeButton = document.querySelector('#dodge-button');
   const actionButton = document.querySelector('#initiate-button')
 
-  // useEffect(() => {
-  //   dodgeButton?.classList.add('hide');
-  //   console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
-  //   const dodgeTimer = setTimeout(() => {
-  //     dodgeButton?.classList.remove('hide');
-  //     setDodgeStatus(false);
-  //   }, 40000 + combatData.weapons[0].dodge)
-  //   return () => clearTimeout(dodgeTimer)
-  // }, [dodgeStatus])
+  useEffect(() => {
+    dodgeButton?.classList.add('hide');
+    console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
+    const dodgeTimer = setTimeout(() => {
+      dodgeButton?.classList.remove('hide');
+      setDodgeStatus(false);
+    }, 40000 + combatData.weapons[0].dodge)
+    return () => clearTimeout(dodgeTimer)
+  }, [dodgeStatus])
 
   // useEffect(() => {
   //   actionButton?.classList.add('hide');
@@ -68,24 +68,24 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
     try {
       // await sleep(250)
       actionButton?.classList.add('hide');
+      setCombatData({ ...combatData, 'action': '' })
       await sleep(3500)
       actionButton?.classList.remove('hide')
-      setCombatData({ ...combatData, 'action': '' })
       setActionStatus(false)
     } catch (err: any) {
       console.log(err.message, 'Error Hiding Action Bar')
     }
   }
 
-  if (dodgeStatus) {
-    dodgeButton?.classList.add('hide');
-    // console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
-    const dodgeTimer = setTimeout(() => {
-      dodgeButton?.classList.remove('hide');
-      setDodgeStatus(false);
-    }, 40000 + combatData.weapons[0].dodge)
-    // return () => clearTimeout(dodgeTimer)
-  }
+  // if (dodgeStatus) {
+  //   dodgeButton?.classList.add('hide');
+  //   // console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
+  //   const dodgeTimer = setTimeout(() => {
+  //     dodgeButton?.classList.remove('hide');
+  //     setDodgeStatus(false);
+  //   }, 40000 + combatData.weapons[0].dodge)
+  //   // return () => clearTimeout(dodgeTimer)
+  // }
 
   if (actionStatus) {
     hideInitiate()

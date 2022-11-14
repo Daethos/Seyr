@@ -724,16 +724,19 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         } else {
             newData.posture_weight += 2
         }
-        // newData.counter_weight += 1 
-        newData.attack_weight -= 2
-        newData.counter_attack_weight += 2
+        newData.counter_weight += 1 
+        newData.attack_weight -= 3
+        newData.counter_attack_weight += 4
         newData.counter_counter_weight -= 1
         newData.counter_dodge_weight -= 1
+        newData.counter_posture_weight -= 1
+        newData.counter_roll_weight -= 1
     }
     if (player_action === 'counter') { 
-        newData.counter_weight += 2  
-        newData.posture_weight -= 1
-        newData.roll_weight -= 1
+        // newData.counter_weight -= 3
+        // newData.attack_weight += 1  
+        // newData.posture_weight += 1
+        // newData.roll_weight += 1
         newData.counter_counter_weight += 2
         newData.counter_attack_weight -= 1
         newData.counter_dodge_weight -= 1
@@ -746,8 +749,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_roll_weight -= 1
     }
     if (player_action === 'posture') { 
-        newData.attack_weight += 1  
-        newData.posture_weight -= 2
+        newData.attack_weight += 2  
+        newData.posture_weight -= 3
         newData.counter_weight += 1
         newData.counter_posture_weight += 3
         newData.counter_roll_weight -= 2
@@ -755,8 +758,8 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     }
 
     if (player_action === 'roll') { 
-        newData.attack_weight += 1  
-        newData.roll_weight -= 2
+        newData.attack_weight += 2  
+        newData.roll_weight -= 3
         newData.counter_weight += 1
         newData.counter_roll_weight += 3
         newData.counter_posture_weight -= 2
@@ -791,6 +794,10 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         } else {
             computer_counter = 'roll'
         }
+        newData.counter_weight -= 3
+        newData.attack_weight += 1  
+        newData.posture_weight += 1
+        newData.roll_weight += 1
     }
     newData.computer_action = computer_action;
     newData.computer_counter_guess = computer_counter;

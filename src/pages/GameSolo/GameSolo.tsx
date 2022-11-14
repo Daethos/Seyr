@@ -489,6 +489,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 
                 playerDamageTotal={combatData.realized_player_damage} computerDamageTotal={combatData.realized_computer_damage} 
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
+                counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
             <GameAscean ascean={opponent} loading={loading} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
             <GameConditions 
@@ -502,7 +503,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
-                playReligion={playReligion}
+                playReligion={playReligion} setDodgeStatus={setDodgeStatus}
             />
 
             <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />

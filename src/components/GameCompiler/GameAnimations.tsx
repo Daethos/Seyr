@@ -13,9 +13,11 @@ interface Props {
     computerCritical: boolean;
     roll_success: boolean;
     computer_roll_success: boolean;
+    counterSuccess: boolean;
+    computerCounterSuccess: boolean;
 }
 
-const GameAnimations = ({ sleep, roll_success, computer_roll_success, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, combatInitiated, setCombatInitiated }: Props) => {
+const GameAnimations = ({ sleep, roll_success, computer_roll_success, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, combatInitiated, setCombatInitiated }: Props) => {
 
     const critStyle = {
         backgroundColor: 'red',
@@ -38,7 +40,7 @@ const GameAnimations = ({ sleep, roll_success, computer_roll_success, playerActi
                     {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
                 </div>
             :
-                computer_roll_success 
+                computer_roll_success || computerCounterSuccess
                 ?
                     <div className="computer hidden" style={rollStyle} >
                         {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
@@ -64,7 +66,7 @@ const GameAnimations = ({ sleep, roll_success, computer_roll_success, playerActi
                     {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
                 </div>
             : 
-                roll_success
+                roll_success || counterSuccess
                 ?
                     <div className="player pulse" style={rollStyle}>
                         {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}

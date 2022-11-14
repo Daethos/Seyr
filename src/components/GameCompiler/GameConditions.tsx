@@ -21,6 +21,7 @@ interface Props {
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
     gameIsLive: boolean;
     setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
+    setDodgeStatus: React.Dispatch<React.SetStateAction<boolean>>;
     playCounter: Function;
     playRoll: Function;
     playDeath: Function;
@@ -40,7 +41,7 @@ interface Props {
     playReligion: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -133,12 +134,14 @@ const GameConditions = ({ combatData, setCombatData, playReligion, playWin, play
                 setWinStreak((winStreak) => winStreak + 1)
                 setLoseStreak(0)
                 setGameIsLive(false)
+                setDodgeStatus(false)
             }
             if (response.data.computer_win === true) {
                 playDeath()
                 setLoseStreak((loseStreak) => loseStreak + 1)
                 setWinStreak(0)
                 setGameIsLive(false)
+                setDodgeStatus(false)
             }
             setLoading(false)
         } catch (err: any) {
