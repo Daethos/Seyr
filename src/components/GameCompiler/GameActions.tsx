@@ -43,15 +43,15 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
   const dodgeButton = document.querySelector('#dodge-button');
   const actionButton = document.querySelector('#initiate-button')
 
-  useEffect(() => {
-    dodgeButton?.classList.add('hide');
-    console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
-    const dodgeTimer = setTimeout(() => {
-      dodgeButton?.classList.remove('hide');
-      setDodgeStatus(false);
-    }, 40000 + combatData.weapons[0].dodge)
-    return () => clearTimeout(dodgeTimer)
-  }, [dodgeStatus])
+  // useEffect(() => {
+  //   dodgeButton?.classList.add('hide');
+  //   console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
+  //   const dodgeTimer = setTimeout(() => {
+  //     dodgeButton?.classList.remove('hide');
+  //     setDodgeStatus(false);
+  //   }, 40000 + combatData.weapons[0].dodge)
+  //   return () => clearTimeout(dodgeTimer)
+  // }, [dodgeStatus])
 
   // useEffect(() => {
   //   actionButton?.classList.add('hide');
@@ -71,7 +71,7 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
       setCombatData({ ...combatData, 'action': '' })
       await sleep(3500)
       actionButton?.classList.remove('hide')
-      setActionStatus(false)
+      // setActionStatus(false)
     } catch (err: any) {
       console.log(err.message, 'Error Hiding Action Bar')
     }
@@ -89,6 +89,7 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
 
   if (actionStatus) {
     hideInitiate()
+    setActionStatus(false)
   }
   return (
     <>
@@ -112,7 +113,7 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
           <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
         ))}
       </select>
-      <button value='dodge' onClick={handleAction} className='btn btn-outline' id='dodge-button'>Dodge</button>
+      {/* <button value='dodge' onClick={handleAction} className='btn btn-outline' id='dodge-button'>Dodge</button> */}
       <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
       <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
     </div>
