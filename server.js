@@ -45,6 +45,7 @@ app.use('/api/community', require('./routes/api/community'));
 app.use('/api/friends', require('./routes/api/friends'));
 app.use('/api/message', require('./routes/api/message'));
 app.use('/api', require('./routes/api/feelings'));
+app.use('/api/chat', require('./routes/api/chat'));
 
 // "catch all" route
 app.get('/*', function(req, res) {
@@ -79,6 +80,39 @@ app.get('/*', function(req, res) {
 
 const port = process.env.PORT || 3001;
 
-app.listen(port, function() {
+const server = app.listen(port, function() {
   console.log(`Express app listening on port ${port}`);
+});
+
+const io = require('socket.io')(server, {
+  cors:  {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
+    console.log(userData.username, userData._id);
+    socket.emit("Connected");
+  })
+
+  socket.on("join_room", (room) => {
+    socket.join(room);
+    // console.log(room.user.use, 'New Player Joining')
+    console.log(`User with ID: ${socket.id} joined room: ${room}`)
+  })
+
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("receive_message", data);
+    console.log(data);
+  })
+
+  socket.on("disconnect", () => {
+    console.log('User Disconnected', socket.id);
+  });
+
 });

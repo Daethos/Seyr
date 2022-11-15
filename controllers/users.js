@@ -13,7 +13,8 @@ const SECRET = process.env.SECRET;
 module.exports = {
   signup,
   login,
-  profile
+  profile,
+  allUsers
 };
 
 async function profile(req, res) {
@@ -53,6 +54,8 @@ async function profile(req, res) {
     res.status(400).json({ error: "Something went wrong" });
   }
 }
+
+
 
 async function signup(req, res) {
   console.log(req.body, " req.body in signup", req.file);
@@ -114,6 +117,20 @@ async function login(req, res) {
   } catch (err) {
     return res.status(401).json({err: 'error message'});
   }
+}
+
+// /api/users
+async function allUsers(req, res) {
+  const keyword = req.query.search ? {
+    $or: [
+      { username: { $regex: req.query.search, $options: "i" } },
+      { email: { $regex: req.query.search, $options: "i" } },
+    ]
+  } : {};
+
+  const users = await User.find(keyword)
+                          .find({ _id: {$ne:req.user._id } });
+  res.send(users);
 }
 
 

@@ -75,7 +75,7 @@ const Equipment = ({ asceanState, setAsceanState, weapons, weaponModalShow, setW
             <option value={w._id} key={w._id}>{w.name}</option>
         )
     })}
-    </Form.Select>
+</Form.Select>
     <Form.Select value={asceanState.weapon_two}  onChange={handleWeaponTwo}>
         <option>Weapon or Spell Two</option>
     {weapons.map((w: any) => {
