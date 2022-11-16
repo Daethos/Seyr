@@ -11,18 +11,20 @@ module.exports = {
 }
 
 async function accessChat(req, res) {
-    const { userId } = req.body;
-    if (!userId) {
-        console.log("UserId Param not sent w/ Request")
-        res.status(400).json({ err });
-    }
-    console.log('We have a userID?')
+    console.log(req.params.id, 'Do we have a params.id?')
+    // const { userId } = req.params.id;
+    // console.log(userId, 'Did this copy over?')
+    // if (!userId) {
+    //     console.log("UserId Param not sent w/ Request")
+    //     res.status(400).json({ err });
+    // }
+    console.log('We have a userID?', req.params.id)
     
     let isChat = await Chat.find({
         isGroupChat: false,
         $and: [
             { users: { $elemMatch: { $eq: req.user._id } } },
-            { users: { $elemMatch: { $eq: userId } } },
+            { users: { $elemMatch: { $eq: req.params.id } } },
         ],
     })
     .populate("users", "-password")
@@ -34,13 +36,13 @@ async function accessChat(req, res) {
     });
 
     if (isChat.length > 0) {
-        res.send(isChat[0]);
+        res.status(200).json(isChat[0]);
         // res.status(200).json({ data: isChat[0] })
     } else {
         let chatData = {
             chatName: 'sender',
             isGroupChat: false,
-            users: [req.user._id, userId],
+            users: [req.user._id, req.params.id],
         };
 
         try {
@@ -50,7 +52,7 @@ async function accessChat(req, res) {
 
             res.status(200).json({ data: FullChat })
         } catch (err) {
-            res.status(400).json({ err });
+            res.status(400).json({ err: 'Error Accessing Chat in the Controller' });
         }
         
         
@@ -58,7 +60,6 @@ async function accessChat(req, res) {
 }
 
 async function fetchChat(req, res) {
-    console.log('Fetching Chat')
     try {
         Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
             .populate("users", "-password")

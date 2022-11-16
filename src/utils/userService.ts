@@ -56,10 +56,22 @@ function login(creds: any) {
   .then(({token}) => tokenService.setToken(token));
 }
 
+function searchUser(search: string) {
+  return fetch(`/api/users?search=` + search, {
+    headers: {
+      Authorization: "Bearer " + tokenService.getToken()
+    } 
+  }).then(res => {
+    if (res.ok) return res.json();
+    throw new Error('Error Searching Users in UserService')
+  })
+}
+
 export default {
   signup, 
   logout,
   login,
   getUser,
-  getProfile
+  getProfile,
+  searchUser
 };

@@ -9,6 +9,7 @@ html, body {
   font-family: 'Cinzel';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* color: #fdf6d8; */
 }
 .signup-button {
   width: 75%;
@@ -295,3 +296,106 @@ html, body {
   transform: scale(1.1);
 }
 
+.Game-Lobby-Chat {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: #fdf6d8;
+}
+/* .message-content {
+  color: #fdf6d8;
+}
+.message-meta {
+  color: #fdf6d8;
+} */
+.Chat-Window p {
+  margin: 0;
+}
+.Chat-Window .Chat-Header {
+  /* height: 45px; */
+  border-radius: 6px;
+  background: #770089;
+  position: relative;
+  cursor: pointer;
+}
+
+.Chat-Window .Chat-Body {
+  width: 100%;
+  height: calc(450px - (45px + 70px));
+  background: black;
+  border: 1px solid purple;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+}
+.Chat-Window .Chat-Body .message {
+  height: auto;
+  padding: 10px;
+  display: flex;
+}
+.Chat-Window .Chat-Body .message .message-content {
+  width: auto;
+  height: auto;
+  /* min-height: 40px; */
+  max-width: 200px;
+  background-color: #6b00a4;
+  border-radius: 5px;
+  align-items: center;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 5px;
+  /* padding-right: 5px;
+  padding-left: 5px; */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.Chat-Window .Chat-Body .message-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.Chat-Window .Chat-Body .message-container::-webkit-scrollbar {
+  display: none;
+}
+#you {
+  justify-content: flex-end;
+}
+#you .message-content {
+  justify-content: flex-end;
+}
+#you .message-meta {
+  justify-content: flex-end;
+  margin-right: 5px;
+}
+#other {
+  justify-content: flex-start;
+}
+#other .message-content {
+  justify-content: flex-start;
+  background-color: #a6a101;
+}
+#other .message-meta {
+  justify-content: flex-start;
+  margin-left: 5px;
+}
+.message-meta #author {
+  margin-left: 10px;
+  font-weight: bold;
+}
+.Chat-Window .Chat-Body .message .message-meta {
+  display: flex;
+  font-size: 10px;
+}
+.Chat-Window .chat-footer button {
+  border: 0;
+  /* display: grid; */
+  place-items: center;
+  cursor: pointer;
+  /* font-weight: 700; */
+  /* font-size: 18px; */
+  
+}
+.side-drawer {
+  color: #fdf6d8;
+}

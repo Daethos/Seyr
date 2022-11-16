@@ -4,16 +4,17 @@ import './index.css';
 import App from './pages/App/App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom';
+import ChatProvider from './context/ChatProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  //<React.StrictMode>
-    <Router>
+  <Router>
+      {/* <ChatProvider> */}
       <App />
+  {/* </ChatProvider> */}
     </Router>
-  //</React.StrictMode>
 );
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
