@@ -80,18 +80,21 @@ async function fetchChat(req, res) {
 }
 
 async function createGroupChat(req, res) {
+    console.log('Are we creating a group chat?')
     if (!req.body.users || !req.body.name) {
         res.status(400).json({ message: 'Please fill out all the fields' });
     }
 
-    let users = JSON.parse(req.body.users);
+    let users = req.body.users
+    // users.push(req.user)
+    // let users = JSON.parse(req.body.users);
 
-    if (users.length < 2) {
-        return res.status(400).send("More than 2 Users are Required to Form a Group Chat")
-    }
+    // if (users.length < 2) {
+    //     return res.status(400).send("More than 2 Users are Required to Form a Group Chat")
+    // }
 
     users.push(req.user);
-
+    console.log(users, 'Users in Controller')
     try {
         const groupChat = await Chat.create({
             chatName: req.body.name,

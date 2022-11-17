@@ -28,3 +28,65 @@ export function fetchChat() {
         throw new Error(res.error);
     });
 }
+
+export function createGroupChat(groupData: any) {
+    console.log(groupData, 'We are in the chatAPI')
+    return fetch (BASE_URL + `group`, {
+        method: 'POST',
+        body: JSON.stringify(groupData),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+}
+
+export function renameGroup(groupName: object) {
+    console.log(groupName, 'New group name in chatAPI')
+    return fetch (BASE_URL + `rename`, {
+        method: 'PUT',
+        body: JSON.stringify(groupName),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+}
+
+export function addToGroup(user: object) {
+    return fetch (BASE_URL + `groupadd`, {
+        method: 'PUT',
+        body: JSON.stringify(user),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+}
+
+export function removeFromGroup(user: object) {
+    return fetch (BASE_URL + `groupremove`, {
+        method: 'PUT',
+        body: JSON.stringify(user),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+}

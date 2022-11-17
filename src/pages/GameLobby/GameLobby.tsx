@@ -14,6 +14,7 @@ import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
 import userService from "../../utils/userService";
 import UserListItem from '../../components/Chat/UserListItem';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+import Toast from 'react-bootstrap/Toast';
 
 let socket: any;
 // const socket: any = io.connect("http://localhost:3001")
@@ -31,6 +32,7 @@ const GameLobby = ({ user }: Props) => {
     const [room, setRoom] = useState<any>("")
     const [showChat, setShowChat] = useState<boolean>(false)
     const [socketConnected, setSocketConnected] = useState<boolean>(false)
+    const [fetchAgain, setFetchAgain] = useState<boolean>(false)
 
     // const [search, setSearch] = useState("")
     const [searchResult, setSearchResult] = useState([])
@@ -142,8 +144,13 @@ const GameLobby = ({ user }: Props) => {
     return (
         <Container className="Game-Lobby-Chat">
             <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />
-            <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} />
-            <ChatBox user={user} selectedChat={selectedChat} />
+            {
+                selectedChat ?
+                <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                : 
+                <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
+                
+            }
             
 
 

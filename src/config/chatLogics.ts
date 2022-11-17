@@ -38,12 +38,14 @@ export const isSameSenderMargin = (messages: string | any[], m: { sender: { _id:
     return i > 0 && messages[i - 1].sender._id === m.sender._id;
   };
   
-  export const getSender = (loggedUser: { _id: any; }, users: {
-      [x: string]: any; name: any; 
-}[]) => {
-    return users[0]._id === loggedUser._id ? users[1].name : users[0].name;
+  export const getSender = (loggedUser: { _id: any; }, users: any[]) => {
+    // console.log(loggedUser, users[0].username, 'Logged User and the Users')
+    return users[0]._id === loggedUser._id 
+    ? users[1].username.charAt(0).toUpperCase() + users[1].username.slice(1) 
+    : users[0].username.charAt(0).toUpperCase() + users[0].username.slice(1);
   };
   
   export const getSenderFull = (loggedUser: { _id: any; }, users: any[]) => {
+    console.log(loggedUser, users, 'Are we hitting the Full Sender?')
     return users[0]._id === loggedUser._id ? users[1] : users[0];
   };
