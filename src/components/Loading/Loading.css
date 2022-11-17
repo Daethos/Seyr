@@ -53,3 +53,9 @@
     margin-top: -12.5%;
     top: 50%;
 }
+
+#loading-spinner-message {
+    position: absolute;
+    margin-left: 75%;
+    margin-top: -8.5%;
+}

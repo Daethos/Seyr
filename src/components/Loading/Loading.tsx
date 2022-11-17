@@ -24,7 +24,7 @@ export default function Loading({ NavBar, Messages, Chat, Combat, chatMessages, 
                 : Chat 
                 ? <Spinner animation="border" variant="warning" id="loading-spinner-chat"  />
                 : Modal ?
-                <Spinner animation="border" variant="danger" id="loading-spinner-nav" />
+                <Spinner animation="border" variant="danger" id="loading-spinner-message" />
                 :
                 Messages 
                 ?

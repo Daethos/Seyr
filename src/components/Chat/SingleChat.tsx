@@ -38,7 +38,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
     const [loading, setLoading] = useState<boolean>(false)
     const toast = Toast
     useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com") // "http://localhost:3001" When Tinkering Around
+        socket = io.connect("https://ascea.herokuapp.com") 
+        // "http://localhost:3001" When Tinkering Around 
+        // "https://ascea.herokuapp.com" When Deploying
         socket.emit("setup", user);
         socket.on("Connected", () => setSocketConnected(true))
 
@@ -174,9 +176,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                 </Modal.Body>
             </Modal>
             </h3>
-            { loading ?
-                <Loading chatMessages={true} />
-                : 
+            
                 <div className='Chat-Window'>
                 <div className='Chat-Header my-2'>Live Chat</div>
                 <ScrollableChat user={user} messages={messages} isTyping={isTyping} />
@@ -188,11 +188,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                 value={newMessage} onChange={typingHandler} required
                 onKeyPress={(e) => { e.key === "Enter" && sendMessage() }}
                 />
-
+            { loading ?
+                <Loading Modal={true} />
+                : 
             <Button variant="" style={{ float: 'right', background: 'black', fontSize: 18 + 'px', marginLeft: 5 + 'px', marginTop: -10.5 + '%', color: 'red', border: 2 + 'px' + ' solid ' + 'red' }} onClick={sendMessage}>Submit</Button>
-            </div>
-            </div>
             }
+            </div>
+            </div>
             </>
             ) : (
                 ''
