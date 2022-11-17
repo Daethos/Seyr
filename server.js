@@ -46,6 +46,7 @@ app.use('/api/friends', require('./routes/api/friends'));
 app.use('/api/message', require('./routes/api/message'));
 app.use('/api', require('./routes/api/feelings'));
 app.use('/api/chat', require('./routes/api/chat'));
+app.use('/api/chatMessages', require('./routes/api/chatMessages'));
 
 // "catch all" route
 app.get('/*', function(req, res) {
