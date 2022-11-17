@@ -137,13 +137,13 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
                         )
                     }
 
-                    <Button type='submit' variant='warning' size='lg' className='my-3'
+                    <Button type='submit' variant='outline-warning' size='lg' className='my-3'
                     style={{ 
                         fontWeight: 550, 
                         fontVariant: 'small-caps', 
-                        color: 'purple', 
+                        color: 'red', 
                         fontSize: 20 + 'px',
-                        border: 2 + 'px' + ' solid ' + 'purple' 
+                        border: 2 + 'px' + ' solid ' + 'red' 
                     }}>Create Chat</Button>
                 </Form>
             </Modal.Body>

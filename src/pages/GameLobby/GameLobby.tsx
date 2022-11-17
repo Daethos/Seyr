@@ -23,6 +23,8 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { PopoverHeader } from 'react-bootstrap';
 import Notifications from '../../components/Chat/Notifications';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 let socket: any;
 let selectedChatCompare;
@@ -41,7 +43,7 @@ const GameLobby = ({ user }: Props) => {
     const [fetchAgain, setFetchAgain] = useState<boolean>(false)
     const [notification, setNotification] = useState<any>([])
     const [searchResult, setSearchResult] = useState([])
-    const [selectedChat, setSelectedChat] = useState([])
+    const [selectedChat, setSelectedChat] = useState<any>([])
     const [loadingChat, setLoadingChat] = useState(false)
     const [chats, setChats] = useState<any>([])
 
@@ -122,12 +124,28 @@ const GameLobby = ({ user }: Props) => {
     // }
     return (
         <Container className="Game-Lobby-Chat">
-            <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />
+            <Tabs defaultActiveKey="Chat Groups" id="justify-tab-example" className="mb-3" justify >
+            <Tab eventKey="home"
+            title={<SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />}>
+                {/* <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} /> */}
+            </Tab>
+            {/* <Tab eventKey="Chat Groups" 
+            title={<MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />}>
+            </Tab> */}
+                {/* <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} /> */}
+            <Tab eventKey="longer-tab" 
+            title={<Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />}>
+            {/* <Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} /> */}
+            </Tab>
+            </Tabs>
+                {
+                    selectedChat?._id ?
+                    <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                    :
+                    <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
+                }
                 
-            <Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />
 
-            <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
-            <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
 
             
 

@@ -314,7 +314,11 @@ html, body {
 .Chat-Window .Chat-Header {
   /* height: 45px; */
   border-radius: 6px;
-  background: #770089;
+  /* background: #770089; */
+  color: #770089;
+  font-size: 18px;
+  font-weight: 600;
+  border: 2px solid #770089;
   position: relative;
   cursor: pointer;
 }
@@ -450,4 +454,7 @@ html, body {
 }
 .dropdown-toggle::after {
   display: none !important;
+}
+.nav-tabs .nav-link {
+  background-color: transparent !important;
 }

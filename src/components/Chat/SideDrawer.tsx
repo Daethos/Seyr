@@ -32,7 +32,7 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
 
     const renderTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
         <Tooltip id="button-tooltip" {...props}>
-          Create or Find Current Group
+          Search Users to Chat
         </Tooltip>
       );
 
