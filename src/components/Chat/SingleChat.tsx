@@ -38,7 +38,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
     const [loading, setLoading] = useState<boolean>(false)
     const toast = Toast
     useEffect(() => {
-        socket = io.connect("http://localhost:3001")
+        socket = io.connect("https://ascea.herokuapp.com") // "http://localhost:3001" When Tinkering Around
         socket.emit("setup", user);
         socket.on("Connected", () => setSocketConnected(true))
 
