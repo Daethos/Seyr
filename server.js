@@ -101,6 +101,33 @@ io.on("connection", (socket) => {
     socket.emit("Connected");
   })
 
+   socket.on("join_chat", (room) => {
+      socket.join(room)
+      console.log("User Joined Room: " + room)
+   });
+
+   socket.on('typing', (room) => socket.in(room).emit('typing'))
+   socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'))
+
+   socket.on("new_message", (newMessageReceived) => {
+    let chat = newMessageReceived.chat;
+
+    if (!chat.users) return console.log('Chat.Users is not defined')
+
+    chat.users.forEach(user => {
+      if (user._id === newMessageReceived.sender._id) return
+
+      socket.in(user._id).emit("message_received", newMessageReceived);
+    })
+   });
+
+
+
+
+
+
+
+  // THIS IS FOR NON SAVEABLE CHAT
   socket.on("join_room", (room) => {
     socket.join(room);
     // console.log(room.user.use, 'New Player Joining')
@@ -112,8 +139,12 @@ io.on("connection", (socket) => {
     console.log(data);
   })
 
-  socket.on("disconnect", () => {
-    console.log('User Disconnected', socket.id);
-  });
+  // socket.on("disconnect", () => {
+  //   console.log('User Disconnected', socket.id);
+  // });
 
+  socket.off("setup", () => {
+    console.log('User Disonnected');
+    socket.leave(userData._id);
+  });
 });

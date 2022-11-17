@@ -15,8 +15,9 @@ interface Props {
     user: any;
     selectedChat: any;
     setSelectedChat: any;
+    fetchMessages: any;
 }
-const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelectedChat }: Props) => {
+const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelectedChat, fetchMessages }: Props) => {
     const [modalShow, setModalShow] = useState(false)
     const [groupChatName, setGroupChatName] = useState('')
     const [selectedUsers, setSelectedUsers] = useState<any>([])
@@ -126,7 +127,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
             userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(response.data)
             // setSelectedChat(response.data)
             setFetchAgain(!fetchAgain)
-
+            fetchMessages();
             setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error Adding User to Group')

@@ -1,6 +1,7 @@
 import { RefAttributes, useEffect, useState } from 'react'
 import * as asceanAPI from '../../utils/asceanApi';
 import * as chatAPI from '../../utils/chatApi'
+import * as chatLogic from '../../config/chatLogics'
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
 import * as io from 'socket.io-client'
@@ -9,15 +10,21 @@ import { ChatState } from '../../context/ChatProvider'
 import SideDrawer from '../../components/Chat/SideDrawer';
 import MyChats from '../../components/Chat/MyChats';
 import ChatBox from '../../components/Chat/ChatBox';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
 import userService from "../../utils/userService";
 import UserListItem from '../../components/Chat/UserListItem';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Toast from 'react-bootstrap/Toast';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import { PopoverHeader } from 'react-bootstrap';
+import Notifications from '../../components/Chat/Notifications';
 
 let socket: any;
-// const socket: any = io.connect("http://localhost:3001")
 let selectedChatCompare;
 
 interface Props {
@@ -31,23 +38,13 @@ const GameLobby = ({ user }: Props) => {
     const [ascean, setAscean] = useState<any>({})
     const [room, setRoom] = useState<any>("")
     const [showChat, setShowChat] = useState<boolean>(false)
-    const [socketConnected, setSocketConnected] = useState<boolean>(false)
     const [fetchAgain, setFetchAgain] = useState<boolean>(false)
-
-    // const [search, setSearch] = useState("")
+    const [notification, setNotification] = useState<any>([])
     const [searchResult, setSearchResult] = useState([])
     const [selectedChat, setSelectedChat] = useState([])
     const [loadingChat, setLoadingChat] = useState(false)
     const [chats, setChats] = useState<any>([])
-    // const [show, setShow] = useState(false);
-    // const handleClose = () => setShow(false);
-    // const handleShow = () => setShow(true);
 
-    useEffect(() => {
-        socket = io.connect("http://localhost:3001")
-        socket.emit("setup", user);
-        socket.on("connection", () => setSocketConnected(true))
-    }, [])
 
     useEffect(() => {
         getUserAscean();
@@ -61,8 +58,6 @@ const GameLobby = ({ user }: Props) => {
         console.log(response[0], 'Response in Filtering Ascean')
         setAscean(response[0])
     }, [username])
-    
-
 
     const getUserAscean = async () => {
         try {
@@ -83,9 +78,7 @@ const GameLobby = ({ user }: Props) => {
       );
 
     const handleSearch = async (search: string) => {
-        if (!search) {
-            return
-        }
+        if (!search) return
         try {
             setLoading(true)
             const response = await userService.searchUser(search);
@@ -98,43 +91,29 @@ const GameLobby = ({ user }: Props) => {
         }
     }
 
-    // const accessChat = async (userId: string) => {
-
-    //     try {
-    //         setLoadingChat(true)
-    //         const response = await chatAPI.accessChat(userId)
-    //         console.log(response, 'Response Accessing or Creating Chat')
-    //         if (!chats.find((c: { _id: any; }) => c._id === response._id)) setChats([response.data, ...chats])
-
-    //         console.log(response.data, 'Response in Accessing Chat')
-    //         setSelectedChat(response.data)
-    //         setLoadingChat(false)
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Accessing Chat')
+    // const joinRoom = () => {
+    //     if (username !== '' && room !== '') {
+    //         console.log(`Connecting to Room: ${room}`)
+    //         // console.log(socket.io)
+    //         socket.emit("join_room", room)
+    //         socket.on("join_room", () => {
+    //             console.log('Socket working on the Front-End inside room: ' + room)
+    //         })
+    //         setShowChat(true)
     //     }
     // }
 
-    const joinRoom = () => {
-        if (username !== '' && room !== '') {
-            console.log(`Connecting to Room: ${room}`)
-            // console.log(socket.io)
-            socket.emit("join_room", room)
-            socket.on("join_room", () => {
-                console.log('Socket working on the Front-End inside room: ' + room)
-            })
-            setShowChat(true)
-        }
-    }
-
-    function handleRoom(e: any) {
-        console.log(e.target.value)
-        setRoom(e.target.value)
-    }
+    // function handleRoom(e: any) {
+    //     console.log(e.target.value)
+    //     setRoom(e.target.value)
+    // }
 
     function handleAscean(e: any) {
         console.log(e.target.value, 'What do we have here?')
         setUsername(e.target.value)
     }
+
+    
 
     // if (loading) {
     //     return (
@@ -143,14 +122,13 @@ const GameLobby = ({ user }: Props) => {
     // }
     return (
         <Container className="Game-Lobby-Chat">
-            <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />
-            {
-                selectedChat ?
-                <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-                : 
-                <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
+            <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />
                 
-            }
+            <Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />
+
+            <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
+            <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+
             
 
 

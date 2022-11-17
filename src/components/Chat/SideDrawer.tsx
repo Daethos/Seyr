@@ -10,18 +10,16 @@ import UserListItem from './UserListItem';
 
 interface Props {
     handleSearch: Function;
-    // accessChat: (userId: string) => Promise<void>;
     searchResult: any;
     loading: boolean;
     setSelectedChat: React.Dispatch<React.SetStateAction<never[]>>;
     chats: any;
     setChats: any;
-    // loadingChat: boolean;
-    // search: string; 
-    // setSearch: any;
+    notification: any[];
+    setNotification: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setSelectedChat }: Props) => {
+const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setSelectedChat, notification, setNotification }: Props) => {
     const [search, setSearch] = useState("")
     // const [searchResult, setSearchResult] = useState([])
     // const [selectedChat, setSelectedChat] = useState([])
@@ -83,7 +81,7 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
         </OverlayTrigger>
 
         <Offcanvas show={show} onHide={handleClose} id="offcanvas">
-        <Offcanvas.Header closeButton>
+        <Offcanvas.Header closeButton closeVariant='white'>
         <Offcanvas.Title className=''><Button variant="" onClick={handleClose} style={{ color: '#fdf6d8' }}>Chat Groups</Button></Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body style={{ color: '#fdf6d8' }}>

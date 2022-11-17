@@ -12,7 +12,7 @@ interface ShieldProps {
 const ShieldsCard = ({ shield, index, userProfile }: ShieldProps) => {
     const shieldPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h3">{shield.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield.imgURL} alt={shield.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {shield.constitution > 0 ? 'CON: +' + shield.constitution + ' ' : ''}
                 {shield.strength > 0 ? 'STR: +' + shield.strength + ' ' : ''}

@@ -319,14 +319,58 @@ html, body {
   cursor: pointer;
 }
 
-.Chat-Window .Chat-Body {
+.Chat-Body {
   width: 100%;
   height: calc(450px - (45px + 70px));
   background: black;
-  border: 1px solid purple;
+  border: 2px solid purple;
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
+}
+#Chat-Body {
+  width: 100%;
+  height: calc(500px - (45px + 70px));
+  background: black;
+  border: 2px solid purple;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+}
+#Chat-Body .message {
+  height: auto;
+  padding: 10px;
+  display: flex;
+}
+#Chat-Body .message .message-content {
+  width: auto;
+  height: auto;
+  /* min-height: 40px; */
+  max-width: 200px;
+  background-color: #430067;
+  border-radius: 5px;
+  align-items: center;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 5px;
+  font-size: 16px;
+  /* padding-right: 5px;
+  padding-left: 5px; */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+#Chat-Body .message-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#Chat-Body .message-container::-webkit-scrollbar {
+  display: none;
+}
+#Chat-Body .message .message-meta {
+  display: flex;
+  font-size: 10px;
 }
 .Chat-Window .Chat-Body .message {
   height: auto;
@@ -371,9 +415,10 @@ html, body {
 #other {
   justify-content: flex-start;
 }
-#other .message-content {
+#Chat-Body #other .message-content {
   justify-content: flex-start;
-  background-color: #a6a101;
+  background-color: #9e9901;
+  color: black;
 }
 #other .message-meta {
   justify-content: flex-start;
@@ -398,4 +443,11 @@ html, body {
 }
 .side-drawer {
   color: #fdf6d8;
+}
+
+#dropdown-basic-button-toggle:after {
+  display: none;
+}
+.dropdown-toggle::after {
+  display: none !important;
 }

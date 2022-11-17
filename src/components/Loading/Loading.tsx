@@ -10,8 +10,10 @@ interface Props {
     Messages?: boolean
     Chat?: boolean
     Combat?: boolean;
+    chatMessages?: boolean;
+    Modal?: boolean;
 }
-export default function Loading({ NavBar, Messages, Chat, Combat }: Props) {
+export default function Loading({ NavBar, Messages, Chat, Combat, chatMessages, Modal }: Props) {
     // Try a different size than xs={12} for perhaps more interesting resutls! Maybe other colors
     return (
         <Container>
@@ -21,7 +23,11 @@ export default function Loading({ NavBar, Messages, Chat, Combat }: Props) {
                 ? <Spinner animation="border" variant="warning" id="loading-spinner-nav" />
                 : Chat 
                 ? <Spinner animation="border" variant="warning" id="loading-spinner-chat"  />
-                : Messages ?
+                : Modal ?
+                <Spinner animation="border" variant="danger" id="loading-spinner-nav" />
+                :
+                Messages 
+                ?
                 <Col className="stat-block wide" id="message-loading">
                 <hr className="orange-border" />
                 <div className="section-left">
@@ -103,7 +109,42 @@ export default function Loading({ NavBar, Messages, Chat, Combat }: Props) {
     
                 <hr className="orange-border bottom" />
             </Col>
-                : Combat ? <Spinner animation="border" variant="warning" id="loading-spinner-combat" /> :
+                : 
+                chatMessages ? <>
+                <Col className="stat-block wide" id="message-loading" style={{ background: 'black' }}>
+                <hr className="orange-border" />
+                <div className="section-left">
+                <div className="actions mt-3">
+                    <Placeholder  animation="glow" style={{ color: 'white' }}>
+                        <Placeholder bg="light" xs={7} /> <Placeholder bg="light" xs={4} /> 
+                          <Placeholder bg="light" xs={3} /> <Placeholder xs={6} bg="light" />{' '}
+                        <Placeholder xs={4} bg="light" />  <Placeholder bg="light" xs={2} /> <Placeholder xs={4} bg="light" />
+                    </Placeholder><br /><br /><br /><br />
+
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="light" xs={3} /> <Placeholder bg="light" xs={4} /> <Placeholder bg="light" xs={3} />{' '}
+                        <Placeholder xs={2} bg="light" />  <Placeholder bg="light" xs={3} /> <Placeholder xs={4} bg="light" />
+                        {' '}
+                    </Placeholder><br /><br /><br /><br />
+                
+                    <Placeholder  animation="glow">
+                        <Placeholder bg="light" xs={5} /> <Placeholder bg="light" xs={2} /> <Placeholder bg="light" xs={3} />{' '}
+                        <Placeholder xs={6} bg="light" />  <Placeholder bg="light" xs={3} /> <Placeholder xs={4} bg="light" />
+                        
+                    </Placeholder><br /><br /><br /><br />
+                </div>
+                </div>
+                <hr className="orange-border bottom" />
+            </Col>
+                {/* <Placeholder  animation="glow" className='mt-1'>
+            
+                        <Placeholder bg="light" xs={9} size="lg" /> <Placeholder xs={2} bg="light" size="lg" />
+                        
+                    </Placeholder> */}
+                    </>
+                :
+                Combat ? 
+                <Spinner animation="border" variant="warning" id="loading-spinner-combat" /> :
                 <Col className="stat-block wide">
                 <hr className="orange-border" />
                 <div className="section-left">

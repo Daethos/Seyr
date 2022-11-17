@@ -8,6 +8,7 @@ module.exports = {
 }
 
 async function sendMessage(req, res) {
+    console.log(req.body, 'Message Content and Chat ID?')
     const { content, chatId } = req.body
     
     if (!content || !chatId) {
@@ -19,17 +20,17 @@ async function sendMessage(req, res) {
         content: content,
         chat: chatId
     }
-
+    console.log(newMessage, 'New Message in Controller')
     try {
-        const message = await Message.create(newMessage)
-
+        let message = await Message.create(newMessage)
         message = await message.populate('sender', 'username photoUrl')
         message = await message.populate('chat')
         message = await User.populate(message, {
             path: 'chat.users',
             select: 'username email photoUrl',
         })
-
+        
+        console.log(message, 'Message Updated?')
         await Chat.findByIdAndUpdate(req.body.chatId, {
             latestMessages: message
         });
@@ -41,7 +42,7 @@ async function sendMessage(req, res) {
 }
 
 async function allMessages(req, res) {
-
+    console.log(req.params.chatId, 'Did we make it to the Controller?')
     try {
         const messages = await Message.find({ chat: req.params.chatId })
                                         .populate('sender', 'username email photoUrl')

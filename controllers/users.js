@@ -14,7 +14,8 @@ module.exports = {
   signup,
   login,
   profile,
-  allUsers
+  allUsers,
+  updateUser
 };
 
 async function profile(req, res) {
@@ -133,6 +134,19 @@ async function allUsers(req, res) {
   res.send(users);
 }
 
+async function updateUser(req, res) {
+  // const { username, email } = req.body;
+  const { username } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      username}, { new: true })
+    // await user.save();
+    res.status(200).json({ data: user })
+  } catch (err) {
+    res.status(400).json({ err: 'Error Updating User in Controller' })
+  }
+}
 
 /*----- Helper Functions -----*/
 

@@ -17,13 +17,15 @@ interface Props {
     fetchAgain: boolean;
     setFetchAgain: React.Dispatch<React.SetStateAction<boolean>>;
     setSelectedChat: any;
+    notification: any[];
+    setNotification: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const ChatBox = ({ user, selectedChat, setSelectedChat, fetchAgain, setFetchAgain }: Props) => {
+const ChatBox = ({ user, selectedChat, setSelectedChat, fetchAgain, setFetchAgain, notification, setNotification }: Props) => {
     const [modalShow, setModalShow] = useState(false)
     const [loading, setLoading] = useState<boolean>(false)
 
-    
+
 
     return (
         <>
@@ -47,7 +49,7 @@ const ChatBox = ({ user, selectedChat, setSelectedChat, fetchAgain, setFetchAgai
             </svg>
             </Button>
             </h3> */}
-            <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
+            <SingleChat notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
         </>  
     )
 }

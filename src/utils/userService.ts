@@ -31,6 +31,21 @@ function signup(user: any) {
   // The above could have been written as .then((token) => token.token);
 }
 
+function updateUser(user: object) {
+  return fetch (BASE_URL + 'update', {
+    method: 'PUT',
+    body: JSON.stringify(user),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + tokenService.getToken()
+    }
+  })
+  .then((res) => {
+    if (res.ok) return res.json()
+    throw new Error('Error Updating User')
+  })
+}
+
 function getUser() {
   return tokenService.getUserFromToken();
 }
@@ -73,5 +88,6 @@ export default {
   login,
   getUser,
   getProfile,
-  searchUser
+  searchUser,
+  updateUser
 };
