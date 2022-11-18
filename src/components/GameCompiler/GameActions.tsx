@@ -35,8 +35,8 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
   }, [currentAction, currentCounter])
 
   useEffect(() => {
-    console.log('Displaying new weapon ', currentWeapon.name)
-    setDisplayedAction(`Main Weapon: ${currentWeapon.name}`)
+    console.log('Displaying new weapon ', currentWeapon?.name)
+    setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
   }, [currentWeapon])
 
 

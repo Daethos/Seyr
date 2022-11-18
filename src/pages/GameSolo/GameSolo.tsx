@@ -312,18 +312,18 @@ const GameSolo = ({ user }: GameProps) => {
     const combatDataCompiler = async () => {
         setLoadingAscean(true)
         try {
-            setCombatData({
-                ...combatData,
-                'player_health': currentPlayerHealth,
-                'current_player_health': currentPlayerHealth,
-                'new_player_health': currentPlayerHealth,
-                'weapons': [weaponOne, weaponTwo, weaponThree],
-                'weapon_one': weaponOne,
-                'weapon_two': weaponTwo,
-                'weapon_three': weaponThree,
-                'player_defense': playerDefense,
-                'player_attributes': attributes
-            })
+            // setCombatData({
+            //     ...combatData,
+            //     'player_health': currentPlayerHealth,
+            //     'current_player_health': currentPlayerHealth,
+            //     'new_player_health': currentPlayerHealth,
+            //     'weapons': [weaponOne, weaponTwo, weaponThree],
+            //     'weapon_one': weaponOne,
+            //     'weapon_two': weaponTwo,
+            //     'weapon_three': weaponThree,
+            //     'player_defense': playerDefense,
+            //     'player_attributes': attributes
+            // })
             setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
@@ -523,7 +523,7 @@ const GameSolo = ({ user }: GameProps) => {
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
-            <GameAscean ascean={opponent} loading={loading} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+            <GameAscean ascean={opponent} loading={loadingAscean} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -539,7 +539,7 @@ const GameSolo = ({ user }: GameProps) => {
             />
             { loadingAscean 
                 ? <Loading Combat={true} /> 
-                : <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />
+                : <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
             }
             
             { playerWin || computerWin ? '' :

@@ -24,9 +24,6 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
     const [searchResult, setSearchResult] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<any>({})
-    // Need TO use Toast Here for issues and errors
-
-    
 
     const handleSearch = async (query: string) => {
         console.log(query, 'The search is on!')
@@ -91,11 +88,6 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
         )
     }
 
-    // if (loading) {
-    //     return (
-    //         <Loading Combat={true} />
-    //     )
-    // }
     return (
         <span style={{ float: 'right' }}>
             <Button variant='' style={{ color: '#fdf6d8', marginTop: -10 + 'px' }} onClick={() => setModalShow(true)}>

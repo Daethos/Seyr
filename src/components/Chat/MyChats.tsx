@@ -1,19 +1,10 @@
 import { RefAttributes, useEffect, useState } from 'react'
-import ScrollToBottom from 'react-scroll-to-bottom'
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import * as chatAPI from "../../utils/chatApi";
 import Loading from '../../components/Loading/Loading';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
-import userService from "../../utils/userService";
-import UserListItem from './UserListItem';
-import Offcanvas from 'react-bootstrap/Offcanvas';
-import { Link } from 'react-router-dom';
 import * as chatLogic from '../../config/chatLogics'
-import Modal from 'react-bootstrap/Modal';
 import GroupChatModal from './GroupChatModal';
-
 
 interface Props {
     selectedChat: any;
@@ -29,8 +20,6 @@ interface Props {
 const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAgain, error, setError }: Props) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    const [modalShow, setModalShow] = useState(false)
 
     const fetchChats = async () => {
         try {
@@ -65,7 +54,6 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
             chats 
             ? (
                 chats?.map((chat: any, index: number) => {
-                    // console.log(chat, 'chat found in Search')
                     return (
                         <div className="friend-block my-2" key={index}>
                             <span id='friend-card'>

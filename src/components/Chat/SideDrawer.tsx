@@ -1,11 +1,10 @@
-import { RefAttributes, useEffect, useState } from 'react'
+import { RefAttributes, useState } from 'react'
 import * as chatAPI from '../../utils/chatApi'
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Button from 'react-bootstrap/Button';
 import Loading from '../../components/Loading/Loading';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
-import userService from "../../utils/userService";
 import UserListItem from './UserListItem';
 
 interface Props {
@@ -21,11 +20,7 @@ interface Props {
 
 const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setSelectedChat, notification, setNotification }: Props) => {
     const [search, setSearch] = useState("")
-    // const [searchResult, setSearchResult] = useState([])
-    // const [selectedChat, setSelectedChat] = useState([])
-    // const [loading, setLoading] = useState<boolean>(false)
     const [loadingChat, setLoadingChat] = useState(false)
-    // const [chats, setChats] = useState([])
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -36,22 +31,6 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
         </Tooltip>
       );
 
-    // const handleSearch = async () => {
-    //     if (!search) {
-    //         return
-    //     }
-    //     try {
-    //         setLoading(true)
-    //         const response = await userService.searchUser(search);
-    //         console.log(response)
-
-    //         setLoading(false)
-    //         setSearchResult(response)
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Searching for Users')
-    //     }
-    // }
-
     const accessChat = async (userId: string) => {
 
         try {
@@ -59,7 +38,6 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
             const response = await chatAPI.accessChat(userId)
             console.log(response, 'Response Accessing or Creating Chat')
             if (!chats.find((c: { _id: any; }) => c._id === response._id)) setChats([response.data, ...chats])
-
             console.log(response, 'Response in Accessing Chat')
             setSelectedChat(response)
             setLoadingChat(false)
@@ -99,7 +77,6 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
                 <Loading Combat={true} />
                 ) : (
                     searchResult?.map((user: any, index: number) => {
-                        // console.log(user, 'User found in Search')
                         return (
                             <UserListItem key={index} user={user} accessChat={() => accessChat(user._id)} />
                         )

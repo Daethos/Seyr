@@ -19,7 +19,6 @@ interface Props {
     fetchMessages: any;
 }
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelectedChat, fetchMessages }: Props) => {
-    const [modalShow, setModalShow] = useState(false)
     const [groupChatName, setGroupChatName] = useState('')
     const [selectedUsers, setSelectedUsers] = useState<any>([])
     const [searchResult, setSearchResult] = useState<any>([])
@@ -140,89 +139,73 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
     }
   return (
     <>
-    {/* <Form onSubmit={handleSubmit}> */}
-                <ToastAlert error={error} setError={setError} />
-                    <h3 className='mb-4' style={{ color: 'red' }}>{selectedChat.chatName}</h3>
-                    {
-                        selectedChat.users.map((user: any, index: number) => {
-                            return (
-                                <UserBadgeItem key={index} user={user} handleFunction={() => handleRemove(user)} />
-                            )
-                        })
-                    }
-                    
-                    <Form.Group className='my-3' >
-                    <FloatingLabel label={`Group Name`} className="mb-3" controlId='floatingInput'>
-                        <Form.Control
-                            type='name'
-                            name='chatName'
-                            placeholder='Group Chat Name'
-                            value={groupChatName}
-                            onChange={(e) => setGroupChatName(e.target.value)}
-                            required
-                        />
-                    </FloatingLabel>
-                    <Button onClick={handleRename} variant='outline-warning' className='my-3' style={{ 
-                        fontWeight: 550, 
-                        fontVariant: 'small-caps', 
-                        color: 'purple', 
-                        fontSize: 20 + 'px',
-                        border: 2 + 'px' + ' solid ' + 'purple' 
-                    }}>
-                        Update Name
-                    </Button>
-                    </Form.Group>
-                    <Form.Group className='my-2' >
-                    <FloatingLabel label={`Add Users`} className="mb-3" controlId='floatingInput'>
-                        <Form.Control
-                            type='name'
-                            name='chatName'
-                            placeholder='Group Chat Name'
-                            onChange={(e) => handleSearch(e.target.value)}
-                        />
-                    </FloatingLabel>
-                    </Form.Group>
-                    {selectedUsers.map((u: any, index: number) => {
-                        return (
-                            <UserBadgeItem key={index} user={u} handleFunction={() => handleDelete(u)} />
-                        )
-                    })}
-                    
-                    {
-                        loading
-                        ? <Loading Combat={true} />
-                        : (
-                            searchResult?.slice(0, 4).map((user: any, index: number) => {
-                                return (
-                                    <UserListItem user={user} accessChat={() => handleAddUser(user)} key={index} />
-                                )
-                            })
-                        )
-                    }
+        <ToastAlert error={error} setError={setError} />
+        <h3 className='mb-4' style={{ color: 'red' }}>{selectedChat.chatName}</h3>
+        { selectedChat.users.map((user: any, index: number) => {
+            return (
+                <UserBadgeItem key={index} user={user} handleFunction={() => handleRemove(user)} />
+            )
+          }) 
+        }
+        <Form.Group className='my-3' >
+        <FloatingLabel label={`Group Name`} className="mb-3" controlId='floatingInput'>
+            <Form.Control
+                type='name'
+                name='chatName'
+                placeholder='Group Chat Name'
+                value={groupChatName}
+                onChange={(e) => setGroupChatName(e.target.value)}
+                required
+            />
+        </FloatingLabel>
+        <Button onClick={handleRename} variant='outline-warning' className='my-3' style={{ 
+            fontWeight: 550, 
+            fontVariant: 'small-caps', 
+            color: 'red', 
+            fontSize: 20 + 'px',
+            border: 2 + 'px' + ' solid ' + 'red' 
+        }}>
+            Update Name
+        </Button>
+        </Form.Group>
+        <Form.Group className='my-2' >
+        <FloatingLabel label={`Add Users`} className="mb-3" controlId='floatingInput'>
+            <Form.Control
+                type='name'
+                name='chatName'
+                placeholder='Group Chat Name'
+                onChange={(e) => handleSearch(e.target.value)}
+            />
+        </FloatingLabel>
+        </Form.Group>
+        {selectedUsers.map((u: any, index: number) => {
+            return (
+                <UserBadgeItem key={index} user={u} handleFunction={() => handleDelete(u)} />
+            )
+        })}
+        { loading
+            ? <Loading Combat={true} />
+            : ( searchResult?.slice(0, 4).map((user: any, index: number) => {
+                return (
+                    <UserListItem user={user} accessChat={() => handleAddUser(user)} key={index} />
+                )
+            }) )
+        }
 
-                    {/* <Button type='submit' variant='outline-warning' size='lg' className='my-3'
-                    style={{ 
-                        fontWeight: 550, 
-                        fontVariant: 'small-caps', 
-                        color: 'purple', 
-                        fontSize: 20 + 'px',
-                        border: 2 + 'px' + ' solid ' + 'purple' 
-                    }}>Create Chat</Button> */}
-                    <br />
-                    <Button variant='outline-warning' 
-                    onClick={() => handleRemove(user)}
-                    className='mt-5'
-                    style={{ 
-                        float: 'right',
-                        fontWeight: 550, 
-                        fontVariant: 'small-caps', 
-                        color: 'red', 
-                        fontSize: 15 + 'px',
-                        border: 2 + 'px' + ' solid ' + 'red' 
-                    }}>
-                        Leave Group
-                    </Button>
-                {/* </Form> */}
+        <br />
+        <Button variant='outline-warning' 
+        onClick={() => handleRemove(user)}
+        className='mt-5'
+        style={{ 
+            float: 'right',
+            fontWeight: 550, 
+            fontVariant: 'small-caps', 
+            color: 'red', 
+            fontSize: 15 + 'px',
+            border: 2 + 'px' + ' solid ' + 'red' 
+        }}>
+            Leave Group
+        </Button>
     </>
   )
 }

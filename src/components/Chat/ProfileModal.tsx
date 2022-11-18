@@ -1,7 +1,3 @@
-import { useEffect, useState } from 'react'
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Loading from '../Loading/Loading';
 import { Link } from 'react-router-dom';
 
 interface Props {
@@ -9,8 +5,6 @@ interface Props {
 }
 
 const ProfileModal = ({ user }: Props) => {
-
-  const [loading, setLoading] = useState<boolean>(false)
 
   return (
     <>
@@ -20,8 +14,6 @@ const ProfileModal = ({ user }: Props) => {
     {' '}
     <p style={{ color: '#fdf6d8', fontSize: 40 + 'px', marginTop: 0 + '%' }}>
     {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
-    {/* <br /> */}
-    {/* {user.email} */}
     </p>
     
     </>

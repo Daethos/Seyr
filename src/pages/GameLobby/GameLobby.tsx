@@ -8,7 +8,6 @@ import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
 import userService from "../../utils/userService";
 import Toast from 'react-bootstrap/Toast';
 import ToastAlert from '../../components/ToastAlert/ToastAlert';
-import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button'
 import Notifications from '../../components/Chat/Notifications';
 import Tab from 'react-bootstrap/Tab';
@@ -112,30 +111,16 @@ const GameLobby = ({ user }: Props) => {
             <Tabs defaultActiveKey="Chat Groups" id="justify-tab-example" className="mb-3" justify >
             <Tab eventKey="home"
             title={<SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />}>
-                {/* <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} /> */}
             </Tab>
-            {/* <Tab eventKey="Chat Groups" 
-            title={<MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />}>
-            </Tab> */}
-                {/* <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} /> */}
             <Tab eventKey="longer-tab" 
             title={<Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />}>
-            {/* <Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} /> */}
             </Tab>
             </Tabs>
-                {
-                    selectedChat?._id ?
-                    <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-                    :
-                    <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} error={error} setError={setError} />
-                }
+            { selectedChat?._id 
+                ? <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                : <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} error={error} setError={setError} />
+            }
                 
-
-
-            
-
-
-
 
             {/* { !showChat 
             ? 
