@@ -8,7 +8,8 @@ module.exports = {
     editAscean,
     getOneAscean,
     delete: deleteAscean,
-    getAsceanStats
+    getAsceanStats,
+    updateHighScore
 }
 
 
@@ -56,6 +57,18 @@ async function editAscean(req, res) {
         res.status(201).json({ ascean: ascean })
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Editing the Ascean!')
+    }
+}
+
+async function updateHighScore(req, res) {
+    const { asceanId, highScore } = req.body
+    console.log(asceanId, highScore, 'Are we updating in the Controller?')
+    try {
+        const ascean = await Ascean.findByIdAndUpdate(asceanId, {
+            high_score: highScore }, { new: true})
+        res.status(200).json({ data: ascean })
+    } catch (err) {
+        res.status(400).json({ err })
     }
 }
 

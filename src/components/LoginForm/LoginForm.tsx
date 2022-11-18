@@ -6,6 +6,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import ToastAlert from "../ToastAlert/ToastAlert";
 
 interface LoginProps {
     setUser: React.Dispatch<any>;
@@ -13,7 +14,8 @@ interface LoginProps {
 }
 
 export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) {
-  const [error, setError] = useState<string>("");
+  const [show, setShow] = useState<boolean>(false)
+  const [error, setError] = useState<any>({})
   const [state, setState] = useState({
     email: "",
     password: "",
@@ -40,13 +42,21 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
       console.log('Did we fail log in?')
       // Invalid user data (probably duplicate email)
       // this is from the throw block in the userService.login first then function
-      setError(err.message);
+      setError({
+        title: 'Login User Error',
+        content: err.message
+      });
     }
+  }
+
+  const handleReveal = () => {
+    setShow(!show)
   }
   return (
     <Col className="stat-block wide" id="signup">
         <Form onSubmit={handleSubmit} className="signup-form">
             <hr className="orange-border" />
+            <ToastAlert error={error} setError={setError} />
             <div className="section-left">
                 <div className="creature-heading">
                     <h1>Login Form</h1>
@@ -78,19 +88,31 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                 <div className="property-line last">
                     <h3>Password</h3>
                 </div> 
-                <Form.Group className="my-2" controlId="formBasicPassword">
+                <Form.Group className="my-2" style={{ width: 87.5 + '%' }} controlId="formBasicPassword">
                 <FloatingLabel controlId="floatingPassword" label="Password">
                 <Form.Control
                     // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     name="password"
-                    type="password"
+                    type={show ? "text" : "password"}
                     placeholder="password"
                     value={state.password}
                     onChange={handleChange}
                     required
-                />
+                    />
                 </FloatingLabel>
                 </Form.Group>
+                    <Button variant='' onClick={handleReveal} style={{ float: 'right', marginTop: -16 + '%', marginRight: -2 + '%', color: 'purple' }}>
+                      {
+                        show ?
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-unlock" viewBox="0 0 16 16">
+                          <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z"/>
+                        </svg>
+                        :
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-lock" viewBox="0 0 16 16">
+                          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                        </svg>
+                      }
+                    </Button>
                 <svg height="5" width="100%" className="tapered-rule mt-4">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
                 </svg>

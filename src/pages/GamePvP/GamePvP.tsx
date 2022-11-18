@@ -22,7 +22,7 @@ interface GameProps {
 const GamePvP = ({ user }: GameProps) => {
     const { asceanID } = useParams();
     
-
+    const [highScore, setHighScore] = useState<number>(0)
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
@@ -490,8 +490,8 @@ const GamePvP = ({ user }: GameProps) => {
                 setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak} playDeath={playDeath}
                 playerWin={playerWin} computerWin={computerWin} playCounter={playCounter} playRoll={playRoll}
-                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive}
-                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} 
+                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive} highScore={highScore}
+                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} setHighScore={setHighScore}
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}

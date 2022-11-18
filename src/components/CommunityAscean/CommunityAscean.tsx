@@ -19,6 +19,10 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
         <hr className="orange-border" />
         <div className="creature-heading">
         <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><h1>{ascean.name}</h1></Link>
+        <div className="property-line">
+            <h4>High Score</h4>
+            <p> {ascean.high_score}</p>
+        </div>
         <h2>{ascean.description}</h2>
         <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}>
             <img 

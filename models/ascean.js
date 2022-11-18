@@ -50,6 +50,7 @@ const asceanSchema = new Schema(
         index: String,
         level: {type: Number, default: 1},
         experience: {type: Number, default: 0},
+        high_score: { type: Number, default: 0 },
         currency: [
             {
                 silver: Number,

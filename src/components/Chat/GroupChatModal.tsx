@@ -8,6 +8,7 @@ import * as chatAPI from '../../utils/chatApi'
 import userService from '../../utils/userService'
 import UserListItem from './UserListItem';
 import UserBadgeItem from './UserBadgeItem';
+import ToastAlert from '../../components/ToastAlert/ToastAlert'
 
 interface Props {
     user: any;
@@ -22,11 +23,18 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
     const [search, setSearch] = useState('')
     const [searchResult, setSearchResult] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<any>({})
     // Need TO use Toast Here for issues and errors
+
+    
 
     const handleSearch = async (query: string) => {
         console.log(query, 'The search is on!')
         if (!query) {
+            setError({
+                title: 'Search Error',
+                content: 'You have not typed anything to search for!'
+            })
             return
         }
         try {
@@ -44,7 +52,10 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         if (!groupChatName || selectedUsers.length <= 1 ) {
-            //TODO:FIXME: TOAST!
+            setError({
+                title: 'Group Chat Creation Error',
+                content: 'Either you have not chosen a group name or have too few users to create a group (3)'
+            })
             console.log('You do not have enough people or have a group name!')
             return
         }
@@ -64,6 +75,10 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
 
     const handleGroup = async (userToAdd: any) => {
         if (selectedUsers.includes(userToAdd)) {
+            setError({
+                title: 'Group Chat Add Person Error',
+                content: 'You have already selected this person to join your group.'
+            })
             return
         }
         setSelectedUsers([...selectedUsers, userToAdd])
@@ -84,7 +99,6 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
     return (
         <span style={{ float: 'right' }}>
             <Button variant='' style={{ color: '#fdf6d8', marginTop: -10 + 'px' }} onClick={() => setModalShow(true)}>
-                {/* //TODO:FIXME: Make the Modal for Create Group! //TODO:FIXME: */}
                 <h6>New Group {' '}
                     <b style={{ fontSize: 25 + 'px' }}>&#43;</b>
                 </h6>
@@ -96,6 +110,11 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
                 id="modal-weapon"
             >
             <Modal.Body id="modal-weapon">
+                <ToastAlert error={error} setError={setError} />
+                {
+                    error ? ''
+                    : ''
+                }
                 <Form onSubmit={handleSubmit}>
                     <h3 className='mb-4' style={{ color: 'red' }}>Create Group Chat Form</h3>
                     <Form.Group className='my-2' >

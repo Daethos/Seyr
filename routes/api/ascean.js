@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const asceanCtrl = require('../../controllers/ascean');
-
+const protect = require('../../config/auth')
 
 // /*---------- Public Routes ----------*/
-router.get('/', asceanCtrl.index);
-router.get('/:id', asceanCtrl.getOneAscean)
-router.get('/stats/:id', asceanCtrl.getAsceanStats)
-router.put('/:id', asceanCtrl.editAscean)
-router.post('/', asceanCtrl.create);
-router.delete('/:id', asceanCtrl.delete)
+router.get('/', protect, asceanCtrl.index);
+router.get('/:id', protect, asceanCtrl.getOneAscean);
+router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
+router.put('/highscore', protect, asceanCtrl.updateHighScore);
+router.put('/:id', protect, asceanCtrl.editAscean);
+router.post('/', protect, asceanCtrl.create);
+router.delete('/:id', protect, asceanCtrl.delete);
 /*---------- Protected Routes ----------*/
 
 

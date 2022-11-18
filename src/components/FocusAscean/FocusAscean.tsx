@@ -53,6 +53,10 @@ const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Prop
                 <p> {ascean.level}</p>
             </div>
             <div className="property-line">
+                <h4>High Score</h4>
+                <p> {ascean.high_score}</p>
+            </div>
+            <div className="property-line">
                 <h4>Mastery</h4>
                 <p> {ascean.mastery}</p>
             </div>

@@ -22,9 +22,11 @@ interface Props {
     chats: any;
     setChats: any;
     fetchAgain: boolean;
+    error: any;
+    setError: any;
 }
 
-const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAgain }: Props) => {
+const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAgain, error, setError }: Props) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);

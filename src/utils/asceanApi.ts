@@ -99,3 +99,20 @@ export async function edit(vaEsai: any) {
         })
     })
 }
+
+export async function highScore(vaEsai: any) {
+    console.log(vaEsai, 'Are We Updating the High Score?')
+    return fetch(BASE_URL + 'highscore', {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        },
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, '<- Response in High Score Utility Return')
+        })
+    })
+}

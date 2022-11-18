@@ -11,6 +11,7 @@ router.post('/login', usersCtrl.login);
 router.get('/', protect, usersCtrl.allUsers);
 router.get('/:username', usersCtrl.profile);
 router.put('/update', protect, usersCtrl.updateUser)
+router.put('/updateBio', protect, usersCtrl.updateUserBio)
 
 /*---------- Protected Routes ----------*/
 

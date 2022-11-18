@@ -15,7 +15,8 @@ module.exports = {
   login,
   profile,
   allUsers,
-  updateUser
+  updateUser,
+  updateUserBio
 };
 
 async function profile(req, res) {
@@ -61,7 +62,7 @@ async function profile(req, res) {
 async function signup(req, res) {
   console.log(req.body, " req.body in signup", req.file);
 
-  if (!req.file) return res.status(400).json({ error: "Please submit Photo!" });
+  if (!req.file) return res.status(400).json({ error: "Please Submit A Photo! I Know Its Trite, I Apologize" });
   const key = `seyr/${uuidv4()}-${req.file.originalname}`;
   const params = { Bucket: BUCKET_NAME, Key: key, Body: req.file.buffer };
 
@@ -71,7 +72,7 @@ async function signup(req, res) {
     console.log("========================");
     if (err)
       return res.status(400).json({
-        err: "Error from aws, check the server terminal!, you bucket name or keys are probley wrong",
+        err: "Error from AWS, their server may be experiencing issues.",
       });
 
     const user = new User({ ...req.body, photoUrl: data.Location });
@@ -88,12 +89,12 @@ async function signup(req, res) {
             errorMessage: err,
             err: `${identifyKeyInMongooseValidationError(
               err.message
-            )} Already taken!`,
+            )} Already Taken!`,
           });
       } else {
         res.status(500).json({
           err: err,
-          message: "Internal Server Error, Please try again",
+          message: "Internal Server Error, Please Try Again",
         });
       }
     }
@@ -104,7 +105,7 @@ async function login(req, res) {
   try {
     const user = await User.findOne({email: req.body.email});
     console.log(user, ' this user in login')
-    if (!user) return res.status(401).json({err: 'bad credentials'});
+    if (!user) return res.status(401).json({err: 'This Email Address Is Not Registered With The Seyr'});
     user.comparePassword(req.body.password, (err, isMatch) => {
         
       if (isMatch) {
@@ -112,11 +113,14 @@ async function login(req, res) {
         console.log(token, '<- Token from Login')
         res.json({token});
       } else {
-        return res.status(401).json({err: 'bad credentials'});
+        return res.status(401).json({err: 'The Password You Have Provided Does Not Match The Registered Email Address'});
       }
     });
   } catch (err) {
-    return res.status(401).json({err: 'error message'});
+
+    return res.status(401).json({err: 'ERROR 401 -- Problem Fetching User, Server May Be Experiencing Issues -- ERROR 401'});
+      
+    
   }
 }
 
@@ -141,6 +145,20 @@ async function updateUser(req, res) {
   try {
     const user = await User.findByIdAndUpdate(req.user._id, {
       username}, { new: true })
+    // await user.save();
+    res.status(200).json({ data: user })
+  } catch (err) {
+    res.status(400).json({ err: 'Error Updating User in Controller' })
+  }
+}
+
+async function updateUserBio(req, res) {
+  // const { username, email } = req.body;
+  const { bio } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      bio}, { new: true })
     // await user.save();
     res.status(200).json({ data: user })
   } catch (err) {

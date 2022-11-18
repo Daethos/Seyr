@@ -21,8 +21,10 @@ const GameSolo = ({ user }: GameProps) => {
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
+    const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
     const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
     const [actionStatus, setActionStatus] = useState<boolean>(false)
+    const [highScore, setHighScore] = useState<number>(0)
     const [winStreak, setWinStreak] = useState<number>(0)
     const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
@@ -91,11 +93,11 @@ const GameSolo = ({ user }: GameProps) => {
     const { asceanID } = useParams();
 
     const getAscean = useCallback(async () => {
-        setLoading(true);
+        setLoadingAscean(true)
         try {
             const response = await asceanAPI.getOneAscean(asceanID);
             setAscean(response.data);
-            // setLoading(false)
+            setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
             setLoading(false)
@@ -206,6 +208,7 @@ const GameSolo = ({ user }: GameProps) => {
             setPlayerWin(false);
             setGameIsLive(true);
             playOpponent()
+            setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         }
@@ -301,9 +304,13 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Compiling Ascean Stats')
         }
     }
+    
+    useEffect(() => {
+        combatDataCompiler()
+    }, [getAscean])
 
-    const combatDataCompiler = useCallback(async () => {
-        setLoading(true)
+    const combatDataCompiler = async () => {
+        setLoadingAscean(true)
         try {
             setCombatData({
                 ...combatData,
@@ -317,16 +324,37 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': playerDefense,
                 'player_attributes': attributes
             })
-            // setLoading(false)
+            setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
         }
-    }, [asceanStatCompiler])
+    }
 
-    useEffect(() => {
-        combatDataCompiler()
-    }, [])
     
+    useEffect(() => {
+        if (highScore > ascean.high_score) {
+            console.log('Congratulations on the New High Score, Sir!')
+            updateHighScore();
+        } else {
+            return
+        }
+    }, [highScore])
+
+    const updateHighScore = async () => {
+        setLoadingAscean(true)
+        try {
+            const response = await asceanAPI.highScore({
+                asceanId: ascean._id,
+                highScore: highScore
+            })
+            console.log(response.data, 'Response Updating High Score')
+            setAscean(response.data)
+            getAscean()
+            setLoadingAscean(false)
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating High Score')
+        }
+    }
 
     function handleAction(action: any) {
         console.log(action.target.value, '<- Action being handled')
@@ -433,6 +461,10 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 playWin()
                 setWinStreak(winStreak + 1)
+                if (winStreak + 1 > highScore) {
+                    setHighScore(score => score + 1)
+                    
+                }
                 setLoseStreak(0)
                 setGameIsLive(false)
             }
@@ -498,15 +530,18 @@ const GameSolo = ({ user }: GameProps) => {
                 setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak} playDeath={playDeath}
                 playerWin={playerWin} computerWin={computerWin} playCounter={playCounter} playRoll={playRoll}
-                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive}
-                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive}
+                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive} highScore={highScore}
+                getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} setHighScore={setHighScore}
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus}
             />
-
-            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />
+            { loadingAscean 
+                ? <Loading Combat={true} /> 
+                : <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />
+            }
+            
             { playerWin || computerWin ? '' :
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 

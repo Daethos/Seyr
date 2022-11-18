@@ -52,11 +52,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
         if (!selectedChat) {
             return
         }
-
         try {
             setLoading(true)
             const response = await messageAPI.allMessages(selectedChat._id)
-            console.log(response.data)
             setMessages(response.data);
             setLoading(false)
             socket.emit("join_chat", selectedChat._id);
@@ -67,12 +65,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
 
     useEffect(() => {
       fetchMessages();
-    
-
       selectedChatCompare = selectedChat;
     }, [selectedChat])
-
-    console.log(notification, '----------------')
     
     useEffect(() => {
         socket.on('message_received', (newMessageReceived: { chat: { _id: any } }) => {

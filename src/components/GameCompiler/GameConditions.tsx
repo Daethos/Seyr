@@ -8,6 +8,8 @@ interface Props {
     computerWin: boolean;
     winStreak: number;
     loseStreak: number;
+    highScore: number;
+    setHighScore: React.Dispatch<React.SetStateAction<number>>;
     getOpponent: () => Promise<void>;
     resetAscean: () => Promise<void>;
     combatData: any;
@@ -41,7 +43,7 @@ interface Props {
     playReligion: Function;
 }
 
-const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -132,6 +134,9 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
             if (response.data.player_win === true) {
                 playWin()
                 setWinStreak((winStreak) => winStreak + 1)
+                if (winStreak + 1 > highScore) {
+                    setHighScore(score => score + 1)
+                }
                 setLoseStreak(0)
                 setGameIsLive(false)
                 setDodgeStatus(false)
@@ -159,11 +164,11 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
   return (
     <>            
     {playerWin ? <div className="win-condition">
-    You Win! Hot Streak: {winStreak}!<br /> 
+    You Win! Hot Streak: {winStreak}! Hi-Score ({highScore})<br /> 
     <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button></div> : ''}
     {computerWin ? <div className="win-condition">
-    You Lose! Cold Streak: {loseStreak}! <br /> 
+    You Lose! Cold Streak: {loseStreak}! Hi-Score ({highScore})<br /> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
     { playerWin || computerWin ? '' : 
     

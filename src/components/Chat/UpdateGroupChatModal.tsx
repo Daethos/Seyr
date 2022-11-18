@@ -8,6 +8,7 @@ import * as chatAPI from '../../utils/chatApi'
 import userService from '../../utils/userService'
 import UserListItem from './UserListItem';
 import UserBadgeItem from './UserBadgeItem';
+import ToastAlert from '../ToastAlert/ToastAlert';
 
 interface Props {
     fetchAgain: boolean;
@@ -24,7 +25,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
     const [searchResult, setSearchResult] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [renameLoading, setRenameLoading] = useState<boolean>(false)
-
+    const [error, setError] = useState<any>({})
 
     const handleSearch = async (query: string) => {
         console.log(query, 'The search is on!')
@@ -43,34 +44,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
         }
     }
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        if (!groupChatName || selectedUsers.length <= 1 ) {
-            //TODO:FIXME: TOAST!
-            console.log('You do not have enough people or have a group name!')
-            return
-        }
-        try {
-            const response = await chatAPI.createGroupChat({
-                name: groupChatName,
-                users: selectedUsers.map((user: any) => user._id)
-            })
-            console.log(response.data, 'Response in Creating Group')
-            // setChats([response.data, ...chats])
-            setModalShow(false)
-        } catch (err: any) {
-            console.log(err.message, 'Error Creating Group')
-        }
-        
-    }
-
-    const handleGroup = async (userToAdd: any) => {
-        if (selectedUsers.includes(userToAdd)) {
-            return
-        }
-        setSelectedUsers([...selectedUsers, userToAdd])
-    }
-
     const handleDelete = async (userToDelete: any) => {
         console.log(userToDelete, 'Buh-Bye!')
         setSelectedUsers(
@@ -80,12 +53,18 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
 
     const handleAddUser = async (userToAdd: any) => {
         if (selectedChat.users.find((user: any) => user._id === userToAdd._id)) {
-            //TODO:FIXME: TOAST! They Already Exist In The Group
+            setError({
+                title: 'Group Chat Add Error',
+                content: 'They Already Exist In The Group'
+            })
             return
         }
 
         if (selectedChat.groupAdmin._id !== user._id) {
-            //TODO:FIXME: TOAST! You Are Not the Admin!
+            setError({
+                title: 'Group Chat Add Error',
+                content: 'You Are Not The Admin!'
+            })
             return
         }
         try {
@@ -106,14 +85,12 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
     }
 
     const handleRemove = async (userToRemove: any) => {
-        // console.log(userToRemove, 'Buh-Bye!')
-        // setSelectedUsers(
-        //     selectedUsers.filter((sel: any) => sel._id !== userToRemove._id)
-        // )
-
 
         if (selectedChat.groupAdmin._id !== user._id && userToRemove._id !== user._id) {
-            //TODO:FIXME: TOAST! You Are Not the Admin!
+            setError({
+                title: 'Group Chat Remove Error',
+                content: 'You are not the Admin!'
+            })
             return
         }
         try {
@@ -137,6 +114,10 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
     const handleRename = async (newGroupName: any) => {
         console.log(newGroupName, 'Buh-Bye!')
         if (!newGroupName) {
+            setError({
+                title: 'Group Chat Rename Error',
+                content: 'You do not have a Group Name Written!'
+            })
             return
         }
         try {
@@ -160,6 +141,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
   return (
     <>
     {/* <Form onSubmit={handleSubmit}> */}
+                <ToastAlert error={error} setError={setError} />
                     <h3 className='mb-4' style={{ color: 'red' }}>{selectedChat.chatName}</h3>
                     {
                         selectedChat.users.map((user: any, index: number) => {

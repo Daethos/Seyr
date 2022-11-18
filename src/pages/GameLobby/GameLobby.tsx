@@ -1,33 +1,18 @@
 import { RefAttributes, useEffect, useState } from 'react'
 import * as asceanAPI from '../../utils/asceanApi';
-import * as chatAPI from '../../utils/chatApi'
-import * as chatLogic from '../../config/chatLogics'
-import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
-import * as io from 'socket.io-client'
-import GameChat from '../../components/GameCompiler/GameChat';
-import { ChatState } from '../../context/ChatProvider'
 import SideDrawer from '../../components/Chat/SideDrawer';
 import MyChats from '../../components/Chat/MyChats';
 import ChatBox from '../../components/Chat/ChatBox';
 import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
 import userService from "../../utils/userService";
-import UserListItem from '../../components/Chat/UserListItem';
-import Offcanvas from 'react-bootstrap/Offcanvas';
 import Toast from 'react-bootstrap/Toast';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import ToastAlert from '../../components/ToastAlert/ToastAlert';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
-import { PopoverHeader } from 'react-bootstrap';
 import Notifications from '../../components/Chat/Notifications';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-
-let socket: any;
-let selectedChatCompare;
 
 interface Props {
     user: any;
@@ -46,7 +31,7 @@ const GameLobby = ({ user }: Props) => {
     const [selectedChat, setSelectedChat] = useState<any>([])
     const [loadingChat, setLoadingChat] = useState(false)
     const [chats, setChats] = useState<any>([])
-
+    const [error, setError] = useState([])
 
     useEffect(() => {
         getUserAscean();
@@ -142,7 +127,7 @@ const GameLobby = ({ user }: Props) => {
                     selectedChat?._id ?
                     <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                     :
-                    <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
+                    <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} error={error} setError={setError} />
                 }
                 
 
