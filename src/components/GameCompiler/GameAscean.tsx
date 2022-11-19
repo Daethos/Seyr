@@ -5,11 +5,11 @@ import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
 
 interface Props {
-    ascean: any;
-    currentPlayerHealth: number;
-    combatData: any;
-    player: boolean;
-    loading: boolean;
+  ascean: any;
+  currentPlayerHealth: number;
+  combatData: any;
+  player: boolean;
+  loading: boolean;
 }
 
 const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }: Props) => {
@@ -24,14 +24,8 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }
   return (
     <>
     {
-      playerCharacter
-      ?
-    <div className="game-block" 
-    style={{ 
-      marginLeft: 7.5 + '%', 
-      transform: 'scale(' + 1.1 + ')', 
-      marginTop: -20 + '%' }}
-    >
+      playerCharacter ?
+    <div className="game-block" style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}>
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
     <GameHealthBar totalPlayerHealth={combatData.player_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
@@ -57,9 +51,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }
     </div>
     </div>
     : 
-    <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, 
-    marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' 
-    }}>
+    <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}>
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
     <GameHealthBar totalPlayerHealth={combatData.computer_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />

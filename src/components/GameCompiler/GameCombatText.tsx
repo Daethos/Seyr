@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 
 interface Props {
     user: any;
@@ -37,8 +37,6 @@ const GameCombatText = ({ user, ascean, emergencyText, playerReligiousText, comp
             value={
                 playerActionText + `\n` + computerActionText + `\n` +
                 playerSpecialText + `\n` + computerSpecialText + `\n` +
-                    // playerSpecialText ? playerSpecialText : ''  + 
-                    // computerSpecialText ? computerSpecialText + `\n` : '' + 
                 playerCombatText + `\n` +  computerCombatText + `\n` +
                 playerReligiousText + `\n` + computerReligiousText + `\n` +
                 emergencyText

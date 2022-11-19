@@ -6,7 +6,6 @@ export function createFeeling(asceanID: any, feeling: string) {
     return fetch (`${BASE_URL}ascean/${asceanID}/feelings/${feeling}`, {
         method: 'POST',
         // body: JSON.stringify(feeling),
-        // body: feeling,
         headers:  {
             //'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken()
@@ -22,8 +21,7 @@ export function removeFeeling(asceanID: any, feeling: string) {
     return fetch(`${BASE_URL}feelings/${asceanID}/${feeling}`, {
         method: "DELETE",
         headers: {
-          Authorization: "Bearer " + tokenService.getToken(), // This grabs thee JWT token out
-          // local storage and send its in the header to the server
+          Authorization: "Bearer " + tokenService.getToken(),
         }
       }).then((res: any) => {
         if (res.ok) return res.json();

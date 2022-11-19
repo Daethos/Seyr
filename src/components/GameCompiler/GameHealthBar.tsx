@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import './GameCompiler.css'
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import Button from 'react-bootstrap/Button'
 import Loading from '../Loading/Loading';
 
 interface GameProps {
@@ -12,8 +11,6 @@ interface GameProps {
 const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0)
     const [loading, setLoading] = useState(true);
-    const playerCanvasRef = useRef(null);
-    const computerCanvasRef = useRef(null);
 
     useEffect(() => {
         updatePlayerHealthPercentage();
