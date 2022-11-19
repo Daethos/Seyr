@@ -35,10 +35,11 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_one?.kyosir > 0 ? 'KYO: +' + weapon_one?.kyosir + ' ' : ''}<br />
                 Damage: {weapon_one?.physical_damage} Phys | {weapon_one?.magical_damage} Magi <br />
                 Penetration: {weapon_one?.physical_penetration} Phys | {weapon_one?.magical_penetration} Magi <br />
-                Crit Chance: +{weapon_one?.critical_chance}% <br />
+                Crit Chance: {weapon_one?.critical_chance}% <br />
                 Crit Damage: {weapon_one?.critical_damage}x <br />
-                Dodge Timer: +{weapon_one?.dodge}s <br />
-                Roll Chance: +{weapon_one?.roll}% <br />
+                Dodge Timer: {weapon_one?.dodge}s <br />
+                Roll Chance: {weapon_one?.roll}% <br />
+                Influence: {weapon_one.influences}
             </Popover.Body>
         </Popover>
     )
@@ -56,10 +57,11 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_two?.kyosir > 0 ? 'KYO: +' + weapon_two?.kyosir + ' ' : ''}<br />
                 Damage: {weapon_two?.physical_damage} Phys | {weapon_two?.magical_damage} Magi <br />
                 Penetration: {weapon_two?.physical_penetration} Phys | {weapon_two?.magical_penetration} Magi <br />
-                Crit Chance: +{weapon_two?.critical_chance}% <br />
+                Crit Chance: {weapon_two?.critical_chance}% <br />
                 Crit Damage: {weapon_two?.critical_damage}x <br />
-                Dodge Timer: +{weapon_two?.dodge}s <br />
-                Roll Chance: +{weapon_two?.roll}% <br />
+                Dodge Timer: {weapon_two?.dodge}s <br />
+                Roll Chance: {weapon_two?.roll}% <br />
+                Influence: {weapon_two.influences}
             </Popover.Body>
         </Popover>
     )
@@ -77,10 +79,11 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_three?.kyosir > 0 ? 'KYO: +' + weapon_three?.kyosir + ' ' : ''}<br />
                 Damage: {weapon_three?.physical_damage} Phys | {weapon_three?.magical_damage} Magi <br />
                 Penetration: {weapon_three?.physical_penetration} Phys | {weapon_three?.magical_penetration} Magi <br />
-                Crit Chance: +{weapon_three?.critical_chance}% <br />
+                Crit Chance: {weapon_three?.critical_chance}% <br />
                 Crit Damage: {weapon_three?.critical_damage}x <br />
-                Dodge Timer: +{weapon_three?.dodge}s <br />
-                Roll Chance: +{weapon_three?.roll}% <br />
+                Dodge Timer: {weapon_three?.dodge}s <br />
+                Roll Chance: {weapon_three?.roll}% <br />
+                Influence: {weapon_three.influences}
             </Popover.Body>
         </Popover>
     )

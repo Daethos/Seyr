@@ -26,14 +26,21 @@ const GamePvP = ({ user }: GameProps) => {
     const [ascean, setAscean] = useState<any>({})
     const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(true);
+
     const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
     const [actionStatus, setActionStatus] = useState<boolean>(false)
+
     const [winStreak, setWinStreak] = useState<number>(0)
     const [loseStreak, setLoseStreak] = useState<number>(0)
+
     const [emergencyText, setEmergencyText] = useState<any[]>([])
+
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
+
     const [gameIsLive, setGameIsLive] = useState<boolean>(true)
+    const [undefined, setUndefined] = useState<boolean>(false)
+    const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
 
     const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
     const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
@@ -165,6 +172,8 @@ const GamePvP = ({ user }: GameProps) => {
         computer_action_description: '',
         player_influence_description: '',
         computer_influence_description: '',
+        player_influence_description_two: '',
+        computer_influence_description_two: '',
         current_player_health: currentPlayerHealth,
         current_computer_health: currentComputerHealth,
         new_player_health: currentPlayerHealth,
@@ -483,7 +492,7 @@ const GamePvP = ({ user }: GameProps) => {
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
-            <GameAscean ascean={opponent} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} loading={loading} />
+            <GameAscean ascean={opponent} player={false} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentComputerHealth} loading={loading} />
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -498,7 +507,7 @@ const GamePvP = ({ user }: GameProps) => {
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus}
             />
 
-            <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loading} />
+            <GameAscean ascean={ascean} player={true} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loading} />
             { playerWin || computerWin ? '' :
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 
@@ -506,7 +515,7 @@ const GamePvP = ({ user }: GameProps) => {
                 weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
-                setCombatData={setCombatData} 
+                setCombatData={setCombatData} setEmergencyText={setEmergencyText}
             />
             }
             <GameCombatText 
@@ -516,6 +525,7 @@ const GamePvP = ({ user }: GameProps) => {
                 playerActionText={combatData.player_start_description} computerActionText={combatData.computer_start_description}
                 playerSpecialText={combatData.player_special_description} computerSpecialText={combatData.computer_special_description}
                 playerReligiousText={combatData.player_influence_description} computerReligiousText={combatData.computer_influence_description}
+                playerReligiousTextTwo={combatData.player_influence_description_two} computerReligiousTextTwo={combatData.computer_influence_description_two}
            />
         </Container>
     )

@@ -188,7 +188,7 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
     penetrationCompiler(weaponOne, attributes, combatStats)
     critCompiler(weaponOne, attributes, combatStats)
     faithCompiler(weaponOne, ascean)
-    weaponOne.dodge += combatStats.dodgeCombat;
+    weaponOne.dodge += (20 + (combatStats.dodgeCombat * 2));
     weaponOne.roll += combatStats.rollCombat;
     weaponOne.physical_damage = Math.round(weaponOne.physical_damage * combatStats.damagePhysical);
     weaponOne.magical_damage = Math.round(weaponOne.magical_damage * combatStats.damageMagical);

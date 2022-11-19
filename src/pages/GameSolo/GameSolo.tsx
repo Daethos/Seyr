@@ -28,9 +28,13 @@ const GameSolo = ({ user }: GameProps) => {
     const [winStreak, setWinStreak] = useState<number>(0)
     const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
+
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
+
     const [gameIsLive, setGameIsLive] = useState<boolean>(true)
+    const [undefined, setUndefined] = useState<boolean>(false)
+    const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`
     const [playOpponent] = useSound(opponentSfx, { volume: 0.5 })
@@ -161,6 +165,8 @@ const GameSolo = ({ user }: GameProps) => {
         computer_action_description: '',
         player_influence_description: '',
         computer_influence_description: '',
+        player_influence_description_two: '',
+        computer_influence_description_two: '',
         current_player_health: currentPlayerHealth,
         current_computer_health: currentComputerHealth,
         new_player_health: currentPlayerHealth,
@@ -190,7 +196,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         opponentStatCompiler()
-    }, [opponent])
+    }, [opponent, undefinedComputer])
 
     // useEffect(() => {
     //     opponentDataCompiler();
@@ -237,6 +243,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_defense': response.data.data.defense,
                 'computer_attributes': response.data.data.attributes
             })
+            setUndefinedComputer(false)
             setLoading(false)
         } catch (err: any) {
             setLoading(false)
@@ -307,7 +314,7 @@ const GameSolo = ({ user }: GameProps) => {
     
     useEffect(() => {
         combatDataCompiler()
-    }, [getAscean])
+    }, [getAscean, undefined])
 
     const combatDataCompiler = async () => {
         setLoadingAscean(true)
@@ -324,6 +331,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': playerDefense,
                 'player_attributes': attributes
             })
+            setUndefined(false)
             setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
@@ -467,6 +475,7 @@ const GameSolo = ({ user }: GameProps) => {
                 }
                 setLoseStreak(0)
                 setGameIsLive(false)
+                setDodgeStatus(false)
             }
             if (response.data.computer_win === true) {
                 playDeath()
@@ -532,7 +541,7 @@ const GameSolo = ({ user }: GameProps) => {
             { loadingAscean 
                 ? <Loading Combat={true} /> 
                 : combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ?
-                <GameAscean ascean={opponent} loading={loadingAscean} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+                <GameAscean ascean={opponent} loading={loadingAscean} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
                 : <Loading Combat={true} />
             }
             <GameConditions 
@@ -552,7 +561,7 @@ const GameSolo = ({ user }: GameProps) => {
             { loadingAscean 
                 ? <Loading Combat={true} /> 
                 : combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ?
-                <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
+                <GameAscean ascean={ascean} player={true} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
                 : <Loading Combat={true} />
             }
             
@@ -563,7 +572,7 @@ const GameSolo = ({ user }: GameProps) => {
                 weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
-                setCombatData={setCombatData} 
+                setCombatData={setCombatData} setEmergencyText={setEmergencyText}
             /> : <Loading Combat={true} />
             }
             <GameCombatText 
@@ -573,6 +582,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerActionText={combatData.player_start_description} computerActionText={combatData.computer_start_description}
                 playerSpecialText={combatData.player_special_description} computerSpecialText={combatData.computer_special_description}
                 playerReligiousText={combatData.player_influence_description} computerReligiousText={combatData.computer_influence_description}
+                playerReligiousTextTwo={combatData.player_influence_description_two} computerReligiousTextTwo={combatData.computer_influence_description_two}
             />
         </Container>
     )

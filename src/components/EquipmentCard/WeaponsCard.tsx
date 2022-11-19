@@ -32,10 +32,10 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 {weapon.caeren > 0 ? 'CAER: +' + weapon.caeren + ' ' : ''}
                 {weapon.kyosir > 0 ? 'KYO: +' + weapon.kyosir + ' ' : ''}<br />
                 Damage: {weapon.physical_damage} Physical | {weapon.magical_damage} Magical <br />
-                Critical Chance: +{weapon.critical_chance}% <br />
+                Critical Chance: {weapon.critical_chance}% <br />
                 Critical Damage: {weapon.critical_damage}x <br />
-                Dodge Timer: +{weapon.dodge}s <br />
-                Roll Chance: +{weapon.roll}% <br />
+                Dodge Timer: {weapon.dodge}s <br />
+                Roll Chance: {weapon.roll}% <br />
                 Influence: {weapon.influences}
             </Popover.Body>
         </Popover>
@@ -52,10 +52,10 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 {weapon_one.caeren > 0 ? 'CAER: +' + weapon_one.caeren + ' ' : ''}
                 {weapon_one.kyosir > 0 ? 'KYO: +' + weapon_one.kyosir + ' ' : ''}<br />
                 Damage: {weapon_one?.physical_damage} Physical | {weapon_one?.magical_damage} Magical <br />
-                Critical Chance: +{weapon_one?.critical_chance}% <br />
+                Critical Chance: {weapon_one?.critical_chance}% <br />
                 Critical Damage: {weapon_one?.critical_damage}x <br />
-                Dodge Timer: +{weapon_one?.dodge}s <br />
-                Roll Chance: +{weapon_one?.roll}% <br />
+                Dodge Timer: {weapon_one?.dodge}s <br />
+                Roll Chance: {weapon_one?.roll}% <br />
                 Influence: {weapon_one.influences}
             </Popover.Body>
         </Popover>
@@ -72,10 +72,10 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 {weapon_two.caeren > 0 ? 'CAER: +' + weapon_two.caeren + ' ' : ''}
                 {weapon_two.kyosir > 0 ? 'KYO: +' + weapon_two.kyosir + ' ' : ''}<br />
                 Damage: {weapon_two?.physical_damage} Physical | {weapon_two?.magical_damage} Magical <br />
-                Critical Chance: +{weapon_two?.critical_chance}% <br />
+                Critical Chance: {weapon_two?.critical_chance}% <br />
                 Critical Damage: {weapon_two?.critical_damage}x <br />
-                Dodge Timer: +{weapon_two?.dodge}s <br />
-                Roll Chance: +{weapon_two?.roll}% <br />
+                Dodge Timer: {weapon_two?.dodge}s <br />
+                Roll Chance: {weapon_two?.roll}% <br />
                 Influence: {weapon_two.influences}
             </Popover.Body>
         </Popover>
@@ -92,10 +92,10 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 {weapon_three.caeren > 0 ? 'CAER: +' + weapon_three.caeren + ' ' : ''}
                 {weapon_three.kyosir > 0 ? 'KYO: +' + weapon_three.kyosir + ' ' : ''}<br />
                 Damage: {weapon_three.physical_damage} Physical | {weapon_three?.magical_damage} Magical <br />
-                Critical Chance: +{weapon_three.critical_chance}% <br />
+                Critical Chance: {weapon_three.critical_chance}% <br />
                 Critical Damage: {weapon_three.critical_damage}x <br />
-                Dodge Timer: +{weapon_three.dodge}s <br />
-                Roll Chance: +{weapon_three.roll}% <br />
+                Dodge Timer: {weapon_three.dodge}s <br />
+                Roll Chance: {weapon_three.roll}% <br />
                 Influence: {weapon_three.influences}
             </Popover.Body>
         </Popover>

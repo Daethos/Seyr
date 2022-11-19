@@ -10,9 +10,14 @@ interface Props {
   combatData: any;
   player: boolean;
   loading: boolean;
+  combatDataCompiler: () => Promise<void>;
+  undefined: boolean;
+  setUndefined: React.Dispatch<React.SetStateAction<boolean>>;
+  undefinedComputer: boolean;
+  setUndefinedComputer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }: Props) => {
+const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading, combatDataCompiler,undefined, setUndefined, undefinedComputer, setUndefinedComputer }: Props) => {
   const [playerCharacter, setPlayerCharacter] = useState<boolean>(player)
   // console.log(playerCharacter, 'Player Status in Game Ascean')
 
@@ -31,7 +36,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }
     <GameHealthBar totalPlayerHealth={combatData.player_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
     </div>
     {
-      combatData?.weapons ?
+      combatData?.weapons?.[0] ?
       <AsceanImageCard
           weapon_one={combatData.weapons[0]}
           weapon_two={combatData.weapons[1]}
@@ -48,7 +53,8 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }
           loading={loading}
           key={ascean._id}
       />
-      : ''
+      : <>{setUndefined(!undefined)}</>
+      
     }
     <div className="actions">
     <GamePlayerStats attributes={combatData.player_attributes} weaponAttributes={combatData.weapons[0]} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
@@ -61,7 +67,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }
     <GameHealthBar totalPlayerHealth={combatData.computer_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
     </div>
     {
-      combatData?.computer_weapons ?
+      combatData?.computer_weapons?.[0] ?
       <AsceanImageCard
           weapon_one={combatData.computer_weapons[0]}
           weapon_two={combatData.computer_weapons[1]}
@@ -78,7 +84,7 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, loading }
           loading={loading}
           key={ascean._id}
       />
-      : ''
+      : <>{setUndefinedComputer(!undefinedComputer)}</>
     }
     <div className="actions">
     <GamePlayerStats attributes={combatData.computer_attributes} weaponAttributes={combatData.computer_weapons[0]} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />

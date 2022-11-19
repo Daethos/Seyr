@@ -14,10 +14,12 @@ interface Props {
     computerSpecialText: string;
     playerReligiousText: string;
     computerReligiousText: string;
+    playerReligiousTextTwo: string;
+    computerReligiousTextTwo: string;
     emergencyText: any[] | (() => any[]);
 }
 
-const GameCombatText = ({ user, ascean, emergencyText, playerReligiousText, computerReligiousText, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerAction, computerAction, playerCombatText, computerCombatText, combatData }: Props) => {
+const GameCombatText = ({ user, ascean, emergencyText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerAction, computerAction, playerCombatText, computerCombatText, combatData }: Props) => {
     
     const [combatText, setCombatText] = useState<any>({})
     let textBoxArea = document.querySelector('.text-box');
@@ -38,7 +40,8 @@ const GameCombatText = ({ user, ascean, emergencyText, playerReligiousText, comp
                 playerActionText + `\n` + computerActionText + `\n` +
                 playerSpecialText + `\n` + computerSpecialText + `\n` +
                 playerCombatText + `\n` +  computerCombatText + `\n` +
-                playerReligiousText + `\n` + computerReligiousText + `\n` +
+                playerReligiousText + `\n` + playerReligiousTextTwo + `\n` +
+                computerReligiousText + `\n` + computerReligiousTextTwo + `\n` +
                 emergencyText
             } 
             readOnly>

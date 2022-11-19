@@ -19,9 +19,10 @@ interface Props {
     sleep: (ms: number) => Promise<unknown>;
     actionStatus: boolean;
     setActionStatus: React.Dispatch<React.SetStateAction<boolean>>;
+    setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const GameActions = ({ setDodgeStatus, setEmergencyText, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([])
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
   useEffect(() => {
@@ -43,15 +44,17 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
   const dodgeButton = document.querySelector('#dodge-button');
   const actionButton = document.querySelector('#initiate-button')
 
-  // useEffect(() => {
-  //   dodgeButton?.classList.add('hide');
-  //   console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
-  //   const dodgeTimer = setTimeout(() => {
-  //     dodgeButton?.classList.remove('hide');
-  //     setDodgeStatus(false);
-  //   }, 40000 + combatData.weapons[0].dodge)
-  //   return () => clearTimeout(dodgeTimer)
-  // }, [dodgeStatus])
+  useEffect(() => {
+    // dodgeButton?.classList.add('hide');
+    // setEmergencyText([`Dodge Timer: ${40 + combatData.weapons[0].dodge} seconds\n`
+    //     ])
+    // console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
+    const dodgeTimer = setTimeout(() => {
+      // dodgeButton?.classList.remove('hide');
+      setDodgeStatus(false);
+    }, (combatData.weapons[0].dodge * 1000))
+    return () => clearTimeout(dodgeTimer)
+  }, [dodgeStatus])
 
   // useEffect(() => {
   //   actionButton?.classList.add('hide');
@@ -113,7 +116,7 @@ const GameActions = ({ setDodgeStatus, actionStatus, setActionStatus, handleActi
           <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
         ))}
       </select>
-      {/* <button value='dodge' onClick={handleAction} className='btn btn-outline' id='dodge-button'>Dodge</button> */}
+      <button value='dodge' onClick={handleAction} disabled={dodgeStatus ? true : false} className='btn btn-outline' id='dodge-button'>Dodge</button>
       <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
       <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
     </div>
