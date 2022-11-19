@@ -116,7 +116,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [dodgeStatus, setDodgeStatus] = useState<boolean>(false)
 
     const [totalPlayerHealth, setTotalPlayerHealth] = useState<number>(0)
-    const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(0)
+    const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(-5)
 
     const [attributes, setAttributes] = useState<any>([])
     const [playerDefense, setPlayerDefense] = useState<any>([])
@@ -128,7 +128,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const [computerAttributes, setComputerAttributes] = useState<any>([])
     const [computerDefense, setComputerDefense] = useState<any>([])
-    const [currentComputerHealth, setCurrentComputerHealth] = useState<number>(0)
+    const [currentComputerHealth, setCurrentComputerHealth] = useState<number>(-5)
     const [totalComputerHealth, setTotalComputerHealth] = useState<number>(0)
 
     const [combatData, setCombatData] = useState<any>({
@@ -312,18 +312,18 @@ const GameSolo = ({ user }: GameProps) => {
     const combatDataCompiler = async () => {
         setLoadingAscean(true)
         try {
-            // setCombatData({
-            //     ...combatData,
-            //     'player_health': currentPlayerHealth,
-            //     'current_player_health': currentPlayerHealth,
-            //     'new_player_health': currentPlayerHealth,
-            //     'weapons': [weaponOne, weaponTwo, weaponThree],
-            //     'weapon_one': weaponOne,
-            //     'weapon_two': weaponTwo,
-            //     'weapon_three': weaponThree,
-            //     'player_defense': playerDefense,
-            //     'player_attributes': attributes
-            // })
+            setCombatData({
+                ...combatData,
+                'player_health': currentPlayerHealth,
+                'current_player_health': currentPlayerHealth,
+                'new_player_health': currentPlayerHealth,
+                'weapons': [weaponOne, weaponTwo, weaponThree],
+                'weapon_one': weaponOne,
+                'weapon_two': weaponTwo,
+                'weapon_three': weaponThree,
+                'player_defense': playerDefense,
+                'player_attributes': attributes
+            })
             setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
@@ -513,6 +513,12 @@ const GameSolo = ({ user }: GameProps) => {
         )
     }
 
+    if (loadingAscean) {
+        return (
+            <Loading Combat={true} />
+        )
+    }
+
     return (
         <Container fluid id="game-container">
             <GameAnimations 
@@ -523,7 +529,12 @@ const GameSolo = ({ user }: GameProps) => {
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
-            <GameAscean ascean={opponent} loading={loadingAscean} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+            { loadingAscean 
+                ? <Loading Combat={true} /> 
+                : combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ?
+                <GameAscean ascean={opponent} loading={loadingAscean} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+                : <Loading Combat={true} />
+            }
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -537,12 +548,15 @@ const GameSolo = ({ user }: GameProps) => {
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus}
             />
+
             { loadingAscean 
                 ? <Loading Combat={true} /> 
-                : <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
+                : combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ?
+                <GameAscean ascean={ascean} player={true} combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
+                : <Loading Combat={true} />
             }
             
-            { playerWin || computerWin ? '' :
+            { playerWin || computerWin ? '' : combatData?.weapons ?
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
@@ -550,7 +564,7 @@ const GameSolo = ({ user }: GameProps) => {
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
                 setCombatData={setCombatData} 
-            />
+            /> : <Loading Combat={true} />
             }
             <GameCombatText 
                 ascean={ascean} user={user} combatData={combatData} emergencyText={emergencyText}
