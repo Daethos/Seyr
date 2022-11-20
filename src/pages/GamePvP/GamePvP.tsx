@@ -492,7 +492,7 @@ const GamePvP = ({ user }: GameProps) => {
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
-            <GameAscean ascean={opponent} player={false} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentComputerHealth} loading={loading} />
+            <GameAscean ascean={opponent} player={false} combatData={combatData} opponentStatCompiler={opponentStatCompiler} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentComputerHealth} loading={loading} />
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -507,7 +507,7 @@ const GamePvP = ({ user }: GameProps) => {
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus}
             />
 
-            <GameAscean ascean={ascean} player={true} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loading} />
+            <GameAscean ascean={ascean} player={true} combatData={combatData} opponentStatCompiler={opponentStatCompiler} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loading} />
             { playerWin || computerWin ? '' :
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 

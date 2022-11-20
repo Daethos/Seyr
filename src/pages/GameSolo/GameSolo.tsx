@@ -538,11 +538,9 @@ const GameSolo = ({ user }: GameProps) => {
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
-            { loadingAscean 
-                ? <Loading Combat={true} /> 
-                : combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ?
-                <GameAscean ascean={opponent} loading={loadingAscean} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
-                : <Loading Combat={true} />
+            { combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ?
+                <GameAscean ascean={opponent} loading={loadingAscean} opponentStatCompiler={opponentStatCompiler} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+                : <>{opponentStatCompiler}</>
             }
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
@@ -558,11 +556,9 @@ const GameSolo = ({ user }: GameProps) => {
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus}
             />
 
-            { loadingAscean 
-                ? <Loading Combat={true} /> 
-                : combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ?
-                <GameAscean ascean={ascean} player={true} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
-                : <Loading Combat={true} />
+            { combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ?
+                <GameAscean ascean={ascean} player={true} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
+                : <>{combatDataCompiler}</>
             }
             
             { playerWin || computerWin ? '' : combatData?.weapons ?
