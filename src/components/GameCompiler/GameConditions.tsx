@@ -52,7 +52,7 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
         }
         const interval = setInterval(() => {
             autoAttack(combatData)
-        }, 8000);
+        }, 6000);
       
         return () => clearInterval(interval);
       }, [combatData, gameIsLive]);
@@ -75,7 +75,7 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
     const autoAttack = async (combatData: any) => {
         setLoading(true)
         try {
-            setEmergencyText([`Auto Response Engaging`])
+            setEmergencyText([`Auto Engagement Response`])
             const response = await gameAPI.initiateAction(combatData)
 
             console.log(response.data, 'Response Auto Engaging')
@@ -135,7 +135,7 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
                 playWin()
                 setWinStreak((winStreak) => winStreak + 1)
                 if (winStreak + 1 > highScore) {
-                    setHighScore(score => score + 1)
+                    setHighScore((score) => score + 1)
                 }
                 setLoseStreak(0)
                 setGameIsLive(false)
@@ -164,16 +164,16 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
   return (
     <>            
     {playerWin ? <div className="win-condition">
-    You Win! Hot Streak: {winStreak}! Hi-Score ({highScore})<br /> 
+    You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
     <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button></div> : ''}
     {computerWin ? <div className="win-condition">
-    You Lose! Cold Streak: {loseStreak}! Hi-Score ({highScore})<br /> 
+    You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
     { playerWin || computerWin ? '' : 
     
     <button className="btn" id='auto-engage' onClick={autoEngage}>
-        {!gameIsLive ? `Auto Engage` : `Disengage Auto`}
+        {!gameIsLive ? `Auto Engage` : `Disengage`}
     </button>
     
     }

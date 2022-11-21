@@ -1428,13 +1428,13 @@ const attackCompiler = async (combatData, player_action) => {
             }
             if (combatData.weapons[0].type === 'Bow') {
                 if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre') {
-                    player_physical_damage *= 2;
-                    player_magical_damage *= 2;
+                    player_physical_damage *= 2.5;
+                    player_magical_damage *= 2.5;
                 }
             }
         } else {
-            player_physical_damage *= 1.25;
-            player_magical_damage *= 1.25;
+            player_physical_damage *= 1.3;
+            player_magical_damage *= 1.3;
         }
     }
 

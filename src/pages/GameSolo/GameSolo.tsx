@@ -414,7 +414,7 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatInitiated(true)
             setActionStatus(true)
             console.log(response.data, 'Response Initiating Combat')
-            setCombatData(response.data) // Guessing the variable, something along those lines. Should be all that's needed to update
+            setCombatData({...response.data, 'action': ''}) // Guessing the variable, something along those lines. Should be all that's needed to update
             setCurrentPlayerHealth(response.data.new_player_health)
             setCurrentComputerHealth(response.data.new_computer_health)
             setPlayerWin(response.data.player_win)
@@ -470,7 +470,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playWin()
                 setWinStreak(winStreak + 1)
                 if (winStreak + 1 > highScore) {
-                    setHighScore(score => score + 1)
+                    setHighScore((score) => score + 1)
                     
                 }
                 setLoseStreak(0)
@@ -479,9 +479,10 @@ const GameSolo = ({ user }: GameProps) => {
             }
             if (response.data.computer_win === true) {
                 playDeath()
-                setLoseStreak(loseStreak + 1)
+                setLoseStreak((loseStreak) => loseStreak + 1)
                 setWinStreak(0)
                 setGameIsLive(false)
+                setDodgeStatus(false)
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')

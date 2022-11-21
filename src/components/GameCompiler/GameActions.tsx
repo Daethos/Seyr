@@ -56,44 +56,34 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, actionStatus, setAction
     return () => clearTimeout(dodgeTimer)
   }, [dodgeStatus])
 
-  // useEffect(() => {
-  //   actionButton?.classList.add('hide');
-  //   setCombatData({ ...combatData, 'action': '' })
-  //   const initiateTimer = setTimeout(() => {
-  //     actionButton?.classList.remove('hide')
-  //     setActionStatus(false)
-  //   }, 4000)
-  //   return () => clearTimeout(initiateTimer);
-  // }, [actionStatus])
+  useEffect(() => {
+    // actionButton?.classList.add('hide');
+    // setCombatData({ ...combatData, 'action': '' })
+    const initiateTimer = setTimeout(() => {
+      // actionButton?.classList.remove('hide')
+      setActionStatus(false)
+    }, 3000)
+    return () => clearTimeout(initiateTimer);
+  }, [actionStatus])
   
 
-  async function hideInitiate() {
-    try {
-      // await sleep(250)
-      actionButton?.classList.add('hide');
-      setCombatData({ ...combatData, 'action': '' })
-      await sleep(3500)
-      actionButton?.classList.remove('hide')
-      // setActionStatus(false)
-    } catch (err: any) {
-      console.log(err.message, 'Error Hiding Action Bar')
-    }
-  }
-
-  // if (dodgeStatus) {
-  //   dodgeButton?.classList.add('hide');
-  //   // console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
-  //   const dodgeTimer = setTimeout(() => {
-  //     dodgeButton?.classList.remove('hide');
-  //     setDodgeStatus(false);
-  //   }, 40000 + combatData.weapons[0].dodge)
-  //   // return () => clearTimeout(dodgeTimer)
+  // async function hideInitiate() {
+  //   try {
+  //     // await sleep(250)
+  //     actionButton?.classList.add('hide');
+  //     setCombatData({ ...combatData, 'action': '' })
+  //     await sleep(3500)
+  //     actionButton?.classList.remove('hide')
+  //     // setActionStatus(false)
+  //   } catch (err: any) {
+  //     console.log(err.message, 'Error Hiding Action Bar')
+  //   }
   // }
 
-  if (actionStatus) {
-    hideInitiate()
-    setActionStatus(false)
-  }
+  // if (actionStatus) {
+  //   hideInitiate()
+  //   setActionStatus(false)
+  // }
   return (
     <>
     <textarea className='action-reader' value={displayedAction} readOnly></textarea>
@@ -107,7 +97,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, actionStatus, setAction
       </select>
     <div className="actionButtons">
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
-          <button value='initiate' type='submit' className='btn btn-outline ' id='initiate-button'>Initiate</button>
+          <button value='initiate' type='submit' className='btn btn-outline ' disabled={actionStatus ? true : false} id='initiate-button'>Initiate</button>
       </Form>
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button'>

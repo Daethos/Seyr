@@ -87,6 +87,9 @@
     display: inline-block;
     margin-bottom: 4px;
   }
+  #dodge-button:disabled {
+    display: none;
+  }
   #initiate-button {
     font-size: 8px;
     background-color: black;
@@ -95,6 +98,9 @@
     display: inline-block;
     margin-bottom: 4px;
     /* font-weight: 650; */
+  }
+  #initiate-button:disabled {
+    display: none;
   }
   .action-reader {
     display: block;
