@@ -240,7 +240,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.weapons[0].critical_damage += 0.3;
         }
         if (combatData.weapons[0].influences[0] === "Shrygei") { // Song
-    
+            let shrygei = combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren + combatData.player_attributes.totalConstitution;
+            combatData.player_influence_description =
+                `The Song of Shry'gei shrieks itself through your ${combatData.weapons[0].name}, the resplendence renews you for ${shrygei}`
+            combatData.weapons[0].magical_penetration += 2
+            combatData.weapons[0].physical_penetration += 2
+            combatData.new_player_health += shrygei
+            combatData.current_player_health += shrygei
         }
         if (combatData.weapons[0].influences[0] === "Tshaer") { // Animal
             console.log("Tshaer!")
@@ -426,8 +432,14 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.weapons[1].critical_damage += 0.3;
             }
             if (combatData.weapons[1].influences[0] === "Shrygei") { // Song
-        
-            }
+                let shrygei = combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren + combatData.player_attributes.totalConstitution;
+                combatData.player_influence_description_two =
+                `The Song of Shry'gei shrieks itself through your ${combatData.weapons[1].name}, the resplendence renews you for ${shrygei}`
+                    combatData.weapons[1].magical_penetration += 2
+                    combatData.weapons[1].physical_penetration += 2
+                    combatData.new_player_health += shrygei
+                    combatData.current_player_health += shrygei
+                }
             if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
                 combatData.player_influence_description_two = 
                     `Your Caer unleashes the bestial nature of Tshaer within you.`
@@ -558,7 +570,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             console.log("Lilos!")
             let lilos = 4 * combatData.computer_attributes.totalCaeren;
             combatData.computer_influence_description = 
-                `Lilos breathes her Cear into ${combatData.player.name}, healing ${combatData.computer.name} for ${lilos}.`
+                `Lilos breathes her Cear into ${combatData.computer.name}, healing ${combatData.computer.name} for ${lilos}.`
             combatData.new_computer_health += lilos;
             combatData.current_computer_health += lilos;
         }
@@ -626,7 +638,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_weapons[0].critical_damage += 0.3;
         }
         if (combatData.computer_weapons[0].influences[0] === "Shrygei") { // Song
-    
+            let shrygei = combatData.comoputer_attributes.totalAchre + combatData.comoputer_attributes.totalCaeren + combatData.comoputer_attributes.totalConstitution;
+            combatData.computer_influence_description =
+            `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, the resplendence renews them for ${shrygei}`
+                combatData.computer_weapons[0].magical_penetration += 2
+                combatData.computer_weapons[0].physical_penetration += 2
+                combatData.new_computer_health += shrygei
+                combatData.current_computer_health += shrygei
         }
         if (combatData.computer_weapons[0].influences[0] === "Tshaer") { // Animal
             console.log("Tshaer!")
@@ -812,7 +830,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_damage += 0.3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Shrygei") { // Song
-        
+                let shrygei = combatData.comoputer_attributes.totalAchre + combatData.comoputer_attributes.totalCaeren + combatData.comoputer_attributes.totalConstitution;
+                combatData.computer_influence_description_two =
+                `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, the resplendence renews them for ${shrygei}`
+                    combatData.computer_weapons[1].magical_penetration += 2
+                    combatData.computer_weapons[1].physical_penetration += 2
+                    combatData.new_computer_health += shrygei
+                    combatData.current_computer_health += shrygei
             }
             if (combatData.computer_weapons[1].influences[0] === "Tshaer") { // Animal
                 combatData.computer_influence_description_two = 
