@@ -73,8 +73,11 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
             // combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance + 1);
+            let achreo = 2 * combatData.player_attributes.totalAchre
+            combatData.new_player_health += achreo
+            combatData.current_player_health += achreo
             combatData.player_influence_description = 
-                `Your Caer stirs Achreo, much to his own surprise.`
+                `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
             combatData.weapons[0].physical_damage += 2;
             combatData.weapons[0].magical_damage += 2;
             combatData.weapons[0].critical_chance += 2;
@@ -138,6 +141,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.weapons[0].physical_penetration += 2;
             combatData.player_defense.physicalDefenseModifier += 2;
             combatData.player_defense.magicalDefenseModifier += 2;
+            combatData.player_defense.physicalPosture += 2;
+            combatData.player_defense.magicalPosture += 2;
         }
         if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
@@ -150,7 +155,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             console.log("Kyrisos!")
             combatData.player_influence_description = 
                 `The Caer of Kyrisos imbues you with Kyosir!`
-            combatData.player_attributes.kyosirMod += 3;
+            combatData.player_attributes.kyosirMod += 4;
         }
         if (combatData.weapons[0].influences[0] === "Kyr'na") { // Time
             console.log("Kyr'na!")
@@ -188,8 +193,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let nyrolus = 2 * combatData.player_attributes.totalCaeren
             combatData.player_influence_description = 
                 `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
-            combatData.player_defense.physicalDefenseModifier += 3;
-            combatData.player_defense.magicalDefenseModifier += 3;
+            combatData.player_defense.physicalDefenseModifier += 2;
+            combatData.player_defense.magicalDefenseModifier += 2;
+            combatData.player_defense.physicalPosture += 2;
+            combatData.player_defense.magicalPosture += 2;
             combatData.new_player_health += nyrolus
             combatData.current_player_health += nyrolus
         }
@@ -198,8 +205,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let quorei = 2 * combatData.player_attributes.totalAchre
             combatData.player_influence_description = 
                 `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
-            combatData.player_defense.physicalDefenseModifier += 3;
-            combatData.player_defense.magicalDefenseModifier += 3;
+            combatData.player_defense.physicalDefenseModifier += 2;
+            combatData.player_defense.magicalDefenseModifier += 2;
+            combatData.player_defense.physicalPosture += 2;
+            combatData.player_defense.magicalPosture += 2;
             combatData.new_player_health += quorei
             combatData.current_player_health += quorei
         }
@@ -278,8 +287,11 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
             if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
+                let achreo = 2 * combatData.player_attributes.totalAchre
+                combatData.new_player_health += achreo
+                combatData.current_player_health += achreo
                 combatData.player_influence_description_two = 
-                    `Your Caer stirs Achreo, much to his own surprise.`
+                    `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
                 combatData.weapons[1].physical_damage += 2;
                 combatData.weapons[1].magical_damage += 2;
                 combatData.weapons[1].critical_chance += 2;
@@ -340,6 +352,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.weapons[1].physical_penetration += 2;
                 combatData.player_defense.physicalDefenseModifier += 2;
                 combatData.player_defense.magicalDefenseModifier += 2;
+                combatData.player_defense.physicalPosture += 2;
+                combatData.player_defense.magicalPosture += 2;
             }
             if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
                 combatData.player_influence_description_two = 
@@ -350,7 +364,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
                 combatData.player_influence_description_two = 
                     `The Caer of Kyrisos imbues you with Kyosir!`
-                combatData.player_attributes.kyosirMod += 3;
+                combatData.player_attributes.kyosirMod += 4;
             }
             if (combatData.weapons[1].influences[0] === "Kyr'na") { // Time
                 let kyrna = 4 * combatData.player_attributes.totalAchre;
@@ -384,8 +398,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 let nyrolus = 2 * combatData.player_attributes.totalCaeren
                 combatData.player_influence_description_two = 
                     `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
-                combatData.player_defense.physicalDefenseModifier += 3;
-                combatData.player_defense.magicalDefenseModifier += 3;
+                combatData.player_defense.physicalDefenseModifier += 2;
+                combatData.player_defense.magicalDefenseModifier += 2;
+                combatData.player_defense.physicalPosture += 2;
+                combatData.player_defense.magicalPosture += 2;
                 combatData.new_player_health += nyrolus
                 combatData.current_player_health += nyrolus
             }
@@ -393,8 +409,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 let quorei = 2 * combatData.player_attributes.totalAchre
                 combatData.player_influence_description_two = 
                     `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
-                combatData.player_defense.physicalDefenseModifier += 3;
-                combatData.player_defense.magicalDefenseModifier += 3;
+                combatData.player_defense.physicalDefenseModifier += 2;
+                combatData.player_defense.magicalDefenseModifier += 2;
+                combatData.player_defense.physicalPosture += 2;
+                combatData.player_defense.magicalPosture += 2;
                 combatData.new_player_health += quorei
                 combatData.current_player_health += quorei
             }
@@ -536,8 +554,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             player_action = 'attack';   
             combatData.computer_weapons[0].magical_penetration += 2;
             combatData.computer_weapons[0].physical_penetration += 2;
-            combatData.computer_defense.physicalDefenseModifier += 2;
-            combatData.computer_defense.magicalDefenseModifier += 2;
+            combatData.player_defense.physicalDefenseModifier += 2;
+            combatData.player_defense.magicalDefenseModifier += 2;
+            combatData.player_defense.physicalPosture += 2;
+            combatData.player_defense.magicalPosture += 2;
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
@@ -588,8 +608,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let nyrolus = (2 * combatedData.computer_attributes.totalCaeren)
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-            combatData.computer_defense.physicalDefenseModifier += 3;
-            combatData.computer_defense.magicalDefenseModifier += 3;
+            combatData.computer_defense.physicalDefenseModifier += 2;
+            combatData.computer_defense.magicalDefenseModifier += 2;
+            combatData.computer_defense.physicalPosture += 2;
+            combatData.computer_defense.magicalPosture += 2;
             combatData.new_computer_health += nyrolus
         }
         if (combatData.computer_weapons[0].influences[0] === "Quor'ei") { // Earth
@@ -597,8 +619,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let quorei = 2 * combatedData.computer_attributes.totalAchre
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
-            combatData.computer_defense.physicalDefenseModifier += 3;
-            combatData.computer_defense.magicalDefenseModifier += 3;
+            combatData.computer_defense.physicalDefenseModifier += 2;
+            combatData.computer_defense.magicalDefenseModifier += 2;
+            combatData.computer_defense.physicalPosture += 2;
+            combatData.computer_defense.magicalPosture += 2;
             combatData.new_computer_health += quorei     }
         if (combatData.computer_weapons[0].influences[0] === "Rahvre") { // Dreams
             console.log("Rahvre!")
@@ -736,8 +760,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 player_action = 'attack';   
                 combatData.computer_weapons[1].magical_penetration += 2;
                 combatData.computer_weapons[1].physical_penetration += 2;
-                combatData.computer_defense.physicalDefenseModifier += 2;
-                combatData.computer_defense.magicalDefenseModifier += 2;
+                combatData.player_defense.physicalDefenseModifier += 2;
+                combatData.player_defense.magicalDefenseModifier += 2;
+                combatData.player_defense.physicalPosture += 2;
+                combatData.player_defense.magicalPosture += 2;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
                 combatData.computer_influence_description_two = 
@@ -782,8 +808,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 let nyrolus = (2 * combatedData.computer_attributes.totalCaeren)
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-                combatData.computer_defense.physicalDefenseModifier += 3;
-                combatData.computer_defense.magicalDefenseModifier += 3;
+                combatData.computer_defense.physicalDefenseModifier += 2;
+                combatData.computer_defense.magicalDefenseModifier += 2;
+                combatData.computer_defense.physicalPosture += 2;
+                combatData.computer_defense.magicalPosture += 2;
                 combatData.new_computer_health += nyrolus
                 combatData.current_computer_health += nyrolus
             }
@@ -791,8 +819,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 let quorei = 2 * combatData.computer_attributes.totalAchre
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
-                combatData.computer_defense.physicalDefenseModifier += 3;
-                combatData.computer_defense.magicalDefenseModifier += 3;
+                combatData.computer_defense.physicalDefenseModifier += 2;
+                combatData.computer_defense.magicalDefenseModifier += 2;
+                combatData.computer_defense.physicalPosture += 2;
+                combatData.computer_defense.magicalPosture += 2;
                 combatData.new_computer_health += quorei
                 combatData.current_computer_health += quorei
             }
