@@ -39,7 +39,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Crit Damage: {weapon_one?.critical_damage}x <br />
                 Dodge Timer: {weapon_one?.dodge}s <br />
                 Roll Chance: {weapon_one?.roll}% <br />
-                Influence: {weapon_one.influences}
+                Influence: {weapon_one?.influences}
             </Popover.Body>
         </Popover>
     )
@@ -61,7 +61,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Crit Damage: {weapon_two?.critical_damage}x <br />
                 Dodge Timer: {weapon_two?.dodge}s <br />
                 Roll Chance: {weapon_two?.roll}% <br />
-                Influence: {weapon_two.influences}
+                Influence: {weapon_two?.influences}
             </Popover.Body>
         </Popover>
     )
@@ -83,7 +83,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Crit Damage: {weapon_three?.critical_damage}x <br />
                 Dodge Timer: {weapon_three?.dodge}s <br />
                 Roll Chance: {weapon_three?.roll}% <br />
-                Influence: {weapon_three.influences}
+                Influence: {weapon_three?.influences}
             </Popover.Body>
         </Popover>
     )

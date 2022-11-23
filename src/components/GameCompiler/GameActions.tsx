@@ -20,9 +20,10 @@ interface Props {
     actionStatus: boolean;
     setActionStatus: React.Dispatch<React.SetStateAction<boolean>>;
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
+    PvP?: boolean;
 }
 
-const GameActions = ({ setDodgeStatus, setEmergencyText, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([])
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
   useEffect(() => {
@@ -52,7 +53,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, actionStatus, setAction
     const dodgeTimer = setTimeout(() => {
       // dodgeButton?.classList.remove('hide');
       setDodgeStatus(false);
-    }, (combatData.weapons[0].dodge * 1000))
+    }, (PvP ? combatData.player_one_weapons[0].dodge * 1000 : combatData.weapons[0].dodge * 1000))
     return () => clearTimeout(dodgeTimer)
   }, [dodgeStatus])
 
@@ -87,7 +88,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, actionStatus, setAction
   return (
     <>
     <textarea className='action-reader' value={displayedAction} readOnly></textarea>
-      <select name="Attacks" id="attack-options" value={combatData.weapons[0]} onChange={setWeaponOrder}>
+      <select name="Attacks" id="attack-options" value={PvP ? combatData.player_one_weapons[0] : combatData.weapons[0]} onChange={setWeaponOrder}>
         <option value="">Weapon Order</option>
         {
         weapons ?

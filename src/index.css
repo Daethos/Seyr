@@ -308,6 +308,13 @@ html, body {
 .message-meta {
   color: #fdf6d8;
 } */
+#pvp-chat {
+  grid-row-start: 8;
+}
+#chat-button:hover {
+  /* transform: scale(1.1); */
+ 
+}
 .Chat-Window p {
   margin: 0;
 }

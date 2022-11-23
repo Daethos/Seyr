@@ -1,3 +1,4 @@
+import { Socket } from 'dgram';
 import { useEffect, useState } from 'react'
 import * as gameAPI from '../../utils/gameApi'
 import Loading from '../Loading/Loading';
@@ -10,7 +11,7 @@ interface Props {
     loseStreak: number;
     highScore: number;
     setHighScore: React.Dispatch<React.SetStateAction<number>>;
-    getOpponent: () => Promise<void>;
+    getOpponent?: () => Promise<void>;
     resetAscean: () => Promise<void>;
     combatData: any;
     setCombatData: React.Dispatch<any>;
@@ -76,8 +77,7 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
         setLoading(true)
         try {
             setEmergencyText([`Auto Engagement Response`])
-            const response = await gameAPI.initiateAction(combatData)
-
+            const response = await gameAPI.pvpAction(combatData)
             console.log(response.data, 'Response Auto Engaging')
             setCombatData({...response.data, 'action': ''})
             setCurrentPlayerHealth(response.data.new_player_health)

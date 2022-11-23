@@ -10,8 +10,6 @@ interface Props {
   combatData: any;
   player: boolean;
   loading: boolean;
-  combatDataCompiler: () => Promise<void>;
-  opponentStatCompiler: () => Promise<void>;
   undefined: boolean;
   setUndefined: React.Dispatch<React.SetStateAction<boolean>>;
   undefinedComputer: boolean;
@@ -19,7 +17,7 @@ interface Props {
   PvP?: boolean;
 }
 
-const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, loading, combatDataCompiler, opponentStatCompiler, undefined, setUndefined, undefinedComputer, setUndefinedComputer }: Props) => {
+const PvPAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, loading, undefined, setUndefined, undefinedComputer, setUndefinedComputer }: Props) => {
   const [playerCharacter, setPlayerCharacter] = useState<boolean>(player)
   // console.log(playerCharacter, 'Player Status in Game Ascean')
 
@@ -34,14 +32,14 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, load
       <div className="game-block" style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}>
       <div className="actions">
       <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-      <GameHealthBar totalPlayerHealth={combatData.player_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
+      <GameHealthBar totalPlayerHealth={combatData.player_one_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
       </div>
-      {
-        !combatData?.weapons?.[0]?.name ? <>{combatDataCompiler}</> :
+      {/* {
+        !combatData?.player_one_weapons?.[0]?.name ? <>{combatDataCompiler}</> : */}
         <AsceanImageCard
-            weapon_one={combatData.weapons[0]}
-            weapon_two={combatData.weapons[1]}
-            weapon_three={combatData.weapons[2]}
+            weapon_one={combatData.player_one_weapons[0]}
+            weapon_two={combatData.player_one_weapons[1]}
+            weapon_three={combatData.player_one_weapons[2]}
             shield={ascean.shield}
             helmet={ascean.helmet}
             chest={ascean.chest}
@@ -54,23 +52,23 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, load
             loading={loading}
             key={ascean._id}
         />
-      }
+      {/* } */}
       <div className="actions">
-      <GamePlayerStats attributes={combatData.player_attributes} weaponAttributes={combatData.weapons[0]} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
+      <GamePlayerStats attributes={combatData.player_one_attributes} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
       </div>
       </div>
     : 
     <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}>
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-    <GameHealthBar totalPlayerHealth={combatData.computer_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
+    <GameHealthBar totalPlayerHealth={combatData.player_two_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
     </div>
-    {
-      !combatData?.computer_weapons?.[0]?.name ? <>{opponentStatCompiler}</> :
+    {/* {
+      !combatData?.player_two_weapons?.[0]?.name ? <>{opponentStatCompiler}</> : */}
       <AsceanImageCard
-          weapon_one={combatData.computer_weapons[0]}
-          weapon_two={combatData.computer_weapons[1]}
-          weapon_three={combatData.computer_weapons[2]}
+          weapon_one={combatData.player_two_weapons[0]}
+          weapon_two={combatData.player_two_weapons[1]}
+          weapon_three={combatData.player_two_weapons[2]}
           shield={ascean.shield}
           helmet={ascean.helmet}
           chest={ascean.chest}
@@ -83,9 +81,9 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, load
           loading={loading}
           key={ascean._id}
       />
-    }
+     {/* } */}
     <div className="actions">
-    <GamePlayerStats attributes={combatData.computer_attributes} weaponAttributes={combatData.computer_weapons[0]} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
+    <GamePlayerStats attributes={combatData.player_two_attributes} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
     </div>
     </div>
     }
@@ -93,4 +91,4 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, load
   )
 }
 
-export default GameAscean
+export default PvPAscean
