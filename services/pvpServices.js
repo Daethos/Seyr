@@ -1022,18 +1022,17 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
                 if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Kyosir' || combatData.player_two.mastery === 'Constitution') {
                     if (combatData.player_two_attributes.totalAgility 
                         + combatData.player_two_weapons[0].agility 
-                        + combatData.player_two_weapons[1].agility >= 30)
-                    if (combatData.player_two_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
-                       combatData.player_two_dual_wielding = true;
-                        await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                        // Computer Dual Wield Compiler
-                        return combatData
-                    } else {
-                        // Computer Double Attack Compiler
-                        combatData.player_two_dual_wielding = true;
-                        await computerDoubleAttackCompiler(combatData)
-                        return combatData
-                    }
+                        + combatData.player_two_weapons[1].agility >= 30) {
+                            if (combatData.player_two_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                               combatData.player_two_dual_wielding = true;
+                                await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                                // Computer Dual Wield Compiler
+                                return combatData
+                            } else {
+                                computer_physical_damage *= 2;
+                                computer_magical_damage *= 1.75;
+                            }
+                        }
                 } else {
                     computer_physical_damage *= 1.5;
                     computer_magical_damage *= 1.25;
@@ -1180,18 +1179,19 @@ const p2RollCompiler = async (combatData, player_one_initiative, player_two_init
                 `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
         await p2AttackCompiler(combatData, player_two_action)
     } else {
-        if (player_one_initiative > player_two_initiative) {
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-            await p2AttackCompiler(combatData, player_two_action)
-            await attackCompiler(combatData, player_one_action)
-        } else {
-            console.log('Computer failed yet had higher initiative')
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-            await attackCompiler(combatData, player_one_action)
-            await p2AttackCompiler(combatData, player_two_action)
-        }
+        combatData.player_two_special_description = 
+            `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
+        return CombatData
+            // if (player_one_initiative > player_two_initiative) {
+        //     await p2AttackCompiler(combatData, player_two_action)
+        //     await attackCompiler(combatData, player_one_action)
+        // } else {
+        //     console.log('Computer failed yet had higher initiative')
+        //     combatData.player_two_special_description = 
+        //         `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
+        //     await attackCompiler(combatData, player_one_action)
+        //     await p2AttackCompiler(combatData, player_two_action)
+        // }
     }
     return (
         combatData
@@ -1497,17 +1497,18 @@ const p1RollCompiler = async (combatData, player_one_initiative, player_two_init
                 `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
         await attackCompiler(combatData, player_one_action)
     } else {
-        if (player_one_initiative > player_two_initiative) {
-            combatData.player_one_special_description =
+        combatData.player_one_special_description =
             `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
-            await attackCompiler(combatData, player_one_action)
-            await p2AttackCompiler(combatData, player_two_action)
-        } else {
-            combatData.player_one_special_description =
-            `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
-            await p2AttackCompiler(combatData, player_two_action)
-            await attackCompiler(combatData, player_one_action)
-        }
+        return combatData
+        // if (player_one_initiative > player_two_initiative) {
+        //     await attackCompiler(combatData, player_one_action)
+        //     await p2AttackCompiler(combatData, player_two_action)
+        // } else {
+        //     combatData.player_one_special_description =
+        //     `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
+        //     await p2AttackCompiler(combatData, player_two_action)
+        //     await attackCompiler(combatData, player_one_action)
+        // }
     }
     return (
         combatData

@@ -77,7 +77,7 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
         setLoading(true)
         try {
             setEmergencyText([`Auto Engagement Response`])
-            const response = await gameAPI.pvpAction(combatData)
+            const response = await gameAPI.initiateAction(combatData)
             console.log(response.data, 'Response Auto Engaging')
             setCombatData({...response.data, 'action': ''})
             setCurrentPlayerHealth(response.data.new_player_health)

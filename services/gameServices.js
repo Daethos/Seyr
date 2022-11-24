@@ -1067,6 +1067,28 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     if (combatData.realized_computer_damage < 0) {
         combatData.realized_computer_damage = 0;
     }
+
+    let strength = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength  + combatData.computer_weapons[1].strength;
+    let agility = combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility  + combatData.computer_weapons[1].agility;
+    let achre = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre  + combatData.computer_weapons[1].achre;
+    let caeren = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren  + combatData.computer_weapons[1].caeren;
+
+    if (combatData.computer_weapons[0].grip === 'One Hand') {
+        if (combatData.computer_weapons[0].attack_type === 'Physical') {
+            combatData.realized_computer_damage *= (agility / 45)
+        } else {
+            combatData.realized_computer_damage *= (achre / 45)
+        }
+    }
+
+    if (combatData.computer_weapons[0].grip === 'Two Hand') {
+        if (combatData.computer_weapons[0].attack_type === 'Physical') {
+            combatData.realized_computer_damage *= (strength / 60) 
+        } else {
+            combatData.realized_computer_damage *= (caeren / 60)
+        }
+    }
+
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
@@ -1105,17 +1127,17 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     if (combatData.computer_action === 'attack') {
         if (combatData.computer_weapons[0].grip === 'One Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {
-                if (combatData.computer.mastery === 'Agility') {
-                    if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
-                       combatData.computer_dual_wielding = true;
-                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                        // Computer Dual Wield Compiler
-                        return combatData
-                    } else {
-                        // Computer Double Attack Compiler
-                        combatData.computer_dual_wielding = true;
-                        await computerDoubleAttackCompiler(combatData)
-                        return combatData
+                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
+                    if (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility + combatData.computer_weapons[1].agility >= 30) {
+                        if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                           combatData.computer_dual_wielding = true;
+                            await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                            // Computer Dual Wield Compiler
+                            return combatData
+                        } else {
+                            computer_physical_damage *= 2;
+                            computer_magical_damage *= 1.75;
+                        }
                     }
                 } else {
                     computer_physical_damage *= 1.5;
@@ -1123,7 +1145,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                 }
             } else {
                 // If Focus + 1h But Magic
-                if (combatData.computer.mastery === 'Achre') {
+                if (combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
                     if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                         combatData.computer_dual_wielding = true;
                         await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
@@ -1135,8 +1157,8 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                 }
             }
         } else { // Weapon is TWO HAND
-            if (combatData.computer.mastery === 'Strength') {
-                if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
+            if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Kyosir') {
+                if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                     combatData.computer_dual_wielding = true;
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
@@ -1145,8 +1167,8 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                     computer_magical_damage *= 1.75;
                 }
             }
-            if (combatData.computer.mastery === 'Caeren') {
-                if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 60) {
+            if (combatData.computer.mastery === 'Caeren' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
+                if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 30) {
                     combatData.computer_dual_wielding = true;
                     await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
@@ -1156,7 +1178,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                 }
             }
             if (combatData.computer_weapons[0].type === 'Bow') {
-                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre') {
+                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
                     computer_physical_damage *= 2;
                     computer_magical_damage *= 2;
                 }
@@ -1261,18 +1283,20 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
                 `${combatData.computer.name} successfully rolls against you, avoiding your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
         await computerAttackCompiler(combatData, computer_action)
     } else {
-        if (player_initiative > computer_initiative) {
-            combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
-            await computerAttackCompiler(combatData, computer_action)
-            await attackCompiler(combatData, player_action)
-        } else {
-            console.log('Computer failed yet had higher initiative')
-            combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
-            await attackCompiler(combatData, player_action)
-            await computerAttackCompiler(combatData, computer_action)
-        }
+        // if (player_initiative > computer_initiative) {
+        combatData.computer_special_description = 
+            `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
+        return combatData
+            // await computerAttackCompiler(combatData, computer_action)
+            // await attackCompiler(combatData, player_action)
+        // } else {
+        //     console.log('Computer failed yet had higher initiative')
+        //     combatData.computer_special_description = 
+        //         `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
+        //     return combatData
+        //     // await attackCompiler(combatData, player_action)
+        //     // await computerAttackCompiler(combatData, computer_action)
+        // }
     }
     return (
         combatData
@@ -1331,6 +1355,28 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     if (combatData.realized_player_damage < 0) {
         combatData.realized_player_damage = 0;
     }
+
+    let strength = combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength;
+    let agility = combatData.player_attributes.totalAgility + combatData.weapons[0].agility  + combatData.weapons[1].agility;
+    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre  + combatData.weapons[1].achre;
+    let caeren = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren  + combatData.weapons[1].caeren;
+
+    if (combatData.weapons[0].grip === 'One Hand') {
+        if (combatData.weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_damage *= (agility / 45)
+        } else {
+            combatData.realized_player_damage *= (achre / 45)
+        }
+    }
+
+    if (combatData.weapons[0].grip === 'Two Hand') {
+        if (combatData.weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_damage *= (strength / 60) 
+        } else {
+            combatData.realized_player_damage *= (caeren / 60)
+        }
+    }
+
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
 
@@ -1374,14 +1420,14 @@ const attackCompiler = async (combatData, player_action) => {
     if (combatData.action === 'attack') {
         if (combatData.weapons[0].grip === 'One Hand') {
             if (combatData.weapons[0].attack_type === 'Physical') {
-                if (combatData.player.mastery === 'Agility') {
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Kyosir' || combatData.player.mastery === 'Constitution') {
                     if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                         combatData.dual_wielding = true;
                         await dualWieldCompiler(combatData)
                         return combatData
                     } else {
-                        player_physical_damage *= 1.5;
-                        player_magical_damage *= 1.25;
+                        player_physical_damage *= 2;
+                        player_magical_damage *= 1.75;
                         // await doubleAttackCompiler(combatData)
                         // return combatData
                     }
@@ -1391,7 +1437,7 @@ const attackCompiler = async (combatData, player_action) => {
                 }
             } else {
                 // If Focus + 1h But Magic
-                if (combatData.player.mastery === 'Achre') {
+                if (combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
                     if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                         combatData.dual_wielding = true;
                         await dualWieldCompiler(combatData)
@@ -1404,8 +1450,8 @@ const attackCompiler = async (combatData, player_action) => {
             }
         } else if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             console.log(combatData.weapons[0].grip, combatData.player.mastery, combatData.player_attributes.totalStrength)
-            if (combatData.player.mastery === 'Strength') {
-                if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
+            if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Kyosir') {
+                if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
                     combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
@@ -1416,8 +1462,8 @@ const attackCompiler = async (combatData, player_action) => {
                 }
 
             }
-            if (combatData.player.mastery === 'Caeren') {
-                if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 60) {
+            if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
+                if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 30) {
                     combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
                         return combatData
@@ -1427,7 +1473,7 @@ const attackCompiler = async (combatData, player_action) => {
                 }
             }
             if (combatData.weapons[0].type === 'Bow') {
-                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre') {
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
                     player_physical_damage *= 2.5;
                     player_magical_damage *= 2.5;
                 }
@@ -1553,17 +1599,18 @@ const playerRollCompiler = async (combatData, player_initiative, computer_initia
                 `You successfully roll against ${combatData.computer.name}, avoiding their ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
         await attackCompiler(combatData, player_action)
     } else {
-        if (player_initiative > computer_initiative) {
-            combatData.player_special_description =
-            `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
-            await attackCompiler(combatData, player_action)
-            await computerAttackCompiler(combatData, computer_action)
-        } else {
-            combatData.player_special_description =
-            `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
-            await computerAttackCompiler(combatData, computer_action)
-            await attackCompiler(combatData, player_action)
-        }
+        // if (player_initiative > computer_initiative) {
+        combatData.player_special_description =
+        `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
+        return combatData
+            //     await attackCompiler(combatData, player_action)
+        //     await computerAttackCompiler(combatData, computer_action)
+        // } else {
+        //     combatData.player_special_description =
+        //     `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
+        //     await computerAttackCompiler(combatData, computer_action)
+        //     await attackCompiler(combatData, player_action)
+        // }
     }
     return (
         combatData
