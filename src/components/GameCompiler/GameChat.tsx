@@ -20,9 +20,12 @@ interface Props {
     combatData: any;
     setCombatData: any;
     enemyPlayer: any;
+    yourData: any;
+    enemyData: any;
+    spectator: boolean;
 }
 
-const GameChat = ({ user, ascean, opponent, room, socket, setShowChat, combatData, setCombatData, enemyPlayer }: Props) => {
+const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat, combatData, setCombatData, enemyPlayer, yourData, enemyData }: Props) => {
     const [modalShow, setModalShow] = useState(false)
     const [currentMessage, setCurrentMessage] = useState("")
     const [messageList, setMessageList] = useState<any>([])
@@ -69,11 +72,18 @@ const GameChat = ({ user, ascean, opponent, room, socket, setShowChat, combatDat
     }, [socket])
 
     useEffect(() => {
-      socket.on(`Game Commencing`, () => {
+      socket.on(`Game Commencing`, async () => {
         // if (ascean && opponent) {
             console.log('Setting Gameplay to Live')
-            setLiveGameplay(true)
-            // setTimeout(() => setLiveGameplay(true), 6000)
+            const messageData = {
+                room: room,
+                author: `The Seyr`,
+                message: `Duel commencing in 6 seconds, prepare.`,
+                time: Date.now()
+            }
+            await socket.emit(`send_message`, messageData);
+            // setLiveGameplay(true)
+            setTimeout(() => setLiveGameplay(true), 6000)
         // }
       })
     }, [])
@@ -86,19 +96,8 @@ const GameChat = ({ user, ascean, opponent, room, socket, setShowChat, combatDat
             liveGameplay
             ?
             <>
-            <GamePvP user={user} ascean={ascean} opponent={opponent} enemyPlayer={enemyPlayer} room={room} socket={socket} combatData={combatData} setCombatData={setCombatData} setModalShow={setModalShow} />
+            <GamePvP user={user} spectator={spectator} ascean={ascean} opponent={opponent} yourData={yourData} enemyData={enemyData} enemyPlayer={enemyPlayer} room={room} socket={socket} combatData={combatData} setCombatData={setCombatData} setModalShow={setModalShow} />
             {/* <PvPChatModal messageList={messageList} user={user} setShowChat={setShowChat} room={room} currentMessage={currentMessage} setCurrentMessage={setCurrentMessage} sendMessage={sendMessage} /> */}
-            {/* <span style={{ float: 'right' }} id='chat-button'>
-                <Button variant='outline-danger'
-                    style={{ color: '#fdf6d8', borderRadius: 50 + '%',
-                        marginTop: 55 + 'vh', marginRight: 35 + 'vw',
-                        border: 1.5 + 'px' + ' solid ' + 'red' 
-                    }} 
-                    onClick={() => setModalShow(true)}
-                    >
-                    <img src={user.photoUrl} alt={user.username} style={{ width: 40 + 'px', height: 40 + 'px', borderRadius: 50 + '%' }} />
-                </Button>
-                </span> */}
 
                 <Modal 
                     show={modalShow}

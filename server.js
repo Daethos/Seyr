@@ -275,12 +275,64 @@ io.on("connection", (socket) => {
       // console.log(newData, 'Updated Data?')
       io.to(newData.room).emit(`updated_combatData`, newData)
     })
+
+    socket.on(`share_combatdata`, async (data) => {
+      console.log('Sharing Combat Data')
+      let newData = {
+        user: newUser.user,
+        room: newUser.room,
+        combatData: data,
+        player: newUser.player
+      };
+      socket.to(newUser.room).emit(`sharing_combatdata`, newData)
+    })
+
+    socket.on(`request_data`, async () => {
+      console.log(`Requesting Data`)
+      socket.to(newUser.room).emit(`requesting_data`)
+    })
+    socket.on(`data_responding`, async () => {
+      console.log(`Responding Data`)
+      socket.to(newUser.room).emit(`data_response`, newUser)
+    })
     
-    if (connectedUsersCount >= 3) {
+    if (connectedUsersCount === 2) {
       io.to(data.room).emit(`Game Commencing`)
     }
 
+    socket.on(`initiated`, async (data) => {
+      let newData = data;
+      console.log(newData, 'Did the New Data transcribe?')
+      if (newUser.player === 1) {
+        newData.player_one_initiated = true;
+      } else {
+        newData.player_two_initiated = true;
+      }
+      
+      if (newData.player_one_initiated === true && newData.player_two_initiated === true) {
+        const response = await pvpService.actionCompiler(data)
+        io.to(newUser.room).emit(`combat_response`, response);
+      } else {
+        io.to(newUser.room).emit(`soft_response`, newData);
+      }
+    })
 
+    socket.on(`request_reduel`, async (data) => {
+      let newData = data;
+      if (newUser.player === 1) {
+        newData.player_one_reduel = true;
+      } else {
+        newData.player_two_reduel = true;
+      }
+      console.log(newData, 'Did the New Data transcribe?')
+      if (newData.player_one_reduel === true && newData.player_two_reduel === true) {
+        // const response = await pvpService.actionCompiler(data)
+        io.to(newUser.room).emit(`reset_duel`);
+      } else {
+        io.to(newUser.room).emit(`reduel_requested`, newData);
+      }
+
+    })
 
 
   })
@@ -298,11 +350,12 @@ io.on("connection", (socket) => {
     // console.log(data)
   })
 
-  socket.on(`send_combatData`, async (combatData) => {
+  socket.on(`auto_engage`, async (combatData) => {
     const response = await pvpService.actionCompiler(combatData)
     // console.log(response)
     io.to(combatData.room).emit(`combat_response`, response)
   })
+
 
   // socket.on("disconnect", () => {
   //   console.log('User Disconnected', socket.id);

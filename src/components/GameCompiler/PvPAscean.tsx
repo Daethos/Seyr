@@ -15,9 +15,11 @@ interface Props {
   undefinedComputer: boolean;
   setUndefinedComputer: React.Dispatch<React.SetStateAction<boolean>>;
   PvP?: boolean;
+  yourData: any;
+  enemyData: any;
 }
 
-const PvPAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, loading, undefined, setUndefined, undefinedComputer, setUndefinedComputer }: Props) => {
+const PvPAscean = ({ ascean, player, PvP, yourData, enemyData, currentPlayerHealth, combatData, loading, undefined, setUndefined, undefinedComputer, setUndefinedComputer }: Props) => {
   const [playerCharacter, setPlayerCharacter] = useState<boolean>(player)
   // console.log(playerCharacter, 'Player Status in Game Ascean')
 
@@ -32,14 +34,16 @@ const PvPAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, loadi
       <div className="game-block" style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}>
       <div className="actions">
       <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-      <GameHealthBar totalPlayerHealth={combatData.player_one_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
+      <GameHealthBar 
+        totalPlayerHealth={yourData.player === 1 ? combatData.player_one_attributes.healthTotal : combatData.player_two_attributes.healthTotal} 
+        currentPlayerHealth={yourData.player === 1 ? combatData.current_player_one_health : combatData.current_player_two_health} />
       </div>
       {/* {
         !combatData?.player_one_weapons?.[0]?.name ? <>{combatDataCompiler}</> : */}
         <AsceanImageCard
-            weapon_one={combatData.player_one_weapons[0]}
-            weapon_two={combatData.player_one_weapons[1]}
-            weapon_three={combatData.player_one_weapons[2]}
+            weapon_one={yourData.player === 1 ? combatData.player_one_weapons[0] : combatData.player_two_weapons[0]}
+            weapon_two={yourData.player === 1 ? combatData.player_one_weapons[1] : combatData.player_two_weapons[1]}
+            weapon_three={yourData.player === 1 ? combatData.player_one_weapons[2] : combatData.player_two_weapons[2]}
             shield={ascean.shield}
             helmet={ascean.helmet}
             chest={ascean.chest}
@@ -54,21 +58,28 @@ const PvPAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, loadi
         />
       {/* } */}
       <div className="actions">
-      <GamePlayerStats attributes={combatData.player_one_attributes} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
+        {
+            yourData.player === 1
+            ? <GamePlayerStats attributes={combatData.player_one_attributes} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
+            : <GamePlayerStats attributes={combatData.player_two_attributes} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
+        }
       </div>
       </div>
     : 
     <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}>
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-    <GameHealthBar totalPlayerHealth={combatData.player_two_attributes.healthTotal} currentPlayerHealth={currentPlayerHealth} />
+    <GameHealthBar 
+        totalPlayerHealth={enemyData.player === 1 ? combatData.player_one_attributes.healthTotal : combatData.player_two_attributes.healthTotal} 
+        currentPlayerHealth={enemyData.player === 1 ? combatData.current_player_one_health : combatData.current_player_two_health}
+    />
     </div>
     {/* {
       !combatData?.player_two_weapons?.[0]?.name ? <>{opponentStatCompiler}</> : */}
       <AsceanImageCard
-          weapon_one={combatData.player_two_weapons[0]}
-          weapon_two={combatData.player_two_weapons[1]}
-          weapon_three={combatData.player_two_weapons[2]}
+          weapon_one={enemyData.player === 2 ? combatData.player_two_weapons[0] : combatData.player_one_weapons[0]}
+          weapon_two={enemyData.player === 2 ? combatData.player_two_weapons[1] : combatData.player_one_weapons[1]}
+          weapon_three={enemyData.player === 2 ? combatData.player_two_weapons[2] : combatData.player_one_weapons[2]}
           shield={ascean.shield}
           helmet={ascean.helmet}
           chest={ascean.chest}
@@ -83,7 +94,11 @@ const PvPAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, loadi
       />
      {/* } */}
     <div className="actions">
-    <GamePlayerStats attributes={combatData.player_two_attributes} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
+        {
+            enemyData.player === 1
+            ? <GamePlayerStats attributes={combatData.player_one_attributes} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
+            : <GamePlayerStats attributes={combatData.player_two_attributes} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
+        }
     </div>
     </div>
     }

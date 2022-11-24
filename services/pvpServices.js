@@ -58,13 +58,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_attributes.totalCaeren) / 2;
             combatData.new_player_one_health += combatData.realized_player_one_damage;
             combatData.player_one_influence_description = 
-                `Daethos wraps through your Caer, ${combatData.player_one_weapons[0].name} healing you for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+                `Daethos wraps through ${combatData.player_one.name}'s Caer, ${combatData.player_one_weapons[0].name} healing them for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
             combatData.new_player_one_health += daethos;
             combatData.new_player_two_health -= daethos;
             combatData.current_player_one_health += daethos;
-            combatData.current_computer_health -= daethos;
-            if (combatData.current_computer_health < 0) {
-                combatData.current_computer_health = 0;
+            combatData.current_player_two_health -= daethos;
+            if (combatData.current_player_two_health < 0) {
+                combatData.current_player_two_health = 0;
             }
             if (combatData.new_player_two_health < 0) {
                 combatData.new_player_two_health = 0;
@@ -77,7 +77,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_one_health += achreo
             combatData.current_player_one_health += achreo
             combatData.player_one_influence_description = 
-                `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
+                `${combatData.player_one.name}'s Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
             combatData.player_one_weapons[0].physical_damage += 2;
             combatData.player_one_weapons[0].magical_damage += 2;
             combatData.player_one_weapons[0].critical_chance += 2;
@@ -86,15 +86,15 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === "Ahn've") { // Wind
             console.log("Achreo!")
             combatData.player_one_influence_description = 
-                `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
+                `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
             player_one_action = 'attack';
             if (combatData.realized_player_one_damage < 0) {
                 combatData.realized_player_one_damage = 0;
             }
-            combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-            combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+            combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+            combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+            if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
                 combatData.new_player_two_health = 0;
                 combatData.player_one_win = true;
             }
@@ -102,21 +102,21 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === 'Astra') { // Lightning
             console.log("Astra!")
             combatData.player_one_influence_description = 
-                `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
+                `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
             combatData.player_one_weapons[0].critical_chance += 5;
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
             combatData.player_one_influence_description = 
-                `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
+                `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
             player_one_action = 'attack';
             if (combatData.realized_player_one_damage < 0) {
                 combatData.realized_player_one_damage = 0;
             }
-            combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-            combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+            combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+            combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+            if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
                 combatData.new_player_two_health = 0;
                 combatData.player_one_win = true;
             }    
@@ -129,13 +129,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === 'Fyer') { // Fire
             console.log("Fyer!")
             combatData.player_one_influence_description = 
-                `Your Caer ushers forth the favor of Fyer igniting through you.`
+                `${combatData.player_one.name}'s Caer ushers forth the favor of Fyer igniting through them.`
             combatData.player_one_weapons[0].critical_damage += 0.9;
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Ilios') { // Sun
             console.log("Ilios!")
             combatData.player_one_influence_description = 
-                `The Hush of Ilios bursts into you through your ${combatData.player_one_weapons[0].name}.`
+                `The Hush of Ilios bursts into them through ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}.`
             player_one_action = 'attack';   
             combatData.player_one_weapons[0].magical_penetration += 2;
             combatData.player_one_weapons[0].physical_penetration += 2;
@@ -147,14 +147,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
             combatData.player_one_influence_description = 
-                `Your keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                `${combatData.player_one.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
             combatData.player_one_weapons[0].roll += 3;
             combatData.player_one_weapons[0].critical_chance += 3;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Kyrisos") { // Gold
             console.log("Kyrisos!")
             combatData.player_one_influence_description = 
-                `The Caer of Kyrisos imbues you with Kyosir!`
+                `The Caer of Kyrisos imbues them with Kyosir!`
             combatData.player_one_attributes.kyosirMod += 4;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Kyr'na") { // Time
@@ -163,9 +163,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_one_influence_description = 
                 `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
             combatData.new_player_two_health -= kyrna;
-            combatData.current_computer_health -= kyrna;
-            if (combatData.current_computer_health < 0) {
-                combatData.current_computer_health = 0;
+            combatData.current_player_two_health -= kyrna;
+            if (combatData.current_player_two_health < 0) {
+                combatData.current_player_two_health = 0;
             }
             if (combatData.new_player_two_health < 0) {
                 combatData.new_player_two_health = 0;
@@ -175,14 +175,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log("Lilos!")
             let lilos = 4 * combatData.player_one_attributes.totalCaeren;
             combatData.player_one_influence_description = 
-                `Lilos breathes her Cear into ${combatData.player_one.name}, healing you for ${lilos}.`
+                `Lilos breathes her Cear into ${combatData.player_one.name}, healing them for ${lilos}.`
             combatData.new_player_one_health += lilos;
             combatData.current_player_one_health += lilos;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Ma'anre") { // Moon
             console.log("Ma'anre!")
             combatData.player_one_influence_description = 
-                `Ma'anre wraps her tendrils about your ${combatData.player_one_weapons[0].name}, changing your perception of this world.` 
+                `Ma'anre wraps her tendrils about ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, changing ${combatData.player_one.name}'s perception of this world.` 
             combatData.player_one_weapons[0].roll += 2;
             combatData.player_one_weapons[0].dodge -= 2;
             combatData.player_one_weapons[0].critical_chance += 2;
@@ -192,7 +192,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log("Nyrolus!")
             let nyrolus = 2 * combatData.player_one_attributes.totalCaeren
             combatData.player_one_influence_description = 
-                `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
+                `${combatData.player_one.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
             combatData.player_one_defense.physicalDefenseModifier += 2;
             combatData.player_one_defense.magicalDefenseModifier += 2;
             combatData.player_one_defense.physicalPosture += 2;
@@ -204,7 +204,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log("Quor'ei!")
             let quorei = 2 * combatData.player_one_attributes.totalAchre
             combatData.player_one_influence_description = 
-                `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
+                `${combatData.player_one.name}'s resolve beckons with the favor of ${combatData.player_one.name}'s Quor'ei, steeling them in their Caer for ${quorei}.`
             combatData.player_one_defense.physicalDefenseModifier += 2;
             combatData.player_one_defense.magicalDefenseModifier += 2;
             combatData.player_one_defense.physicalPosture += 2;
@@ -215,28 +215,28 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === "Rahvre") { // Dreams
             console.log("Rahvre!")
             combatData.player_one_influence_description = 
-            `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
+            `${combatData.player_one.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
         combatData.player_one_weapons[0].magical_damage += 5;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Senari") { // Wisdom
             console.log("Senari!")
             combatData.player_one_influence_description = 
-                `Your calm swirls with the favor of Senari, holding you in her Caer.`
+                `${combatData.player_one.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
             combatData.player_one_weapons[0].roll += 3;
             combatData.player_one_weapons[0].dodge -= 3;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Se'dyro") { // Iron
             console.log("Se'dyro!")
             combatData.player_one_influence_description = 
-                `The Caer of Se'dyro sings into your ${combatData.player_one_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
+                `The Caer of Se'dyro sings into ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
             player_one_action = 'attack';
             if (combatData.realized_player_one_damage < 0) {
                 combatData.realized_player_one_damage = 0;
             }
-            combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-            combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+            combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+            combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+            if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
                 combatData.new_player_two_health = 0;
                 combatData.player_one_win = true;
             }
@@ -244,14 +244,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === "Se'vas") { // War
             console.log("Se'vas!")
             combatData.player_one_influence_description = 
-                `The Caer of Se'vas scorns your ${combatData.player_one_weapons[0].name}, scarring it with the beauty of war.` 
+                `The Caer of Se'vas scorns ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, scarring it with the beauty of war.` 
             combatData.player_one_weapons[0].critical_chance += 3;
             combatData.player_one_weapons[0].critical_damage += 0.3;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Shrygei") { // Song
             let shrygei = combatData.player_one_attributes.totalAchre + combatData.player_one_attributes.totalCaeren + combatData.player_one_attributes.totalConstitution;
             combatData.player_one_influence_description =
-                `The Song of Shry'gei shrieks itself through your ${combatData.player_one_weapons[0].name}, the resplendence renews you for ${shrygei}`
+                `The Song of Shry'gei shrieks itself through ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, the resplendence renews them for ${shrygei}`
             combatData.player_one_weapons[0].magical_penetration += 2
             combatData.player_one_weapons[0].physical_penetration += 2
             combatData.new_player_one_health += shrygei
@@ -260,7 +260,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === "Tshaer") { // Animal
             console.log("Tshaer!")
             combatData.player_one_influence_description = 
-                `Your fervor unleashes the bestial nature of Tshaer within you.`
+                `${combatData.player_one.name}'s fervor unleashes the bestial nature of Tshaer within them.`
             combatData.player_one_weapons[0].physical_damage += 5;
         }
     }
@@ -273,13 +273,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health += combatData.realized_player_one_damage;
                 combatData.current_player_one_health += combatData.realized_player_one_damage;
                 combatData.player_one_influence_description_two = 
-                    `Daethos wraps through your Caer, ${combatData.player_one_weapons[1].name} healing you for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+                    `Daethos wraps through ${combatData.player_one.name}'s Caer, ${combatData.player_one_weapons[1].name} healing them for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
                 combatData.new_player_one_health += daethos;
                 combatData.new_player_two_health -= daethos;
                 combatData.current_player_one_health += daethos;
-                combatData.current_computer_health -= daethos;
-                if (combatData.current_computer_health < 0) {
-                    combatData.current_computer_health = 0;
+                combatData.current_player_two_health -= daethos;
+                if (combatData.current_player_two_health < 0) {
+                    combatData.current_player_two_health = 0;
                 }
                 if (combatData.new_player_two_health < 0) {
                     combatData.new_player_two_health = 0;
@@ -291,7 +291,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health += achreo
                 combatData.current_player_one_health += achreo
                 combatData.player_one_influence_description_two = 
-                    `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
+                    `${combatData.player_one.name}'s Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
                 combatData.player_one_weapons[1].physical_damage += 2;
                 combatData.player_one_weapons[1].magical_damage += 2;
                 combatData.player_one_weapons[1].critical_chance += 2;
@@ -300,37 +300,37 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === "Ahn've") { // Wind
                 console.log("Ahn've!")
                 combatData.player_one_influence_description_two = 
-                    `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
+                    `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
                 player_one_action = 'attack';
                 // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }
-                combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-                combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+                combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+                combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+                if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
                     combatData.new_player_two_health = 0;
                     combatData.player_one_win = true;
                 }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Astra') { // Lightning
                 combatData.player_one_influence_description_two = 
-                    `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
+                    `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.player_one_weapons[1].critical_chance += 5;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_one_influence_description_two = 
-                    `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
+                    `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
                 player_one_action = 'attack';
                 // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }
-                combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-                combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+                combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+                combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+                if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
                     combatData.new_player_two_health = 0;
                     combatData.player_one_win = true;
                 }
@@ -341,12 +341,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Fyer') { // Fire
                 combatData.player_one_influence_description_two = 
-                    `Your Caer ushers forth the favor of Fyer igniting through you.`
+                    `${combatData.player_one.name}'s Caer ushers forth the favor of Fyer igniting through them.`
                 combatData.player_one_weapons[1].critical_damage += 0.9;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Ilios') { // Sun
                 combatData.player_one_influence_description_two = 
-                    `The Hush of Ilios bursts into you through your ${combatData.player_one_weapons[1].name}.`
+                    `The Hush of Ilios bursts into them through ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}.`
                 player_one_action = 'attack';   
                 combatData.player_one_weapons[1].magical_penetration += 2;
                 combatData.player_one_weapons[1].physical_penetration += 2;
@@ -357,13 +357,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             if (combatData.player_one_weapons[1].influences[0] === "Kyn'gi") { // Hunt
                 combatData.player_one_influence_description_two = 
-                    `Your keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                    `${combatData.player_one.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
                 combatData.player_one_weapons[1].roll += 3;
                 combatData.player_one_weapons[1].critical_chance += 3;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Kyrisos") { // Gold
                 combatData.player_one_influence_description_two = 
-                    `The Caer of Kyrisos imbues you with Kyosir!`
+                    `The Caer of Kyrisos imbues them with Kyosir!`
                 combatData.player_one_attributes.kyosirMod += 4;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Kyr'na") { // Time
@@ -371,9 +371,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_influence_description_two = 
                     `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
                 combatData.new_player_two_health -= kyrna;
-                combatData.current_computer_health -= kyrna;
-                if (combatData.current_computer_health < 0) {
-                    combatData.current_computer_health = 0;
+                combatData.current_player_two_health -= kyrna;
+                if (combatData.current_player_two_health < 0) {
+                    combatData.current_player_two_health = 0;
                 }
                 if (combatData.new_player_two_health < 0) {
                     combatData.new_player_two_health = 0;
@@ -382,13 +382,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 4 * combatData.player_one_attributes.totalCaeren;
                 combatData.player_one_influence_description_two = 
-                    `Lilos breathes her Caer into ${combatData.player_one.name}, healing you for ${lilos}.`
+                    `Lilos breathes her Caer into ${combatData.player_one.name}, healing them for ${lilos}.`
                 combatData.new_player_one_health += lilos;
                 combatData.current_player_one_health += lilos;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Ma'anre") { // Moon
                 combatData.player_one_influence_description_two = 
-                    `Ma'anre wraps her tendrils about your ${combatData.player_one_weapons[1].name}, changing your perception of this world.` 
+                    `Ma'anre wraps her tendrils about ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, changing ${combatData.player_one.name}'s perception of this world.` 
                 combatData.player_one_weapons[1].roll += 2;
                 combatData.player_one_weapons[1].dodge -= 2;
                 combatData.player_one_weapons[1].critical_chance += 2;
@@ -397,7 +397,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === "Nyrolus") { // Water
                 let nyrolus = 2 * combatData.player_one_attributes.totalCaeren
                 combatData.player_one_influence_description_two = 
-                    `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
+                    `${combatData.player_one.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
                 combatData.player_one_defense.physicalDefenseModifier += 2;
                 combatData.player_one_defense.magicalDefenseModifier += 2;
                 combatData.player_one_defense.physicalPosture += 2;
@@ -408,7 +408,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === "Quor'ei") { // Earth
                 let quorei = 2 * combatData.player_one_attributes.totalAchre
                 combatData.player_one_influence_description_two = 
-                    `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
+                    `${combatData.player_one.name}'s resolve beckons with the favor of ${combatData.player_one.name}'s Quor'ei, steeling them in their Caer for ${quorei}.`
                 combatData.player_one_defense.physicalDefenseModifier += 2;
                 combatData.player_one_defense.magicalDefenseModifier += 2;
                 combatData.player_one_defense.physicalPosture += 2;
@@ -418,41 +418,41 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             if (combatData.player_one_weapons[1].influences[0] === "Rahvre") { // Dreams
                 combatData.player_one_influence_description_two = 
-                `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
+                `${combatData.player_one.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
             combatData.player_one_weapons[1].magical_damage += 5;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Senari") { // Wisdom
                 combatData.player_one_influence_description_two = 
-                    `Your calm swirls with the favor of Senari, holding you in her Caer.`
+                    `${combatData.player_one.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
                 combatData.player_one_weapons[1].roll += 3;
                 combatData.player_one_weapons[1].dodge -= 3;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Se'dyro") { // Iron
                 combatData.player_one_influence_description_two = 
-                    `The Caer of Se'dyro sings into your ${combatData.player_one_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
+                    `The Caer of Se'dyro sings into ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
                 player_one_action = 'attack';
                 // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }
-                combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-                combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+                combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+                combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+                if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
                     combatData.new_player_two_health = 0;
                     combatData.player_one_win = true;
                 }
             }
             if (combatData.player_one_weapons[1].influences[0] === "Se'vas") { // War
                 combatData.player_one_influence_description_two = 
-                    `The Caer of Se'vas scorns your ${combatData.player_one_weapons[1].name}, scarring it with the beauty of war.` 
+                    `The Caer of Se'vas scorns ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, scarring it with the beauty of war.` 
                 combatData.player_one_weapons[1].critical_chance += 3;
                 combatData.player_one_weapons[1].critical_damage += 0.3;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Shrygei") { // Song
                 let shrygei = combatData.player_one_attributes.totalAchre + combatData.player_one_attributes.totalCaeren + combatData.player_one_attributes.totalConstitution;
                 combatData.player_one_influence_description_two =
-                `The Song of Shry'gei shrieks itself through your ${combatData.player_one_weapons[1].name}, the resplendence renews you for ${shrygei}`
+                `The Song of Shry'gei shrieks itself through ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, the resplendence renews them for ${shrygei}`
                     combatData.player_one_weapons[1].magical_penetration += 2
                     combatData.player_one_weapons[1].physical_penetration += 2
                     combatData.new_player_one_health += shrygei
@@ -460,7 +460,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
             if (combatData.player_one_weapons[1].influences[0] === "Tshaer") { // Animal
                 combatData.player_one_influence_description_two = 
-                    `Your Caer unleashes the bestial nature of Tshaer within you.`
+                    `${combatData.player_one.name}'s Caer unleashes the bestial nature of Tshaer within them.`
                 combatData.player_one_weapons[1].physical_damage += 5;
             }
         }
@@ -472,12 +472,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log('Daethos!')
             let daethos = (combatData.player_two_attributes.totalAchre + combatData.player_two_attributes.totalCaeren) / 2;
             combatData.new_player_two_health += combatData.realized_player_two_damage;
-            combatData.current_computer_health += combatData.realized_player_two_damage;
+            combatData.current_player_two_health += combatData.realized_player_two_damage;
             combatData.player_two_influence_description = 
                 `Daethos wraps through ${combatData.player_two.name}'s Caer, ${combatData.player_two_weapons[0].name} healing them for ${Math.round(combatData.realized_player_two_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
             combatData.new_player_two_health += daethos;
             combatData.new_player_one_health -= daethos;
-            combatData.current_computer_health += daethos;
+            combatData.current_player_two_health += daethos;
             combatData.current_player_one_health -= daethos;
             if (combatData.current_player_one_health < 0) {
                 combatData.current_player_one_health = 0;
@@ -489,6 +489,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_two_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
             // combatData.player_two_weapons[0].critical_chance = Number(combatData.player_two_weapons[0].critical_chance + 1);
+            let achreo = 2 * combatData.player_two_attributes.totalAchre
+            combatData.new_player_two_health += achreo
+            combatData.current_player_two_health += achreo
             combatData.player_two_influence_description = 
                 `${combatData.player_two.name}'s Caer stirs Achreo, much to his own surprise.`
             combatData.player_two_weapons[0].physical_damage += 2;
@@ -592,7 +595,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_two_influence_description = 
                 `Lilos breathes her Cear into ${combatData.player_two.name}, healing ${combatData.player_two.name} for ${lilos}.`
             combatData.new_player_two_health += lilos;
-            combatData.current_computer_health += lilos;
+            combatData.current_player_two_health += lilos;
         }
         if (combatData.player_two_weapons[0].influences[0] === "Ma'anre") { // Moon
             console.log("Ma'anre!")
@@ -668,7 +671,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_weapons[0].magical_penetration += 2
                 combatData.player_two_weapons[0].physical_penetration += 2
                 combatData.new_player_two_health += shrygei
-                combatData.current_computer_health += shrygei
+                combatData.current_player_two_health += shrygei
         }
         if (combatData.player_two_weapons[0].influences[0] === "Tshaer") { // Animal
             console.log("Tshaer!")
@@ -684,12 +687,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 console.log("Daethos!")
                 let daethos = (combatData.player_two_attributes.totalAchre + combatData.player_two_attributes.totalCaeren) / 2;
                 combatData.new_player_two_health += combatData.realized_player_two_damage;
-                combatData.current_computer_health += combatData.realized_player_two_damage;
+                combatData.current_player_two_health += combatData.realized_player_two_damage;
                 combatData.player_two_influence_description_two = 
                     `Daethos wraps through ${combatData.player_two.name}'s Caer, ${combatData.player_two_weapons[1].name} healing them for ${Math.round(combatData.realized_player_two_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
                     combatData.new_player_two_health += daethos;
                     combatData.new_player_one_health -= daethos;
-                    combatData.current_computer_health += daethos;
+                    combatData.current_player_two_health += daethos;
                     combatData.current_player_one_health -= daethos;
                     if (combatData.current_player_one_health < 0) {
                         combatData.current_player_one_health = 0;
@@ -700,6 +703,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         }
             if (combatData.player_two_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
+                let achreo = 2 * combatData.player_two_attributes.totalAchre
+                combatData.new_player_two_health += achreo
+                combatData.current_player_two_health += achreo
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s Caer stirs Achreo, much to his own surprise.`
                 combatData.player_two_weapons[1].physical_damage += 2;
@@ -794,7 +800,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_influence_description_two = 
                     `Lilos breathes her Caer into ${combatData.player_two.name}, healing them for ${lilos}.`
                 combatData.new_player_two_health += lilos;
-                combatData.current_computer_health += lilos;
+                combatData.current_player_two_health += lilos;
             }
             if (combatData.player_two_weapons[1].influences[0] === "Ma'anre") { // Moon
                 combatData.player_two_influence_description_two = 
@@ -813,7 +819,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_defense.physicalPosture += 2;
                 combatData.player_two_defense.magicalPosture += 2;
                 combatData.new_player_two_health += nyrolus
-                combatData.current_computer_health += nyrolus
+                combatData.current_player_two_health += nyrolus
             }
             if (combatData.player_two_weapons[1].influences[0] === "Quor'ei") { // Earth
                 let quorei = 2 * combatData.player_two_attributes.totalAchre
@@ -824,7 +830,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_defense.physicalPosture += 2;
                 combatData.player_two_defense.magicalPosture += 2;
                 combatData.new_player_two_health += quorei
-                combatData.current_computer_health += quorei
+                combatData.current_player_two_health += quorei
             }
             if (combatData.player_two_weapons[1].influences[0] === "Rahvre") { // Dreams
                 combatData.player_two_influence_description_two = 
@@ -866,7 +872,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     combatData.player_two_weapons[1].magical_penetration += 2
                     combatData.player_two_weapons[1].physical_penetration += 2
                     combatData.new_player_two_health += shrygei
-                    combatData.current_computer_health += shrygei
+                    combatData.current_player_two_health += shrygei
             }
             if (combatData.player_two_weapons[1].influences[0] === "Tshaer") { // Animal
                 combatData.player_two_influence_description_two = 
@@ -896,18 +902,18 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
 
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
-const computerDualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     console.log('Computer Dual Wield Firing')
     const player = combatData.player;
     const computer = combatData.player_two;
     const weapons = combatData.player_two_weapons;
 
-    let computer_weapon_one_physical_damage = weapons[0].physical_damage;
-    let computer_weapon_one_magical_damage = weapons[0].magical_damage;
-    let computer_weapon_two_physical_damage = weapons[1].physical_damage;
-    let computer_weapon_two_magical_damage = weapons[1].magical_damage;
-    let computer_weapon_one_total_damage;
-    let computer_weapon_two_total_damage;
+    let player_two_weapon_one_physical_damage = weapons[0].physical_damage;
+    let player_two_weapon_one_magical_damage = weapons[0].magical_damage;
+    let player_two_weapon_two_physical_damage = weapons[1].physical_damage;
+    let player_two_weapon_two_magical_damage = weapons[1].magical_damage;
+    let player_two_weapon_one_total_damage;
+    let player_two_weapon_two_total_damage;
     let firstWeaponCrit = false;
     let secondWeaponCrit = false;
     
@@ -916,50 +922,65 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 
     // This is for Critical Strikes
     if (weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        // console.log('Comp DW1 Critical Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        computer_weapon_one_physical_damage *= weapons[0].critical_damage;
-        computer_weapon_one_magical_damage *= weapons[0].critical_damage;
-        // if (combatData.player_one_weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        //     await computerCriticalCompiler(combatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        //     await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        //     firstWeaponCrit = true;
-        //     secondWeaponCrit = true;
-        // } else {
-            
-        // await computerCriticalCompiler(combatDatacombatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        console.log('Comp DW1 Post-Crit Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
+        // console.log('Comp DW1 Critical Firing', player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage)
+        player_two_weapon_one_physical_damage *= weapons[0].critical_damage;
+        player_two_weapon_one_magical_damage *= weapons[0].critical_damage;
+        // await computerCriticalCompiler(combatDatacombatData, player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage)
+        console.log('Comp DW1 Post-Crit Firing', player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage)
         firstWeaponCrit = true;
         combatData.player_two_critical_success = true;
         // }
     }
 
     if (weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        // console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        computer_weapon_two_physical_damage *= weapons[1].critical_damage;
-        computer_weapon_two_magical_damage *= weapons[1].critical_damage;
-        //await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
+        // console.log('Comp DW2 Critical Firing', player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage)
+        player_two_weapon_two_physical_damage *= weapons[1].critical_damage;
+        player_two_weapon_two_magical_damage *= weapons[1].critical_damage;
+        //await computerCriticalCompiler(combatData, player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage)
+        console.log('Comp DW2 Critical Firing', player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage)
         secondWeaponCrit = true;
         combatData.player_two_critical_success = true;
     }
     
     console.log(firstWeaponCrit, secondWeaponCrit)
 
-    computer_weapon_one_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100 )));
-    computer_weapon_one_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[0].magical_penetration  / 100 )));
+    player_two_weapon_one_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100 )));
+    player_two_weapon_one_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[0].magical_penetration  / 100 )));
 
-    computer_weapon_two_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100 )));
-    computer_weapon_two_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100 )));
+    player_two_weapon_two_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100 )));
+    player_two_weapon_two_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100 )));
 
-    computer_weapon_one_total_damage = computer_weapon_one_physical_damage + computer_weapon_one_magical_damage;
-    computer_weapon_two_total_damage = computer_weapon_two_physical_damage + computer_weapon_two_magical_damage;
+    player_two_weapon_one_total_damage = player_two_weapon_one_physical_damage + player_two_weapon_one_magical_damage;
+    player_two_weapon_two_total_damage = player_two_weapon_two_physical_damage + player_two_weapon_two_magical_damage;
 
-    console.log(computer_weapon_one_total_damage, computer_weapon_two_total_damage);
+    console.log(player_two_weapon_one_total_damage, player_two_weapon_two_total_damage);
 
-    combatData.realized_player_two_damage = computer_weapon_one_total_damage + computer_weapon_two_total_damage;
+    combatData.realized_player_two_damage = player_two_weapon_one_total_damage + player_two_weapon_two_total_damage;
     if (combatData.realized_player_two_damage < 0) {
         combatData.realized_player_two_damage = 0;
     }
+
+    let strength = combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength  + combatData.player_two_weapons[1].strength;
+    let agility = combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[0].agility  + combatData.player_two_weapons[1].agility;
+    let achre = combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre  + combatData.player_two_weapons[1].achre;
+    let caeren = combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren  + combatData.player_two_weapons[1].caeren;
+
+    if (combatData.player_two_weapons[0].grip === 'One Hand') {
+        if (combatData.player_two_weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_two_damage *= (agility / 45)
+        } else {
+            combatData.realized_player_two_damage *= (achre / 45)
+        }
+    }
+
+    if (combatData.player_two_weapons[0].grip === 'Two Hand') {
+        if (combatData.player_two_weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_two_damage *= (strength / 60) 
+        } else {
+            combatData.realized_player_two_damage *= (caeren / 60)
+        }
+    }
+
     combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
     combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
@@ -975,7 +996,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     )
 }
 
-const computerAttackCompiler = async (combatData, player_two_action) => {
+const p2AttackCompiler = async (combatData, player_two_action) => {
     if (combatData.player_one_win === true) {
         combatData.player_two_action_description = 
         `${combatData.player_two.name} has been defeated. Hail ${combatData.player_one.name}, you are the new va'Esai!`
@@ -998,10 +1019,13 @@ const computerAttackCompiler = async (combatData, player_two_action) => {
     if (combatData.player_two_action === 'attack') {
         if (combatData.player_two_weapons[0].grip === 'One Hand') {
             if (combatData.player_two_weapons[0].attack_type === 'Physical') {
-                if (combatData.player_two.mastery === 'Agility') {
+                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Kyosir' || combatData.player_two.mastery === 'Constitution') {
+                    if (combatData.player_two_attributes.totalAgility 
+                        + combatData.player_two_weapons[0].agility 
+                        + combatData.player_two_weapons[1].agility >= 30)
                     if (combatData.player_two_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                        combatData.player_two_dual_wielding = true;
-                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         // Computer Dual Wield Compiler
                         return combatData
                     } else {
@@ -1016,10 +1040,10 @@ const computerAttackCompiler = async (combatData, player_two_action) => {
                 }
             } else {
                 // If Focus + 1h But Magic
-                if (combatData.player_two.mastery === 'Achre') {
+                if (combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir') {
                     if (combatData.player_two_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                         combatData.player_two_dual_wielding = true;
-                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         return combatData
                     }
                 } else {
@@ -1028,20 +1052,22 @@ const computerAttackCompiler = async (combatData, player_two_action) => {
                 }
             }
         } else { // Weapon is TWO HAND
-            if (combatData.player_two.mastery === 'Strength') {
-                if (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength + combatData.player_two_weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
+            if (combatData.player_two.mastery === 'Strength' || combatData.player_two.mastery === 'Kyosir') {
+                if (combatData.player_two_attributes.totalStrength 
+                    + combatData.player_two_weapons[0].strength 
+                    + combatData.player_two_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                     combatData.player_two_dual_wielding = true;
-                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                    await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
                 } else { // Less than 50 Srength 
                     computer_physical_damage *= 2.0;
                     computer_magical_damage *= 1.75;
                 }
             }
-            if (combatData.player_two.mastery === 'Caeren') {
+            if (combatData.player_two.mastery === 'Caeren' || combatData.player_two.mastery === 'Kyosir' || combatData.player_two.mastery === 'Constitution') {
                 if (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren + combatData.player_two_weapons[1].caeren >= 60) {
                     combatData.player_two_dual_wielding = true;
-                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                    await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                     return combatData
                 } else {
                     computer_physical_damage *= 1.75;
@@ -1049,7 +1075,7 @@ const computerAttackCompiler = async (combatData, player_two_action) => {
                 }
             }
             if (combatData.player_two_weapons[0].type === 'Bow') {
-                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Achre') {
+                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir') {
                     computer_physical_damage *= 2;
                     computer_magical_damage *= 2;
                 }
@@ -1106,7 +1132,7 @@ const computerAttackCompiler = async (combatData, player_two_action) => {
     combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
     combatData.player_two_action_description = 
-        `${combatData.player_two.name} attacks you with their ${combatData.player_two_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.player_two_weapons[0].damage_type[0] ? combatData.player_two_weapons[0].damage_type[0] : ''}${combatData.player_two_weapons[0].damage_type[1] ? ' / ' + combatData.player_two_weapons[0].damage_type[1] : ''} ${combatData.player_two_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `${combatData.player_two.name} attacks ${combatData.player_one.name} with their ${combatData.player_two_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.player_two_weapons[0].damage_type[0] ? combatData.player_two_weapons[0].damage_type[0] : ''}${combatData.player_two_weapons[0].damage_type[1] ? ' / ' + combatData.player_two_weapons[0].damage_type[1] : ''} ${combatData.player_two_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
     if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
         combatData.new_player_one_health = 0;
@@ -1143,7 +1169,7 @@ const computerCounterCompiler = async (combatData, player_one_action, player_two
     }
 }
     
-const computerRollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
+const p2RollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
     console.log(player_two_action, 'Computer Roll Firing')
     const computer_roll = combatData.player_two_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.player_one_attributes.kyosirMod;
@@ -1151,20 +1177,20 @@ const computerRollCompiler = async (combatData, player_one_initiative, player_tw
     if (computer_roll > roll_catch) {
         combatData.player_two_roll_success = true;
         combatData.player_two_special_description = 
-                `${combatData.player_two.name} successfully rolls against you, avoiding your ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-        await computerAttackCompiler(combatData, player_two_action)
+                `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
+        await p2AttackCompiler(combatData, player_two_action)
     } else {
         if (player_one_initiative > player_two_initiative) {
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against your ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-            await computerAttackCompiler(combatData, player_two_action)
+                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
+            await p2AttackCompiler(combatData, player_two_action)
             await attackCompiler(combatData, player_one_action)
         } else {
             console.log('Computer failed yet had higher initiative')
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against your ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
+                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
             await attackCompiler(combatData, player_one_action)
-            await computerAttackCompiler(combatData, player_two_action)
+            await p2AttackCompiler(combatData, player_two_action)
         }
     }
     return (
@@ -1224,16 +1250,39 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     if (combatData.realized_player_one_damage < 0) {
         combatData.realized_player_one_damage = 0;
     }
-    combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-    combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
 
-    if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+    let strength = combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength;
+    let agility = combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility  + combatData.player_one_weapons[1].agility;
+    let achre = combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre  + combatData.player_one_weapons[1].achre;
+    let caeren = combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren  + combatData.player_one_weapons[1].caeren;
+
+    if (combatData.player_one_weapons[0].grip === 'One Hand') {
+        if (combatData.player_one_weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_one_damage *= (agility / 45)
+        } else {
+            combatData.realized_player_one_damage *= (achre / 45)
+        }
+    }
+
+    if (combatData.player_one_weapons[0].grip === 'Two Hand') {
+        if (combatData.player_one_weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_one_damage *= (strength / 60) 
+        } else {
+            combatData.realized_player_one_damage *= (caeren / 60)
+        }
+    }
+
+    
+    combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+    combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
+
+    if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
         combatData.new_player_two_health = 0;
         combatData.player_one_win = true;
     }
     
     combatData.player_one_action_description = 
-        `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_one_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `${combatData.player_one.name} attacks ${computer.name} with both ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_one_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
     console.log(combatData.realized_player_one_damage)
     return (
         combatData
@@ -1243,7 +1292,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 const attackCompiler = async (combatData, player_one_action) => {
     if (combatData.player_two_win === true) {
         combatData.player_one_action_description = 
-        `You have been defeated. Hail ${combatData.player_two.name}, the new va'Esai!`
+        `${combatData.player_one.name} has been defeated. Hail ${combatData.player_two.name}, the new va'Esai!`
         return
     }
     console.log('In the Player Attack Compiler')
@@ -1267,16 +1316,18 @@ const attackCompiler = async (combatData, player_one_action) => {
     if (combatData.action === 'attack') {
         if (combatData.player_one_weapons[0].grip === 'One Hand') {
             if (combatData.player_one_weapons[0].attack_type === 'Physical') {
-                if (combatData.player_one.mastery === 'Agility') {
-                    if (combatData.player_one_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
-                        combatData.dual_wielding = true;
-                        await dualWieldCompiler(combatData)
-                        return combatData
-                    } else {
-                        player_physical_damage *= 1.5;
-                        player_magical_damage *= 1.25;
-                        // await doubleAttackCompiler(combatData)
-                        // return combatData
+                if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
+                    if (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility  + combatData.player_one_weapons[1].agility >= 30) {
+                        if (combatData.player_one_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else {
+                            player_physical_damage *= 1.5;
+                            player_magical_damage *= 1.25;
+                            // await doubleAttackCompiler(combatData)
+                            // return combatData
+                        }
                     }
                 } else {
                     player_physical_damage *= 1.5;
@@ -1284,7 +1335,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                 }
             } else {
                 // If Focus + 1h But Magic
-                if (combatData.player_one.mastery === 'Achre') {
+                if (combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir') {
                     if (combatData.player_one_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                         combatData.dual_wielding = true;
                         await dualWieldCompiler(combatData)
@@ -1297,8 +1348,8 @@ const attackCompiler = async (combatData, player_one_action) => {
             }
         } else if (combatData.player_one_weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             console.log(combatData.player_one_weapons[0].grip, combatData.player_one.mastery, combatData.player_one_attributes.totalStrength)
-            if (combatData.player_one.mastery === 'Strength') {
-                if (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength >= 60) { // Might be a dual-wield compiler instead to take the rest of it
+            if (combatData.player_one.mastery === 'Strength'  || combatData.player_one.mastery === 'Kyosir') {
+                if (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
                     combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
@@ -1309,7 +1360,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                 }
 
             }
-            if (combatData.player_one.mastery === 'Caeren') {
+            if (combatData.player_one.mastery === 'Caeren' || combatData.player_one.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
                 if (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_weapons[1].caeren >= 60) {
                     combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
@@ -1320,7 +1371,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                 }
             }
             if (combatData.player_one_weapons[0].type === 'Bow') {
-                if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Achre') {
+                if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir') {
                     player_physical_damage *= 2.5;
                     player_magical_damage *= 2.5;
                 }
@@ -1383,13 +1434,13 @@ const attackCompiler = async (combatData, player_one_action) => {
         player_total_damage = 0;
     }
     combatData.realized_player_one_damage = player_total_damage;
-    combatData.new_player_two_health = combatData.current_computer_health - combatData.realized_player_one_damage;
-    combatData.current_computer_health = combatData.new_player_two_health; // Added to persist health totals?
+    combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
+    combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
     combatData.player_one_action_description = 
-        `You attack ${combatData.player_two.name} with your ${combatData.player_one_weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_one_weapons[0].damage_type[0] ? combatData.player_one_weapons[0].damage_type[0] : ''}${combatData.player_one_weapons[0].damage_type[1] ? ' / ' + combatData.player_one_weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `${combatData.player_one.name} attacks ${combatData.player_two.name} with their ${combatData.player_one_weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_one_weapons[0].damage_type[0] ? combatData.player_one_weapons[0].damage_type[0] : ''}${combatData.player_one_weapons[0].damage_type[1] ? ' / ' + combatData.player_one_weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
 
-    if (combatData.new_player_two_health <= 0 || combatData.current_computer_health <= 0) {
+    if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
         combatData.new_player_two_health = 0;
         combatData.player_one_win = true;
     }
@@ -1435,7 +1486,7 @@ const counterCompiler = async (combatData, player_one_action, player_two_action)
     )
 }
 
-const playerRollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
+const p1RollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
     console.log('Player Roll Firing')
     const player_roll = combatData.player_one_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.player_two_attributes.kyosirMod;
@@ -1443,18 +1494,18 @@ const playerRollCompiler = async (combatData, player_one_initiative, player_two_
     if (player_roll > roll_catch) {
         combatData.player_one_roll_success = true;
         combatData.player_one_special_description = 
-                `You successfully roll against ${combatData.player_two.name}, avoiding their ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
+                `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
         await attackCompiler(combatData, player_one_action)
     } else {
         if (player_one_initiative > player_two_initiative) {
             combatData.player_one_special_description =
-            `You failed to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
+            `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
             await attackCompiler(combatData, player_one_action)
-            await computerAttackCompiler(combatData, player_two_action)
+            await p2AttackCompiler(combatData, player_two_action)
         } else {
             combatData.player_one_special_description =
-            `You failed to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
-            await computerAttackCompiler(combatData, player_two_action)
+            `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
+            await p2AttackCompiler(combatData, player_two_action)
             await attackCompiler(combatData, player_one_action)
         }
     }
@@ -1473,39 +1524,39 @@ const doubleRollCompiler = async (combatData, player_one_initiative, player_two_
     if (player_one_initiative > player_two_initiative) { // You have Higher Initiative
         if (player_roll > roll_catch) { // The Player Succeeds the Roll
             combatData.player_one_special_description = 
-                `You successfully roll against ${combatData.player_two.name}, avoiding their ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
+                `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
             await attackCompiler(combatData, player_one_action)
         } else if (computer_roll > roll_catch) { // The Player Fails the Roll and the Computer Succeeds
             combatData.player_one_special_description = 
-                `You failed to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
+                `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} successfully rolls against you, avoiding your ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            await computerAttackCompiler(combatData, player_two_action)
+                `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
+            await p2AttackCompiler(combatData, player_two_action)
         } else { // Neither Player nor Computer Succeed
             combatData.player_one_special_description = 
-                `You failed to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
+                `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against your ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
+                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
             await attackCompiler(combatData, player_one_action)
-            await computerAttackCompiler(combatData, player_two_action)
+            await p2AttackCompiler(combatData, player_two_action)
         }
     } else { // The Computer has Higher Initiative
         if (computer_roll > roll_catch) { // The Computer Succeeds the Roll
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} successfully rolls against you, avoiding your ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            await computerAttackCompiler(combatData, player_two_action)
+                `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
+            await p2AttackCompiler(combatData, player_two_action)
         } else if (player_roll > roll_catch) { // The Computer Fails the Roll and the Player Succeeds
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against your ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
+                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
             combatData.player_one_special_description = 
-                `You successfully roll against ${combatData.player_two.name}, avoiding their ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
+                `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
             await attackCompiler(combatData, player_one_action)
         } else { // Neither Computer nor Player Succeed
             combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against your ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
+                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
             combatData.player_one_special_description = 
-                `You failed to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
-            await computerAttackCompiler(combatData, player_two_action)
+                `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
+            await p2AttackCompiler(combatData, player_two_action)
             await attackCompiler(combatData, player_one_action)
         }
     }
@@ -1534,8 +1585,9 @@ const actionSplitter = async (combatData) => {
         player_two: combatData.player_two, // Computer Enemy
         player_two_attributes: combatData.player_two_attributes, // Possesses compiled Attributes, Initiative
         player_two_defense: combatData.player_two_defense, // Posseses Base + Postured Defenses
-        player_two_action: '', // Action Chosen By Computer
-        player_two_counter_guess: '', // Comp's Counter Guess if Action === 'Counter'
+        action_two: combatData.action_two,
+        player_two_action: combatData.action_two, // Action Chosen By Computer
+        player_two_counter_guess: combatData.player_two_counter_guess, // Comp's Counter Guess if Action === 'Counter'
         player_two_weapons: combatData.player_two_weapons,  // All 3 Weapons
 
         potential_player_one_damage: 0, // All the Damage that is possible on hit for a player
@@ -1557,7 +1609,7 @@ const actionSplitter = async (combatData) => {
         player_two_influence_description_two: '',
         
         current_player_one_health: combatData.new_player_one_health, // New player health post-combat action
-        current_computer_health: combatData.new_player_two_health, // New computer health post-combat action
+        current_player_two_health: combatData.new_player_two_health, // New computer health post-combat action
         new_player_one_health: combatData.new_player_one_health, // New player health post-combat action
         new_player_two_health: combatData.new_player_two_health, // New computer health post-combat action
 
@@ -1568,8 +1620,11 @@ const actionSplitter = async (combatData) => {
         player_one_win: false,
         player_one_critical_success: false,
         player_one_counter_success: false,
+        player_one_initiated: false,
+        player_one_reduel: false,
 
-
+        player_two_reduel: false,
+        player_two_initiated: false,
         player_two_dual_wielding: false,
         player_two_roll_success: false,
         player_two_counter_success: false,
@@ -1580,36 +1635,38 @@ const actionSplitter = async (combatData) => {
     const player_one_initiative = newData.player_one_attributes.initiative;
     const player_two_initiative = newData.player_two_attributes.initiative;
     let player_one_action = newData.action;
-    const player_one_counter = newData.player_one_counter_guess;
+    let player_one_counter = newData.player_one_counter_guess;
     let player_two_counter = newData.player_two_counter_guess;
-    let player_two_action = newData.player_two_action;
+    let player_two_action = newData.action_two;
     let possible_choices = ['attack', 'posture', 'roll']
-    let player_one_new_choice = Math.floor(Math.random() * possible_choices.length)
-    console.log(player_one_new_choice, 'New Choice Number')
     if (player_one_action === '') {
+        let player_one_new_choice = Math.floor(Math.random() * possible_choices.length)
+        console.log(player_one_new_choice, 'New Choice Number')
         newData.action = possible_choices[player_one_new_choice];
         newData.player_one_action = possible_choices[player_one_new_choice];
         player_one_action = possible_choices[player_one_new_choice];
         console.log(player_one_action, 'New Choice')
     }
 
-    let player_two_new_choice = Math.floor(Math.random() * possible_choices.length)
-    console.log(player_two_new_choice, 'New Choice Number')
     if (player_two_action === '') {
+        let player_two_new_choice = Math.floor(Math.random() * possible_choices.length)
+        console.log(player_two_new_choice, 'New Choice Number')
+        newData.action_two = possible_choices[player_two_new_choice];
         newData.player_two_action = possible_choices[player_two_new_choice];
         player_two_action = possible_choices[player_two_new_choice];
         console.log(player_two_action, 'New Choice')
     }
+    player_one_counter = newData.player_one_counter_guess;
+    player_one_action = newData.player_one_action;
     
     player_two_counter = newData.player_two_counter_guess;
     player_two_action = newData.player_two_action;
-    console.log(newData.player_two_action, 'Computer Action', newData.player_two_counter_guess, '<- If Countering')
 
     newData.player_two_start_description = 
-        `${newData.player_two.name} sets to ${player_two_action.charAt(0).toUpperCase() + player_two_action.slice(1)}${player_two_counter ? '-' + player_two_counter.charAt(0).toUpperCase() + player_two_counter.slice(1) : ''} against you.`
+        `${combatData.player_two.name} sets to ${player_two_action.charAt(0).toUpperCase() + player_two_action.slice(1)}${player_two_counter ? '-' + player_two_counter.charAt(0).toUpperCase() + player_two_counter.slice(1) : ''} against ${combatData.player_one.name}.`
 
     newData.player_one_start_description = 
-        `You attempt to ${player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1)}${player_one_counter ? '-' + player_one_counter.charAt(0).toUpperCase() + player_one_counter.slice(1) : ''} against ${newData.player_two.name}.`
+        `${combatData.player_one.name} attempt to ${player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1)}${player_one_counter ? '-' + player_one_counter.charAt(0).toUpperCase() + player_one_counter.slice(1) : ''} against ${combatData.player_two.name}.`
     
     // If both Player and Computer Counter -> Counter [Fastest Resolution]
     if (player_one_action === 'counter' && player_two_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
@@ -1617,15 +1674,15 @@ const actionSplitter = async (combatData) => {
             if (player_one_initiative > player_two_initiative) {
                 newData.player_one_counter_success = true;
                 newData.player_one_special_description = 
-                    `You successfully Countered ${newData.player_two.name}'s Counter-Counter! Absolutely Brutal`
+                    `${newData.player_one.name} successfully Countered ${newData.player_two.name}'s Counter-Counter! Absolutely Brutal`
                 await attackCompiler(newData, player_one_action)
                 await faithFinder(newData, player_one_action, player_two_action);
                 return newData
             } else {
                 newData.player_two_counter_success = true;
                 newData.player_two_special_description = 
-                    `${newData.player_two.name} successfully Countered your Counter-Counter! Absolutely Brutal`
-                await computerAttackCompiler(newData, player_two_action);
+                    `${newData.player_two.name} successfully Countered ${newData.player_one.name}'s Counter-Counter! Absolutely Brutal`
+                await p2AttackCompiler(newData, player_two_action);
                 await faithFinder(newData, player_one_action, player_two_action);
                 return newData
             }    
@@ -1634,7 +1691,7 @@ const actionSplitter = async (combatData) => {
         if (player_one_counter === player_two_action && player_two_counter !== player_one_action) {
             newData.player_one_counter_success = true;
             newData.player_one_special_description = 
-                `You successfully Countered ${newData.player_two.name}'s Counter-${player_two_counter.charAt(0).toUpperCase() + player_two_counter.slice(1)}! Absolutely Brutal`
+                `${newData.player_one.name} successfully Counters ${newData.player_two.name}'s Counter-${player_two_counter.charAt(0).toUpperCase() + player_two_counter.slice(1)}! Absolutely Brutal`
             await attackCompiler(newData, player_one_action)
             await faithFinder(newData, player_one_action, player_two_action);
             return newData
@@ -1644,22 +1701,22 @@ const actionSplitter = async (combatData) => {
         if (player_two_counter === player_one_action && player_one_counter !== player_two_action) {
             newData.player_two_counter_success = true;
             newData.player_two_special_description = 
-                `${newData.player_two.name} successfully Countered your Counter-${player_one_counter.charAt(0).toUpperCase() + player_one_counter.slice(1)}! Absolutely Brutal`
-            await computerAttackCompiler(newData, player_two_action);
+                `${newData.player_two.name} successfully Counters ${newData.player_one.name}'s Counter-${player_one_counter.charAt(0).toUpperCase() + player_one_counter.slice(1)}! Absolutely Brutal`
+            await p2AttackCompiler(newData, player_two_action);
             await faithFinder(newData, player_one_action, player_two_action);
             return newData
         } 
     
         if (player_one_counter !== player_two_action && player_two_counter !== player_one_action) {
             newData.player_one_special_description = 
-                `You failed to Counter ${newData.player_two.name}'s Counter! Heartbreaking`
+                `${newData.player_one.name} fails to Counter ${newData.player_two.name}'s Counter! Heartbreaking`
             newData.player_two_special_description = 
-                `${newData.player_two.name} fails to Counter your Counter! Heartbreaking`
+                `${newData.player_two.name} fails to Counter ${newData.player_one.name}'s Counter! Heartbreaking`
                 if (player_one_initiative > player_two_initiative) {
                     await attackCompiler(newData, player_one_action);
-                    await computerAttackCompiler(newData, player_two_action);
+                    await p2AttackCompiler(newData, player_two_action);
                 } else {
-                    await computerAttackCompiler(newData, player_two_action);
+                    await p2AttackCompiler(newData, player_two_action);
                     await attackCompiler(newData, player_one_action);
                 }
         }
@@ -1672,13 +1729,13 @@ const actionSplitter = async (combatData) => {
         if (player_one_counter === player_two_action) {
             newData.player_one_counter_success = true;
             newData.player_one_special_description = 
-                `You successfully Countered ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack.`
+                `${newData.player_one.name} successfully Counters ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack.`
             await attackCompiler(newData, player_one_action)
             await faithFinder(newData, player_one_action, player_two_action);
             return newData
         } else {
             newData.player_one_special_description = 
-                `You failed to Counter ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack. Heartbreaking!`
+                `${newData.player_one.name} fail to Counter ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
@@ -1686,13 +1743,13 @@ const actionSplitter = async (combatData) => {
         if (player_two_counter === player_one_action) {
             newData.player_two_counter_success = true;
             newData.player_two_special_description = 
-                `${newData.player_two.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
-            await computerAttackCompiler(newData, player_two_action)
+                `${newData.player_two.name} successfully Counters ${newData.player_one.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
+            await p2AttackCompiler(newData, player_two_action)
             await faithFinder(newData, player_one_action, player_two_action);
             return newData
         } else {
             newData.player_two_special_description = 
-                `${newData.player_two.name} fails to Counter your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
+                `${newData.player_two.name} fails to Counter ${newData.player_one.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
@@ -1701,18 +1758,18 @@ const actionSplitter = async (combatData) => {
     if (player_one_action === 'dodge' && player_two_action === 'dodge') { // If both choose Dodge
         if (player_one_initiative > player_two_initiative) {
             newData.player_one_special_description = 
-                `You successfully Dodge ${newData.player_two.name}'s ${  newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack`
+                `${newData.player_one.name} successfully Dodge ${newData.player_two.name}'s ${  newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack`
             await attackCompiler(newData, player_one_action)
         } else {
-            `${newData.player_two.name} successfully Dodges your ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
-            await computerAttackCompiler(newData, player_two_action)
+            `${newData.player_two.name} successfully Dodges ${newData.player_one.name}'s ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
+            await p2AttackCompiler(newData, player_two_action)
         }
     }
 
     // If the Player Dodges and the Computer does not *Counter or Dodge  *Checked for success
     if (player_one_action === 'dodge' && player_two_action !== 'dodge') {
         newData.player_one_special_description = 
-            `You successfully Dodge ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack`
+            `${newData.player_one.name} successfully Dodge ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack`
         await attackCompiler(newData, player_one_action)
         await faithFinder(newData, player_one_action, player_two_action);
         return newData
@@ -1720,8 +1777,8 @@ const actionSplitter = async (combatData) => {
 
     // If the Computer Dodges and the Player does not *Counter or Dodge *Checked for success
     if (player_two_action === 'dodge' && player_one_action !== 'dodge') {
-        `${newData.player_two.name} successfully Dodges your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
-        await computerAttackCompiler(newData, player_two_action)
+        `${newData.player_two.name} successfully Dodges ${newData.player_one.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
+        await p2AttackCompiler(newData, player_two_action)
         await faithFinder(newData, player_one_action, player_two_action);
         return newData
     }
@@ -1731,7 +1788,7 @@ const actionSplitter = async (combatData) => {
     }
 
     if (player_one_action === 'roll' && player_two_action !== 'roll') {
-        await playerRollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
+        await p1RollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
         if (newData.player_one_roll_success === true) {
             await faithFinder(newData, player_one_action, player_two_action);
             return newData
@@ -1739,7 +1796,7 @@ const actionSplitter = async (combatData) => {
     }
 
     if (player_two_action === 'roll' && player_one_action !== 'roll') {
-        await computerRollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
+        await p2RollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
         if (newData.player_two_roll_success === true) {
             await faithFinder(newData, player_one_action, player_two_action);
             return newData
@@ -1750,11 +1807,11 @@ const actionSplitter = async (combatData) => {
         if (player_one_initiative > player_two_initiative) {
             await attackCompiler(newData, player_one_action)
             // if (player_two_action === 'attack' || player_two_action === 'posture') {
-                await computerAttackCompiler(newData, player_two_action)
+                await p2AttackCompiler(newData, player_two_action)
             // }
         } else {
             // if (player_two_action === 'attack' || player_two_action === 'posture') {
-                await computerAttackCompiler(newData, player_two_action)
+                await p2AttackCompiler(newData, player_two_action)
             // }
             await attackCompiler(newData, player_one_action)
         }

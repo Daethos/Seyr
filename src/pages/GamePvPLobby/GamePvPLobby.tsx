@@ -16,11 +16,13 @@ interface Props {
 const GamePvPLobby = ({ user }: Props) => {
     const [asceanVaEsai, setAsceanVaEsai] = useState<any>([])
     const [ascean, setAscean] = useState<any>({})
-    const [opponent, setOpponent] = useState<any>({})
+    const [opponent, setOpponent] = useState<any>(null)
     const [username, setUsername] = useState<any>('')
-    const [enemyPlayer, setEnemyPlayer] = useState<any>({})
-    const [yourData, setYourData] = useState<any>([])
-    const [enemyData, setEnemyData] = useState<any>([])
+    const [enemyPlayer, setEnemyPlayer] = useState<any>(null)
+    const [yourData, setYourData] = useState<any>(null)
+    const [enemyData, setEnemyData] = useState<any>(null)
+    const [users, setUsers] = useState<any>([])
+    const [spectator, setSpectator] = useState<boolean>(false)
     const [room, setRoom] = useState<any>("")
     const [showChat, setShowChat] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(true)
@@ -187,6 +189,8 @@ const GamePvPLobby = ({ user }: Props) => {
         player_one_counter_success: false,
         player_one_roll_success: false,
         player_one_win: false,
+        player_one_initiated: false,
+        player_one_reduel: false,
 
         player_one_start_description: '',
         player_one_special_description: '',
@@ -195,6 +199,7 @@ const GamePvPLobby = ({ user }: Props) => {
         player_one_influence_description_two: '',
 
 
+        action_two: '',
         player_two: '',
         player_two_health: 0,
         player_two_action: '',
@@ -219,10 +224,12 @@ const GamePvPLobby = ({ user }: Props) => {
         player_two_roll_success: false,
         player_two_counter_success: false,
         player_two_win: false,
+        player_two_initiated: false,
+        player_two_reduel: false,
     })
 
     useEffect(() => {
-        socket = io.connect("http://localhost:3001") 
+        socket = io.connect("https://ascea.herokuapp.com") 
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
         socket.emit("setup", user);
@@ -231,34 +238,49 @@ const GamePvPLobby = ({ user }: Props) => {
         socket.on('typing', () => setIsTyping(true))
         socket.on('stop_typing', () => setIsTyping(false))
         socket.on('new_user', async (userData: any) => {
-            await socket.emit(`combatData_update`)
-            // console.log(userData, 'New User')
-            // setCombatData({...combatData, 'room': userData.room})
-            // await setPlayerData(userData)
-            // await sortPlayers(userData)
+            if (userData.user._id === user._id && userData.player === 2) {
+                await socket.emit(`request_data`)
+            }
+            if (userData.user._id === user._id && userData.player >= 3) {
+                setSpectator(true)
+                return
+            }
+            console.log(userData, 'New User')
+            await setPlayerData(userData)
         })
-        socket.on(`update_ascean`, (asceanData: any) => {
+        socket.on(`requesting_data`, async () => {
+            await socket.emit(`data_responding`)
+        })
+        socket.on(`data_response`, async (data: any) => {
+            console.log(data, 'Data Response from other Player')
+            // if (data.player > 2) {
+            //     return
+            // }
+            await setOpponentAscean(data.ascean)
+            setEnemyData(data)
+            setEnemyPlayer(data.user)
+        })
+
+        socket.on(`update_ascean`, async (asceanData: any) => {
             console.log(asceanData, 'Did the opponent make it?')
-            setOpponentAscean(asceanData.ascean)
+            await setOpponentAscean(asceanData.ascean)
             setEnemyPlayer(asceanData.user)
         })
-        socket.on(`updated_combatData`, async (newData: any) => {
-            console.log(newData, 'Updated Combat Data?')
-            await setPlayerData(newData)
+
+        
+        socket.on(`combat_response`, (response: any) => {
+            console.log(response, 'Combat Response!')
+            // statusUpdate(response)
         })
+        
+
+
     }, [])
 
     const setPlayerData = async (userData: any) => {
         setLoading(true)
         try {
-            // setPreCombatData({...preCombatData, ...userData.combatData})
-            console.log(
-                user._id, 'User _id',
-                userData.user._id, 'User Data _id', 
-                userData.combatData.player_one.name, 'User Data Combat Data Player One Name',
-                userData.combatData.player_two.name, 'User Data Combat Data Player Two Name'
-                )
-                
+            
             if (user._id === userData.user._id) {
                 console.log('Setting Your Data')
                 setYourData(userData)
@@ -266,88 +288,123 @@ const GamePvPLobby = ({ user }: Props) => {
                 console.log('Setting Enemy Data')
                 setEnemyData(userData)
             }
-
+            
             if (user._id === userData.user._id && userData.player === 1) { // Asking if your Ascean is slotted as Player One
-                console.log('You are Player One!')
                 setPreCombatDataUser({...preCombatDataUser, ...userData.combatData})
-                //TODO:FIXME: Set Function For (You) Being Player One (setCombatData)
-                // if (preCombatData.player_two !== '') {
-                //     console.log('Setting the Opponent to Player Two Manually')
-                //     setPreCombatDataUser({...preCombatDataUser, 
-                //                     'player_two': userData.combatData.ascean,
-                //                     'player_two_health': userData.combatData.attributes.healthTotal,
-                //                     'current_player_two_health': userData.combatData.attributes.healthTotal,
-                //                     'new_player_two_health': userData.combatData.attributes.healthTotal,
-                //                     'player_two_weapons': [userData.combatData.combat_weapon_one, userData.combatData.combat_weapon_two, userData.combatData.combat_weapon_three],
-                //                     'player_two_weapon_one': userData.combatData.combat_weapon_one,
-                //                     'player_two_weapon_two': userData.combatData.combat_weapon_two,
-                //                     'player_two_weapon_three': userData.combatData.combat_weapon_three,
-                //                     'player_two_defense': userData.combatData.defense,
-                //                     'player_two_attributes': userData.combatData.attributes
-                //     })
-                // }
+                await setUserPlayerOne(userData.combatData)
+                
             }
-
+            
             if (user._id === userData.user._id && userData.player === 2) { // Asking if your Ascean is slotted as Player Two
-                console.log('You are Player Two!')
                 setPreCombatDataUser({...preCombatDataUser, ...userData.combatData})
-                //TODO:FIXME: Set Function For (You) Being Player Two (setCombatData)
-                // if (preCombatData.player_one !== '') {
-                //     console.log('Setting the Opponent to Player Two Manually')
-                //     setPreCombatDataUser({...preCombatDataUser, 
-                //         'player_one': userData.combatData.ascean,
-                //         'player_one_health': userData.combatData.attributes.healthTotal,
-                //         'current_player_one_health': userData.combatData.attributes.healthTotal,
-                //         'new_player_one_health': userData.combatData.attributes.healthTotal,
-                //         'player_one_weapons': [userData.combatData.combat_weapon_one, userData.combatData.combat_weapon_two, userData.combatData.combat_weapon_three],
-                //         'player_one_weapon_one': userData.combatData.combat_weapon_one,
-                //         'player_one_weapon_two': userData.combatData.combat_weapon_two,
-                //         'player_one_weapon_three': userData.combatData.combat_weapon_three,
-                //         'player_one_defense': userData.combatData.defense,
-                //         'player_one_attributes': userData.combatData.attributes
-                //     })
-                // }
+                await setUserPlayerTwo(userData.combatData)
+                
             }
-
+            
             if (user._id !== userData.user._id && userData.player === 1) {
-                console.log('Enemy is Player One!')
                 setPreCombatData({...preCombatData, ...userData.combatData})
-                //TODO:FIXME: Set Function For (Enemy) Being Player One (setCombatData)
-
-                // setCombatData({...combatData, 
-                //     'player_one': userData.combatData.ascean,
-                //     'player_one_health': userData.combatData.player_one_attributes.healthTotal,
-                //     'current_player_one_health': userData.combatData.player_one_attributes.healthTotal,
-                //     'new_player_one_health': userData.combatData.player_one_attributes.healthTotal,
-                //     'player_one_weapons': [userData.combatData.combat_weapon_one, userData.combatData.combat_weapon_two, userData.combatData.combat_weapon_three],
-                //     'player_one_weapon_one': userData.combatData.combat_weapon_one,
-                //     'player_one_weapon_two': userData.combatData.combat_weapon_two,
-                //     'player_one_weapon_three': userData.combatData.combat_weapon_three,
-                //     'player_one_defense': userData.combatData.defense,
-                //     'player_one_attributes': userData.combatData.player_one_attributes
-                // })
+                await setEnemyPlayerOne(userData.combatData)
+                
             }
             if (user._id !== userData.user._id && userData.player === 2) {
-                console.log('Enemy is Player Two!')
                 setPreCombatData({...preCombatData, ...userData.combatData})
-                //TODO:FIXME: Set Function For (Enemy) Being Player Two (setCombatData)
-
-                // setCombatData({...combatData, 
-                //     'player_two': userData.combatData.ascean,
-                //     'player_two_health': userData.combatData.player_two_attributes.healthTotal,
-                //     'current_player_two_health': userData.combatData.player_two_attributes.healthTotal,
-                //     'new_player_two_health': userData.combatData.player_two_attributes.healthTotal,
-                //     'player_two_weapons': [userData.combatData.combat_weapon_one, userData.combatData.combat_weapon_two, userData.combatData.combat_weapon_three],
-                //     'player_two_weapon_one': userData.combatData.combat_weapon_one,
-                //     'player_two_weapon_two': userData.combatData.combat_weapon_two,
-                //     'player_two_weapon_three': userData.combatData.combat_weapon_three,
-                //     'player_two_defense': userData.combatData.defense,
-                //     'player_two_attributes': userData.combatData.player_two_attributes
-                // })
+                await setEnemyPlayerTwo(userData.combatData)
             }
+            if (user.id !== userData.user._id) {
+                setUsers(userData) // users Only Triggers when !user is Set ??
+            }
+
             setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error Setting Players')
+        }
+    }
+
+    const setUserPlayerOne = async (data: any) => {
+        console.log('You are Player One!')
+        console.log(combatData, 'How well formed are you right now?')
+        try { 
+            setCombatData({
+                ...combatData, 
+                'player_one': data.ascean,
+                'player_one_health': data.player_one_attributes.healthTotal,
+                'current_player_one_health': data.player_one_attributes.healthTotal,
+                'new_player_one_health': data.player_one_attributes.healthTotal,
+                'player_one_weapons': [data.player_one_weapon_one, data.player_one_weapon_two, data.player_one_weapon_three],
+                'player_one_weapon_one': data.player_one_weapon_one,
+                'player_one_weapon_two': data.player_one_weapon_two,
+                'player_one_weapon_three': data.player_one_weapon_three,
+                'player_one_defense': data.player_one_defense,
+                'player_one_attributes': data.player_one_attributes
+            })
+        } catch (err: any) { 
+            console.log(err.message, 'Error Setting You To Player One') 
+        } 
+    }
+
+    const setUserPlayerTwo = async (data: any) => {
+        console.log(combatData, 'How well formed are you right now?')
+        console.log('You are Player Two!')
+        try { 
+            setCombatData({
+                ...combatData, 
+                'player_two': data.ascean,
+                'player_two_health': data.player_two_attributes.healthTotal,
+                'current_player_two_health': data.player_two_attributes.healthTotal,
+                'new_player_two_health': data.player_two_attributes.healthTotal,
+                'player_two_weapons': [data.player_two_weapon_one, data.player_two_weapon_two, data.player_two_weapon_three],
+                'player_two_weapon_one': data.player_two_weapon_one,
+                'player_two_weapon_two': data.player_two_weapon_two,
+                'player_two_weapon_three': data.player_two_weapon_three,
+                'player_two_defense': data.player_two_defense,
+                'player_two_attributes': data.player_two_attributes
+            })
+        } catch (err: any) { 
+            console.log(err.message, 'Error Setting You To Player Two') 
+        }
+    }
+
+    const setEnemyPlayerOne = async (data: any) => {
+        console.log(combatData, 'How well formed are you right now?')
+        console.log('Enemy is Player One!')
+        try { 
+            setCombatData({
+                ...combatData, 
+                'player_one': data.ascean,
+                'player_one_health': data.player_one_attributes.healthTotal,
+                'current_player_one_health': data.player_one_attributes.healthTotal,
+                'new_player_one_health': data.player_one_attributes.healthTotal,
+                'player_one_weapons': [data.player_one_weapon_one, data.player_one_weapon_two, data.player_one_weapon_three],
+                'player_one_weapon_one': data.player_one_weapon_one,
+                'player_one_weapon_two': data.player_one_weapon_two,
+                'player_one_weapon_three': data.player_one_weapon_three,
+                'player_one_defense': data.player_one_defense,
+                'player_one_attributes': data.player_one_attributes
+            })
+        } catch (err: any) { 
+            console.log(err.message, 'Error Setting Enemy To Player One') 
+        }
+    }
+
+    const setEnemyPlayerTwo = async (data: any) => {
+        console.log(combatData, 'How well formed are you right now?')
+        console.log('Enemy is Player Two!')
+        try { 
+            setCombatData({
+                ...combatData, 
+                'player_two': data.ascean,
+                'player_two_health': data.player_two_attributes.healthTotal,
+                'current_player_two_health': data.player_two_attributes.healthTotal,
+                'new_player_two_health': data.player_two_attributes.healthTotal,
+                'player_two_weapons': [data.player_two_weapon_one, data.player_two_weapon_two, data.player_two_weapon_three],
+                'player_two_weapon_one': data.player_two_weapon_one,
+                'player_two_weapon_two': data.player_two_weapon_two,
+                'player_two_weapon_three': data.player_two_weapon_three,
+                'player_two_defense': data.player_two_defense,
+                'player_two_attributes': data.player_two_attributes
+            })
+        } catch (err: any) { 
+            console.log(err.message, 'Error Setting Enemy To Player Two') 
         }
     }
     
@@ -372,24 +429,90 @@ const GamePvPLobby = ({ user }: Props) => {
     //     }
     // }
 
-    useEffect(() => {
-        console.log(enemyData, 'enemyData in Use Effect')
-    }, [enemyData])
+    const setPlayerOrder = async (you: any, enemy: any) => {
+        setLoading(true)
+        try {   
+            console.log(you, enemy, 'Hey are you two doing?')
+            if (you.player === 1) {
+                setCombatData({
+                    ...combatData,
+                    'room': you.room, 
+                    'player_one': you.ascean,
+                    'player_one_health': you.combatData.player_one_attributes.healthTotal,
+                    'current_player_one_health': you.combatData.player_one_attributes.healthTotal,
+                    'new_player_one_health': you.combatData.player_one_attributes.healthTotal,
+                    'player_one_weapons': [you.combatData.player_one_weapon_one, you.combatData.player_one_weapon_two, you.combatData.player_one_weapon_three],
+                    'player_one_weapon_one': you.combatData.player_one_weapon_one,
+                    'player_one_weapon_two': you.combatData.player_one_weapon_two,
+                    'player_one_weapon_three': you.combatData.player_one_weapon_three,
+                    'player_one_defense': you.combatData.player_one_defense,
+                    'player_one_attributes': you.combatData.player_one_attributes,
+    
+                    'player_two': enemy.ascean,
+                    'player_two_health': enemy.combatData.player_two_attributes.healthTotal,
+                    'current_player_two_health': enemy.combatData.player_two_attributes.healthTotal,
+                    'new_player_two_health': enemy.combatData.player_two_attributes.healthTotal,
+                    'player_two_weapons': [enemy.combatData.player_two_weapon_one, enemy.combatData.player_two_weapon_two, enemy.combatData.player_two_weapon_three],
+                    'player_two_weapon_one': enemy.combatData.player_two_weapon_one,
+                    'player_two_weapon_two': enemy.combatData.player_two_weapon_two,
+                    'player_two_weapon_three': enemy.combatData.player_two_weapon_three,
+                    'player_two_defense': enemy.combatData.player_two_defense,
+                    'player_two_attributes': enemy.combatData.player_two_attributes
+                })
+            } else {
+                setCombatData({
+                    ...combatData,
+                    'room': you.room, 
+                    'player_one': enemy.ascean,
+                    'player_one_health': enemy.combatData.player_one_attributes.healthTotal,
+                    'current_player_one_health': enemy.combatData.player_one_attributes.healthTotal,
+                    'new_player_one_health': enemy.combatData.player_one_attributes.healthTotal,
+                    'player_one_weapons': [enemy.combatData.player_one_weapon_one, enemy.combatData.player_one_weapon_two, enemy.combatData.player_one_weapon_three],
+                    'player_one_weapon_one': enemy.combatData.player_one_weapon_one,
+                    'player_one_weapon_two': enemy.combatData.player_one_weapon_two,
+                    'player_one_weapon_three': enemy.combatData.player_one_weapon_three,
+                    'player_one_defense': enemy.combatData.player_one_defense,
+                    'player_one_attributes': enemy.combatData.player_one_attributes,
+    
+                    'player_two': you.ascean,
+                    'player_two_health': you.combatData.player_two_attributes.healthTotal,
+                    'current_player_two_health': you.combatData.player_two_attributes.healthTotal,
+                    'new_player_two_health': you.combatData.player_two_attributes.healthTotal,
+                    'player_two_weapons': [you.combatData.player_two_weapon_one, you.combatData.player_two_weapon_two, you.combatData.player_two_weapon_three],
+                    'player_two_weapon_one': you.combatData.player_two_weapon_one,
+                    'player_two_weapon_two': you.combatData.player_two_weapon_two,
+                    'player_two_weapon_three': you.combatData.player_two_weapon_three,
+                    'player_two_defense': you.combatData.player_two_defense,
+                    'player_two_attributes': you.combatData.player_two_attributes
+                })
+            }
 
-    const setEnemyCombatData = async () => {
-        setCombatData({
-            ...combatData,
+        setLoading(false)   
 
-        })
+        } catch (err: any) {
+            console.log('Error Setting Player Order')
+        }
+
     }
 
     useEffect(() => {
-        console.log(yourData, 'yourData in Use Effect')
-    }, [yourData])
+        if (enemyData && yourData) {
+            console.log(enemyData, 'Setting Up Both Players!')
+            setPlayerOrder(yourData, enemyData);
+        } else {
+            console.log('Halfway!')
+        }
+    }, [enemyData, yourData])
 
     useEffect(() => {
-        console.log(combatData, 'The ever forming Combat Data')
+        console.log(combatData, 'How are we looking?')
     }, [combatData])
+
+    useEffect(() => {
+        console.log(users, 'New User')
+        socket.emit(`share_combatdata`, combatData)
+
+    }, [users])
 
     useEffect(() => {
         getUserAscean();
@@ -419,21 +542,12 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(err.message, 'Error Retrieving User Ascean')
         }
     }
-    
-    const sendAscean = async () => {
-        try {
-            const asceanData = {
-                room: room,
-                ascean: ascean,
-                user: user,
-            }
-            // await socket.emit(`ascean`, asceanData)
-        } catch (err: any) {
-            console.log(err.message, 'Error Sending Ascean to Opponent')
-        }
-    }
 
     const setOpponentAscean = async (asceanData: any) => {
+        if (opponent !== null) {
+            console.log('You already have an opponent!')
+            return
+        }
         try {
             setOpponent(asceanData)
         } catch (err: any) {
@@ -471,92 +585,13 @@ const GamePvPLobby = ({ user }: Props) => {
         setCombatData({...combatData, 'room': e.target.value})
     }
 
-    // const playerTwoStatCompiler = async (playerTwo: { name: string, _id: string; }) => {
-    //     if (playerTwo._id === '') {
-    //         return
-    //     }
-    //     console.log(playerTwo.name, playerTwo._id, 'Player Two Name and ID')
-    //     setLoading(true)
-    //     try {
-    //         const response = await asceanAPI.getAsceanStats(playerTwo._id)
-    //         // console.log(response.data.data, 'Response Compiling Stats For Player Two')
-    //         setPlayerTwoDefense(response.data.data.defense)
-    //         setPlayerTwoAttributes(response.data.data.attributes)
-    //         setTotalPlayerTwoHealth(response.data.data.attributes.healthTotal)
-    //         setCurrentPlayerTwoHealth(response.data.data.attributes.healthTotal)
-    //         setPlayerTwoWeaponOne(response.data.data.combat_weapon_one)
-    //         setPlayerTwoWeaponTwo(response.data.data.combat_weapon_two)
-    //         setPlayerTwoWeaponThree(response.data.data.combat_weapon_three)
-    //         setPlayerTwoWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
-    //         setCombatData({
-    //             ...combatData,
-    //             'player_two': response.data.data.ascean,
-    //             'player_two_health': response.data.data.attributes.healthTotal,
-    //             'current_player_two_health': response.data.data.attributes.healthTotal,
-    //             'new_player_two_health': response.data.data.attributes.healthTotal,
-    //             'player_two_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
-    //             'player_two_weapon_one': response.data.data.combat_weapon_one,
-    //             'player_two_weapon_two': response.data.data.combat_weapon_two,
-    //             'player_two_weapon_three': response.data.data.combat_weapon_three,
-    //             'player_two_defense': response.data.data.defense,
-    //             'player_two_attributes': response.data.data.attributes
-    //         })
-    //         setUndefinedComputer(false)
-    //         setTimeout(() => setLoading(false), 2000);
-    //         // setLoading(false)
-    //     } catch (err: any) {
-    //         setLoading(false)
-    //         console.log(err.message, 'Error Compiling Ascean Stats For Player Two')
-    //     }
-    // }
-
-    // const playerOneStatCompiler = async (playerOne: any) => {
-    //     console.log(playerOne.name, playerOne._id, 'Player One Name and ID')
-    //     if (playerOne._id === '') {
-    //         console.log('Username Is Empty')
-    //         return
-    //     }
-    //     setLoadingAscean(true)
-    //     try {
-    //         const response = await asceanAPI.getAsceanStats(playerOne._id)
-    //         // const response_two = await asceanAPI.getAsceanStats(opponent._id)
-    //         console.log(response.data.data, 'Response Compiling Stats For Player One')
-    //         setPlayerOneDefense(response.data.data.defense)
-    //         setPlayerOneAttributes(response.data.data.attributes)
-    //         setTotalPlayerOneHealth(response.data.data.attributes.healthTotal)
-    //         setCurrentPlayerOneHealth(response.data.data.attributes.healthTotal)
-    //         setPlayerOneWeaponOne(response.data.data.combat_weapon_one)
-    //         setPlayerOneWeaponTwo(response.data.data.combat_weapon_two)
-    //         setPlayerOneWeaponThree(response.data.data.combat_weapon_three)
-    //         setPlayerOneWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
-    //         setCombatData({
-    //             ...combatData,
-    //             'player_one': response.data.data.ascean,
-    //             'player_one_health': response.data.data.attributes.healthTotal,
-    //             'current_player_one_health': response.data.data.attributes.healthTotal,
-    //             'new_player_one_health': response.data.data.attributes.healthTotal,
-    //             'player_one_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
-    //             'player_one_weapon_one': response.data.data.combat_weapon_one,
-    //             'player_one_weapon_two': response.data.data.combat_weapon_two,
-    //             'player_one_weapon_three': response.data.data.combat_weapon_three,
-    //             'player_one_defense': response.data.data.defense,
-    //             'player_one_attributes': response.data.data.attributes
-    //         })
-
-    //         setTimeout(() => setLoadingAscean(false), 2000);
-    //         // setTimeout(() => setLoading(false), 5000)
-    //         // setLoadingAscean(false)
-    //         // setLoading(false)
-    //     } catch (err: any) {
-    //         setLoading(false)
-    //         console.log(err.message, 'Error Compiling Ascean Stats For Player One')
-    //     }
-    // }
+    useEffect(() => {
+        console.log(preCombatDataUser, 'Pre-Combat Data (You)')
+    }, [preCombatDataUser])
 
     useEffect(() => {
         console.log(preCombatData, 'Pre-Combat Data (Opponent)')
-        console.log(preCombatDataUser, 'Pre-Combat Data (You)')
-    }, [preCombatData, preCombatDataUser])
+    }, [preCombatData])
 
     if (loading || loadingAscean) {
         return (
@@ -584,7 +619,7 @@ const GamePvPLobby = ({ user }: Props) => {
             <button className='btn btn-outline-info my-2' onClick={joinRoom}> Join Room </button>
             </Container>
             : 
-            <GameChat user={user} ascean={ascean} opponent={opponent} enemyPlayer={enemyPlayer} combatData={combatData} setCombatData={setCombatData} room={room} setShowChat={setShowChat} socket={socket} />
+            <GameChat user={user} ascean={ascean} spectator={spectator} yourData={yourData} enemyData={enemyData} opponent={opponent} enemyPlayer={enemyPlayer} combatData={combatData} setCombatData={setCombatData} room={room} setShowChat={setShowChat} socket={socket} />
         }
         </>
 

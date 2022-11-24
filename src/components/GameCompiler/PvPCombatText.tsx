@@ -37,6 +37,7 @@ const PvPCombatText = ({ user, ascean, emergencyText, playerReligiousText, compu
         <textarea 
             className="text-box" id="console" 
             value={
+                emergencyText + `\n` +
                 playerActionText + `\n` + computerActionText + `\n` +
                 playerSpecialText + `\n` + computerSpecialText + `\n` +
                 playerCombatText + `\n` +  computerCombatText + `\n` +
