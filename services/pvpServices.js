@@ -1011,7 +1011,7 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
     let player_magical_defense_multiplier = 1 - (combatData.player_one_defense.magicalDefenseModifier / 100);
 
     // This is for Players's who are Posturing
-    if (combatData.action === 'posture') {
+    if (combatData.action === 'posture' && combatData.player_two_counter_success !== true && combatData.player_two_roll_success !== true) {
         player_physical_defense_multiplier = 1 - (combatData.player_one_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_one_defense.magicalPosture / 100);
     }
@@ -1104,8 +1104,13 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
     }
 
     if (player_two_action === 'roll' ) {
-        computer_physical_damage *= 0.85;
-        computer_magical_damage *= 0.85;
+        if (combatData.player_two_roll_success === true) {
+            computer_physical_damage *= 1.1;
+            computer_magical_damage *= 1.1;
+        } else {
+            computer_physical_damage *= 0.75;
+            computer_magical_damage *= 0.75;
+        }
     }
 
     // This is for Critical Strikes
@@ -1304,7 +1309,7 @@ const attackCompiler = async (combatData, player_one_action) => {
     let computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalDefenseModifier / 100);
     
     // This is for Opponent's who are Posturing
-    if (combatData.player_two_action === 'posture') {
+    if (combatData.player_two_action === 'posture' && combatData.player_one_counter_success !== true && combatData.player_one_roll_success !== true) {
         computer_physical_defense_multiplier = 1 - (combatData.player_two_defense.physicalPosture / 100);
         computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalPosture / 100);
     }
@@ -1316,7 +1321,7 @@ const attackCompiler = async (combatData, player_one_action) => {
     if (combatData.action === 'attack') {
         if (combatData.player_one_weapons[0].grip === 'One Hand') {
             if (combatData.player_one_weapons[0].attack_type === 'Physical') {
-                if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
+                if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Constitution') {
                     if (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility  + combatData.player_one_weapons[1].agility >= 30) {
                         if (combatData.player_one_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                             combatData.dual_wielding = true;
@@ -1325,8 +1330,6 @@ const attackCompiler = async (combatData, player_one_action) => {
                         } else {
                             player_physical_damage *= 1.5;
                             player_magical_damage *= 1.25;
-                            // await doubleAttackCompiler(combatData)
-                            // return combatData
                         }
                     }
                 } else {
@@ -1346,9 +1349,10 @@ const attackCompiler = async (combatData, player_one_action) => {
                     player_magical_damage *= 1.5;
                 }
             }
-        } else if (combatData.player_one_weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
+        } // else 
+        if (combatData.player_one_weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             console.log(combatData.player_one_weapons[0].grip, combatData.player_one.mastery, combatData.player_one_attributes.totalStrength)
-            if (combatData.player_one.mastery === 'Strength'  || combatData.player_one.mastery === 'Kyosir') {
+            if (combatData.player_one.mastery === 'Strength'  || combatData.player_one.mastery === 'Constitution') {
                 if (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
                     combatData.dual_wielding = true;
@@ -1358,10 +1362,9 @@ const attackCompiler = async (combatData, player_one_action) => {
                     player_physical_damage *= 2.25;
                     player_magical_damage *= 1.75;
                 }
-
             }
-            if (combatData.player_one.mastery === 'Caeren' || combatData.player_one.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
-                if (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_weapons[1].caeren >= 60) {
+            if (combatData.player_one.mastery === 'Caeren' || combatData.player_one.mastery === 'Kyosir') {
+                if (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_weapons[1].caeren >= 30) {
                     combatData.dual_wielding = true;
                     await dualWieldCompiler(combatData)
                         return combatData
@@ -1376,10 +1379,11 @@ const attackCompiler = async (combatData, player_one_action) => {
                     player_magical_damage *= 2.5;
                 }
             }
-        } else {
-            player_physical_damage *= 1.3;
-            player_magical_damage *= 1.3;
-        }
+        } 
+        // else {
+        //     player_physical_damage *= 1.3;
+        //     player_magical_damage *= 1.3;
+        // }
     }
 
     // Checking For Player Actions

@@ -5,6 +5,10 @@
 // =================================== HELPER FUNCTIONS ======================================= \\
 
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
+    if (combatData.player_win === true || combatData.computer_win === true) {
+        return
+    }
+    
     let faith_number = Math.floor(Math.random() * 101);
     let faith_number_two = Math.floor(Math.random() * 101);
     let faith_check = Math.floor(Math.random() * 101);
@@ -100,10 +104,14 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.weapons[0].influences[0] === 'Astra') { // Lightning
+            let astra = 2 * combatData.player_attributes.totalAchre
             console.log("Astra!")
             combatData.player_influence_description = 
                 `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
-            combatData.weapons[0].critical_chance += 5;
+            combatData.weapons[0].critical_chance += 4;
+            combatData.weapons[0].roll += 2;
+            combatData.new_player_health += astra
+            combatData.current_player_health += astra
         }
         if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
@@ -128,9 +136,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === 'Fyer') { // Fire
             console.log("Fyer!")
+            let fyer = 2 * combatData.player_attributes.totalCaeren;
             combatData.player_influence_description = 
                 `Your Caer ushers forth the favor of Fyer igniting through you.`
+            combatData.weapons[0].critical_chance += 1;
             combatData.weapons[0].critical_damage += 0.9;
+            combatData.new_player_health += fyer;
+            combatData.current_player_health += fyer;  
         }
         if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
             console.log("Ilios!")
@@ -146,10 +158,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
+            let kyngi = 2 * combatData.player_attributes.totalAgility;
             combatData.player_influence_description = 
-                `Your keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                `Your keening Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
             combatData.weapons[0].roll += 3;
             combatData.weapons[0].critical_chance += 3;
+            combatData.new_player_health += kyngi;
+            combatData.current_player_health += kyngi;
         }
         if (combatData.weapons[0].influences[0] === "Kyrisos") { // Gold
             console.log("Kyrisos!")
@@ -213,10 +228,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.current_player_health += quorei
         }
         if (combatData.weapons[0].influences[0] === "Rahvre") { // Dreams
+            let rahvre = 2 * combatData.player_attributes.totalCaeren
             console.log("Rahvre!")
             combatData.player_influence_description = 
             `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
-        combatData.weapons[0].magical_damage += 5;
+            combatData.weapons[0].magical_damage += 5;
+            combatData.new_player_health += rahvre
+            combatData.current_player_health += rahvre
         }
         if (combatData.weapons[0].influences[0] === "Senari") { // Wisdom
             console.log("Senari!")
@@ -243,10 +261,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Se'vas") { // War
             console.log("Se'vas!")
+            let sevas = combatData.player_attributes.totalStrength * 2
             combatData.player_influence_description = 
-                `The Caer of Se'vas scorns your ${combatData.weapons[0].name}, scarring it with the beauty of war.` 
+                `The Caer of Se'vas scorns your ${combatData.weapons[0].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
             combatData.weapons[0].critical_chance += 3;
             combatData.weapons[0].critical_damage += 0.3;
+            combatData.new_player_health += sevas
+            combatData.current_player_health += sevas
         }
         if (combatData.weapons[0].influences[0] === "Shrygei") { // Song
             let shrygei = combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren + combatData.player_attributes.totalConstitution;
@@ -259,9 +280,12 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Tshaer") { // Animal
             console.log("Tshaer!")
+            let tshaer = combatData.player_attributes.totalStrength * 2
             combatData.player_influence_description = 
-                `Your fervor unleashes the bestial nature of Tshaer within you.`
+                `Your fervor unleashes the bestial nature of Tshaer within you for ${tshaer}.`
             combatData.weapons[0].physical_damage += 5;
+            combatData.new_player_health += tshaer
+            combatData.current_player_health += tshaer
         }
     }
     if (combatData.dual_wielding === true) {
@@ -315,9 +339,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Astra') { // Lightning
+                let astra = 2 * combatData.player_attributes.totalAchre
                 combatData.player_influence_description_two = 
                     `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
-                combatData.weapons[1].critical_chance += 5;
+                combatData.weapons[1].critical_chance += 4;
+                combatData.weapons[1].roll += 2;
+                combatData.new_player_health += astra
+                combatData.current_player_health += astra
             }
             if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_influence_description_two = 
@@ -340,9 +368,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.weapons[1].magical_penetration += 3;
             }
             if (combatData.weapons[1].influences[0] === 'Fyer') { // Fire
+                let fyer = 2 * combatData.player_attributes.totalCaeren;
                 combatData.player_influence_description_two = 
                     `Your Caer ushers forth the favor of Fyer igniting through you.`
+                combatData.weapons[1].critical_chance += 1;
                 combatData.weapons[1].critical_damage += 0.9;
+                combatData.new_player_health += fyer;
+                combatData.current_player_health += fyer;  
             }
             if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
                 combatData.player_influence_description_two = 
@@ -356,10 +388,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.player_defense.magicalPosture += 2;
             }
             if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
+                let kyngi = 2 * combatData.player_attributes.totalAgility;
                 combatData.player_influence_description_two = 
-                    `Your keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                    `Your keen Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
                 combatData.weapons[1].roll += 3;
                 combatData.weapons[1].critical_chance += 3;
+                combatData.new_player_health += kyngi;
+                combatData.current_player_health += kyngi;
             }
             if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
                 combatData.player_influence_description_two = 
@@ -417,9 +452,12 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += quorei
             }
             if (combatData.weapons[1].influences[0] === "Rahvre") { // Dreams
+                let rahvre = 2 * combatData.player_attributes.totalCaeren
                 combatData.player_influence_description_two = 
-                `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
-            combatData.weapons[1].magical_damage += 5;
+                `Your calming Caer reaches its tendrils to Rahvre, intertwining you for ${rahvre}.`
+                combatData.weapons[1].magical_damage += 5;
+                combatData.new_player_health += rahvre
+                combatData.current_player_health += rahvre
             }
             if (combatData.weapons[1].influences[0] === "Senari") { // Wisdom
                 combatData.player_influence_description_two = 
@@ -444,10 +482,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Se'vas") { // War
+                let sevas = combatData.player_attributes.totalStrength * 2
                 combatData.player_influence_description_two = 
-                    `The Caer of Se'vas scorns your ${combatData.weapons[1].name}, scarring it with the beauty of war.` 
+                    `The Caer of Se'vas scorns your ${combatData.weapons[1].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
                 combatData.weapons[1].critical_chance += 3;
                 combatData.weapons[1].critical_damage += 0.3;
+                combatData.new_player_health += sevas
+            combatData.current_player_health += sevas
             }
             if (combatData.weapons[1].influences[0] === "Shrygei") { // Song
                 let shrygei = combatData.player_attributes.totalAchre + combatData.player_attributes.totalCaeren + combatData.player_attributes.totalConstitution;
@@ -459,9 +500,12 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     combatData.current_player_health += shrygei
                 }
             if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
+                let tshaer = combatData.player_attributes.totalStrength * 2
                 combatData.player_influence_description_two = 
-                    `Your Caer unleashes the bestial nature of Tshaer within you.`
+                    `Your Caer unleashes the bestial nature of Tshaer within you for ${tshaer}.`
                 combatData.weapons[1].physical_damage += 5;
+                combatData.new_player_health += tshaer
+                combatData.current_player_health += tshaer
             }
         }
     }
@@ -488,9 +532,12 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     }
         if (combatData.computer_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
+            let achreo = 2 * combatData.computer_attributes.totalAchre
+            combatData.new_computer_health += achreo
+            combatData.current_computer_health += achreo
             // combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance + 1);
             combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise.`
+                `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise and soft as whispers he grants renewal of ${achreo}.`
             combatData.computer_weapons[0].physical_damage += 2;
             combatData.computer_weapons[0].magical_damage += 2;
             combatData.computer_weapons[0].critical_chance += 2;
@@ -514,6 +561,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
         }
         if (combatData.computer_weapons[0].influences[0] === 'Astra') { // Lightning
+            let achreo = 2 * combatData.computer_attributes.totalAchre
+            combatData.new_computer_health += achreo
+            combatData.current_computer_health += achreo
             console.log("Astra!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
@@ -542,6 +592,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_weapons[0].magical_penetration += 3;
         }
         if (combatData.computer_weapons[0].influences[0] === 'Fyer') { // Fire
+            let fyer = 2 * combatData.computer_attributes.totalCaeren
+            combatData.new_computer_health += fyer
+            combatData.current_computer_health += fyer
             console.log("Fyer!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
@@ -560,6 +613,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.player_defense.magicalPosture += 2;
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
+            let kyngi = 2 * combatData.computer_attributes.totalAgility
+            combatData.new_computer_health += kyngi
+            combatData.current_computer_health += kyngi
             console.log("Kyn'gi!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
@@ -625,6 +681,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_defense.magicalPosture += 2;
             combatData.new_computer_health += quorei     }
         if (combatData.computer_weapons[0].influences[0] === "Rahvre") { // Dreams
+            let rahvre = 2 * combatData.computer_attributes.totalCaeren
+            combatData.new_computer_health += rahvre
+            combatData.current_computer_health += rahvre
             console.log("Rahvre!")
             combatData.computer_influence_description = 
             `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
@@ -655,6 +714,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
         }
         if (combatData.computer_weapons[0].influences[0] === "Se'vas") { // War
+            let sevas = 2 * combatData.computer_attributes.totalStrength
+            combatData.new_computer_health += sevas
+            combatData.current_computer_health += sevas
             console.log("Se'vas!")
             combatData.computer_influence_description = 
                 `The Caer of Se'vas scorns their ${combatData.computer_weapons[0].name}, scarring it with the beauty of war.` 
@@ -671,6 +733,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_computer_health += shrygei
         }
         if (combatData.computer_weapons[0].influences[0] === "Tshaer") { // Animal
+            let tshaer = 2 * combatData.computer_attributes.totalStrength
+            combatData.new_computer_health += tshaer
+            combatData.current_computer_health += tshaer
             console.log("Tshaer!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s fervor unleashes the bestial nature of Tshaer within them.`
@@ -725,6 +790,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === 'Astra') { // Lightning
+                let astra = 2 * combatData.computer_attributes.totalAchre
+                combatData.new_computer_health += astra
+                combatData.current_computer_health += astra
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.computer_weapons[1].critical_chance += 4;
@@ -750,6 +818,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].magical_penetration += 3;
             }
             if (combatData.computer_weapons[1].influences[0] === 'Fyer') { // Fire
+                let fyer = 2 * combatData.computer_attributes.totalCaeren
+                combatData.new_computer_health += fyer
+                combatData.current_computer_health += fyer
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
                 combatData.computer_weapons[1].critical_damage += 0.9;
@@ -766,6 +837,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.player_defense.magicalPosture += 2;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
+                let kyngi = 2 * combatData.computer_attributes.totalAgility
+                combatData.new_computer_health += kyngi
+                combatData.current_computer_health += kyngi
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
                 combatData.computer_weapons[1].roll += 3;
@@ -827,6 +901,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_computer_health += quorei
             }
             if (combatData.computer_weapons[1].influences[0] === "Rahvre") { // Dreams
+                let rahvre = 2 * combatData.computer_attributes.totalCaeren
+                combatData.new_computer_health += rahvre
+                combatData.current_computer_health += rahvre
                 combatData.computer_influence_description_two = 
                 `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
             combatData.computer_weapons[1].magical_damage += 5;
@@ -854,6 +931,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === "Se'vas") { // War
+                let sevas = 2 * combatData.computer_attributes.totalStrength
+                combatData.new_computer_health += sevas
+                combatData.current_computer_health += sevas
                 combatData.computer_influence_description_two = 
                     `The Caer of Se'vas scorns their ${combatData.computer_weapons[1].name}, scarring it with the beauty of war.` 
                 combatData.computer_weapons[1].critical_chance += 3;
@@ -869,6 +949,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     combatData.current_computer_health += shrygei
             }
             if (combatData.computer_weapons[1].influences[0] === "Tshaer") { // Animal
+                let tshaer = 2 * combatData.computer_attributes.totalStrength
+                combatData.new_computer_health += tshaer
+                combatData.current_computer_health += tshaer
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer unleashes the bestial nature of Tshaer within them.`
                 combatData.computer_weapons[1].physical_damage += 5;
@@ -1119,7 +1202,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     let player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalDefenseModifier / 100);
 
     // This is for Players's who are Posturing
-    if (combatData.action === 'posture') {
+    if (combatData.action === 'posture' && combatData.computer_counter_success !== true && combatData.computer_roll_success !== true) {
         player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
     }
@@ -1127,64 +1210,77 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     if (combatData.computer_action === 'attack') {
         if (combatData.computer_weapons[0].grip === 'One Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {
-                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
+                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Constitution') {
                     if (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility + combatData.computer_weapons[1].agility >= 30) {
                         if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                            combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                            // Computer Dual Wield Compiler
                             return combatData
                         } else {
-                            computer_physical_damage *= 2;
-                            computer_magical_damage *= 1.75;
+                            computer_physical_damage *= 1.6;
+                            computer_magical_damage *= 1.4;
                         }
                     }
                 } else {
-                    computer_physical_damage *= 1.5;
-                    computer_magical_damage *= 1.25;
+                    computer_physical_damage *= 1.2;
+                    computer_magical_damage *= 1.2;
                 }
-            } else {
-                // If Focus + 1h But Magic
+            } 
+            if (combatData.computer_weapons[0].attack_type === 'Magic') {
                 if (combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
-                    if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                    if (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre + combatData.computer_weapons[1].achre >= 30) {
+                        if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                            combatData.computer_dual_wielding = true;
+                            await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                            return combatData
+                        }
+                    } else {
+                        computer_physical_damage *= 1.4;
+                        computer_magical_damage *= 1.6;
+                    }
+                } else {
+                    computer_physical_damage *= 1.2;
+                    computer_magical_damage *= 1.2;
+                }
+            } 
+        }
+        if (combatData.computer_weapons[0].grip === 'Two Hand') {
+            if (combatData.computer_weapons[0].attack_type === 'Physical' && combatData.computer_weapons[0].type !== 'Bow') {
+                if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Constitution') {
+                    if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                         combatData.computer_dual_wielding = true;
                         await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                         return combatData
+                    } else { // Less than 50 Srength 
+                        computer_physical_damage *= 1.6;
+                        computer_magical_damage *= 1.4;
                     }
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.5;
+                    computer_physical_damage *= 1.2;
+                    computer_magical_damage *= 1.2;
                 }
             }
-        } else { // Weapon is TWO HAND
-            if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Kyosir') {
-                if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
-                    combatData.computer_dual_wielding = true;
-                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                    return combatData
-                } else { // Less than 50 Srength 
-                    computer_physical_damage *= 2.0;
-                    computer_magical_damage *= 1.75;
-                }
-            }
-            if (combatData.computer.mastery === 'Caeren' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
-                if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 30) {
-                    combatData.computer_dual_wielding = true;
-                    await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                    return combatData
+            if (combatData.computer_weapons[0].attack_type === 'Magic') {
+                if (combatData.computer.mastery === 'Caeren' || combatData.computer.mastery === 'Kyosir') {
+                    if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 30) {
+                        combatData.computer_dual_wielding = true;
+                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                        return combatData
+                    } else {
+                        computer_physical_damage *= 1.4;
+                        computer_magical_damage *= 1.6;
+                    }
                 } else {
-                    computer_physical_damage *= 1.75;
-                    computer_magical_damage *= 2.0;
+                    computer_physical_damage *= 1.2;
+                    computer_magical_damage *= 1.2;
                 }
             }
             if (combatData.computer_weapons[0].type === 'Bow') {
-                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
                     computer_physical_damage *= 2;
                     computer_magical_damage *= 2;
-                }
             }
         }
-    }
+    } 
 
     // Checking For Player Actions
     if (computer_action === 'counter') {
@@ -1208,8 +1304,13 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     }
 
     if (computer_action === 'roll' ) {
-        computer_physical_damage *= 0.85;
-        computer_magical_damage *= 0.85;
+        if (combatData.computer_roll_success === true) {
+            computer_physical_damage *= 1.1;
+            computer_magical_damage *= 1.1;
+        } else {
+            computer_physical_damage *= 0.75;
+            computer_magical_damage *= 0.75;
+        }
     }
 
     // This is for Critical Strikes
@@ -1302,7 +1403,6 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
         combatData
     )
 }
-
 
 // ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
@@ -1408,7 +1508,7 @@ const attackCompiler = async (combatData, player_action) => {
     let computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalDefenseModifier / 100);
     
     // This is for Opponent's who are Posturing
-    if (combatData.computer_action === 'posture') {
+    if (combatData.computer_action === 'posture' && combatData.counter_success !== true && combatData.roll_success !== true) {
         computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalPosture / 100);
         computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalPosture / 100);
     }
@@ -1420,68 +1520,77 @@ const attackCompiler = async (combatData, player_action) => {
     if (combatData.action === 'attack') {
         if (combatData.weapons[0].grip === 'One Hand') {
             if (combatData.weapons[0].attack_type === 'Physical') {
-                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Kyosir' || combatData.player.mastery === 'Constitution') {
-                    if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Constitution') {
+                    if (combatData.player_attributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 30) {
+                        if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else {
+                            player_physical_damage *= 1.6;
+                            player_magical_damage *= 1.4;
+                        }
+                    }
+                } else {
+                    player_physical_damage *= 1.2;
+                    player_magical_damage *= 1.2;
+                }
+            } 
+            if (combatData.weapons[0].attack_type === 'Magic') {
+                if (combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
+                    if (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 30) {
+                        if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else {
+                            player_physical_damage *= 1.4;
+                            player_magical_damage *= 1.6;
+                        }
+                    }
+                } else {
+                    player_physical_damage *= 1.2;
+                    player_magical_damage *= 1.2;
+                }
+            }
+        } 
+        if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
+            if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow') {
+                if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Constitution') {
+                    if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
+                        combatData.dual_wielding = true;
+                        await dualWieldCompiler(combatData)
+                        return combatData
+                    } else { // Less than 40 Srength 
+                        player_physical_damage *= 1.6;
+                        player_magical_damage *= 1.4;
+                    }
+                } else {
+                    player_physical_damage *= 1.2;
+                    player_magical_damage *= 1.2;
+                }
+            }
+            if (combatData.weapons[0].attack_type === 'Magic') {
+                if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir') {
+                    if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 30) {
                         combatData.dual_wielding = true;
                         await dualWieldCompiler(combatData)
                         return combatData
                     } else {
-                        player_physical_damage *= 2;
-                        player_magical_damage *= 1.75;
-                        // await doubleAttackCompiler(combatData)
-                        // return combatData
+                        player_physical_damage *= 1.4;
+                        player_magical_damage *= 1.6;
                     }
                 } else {
-                    player_physical_damage *= 1.5;
-                    player_magical_damage *= 1.25;
-                }
-            } else {
-                // If Focus + 1h But Magic
-                if (combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
-                    if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
-                        combatData.dual_wielding = true;
-                        await dualWieldCompiler(combatData)
-                        return combatData
-                    }
-                } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.5;
-                }
-            }
-        } else if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
-            console.log(combatData.weapons[0].grip, combatData.player.mastery, combatData.player_attributes.totalStrength)
-            if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Kyosir') {
-                if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
-                    console.log('Did we make it here?')
-                    combatData.dual_wielding = true;
-                    await dualWieldCompiler(combatData)
-                    return combatData
-                } else { // Less than 40 Srength 
-                    player_physical_damage *= 2.25;
-                    player_magical_damage *= 1.75;
-                }
-
-            }
-            if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
-                if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 30) {
-                    combatData.dual_wielding = true;
-                    await dualWieldCompiler(combatData)
-                        return combatData
-                } else {
-                    player_physical_damage *= 1.75;
-                    player_magical_damage *= 2.25;
+                    player_physical_damage *= 1.2;
+                    player_magical_damage *= 1.2;
                 }
             }
             if (combatData.weapons[0].type === 'Bow') {
-                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
-                    player_physical_damage *= 2.5;
-                    player_magical_damage *= 2.5;
-                }
+                player_physical_damage *= 2.25;
+                player_magical_damage *= 2.25;
+
             }
-        } else {
-            player_physical_damage *= 1.3;
-            player_magical_damage *= 1.3;
-        }
+        } 
     }
 
     // Checking For Player Actions
