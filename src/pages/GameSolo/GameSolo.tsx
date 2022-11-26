@@ -28,6 +28,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [winStreak, setWinStreak] = useState<number>(0)
     const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
+    const [timeLeft, setTimeLeft] = useState<number>(0);
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -371,6 +372,7 @@ const GameSolo = ({ user }: GameProps) => {
             'action': action.target.value,
             'counter_guess': ''
         })
+        setTimeLeft(10)
     }
 
     function handleCounter(counter: any) {
@@ -380,6 +382,7 @@ const GameSolo = ({ user }: GameProps) => {
             'action': 'counter',
             'counter_guess': counter.target.value
         })
+        setTimeLeft(10)
     }
 
     async function setWeaponOrder(weapon: any) {
@@ -395,6 +398,7 @@ const GameSolo = ({ user }: GameProps) => {
         playWO()
         // console.log(response, '<- Response re-ordering weapons')
         setCombatData({...combatData, 'weapons': response})
+        setTimeLeft(10)
     }
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
@@ -554,7 +558,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
-                playReligion={playReligion} setDodgeStatus={setDodgeStatus}
+                playReligion={playReligion} setDodgeStatus={setDodgeStatus} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
 
             { combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ?
@@ -569,7 +573,7 @@ const GameSolo = ({ user }: GameProps) => {
                 weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
-                setCombatData={setCombatData} setEmergencyText={setEmergencyText}
+                setCombatData={setCombatData} setEmergencyText={setEmergencyText} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             /> : <Loading Combat={true} />
             }
             <GameCombatText 

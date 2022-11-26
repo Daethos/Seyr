@@ -74,8 +74,8 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log('Achreo!')
             // combatData.player_one_weapons[0].critical_chance = Number(combatData.player_one_weapons[0].critical_chance + 1);
             let achreo = 2 * combatData.player_one_attributes.totalAchre
-            combatData.new_player_one_health += achreo
-            combatData.current_player_one_health += achreo
+            combatData.new_player_one_health += achreo;
+            combatData.current_player_one_health += achreo;
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
             combatData.player_one_weapons[0].physical_damage += 2;
@@ -100,10 +100,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Astra') { // Lightning
+            let astra = 2 * combatData.player_one_attributes.totalAchre
+            combatData.new_player_one_health += astra;
+            combatData.current_player_one_health += astra;
             console.log("Astra!")
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-            combatData.player_one_weapons[0].critical_chance += 5;
+            combatData.player_one_weapons[0].critical_chance += 4;
+            combatData.player_one_weapons[0].roll += 2;
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
@@ -127,10 +131,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_one_weapons[0].magical_penetration += 3;
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Fyer') { // Fire
+            let fyer = 2 * combatData.player_one_attributes.totalCaeren
+            combatData.new_player_one_health += fyer;
+            combatData.current_player_one_health += fyer;
             console.log("Fyer!")
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer ushers forth the favor of Fyer igniting through them.`
             combatData.player_one_weapons[0].critical_damage += 0.9;
+            combatData.player_one_weapons[0].critical_chance += 1;
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Ilios') { // Sun
             console.log("Ilios!")
@@ -146,12 +154,18 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         }
         if (combatData.player_one_weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
+            let kyngi = 2 * combatData.player_one_attributes.totalAgility
+            combatData.new_player_one_health += kyngi;
+            combatData.current_player_one_health += kyngi;
             combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
+                `${combatData.player_one.name}'s keening Caer shrieks into Kyn'gi, his blessing emboldening the Hunt.`
             combatData.player_one_weapons[0].roll += 3;
             combatData.player_one_weapons[0].critical_chance += 3;
         }
         if (combatData.player_one_weapons[0].influences[0] === "Kyrisos") { // Gold
+            let kyrisos = 2 * combatData.player_one_attributes.totalKyosir
+            combatData.new_player_one_health += kyrisos;
+            combatData.current_player_one_health += kyrisos;
             console.log("Kyrisos!")
             combatData.player_one_influence_description = 
                 `The Caer of Kyrisos imbues them with Kyosir!`
@@ -213,6 +227,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.current_player_one_health += quorei
         }
         if (combatData.player_one_weapons[0].influences[0] === "Rahvre") { // Dreams
+            let rahvre = 2 * combatData.player_one_attributes.totalCaeren
+            combatData.new_player_one_health += rahvre
+            combatData.current_player_one_health += rahvre
             console.log("Rahvre!")
             combatData.player_one_influence_description = 
             `${combatData.player_one.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
@@ -242,6 +259,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
         }
         if (combatData.player_one_weapons[0].influences[0] === "Se'vas") { // War
+            let sevas = 2 * combatData.player_one_attributes.totalStrength
+            combatData.new_player_one_health += sevas
+            combatData.current_player_one_health += sevas
             console.log("Se'vas!")
             combatData.player_one_influence_description = 
                 `The Caer of Se'vas scorns ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, scarring it with the beauty of war.` 
@@ -258,6 +278,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.current_player_one_health += shrygei
         }
         if (combatData.player_one_weapons[0].influences[0] === "Tshaer") { // Animal
+            let tshaer = 2 * combatData.player_one_attributes.totalStrength
+            combatData.new_player_one_health += tshaer
+            combatData.current_player_one_health += tshaer
             console.log("Tshaer!")
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s fervor unleashes the bestial nature of Tshaer within them.`
@@ -284,7 +307,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 if (combatData.new_player_two_health < 0) {
                     combatData.new_player_two_health = 0;
                 }
-        }
+            }
             if (combatData.player_one_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
                 let achreo = 2 * combatData.player_one_attributes.totalAchre
@@ -315,9 +338,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Astra') { // Lightning
+                let astra = 2 * combatData.player_one_attributes.totalAchre
+                combatData.new_player_one_health += astra;
+                combatData.current_player_one_health += astra;
                 combatData.player_one_influence_description_two = 
                     `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-                combatData.player_one_weapons[1].critical_chance += 5;
+                combatData.player_one_weapons[1].critical_chance += 4;
+                combatData.player_one_weapons[1].roll += 2;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_one_influence_description_two = 
@@ -340,9 +367,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_weapons[1].magical_penetration += 3;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Fyer') { // Fire
+                let fyer = 2 * combatData.player_one_attributes.totalCaeren
+                combatData.new_player_one_health += fyer;
+                combatData.current_player_one_health += fyer;
                 combatData.player_one_influence_description_two = 
                     `${combatData.player_one.name}'s Caer ushers forth the favor of Fyer igniting through them.`
                 combatData.player_one_weapons[1].critical_damage += 0.9;
+                combatData.player_one_weapons[1].critical_chance += 1;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Ilios') { // Sun
                 combatData.player_one_influence_description_two = 
@@ -356,12 +387,18 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_defense.magicalPosture += 2;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Kyn'gi") { // Hunt
+                let kyngi = 2 * combatData.player_one_attributes.totalAgility
+                combatData.new_player_one_health += kyngi;
+                combatData.current_player_one_health += kyngi;
                 combatData.player_one_influence_description_two = 
                     `${combatData.player_one.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
                 combatData.player_one_weapons[1].roll += 3;
                 combatData.player_one_weapons[1].critical_chance += 3;
             }
             if (combatData.player_one_weapons[1].influences[0] === "Kyrisos") { // Gold
+                let kyrisos = 2 * combatData.player_one_attributes.totalKyosir
+                combatData.new_player_one_health += kyrisos;
+                combatData.current_player_one_health += kyrisos;
                 combatData.player_one_influence_description_two = 
                     `The Caer of Kyrisos imbues them with Kyosir!`
                 combatData.player_one_attributes.kyosirMod += 4;
@@ -417,9 +454,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.current_player_one_health += quorei
             }
             if (combatData.player_one_weapons[1].influences[0] === "Rahvre") { // Dreams
+                let rahvre = 2 * combatData.player_one_attributes.totalCaeren
+                combatData.new_player_one_health += rahvre
+                combatData.current_player_one_health += rahvre
                 combatData.player_one_influence_description_two = 
                 `${combatData.player_one.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-            combatData.player_one_weapons[1].magical_damage += 5;
+                combatData.player_one_weapons[1].magical_damage += 5;   
             }
             if (combatData.player_one_weapons[1].influences[0] === "Senari") { // Wisdom
                 combatData.player_one_influence_description_two = 
@@ -444,6 +484,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
             }
             if (combatData.player_one_weapons[1].influences[0] === "Se'vas") { // War
+                let sevas = 2 * combatData.player_one_attributes.totalStrength
+                combatData.new_player_one_health += sevas
+                combatData.current_player_one_health += sevas
                 combatData.player_one_influence_description_two = 
                     `The Caer of Se'vas scorns ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, scarring it with the beauty of war.` 
                 combatData.player_one_weapons[1].critical_chance += 3;
@@ -459,6 +502,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     combatData.current_player_one_health += shrygei
                 }
             if (combatData.player_one_weapons[1].influences[0] === "Tshaer") { // Animal
+                let tshaer = 2 * combatData.player_one_attributes.totalStrength
+                combatData.new_player_one_health += tshaer
+                combatData.current_player_one_health += tshaer
                 combatData.player_one_influence_description_two = 
                     `${combatData.player_one.name}'s Caer unleashes the bestial nature of Tshaer within them.`
                 combatData.player_one_weapons[1].physical_damage += 5;
@@ -517,10 +563,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Astra') { // Lightning
+            let astra = 2 * combatData.player_two_attributes.totalAchre
+            combatData.new_player_two_health += astra;
+            combatData.current_player_two_health += astra;
             console.log("Astra!")
             combatData.player_two_influence_description = 
                 `${combatData.player_two.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-            combatData.player_two_weapons[0].critical_chance += 5;
+            combatData.player_two_weapons[0].critical_chance += 4;
+            combatData.player_two_weapons[0].roll += 2;
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
@@ -545,6 +595,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_two_weapons[0].magical_penetration += 3;
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Fyer') { // Fire
+            let fyer = 2 * combatData.player_two_attributes.totalCaeren
+            combatData.new_player_two_health += fyer;
+            combatData.current_player_two_health += fyer;
             console.log("Fyer!")
             combatData.player_two_influence_description = 
                 `${combatData.player_two.name}'s Caer ushers forth the favor of Fyer igniting through them.`
@@ -557,12 +610,15 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             player_one_action = 'attack';   
             combatData.player_two_weapons[0].magical_penetration += 2;
             combatData.player_two_weapons[0].physical_penetration += 2;
-            combatData.player_one_defense.physicalDefenseModifier += 2;
-            combatData.player_one_defense.magicalDefenseModifier += 2;
-            combatData.player_one_defense.physicalPosture += 2;
-            combatData.player_one_defense.magicalPosture += 2;
+            combatData.player_two_defense.physicalDefenseModifier += 2;
+            combatData.player_two_defense.magicalDefenseModifier += 2;
+            combatData.player_two_defense.physicalPosture += 2;
+            combatData.player_two_defense.magicalPosture += 2;
         }
         if (combatData.player_two_weapons[0].influences[0] === "Kyn'gi") { // Hunt
+            let kyngi = 2 * combatData.player_two_attributes.totalAgility
+            combatData.new_player_two_health += kyngi;
+            combatData.current_player_two_health += kyngi;
             console.log("Kyn'gi!")
             combatData.player_two_influence_description = 
                 `${combatData.player_two.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
@@ -570,6 +626,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_two_weapons[0].critical_chance += 3;
         }
         if (combatData.player_two_weapons[0].influences[0] === "Kyrisos") { // Gold
+            let kyrisos = 2 * combatData.player_two_attributes.totalKyosir
+            combatData.new_player_two_health += kyrisos;
+            combatData.current_player_two_health += kyrisos;
             console.log("Kyrisos!")
             combatData.player_two_influence_description = 
                 `The Caer of Kyrisos imbues ${combatData.player_two.name}'s with Kyosir!`
@@ -628,6 +687,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_two_defense.magicalPosture += 2;
             combatData.new_player_two_health += quorei     }
         if (combatData.player_two_weapons[0].influences[0] === "Rahvre") { // Dreams
+            let rahvre = 2 * combatData.player_two_attributes.totalCaeren
+            combatData.new_player_two_health += rahvre
+            combatData.current_player_two_health += rahvre
             console.log("Rahvre!")
             combatData.player_two_influence_description = 
             `${combatData.player_two.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
@@ -658,6 +720,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
         }
         if (combatData.player_two_weapons[0].influences[0] === "Se'vas") { // War
+            let sevas = 2 * combatData.player_two_attributes.totalStrength
+            combatData.new_player_two_health += sevas
+            combatData.current_player_two_health += sevas
             console.log("Se'vas!")
             combatData.player_two_influence_description = 
                 `The Caer of Se'vas scorns their ${combatData.player_two_weapons[0].name}, scarring it with the beauty of war.` 
@@ -674,6 +739,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.current_player_two_health += shrygei
         }
         if (combatData.player_two_weapons[0].influences[0] === "Tshaer") { // Animal
+            let tshaer = 2 * combatData.player_two_attributes.totalStrength
+            combatData.new_player_two_health += tshaer
+            combatData.current_player_two_health += tshaer
             console.log("Tshaer!")
             combatData.player_two_influence_description = 
                 `${combatData.player_two.name}'s fervor unleashes the bestial nature of Tshaer within them.`
@@ -731,9 +799,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Astra') { // Lightning
+                let astra = 2 * combatData.player_two_attributes.totalAchre
+                combatData.new_player_two_health += astra;
+                combatData.current_player_two_health += astra;
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.player_two_weapons[1].critical_chance += 4;
+                combatData.player_two_weapons[1].roll += 2;
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_two_influence_description_two = 
@@ -756,9 +828,13 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_weapons[1].magical_penetration += 3;
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Fyer') { // Fire
+                let fyer = 2 * combatData.player_two_attributes.totalCaeren
+                combatData.new_player_two_health += fyer;
+                combatData.current_player_two_health += fyer;
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s Caer ushers forth the favor of Fyer igniting through them.`
                 combatData.player_two_weapons[1].critical_damage += 0.9;
+                combatData.player_two_weapons[1].critical_chance += 1;
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Ilios') { // Sun
                 combatData.player_two_influence_description_two = 
@@ -766,18 +842,24 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 player_one_action = 'attack';   
                 combatData.player_two_weapons[1].magical_penetration += 2;
                 combatData.player_two_weapons[1].physical_penetration += 2;
-                combatData.player_one_defense.physicalDefenseModifier += 2;
-                combatData.player_one_defense.magicalDefenseModifier += 2;
-                combatData.player_one_defense.physicalPosture += 2;
-                combatData.player_one_defense.magicalPosture += 2;
+                combatData.player_two_defense.physicalDefenseModifier += 2;
+                combatData.player_two_defense.magicalDefenseModifier += 2;
+                combatData.player_two_defense.physicalPosture += 2;
+                combatData.player_two_defense.magicalPosture += 2;
             }
             if (combatData.player_two_weapons[1].influences[0] === "Kyn'gi") { // Hunt
+                let kyngi = 2 * combatData.player_two_attributes.totalAgility
+                combatData.new_player_two_health += kyngi;
+                combatData.current_player_two_health += kyngi;
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
                 combatData.player_two_weapons[1].roll += 3;
                 combatData.player_two_weapons[1].critical_chance += 3;
             }
             if (combatData.player_two_weapons[1].influences[0] === "Kyrisos") { // Gold
+                let kyrisos = 2 * combatData.player_two_attributes.totalKyosir
+                combatData.new_player_two_health += kyrisos;
+                combatData.current_player_two_health += kyrisos;
                 combatData.player_two_influence_description_two = 
                     `The Caer of Kyrisos imbues ${combatData.player_two.name}'s with Kyosir!`
                 combatData.player_two_attributes.kyosirMod += 3;
@@ -833,9 +915,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.current_player_two_health += quorei
             }
             if (combatData.player_two_weapons[1].influences[0] === "Rahvre") { // Dreams
+                let rahvre = 2 * combatData.player_two_attributes.totalCaeren
+                combatData.new_player_two_health += rahvre
+                combatData.current_player_two_health += rahvre
                 combatData.player_two_influence_description_two = 
-                `${combatData.player_two.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-            combatData.player_two_weapons[1].magical_damage += 5;
+                    `${combatData.player_two.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
+                combatData.player_two_weapons[1].magical_damage += 5;
             }
             if (combatData.player_two_weapons[1].influences[0] === "Senari") { // Wisdom
                 combatData.player_two_influence_description_two = 
@@ -860,6 +945,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 }
             }
             if (combatData.player_two_weapons[1].influences[0] === "Se'vas") { // War
+                let sevas = 2 * combatData.player_two_attributes.totalStrength
+                combatData.new_player_two_health += sevas
+                combatData.current_player_two_health += sevas
                 combatData.player_two_influence_description_two = 
                     `The Caer of Se'vas scorns their ${combatData.player_two_weapons[1].name}, scarring it with the beauty of war.` 
                 combatData.player_two_weapons[1].critical_chance += 3;
@@ -875,6 +963,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     combatData.current_player_two_health += shrygei
             }
             if (combatData.player_two_weapons[1].influences[0] === "Tshaer") { // Animal
+                let tshaer = 2 * combatData.player_two_attributes.totalStrength
+                combatData.new_player_two_health += tshaer
+                combatData.current_player_two_health += tshaer
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s Caer unleashes the bestial nature of Tshaer within them.`
                 combatData.player_two_weapons[1].physical_damage += 5;

@@ -42,28 +42,36 @@ interface Props {
     playSlash: Function;
     playWild: Function;
     playReligion: Function;
+    timeLeft: number;
+    setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
-        if (!gameIsLive) {
-            return
-        }
-        const interval = setInterval(() => {
+        console.log('Ticking...')
+        if (!timeLeft) return;
+        const intervalId = setInterval(() => {
+            setEmergencyText([`Auto Engage In ${timeLeft - 1} Second(s)`])
+            setTimeLeft(timeLeft - 1);
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, [timeLeft]);
+
+    useEffect(() => {
+        if (!gameIsLive) return;
+        const interval = setInterval(async () => {
             autoAttack(combatData)
-        }, 6000);
-      
+        }, 10000);
         return () => clearInterval(interval);
       }, [combatData, gameIsLive]);
 
       
 
     const autoEngage = () => {
-        setGameIsLive(liveGameplay => !liveGameplay)
+        setGameIsLive((liveGameplay) => !liveGameplay)
     }
-
     useEffect(() => {
         if (gameIsLive) {
             setEmergencyText(['Auto Action Commencing'])
@@ -75,6 +83,7 @@ const GameConditions = ({ combatData, setCombatData, setDodgeStatus, playReligio
 
     const autoAttack = async (combatData: any) => {
         setLoading(true)
+        setTimeLeft(10)
         try {
             setEmergencyText([`Auto Engagement Response`])
             const response = await gameAPI.initiateAction(combatData)

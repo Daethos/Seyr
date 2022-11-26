@@ -290,12 +290,18 @@ html, body {
   transform: scale(2.5);
 }
 .feeling-icon:hover {
-  transform: scale(3.5);
+  transform: scale(3);
 }
 .friend-popover:hover {
   transform: scale(1.1);
 }
-
+#disable-feeling {
+  pointer-events: none;
+  /* Web Point Event None Thang */
+}
+#feelings {
+  justify-content: space-evenly;
+}
 .Game-Lobby-Chat {
   display: flex;
   flex-direction: column;

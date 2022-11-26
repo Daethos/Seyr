@@ -167,6 +167,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.current_player_health += kyngi;
         }
         if (combatData.weapons[0].influences[0] === "Kyrisos") { // Gold
+            let kyrisos = 2 * combatData.player_attributes.totalKyosir;
+            combatData.new_player_health += kyrisos;
+            combatData.current_player_health += kyrisos;
             console.log("Kyrisos!")
             combatData.player_influence_description = 
                 `The Caer of Kyrisos imbues you with Kyosir!`

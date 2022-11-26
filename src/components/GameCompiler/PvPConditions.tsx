@@ -51,43 +51,29 @@ interface Props {
 
 const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, setFreshCombatData, reduelRequest, enemyData, yourData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
-
-    
-        const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [timeLeft, setTimeLeft] = useState<number>(0);
       
-        useEffect(() => {
-            console.log('Ticking...')
-          // exit early when we reach 0
-          if (!timeLeft) return;
-          
-          // save intervalId to clear the interval when the
-          // component re-renders
-          const intervalId = setInterval(() => {
+    useEffect(() => {
+        console.log('Ticking...')
+        if (!timeLeft) return;
+        const intervalId = setInterval(() => {
             setEmergencyText([`Auto Engage In ${timeLeft - 1} Second(s)`])
             setTimeLeft(timeLeft - 1);
-          }, 1000);
-      
-          // clear interval on re-render to avoid memory leaks
-          return () => clearInterval(intervalId);
-          // add timeLeft as a dependency to re-rerun the effect
-          // when we update it
-        }, [timeLeft]);
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, [timeLeft]);
 
     useEffect(() => {
-        if (!gameIsLive) {
-            return
-        }
+        if (!gameIsLive) return;
         const interval = setInterval(async () => {
             autoAttack(combatData)
         }, 10000);
-        
         return () => clearInterval(interval);
       }, [combatData, gameIsLive]);
 
     const autoEngage = () => {
-        setGameIsLive(liveGameplay => !liveGameplay)
+        setGameIsLive((liveGameplay) => !liveGameplay)
     }
-
     useEffect(() => {
         if (gameIsLive) {
             setEmergencyText(['Auto Action Commencing'])
