@@ -285,8 +285,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let shrygei = combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.player_attributes.totalConstitution;
             combatData.player_influence_description =
                 `The Song of Shry'gei shrieks itself through your ${combatData.weapons[0].name}, the resplendence renews you for ${shrygei}`
-            combatData.weapons[0].magical_penetration += 2
-            combatData.weapons[0].physical_penetration += 2
+            combatData.weapons[0].magical_penetration += 3
+            combatData.weapons[0].physical_penetration += 3
             combatData.new_player_health += shrygei
             combatData.current_player_health += shrygei
         }
@@ -518,8 +518,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 let shrygei = combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.player_attributes.totalConstitution;
                 combatData.player_influence_description_two =
                 `The Song of Shry'gei shrieks itself through your ${combatData.weapons[1].name}, the resplendence renews you for ${shrygei}`
-                    combatData.weapons[1].magical_penetration += 2
-                    combatData.weapons[1].physical_penetration += 2
+                    combatData.weapons[1].magical_penetration += 3
+                    combatData.weapons[1].physical_penetration += 3
                     combatData.new_player_health += shrygei
                     combatData.current_player_health += shrygei
                 }
