@@ -85,10 +85,11 @@ const port = process.env.PORT || 3001;
 const server = app.listen(port, function() {
   console.log(`Express app listening on port ${port}`);
 });
-
+// https://ascea.herokuapp.com
+// http://localhost:3000
 const io = require('socket.io')(server, {
   cors:  {
-    origin: "http://localhost:3000",
+    origin: "https://ascea.herokuapp.com",
     methods: ["GET", "POST"],
   },
 });

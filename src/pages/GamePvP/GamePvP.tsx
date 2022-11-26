@@ -44,6 +44,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
     const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [freshCombatData, setFreshCombatData] = useState<any>(combatData)
+    const [timeLeft, setTimeLeft] = useState<number>(0);
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -110,27 +111,14 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
     const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`
     const [playWind] = useSound(windSfx, { volume: 0.5 })
 
-    const [playerOneWeaponOne, setPlayerOneWeaponOne] = useState<any>(combatData.player_one_weapon_one[0])
-    const [playerOneWeaponTwo, setPlayerOneWeaponTwo] = useState<any>(combatData.player_one_weapon_one[1])
-    const [playerOneWeaponThree, setPlayerOneWeaponThree] = useState<any>(combatData.player_one_weapon_one[2])
-    const [playerOneWeapons, setPlayerOneWeapons] = useState<any>(combatData.player_one_weapons)
+
     const [dodgeStatus, setDodgeStatus] = useState<boolean>(false)
 
-    const [totalPlayerOneHealth, setTotalPlayerOneHealth] = useState<number>(combatData.player_one_attributes.healthTotal)
-    const [currentPlayerOneHealth, setCurrentPlayerOneHealth] = useState<number>(combatData.current_player_one_health)
+    const [totalPlayerOneHealth, setTotalPlayerOneHealth] = useState<number>(combatData?.player_one_attributes?.healthTotal)
+    const [currentPlayerOneHealth, setCurrentPlayerOneHealth] = useState<number>(combatData?.current_player_one_health)
 
-    const [playerOneAttributes, setPlayerOneAttributes] = useState<any>(combatData.player_one_attributes)
-    const [playerOneDefense, setPlayerOneDefense] = useState<any>(combatData.player_one_defense)
-
-    const [playerTwoWeaponOne, setPlayerTwoWeaponOne] = useState<any>(combatData.player_two_weapons[0])
-    const [playerTwoWeaponTwo, setPlayerTwoWeaponTwo] = useState<any>(combatData.player_two_weapons[1])
-    const [playerTwoWeaponThree, setPlayerTwoWeaponThree] = useState<any>(combatData.player_two_weapons[2])
-    const [playerTwoWeapons, setPlayerTwoWeapons] = useState<any>(combatData.player_two_weapons)
-
-    const [playerTwoAttributes, setPlayerTwoAttributes] = useState<any>(combatData.player_two_attributes)
-    const [playerTwoDefense, setPlayerTwoDefense] = useState<any>(combatData.player_two_defense)
-    const [totalPlayerTwoHealth, setTotalPlayerTwoHealth] = useState<number>(combatData.player_two_attributes.healthTotal)
-    const [currentPlayerTwoHealth, setCurrentPlayerTwoHealth] = useState<number>(combatData.current_player_two_health)
+    const [totalPlayerTwoHealth, setTotalPlayerTwoHealth] = useState<number>(combatData?.player_two_attributes?.healthTotal)
+    const [currentPlayerTwoHealth, setCurrentPlayerTwoHealth] = useState<number>(combatData?.current_player_two_health)
 
 
     // const [combatData, setCombatData] = useState<any>({
@@ -368,6 +356,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 'action': action.target.value,
                 'player_one_counter_guess': ''
             })
+            setTimeLeft(10)
         } else {
             setCombatData({
                 ...combatData,
@@ -385,6 +374,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 'action': 'counter',
                 'player_one_counter_guess': counter.target.value
             })
+            setTimeLeft(10)
         } else {
             setCombatData({
                 ...combatData,
@@ -414,6 +404,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
         // console.log(response, '<- Response re-ordering weapons')
         if (yourData.player === 1) {
             setCombatData({...combatData, 'player_one_weapons': response})
+            setTimeLeft(10)
         } else {
             setCombatData({...combatData, 'player_two_weapons': response})
         }
@@ -440,6 +431,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
         }
         try {
             setEmergencyText([``])
+            setTimeLeft(10)
             await socket.emit(`initiated`, combatData)
             console.log(combatData, 'Socket Emit Combat Data')
             // const response = await gameAPI.initiateAction(combatData)
@@ -583,6 +575,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
     const softUpdate = async (response: any) => {
         try {
             setLoading(true)
+            setTimeLeft(10)
             setCombatData({...response})
             setLoading(false)
         } catch (err: any) {
@@ -793,6 +786,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} socket={socket} freshCombatData={freshCombatData} setFreshCombatData={setFreshCombatData}
+                timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
 
             {/* { combatData?.player_one_attributes?.healthTotal && currentPlayerOneHealth >= 0 ? */}

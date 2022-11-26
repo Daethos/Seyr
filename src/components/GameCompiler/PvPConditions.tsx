@@ -47,11 +47,12 @@ interface Props {
     reduelRequest: boolean;
     enemyData: any;
     yourData: any;
+    timeLeft: number;
+    setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, setFreshCombatData, reduelRequest, enemyData, yourData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
+const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, setFreshCombatData, timeLeft, setTimeLeft, reduelRequest, enemyData, yourData, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
-    const [timeLeft, setTimeLeft] = useState<number>(0);
       
     useEffect(() => {
         console.log('Ticking...')
