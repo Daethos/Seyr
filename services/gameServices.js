@@ -130,6 +130,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }    
         }
         if (combatData.weapons[0].influences[0] === 'Chiomyr') { // Humor
+            let chiomyr = 2 * combatData.player_attributes.totalKyosir;
+            combatData.new_player_health += chiomyr;
+            combatData.current_player_health += chiomyr;
             console.log("Chiomyr!")
             combatData.weapons[0].physical_penetration += 3;
             combatData.weapons[0].magical_penetration += 3;
@@ -145,16 +148,19 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.current_player_health += fyer;  
         }
         if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
+            let ilios = combatData.realized_player_damage;
+            combatData.new_player_health += ilios;
+            combatData.current_player_health += ilios;
             console.log("Ilios!")
             combatData.player_influence_description = 
-                `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}.`
+                `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
             player_action = 'attack';   
             combatData.weapons[0].magical_penetration += 2;
             combatData.weapons[0].physical_penetration += 2;
-            combatData.player_defense.physicalDefenseModifier += 2;
-            combatData.player_defense.magicalDefenseModifier += 2;
-            combatData.player_defense.physicalPosture += 2;
-            combatData.player_defense.magicalPosture += 2;
+            combatData.player_defense.physicalDefenseModifier += 1;
+            combatData.player_defense.magicalDefenseModifier += 1;
+            combatData.player_defense.physicalPosture += 1;
+            combatData.player_defense.magicalPosture += 1;
         }
         if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
@@ -191,16 +197,19 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
-            let lilos = 4 * combatData.player_attributes.totalCaeren;
+            let lilos = 5 * combatData.player_attributes.totalCaeren;
             combatData.player_influence_description = 
                 `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
             combatData.new_player_health += lilos;
             combatData.current_player_health += lilos;
         }
         if (combatData.weapons[0].influences[0] === "Ma'anre") { // Moon
+            let maanre = combatData.realized_player_damage;
+            combatData.new_player_health += maanre;
+            combatData.current_player_health += maanre;
             console.log("Ma'anre!")
             combatData.player_influence_description = 
-                `Ma'anre wraps her tendrils about your ${combatData.weapons[0].name}, changing your perception of this world.` 
+                `Ma'anre wraps her tendrils about your ${combatData.weapons[0].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
             combatData.weapons[0].roll += 2;
             combatData.weapons[0].dodge -= 2;
             combatData.weapons[0].critical_chance += 2;
@@ -367,6 +376,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Chiomyr') { // Humor
+                let chiomyr = 2 * combatData.player_attributes.totalKyosir;
+                combatData.new_player_health += chiomyr;
+                combatData.current_player_health += chiomyr;
                 combatData.weapons[1].physical_penetration += 3;
                 combatData.weapons[1].magical_penetration += 3;
             }
@@ -380,15 +392,18 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += fyer;  
             }
             if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
+                let ilios = combatData.realized_player_damage;
+                combatData.new_player_health += ilios;
+                combatData.current_player_health += ilios;
                 combatData.player_influence_description_two = 
-                    `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}.`
+                    `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
                 player_action = 'attack';   
                 combatData.weapons[1].magical_penetration += 2;
                 combatData.weapons[1].physical_penetration += 2;
-                combatData.player_defense.physicalDefenseModifier += 2;
-                combatData.player_defense.magicalDefenseModifier += 2;
-                combatData.player_defense.physicalPosture += 2;
-                combatData.player_defense.magicalPosture += 2;
+                combatData.player_defense.physicalDefenseModifier += 1;
+                combatData.player_defense.magicalDefenseModifier += 1;
+                combatData.player_defense.physicalPosture += 1;
+                combatData.player_defense.magicalPosture += 1;
             }
             if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
                 let kyngi = 2 * combatData.player_attributes.totalAgility;
@@ -400,6 +415,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += kyngi;
             }
             if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
+                let kyrisos = 2 * combatData.player_attributes.totalKyosir;
+                combatData.new_player_health += kyrisos;
+                combatData.current_player_health += kyrisos;
                 combatData.player_influence_description_two = 
                     `The Caer of Kyrisos imbues you with Kyosir!`
                 combatData.player_attributes.kyosirMod += 4;
@@ -418,15 +436,18 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = 4 * combatData.player_attributes.totalCaeren;
+                let lilos = 5 * combatData.player_attributes.totalCaeren;
                 combatData.player_influence_description_two = 
                     `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`
                 combatData.new_player_health += lilos;
                 combatData.current_player_health += lilos;
             }
             if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
+                let maanre = combatData.realized_player_damage;
+                combatData.new_player_health += maanre;
+                combatData.current_player_health += maanre;
                 combatData.player_influence_description_two = 
-                    `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world.` 
+                    `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
                 combatData.weapons[1].roll += 2;
                 combatData.weapons[1].dodge -= 2;
                 combatData.weapons[1].critical_chance += 2;
@@ -590,6 +611,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }    
         }
         if (combatData.computer_weapons[0].influences[0] === 'Chiomyr') { // Humor
+            let chiomyr = 2 * combatData.computer_attributes.totalKyosir;
+            combatData.new_computer_health += chiomyr;
+            combatData.current_computer_health += chiomyr;
             console.log("Chiomyr!")
             combatData.computer_weapons[0].physical_penetration += 3;
             combatData.computer_weapons[0].magical_penetration += 3;
@@ -604,16 +628,19 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_weapons[0].critical_damage += 0.9;
         }
         if (combatData.computer_weapons[0].influences[0] === 'Ilios') { // Sun
+            let ilios = combatData.realized_computer_damage;
+            combatData.new_computer_health += ilios;
+            combatData.current_computer_health += ilios;
             console.log("Ilios!")
             combatData.computer_influence_description = 
-                `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[0].name}.`
+                `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
             player_action = 'attack';   
             combatData.computer_weapons[0].magical_penetration += 2;
             combatData.computer_weapons[0].physical_penetration += 2;
-            combatData.player_defense.physicalDefenseModifier += 2;
-            combatData.player_defense.magicalDefenseModifier += 2;
-            combatData.player_defense.physicalPosture += 2;
-            combatData.player_defense.magicalPosture += 2;
+            combatData.player_defense.physicalDefenseModifier += 1;
+            combatData.player_defense.magicalDefenseModifier += 1;
+            combatData.player_defense.physicalPosture += 1;
+            combatData.player_defense.magicalPosture += 1;
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
             let kyngi = 2 * combatData.computer_attributes.totalAgility
@@ -626,6 +653,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_weapons[0].critical_chance += 3;
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyrisos") { // Gold
+            let kyrisos = 2 * combatData.computer_attributes.totalKyosir;
+            combatData.new_computer_health += kyrisos;
+            combatData.current_computer_health += kyrisos;
             console.log("Kyrisos!")
             combatData.computer_influence_description = 
                 `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
@@ -647,16 +677,19 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
-            let lilos = 4 * combatData.computer_attributes.totalCaeren;
+            let lilos = 5 * combatData.computer_attributes.totalCaeren;
             combatData.computer_influence_description = 
                 `Lilos breathes her Cear into ${combatData.computer.name}, healing ${combatData.computer.name} for ${lilos}.`
             combatData.new_computer_health += lilos;
             combatData.current_computer_health += lilos;
         }
         if (combatData.computer_weapons[0].influences[0] === "Ma'anre") { // Moon
+            let maanre = combatData.realized_computer_damage;
+            combatData.new_computer_health += maanre;
+            combatData.current_computer_health += maanre;
             console.log("Ma'anre!")
             combatData.computer_influence_description = 
-                `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, changing their perception of this world.` 
+                `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
             combatData.computer_weapons[0].roll += 2;
             combatData.computer_weapons[0].dodge -= 2;
             combatData.computer_weapons[0].critical_chance += 2;
@@ -817,6 +850,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }    
             }
             if (combatData.computer_weapons[1].influences[0] === 'Chiomyr') { // Humor
+                let chiomyr = 2 * combatData.computer_attributes.totalKyosir;
+                combatData.new_computer_health += chiomyr;
+                combatData.current_computer_health += chiomyr;
                 combatData.computer_weapons[1].physical_penetration += 3;
                 combatData.computer_weapons[1].magical_penetration += 3;
             }
@@ -829,15 +865,18 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_damage += 0.9;
             }
             if (combatData.computer_weapons[1].influences[0] === 'Ilios') { // Sun
+                let ilios = combatData.realized_computer_damage;
+                combatData.new_computer_health += ilios;
+                combatData.current_computer_health += ilios;
                 combatData.computer_influence_description_two = 
-                    `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[1].name}.`
+                    `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
                 player_action = 'attack';   
                 combatData.computer_weapons[1].magical_penetration += 2;
                 combatData.computer_weapons[1].physical_penetration += 2;
-                combatData.player_defense.physicalDefenseModifier += 2;
-                combatData.player_defense.magicalDefenseModifier += 2;
-                combatData.player_defense.physicalPosture += 2;
-                combatData.player_defense.magicalPosture += 2;
+                combatData.player_defense.physicalDefenseModifier += 1;
+                combatData.player_defense.magicalDefenseModifier += 1;
+                combatData.player_defense.physicalPosture += 1;
+                combatData.player_defense.magicalPosture += 1;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
                 let kyngi = 2 * combatData.computer_attributes.totalAgility
@@ -849,6 +888,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_chance += 3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyrisos") { // Gold
+                let kyrisos = 2 * combatData.computer_attributes.totalKyosir;
+                combatData.new_computer_health += kyrisos;
+                combatData.current_computer_health += kyrisos;
                 combatData.computer_influence_description_two = 
                     `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
                 combatData.computer_attributes.kyosirMod += 3;
@@ -867,15 +909,18 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = 4 * combatData.computer_attributes.totalCaeren;
+                let lilos = 5 * combatData.computer_attributes.totalCaeren;
                 combatData.computer_influence_description_two = 
                     `Lilos breathes her Caer into ${combatData.computer.name}, healing them for ${lilos}.`
                 combatData.new_computer_health += lilos;
                 combatData.current_computer_health += lilos;
             }
             if (combatData.computer_weapons[1].influences[0] === "Ma'anre") { // Moon
+                let maanre = combatData.realized_computer_damage;
+                combatData.new_computer_health += maanre;
+                combatData.current_computer_health += maanre;
                 combatData.computer_influence_description_two = 
-                    `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, changing their perception of this world.` 
+                    `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
                 combatData.computer_weapons[1].roll += 2;
                 combatData.computer_weapons[1].dodge -= 2;
                 combatData.computer_weapons[1].critical_chance += 2;

@@ -414,6 +414,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             console.log(combatData.action, 'Combat Action Being Initiated')
             setEmergencyText([``])
+            setTimeLeft(10)
             const response = await gameAPI.initiateAction(combatData)
             setCombatInitiated(true)
             setActionStatus(true)

@@ -37,6 +37,7 @@ const GameCombatText = ({ user, ascean, emergencyText, playerReligiousText, comp
         <textarea 
             className="text-box" id="console" 
             value={
+                emergencyText + `\n` +
                 playerActionText + `\n` + computerActionText + `\n` +
                 playerSpecialText + `\n` + computerSpecialText + `\n` +
                 playerCombatText + `\n` +  computerCombatText + `\n` +

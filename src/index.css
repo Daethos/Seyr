@@ -289,15 +289,17 @@ html, body {
 .feeling-icon {
   transform: scale(2.5);
 }
-.feeling-icon:hover {
+/* .feeling-icon:hover {
   transform: scale(3);
-}
+} */
 .friend-popover:hover {
   transform: scale(1.1);
 }
-#disable-feeling {
+#disable-feeling:active {
   pointer-events: none;
-  /* Web Point Event None Thang */
+}
+#disable-feeling {
+  pointer-events: auto;
 }
 #feelings {
   justify-content: space-evenly;
@@ -317,10 +319,7 @@ html, body {
 #pvp-chat {
   grid-row-start: 8;
 }
-#chat-button:hover {
-  /* transform: scale(1.1); */
- 
-}
+
 .Chat-Window p {
   margin: 0;
 }

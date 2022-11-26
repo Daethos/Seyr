@@ -11,7 +11,7 @@ interface Props {
 }
 
 const FeelingsCard = ({ loggedUser, ascean }: Props) => {
-
+  const [asceanState, setAsceanState] = useState(ascean)
   const [loading, setLoading] = useState<boolean>(false)
   const [asceanFeelings, setAsceanFeelings] = useState(ascean)
   const [likeStat, setLikeStat] = useState<any>([])
@@ -21,24 +21,28 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
   const renderLikesTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
     <Tooltip id="button-tooltip" {...props}>
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
-      { likeStat?.map((like: any, index: number) => 
-        <>{index <= 3 
-          ? (likeStat?.length) === (index + 1) 
-          ? likeStat?.length === 1 
-            ? <>{like}</> 
-            : likeStat?.length === 2 
-              ? <> and {like}</> 
-              : likeStat?.length === 3 
-                ? <> and {like}</> 
-                : likeStat?.length === 4 
-                  ? <>and {like}</> 
-                  : <>and {like}</> 
-                    : <>{like}, {' '}</> 
-                    : index > 3 
-                    ? <>{like} and {likeStat?.length - index} more</> 
-                    : <>and {like}</>
-          }</>
-      )}
+        {
+          likeStat.length > 0 ?
+          likeStat?.map((like: any, index: number) => 
+            <>{index <= 3 
+              ? (likeStat?.length) === (index + 1) 
+              ? likeStat?.length === 1 
+                ? <>{like}</> 
+                : likeStat?.length === 2 
+                  ? <> and {like}</> 
+                  : likeStat?.length === 3 
+                    ? <> and {like}</> 
+                    : likeStat?.length === 4 
+                      ? <>and {like}</> 
+                      : <>and {like}</> 
+                        : <>{like}, {' '}</> 
+                        : index > 3 
+                        ? <>{like} and {likeStat?.length - index} more</> 
+                        : <>and {like}</>
+              }</>
+          )
+          : 'No Likes Yet!'
+        }
       </div>
     </Tooltip>
   );
@@ -46,17 +50,23 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
   const renderDislikesTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
     <Tooltip id="button-tooltip" {...props}>
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
-      { dislikeStat?.map((like: any, index: number) => <>{index < 3 ? (dislikeStat?.length) === (index + 1) ? dislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {dislikeStat?.length - index} more</> : <>and {like}</>}</>
-      )}
+        { dislikeStat.length > 0 ?
+       dislikeStat?.map((like: any, index: number) => <>{index < 3 ? (dislikeStat?.length) === (index + 1) ? dislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {dislikeStat?.length - index} more</> : <>and {like}</>}</>
+      )
+        : 'No Dislikes Yet!'
+         }
       </div>
     </Tooltip>
   );
 
   const renderDoubleDislikesTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
-    <Tooltip id="button-tooltip" {...props}>
+    <Tooltip id="button-tooltip" {...props} show={doubleDislikeStat > 0 ? true : false}>
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
-      { doubleDislikeStat?.map((like: any, index: number) => <>{index < 3 ? (doubleDislikeStat?.length) === (index + 1) ? doubleDislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {doubleDislikeStat?.length - index} more</> : <>and {like}</>}</>
-      )}
+        { doubleDislikeStat.length > 0 ? 
+       doubleDislikeStat?.map((like: any, index: number) => <>{index < 3 ? (doubleDislikeStat?.length) === (index + 1) ? doubleDislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {doubleDislikeStat?.length - index} more</> : <>and {like}</>}</>
+      )
+      : 'No Double Dislikes Yet!'
+      }
       </div>
     </Tooltip>
   );
@@ -81,23 +91,23 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
   const dislikeColor = dislikedIndex > -1 ? "red" : "red";
   const doubleDislikeColor = doubleDislikedIndex > -1 ? "red" : "red";
 
-  // const getAscean = async () => {
-  //   setLoading(true);
-  //       try {
-  //           const response = await asceanAPI.getOneAscean(ascean._id);
-  //           console.log(response, ' <- the response in getAscean')
-  //           setAscean(response.data)
-  //           setLoading(false)
-  //           console.log(ascean, '<- Ascean focused upon.')
-  //       } catch (err: any) {
-  //           setLoading(false)
-  //           console.log(err.message);
-  //       }
-  //  }
+  const getAscean = async () => {
+    // setLoading(true);
+        try {
+            const response = await asceanAPI.getOneAscean(ascean._id);
+            console.log(response, ' <- the response in getAscean')
+            setAsceanState(response.data)
+            // setLoading(false)
+            console.log(ascean, '<- Ascean focused upon.')
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message);
+        }
+   }
 
   // useEffect(() => {
   //     getAscean()
-  // }, [addFeeling, removeFeeling])
+  // }, [])
                     
   const likeHandler =
     likedIndex > -1
@@ -114,29 +124,29 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       ? () => removeFeeling(asceanFeelings?.double_dislikes[doubleDislikedIndex]._id, 'doubleDislike') 
       : () => addFeeling(asceanFeelings?._id, 'doubleDislike');  
 
-  console.log(ascean.likes.map((like: any) => {
-    console.log(like, 'How do I extract your usernames?')
-  }))
+  // console.log(ascean.likes.map((like: any) => {
+  //   console.log(like, 'How do I extract your usernames?')
+  // }))
 
   useEffect(() => {
     likesArray();
     // dislikesArray();
     // doubleDislikesArray();
-  }, [asceanFeelings])
+  }, [asceanState])
 
   useEffect(() => {
     dislikesArray();
     // doubleDislikesArray();
-  }, [asceanFeelings])
+  }, [asceanState])
 
   useEffect(() => {
     doubleDislikesArray();
-  }, [asceanFeelings])
+  }, [asceanState])
 
   const likesArray = async () => {
     try {
-      setLoading(true)
-      const response = await ascean.likes.map((like: { username: string }) => {
+      // setLoading(true)
+      const response = await asceanState.likes.map((like: { username: string }) => {
         console.log(like.username, 'Like?')
         let newArray: any[] = [];
         newArray = [...newArray, like.username]
@@ -147,7 +157,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       console.log(response, 'Response Finding Likes')
       setLikeStat(response)
 
-      setLoading(false)
+      // setLoading(false)
     } catch (err: any) {
       console.log(err.message, 'Error Retrieving Feelings')
     }
@@ -155,9 +165,9 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   const dislikesArray = async () => {
     try {
-      setLoading(true)
+      // setLoading(true)
 
-      const dislikeResponse = await ascean.dislikes.map((like: { username: string }) => {
+      const dislikeResponse = await asceanState.dislikes.map((like: { username: string }) => {
         console.log(like.username, 'Dislike?')
         let newArray: any[] = [];
         newArray = [...newArray, like.username]
@@ -168,7 +178,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       console.log(dislikeResponse, 'Response Finding Dislikes')
       setDislikeStat(dislikeResponse)
 
-      setLoading(false)
+      // setLoading(false)
     } catch (err: any) {
       console.log(err.message, 'Error Retrieving Feelings')
     }
@@ -176,8 +186,8 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   const doubleDislikesArray = async () => {
     try {
-      setLoading(true)
-      const doubleDislikeResponse = await ascean.double_dislikes.map((like: { username: string }) => {
+      // setLoading(true)
+      const doubleDislikeResponse = await asceanState.double_dislikes.map((like: { username: string }) => {
         console.log(like.username, 'Double Dislike?')
         let newArray: any[] = [];
         newArray = [...newArray, like.username]
@@ -188,7 +198,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       console.log(doubleDislikeResponse, 'Response Finding Double Dislikes')
       setDoubleDislikeStat(doubleDislikeResponse)
 
-      setLoading(false)
+      // setLoading(false)
     } catch (err: any) {
       console.log(err.message, 'Error Retrieving Feelings')
     }
@@ -200,6 +210,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
         const response = await feelingAPI.createFeeling(asceanID, feeling);
         console.log(response.data, 'Response in Adding a Feeling')
         setAsceanFeelings(response.data)
+        getAscean()
         // getAscean()
     } catch (err: any) {
         console.log(err.message, '<- Error adding a feeling!')
@@ -212,6 +223,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
           const response = await feelingAPI.removeFeeling(asceanID, feeling);
           console.log(response.data, 'Response in Removing a Feeling')
           setAsceanFeelings(response.data)
+          getAscean()
       } catch (err: any) {
           console.log(err.message, '<- Error adding a feeling!')
       }
