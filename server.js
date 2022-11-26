@@ -89,7 +89,7 @@ const server = app.listen(port, function() {
 // http://localhost:3000
 const io = require('socket.io')(server, {
   cors:  {
-    origin: "https://ascea.herokuapp.com",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });

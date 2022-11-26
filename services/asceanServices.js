@@ -43,7 +43,7 @@ const attributeCompiler = async (ascean) => {
     newAttributes.equipCaeren = newAttributes.totalCaeren - newAttributes.rawCaeren;
     newAttributes.equipKyosir = newAttributes.totalKyosir - newAttributes.rawKyosir;
 
-    newAttributes.healthTotal = ((newAttributes.totalConstitution * 3) + ((newAttributes.constitutionMod + newAttributes.caerenMod) * 2)) * 6;
+    newAttributes.healthTotal = ((newAttributes.totalConstitution * 12) + ((newAttributes.constitutionMod + newAttributes.caerenMod) * 12));
     newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2)
 
     return (
@@ -88,13 +88,14 @@ async function originCompiler(weapon, ascean) {
 
 async function gripCompiler(weapon, attributes) { 
     if (weapon.grip === 'One Hand') {
-        weapon.physical_damage += (((weapon.agility / 2) * 1.5) + attributes.agilityMod * 1.5) + ((weapon.strength / 2) + attributes.strengthMod / 2);
-        weapon.magical_damage += ((weapon.achre + weapon.caeren) / 2) + attributes.achreMod + attributes.caerenMod;
+        weapon.physical_damage += (((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2);
+        weapon.magical_damage += (weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2);
     } 
     if (weapon.grip === 'Two Hand') {
-        weapon.physical_damage += ((weapon.strength) + attributes.strengthMod * 2) + ((weapon.agility / 2) + attributes.agilityMod);
-        weapon.magical_damage += (((weapon.achre + weapon.caeren) / 2) * 1.5) + (attributes.achreMod * 1.5) +  (attributes.caerenMod * 1.5);
+        weapon.physical_damage += (weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2);
+        weapon.magical_damage += ((weapon.achre / 4) + weapon.caeren + (attributes.achreMod / 2)) + attributes.caerenMod;
     }
+    console.log(weapon.physical_damage, weapon.magical_damage, 'Damage After Attributes')
 }
 
 async function penetrationCompiler(weapon, attributes, combatStats) { 
@@ -190,9 +191,9 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
     faithCompiler(weaponOne, ascean)
     weaponOne.dodge += (20 + (combatStats.dodgeCombat * 2));
     weaponOne.roll += combatStats.rollCombat;
+    console.log(weaponOne.physical_damage, combatStats.damagePhysical, 'Crit Damage After Compiling')
     weaponOne.physical_damage = Math.round(weaponOne.physical_damage * combatStats.damagePhysical);
     weaponOne.magical_damage = Math.round(weaponOne.magical_damage * combatStats.damageMagical);
-    // console.log(weaponOne.critical_damage, 'Crit Damage After Compiling')
     return weaponOne
 }
 
@@ -259,7 +260,7 @@ const asceanCompiler = async (ascean) => {
         const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats)
         const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats)
         const defense = await defenseCompiler(ascean, attributes, combatStats)
-        console.log(combat_weapon_one.name, combat_weapon_one.critical_damage, 'Did the weapon compile?')
+        // console.log(physicalDamageModifier, magicalDamageModifier, 'Did the weapon compile?')
         return {
     
             data: {
