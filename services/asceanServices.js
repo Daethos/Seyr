@@ -90,8 +90,12 @@ async function gripCompiler(weapon, attributes) {
     if (weapon.grip === 'One Hand') {
         weapon.physical_damage += (((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2);
         weapon.magical_damage += (weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2);
-    } 
-    if (weapon.grip === 'Two Hand') {
+    }
+    if (weapon.type === 'Bow') {
+        weapon.physical_damage += (((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod);
+        weapon.magical_damage += (weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod);
+    }  
+    if (weapon.grip === 'Two Hand' && weapon.type !== 'Bow') {
         weapon.physical_damage += (weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2);
         weapon.magical_damage += ((weapon.achre / 4) + weapon.caeren + (attributes.achreMod / 2)) + attributes.caerenMod;
     }
