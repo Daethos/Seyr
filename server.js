@@ -303,7 +303,7 @@ io.on("connection", (socket) => {
 
     socket.on(`initiated`, async (data) => {
       let newData = data;
-      console.log(newData, 'Did the New Data transcribe?')
+      // console.log(newData, 'Did the New Data transcribe?')
       if (newUser.player === 1) {
         newData.player_one_initiated = true;
       } else {
@@ -312,6 +312,7 @@ io.on("connection", (socket) => {
       
       if (newData.player_one_initiated === true && newData.player_two_initiated === true) {
         const response = await pvpService.actionCompiler(data)
+        console.log(response, 'Is This Null?')
         io.to(newUser.room).emit(`combat_response`, response);
       } else {
         io.to(newUser.room).emit(`soft_response`, newData);
@@ -325,7 +326,7 @@ io.on("connection", (socket) => {
       } else {
         newData.player_two_reduel = true;
       }
-      console.log(newData, 'Did the New Data transcribe?')
+      // console.log(newData, 'Did the New Data transcribe?')
       if (newData.player_one_reduel === true && newData.player_two_reduel === true) {
         // const response = await pvpService.actionCompiler(data)
         io.to(newUser.room).emit(`reset_duel`);
@@ -334,7 +335,12 @@ io.on("connection", (socket) => {
       }
 
     })
-
+    
+    socket.on(`auto_engage`, async (combatData) => {
+      const response = await pvpService.actionCompiler(combatData)
+      // console.log(response, 'Is this Null?')
+      io.to(combatData.room).emit(`combat_response`, response)
+    })
 
   })
 
@@ -351,11 +357,6 @@ io.on("connection", (socket) => {
     // console.log(data)
   })
 
-  socket.on(`auto_engage`, async (combatData) => {
-    const response = await pvpService.actionCompiler(combatData)
-    // console.log(response)
-    io.to(combatData.room).emit(`combat_response`, response)
-  })
 
 
   // socket.on("disconnect", () => {

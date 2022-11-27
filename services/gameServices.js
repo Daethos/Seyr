@@ -133,6 +133,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let chiomyr = 2 * (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
             combatData.new_player_health += chiomyr;
             combatData.current_player_health += chiomyr;
+            combatData.player_influence_description = 
+                `Your Caer causes a faint cackle to fade around you.`
             console.log("Chiomyr!")
             combatData.weapons[0].physical_penetration += 3;
             combatData.weapons[0].magical_penetration += 3;

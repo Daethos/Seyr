@@ -55,7 +55,6 @@ const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, set
     const [loading, setLoading] = useState<boolean>(false)
       
     useEffect(() => {
-        console.log('Ticking...')
         if (!timeLeft) return;
         const intervalId = setInterval(() => {
             setEmergencyText([`Auto Engage In ${timeLeft - 1} Second(s)`])
@@ -84,7 +83,7 @@ const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, set
         }
       }, [gameIsLive])
 
-    const autoAttack = async (combatData: any) => {
+    const autoAttack = async (data: any) => {
         if (yourData.player === 2) {
             setTimeLeft(10)
             return
@@ -92,7 +91,7 @@ const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, set
         setLoading(true)
         try {
             setEmergencyText([`Auto Engagement Response`])
-            await socket.emit(`auto_engage`, combatData)
+            await socket.emit(`auto_engage`, data)
             setTimeLeft(10)
             setLoading(false)
             // const response = await gameAPI.pvpAction(combatData)
@@ -113,18 +112,18 @@ const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, set
     {playerWin ? <div className="win-condition">
     You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
     {/* <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button>  */}
-    {
-        reduelRequest
-        ?
-        <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button>
-        :
-        ''
+    { reduelRequest
+        ? <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button>
+        : ''
     }
     </div> : ''}
-    {computerWin ? <div className="win-condition">
-    You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
-    <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button>
-    </div> : ''}
+    { computerWin 
+        ? <div className="win-condition">
+            You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
+            <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button>
+            </div> 
+        : ''
+    }
     {/* { playerWin || computerWin ? '' : 
     
     <button className="btn" id='auto-engage' onClick={autoEngage}>
