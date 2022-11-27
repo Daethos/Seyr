@@ -33,7 +33,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
 
-    const [gameIsLive, setGameIsLive] = useState<boolean>(true)
+    const [gameIsLive, setGameIsLive] = useState<boolean>(false)
     const [undefined, setUndefined] = useState<boolean>(false)
     const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
 
@@ -111,6 +111,9 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         getAscean();
+    }, [asceanID, getAscean])
+
+    useEffect(() => {
         getOpponent();
     }, [asceanID, getAscean])
 
@@ -332,6 +335,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': playerDefense,
                 'player_attributes': attributes
             })
+            setGameIsLive(true)
             setUndefined(false)
             setLoadingAscean(false)
         } catch (err: any) {
