@@ -60,6 +60,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+            daethos = Math.round(daethos / 2);
             combatData.new_player_health += combatData.realized_player_damage;
             combatData.player_influence_description = 
                 `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
@@ -308,6 +309,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             if (combatData.weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                daethos = Math.round(daethos / 2);
                 combatData.new_player_health += combatData.realized_player_damage;
                 combatData.current_player_health += combatData.realized_player_damage;
                 combatData.player_influence_description_two = 
@@ -541,6 +543,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.computer_weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
+            daethos = Math.round(daethos / 2);
             combatData.new_computer_health += combatData.realized_computer_damage;
             combatData.current_computer_health += combatData.realized_computer_damage;
             combatData.computer_influence_description = 
@@ -786,6 +789,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             if (combatData.computer_weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
+                daethos = Math.round(daethos / 2);
                 combatData.new_computer_health += combatData.realized_computer_damage;
                 combatData.current_computer_health += combatData.realized_computer_damage;
                 combatData.computer_influence_description_two = 

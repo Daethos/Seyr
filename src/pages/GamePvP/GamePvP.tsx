@@ -16,6 +16,7 @@ import PvPAscean from '../../components/GameCompiler/PvPAscean';
 import PvPConditions from '../../components/GameCompiler/PvPConditions';
 import PvPCombatText from '../../components/GameCompiler/PvPCombatText';
 import PvPActions from '../../components/GameCompiler/PvPActions';
+import PVPAnimations from '../../components/GameCompiler/PvPAnimations';
 
 interface GameProps {
     user: any;
@@ -449,7 +450,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
 
     return (
         <Container fluid id="game-container" >
-            <GameAnimations 
+            <PVPAnimations 
                 sleep={sleep} 
                 playerCritical={yourData.player === 1 ? combatData.player_one_critical_success : combatData.player_two_critical_success} 
                 computerCritical={enemyData.player === 2 ? combatData.player_two_critical_success : combatData.player_one_critical_success}

@@ -56,6 +56,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren);
+            daethos = Math.round(daethos / 2);
             combatData.new_player_one_health += combatData.realized_player_one_damage;
             combatData.player_one_influence_description = 
                 `Daethos wraps through ${combatData.player_one.name}'s Caer, ${combatData.player_one_weapons[0].name} healing them for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
@@ -304,6 +305,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren);
+                daethos = Math.round(daethos / 2);
                 combatData.new_player_one_health += combatData.realized_player_one_damage;
                 combatData.current_player_one_health += combatData.realized_player_one_damage;
                 combatData.player_one_influence_description_two = 
@@ -537,6 +539,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_two_weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre + combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren);
+            daethos = Math.round(daethos / 2);
             combatData.new_player_two_health += combatData.realized_player_two_damage;
             combatData.current_player_two_health += combatData.realized_player_two_damage;
             combatData.player_two_influence_description = 
@@ -783,6 +786,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_two_weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre + combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren);
+                daethos = Math.round(daethos / 2);
                 combatData.new_player_two_health += combatData.realized_player_two_damage;
                 combatData.current_player_two_health += combatData.realized_player_two_damage;
                 combatData.player_two_influence_description_two = 
@@ -1358,7 +1362,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
             player_weapon_one_physical_damage *= combatData.player_one_weapons[0].critical_damage;
             player_weapon_one_magical_damage *= combatData.player_one_weapons[0].critical_damage;
             firstWeaponCrit = true;
-            combatData.critical_success = true;
+            combatData.player_one_critical_success = true;
         console.log(player_weapon_one_physical_damage, player_weapon_one_magical_damage, 'Weapon 1 Post-Crit Modifier')
     }
 
@@ -1367,7 +1371,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
         player_weapon_two_magical_damage *= combatData.player_one_weapons[1].critical_damage;
         // await criticalCompiler(combatData, combatData.player_one_weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
         secondWeaponCrit = true;
-        combatData.critical_success = true;
+        combatData.player_one_critical_success = true;
         console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
 
@@ -1555,7 +1559,7 @@ const attackCompiler = async (combatData, player_one_action) => {
         // criticalCompiler(combatData, combatData.player_one_weapons[0], player_physical_damage, player_magical_damage)
         // return combatData
         console.log('Attack Compiler Post-Crit Multiplier', player_physical_damage, player_magical_damage)
-        combatData.critical_success = true;
+        combatData.player_one_critical_success = true;
     }
 
     // If you made it here, your basic attack now resolves itself
@@ -1785,7 +1789,7 @@ const actionSplitter = async (combatData) => {
     let roll = 'roll';
 
     // Keeping This Off For Now to Facilliate More Auto Focus Attacks
-    
+
     // if (playerOneRollRating >= 100) {
     //     player_one_possible_choices.push(roll)
     // } else  if (playerOnePostureRating >= 100) {
