@@ -401,6 +401,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                         setHighScore((score) => score + 1)
                     }
                     setLoseStreak(0)
+
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }
@@ -408,6 +409,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                     playDeath()
                     setLoseStreak((loseStreak) => loseStreak + 1)
                     setWinStreak(0)
+                    
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }

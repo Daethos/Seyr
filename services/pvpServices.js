@@ -1772,22 +1772,56 @@ const actionSplitter = async (combatData) => {
     let player_one_counter = newData.player_one_counter_guess;
     let player_two_counter = newData.player_two_counter_guess;
     let player_two_action = newData.action_two;
-    let possible_choices = ['attack', 'posture', 'roll']
+    let player_one_possible_choices = ['attack', 'posture', 'roll']
+    let player_two_possible_choices = ['attack', 'posture', 'roll']
+
+    let playerOnePostureRating = ((combatData.player_one_defense.physicalPosture + combatData.player_one_defense.magicalPosture) / 4) + 5;
+    let playerOneRollRating = combatData.player_one_weapons[0].roll;
+
+    let playerTwoPostureRating = ((combatData.player_two_defense.physicalPosture + combatData.player_two_defense.magicalPosture) / 4) + 5;
+    let playerTwoRollRating = combatData.player_two_weapons[0].roll;
+
+    let posture = 'posture';
+    let roll = 'roll';
+
+    // Keeping This Off For Now to Facilliate More Auto Focus Attacks
+    
+    // if (playerOneRollRating >= 100) {
+    //     player_one_possible_choices.push(roll)
+    // } else  if (playerOnePostureRating >= 100) {
+    //     player_one_possible_choices.push(posture)
+    // } else if (playerOnePostureRating >= playerOneRollRating) { 
+    //     player_one_possible_choices.push(posture)
+    // } else { 
+    //     player_one_possible_choices.push(roll) 
+    // } 
+
+    // if (playerTwoRollRating >= 100) {
+    //     player_two_possible_choices.push(roll)
+    // } else  if (playerTwoPostureRating >= 100) {
+    //     player_two_possible_choices.push(posture)
+    // } else if (playerTwoPostureRating >= playerTwoRollRating) { 
+    //     player_two_possible_choices.push(posture)
+    // } else { 
+    //     player_two_possible_choices.push(roll) 
+    // } 
+
+
     if (player_one_action === '') {
-        let player_one_new_choice = Math.floor(Math.random() * possible_choices.length)
+        let player_one_new_choice = Math.floor(Math.random() * player_one_possible_choices.length)
         console.log(player_one_new_choice, 'New Choice Number')
-        newData.action = possible_choices[player_one_new_choice];
-        newData.player_one_action = possible_choices[player_one_new_choice];
-        player_one_action = possible_choices[player_one_new_choice];
+        newData.action = player_one_possible_choices[player_one_new_choice];
+        newData.player_one_action = player_one_possible_choices[player_one_new_choice];
+        player_one_action = player_one_possible_choices[player_one_new_choice];
         console.log(player_one_action, 'New Choice')
     }
 
     if (player_two_action === '') {
-        let player_two_new_choice = Math.floor(Math.random() * possible_choices.length)
+        let player_two_new_choice = Math.floor(Math.random() * player_two_possible_choices.length)
         console.log(player_two_new_choice, 'New Choice Number')
-        newData.action_two = possible_choices[player_two_new_choice];
-        newData.player_two_action = possible_choices[player_two_new_choice];
-        player_two_action = possible_choices[player_two_new_choice];
+        newData.action_two = player_two_possible_choices[player_two_new_choice];
+        newData.player_two_action = player_two_possible_choices[player_two_new_choice];
+        player_two_action = player_two_possible_choices[player_two_new_choice];
         console.log(player_two_action, 'New Choice')
     }
     player_one_counter = newData.player_one_counter_guess;

@@ -59,7 +59,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         combatData.religious_success = true;
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
-            let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren) / 2;
+            let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
             combatData.new_player_health += combatData.realized_player_damage;
             combatData.player_influence_description = 
                 `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
@@ -307,7 +307,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.religious_success = true;
             if (combatData.weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
-                let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren) / 2;
+                let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
                 combatData.new_player_health += combatData.realized_player_damage;
                 combatData.current_player_health += combatData.realized_player_damage;
                 combatData.player_influence_description_two = 
@@ -540,7 +540,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         combatData.computer_religious_success = true;
         if (combatData.computer_weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
-            let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren) / 2;
+            let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
             combatData.new_computer_health += combatData.realized_computer_damage;
             combatData.current_computer_health += combatData.realized_computer_damage;
             combatData.computer_influence_description = 
@@ -785,7 +785,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_religious_success = true;
             if (combatData.computer_weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
-                let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren) / 2;
+                let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
                 combatData.new_computer_health += combatData.realized_computer_damage;
                 combatData.current_computer_health += combatData.realized_computer_damage;
                 combatData.computer_influence_description_two = 
@@ -1896,6 +1896,21 @@ const actionSplitter = async (combatData) => {
     let computer_counter = newData.computer_counter_guess;
     let computer_action = newData.computer_action;
     let possible_choices = ['attack', 'posture', 'roll']
+    let postureRating = ((combatData.player_defense.physicalPosture + combatData.player_defense.magicalPosture) / 4) + 5;
+    let rollRating = combatData.weapons[0].roll;
+    console.log('Posture vs Roll: ', postureRating, ' vs. ', rollRating)
+    let posture = 'posture';
+    let roll = 'roll';
+    if (rollRating >= 100) {
+        possible_choices.push(roll)
+    } else  if (postureRating >= 100) {
+        possible_choices.push(posture)
+    } else if (postureRating >= rollRating) { 
+        possible_choices.push(posture)
+    } else { 
+        possible_choices.push(roll) 
+    } 
+    console.log(possible_choices, 'What choice was added?')
     let new_choice = Math.floor(Math.random() * possible_choices.length)
     console.log(new_choice, 'New Choice Number')
     if (player_action === '') {
