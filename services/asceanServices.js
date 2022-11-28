@@ -134,7 +134,7 @@ async function faithCompiler(weapon, ascean) {
         if (weapon.grip === 'Two Hand') {
             weapon.physical_damage *= 1.03;
             weapon.magical_damage *= 1.03;
-            weapon.critical_chancee += 2
+            weapon.critical_chance += 2
         }
         weapon.critical_chance *= 1.05;
         weapon.critical_chance = weapon.critical_chance.toFixed(2)

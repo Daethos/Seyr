@@ -166,6 +166,7 @@ io.on("connection", (socket) => {
       current_player_one_health: 0,
       new_player_one_health: 0,
 
+      player_one_ready: false,
       player_one_religious_success: false,
       player_one_dual_wielding: false,
       player_one_critical_success: false,
@@ -198,6 +199,7 @@ io.on("connection", (socket) => {
       current_player_two_health: 0,
       new_player_two_health: 0,
 
+      player_two_ready: false,
       player_two_critical_success: false,
       player_two_dual_wielding: false,
       player_two_roll_success: false,
@@ -259,6 +261,23 @@ io.on("connection", (socket) => {
 
     io.to(data.room).emit(`new_user`, newUser)
 
+    // let newUser = {
+    //   room: data.room,
+    //   ascean: data.ascean,
+    //   user: data.user,
+    //   combatData: data.combatData,
+    //   player: connectedUsersCount,
+    // }
+
+    const helloMessage = {
+      room: data.room,
+      author: `The Seyr`,
+      message: `Welcome to the Ascea, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
+      time: Date.now()
+    }
+
+    io.to(data.room).emit(`receive_message`, helloMessage)
+
     socket.on(`ascean`, async (asceanData) => {
       console.log('Did the Ascean Update start?')
       socket.to(asceanData.room).emit(`update_ascean`, asceanData)
@@ -297,9 +316,34 @@ io.on("connection", (socket) => {
       socket.to(newUser.room).emit(`data_response`, newUser)
     })
     
-    if (connectedUsersCount === 2) {
-      io.to(data.room).emit(`Game Commencing`)
-    }
+    // if (connectedUsersCount === 2) {
+    //   io.to(data.room).emit(`Game Commencing`)
+    // }
+
+    socket.on(`duel_ready`, async (data) => {
+      let newData = data;
+      let duelMessage = {
+        room: data.room,
+        author: `The Seyr`,
+        message: ``,
+        time: Date.now()
+      }
+      if (newUser.player === 1) {
+        newData.player_one_ready = true;
+        duelMessage.message = `${data.player_one.name.charAt(0).toUpperCase() + data.player_one.name.slice(1)} is ready to duel.`
+        io.to(duelMessage.room).emit(`receive_message`, duelMessage)
+      } else {
+        newData.player_two_ready = true;
+        duelMessage.message = `${data.player_two.name.charAt(0).toUpperCase() + data.player_two.name.slice(1)} is ready to duel.`
+        io.to(duelMessage.room).emit(`receive_message`, duelMessage)
+      } 
+      if (newData.player_one_ready === true && newData.player_two_ready === true) {
+        io.to(newUser.room).emit(`Game Commencing`)
+      } else {
+        console.log(newUser.room, 'New User Room?')
+        io.to(newUser.room).emit(`duel_ready_response`, newData)
+      }
+    })
 
     socket.on(`initiated`, async (data) => {
       let newData = data;

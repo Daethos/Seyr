@@ -1014,24 +1014,17 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
         }
     }
+
+    if (combatData.new_player_one_health > 0) {
+        combatData.player_two_win = false;
+    }
+    if (combatData.new_player_two_health > 0) {
+        combatData.player_one_win = false;
+    }
+
+
     return combatData
 }
-
-// TODO: QueryFunctions -------
-// FIXME: Weapon -> Grip / Attack Type / Damage Type
-// FIXME: Attack ? Weapon[0].grip: 1h ? weapon[0].attack_type === 'Physical' ?  
-// So I need to do some wild nesting and if statements which suck unfortunately
-// So what's the first thing that needs to be resolved? Presumably who goes first!
-// This is solved with initiative, but what if someone with low initiative rolls against high?
-// Should initiative be used as the trump card if the actions are the same?
-// Sort of like if both parties guessed the other was countering, the person with first initiative gets priority?
-// So at beginning of action splitter, it'll evaluate player and computer action
-// Hierarchy is... 
-// COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
-// Add difference between Initiatives for roll % ONLY IF person not rolling has higher?
-// 
-// 
-// 
 
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
@@ -1131,8 +1124,8 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
 
 const p2AttackCompiler = async (combatData, player_two_action) => {
     if (combatData.player_one_win === true) {
-        combatData.player_two_action_description = 
-        `${combatData.player_two.name} has been defeated. Hail ${combatData.player_one.name}, you are the new va'Esai!`
+        // combatData.player_two_action_description = 
+        // `${combatData.player_two.name} has been defeated. Hail ${combatData.player_one.name}, you are the new va'Esai!`
         return
     }
     console.log('Computer Attack Compiler Firing')
@@ -1429,8 +1422,8 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     
 const attackCompiler = async (combatData, player_one_action) => {
     if (combatData.player_two_win === true) {
-        combatData.player_one_action_description = 
-        `${combatData.player_one.name} has been defeated. Hail ${combatData.player_two.name}, the new va'Esai!`
+        // combatData.player_one_action_description = 
+        // `${combatData.player_one.name} has been defeated. Hail ${combatData.player_two.name}, the new va'Esai!`
         return
     }
     console.log('In the Player Attack Compiler')
@@ -1457,7 +1450,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                 if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Constitution') {
                     if (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility  + combatData.player_one_weapons[1].agility >= 30) {
                         if (combatData.player_one_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
-                            combatData.dual_wielding = true;
+                            combatData.player_one_dual_wielding = true;
                             await dualWieldCompiler(combatData)
                             return combatData
                         } else {
@@ -1473,7 +1466,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                 // If Focus + 1h But Magic
                 if (combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir') {
                     if (combatData.player_one_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
-                        combatData.dual_wielding = true;
+                        combatData.player_one_dual_wielding = true;
                         await dualWieldCompiler(combatData)
                         return combatData
                     }
@@ -1488,7 +1481,7 @@ const attackCompiler = async (combatData, player_one_action) => {
             if (combatData.player_one.mastery === 'Strength'  || combatData.player_one.mastery === 'Constitution') {
                 if (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                     console.log('Did we make it here?')
-                    combatData.dual_wielding = true;
+                    combatData.player_one_dual_wielding = true;
                     await dualWieldCompiler(combatData)
                     return combatData
                 } else { // Less than 40 Srength 
@@ -1498,7 +1491,7 @@ const attackCompiler = async (combatData, player_one_action) => {
             }
             if (combatData.player_one.mastery === 'Caeren' || combatData.player_one.mastery === 'Kyosir') {
                 if (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_weapons[1].caeren >= 30) {
-                    combatData.dual_wielding = true;
+                    combatData.player_one_dual_wielding = true;
                     await dualWieldCompiler(combatData)
                         return combatData
                 } else {
@@ -1993,9 +1986,13 @@ const actionSplitter = async (combatData) => {
     
     if (newData.new_player_two_health === 0) {
         newData.player_one_win = true;
+        newData.player_two_action_description = 
+            `${newData.player_two.name} has been defeated. Hail ${newData.player_one.name}, the new va'Esai!`
     }
     if (newData.new_player_one_health === 0) {
         newData.player_two_win = true;
+        newData.player_one_action_description = 
+            `${newData.player_one.name} has been defeated. Hail ${newData.player_two.name}, the new va'Esai!`
     }
     
 

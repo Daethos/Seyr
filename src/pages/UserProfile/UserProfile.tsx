@@ -2,6 +2,7 @@ import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image'
 import * as asceanAPI from '../../utils/asceanApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
@@ -50,9 +51,10 @@ const UserProfile = ({ loggedUser }: UserProps) => {
   return (
 
     <Container>
+      {/* <Image src={loggedUser.photoUrl} alt={loggedUser.username} roundedCircle style={{ width: 100 + 'px', height: 100 + 'px' }} /> */}
       <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} key={loggedUser._id} userProfile={true} />
         {
-          asceanVaEsai
+          asceanVaEsai.length > 0
           ? asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {
             return (
               <SolaAscean
@@ -63,7 +65,19 @@ const UserProfile = ({ loggedUser }: UserProps) => {
               />
             )
           })
-          : 'No Characters? No worries! Just hit the Ascean tab to create a new character ^_^'
+          : 
+          <p className='' style={{ textAlign: 'center', color: '#fdf6d8' }}>
+            No Characters? No worries ^_^ <br />
+            Here's a Quick Overview of the NavBar to Catch You Up<br />
+            
+            Castle: Home<br />
+            Knight: New Character<br />
+            Quill: Edit Character<br />
+            Practice Target: Computer Arena<br />
+            Scroll: Home<br />
+            Chat Bubbles: Direct Messages<br />
+            Double-Axes: PvP Arena<br />
+          </p>
         }
     </Container>
   )

@@ -183,6 +183,7 @@ const GamePvPLobby = ({ user }: Props) => {
         current_player_one_health: currentPlayerOneHealth,
         new_player_one_health: currentPlayerOneHealth,
 
+        player_one_ready: false,
         player_one_religious_success: false,
         player_one_dual_wielding: false,
         player_one_critical_success: false,
@@ -219,6 +220,7 @@ const GamePvPLobby = ({ user }: Props) => {
         current_player_two_health: currentPlayerTwoHealth,
         new_player_two_health: currentPlayerTwoHealth,
 
+        player_two_ready: false,
         player_two_critical_success: false,
         player_two_dual_wielding: false,
         player_two_roll_success: false,
@@ -273,7 +275,9 @@ const GamePvPLobby = ({ user }: Props) => {
             // statusUpdate(response)
         })
         
-
+        socket.on(`duel_ready_response`, async (data: any) => {
+            setCombatData(data)
+        })
 
     }, [])
 
@@ -604,7 +608,27 @@ const GamePvPLobby = ({ user }: Props) => {
         { !showChat 
             ? 
             <Container className="Game-Lobby-Chat" style={{ overflow: 'auto' }}>
-            <h3 className='my-3'>Game PvP Lobby</h3>
+            <h3 className='welcome-text mt-3'>PvP Lobby</h3>
+            <h3 className='welcome-explanation'>
+                Welcome one and all to the greatest spectacle this world has seen, a coliseum holding tests of triumph between the steeliest souls across
+                the land, arriving in the beautiful fields of Licivitas to have a hand at capturing glory and renown, with the winner achieving the title
+                known as the <br /><br /> 
+                <div className='ascean'>
+                'Ascean va'Esai.'
+                </div>
+                <br />
+                <div className="game">
+                Test your will against others in turn-based, rpg combat utilizing a series of weapons and skills to prove you are
+                </div>
+                <br />
+                <div className="aenservaesai">
+                'worthy of the preservation of being.'
+                </div>
+                <div className="aenservaesai mt-3">
+                Choose a prospective Ascean to duel with, and either create or join an existing room to fight against an opponent.
+                </div>
+            </h3>
+            {/* <h4>Choose a prospective Ascean to duel with, and either create a join an existing room to fight against an opponent.</h4> */}
                 <div className='' style={{  }}>
             <select value={username} onChange={handleAscean} style={{ width: 45 + '%', marginRight: 10 + '%' }}>
                 <option>Ascean</option>

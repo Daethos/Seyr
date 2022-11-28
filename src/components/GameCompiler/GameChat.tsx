@@ -30,6 +30,7 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
     const [currentMessage, setCurrentMessage] = useState("")
     const [messageList, setMessageList] = useState<any>([])
     const [liveGameplay, setLiveGameplay] = useState<boolean>(false)
+    const [duelReady, setDuelReady] = useState<boolean>(false)
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -44,6 +45,17 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
             await socket.emit("send_message", messageData);
             setMessageList((list: any) => [...list, messageData]);
             setCurrentMessage("");
+        }
+    }
+
+    const readyDuel = async () => {
+
+        try {
+
+            await socket.emit(`duel_ready`, combatData)
+            setDuelReady(true)
+        } catch (err: any) {
+            console.log(err.message, 'Error Preparing To Duel')
         }
     }
 
@@ -78,12 +90,12 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
             const messageData = {
                 room: room,
                 author: `The Seyr`,
-                message: `Duel commencing in 6 seconds, prepare.`,
+                message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
                 time: Date.now()
             }
             await socket.emit(`send_message`, messageData);
             // setLiveGameplay(true)
-            setTimeout(() => setLiveGameplay(true), 6000)
+            setTimeout(() => setLiveGameplay(true), 10000)
         // }
       })
     }, [])
@@ -200,7 +212,13 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
                     <Form.Control as="textarea" style={{ maxHeight: 30 + 'px', width: 80 + '%' }} type="text" placeholder='Warning, no profanity filter...' value={currentMessage} onChange={(e) => { setCurrentMessage(e.target.value) }}
                     onKeyPress={(e) => { e.key === "Enter" && sendMessage() }}
                     />
-                    <Button variant="outline-info" onClick={sendMessage} style={{ float: 'right', marginTop: -9.25 + '%' }}>Submit</Button>
+                    <Button  variant="outline-info" onClick={sendMessage} style={{ float: 'right', marginTop: -9.25 + '%' }}>Submit</Button>
+                    {
+                        yourData?.player === 2 || enemyData?.player === 2
+                        ? duelReady ? '' :
+                        <Button className='my-3' variant='outline-danger' onClick={readyDuel}>Duel {enemyData?.ascean?.name} ?</Button>
+                        : ''
+                    }
                     {/* <Button variant='outline-danger' size='lg' className='my-3' onClick={sendAscean}>Reveal Ascean</Button> */}
                 </div>
                 </div>
