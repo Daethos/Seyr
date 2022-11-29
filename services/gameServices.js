@@ -829,7 +829,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Nyrolus") { // Water
             console.log("Nyrolus!")
-            let nyrolus = (2 * combatedData.computer_attributes.totalCaeren)
+            let nyrolus = (2 * combatData.computer_attributes.totalCaeren)
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
             combatData.computer_defense.physicalDefenseModifier += 2;
@@ -844,7 +844,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Quor'ei") { // Earth
             console.log("Quor'ei!")
-            let quorei = 2 * combatedData.computer_attributes.totalAchre
+            let quorei = 2 * combatData.computer_attributes.totalAchre
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
             combatData.computer_defense.physicalDefenseModifier += 2;
@@ -1090,7 +1090,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_damage += 0.2;
             }
             if (combatData.computer_weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = (2 * combatedData.computer_attributes.totalCaeren)
+                let nyrolus = (2 * combatData.computer_attributes.totalCaeren)
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
                 combatData.computer_defense.physicalDefenseModifier += 2;
@@ -1169,6 +1169,14 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
     }
+
+    if (combatData.new_player_health > 0) {
+        combatData.computer_win = false;
+    }
+    if (combatData.new_computer_health > 0) {
+        combatData.player_win = false;
+    }
+
     return combatData
 }
 
@@ -1204,7 +1212,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         counter_posture: 20 + newData.counter_posture_weight,
         counter_roll: 20 + newData.counter_roll_weight,
         roll_rating: newData.computer_weapons[0].roll,
-        armor_rating: (newData.computer_defense.physicalPosture + newData.computer_defense.magicalPosture)  / 4,
+        armor_rating: (newData.computer_defense.physicalPosture + newData.computer_defense.magicalPosture)  /  4,
     }
 
     if (player_action === 'attack') { 
@@ -1222,15 +1230,18 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_roll_weight -= 1
     }
     if (player_action === 'counter') { 
-        // newData.counter_weight -= 3
-        // newData.attack_weight += 1  
-        // newData.posture_weight += 1
-        // newData.roll_weight += 1
+        newData.counter_weight -= 3
+        // newData.dodge_weight += 2
+        newData.attack_weight += 1  
+        newData.posture_weight += 1
+        newData.roll_weight += 1
         newData.counter_counter_weight += 2
         newData.counter_attack_weight -= 1
         newData.counter_dodge_weight -= 1
     }
     if (player_action === 'dodge') { 
+        // newData.counter_weight += 2
+        // newData.dodge_weight -= 2
         newData.counter_dodge_weight += 4
         newData.counter_attack_weight -= 1
         newData.counter_counter_weight -= 1
@@ -1431,10 +1442,13 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                             computer_physical_damage *= 1.6;
                             computer_magical_damage *= 1.4;
                         }
+                    } else {
+                        computer_physical_damage *= 1.6;
+                        computer_magical_damage *= 1.4;
                     }
                 } else {
-                    computer_physical_damage *= 1.2;
-                    computer_magical_damage *= 1.2;
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.25;
                 }
             } 
             if (combatData.computer_weapons[0].attack_type === 'Magic') {
@@ -1444,14 +1458,17 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
+                        } else {
+                            computer_physical_damage *= 1.4;
+                            computer_magical_damage *= 1.6;
                         }
                     } else {
                         computer_physical_damage *= 1.4;
                         computer_magical_damage *= 1.6;
                     }
                 } else {
-                    computer_physical_damage *= 1.2;
-                    computer_magical_damage *= 1.2;
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.25;
                 }
             } 
         }
@@ -1459,36 +1476,51 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             if (combatData.computer_weapons[0].attack_type === 'Physical' && combatData.computer_weapons[0].type !== 'Bow') {
                 if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Constitution') {
                     if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
-                        combatData.computer_dual_wielding = true;
-                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                        return combatData
+                        if (combatData.computer_weapons[1].type !== 'Bow') {
+                            combatData.computer_dual_wielding = true;
+                            await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                            return combatData
+                        } else { // Less than 50 Srength 
+                            computer_physical_damage *= 1.6;
+                            computer_magical_damage *= 1.4;
+                        }
                     } else { // Less than 50 Srength 
                         computer_physical_damage *= 1.6;
                         computer_magical_damage *= 1.4;
                     }
                 } else {
-                    computer_physical_damage *= 1.2;
-                    computer_magical_damage *= 1.2;
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.25;
                 }
             }
             if (combatData.computer_weapons[0].attack_type === 'Magic') {
                 if (combatData.computer.mastery === 'Caeren' || combatData.computer.mastery === 'Kyosir') {
                     if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 30) {
-                        combatData.computer_dual_wielding = true;
-                        await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                        return combatData
+                        if (combatData.computer_weapons[1].type !== 'Bow') {
+                            combatData.computer_dual_wielding = true;
+                            await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                            return combatData
+                        } else {
+                            computer_physical_damage *= 1.4;
+                            computer_magical_damage *= 1.6;
+                        }
                     } else {
-                        computer_physical_damage *= 1.4;
-                        computer_magical_damage *= 1.6;
+                        computer_physical_damage *= 1.25;
+                        computer_magical_damage *= 1.25;
                     }
                 } else {
-                    computer_physical_damage *= 1.2;
-                    computer_magical_damage *= 1.2;
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.25;
                 }
             }
             if (combatData.computer_weapons[0].type === 'Bow') {
-                    computer_physical_damage *= 2;
-                    computer_magical_damage *= 2;
+                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
+                    computer_physical_damage *= 2.25;
+                    computer_magical_damage *= 2.25;
+                } else {
+                    computer_physical_damage *= 1.25;
+                    computer_magical_damage *= 1.25;
+                }
             }
         }
     } 
@@ -1496,8 +1528,8 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     // Checking For Player Actions
     if (computer_action === 'counter') {
         if (combatData.computer_counter_success === true) {
-            computer_physical_damage *= 2.5;
-            computer_magical_damage *= 2.5;    
+            computer_physical_damage *= 3;
+            computer_magical_damage *= 3;    
         } else {
             computer_physical_damage *= 0.9;
             computer_magical_damage *= 0.9;
@@ -1505,22 +1537,22 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     }
 
     if (computer_action === 'dodge') {
+        computer_physical_damage *= 0.9;
+        computer_magical_damage *= 0.9;
+    }
+
+    if (computer_action === 'posture') {
         computer_physical_damage *= 0.95;
         computer_magical_damage *= 0.95;
     }
 
-    if (computer_action === 'posture') {
-        computer_physical_damage *= 0.85;
-        computer_magical_damage *= 0.85;
-    }
-
     if (computer_action === 'roll' ) {
         if (combatData.computer_roll_success === true) {
-            computer_physical_damage *= 1.1;
-            computer_magical_damage *= 1.1;
+            computer_physical_damage *= 1.15;
+            computer_magical_damage *= 1.15;
         } else {
-            computer_physical_damage *= 0.75;
-            computer_magical_damage *= 0.75;
+            computer_physical_damage *= 0.85;
+            computer_magical_damage *= 0.85;
         }
     }
 
@@ -1749,10 +1781,13 @@ const attackCompiler = async (combatData, player_action) => {
                             player_physical_damage *= 1.6;
                             player_magical_damage *= 1.4;
                         }
+                    } else {
+                        player_physical_damage *= 1.6;
+                        player_magical_damage *= 1.4;
                     }
                 } else {
-                    player_physical_damage *= 1.2;
-                    player_magical_damage *= 1.2;
+                    player_physical_damage *= 1.25;
+                    player_magical_damage *= 1.25;
                 }
             } 
             if (combatData.weapons[0].attack_type === 'Magic') {
@@ -1766,10 +1801,13 @@ const attackCompiler = async (combatData, player_action) => {
                             player_physical_damage *= 1.4;
                             player_magical_damage *= 1.6;
                         }
+                    } else {
+                        player_physical_damage *= 1.4;
+                        player_magical_damage *= 1.6;
                     }
                 } else {
-                    player_physical_damage *= 1.2;
-                    player_magical_damage *= 1.2;
+                    player_physical_damage *= 1.25;
+                    player_magical_damage *= 1.25;
                 }
             }
         } 
@@ -1777,37 +1815,51 @@ const attackCompiler = async (combatData, player_action) => {
             if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow') {
                 if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Constitution') {
                     if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
-                        combatData.dual_wielding = true;
-                        await dualWieldCompiler(combatData)
-                        return combatData
+                        if (combatData.weapons[1].type !== 'Bow') {
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else { // Less than 40 Srength 
+                            player_physical_damage *= 1.6;
+                            player_magical_damage *= 1.4;
+                        }
                     } else { // Less than 40 Srength 
                         player_physical_damage *= 1.6;
                         player_magical_damage *= 1.4;
                     }
                 } else {
-                    player_physical_damage *= 1.2;
-                    player_magical_damage *= 1.2;
+                    player_physical_damage *= 1.25;
+                    player_magical_damage *= 1.25;
                 }
             }
             if (combatData.weapons[0].attack_type === 'Magic') {
                 if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir') {
                     if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 30) {
-                        combatData.dual_wielding = true;
-                        await dualWieldCompiler(combatData)
-                        return combatData
+                        if (combatData.weapons[1].type !== 'Bow') {
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else {
+                            player_physical_damage *= 1.4;
+                            player_magical_damage *= 1.6;
+                        }
                     } else {
                         player_physical_damage *= 1.4;
                         player_magical_damage *= 1.6;
                     }
                 } else {
-                    player_physical_damage *= 1.2;
-                    player_magical_damage *= 1.2;
+                    player_physical_damage *= 1.25;
+                    player_magical_damage *= 1.25;
                 }
             }
             if (combatData.weapons[0].type === 'Bow') {
-                player_physical_damage *= 2.25;
-                player_magical_damage *= 2.25;
-
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
+                    player_physical_damage *= 2.25;
+                    player_magical_damage *= 2.25;
+                } else {
+                    player_physical_damage *= 1.25;
+                    player_magical_damage *= 1.25;
+                }
             }
         } 
     }
@@ -1815,8 +1867,8 @@ const attackCompiler = async (combatData, player_action) => {
     // Checking For Player Actions
     if (player_action === 'counter') {
         if (combatData.counter_success === true) {
-            player_physical_damage *= 2.5;
-            player_magical_damage *= 2.5;
+            player_physical_damage *= 3;
+            player_magical_damage *= 3;
         } else {
             player_physical_damage *= 0.9;
             player_magical_damage *= 0.9;
@@ -1824,22 +1876,22 @@ const attackCompiler = async (combatData, player_action) => {
     }
 
     if (player_action === 'dodge') {
+        player_physical_damage *= 0.9;
+        player_magical_damage *= 0.9;
+    }
+
+    if (player_action === 'posture') {
         player_physical_damage *= 0.95;
         player_magical_damage *= 0.95;
     }
 
-    if (player_action === 'posture') {
-        player_physical_damage *= 0.85;
-        player_magical_damage *= 0.85;
-    }
-
     if (player_action === 'roll' ) {
         if (combatData.roll_success === true) {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
+            player_physical_damage *= 1.15;
+            player_magical_damage *= 1.15;
         } else {
-            player_physical_damage *= 0.75;
-            player_magical_damage *= 0.75;
+            player_physical_damage *= 0.85;
+            player_magical_damage *= 0.85;
         }
     }
 
@@ -2046,6 +2098,7 @@ const actionSplitter = async (combatData) => {
         counter_posture_weight: combatData.counter_posture_weight,
         counter_roll_weight: combatData.counter_roll_weight,
         religious_success: false,
+        computer_religious_success: false,
         dual_wielding: false,
         computer_dual_wielding: false,
         roll_success: false,
@@ -2258,13 +2311,11 @@ const actionSplitter = async (combatData) => {
 
     await faithFinder(newData, player_action, computer_action);
     
-    if (newData.new_computer_health === 0) {
-        newData.player_win = true;
+    if (newData.player_win === true) {
         combatData.computer_action_description = 
         `${combatData.computer.name} has been defeated. Hail ${combatData.player.name}, you are the new va'Esai!`
     }
-    if (newData.new_player_health === 0) {
-        newData.computer_win = true;
+    if (newData.computer_win === true) {
         combatData.player_action_description = 
             `You have been defeated. Hail ${combatData.computer.name}, the new va'Esai!`
     }

@@ -14,6 +14,10 @@ import NavBarMessages from '../NavBarComponents/NavBarMessages';
 import UserModal from '../UserModal/UserModal';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import * as communityAPI from '../../utils/communityApi'
+import Table from 'react-bootstrap/Table';
+import Accordion from 'react-bootstrap/Accordion';
+
 
 interface NavProps {
     user: any;
@@ -27,6 +31,9 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [relayStatus, setRelayStatus] = useState<boolean>(false)
 
+  const [allAscean, setAllAscean] = useState<any>([])
+  const [highScores, setHighScores] = useState<any>([])
+
   const [editOffCanvas, setEditOffCanvas] = useState<boolean>(false)
   const handleEditClose = () => setEditOffCanvas(false);
   const handleEditShow = () => setEditOffCanvas(true);
@@ -35,6 +42,23 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
   const handleSoloClose = () => setSoloOffCanvas(false);
   const handleSoloShow = () => setSoloOffCanvas(true);
 
+  function compareScores(a: any, b: any) {
+    console.log(a[0], b[0])
+    console.log(a[0].ascean, ': ', a[0].score, ' vs ', b[0].ascean, ': ', b[0].score)
+    // return a.score - b.score;
+   
+    if (a[0].score > b[0].score) {
+      return 1;
+    }
+    if (a[0].ascore < b[0].score) {
+      return 1;
+    }
+    return 0;
+  }
+
+  useEffect(() => {
+    console.log(highScores, 'It has updated')
+  }, [highScores])
 
   useEffect(() => {
     getAscean();
@@ -51,6 +75,42 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
       console.log(err);
     }
   }
+
+  useEffect(() => {
+    getAllAscean()
+}, [])
+
+async function getAllAscean() {
+    setLoading(true);
+    try {
+        const response = await communityAPI.getEveryone();
+        console.log(response, ' <- the response in getAscean')
+        const scores = await response.data.map((ascean: any, index: number) => {
+          console.log(ascean, index, 'What is this?')
+          let scoreData = {
+            ascean: ascean.name,
+            score: ascean.high_score,
+            key: index,
+            _id: ascean._id,
+            mastery: ascean.mastery,
+            photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'
+          }
+          let newArr = []
+          newArr.push(scoreData)
+          return (
+            newArr
+          )
+        })
+        const sortedScores = await scores.sort(compareScores)
+        console.log(sortedScores, 'Sorted Scores ?!')
+        setHighScores(sortedScores.reverse())
+        setAllAscean([...response.data].reverse())
+        setLoading(false)
+    } catch (err: any) {
+        setLoading(false)
+        console.log(err.message);
+    }
+}
 
   if (loading) {
     return (
@@ -176,6 +236,98 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
       <Offcanvas.Title style={{ color: '#fdf6d8' }}>Practice Arena [Computer]</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body style={{ color: '#fdf6d8' }}>
+        <h6 style={{ textAlign: 'center' }} >
+          {/* <h3 className='mb-3'>
+            High Scores:
+            </h3> */}
+            <Accordion >
+            <Accordion.Item eventKey="0">
+            <Accordion.Header>High Scores [Public] :</Accordion.Header>
+            <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
+            <Table responsive style={{ color: '#fdf6d8' }}>
+              <thead>
+                <tr>
+                  <th>Ascean</th>
+                  <th>Name</th>
+                  <th>Score</th>
+                  <th>Mastery</th>
+                </tr>
+              </thead>
+            {
+            highScores.map((ascean: any, index: number) => {
+              console.log(ascean, 'Anything here?')
+              return (
+               <>
+                  <tbody key={index}>
+               { 
+                index < 10 ? 
+                // <p key={index}><img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                // style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple' }} />{' '}
+                // {ascean[0].ascean} - {ascean[0].score}</p> 
+                    <tr>
+                      <td>
+                      <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                        style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
+                      </td>
+                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].ascean}</td>
+                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
+                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
+                    </tr>
+                : '' 
+              }
+                  
+                  </tbody>
+               </>
+              )
+            })
+          }
+          </Table>
+            </Accordion.Body>
+            </Accordion.Item>
+            </Accordion>
+            {/* <Table responsive style={{ color: '#fdf6d8' }}>
+              <thead>
+                <tr>
+                  <th>Ascean</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Mastery</th>
+                </tr>
+              </thead>
+            {
+            highScores.map((ascean: any, index: number) => {
+              console.log(ascean, 'Anything here?')
+              return (
+               <>
+                  <tbody key={index}>
+               { 
+                index < 5 ? 
+                // <p key={index}><img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                // style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple' }} />{' '}
+                // {ascean[0].ascean} - {ascean[0].score}</p> 
+                    <tr>
+                      <td>
+                      <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                        style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginTop: 0 + 'px' }} />
+                      </td>
+                      
+                        <td style={{ padding: 4 + '%' }}>{ascean[0].ascean}</td>
+                        
+                        <td style={{ padding: 4 + '%' }}>{ascean[0].score}</td>
+                        
+                        <td style={{ padding: 4 + '%' }}>{ascean[0].mastery}</td>
+                     
+                    </tr>
+                : '' 
+              }
+                  
+                  </tbody>
+               </>
+              )
+            })
+          }
+          </Table> */}
+        </h6>
       {asceanVaEsai.map((ascean: any, index: number) => 
           (<Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id} key={index} 
             style={{ color: '#fdf6d8' }} onClick={handleSoloClose}

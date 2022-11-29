@@ -353,7 +353,8 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }
-            } else {
+            } 
+            if (yourData.player === 2) {
                 if (response.player_two_critical_success === true) {
                     if (response.player_two_weapons[0].damage_type[0] === 'Spooky' || response.player_two_weapons[0].damage_type[0] === 'Righteous') {
                         playDaethic()

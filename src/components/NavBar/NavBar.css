@@ -85,3 +85,18 @@
 .equipment-button {
     margin-top: 5px;
 }
+.accordion-button:not(.collapsed) {
+    color: #ffffff;
+    background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}
+.accordion-button {
+    color: #ffffff;
+    background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}
+.accordion-body:not(.collapsed) {
+    color: #ffffff;
+    background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}

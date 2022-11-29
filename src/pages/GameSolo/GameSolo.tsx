@@ -186,6 +186,7 @@ const GameSolo = ({ user }: GameProps) => {
         counter_posture_weight: 0,
         counter_roll_weight: 0,
         religious_success: false,
+        computer_religious_success: false,
         dual_wielding: false,
         computer_dual_wielding: false,
         roll_success: false,
