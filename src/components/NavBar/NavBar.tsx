@@ -229,61 +229,46 @@ async function getAllAscean() {
       </Offcanvas.Header>
       <Offcanvas.Body style={{ color: '#fdf6d8' }}>
         <h6 style={{ textAlign: 'center' }} >
-          {/* <h3 className='mb-3'>
-            High Scores:
-            </h3> */}
-            <Accordion >
-            <Accordion.Item eventKey="0">
-            <Accordion.Header>High Scores [Public] :</Accordion.Header>
-            <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
-            <Table responsive style={{ color: '#fdf6d8' }}>
-              <thead>
-                <tr>
-                  <th>Ascean</th>
-                  <th>Name</th>
-                  <th>Score</th>
-                  <th>Mastery</th>
+        <Accordion >
+        <Accordion.Item eventKey="0">
+        <Accordion.Header>High Scores [Public] :</Accordion.Header>
+        <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
+        <Table responsive style={{ color: '#fdf6d8' }}>
+          <thead>
+            <tr>
+              <th>Ascean</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Mastery</th>
+            </tr>
+          </thead>
+        { highScores.map((ascean: any, index: number) => {
+          return (
+            <>
+            <tbody key={index}>
+            { index < 10 
+            ? <tr key={ascean._id}>
+                  <td>
+                  <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                    style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
+                  </td>
+                  <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
+                    <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' onClick={handleSoloClose}>{ascean[0].ascean}</Nav.Link>
+                  </td>
+                  <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
+                  <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
                 </tr>
-              </thead>
-            {
-            highScores.map((ascean: any, index: number) => {
-              // console.log(ascean, 'Anything here?')
-              return (
-               <>
-                  <tbody key={index}>
-               { 
-                index < 10 ? 
-                // <p key={index}><img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                // style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple' }} />{' '}
-                // {ascean[0].ascean} - {ascean[0].score}</p> 
-                    <tr>
-                      <td>
-                      <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                        style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
-                      </td>
-                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
-                        <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' onClick={handleSoloClose}>
-                        {ascean[0].ascean}
-
-                        </Nav.Link>
-                      </td>
-                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
-                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
-                    </tr>
-                : '' 
-              }
-                  
-                  </tbody>
-               </>
-              )
-            })
-          }
-          </Table>
-            </Accordion.Body>
-            </Accordion.Item>
-            </Accordion>
+            : '' }
+            </tbody>
+            </>
+          )
+        })}
+        </Table>
+        </Accordion.Body>
+        </Accordion.Item>
+        </Accordion>
         </h6>
-      {asceanVaEsai.map((ascean: any, index: number) => 
+      { asceanVaEsai.map((ascean: any, index: number) => 
           (<Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id} key={index} 
             style={{ color: '#fdf6d8' }} onClick={handleSoloClose}
             className='btn btn-lg btn-outline-black mb-1 update-links'>

@@ -31,9 +31,10 @@ interface GameProps {
     yourData: any;
     enemyData: any;
     spectator: boolean;
+    handleRoomReset: () => void;
 }
 
-const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, setCombatData, setModalShow, enemyPlayer, yourData, enemyData }: GameProps) => {
+const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, setCombatData, setModalShow, enemyPlayer, yourData, enemyData, handleRoomReset }: GameProps) => {
     // const [ascean, setAscean] = useState<any>({})
     // const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(false);
@@ -284,10 +285,17 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
         }
     }
 
+    useEffect(() => {
+        console.log(winStreak, highScore, 'Win Streak and High Score')
+        if (winStreak> highScore) {
+            setHighScore((score) => score + 1)
+        }
+    }, [winStreak])
+
     const statusUpdate = async (response: any) => {
+        console.log(yourData.player, 'Which player are you?')
         try {
             setLoading(true)
-
             console.log(response, 'Response Auto Engaging')
             setCombatData({...response, 'action': '', 'action_two': '', 'player_one_counter_guess': '', 'player_two_counter_guess': ''})
             setCurrentPlayerOneHealth(response.new_player_one_health)
@@ -339,17 +347,18 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 if (response.player_one_win === true) {
                     playWin()
                     setWinStreak((winStreak) => winStreak + 1)
-                    if (winStreak + 1 > highScore) {
-                        setHighScore((score) => score + 1)
-                    }
+                    // if (winStreak + 1 > highScore) {
+                    //     setHighScore((score) => score + 1)
+                    // }
                     setLoseStreak(0)
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }
                 if (response.player_two_win === true) {
+                    console.log(winStreak, 'Former Win Streak?')
                     playDeath()
                     setLoseStreak((loseStreak) => loseStreak + 1)
-                    setWinStreak(0)
+                    setWinStreak((winStreak) =>  winStreak = 0)
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }
@@ -397,27 +406,27 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                     playReligion()
                 }
                 if (response.player_two_win === true) {
+                    // console.log(winStreak, highScore, 'Win Streak and High Score')
                     playWin()
                     setWinStreak((winStreak) => winStreak + 1)
-                    if (winStreak + 1 > highScore) {
-                        setHighScore((score) => score + 1)
-                    }
+                    // if (winStreak + 1 > highScore) {
+                    //     setHighScore((score) => score + 1)
+                    // }
                     setLoseStreak(0)
 
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }
                 if (response.player_one_win === true) {
+                    console.log(winStreak, 'Former Win Streak?')
                     playDeath()
                     setLoseStreak((loseStreak) => loseStreak + 1)
-                    setWinStreak(0)
+                    setWinStreak((winStreak) => winStreak = 0)
                     
                     setGameIsLive(false)
                     setDodgeStatus(false)
                 }
             }
-
-
             if (response.player_one_roll_success === true || response.player_two_roll_success === true) {
                 playRoll()
             }

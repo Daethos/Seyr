@@ -1015,6 +1015,24 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         }
     }
 
+    combatData.player_one_weapons[0].critical_chance = combatData.player_one_weapons[0].critical_chance.toFixed(2)
+    combatData.player_one_weapons[0].critical_damage = combatData.player_one_weapons[0].critical_damage.toFixed(2)
+    combatData.player_one_weapons[1].critical_chance = combatData.player_one_weapons[1].critical_chance.toFixed(2)
+    combatData.player_one_weapons[1].critical_damage = combatData.player_one_weapons[1].critical_damage.toFixed(2)
+    combatData.player_two_weapons[0].critical_chance = combatData.player_two_weapons[0].critical_chance.toFixed(2)
+    combatData.player_two_weapons[0].critical_damage = combatData.player_two_weapons[0].critical_damage.toFixed(2)
+    combatData.player_two_weapons[1].critical_chance = combatData.player_two_weapons[1].critical_chance.toFixed(2)
+    combatData.player_two_weapons[1].critical_damage = combatData.player_two_weapons[1].critical_damage.toFixed(2)
+
+    combatData.player_one_weapons[0].critical_chance = Number(combatData.player_one_weapons[0].critical_chance)
+    combatData.player_one_weapons[0].critical_damage = Number(combatData.player_one_weapons[0].critical_damage)
+    combatData.player_one_weapons[1].critical_chance = Number(combatData.player_one_weapons[1].critical_chance)
+    combatData.player_one_weapons[1].critical_damage = Number(combatData.player_one_weapons[1].critical_damage)
+    combatData.player_two_weapons[0].critical_chance = Number(combatData.player_two_weapons[0].critical_chance)
+    combatData.player_two_weapons[0].critical_damage = Number(combatData.player_two_weapons[0].critical_damage)
+    combatData.player_two_weapons[1].critical_chance = Number(combatData.player_two_weapons[1].critical_chance)
+    combatData.player_two_weapons[1].critical_damage = Number(combatData.player_two_weapons[1].critical_damage)
+
     if (combatData.new_player_one_health > 0) {
         combatData.player_two_win = false;
     }

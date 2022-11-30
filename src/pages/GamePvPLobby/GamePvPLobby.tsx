@@ -231,7 +231,7 @@ const GamePvPLobby = ({ user }: Props) => {
     })
 
     useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com") 
+        socket = io.connect("http://localhost:3001") 
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
         socket.emit("setup", user);
@@ -589,6 +589,72 @@ const GamePvPLobby = ({ user }: Props) => {
         setCombatData({...combatData, 'room': e.target.value})
     }
 
+    function handleRoomReset() {
+        setShowChat(false)
+        setCombatData({
+            room: '',
+            action: '',
+            player_one: '',
+            player_one_action: '',
+            player_one_counter_guess: '',
+            player_one_health: currentPlayerOneHealth,
+            player_one_weapons: [],
+            player_one_weapon_one: playerOneWeaponOne,
+            player_one_weapon_two: playerOneWeaponTwo,
+            player_one_weapon_three: playerOneWeaponThree,
+            player_one_defense: playerOneDefense,
+            player_one_attributes: playerOneAttributes,
+            current_player_one_health: currentPlayerOneHealth,
+            new_player_one_health: currentPlayerOneHealth,
+    
+            player_one_ready: false,
+            player_one_religious_success: false,
+            player_one_dual_wielding: false,
+            player_one_critical_success: false,
+            player_one_counter_success: false,
+            player_one_roll_success: false,
+            player_one_win: false,
+            player_one_initiated: false,
+            player_one_reduel: false,
+    
+            player_one_start_description: '',
+            player_one_special_description: '',
+            player_one_action_description: '',
+            player_one_influence_description: '',
+            player_one_influence_description_two: '',
+    
+    
+            action_two: '',
+            player_two: '',
+            player_two_health: 0,
+            player_two_action: '',
+            player_two_counter_guess: '',
+            player_two_weapons: [],
+            player_two_weapon_one: playerTwoWeaponOne,
+            player_two_weapon_two: playerTwoWeaponTwo,
+            player_two_weapon_three: playerTwoWeaponThree,
+            player_two_defense: playerTwoDefense,
+            player_two_attributes: playerTwoAttributes,
+            player_two_start_description: '',
+            player_two_special_description: '',
+            player_two_action_description: '',
+            player_two_influence_description: '',
+            player_two_influence_description_two: '',
+    
+            current_player_two_health: currentPlayerTwoHealth,
+            new_player_two_health: currentPlayerTwoHealth,
+    
+            player_two_ready: false,
+            player_two_critical_success: false,
+            player_two_dual_wielding: false,
+            player_two_roll_success: false,
+            player_two_counter_success: false,
+            player_two_win: false,
+            player_two_initiated: false,
+            player_two_reduel: false,
+        })
+    }
+
     useEffect(() => {
         console.log(preCombatDataUser, 'Pre-Combat Data (You)')
     }, [preCombatDataUser])
@@ -643,7 +709,7 @@ const GamePvPLobby = ({ user }: Props) => {
             <button className='btn btn-outline-info my-2' onClick={joinRoom}> Join Room </button>
             </Container>
             : 
-            <GameChat user={user} ascean={ascean} spectator={spectator} yourData={yourData} enemyData={enemyData} opponent={opponent} enemyPlayer={enemyPlayer} combatData={combatData} setCombatData={setCombatData} room={room} setShowChat={setShowChat} socket={socket} />
+            <GameChat user={user} ascean={ascean} spectator={spectator} yourData={yourData} enemyData={enemyData} opponent={opponent} enemyPlayer={enemyPlayer} handleRoomReset={handleRoomReset} combatData={combatData} setCombatData={setCombatData} room={room} setShowChat={setShowChat} socket={socket} />
         }
         </>
 

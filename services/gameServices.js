@@ -699,7 +699,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             console.log("Astra!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-            combatData.computer_weapons[0].critical_chance += 5;
+            combatData.computer_weapons[0].critical_chance += 4;
+            combatData.computer_weapons[0].roll += 2;
             if (combatData.new_computer_health > 0) {
                 combatData.player_win = false;
             }
@@ -740,6 +741,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
             combatData.computer_weapons[0].critical_damage += 0.9;
+            combatData.computer_weapons[0].critical_chance += 1;
             if (combatData.new_computer_health > 0) {
                 combatData.player_win = false;
             }
@@ -992,6 +994,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.computer_weapons[1].critical_chance += 4;
+                combatData.computer_weapons[1].roll += 2;
                 if (combatData.new_computer_health > 0) {
                     combatData.player_win = false;
                 }
@@ -1026,6 +1029,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
                 combatData.computer_weapons[1].critical_damage += 0.9;
+                combatData.computer_weapons[1].critical_chance += 1;
             }
             if (combatData.computer_weapons[1].influences[0] === 'Ilios') { // Sun
                 let ilios = combatData.realized_computer_damage;
@@ -1169,6 +1173,26 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
     }
+
+    combatData.weapons[0].critical_chance = combatData.weapons[0].critical_chance.toFixed(2)
+    combatData.weapons[0].critical_damage = combatData.weapons[0].critical_damage.toFixed(2)
+    combatData.weapons[1].critical_chance = combatData.weapons[1].critical_chance.toFixed(2)
+    combatData.weapons[1].critical_damage = combatData.weapons[1].critical_damage.toFixed(2)
+    combatData.computer_weapons[0].critical_chance = combatData.computer_weapons[0].critical_chance.toFixed(2)
+    combatData.computer_weapons[0].critical_damage = combatData.computer_weapons[0].critical_damage.toFixed(2)
+    combatData.computer_weapons[1].critical_chance = combatData.computer_weapons[1].critical_chance.toFixed(2)
+    combatData.computer_weapons[1].critical_damage = combatData.computer_weapons[1].critical_damage.toFixed(2)
+
+    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
+    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
+    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
+    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance)
+    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage)
+    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
+    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
+
+    
 
     if (combatData.new_player_health > 0) {
         combatData.computer_win = false;

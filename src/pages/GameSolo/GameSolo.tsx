@@ -455,8 +455,10 @@ const GameSolo = ({ user }: GameProps) => {
                 highScore: highScore
             })
             // console.log(response.data, 'Response Updating High Score')
-            setAscean(response.data)
-            getAscean()
+            const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            setAscean(firstResponse.data);
+            // setAscean(response.data)
+            // getAscean()
             setLoadingAscean(false)
         } catch (err: any) {
             console.log(err.message, 'Error Updating High Score')

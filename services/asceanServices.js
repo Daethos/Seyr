@@ -112,6 +112,8 @@ async function critCompiler(weapon, attributes, combatStats) {
     weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 25);
     weapon.critical_chance = weapon.critical_chance.toFixed(2)
     weapon.critical_damage = weapon.critical_damage.toFixed(2)
+    Number(weapon.critical_chance)
+    Number(weapon.critical_damage)
 }
 
 async function faithCompiler(weapon, ascean) { 
@@ -160,6 +162,8 @@ async function faithCompiler(weapon, ascean) {
         weapon.dodge -= 2;
 
     }
+    Number(weapon.critical_chance)
+    Number(weapon.critical_damage)
 }
 
 // =============================== COMPILER FUNCTIONS ================================== \\

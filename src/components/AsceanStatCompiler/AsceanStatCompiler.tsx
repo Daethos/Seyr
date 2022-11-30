@@ -25,7 +25,7 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
 
     useEffect(() => {
       asceanStatCompiler()
-      console.log(typeof ((weaponOne.physical_damage)))
+    //   console.log(typeof ((weaponOne.physical_damage)))
     }, [])
     
 
