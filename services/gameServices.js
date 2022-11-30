@@ -117,6 +117,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
             combatData.weapons[0].critical_chance += 4;
             combatData.weapons[0].roll += 2;
+            combatData.weapons[0].critical_damage += 0.1;
             combatData.new_player_health += astra
             combatData.current_player_health += astra
             if (combatData.new_player_health > 0) {
@@ -414,6 +415,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
                 combatData.weapons[1].critical_chance += 4;
                 combatData.weapons[1].roll += 2;
+                combatData.weapons[1].critical_damage += 0.1;
                 combatData.new_player_health += astra
                 combatData.current_player_health += astra
                 if (combatData.new_player_health > 0) {
@@ -696,6 +698,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let achreo = 2 * combatData.computer_attributes.totalAchre
             combatData.new_computer_health += achreo
             combatData.current_computer_health += achreo
+            combatData.computer_weapons[0].critical_damage += 0.1;
             console.log("Astra!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
@@ -995,6 +998,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.computer_weapons[1].critical_chance += 4;
                 combatData.computer_weapons[1].roll += 2;
+                combatData.computer_weapons[1].critical_damage += 0.1;
                 if (combatData.new_computer_health > 0) {
                     combatData.player_win = false;
                 }
@@ -1192,7 +1196,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
     combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
 
-    
+
 
     if (combatData.new_player_health > 0) {
         combatData.computer_win = false;

@@ -109,6 +109,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
             combatData.player_one_weapons[0].critical_chance += 4;
             combatData.player_one_weapons[0].roll += 2;
+            combatData.player_one_weapons[0].critical_damage += 0.1;
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
@@ -358,6 +359,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.player_one_weapons[1].critical_chance += 4;
                 combatData.player_one_weapons[1].roll += 2;
+                combatData.player_one_weapons[1].critical_damage += 0.1;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_one_influence_description_two = 
@@ -594,6 +596,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 `${combatData.player_two.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
             combatData.player_two_weapons[0].critical_chance += 4;
             combatData.player_two_weapons[0].roll += 2;
+            combatData.player_two_weapons[0].critical_damage += 0.1;
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
@@ -839,6 +842,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     `${combatData.player_two.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
                 combatData.player_two_weapons[1].critical_chance += 4;
                 combatData.player_two_weapons[1].roll += 2;
+                combatData.player_two_weapons[1].critical_damage += 0.1;
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_two_influence_description_two = 

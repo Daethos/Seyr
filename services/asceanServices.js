@@ -112,8 +112,8 @@ async function critCompiler(weapon, attributes, combatStats) {
     weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 25);
     weapon.critical_chance = weapon.critical_chance.toFixed(2)
     weapon.critical_damage = weapon.critical_damage.toFixed(2)
-    Number(weapon.critical_chance)
-    Number(weapon.critical_damage)
+    weapon.critical_chance = Number(weapon.critical_chance)
+    weapon.critical_damage = Number(weapon.critical_damage)
 }
 
 async function faithCompiler(weapon, ascean) { 
@@ -162,8 +162,8 @@ async function faithCompiler(weapon, ascean) {
         weapon.dodge -= 2;
 
     }
-    Number(weapon.critical_chance)
-    Number(weapon.critical_damage)
+    weapon.critical_chance = Number(weapon.critical_chance)
+    weapon.critical_damage = Number(weapon.critical_damage)
 }
 
 // =============================== COMPILER FUNCTIONS ================================== \\
@@ -199,7 +199,8 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
     faithCompiler(weaponOne, ascean)
     weaponOne.dodge += (30 + (combatStats.dodgeCombat * 1.5));
     weaponOne.roll += combatStats.rollCombat;
-    console.log(weaponOne.physical_damage, combatStats.damagePhysical, 'Crit Damage After Compiling')
+    console.log(weaponOne.magical_damage,  weaponOne.physical_damage, 'Damage Before Weapon Multiplier')
+    console.log(combatStats.damageMagical, combatStats.damagePhysical, 'Damage Multiplier After Compiling')
     weaponOne.physical_damage = Math.round(weaponOne.physical_damage * combatStats.damagePhysical);
     weaponOne.magical_damage = Math.round(weaponOne.magical_damage * combatStats.damageMagical);
     return weaponOne
