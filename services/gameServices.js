@@ -2064,6 +2064,7 @@ const actionSplitter = async (combatData) => {
         player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
         player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
         computer: combatData.computer, // Computer Enemy
+        computer_health: combatData.computer_health,
         computer_attributes: combatData.computer_attributes, // Possesses compiled Attributes, Initiative
         computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
         computer_action: '', // Action Chosen By Computer

@@ -97,26 +97,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     const { asceanID } = useParams();
 
-    const getAscean = useCallback(async () => {
-        setLoadingAscean(true)
-        try {
-            const response = await asceanAPI.getOneAscean(asceanID);
-            setAscean(response.data);
-            setLoadingAscean(false)
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-            setLoading(false)
-        }
-    }, [asceanID])
-
-    useEffect(() => {
-        getAscean();
-    }, [asceanID, getAscean])
-
-    useEffect(() => {
-        getOpponent();
-    }, [asceanID, getAscean])
-
     const [weaponOne, setWeaponOne] = useState<any>({})
     const [weaponTwo, setWeaponTwo] = useState<any>({})
     const [weaponThree, setWeaponThree] = useState<any>({})
@@ -152,7 +132,7 @@ const GameSolo = ({ user }: GameProps) => {
         player_defense: playerDefense,
         player_attributes: attributes,
         computer: '',
-        computer_health: 0,
+        computer_health: currentComputerHealth,
         computer_action: '',
         computer_counter_guess: '',
         computer_weapons: [],
@@ -199,9 +179,103 @@ const GameSolo = ({ user }: GameProps) => {
         computer_critical_success: false
     })
 
+    const getAscean = useCallback(async () => {
+        console.log('1?')
+        setLoadingAscean(true)
+        try {
+            const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            setAscean(firstResponse.data);
+
+            const response = await asceanAPI.getAsceanStats(asceanID)
+            console.log(response.data.data, 'Response Compiling Stats')
+            setWeaponOne(response.data.data.combat_weapon_one)
+            setWeaponTwo(response.data.data.combat_weapon_two)
+            setWeaponThree(response.data.data.combat_weapon_three)
+            setPlayerDefense(response.data.data.defense)
+            setAttributes(response.data.data.attributes)
+            setTotalPlayerHealth(response.data.data.attributes.healthTotal)
+            setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
+            setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
+            // setCombatData({
+            //     ...combatData,
+            //     'player': response.data.data.ascean,
+            //     'player_health': response.data.data.attributes.healthTotal,
+            //     'current_player_health': response.data.data.attributes.healthTotal,
+            //     'new_player_health': response.data.data.attributes.healthTotal,
+            //     'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+            //     'weapon_one': response.data.data.combat_weapon_one,
+            //     'weapon_two': response.data.data.combat_weapon_two,
+            //     'weapon_three': response.data.data.combat_weapon_three,
+            //     'player_defense': response.data.data.defense,
+            //     'player_attributes': response.data.data.attributes
+            // })
+            setLoadingAscean(false)
+
+            setLoading(true)
+            const secondResponse = await userService.getProfile('daethos');
+            const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
+            setOpponent(secondResponse.data.ascean[randomOpponent]);
+            // console.log(secondResponse.data.ascean[randomOpponent], '<- New Opponent');
+            const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean[randomOpponent]._id)
+            // console.log(response.data.data, 'Response Compiling Stats')
+            setComputerDefense(opponentResponse.data.data.defense)
+            setComputerAttributes(opponentResponse.data.data.attributes)
+            setTotalComputerHealth(opponentResponse.data.data.attributes.healthTotal)
+            setCurrentComputerHealth(opponentResponse.data.data.attributes.healthTotal)
+            setComputerWeapons([opponentResponse.data.data.combat_weapon_one, opponentResponse.data.data.combat_weapon_two, opponentResponse.data.data.combat_weapon_three])
+            setCombatData({
+                ...combatData,
+
+                'player': response.data.data.ascean,
+                'player_health': response.data.data.attributes.healthTotal,
+                'current_player_health': response.data.data.attributes.healthTotal,
+                'new_player_health': response.data.data.attributes.healthTotal,
+                'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+                'weapon_one': response.data.data.combat_weapon_one,
+                'weapon_two': response.data.data.combat_weapon_two,
+                'weapon_three': response.data.data.combat_weapon_three,
+                'player_defense': response.data.data.defense,
+                'player_attributes': response.data.data.attributes,
+
+                'computer': opponentResponse.data.data.ascean,
+                'computer_health': opponentResponse.data.data.attributes.healthTotal,
+                'current_computer_health': opponentResponse.data.data.attributes.healthTotal,
+                'new_computer_health': opponentResponse.data.data.attributes.healthTotal,
+                'computer_weapons': [opponentResponse.data.data.combat_weapon_one, opponentResponse.data.data.combat_weapon_two, opponentResponse.data.data.combat_weapon_three],
+                'computer_weapon_one': opponentResponse.data.data.combat_weapon_one,
+                'computer_weapon_two': opponentResponse.data.data.combat_weapon_two,
+                'computer_weapon_three': opponentResponse.data.data.combat_weapon_three,
+                'computer_defense': opponentResponse.data.data.defense,
+                'computer_attributes': opponentResponse.data.data.attributes
+            })
+            setComputerWin(false);
+            setPlayerWin(false);
+            setGameIsLive(true);
+            playOpponent()
+
+            setLoading(false)
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+            setLoading(false)
+        }
+    }, [asceanID])
+
     useEffect(() => {
-        opponentStatCompiler()
-    }, [opponent, undefinedComputer])
+        getAscean();
+    }, [asceanID, getAscean])
+
+    // useEffect(() => {
+    //     getOpponent();
+    // }, [getAscean])
+
+    useEffect(() => {
+        console.log(combatData, 'Update')
+    }, [combatData])
+
+
+    // useEffect(() => {
+    //     opponentStatCompiler()
+    // }, [opponent, undefinedComputer])
 
     // useEffect(() => {
     //     opponentDataCompiler();
@@ -209,17 +283,38 @@ const GameSolo = ({ user }: GameProps) => {
       
 
     const getOpponent = async () => {
+        console.log('2?')
         setLoading(true)
         try {
-            const response = await userService.getProfile('daethos');
-            const randomOpponent = Math.floor(Math.random() * response.data.ascean.length);
-            setOpponent(response.data.ascean[randomOpponent]);
-            console.log(response.data.ascean[randomOpponent], '<- New Opponent');
+            const firstResponse = await userService.getProfile('daethos');
+            const randomOpponent = Math.floor(Math.random() * firstResponse.data.ascean.length);
+            setOpponent(firstResponse.data.ascean[randomOpponent]);
+            // console.log(firstResponse.data.ascean[randomOpponent], '<- New Opponent');
+            const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean[randomOpponent]._id)
+            console.log(response.data.data, 'Response Compiling Stats For Opponent')
+            setComputerDefense(response.data.data.defense)
+            setComputerAttributes(response.data.data.attributes)
+            setTotalComputerHealth(response.data.data.attributes.healthTotal)
+            setCurrentComputerHealth(response.data.data.attributes.healthTotal)
+            setComputerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
+            setCombatData({
+                ...combatData,
+                'computer': response.data.data.ascean,
+                'computer_health': response.data.data.attributes.healthTotal,
+                'current_computer_health': response.data.data.attributes.healthTotal,
+                'new_computer_health': response.data.data.attributes.healthTotal,
+                'computer_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+                'computer_weapon_one': response.data.data.combat_weapon_one,
+                'computer_weapon_two': response.data.data.combat_weapon_two,
+                'computer_weapon_three': response.data.data.combat_weapon_three,
+                'computer_defense': response.data.data.defense,
+                'computer_attributes': response.data.data.attributes
+            })
             setComputerWin(false);
             setPlayerWin(false);
             setGameIsLive(true);
             playOpponent()
-            setLoadingAscean(false)
+            setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         }
@@ -277,12 +372,9 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-
-    useEffect(() => {
-      asceanStatCompiler()
-    }, [getAscean]) // Says to remove it?
-    
-    
+    // useEffect(() => {
+    //   asceanStatCompiler()
+    // }, [getAscean]) // Says to remove it?
 
     const asceanStatCompiler = async () => {
         setLoading(true)
@@ -317,12 +409,13 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
     
-    useEffect(() => {
-        combatDataCompiler()
-    }, [getAscean, undefined])
+    // useEffect(() => {
+    //     console.log('3?')
+    //     combatDataCompiler()
+    // }, [getAscean, undefined])
 
     const combatDataCompiler = async () => {
-        setLoadingAscean(true)
+        // setLoadingAscean(true)
         try {
             setCombatData({
                 ...combatData,
@@ -361,7 +454,7 @@ const GameSolo = ({ user }: GameProps) => {
                 asceanId: ascean._id,
                 highScore: highScore
             })
-            console.log(response.data, 'Response Updating High Score')
+            // console.log(response.data, 'Response Updating High Score')
             setAscean(response.data)
             getAscean()
             setLoadingAscean(false)
@@ -371,7 +464,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     function handleAction(action: any) {
-        console.log(action.target.value, '<- Action being handled')
+        // console.log(action.target.value, '<- Action being handled')
         setCombatData({
             ...combatData,
             'action': action.target.value,
@@ -381,7 +474,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     function handleCounter(counter: any) {
-        console.log(counter.target.value, 'New Counter')
+        // console.log(counter.target.value, 'New Counter')
         setCombatData({
             ...combatData,
             'action': 'counter',
@@ -417,7 +510,7 @@ const GameSolo = ({ user }: GameProps) => {
             return
         }
         try {
-            console.log(combatData.action, 'Combat Action Being Initiated')
+            // console.log(combatData.action, 'Combat Action Being Initiated')
             setEmergencyText([``])
             setTimeLeft(10)
             const response = await gameAPI.initiateAction(combatData)
@@ -501,16 +594,21 @@ const GameSolo = ({ user }: GameProps) => {
 
     const resetAscean = async () => {
         try {
-            getOpponent();
+            // await getOpponent();
             setCombatData({
                 ...combatData,
+                'player_defense': playerDefense,
+                'player_attributes': attributes,
                 'current_player_health': totalPlayerHealth,
                 'new_player_health': totalPlayerHealth,
+                'current_computer_health': totalComputerHealth,
+                'new_computer_health': totalComputerHealth,
                 'weapons': [weaponOne, weaponTwo, weaponThree],
                 'player_win': false,
                 'computer_win': false
             });
             setCurrentPlayerHealth(totalPlayerHealth);
+            setCurrentComputerHealth(totalComputerHealth);
             setComputerWin(false);
             setPlayerWin(false);
             setGameIsLive(true);
@@ -527,17 +625,17 @@ const GameSolo = ({ user }: GameProps) => {
         );
     }
 
-    if (loading) {
+    if (loading || loadingAscean) {
         return (
             <Loading Combat={true} />
         )
     }
 
-    if (loadingAscean) {
-        return (
-            <Loading Combat={true} />
-        )
-    }
+    // if (loadingAscean) {
+    //     return (
+    //         <Loading Combat={true} />
+    //     )
+    // }
 
     return (
         <Container fluid id="game-container">
@@ -549,10 +647,10 @@ const GameSolo = ({ user }: GameProps) => {
                 roll_success={combatData.roll_success} computer_roll_success={combatData.computer_roll_success}
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
-            { combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ?
-                <GameAscean ascean={opponent} loading={loadingAscean} opponentStatCompiler={opponentStatCompiler} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
-                : <>{opponentStatCompiler}</>
-            }
+            {/* { combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ? */}
+                <GameAscean ascean={opponent} totalPlayerHealth={totalComputerHealth} loading={loadingAscean} opponentStatCompiler={opponentStatCompiler} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+                {/* : <>{opponentStatCompiler}</>
+            } */}
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
@@ -567,10 +665,10 @@ const GameSolo = ({ user }: GameProps) => {
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
 
-            { combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ?
-                <GameAscean ascean={ascean} player={true} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
-                : <>{combatDataCompiler}</>
-            }
+            {/* { combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ? */}
+                <GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
+                {/* : <>{combatDataCompiler}</>
+            } */}
             
             { playerWin || computerWin ? '' : combatData?.weapons ?
             <GameActions 

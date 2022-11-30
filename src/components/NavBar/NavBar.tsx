@@ -43,21 +43,13 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
   const handleSoloShow = () => setSoloOffCanvas(true);
 
   function compareScores(a: any, b: any) {
-    console.log(a[0], b[0])
-    console.log(a[0].ascean, ': ', a[0].score, ' vs ', b[0].ascean, ': ', b[0].score)
-    // return a.score - b.score;
+    // console.log(a[0].ascean, ': ', a[0].score, ' vs ', b[0].ascean, ': ', b[0].score)
+    return a[0].score - b[0].score;
    
-    if (a[0].score > b[0].score) {
-      return 1;
-    }
-    if (a[0].ascore < b[0].score) {
-      return 1;
-    }
-    return 0;
   }
 
   useEffect(() => {
-    console.log(highScores, 'It has updated')
+    // console.log(highScores, 'It has updated')
   }, [highScores])
 
   useEffect(() => {
@@ -84,9 +76,9 @@ async function getAllAscean() {
     setLoading(true);
     try {
         const response = await communityAPI.getEveryone();
-        console.log(response, ' <- the response in getAscean')
+        // console.log(response, ' <- the response in getAscean')
         const scores = await response.data.map((ascean: any, index: number) => {
-          console.log(ascean, index, 'What is this?')
+          // console.log(ascean, index, 'What is this?')
           let scoreData = {
             ascean: ascean.name,
             score: ascean.high_score,
@@ -102,7 +94,7 @@ async function getAllAscean() {
           )
         })
         const sortedScores = await scores.sort(compareScores)
-        console.log(sortedScores, 'Sorted Scores ?!')
+        // console.log(sortedScores, 'Sorted Scores ?!')
         setHighScores(sortedScores.reverse())
         setAllAscean([...response.data].reverse())
         setLoading(false)
@@ -255,7 +247,7 @@ async function getAllAscean() {
               </thead>
             {
             highScores.map((ascean: any, index: number) => {
-              console.log(ascean, 'Anything here?')
+              // console.log(ascean, 'Anything here?')
               return (
                <>
                   <tbody key={index}>
@@ -269,7 +261,12 @@ async function getAllAscean() {
                       <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
                         style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
                       </td>
-                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].ascean}</td>
+                      <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
+                        <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' onClick={handleSoloClose}>
+                        {ascean[0].ascean}
+
+                        </Nav.Link>
+                      </td>
                       <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
                       <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
                     </tr>
@@ -285,48 +282,6 @@ async function getAllAscean() {
             </Accordion.Body>
             </Accordion.Item>
             </Accordion>
-            {/* <Table responsive style={{ color: '#fdf6d8' }}>
-              <thead>
-                <tr>
-                  <th>Ascean</th>
-                    <th>Name</th>
-                    <th>Score</th>
-                    <th>Mastery</th>
-                </tr>
-              </thead>
-            {
-            highScores.map((ascean: any, index: number) => {
-              console.log(ascean, 'Anything here?')
-              return (
-               <>
-                  <tbody key={index}>
-               { 
-                index < 5 ? 
-                // <p key={index}><img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                // style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple' }} />{' '}
-                // {ascean[0].ascean} - {ascean[0].score}</p> 
-                    <tr>
-                      <td>
-                      <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                        style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginTop: 0 + 'px' }} />
-                      </td>
-                      
-                        <td style={{ padding: 4 + '%' }}>{ascean[0].ascean}</td>
-                        
-                        <td style={{ padding: 4 + '%' }}>{ascean[0].score}</td>
-                        
-                        <td style={{ padding: 4 + '%' }}>{ascean[0].mastery}</td>
-                     
-                    </tr>
-                : '' 
-              }
-                  
-                  </tbody>
-               </>
-              )
-            })
-          }
-          </Table> */}
         </h6>
       {asceanVaEsai.map((ascean: any, index: number) => 
           (<Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id} key={index} 
@@ -427,9 +382,9 @@ async function getAllAscean() {
           </Nav.Link>
           <NavBarMessages user={user} relayStatus={relayStatus} setRelayStatus={setRelayStatus} /> */}
 
-      <span className="logging-button" style={{ float: 'right' }}>
+      <span className="logging-button" style={{ float: 'right', marginRight: -12 + '%' }}>
       <Link to="" onClick={handleLogout} className="text-warning btn btn-lg btn-outline-black link-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-power" viewBox="0 0 16 16">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="bi bi-power" viewBox="0 0 16 16">
           <path d="M7.5 1v7h1V1h-1z"/>
           <path d="M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z"/>
         </svg>

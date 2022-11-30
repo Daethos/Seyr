@@ -50,7 +50,6 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, setD
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
-        console.log('Ticking...')
         if (!timeLeft) return;
         const intervalId = setInterval(() => {
             setEmergencyText([`Auto Engage In ${timeLeft - 1} Second(s)`])

@@ -29,7 +29,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeL
   const [displayedAction, setDisplayedAction] = useState<any>([])
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
   useEffect(() => {
-    console.log('Displaying new action: ', currentAction)
+    // console.log('Displaying new action: ', currentAction)
     if (currentAction === 'counter') {
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1))
     } else {
@@ -39,7 +39,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeL
   }, [currentAction, currentCounter])
 
   useEffect(() => {
-    console.log('Displaying new weapon ', currentWeapon?.name)
+    // console.log('Displaying new weapon ', currentWeapon?.name)
     setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
   }, [currentWeapon])
 
@@ -55,7 +55,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeL
     const dodgeTimer = setTimeout(() => {
       // dodgeButton?.classList.remove('hide');
       setDodgeStatus(false);
-    }, (PvP ? combatData.player_one_weapons[0].dodge * 1000 : combatData.weapons[0].dodge * 1000))
+    }, (PvP ? combatData?.player_one_weapons?.[0]?.dodge * 1000 : combatData?.weapons?.[0]?.dodge * 1000))
     return () => clearTimeout(dodgeTimer)
   }, [dodgeStatus])
 
