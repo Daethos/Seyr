@@ -215,7 +215,7 @@ const GameSolo = ({ user }: GameProps) => {
             setLoadingAscean(false)
 
             setLoading(true)
-            const secondResponse = await userService.getProfile('daethos');
+            const secondResponse = await userService.getProfile('mirio');
             const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
             setOpponent(secondResponse.data.ascean[randomOpponent]);
             // console.log(secondResponse.data.ascean[randomOpponent], '<- New Opponent');
