@@ -87,8 +87,9 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
 
   return (
     <Container fluid>
-        <Row className="justify-content-center my-5">
-        <Col md={{span: 8, offset: 2}} className="my-5">
+        <Row className="justify-content-center my-3">
+        <h3 style={{ color: '#fdf6d8', textAlign: 'center' }}>Community Feed</h3>
+        <Col md={{span: 8, offset: 2}} className="my-3">
             <InputGroup className="bg-black">
             <InputGroup.Text className="bg-black">
             <img 

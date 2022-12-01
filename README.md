@@ -1,46 +1,113 @@
-# Getting Started with Create React App
+# **[Seyr of Daethos][A First Place]**
+<br />
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Greetings, weary traveler, it is myself, Mirio, a kindly merchant traveling from Lor, here to showcase an exciting app granting many mysteries. I'm sure your [constant gameplay][don't look] elsewhere has left you bereft of hope, shambling for some semblance of salvation. Well, fear no more !! Just released of my [own free will][best not look], this may yet help you better enjoy a game with dynamic yet simple combat mechanics against computers and players alike. This application will allow you to journey into this world as one of several definable race-cultures--crafting your character to your personal quirks, seeing how one may better resource concepts and pair synergistic equipment pieces together for great forms of **_attack_** and **_defense_**! Let us venture into this sorcery the likes this daethic worshiper of the One Above believes somewhat blasphemous but for the purposes of this sale I'll allow it.
+<br /><br />
 
-## Available Scripts
+# Screenshot[s] of This Exciting Opportunity! 
+## NavBar Featuers: [Castle]: Home, [Helm]: New Character, [Quill]: Edit Character, [Scarecrow]: Computer Arena, [Scroll]: Community Feed, [Chat]: DMs, [Axes]: PvP Arena
+<br /><br />
+<details>
+    <summary>JWT-Auth Login/Signup</summary>
 
-In the project directory, you can run:
+## At the opening of the app, you'll be prompted to signup with your personal credentials. Everything requested of a new user is required for best experience playing the game, including profile picture!
+![App Start](https://i.imgur.com/erxSZr1.png)
+![App Start](https://i.imgur.com/aHGCG3f.png)
+</details>
+<br /><br /><br />
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+<details>
+    <summary>Character Creation</summary>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## From Here, we're asked to create a character if you are not in possession of one--which at the beginning, of course not! You may be yourself, but who are you, really? And now we can settle on the matter of what you believe it is best to wear to a sudden and proper death in front of an adoring crowd, of course we are antiquitous in nature, and are not prone toward bothering to cheer for anyone but the proper favorites, of which you cannot hope to be--not yet, that is!
+![Profile New](https://i.imgur.com/P3hrNqz.png)
+![Profile New](https://i.imgur.com/yZJvyBL.png)
+</details>
+<br /><br /><br />
 
-### `npm test`
+<details>
+    <summary>Profile Page</summary>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Phew, made it to our profile, and now with a character! Whomst would hope to defeat the greatest Ascean that walked this world? It's good I'm here to show you how to use this that I am selling to you now. What impeccable luck!
+![Profile Create](https://i.imgur.com/jXCjulJ.png)
+</details>
+<br /><br /><br />
 
-### `npm run build`
+<details>
+    <summary>Edit Character</summary>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Incase there are any concerns or necessary tweaks to find yourself in the best position to take on this world whether for honor of your ancient beliefs, culture, daethic devotion, or even individuality if it suits you.
+![Profile Create](https://i.imgur.com/NG9l9eF.png)
+![Profile Create](https://i.imgur.com/utfNx0b.png)
+</details>
+<br /><br /><br />
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<details>
+    <summary>Computer Arena</summary>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Well look at you, I cannot attest for that cursed and maddening weapon you've chosen, but the beautiful attire you've selected to wear to battle is a sight to behold, it reminds me of our standard issue Licivitan equipment for soldiers, though the Daethic Knights tend to look a bit too Northren--yet I am a worldy man of course, and see no issue in such matters. Hopefully here it is where you prove yourself before venturing to thwart more active and dynamic opponents.
+![Character Create](https://i.imgur.com/TOpZr3V.png?1)
+![Character Create](https://i.imgur.com/CVuegtB.png?1)
+</details>
+<br /><br /><br />
 
-### `npm run eject`
+<details>
+    <summary>Community Feed</summary>
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## And here we can see other characters that have chosen to be on display, to see your potential enemies and friends alike. You can view any character with more precision and even take a gander at the user who has created them if you so choose.
+![Profile Show](https://i.imgur.com/YVdR4ob.png)
+</details>
+<br /><br /><br />
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<details>
+    <summary>Chat Messages</summary>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Wehther you're speaking to someone directly 1-on-1 or in a group, this is the area to find them and speak with them one on one. Warning, there is no profanity filter or way to block people, so play nicely! ^_^
+![Profile Show](https://i.imgur.com/QFywc9F.png)
+![Profile Show](https://i.imgur.com/OiuFilh.png)
+</details>
+<br /><br /><br />
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+<details>
+    <summary>PvP Arena</summary>
 
-## Learn More
+## Here is the PvP portion of the game. This allows you to choose an Ascean, connect to a room whether you're the first or second person, and ready yourself for combat against them, complete with real-time chat features during the duel, and options to reduel ad infinitum.
+![Profile Show](https://i.imgur.com/8KAhySl.png)
+![Profile Show](https://i.imgur.com/r1Yi2QN.png)
+![Profile Show](https://i.imgur.com/SKeif4I.png)
+</details>
+<br /><br /><br />
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Sorceries Conjured
+<br />
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Traditional MERN-Stack w/ Bootstrap, Socket.IO, and TypeScript.
+<br /><br /><br />
+
+# How to Survive Without Me
+<br />
+
+## This companion has quite a high ease of use, and a straightforward way to navigate between options of profile use, character creation and so forth, with an allowance to collect and hold different concepts to compare and contrast at your leisure.
+    Login / Singup
+    Profile Viewing
+    Character Creation
+    Character Editing
+    Computer Arena
+    Community Feed
+    Group/Personal DMs
+    PvP Arena
+## With much of this being able to be performed on the navigation bar, and multiple options granting proper direction in what you're trying to aim for.
+<br /><br />
+
+# Iceboxing
+### * Implement more intricate concepts with reference to the combat mechanics and the development of the story itself with leveling throughout the gameplay. 
+
+[A First Place]: https://ascea.herokuapp.com/
+[don't look]: https://www.youtube.com/watch?v=2nXGPZaTKik
+[best not look]: https://www.youtube.com/watch?v=zfy5dFhw3ik
+[Another place]: https://daethos.github.io/Arena
+[Todd!]: https://www.youtube.com/watch?v=hFcLyDb6niA
+[whimsical]: https://whimsical.com/ascea-app-VQpx4xRUaDqvSwFeFnfw1h
+[trello]: https://trello.com/b/NpV2wLHw/ascea-app
+<!-- ['It just works.'][Todd!]. -->

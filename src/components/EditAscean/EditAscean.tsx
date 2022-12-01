@@ -126,8 +126,9 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
     }
 
     return (
-        <Row className="justify-content-center my-5">
-        <Form className="stat-block wide my-5" id="new-ascean" onSubmit={handleSubmit}>
+        <Row className="justify-content-center my-3">
+            <h3 style={{ color: '#fdf6d8', textAlign: 'center' }}>Edit Character</h3>
+        <Form className="stat-block wide my-3" id="new-ascean" onSubmit={handleSubmit}>
         <hr className="orange-border" />
         <div className="section-left">
             <Character asceanState={editState} setAsceanState={setEditState} key={ascean._id} />
