@@ -95,6 +95,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.weapons[0].critical_damage += 0.2;
         }
         if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
+            let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            combatData.new_player_health += ahnve
+            combatData.current_player_health += ahnve
             console.log("Achreo!")
             combatData.player_influence_description = 
                 `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
@@ -299,6 +302,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.weapons[0].dodge -= 3;
         }
         if (combatData.weapons[0].influences[0] === "Se'dyro") { // Iron
+            let sedyro = 2 * (combatData.player_attributes.totalAgility + combatData.weapons[0].agility)
+            combatData.new_player_health += sedyro
+            combatData.current_player_health += sedyro
             console.log("Se'dyro!")
             combatData.player_influence_description = 
                 `The Caer of Se'dyro sings into your ${combatData.weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
@@ -393,6 +399,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Ahn've") { // Wind
+                let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
+                combatData.new_player_health += ahnve
+                combatData.current_player_health += ahnve
                 console.log("Ahn've!")
                 combatData.player_influence_description_two = 
                     `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
@@ -583,6 +592,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.weapons[1].dodge -= 3;
             }
             if (combatData.weapons[1].influences[0] === "Se'dyro") { // Iron
+                let sedyro = 2 * (combatData.player_attributes.totalAgility + combatData.weapons[1].agility)
+                combatData.new_player_health += sedyro
+                combatData.current_player_health += sedyro
                 combatData.player_influence_description_two = 
                     `The Caer of Se'dyro sings into your ${combatData.weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
                 player_action = 'attack';
@@ -678,10 +690,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === "Ahn've") { // Wind
+            let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.computer_weapons[0].caeren)
+            combatData.new_computer_health += ahnve
+            combatData.current_computer_health += ahnve
             console.log("Achreo!")
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage.`
-            player_action = 'attack';
+            // player_action = 'attack';
             // await attackCompiler(combatData, player_action)
             if (combatData.realized_computer_damage < 0) {
                     combatData.realized_computer_damage = 0;
@@ -882,6 +897,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_weapons[0].dodge -= 3;
         }
         if (combatData.computer_weapons[0].influences[0] === "Se'dyro") { // Iron
+            let sedyro = 2 * (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility)
+            combatData.new_computer_health += sedyro
+            combatData.current_computer_health += sedyro
             console.log("Se'dyro!")
             combatData.computer_influence_description = 
                 `The Caer of Se'dyro sings into their ${combatData.computer_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
@@ -974,6 +992,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === "Ahn've") { // Wind
+                let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.computer_weapons[1].caeren)
+                combatData.new_computer_health += ahnve
+                combatData.current_computer_health += ahnve
                 console.log("Ahn've!")
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage.`
@@ -1134,6 +1155,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].dodge -= 3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Se'dyro") { // Iron
+                let sedyro = 2 * (combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility)
+                combatData.new_computer_health += sedyro
+                combatData.current_computer_health += sedyro
                 combatData.computer_influence_description_two = 
                     `The Caer of Se'dyro sings into their ${combatData.computer_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
                 player_action = 'attack';
@@ -2112,6 +2136,8 @@ const actionSplitter = async (combatData) => {
         computer_influence_description: '',
         player_influence_description_two: '',
         computer_influence_description_two: '',
+        player_death_description: '',
+        computer_death_description: '',
         current_player_health: combatData.new_player_health, // New player health post-combat action
         current_computer_health: combatData.new_computer_health, // New computer health post-combat action
         new_player_health: combatData.new_player_health, // New player health post-combat action
@@ -2341,12 +2367,12 @@ const actionSplitter = async (combatData) => {
     await faithFinder(newData, player_action, computer_action);
     
     if (newData.player_win === true) {
-        combatData.computer_action_description = 
-        `${combatData.computer.name} has been defeated. Hail ${combatData.player.name}, you are the new va'Esai!`
+        newData.computer_death_description = 
+        `${newData.computer.name} has been defeated. Hail ${newData.player.name}, you are the new va'Esai!`
     }
     if (newData.computer_win === true) {
-        combatData.player_action_description = 
-            `You have been defeated. Hail ${combatData.computer.name}, the new va'Esai!`
+        newData.player_death_description = 
+            `You have been defeated. Hail ${newData.computer.name}, the new va'Esai!`
     }
     
 

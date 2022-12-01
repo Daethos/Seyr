@@ -131,7 +131,7 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
                     </span> 
                     <span style={{ marginLeft: -5 + '%', marginTop: -0.75 + '%' }}>Live Chat</span>
                     </div>
-                    <div className='Chat-Body'>
+                    <div className='Chat-Body' id='Chat-Body'>
                     <ScrollToBottom className="message-container">
                     {
                         messageList.map((message: any, index: number) => {
@@ -158,10 +158,10 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
                         <p className='text-white my-1'>Room: {room}</p>
                     </div>
                     <div className="chat-footer">
-                        <Form.Control as="textarea" style={{ maxHeight: 30 + 'px', width: 80 + '%' }} type="text" placeholder='Warning, no profanity filter...' value={currentMessage} onChange={(e) => { setCurrentMessage(e.target.value) }}
+                        <Form.Control as="textarea" style={{ maxHeight: 30 + 'px', width: 75 + '%' }} type="text" placeholder='Warning, no profanity filter...' value={currentMessage} onChange={(e) => { setCurrentMessage(e.target.value) }}
                         onKeyPress={(e) => { e.key === "Enter" && sendMessage() }}
                         />
-                        <Button variant="outline-info" onClick={sendMessage} style={{ float: 'right', marginTop: -9.25 + '%' }}>Submit</Button>
+                        <Button variant="outline-info" onClick={sendMessage} style={{ float: 'right', marginTop: -11.25 + '%' }}>Submit</Button>
                 
                     </div>
                     </div>

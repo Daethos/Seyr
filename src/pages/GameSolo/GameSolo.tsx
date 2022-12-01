@@ -151,6 +151,9 @@ const GameSolo = ({ user }: GameProps) => {
         computer_influence_description: '',
         player_influence_description_two: '',
         computer_influence_description_two: '',
+        player_death_description: '',
+        computer_death_description: '',
+
         current_player_health: currentPlayerHealth,
         current_computer_health: currentComputerHealth,
         new_player_health: currentPlayerHealth,
@@ -687,6 +690,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerAction={combatData.player_action} computerAction={combatData.computer_action} 
                 playerCombatText={combatData.player_action_description} computerCombatText={combatData.computer_action_description} 
                 playerActionText={combatData.player_start_description} computerActionText={combatData.computer_start_description}
+                playerDeathText={combatData.player_death_description} computerDeathText={combatData.computer_death_description}
                 playerSpecialText={combatData.player_special_description} computerSpecialText={combatData.computer_special_description}
                 playerReligiousText={combatData.player_influence_description} computerReligiousText={combatData.computer_influence_description}
                 playerReligiousTextTwo={combatData.player_influence_description_two} computerReligiousTextTwo={combatData.computer_influence_description_two}

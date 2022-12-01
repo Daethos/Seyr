@@ -198,6 +198,7 @@ const GamePvPLobby = ({ user }: Props) => {
         player_one_action_description: '',
         player_one_influence_description: '',
         player_one_influence_description_two: '',
+        player_one_death_description: '',
 
 
         action_two: '',
@@ -216,6 +217,7 @@ const GamePvPLobby = ({ user }: Props) => {
         player_two_action_description: '',
         player_two_influence_description: '',
         player_two_influence_description_two: '',
+        player_two_death_description: '',
 
         current_player_two_health: currentPlayerTwoHealth,
         new_player_two_health: currentPlayerTwoHealth,

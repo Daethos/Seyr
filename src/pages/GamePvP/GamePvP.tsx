@@ -546,7 +546,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 ascean={ascean} user={user} combatData={combatData} emergencyText={emergencyText} 
                 playerAction={yourData.player === 1 ? combatData.player_one_action : combatData.player_two_action} 
                 computerAction={enemyData.player === 2 ? combatData.player_two_action : combatData.player_one_action} 
-
+                playerDeathText={combatData.player_one_death_description} computerDeathText={combatData.player_two_death_description}
                 playerCombatText={combatData.player_one_action_description} computerCombatText={combatData.player_two_action_description} 
                 playerActionText={combatData.player_one_start_description} computerActionText={combatData.player_two_start_description}
                 playerSpecialText={combatData.player_one_special_description} computerSpecialText={combatData.player_two_special_description}

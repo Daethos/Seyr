@@ -113,14 +113,14 @@ const PvPConditions = ({ combatData, socket, setCombatData, freshCombatData, set
     You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
     {/* <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button>  */}
     { reduelRequest
-        ? <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button>
+        ? <button className='btn text-info' onClick={resetAscean} >{enemyData?.ascean?.name} Requested Reduel. Click to Consent</button>
         : ''
     }
     </div> : ''}
     { computerWin 
         ? <div className="win-condition">
             You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
-            <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button>
+            <button className='btn text-info' onClick={resetAscean} >Request Reduel With {enemyData?.ascean?.name}?</button>
             </div> 
         : ''
     }
