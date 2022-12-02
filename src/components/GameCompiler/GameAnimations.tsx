@@ -34,7 +34,7 @@ const GameAnimations = ({ sleep, roll_success, computer_roll_success, counterSuc
         {
             computerCritical 
             ?
-                <div className="computer hidden" style={critStyle} >
+                <div className="computer hidden" style={critStyle} id='computer-animation'>
                     {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                     <br />
                     {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
@@ -42,13 +42,13 @@ const GameAnimations = ({ sleep, roll_success, computer_roll_success, counterSuc
             :
                 computer_roll_success || computerCounterSuccess
                 ?
-                    <div className="computer hidden" style={rollStyle} >
+                    <div className="computer hidden" style={rollStyle} id='computer-animation'>
                         {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                         <br />
                         {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
                     </div> 
                 :
-                    <div className="computer hidden" >
+                    <div className="computer hidden" id='computer-animation'>
                         {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                         <br />
                         {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
@@ -60,7 +60,7 @@ const GameAnimations = ({ sleep, roll_success, computer_roll_success, counterSuc
         {
             playerCritical 
             ? 
-                <div className="player pulse" style={critStyle}>
+                <div className="player pulse" style={critStyle} id='player-animation'>
                     {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                     <br />
                     {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
@@ -68,15 +68,13 @@ const GameAnimations = ({ sleep, roll_success, computer_roll_success, counterSuc
             : 
                 roll_success || counterSuccess
                 ?
-                    <div className="player pulse" style={rollStyle}>
+                    <div className="player pulse" style={rollStyle} id='player-animation'>
                         {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                         <br />
                         {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
                     </div>
                 :
-                    <div 
-                    className="player pulse"
-                    >
+                    <div className="player pulse" id='player-animation'>
                     {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                     <br />
                         {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}

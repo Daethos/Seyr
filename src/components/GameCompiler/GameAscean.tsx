@@ -3,6 +3,7 @@ import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import Loading from '../Loading/Loading';
 import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
+import Container from 'react-bootstrap/Container'
 
 interface Props {
   ascean: any;
@@ -32,7 +33,9 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
   return (
     <>
     { playerCharacter ?
-      <div className="game-block" style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}>
+      <div id='game-block' className="game-block" 
+        // style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}
+      >
       <div className="actions">
       <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
@@ -61,7 +64,9 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
       </div>
       </div>
     : 
-    <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}>
+    <div className="game-block" id='opponent-block'
+      // style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}
+    >
     <div className="actions">
     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
     <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />

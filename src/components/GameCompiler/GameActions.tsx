@@ -89,16 +89,16 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeL
   // }
   return (
     <>
-    <textarea className='action-reader' value={displayedAction} readOnly></textarea>
+    <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
       <select name="Attacks" id="attack-options" value={PvP ? combatData.player_one_weapons[0] : combatData.weapons[0]} onChange={setWeaponOrder}>
-        <option value="">Weapon Order</option>
+        <option value="" id='attack-option'>Weapon Order</option>
         {
         weapons ?
         weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )
         : ''
         }
       </select>
-    <div className="actionButtons">
+    <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
           <button value='initiate' type='submit' className='btn btn-outline ' disabled={actionStatus ? true : false} id='initiate-button'>Initiate</button>
       </Form>

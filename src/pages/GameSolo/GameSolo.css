@@ -17,6 +17,18 @@
     /* grid-auto-rows: repeat(8, 1fr);  */
     /* border: 1px solid purple; */
   }
+  #game-block {
+    margin-left: 7.5%;
+    transform: scale(1.1);
+    margin-top: -20%;
+  }
+  #opponent-block {
+    grid-row-start: 1;
+    grid-column-start: 2;
+    margin-left: 25%;
+    transform: scale(1.1);
+    margin-top: -10%;
+  }
   
   /* .Chat-Window .chat-footer button:hover {
     transform: scale(1.1);
@@ -182,6 +194,115 @@
         font-size: 7.5px;
     }
   }
+  @media screen and (max-width: 380px) {
+    
+    #game-container {
+      transform: scale(1);
+    
+    }
+    #game-block {
+      transform: scale(.97);
+      margin-left: 0%;
+    }
+    #opponent-block {
+      transform: scale(.97);
+      margin-left: 10%;
+    }
+    #console {
+      transform: scale(.97);
+      margin-left: 3%;
+      font-size: 6px;
+    }
+    #action-buttons {
+      transform: scale(.97);
+      margin-left: -9.75%;
+      margin-top: 10%;
+      
+    }
+    #action-reader {
+      transform: scale(.97);
+      margin-left: -10%;
+      margin-top: -25%;
+      font-size: 6px;  
+    }
+    #attack-options {
+      transform: scale(.97);
+      margin-right: -2%;
+      font-size: 6px;
+    }
+    #attack-options {
+      font-size: 6px;
+    }
+    #auto-engage {
+      transform: scale(.97);
+      margin-top: -25%;
+      margin-left: -11%;
+      font-size: 6px;
+    }
+    #computer-animation {
+      transform: scale(.9);
+      margin-left: -20%;
+    }
+    #player-animation {
+      transform: scale(.9);
+      /* margin-left: -10%; */
+    }
+  }
+  @media screen and (max-width: 330px) {
+    
+    #game-container {
+      transform: scale(1);
+    
+    }
+    #game-block {
+      transform: scale(.9);
+      margin-left: -10%;
+    }
+    #opponent-block {
+      transform: scale(.9);
+      margin-left: 0%;
+    }
+    #console {
+      transform: scale(.9);
+      margin-left: 5%;
+      font-size: 6px;
+    }
+    #action-buttons {
+      transform: scale(.9);
+      margin-left: -6.75%;
+      margin-top: 10%;
+      
+    }
+    #action-reader {
+      transform: scale(.9);
+      margin-left: -7%;
+      margin-top: -30%;
+      font-size: 6px;  
+    }
+    #attack-options {
+      transform: scale(.9);
+      margin-right: -5%;
+      font-size: 6px;
+    }
+    #attack-options {
+      font-size: 6px;
+    }
+    #auto-engage {
+      transform: scale(.9);
+      margin-top: -30%;
+      margin-left: -8%;
+      font-size: 6px;
+    }
+    #computer-animation {
+      transform: scale(.9);
+      margin-left: -30%;
+    }
+    #player-animation {
+      transform: scale(.9);
+      /* margin-left: -10%; */
+    }
+  }
+
   .game-stat h4,
   .game-stat p{
         display: inline;
