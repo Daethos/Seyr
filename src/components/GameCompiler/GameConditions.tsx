@@ -171,11 +171,11 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, setD
 
   return (
     <>            
-    {playerWin ? <div className="win-condition">
+    {playerWin ? <div className="win-condition" id='win-condition'>
     You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
     <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button></div> : ''}
-    {computerWin ? <div className="win-condition">
+    {computerWin ? <div className="win-condition" id='win-condition'>
     You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
     <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
     { playerWin || computerWin ? '' : 
