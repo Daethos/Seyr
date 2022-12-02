@@ -91,7 +91,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log("Achreo!")
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
-            player_one_action = 'attack';
             if (combatData.realized_player_one_damage < 0) {
                 combatData.realized_player_one_damage = 0;
             }
@@ -118,7 +117,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             console.log("Cambire!")
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
-            player_one_action = 'attack';
             if (combatData.realized_player_one_damage < 0) {
                 combatData.realized_player_one_damage = 0;
             }

@@ -98,10 +98,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
             combatData.new_player_health += ahnve
             combatData.current_player_health += ahnve
-            console.log("Achreo!")
+            console.log("Ahn've!")
             combatData.player_influence_description = 
-                `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-            player_action = 'attack';
+                `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
             if (combatData.realized_player_damage < 0) {
                 combatData.realized_player_damage = 0;
             }
@@ -130,8 +129,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
             combatData.player_influence_description = 
-                `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-            player_action = 'attack';
+                `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
             if (combatData.realized_player_damage < 0) {
                 combatData.realized_player_damage = 0;
             }
@@ -175,8 +173,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.current_player_health += ilios;
             console.log("Ilios!")
             combatData.player_influence_description = 
-                `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
-            player_action = 'attack';   
+                `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`   
             combatData.weapons[0].magical_penetration += 2;
             combatData.weapons[0].physical_penetration += 2;
             combatData.player_defense.physicalDefenseModifier += 1;
@@ -308,7 +305,6 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             console.log("Se'dyro!")
             combatData.player_influence_description = 
                 `The Caer of Se'dyro sings into your ${combatData.weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
-            player_action = 'attack';
             if (combatData.realized_player_damage < 0) {
                 combatData.realized_player_damage = 0;
             }
@@ -404,8 +400,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += ahnve
                 console.log("Ahn've!")
                 combatData.player_influence_description_two = 
-                    `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-                player_action = 'attack';
+                    `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
+
                 // await attackCompiler(combatData, player_action)
                 if (combatData.realized_player_damage < 0) {
                     combatData.realized_player_damage = 0;
@@ -433,8 +429,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
             if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_influence_description_two = 
-                    `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combat.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-                player_action = 'attack';
+                    `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
+
                 // await attackCompiler(combatData, player_action)
                 if (combatData.realized_player_damage < 0) {
                     combatData.realized_player_damage = 0;
@@ -475,7 +471,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += ilios;
                 combatData.player_influence_description_two = 
                     `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
-                player_action = 'attack';   
+   
                 combatData.weapons[1].magical_penetration += 2;
                 combatData.weapons[1].physical_penetration += 2;
                 combatData.player_defense.physicalDefenseModifier += 1;
@@ -597,7 +593,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += sedyro
                 combatData.player_influence_description_two = 
                     `The Caer of Se'dyro sings into your ${combatData.weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
-                player_action = 'attack';
+
                 // await attackCompiler(combatData, player_action)
                 if (combatData.realized_player_damage < 0) {
                     combatData.realized_player_damage = 0;
