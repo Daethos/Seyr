@@ -389,30 +389,30 @@
       margin-top: -1%;
     }
     #console {
-      transform: scale(.9);
+      transform: scale(.95);
       margin-top: -10%;
       margin-left: 2%;
       font-size: 6px;
     }
     #action-buttons {
-      transform: scale(.9);
-      margin-left: -9.75%;
-      margin-top: 10%;
+      transform: scale(.95);
+      margin-left: -10.25%;
+      margin-top: 5%;
       
     }
     #action-reader {
-      transform: scale(.9);
+      transform: scale(.95);
       margin-left: -11%;
       margin-top: -30%;
       font-size: 6px;  
     }
     #attack-options {
-      transform: scale(.9);
+      transform: scale(.95);
       margin-right: -2%;
       font-size: 6px;
     }
     #auto-engage {
-      transform: scale(.9);
+      transform: scale(.95);
       margin-top: -30%;
       margin-left: -12%;
       font-size: 6px;
@@ -450,7 +450,6 @@
   @media screen and (max-height: 600px) {
     #game-container {
       transform: scaleY(.9);
-      /* max-height: 90vh; */
     }
     #opponent-block {
       transform: scaleY(.92);
