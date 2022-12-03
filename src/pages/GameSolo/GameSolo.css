@@ -361,15 +361,43 @@
       margin-left: -40%;
     }
   }
+  @media screen and (max-height: 700px) {
+    #game-container {
+      transform: scaleY(.97);
+      /* max-height: 90vh; */
+    }
+    #opponent-block {
+      transform: scaleY(.97);
+      margin-top: -30%;
+    }
+    #game-block {
+      transform: scaleY(.97);
+      margin-top: -40%;
+    }
+    #computer-animation {
+      transform: scaleY(1);
+      /* margin-left: -40%; */
+    }
+    #player-animation {
+      transform: scaleY(1);
+      /* margin-left: -40%; */
+    }
+    #win-condition {
+      transform: scale(.85);
+      margin-top: -1%;
+    }
+  }
   @media screen and (max-height: 650px) {
     #game-container {
       transform: scaleY(.95);
       /* max-height: 90vh; */
     }
     #opponent-block {
+      transform: scaleY(.95);
       margin-top: -30%;
     }
     #game-block {
+      transform: scaleY(.95);
       margin-top: -40%;
     }
     #computer-animation {
@@ -384,12 +412,6 @@
       transform: scale(.7);
       margin-top: -1%;
     }
-    /* .computer {
-      margin-top: 50px;
-    }  
-    .player {
-      margin-top: 200px;
-    } */
   }
   @media screen and (max-height: 600px) {
     #game-container {
@@ -397,9 +419,11 @@
       /* max-height: 90vh; */
     }
     #opponent-block {
+      transform: scaleY(.92);
       margin-top: -50%;
     }
     #game-block {
+      transform: scaleY(.92);
       margin-top: -40%;
     }
     #win-condition {
