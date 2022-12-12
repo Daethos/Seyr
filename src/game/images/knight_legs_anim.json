@@ -1,0 +1,52 @@
+{
+    "anims": [
+        {
+            "key": "knight_legs_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_idle"
+                },
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_move_1"
+                },
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_move_2"
+                },
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_move_3"
+                },
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_move_4"
+                },
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_move_5"
+                }
+            ]
+        },
+        {
+            "key": "knight_legs_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_idle"
+                },
+                {
+                    "key": "knight_legs",
+                    "frame": "knight_legs_move_1"
+                }
+            ]
+        }
+    ]
+}

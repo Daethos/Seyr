@@ -1,0 +1,86 @@
+{
+    "frames": [
+        {
+            "filename": "knight_armor_move_4",
+            "frame": {
+                "w": 19,
+                "h": 42,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "knight_armor_move_5",
+            "frame": {
+                "w": 11,
+                "h": 41,
+                "x": 21,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "knight_armor_move_3",
+            "frame": {
+                "w": 26,
+                "h": 39,
+                "x": 33,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "knight_armor_move_2",
+            "frame": {
+                "w": 28,
+                "h": 36,
+                "x": 1,
+                "y": 44
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "knight_armor_move_1",
+            "frame": {
+                "w": 32,
+                "h": 34,
+                "x": 60,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "knight_armor_idle",
+            "frame": {
+                "w": 34,
+                "h": 34,
+                "x": 30,
+                "y": 43
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

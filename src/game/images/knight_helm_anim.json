@@ -1,0 +1,52 @@
+{
+    "anims": [
+        {
+            "key": "knight_helm",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "knight_helm_move",
+                    "frame": "knight_helm_idle"
+                },
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_move_1"
+                },
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_move_2"
+                },
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_move_3"
+                },
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_move_4"
+                },
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_move_5"
+                }
+            ]
+        },
+        {
+            "key": "knight_helm_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_idle"
+                },
+                {
+                    "key": "knight_helm",
+                    "frame": "knight_helm_move_1"
+                }
+            ]
+        }
+    ]
+}

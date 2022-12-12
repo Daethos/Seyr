@@ -8,6 +8,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.186.0",
     "@fortawesome/fontawesome-free": "^6.2.0",
+    "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -33,6 +34,7 @@
     "mongoose": "^6.6.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "phaser": "^3.55.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-dom": "^18.2.0",
@@ -77,5 +79,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3001"
+  "proxy": "http://localhost:3001",
+  "devDependencies": {
+    "file-loader": "^6.2.0"
+  }
 }

@@ -20,6 +20,7 @@ import GameSolo from "../GameSolo/GameSolo";
 import GamePvP from "../GamePvP/GamePvP";
 import GameLobby from "../GameLobby/GameLobby";
 import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
+import Story from "../Story/Story";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -76,6 +77,7 @@ function App() {
         <Route path="/" element={<UserProfile loggedUser={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
+        <Route path="/Story/:asceanID" element={<Story user={user} />} />
         <Route path="/Game/Lobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />
         {/* <Route path="/Game/PvP/:asceanID" element={<GamePvP user={user} />} /> */}

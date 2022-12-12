@@ -10,9 +10,10 @@ interface Props {
     magicalPosture: number;
     physicalDefense: number;
     physicalPosture: number;
+    player: any;
 }
 
-const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture }: Props) => {
+const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
     let totalConstitution: number = attributes.totalConstitution + weaponAttributes?.constitution;
     let totalStrength: number = attributes.totalStrength + weaponAttributes?.strength;
     let totalAgility: number = attributes.totalAgility + weaponAttributes?.agility;
@@ -29,7 +30,8 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
 
     const playerPopover = (
         <Popover id="popover">
-            <Popover.Header id="popover-header" as="h2">Player Statistics</Popover.Header>
+            <Popover.Header id="popover-header" as="h2">Player Statistics
+            </Popover.Header>
             <Popover.Body id="popover-body">
                 <div className="">
                 Magical Defense:  {magicalDefense}% / [{magicalPosture}%]
@@ -42,6 +44,7 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
                 </div>
                 <div>Constitution: {attributes.totalConstitution} [ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ] </div>
             <div>Strength: {attributes.totalStrength} [ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</div>
+            <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
             <div>Agility: {attributes.totalAgility} [ {attributes.totalAgility < 10 ? '- ' + attributes.agilityMod : '+ ' + attributes.agilityMod} ]</div>
             <div>Achre: {attributes.totalAchre} [ {attributes.totalAchre < 10 ? '- ' + attributes.achreMod : '+ ' + attributes.achreMod} ]</div>
             <div>Caeren: {attributes.totalCaeren} [ {attributes.totalCaeren < 10 ? '- ' + attributes.caerenMod : '+ ' + attributes.caerenMod} ]</div>

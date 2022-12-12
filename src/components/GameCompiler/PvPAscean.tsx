@@ -60,8 +60,8 @@ const PvPAscean = ({ ascean, player, PvP, yourData, enemyData, currentPlayerHeal
       <div className="actions">
         {
             yourData.player === 1
-            ? <GamePlayerStats attributes={combatData.player_one_attributes} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
-            : <GamePlayerStats attributes={combatData.player_two_attributes} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
+            ? <GamePlayerStats attributes={combatData.player_one_attributes} player={combatData.player_one} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
+            : <GamePlayerStats attributes={combatData.player_two_attributes} player={combatData.player_two} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
         }
       </div>
       </div>
@@ -96,8 +96,8 @@ const PvPAscean = ({ ascean, player, PvP, yourData, enemyData, currentPlayerHeal
     <div className="actions">
         {
             enemyData.player === 1
-            ? <GamePlayerStats attributes={combatData.player_one_attributes} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
-            : <GamePlayerStats attributes={combatData.player_two_attributes} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
+            ? <GamePlayerStats attributes={combatData.player_one_attributes} player={combatData.player_one} weaponAttributes={combatData.player_one_weapons[0]} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
+            : <GamePlayerStats attributes={combatData.player_two_attributes} player={combatData.player_two} weaponAttributes={combatData.player_two_weapons[0]} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
         }
     </div>
     </div>
