@@ -14,8 +14,8 @@ export default class PlayerArmor extends Entity {
         this.setScale(0.8);
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.circle(this.x, this.y, 18, { isSensor: false, label: 'playerCollider' });
-        let playerSensor = Bodies.circle(this.x, this.y, 24, { isSensor: true, label: 'playerSensor' });
+        let playerCollider = Bodies.circle(this.x, this.y, 12, { isSensor: false, label: 'playerCollider' });
+        let playerSensor = Bodies.circle(this.x, this.y, 20, { isSensor: true, label: 'playerSensor' });
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
             // frictionAir: 0.35,

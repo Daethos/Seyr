@@ -46,8 +46,8 @@ export default class MainScene extends Phaser.Scene {
         
         this.target = new Vector2();
         this.playerHelm = new PlayerHelm({scene: this, x: 100, y: 100, texture: 'knight_helm', frame: 'knight_helm_idle'});
-        this.playerArmor = new PlayerArmor({scene: this, x: 100, y: 132, texture: 'knight_armor', frame: 'knight_armor_idle'});
-        this.playerLegs = new PlayerLegs({scene: this, x: 100, y: 164, texture: 'knight_legs', frame: 'knight_legs_idle'});
+        this.playerArmor = new PlayerArmor({scene: this, x: 98, y: 122, texture: 'knight_armor', frame: 'knight_armor_idle'});
+        this.playerLegs = new PlayerLegs({scene: this, x: 104, y: 144, texture: 'knight_legs', frame: 'knight_legs_idle'});
         // this.add.existing(this.playerHelm);
         // this.add.existing(this.playerArmor);
         // this.add.existing(this.playerLegs);
@@ -79,6 +79,8 @@ export default class MainScene extends Phaser.Scene {
         console.log(joystick.angle, 'New Joystick')
         joystick.setScrollFactor(0);
         this.playerArmor.joystick = joystick;
+        this.playerLegs.joystick = joystick;
+        this.playerHelm.joystick = joystick;
         
         // var pad = this.game.plugins.add(Phaser.VirtualJoystick);
         
