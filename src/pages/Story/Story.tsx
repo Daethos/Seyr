@@ -5,6 +5,7 @@ import Loading from '../../components/Loading/Loading';
 import TileMap from '../../components/Story/TileMap'
 import Phaser from "phaser";
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
+import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 import { calculateGameSize } from '../../game/utility';
 import MainScene from '../../scenes/MainScene';
 const { width, height, multiplier } = calculateGameSize();
@@ -29,8 +30,8 @@ const Story = ({ user }: Props) => {
         type: Phaser.AUTO,
         // orientation: 'LANDSCAPE',
         parent: 'story-game',
-        width: 384,
-        height: 512,
+        width: 1024,
+        height: 1024,
         scene: [MainScene],
         scale: {
             zoom: 1,
@@ -43,13 +44,24 @@ const Story = ({ user }: Props) => {
             }
         },
         plugins: {
+            global: [{
+                key: 'rexVirtualJoystick',
+                plugin: VirtualJoystickPlugin,
+                start: true
+            }],
             scene: [
                 {
                     plugin: PhaserMatterCollisionPlugin,
                     key: 'matterCollision',
                     mapping: 'matterCollision'
                 }
-            ]
+            ],
+            src: [
+                'VirtualJoysticks/plugin/src/Pad.js',
+                'VirtualJoysticks/plugin/src/Stick.js',
+                'VirtualJoysticks/plugin/src/Button.js',
+                'VirtualJoysticks/plugin/src/DPad.js',
+            ],
         },
         backgroundColor: '#000',
     };

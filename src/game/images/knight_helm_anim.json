@@ -1,13 +1,13 @@
 {
     "anims": [
         {
-            "key": "knight_helm",
+            "key": "knight_helm_move",
             "type": "frames",
             "repeat": -1,
             "frameRate": 12,
             "frames": [
                 {
-                    "key": "knight_helm_move",
+                    "key": "knight_helm",
                     "frame": "knight_helm_idle"
                 },
                 {

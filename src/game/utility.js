@@ -8,7 +8,6 @@ import knightArmorJson from '../game/images/knight_armor_atlas.json';
 import knightArmorPng  from '../game/images/knight_armor.png'
 import knightArmorAnim from '../game/images/knight_armor_anim.json';
 
-console.log(knightLegsPng, 'Knight Legs PNG In Utility')
 
 export const calculateGameSize = () => {
     let width = 512;
