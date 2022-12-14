@@ -101,7 +101,12 @@ const Story = ({ user }: Props) => {
         
     return (
         <>
-        <HostScene user={user} ascean={ascean} />
+        <HostScene 
+            user={user} ascean={ascean} 
+            weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} 
+            totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} 
+            attributes={attributes} playerDefense={playerDefense}
+        />
         <div id='story-game' style={{ textAlign: 'center' }} className='my-5'>
         </div>
         </>

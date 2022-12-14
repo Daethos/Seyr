@@ -7,15 +7,23 @@ import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-p
 import Boot from '../Boot';
 import Preload from '../Preload';
 import Menu from '../Menu';
+import Play from '../Play';
 // import { resizeGame } from '../Resize';
 
 
 interface Props {
     user: any;
     ascean: any;
+    weaponOne: any;
+    weaponTwo: any;
+    weaponThree: any;
+    totalPlayerHealth: number;
+    currentPlayerHealth: number;
+    attributes: any;
+    playerDefense: any;
 }
 
-const HostScene = ({ user, ascean }: Props) => {
+const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense }: Props) => {
     const [gameState, setGameState] = useState<any>({});
     const [IS_DEV, setIS_DEV] = useState<boolean>(true);
     const [VERSION, setVERSION] = useState<string>('0.0.1');
@@ -23,6 +31,7 @@ const HostScene = ({ user, ascean }: Props) => {
     scenes.push(Boot);
     scenes.push(Preload);
     scenes.push(Menu);
+    scenes.push(Play);
 
 
     const [config, setConfig] = useState({
@@ -34,7 +43,10 @@ const HostScene = ({ user, ascean }: Props) => {
         centerX: Math.round(0.5 * 360),
         centerY: Math.round(0.5 * 640),
         tileSize: 32,
+        ascean: ascean,
+        user: user,
         scene: scenes,
+        gameVersion: VERSION,
         scale: {
             zoom: 1,
         },
@@ -113,9 +125,9 @@ const HostScene = ({ user, ascean }: Props) => {
     }, [])
     const startGame = async () => {
          try {
-             let game = new Phaser.Game(config);
-             console.log(game, 'New Game');
-
+            let game = new Phaser.Game(config);
+            console.log(game.scene.scenes, 'New Game');
+            setGameState(game);
          } catch (err: any) {
             console.log(err.message, 'Error Starting Game')
          }
@@ -148,10 +160,15 @@ const HostScene = ({ user, ascean }: Props) => {
     
     window.addEventListener('resize', resizeGame);
     
-
+    // TODO:FIXME: game.scene.scenes[0].scene.key
 
     return (
         <div id='story-game' style={{ textAlign: 'center' }} className='my-5'>
+            {
+                gameState?.scene?.scenes?.find((scene: any) => scene?.scene?.key === 'Play' && scene?.scene?.settings?.active === true)
+                ? ''
+                : ''
+            }
         </div>
   )
 }

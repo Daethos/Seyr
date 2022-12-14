@@ -50,9 +50,9 @@ export default class NewText {
         let obj = this.ctx.add.text(
             this.x,
             this.y,
-            // this.style.fontFamily,
             this.text,
             this.style.fontSize,
+            this.style.fontFamily,
             this.style.align
         );
 
