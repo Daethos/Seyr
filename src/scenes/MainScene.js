@@ -1,4 +1,5 @@
 import tokenService from "../utils/tokenService";
+import { storyAscean } from "../game/StoryAscean";
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Phaser, { Math as pMath } from 'phaser';
@@ -11,9 +12,9 @@ import PlayerLegs from "../game/PlayerLegs";
 import Tileset from '../game/images/Tileset.png';
 import TileJson from '../game/images/map.json';
 import { CanvasScaler } from "../game/CanvasScaler";
-
 import JoystickPng from '../game/images/generic-joystick.png';
 import JoystickJson from '../game/images/generic-joystick.json';
+
 
 const { Vector2 } = pMath;
 
@@ -38,8 +39,8 @@ export default class MainScene extends Phaser.Scene {
     }
     
     create() {
-        const scaler = new CanvasScaler(this, 'CanvasScaler');
-        this.add.existing(scaler);
+        // const scaler = new CanvasScaler(this, 'CanvasScaler');
+        // this.add.existing(scaler);
         const map = this.make.tilemap({ key: 'map' });
         const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
         const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
@@ -67,7 +68,7 @@ export default class MainScene extends Phaser.Scene {
 
         var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
             x: 100,
-            y: 800,
+            y: 400,
             radius: 50,
             base: this.add.circle(0, 0, 25, 0x888888),
             thumb: this.add.circle(0, 0, 12.5, 0xcccccc),
@@ -87,7 +88,6 @@ export default class MainScene extends Phaser.Scene {
         // this.pad = this.plugins.add(Phaser.VirtualJoystick);
         // var pad = this.plugins.add(Phaser.VirtualJoystick);
         // this.stick = this.pad.addStick(0, 0, 100, 'joystick');
-
           
           
     }
@@ -98,4 +98,31 @@ export default class MainScene extends Phaser.Scene {
         this.playerArmor.update();
         this.playerLegs.update();
     }
+}
+
+export const MainSceneReact = () => {
+
+    const { asceanID } = useParams();
+    const [loading, setLoading] = useState(true);
+    const [ascean, setAscean] = useState({});
+    const [weaponOne, setWeaponOne] = useState({});
+    const [weaponTwo, setWeaponTwo] = useState({});
+    const [weaponThree, setWeaponThree] = useState({});
+    const [totalPlayerHealth, setTotalPlayerHealth] = useState(0);
+    const [currentPlayerHealth, setCurrentPlayerHealth] = useState(-5)
+    const [attributes, setAttributes] = useState([]);
+    const [playerDefense, setPlayerDefense] = useState([]);
+
+    const getAscean = async () => {
+        const response = await storyAscean(asceanID);
+        console.log(response)
+        
+    } 
+
+
+    return (
+        <div>
+
+        </div>
+    )
 }

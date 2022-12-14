@@ -4,10 +4,10 @@ import * as asceanAPI from '../../utils/asceanApi';
 import Loading from '../../components/Loading/Loading';
 import TileMap from '../../components/Story/TileMap'
 import Phaser from "phaser";
-import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
-import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
+
 import { calculateGameSize } from '../../game/utility';
 import MainScene from '../../scenes/MainScene';
+import HostScene from '../../game/sceneComponents/HostScene';
 const { width, height, multiplier } = calculateGameSize();
 
 interface Props {
@@ -26,49 +26,11 @@ const Story = ({ user }: Props) => {
     const [attributes, setAttributes] = useState<any>([]);
     const [playerDefense, setPlayerDefense] = useState<any>([]);
 
-    const config = {
-        type: Phaser.AUTO,
-        // orientation: 'LANDSCAPE',
-        parent: 'story-game',
-        width: 1024,
-        height: 1024,
-        scene: [MainScene],
-        scale: {
-            zoom: 1,
-        },
-        physics: {
-            default: 'matter',
-            matter: {
-                debug: true,
-                gravity: { y: 0 },
-            }
-        },
-        plugins: {
-            global: [{
-                key: 'rexVirtualJoystick',
-                plugin: VirtualJoystickPlugin,
-                start: true
-            }],
-            scene: [
-                {
-                    plugin: PhaserMatterCollisionPlugin,
-                    key: 'matterCollision',
-                    mapping: 'matterCollision'
-                }
-            ],
-            src: [
-                'VirtualJoysticks/plugin/src/Pad.js',
-                'VirtualJoysticks/plugin/src/Stick.js',
-                'VirtualJoysticks/plugin/src/Button.js',
-                'VirtualJoysticks/plugin/src/DPad.js',
-            ],
-        },
-        backgroundColor: '#000',
-    };
+    
 
     const getAscean = useCallback(async () => {
         try {
-            const game = new Phaser.Game(config);
+            // const game = new Phaser.Game(config);
             const response = await asceanAPI.getOneAscean(asceanID);
             setAscean(response.data);
             const stats = await asceanAPI.getAsceanStats(asceanID);
@@ -131,9 +93,15 @@ const Story = ({ user }: Props) => {
       
     // }, [])
     
+    if (loading) {
+        return (
+            <Loading NavBar={true} />
+        )
+    }
         
     return (
         <>
+        <HostScene user={user} ascean={ascean} />
         <div id='story-game' style={{ textAlign: 'center' }} className='my-5'>
         </div>
         </>

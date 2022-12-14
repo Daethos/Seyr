@@ -37,7 +37,6 @@ export default class PlayerArmor extends Entity {
         const speed = 2.5;
         let playerVelocity = new Phaser.Math.Vector2();
         this.movementSpeed = 24;
-        console.log(this.joystick.forceY)
 
         playerVelocity.normalize();
         playerVelocity.scale(speed);
