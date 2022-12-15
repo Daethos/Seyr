@@ -47,8 +47,8 @@ export default class MainScene extends Phaser.Scene {
         
         this.target = new Vector2();
         this.playerHelm = new PlayerHelm({scene: this, x: 100, y: 100, texture: 'knight_helm', frame: 'knight_helm_idle'});
-        this.playerArmor = new PlayerArmor({scene: this, x: 98, y: 122, texture: 'knight_armor', frame: 'knight_armor_idle'});
-        this.playerLegs = new PlayerLegs({scene: this, x: 104, y: 144, texture: 'knight_legs', frame: 'knight_legs_idle'});
+        this.playerArmor = new PlayerArmor({scene: this, x: 98, y: 116, texture: 'knight_armor', frame: 'knight_armor_idle'});
+        this.playerLegs = new PlayerLegs({scene: this, x: 104, y: 132, texture: 'knight_legs', frame: 'knight_legs_idle'});
         // this.add.existing(this.playerHelm);
         // this.add.existing(this.playerArmor);
         // this.add.existing(this.playerLegs);
@@ -62,7 +62,7 @@ export default class MainScene extends Phaser.Scene {
         camera.zoom = 1.5;
         camera.startFollow(this.playerArmor);
         camera.setLerp(0.1, 0.1);
-        camera.setBounds(0, 0, this.game.config.width, this.game.config.height);
+        camera.setBounds(0, 0, 1024, 1024);
         console.log(this.game, 'What is this.game?')
 
 

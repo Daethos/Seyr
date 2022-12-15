@@ -11,14 +11,14 @@ export default class PlayerLegs extends Entity {
         let { scene, x, y, texture, frame } = data;
         super({ ...data, name: 'player' });
         this.scene.add.existing(this);
-        this.setScale(0.85);
+        this.setScale(0.45);
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.circle(this.x, this.y, 12, { isSensor: false, label: 'playerCollider' });
-        let playerSensor = Bodies.circle(this.x, this.y, 18, { isSensor: true, label: 'playerSensor' });
+        let playerCollider = Bodies.circle(this.x, this.y, 6, { isSensor: false, label: 'playerCollider' });
+        let playerSensor = Bodies.circle(this.x, this.y, 8, { isSensor: true, label: 'playerSensor' });
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
-            // frictionAir: 0.35,
+            frictionAir: 0.35,
         });
         this.setExistingBody(compoundBody);
         this.setFixedRotation();
@@ -37,23 +37,23 @@ export default class PlayerLegs extends Entity {
         playerVelocity.scale(speed);
         // this.setVelocity(playerVelocity.x, playerVelocity.y);
 
-        if (this.joystick.touchCursor.forceX === 0) {
-            this.setVelocityX(this.joystick.touchCursor.start.x);
+        if (this.joystick.touchCursor.forceX < 10 || this.joystick.touchCursor.forceX > -10) {
+            this.setVelocityX(0);
         } 
-        if (this.joystick.touchCursor.forceX > 0) {
+        if (this.joystick.touchCursor.forceX > 10) {
             this.setVelocityX(1);
         } 
-        if (this.joystick.touchCursor.forceX < 0) {
+        if (this.joystick.touchCursor.forceX < -10) {
             this.setVelocityX(-1);
         }
 
-        if (this.joystick.touchCursor.forceY === 0) {
-            this.setVelocityY(this.joystick.touchCursor.start.y);
+        if (this.joystick.touchCursor.forceY < 10 || this.joystick.touchCursor.forceY > -10) {
+            this.setVelocityY(0);
         } 
-        if (this.joystick.touchCursor.forceY > 0) {
+        if (this.joystick.touchCursor.forceY > 10) {
             this.setVelocityY(1);
         } 
-        if (this.joystick.touchCursor.forceY < 0) {
+        if (this.joystick.touchCursor.forceY < -10) {
             this.setVelocityY(-1);
         }
 

@@ -4,7 +4,7 @@
             "key": "knight_legs_move",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 12,
+            "frameRate": 8,
             "frames": [
                 {
                     "key": "knight_legs",
@@ -21,14 +21,6 @@
                 {
                     "key": "knight_legs",
                     "frame": "knight_legs_move_3"
-                },
-                {
-                    "key": "knight_legs",
-                    "frame": "knight_legs_move_4"
-                },
-                {
-                    "key": "knight_legs",
-                    "frame": "knight_legs_move_5"
                 }
             ]
         },

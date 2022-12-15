@@ -21,6 +21,8 @@ export default class Menu extends Phaser.Scene {
     }
 
     create() {
+
+        this.createBackground();
         // Game Title
         this.title = new NewText(
             this,
@@ -38,6 +40,30 @@ export default class Menu extends Phaser.Scene {
             'standard'
         )
 
+        this.createMoustInput();
+        this.createKeyboardInput();
+
+    }
+
+    createBackground() {
+        this.bg = this.add.graphics({ x: 0, y: 0 });
+        this.bg.fillStyle('0x8A2BE2', 1);
+        this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
+    }
+
+    createMoustInput() {
+        this.input.on('pointerup', this.goPlay, this);
+    }
+
+    createKeyboardInput() {
+        function handleKeyUp(e) {
+            switch(e.code) {
+                case 'Enter':
+                    this.goPlay();
+                    break;
+            }
+        }
+        this.input.keyboard.on('keyup', handleKeyUp, this);
     }
 
     goPlay() {

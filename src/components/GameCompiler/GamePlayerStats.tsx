@@ -76,7 +76,7 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
     <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
         <Button variant=""  >
             {/* <div className="actions"> */}
-        <h3 style={{ fontSize: 10 + 'px' }}>Combat Stats</h3>
+        <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mb-5'>{player.name}</h3>
         {/* </div> */}
         </Button>
     </OverlayTrigger>

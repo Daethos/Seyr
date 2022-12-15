@@ -41,6 +41,7 @@ const Story = ({ user }: Props) => {
             setAttributes(stats.data.data.attributes)
             setTotalPlayerHealth(stats.data.data.attributes.healthTotal)
             setCurrentPlayerHealth(stats.data.data.attributes.healthTotal)
+            console.log(stats, 'The Ascean Returned!')
             setLoading(false)
         } catch (err: any) {
             setLoading(false)

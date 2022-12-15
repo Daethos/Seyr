@@ -26,17 +26,21 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
     }
     return (
         <>
-        <div id='game-block' className="game-block" 
+        <div className="game-block"
             // style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}
         >
-        <div className="actions">
-            <button onClick={() => setShowPlayer(!showPlayer)}>
-        <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-        <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
-            </button>
+        <div className="actions" style={{ marginBottom: 10 + '%', maxWidth: 34 + '%' }}>
+        <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} story={true} />
         </div>
+        <GamePlayerStats 
+            attributes={attributes} player={ascean} weaponAttributes={weaponOne} 
+            magicalDefense={playerDefense.magicalDefenseModifier} magicalPosture={playerDefense.magicalPosture} 
+            physicalDefense={playerDefense.physicalDefenseModifier} physicalPosture={playerDefense.physicalPosture} />
+            {/* <button className='btn' onClick={() => setShowPlayer(!showPlayer)}> */}
+        {/* <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: -5 + 'px' }} className='mb-2'>{ascean.name}</h3> */}
+            {/* </button> */}
         {
-            showPlayer ?
+            !showPlayer ?
             <>
             <AsceanImageCard
                 weapon_one={weaponOne}
@@ -54,11 +58,7 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
                 loading={loading}
                 key={ascean._id}
             />
-            <div className="actions">
-            <GamePlayerStats 
-                attributes={attributes} player={ascean} weaponAttributes={weaponOne} 
-                magicalDefense={playerDefense.magicalDefenseModifier} magicalPosture={playerDefense.magicalPosture} 
-                physicalDefense={playerDefense.physicalDefenseModifier} physicalPosture={playerDefense.physicalPosture} />
+            <div className="actions" style={{ marginTop: 12.5 + '%' }}>
             </div>
             </>
             : ''

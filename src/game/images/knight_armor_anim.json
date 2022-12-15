@@ -4,7 +4,7 @@
             "key": "knight_armor_move",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 12,
+            "frameRate": 8,
             "frames": [
                 {
                     "key": "knight_armor",
@@ -21,14 +21,6 @@
                 {
                     "key": "knight_armor",
                     "frame": "knight_armor_move_3"
-                },
-                {
-                    "key": "knight_armor",
-                    "frame": "knight_armor_move_4"
-                },
-                {
-                    "key": "knight_armor",
-                    "frame": "knight_armor_move_5"
                 }
             ]
         },

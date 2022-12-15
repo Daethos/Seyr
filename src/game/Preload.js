@@ -7,6 +7,8 @@ import PlayerLegs from "../game/PlayerLegs";
 import Tileset from '../game/images/Tileset.png';
 import TileJson from '../game/images/map.json';
 import storyAscean from './StoryAscean';
+import joystickPng from './images/generic-joystick.png';
+import joystickJson from './images/generic-joystick.json';
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -26,15 +28,22 @@ export default class Preload extends Phaser.Scene {
     }
 
     preload() {
+        this.bg = this.add.graphics({ x: 0, y: 0 });
+        this.bg.fillStyle('0x8A2BE2', 1);
+        this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
+        this.load.script('generic', 'phaser-virtual-joystick.min.js');
+        this.load.atlas('generic', joystickPng, joystickJson);
         PlayerHelm.preload(this);
         PlayerArmor.preload(this);
         PlayerLegs.preload(this);
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
-        this.load.image('tiles', Tileset)
-        this.load.tilemapTiledJSON('map', TileJson)
+        this.load.image('tiles', Tileset);
+        this.load.tilemapTiledJSON('map', TileJson);
+        // this.load.atlas('generic', joystickPng, joystickJson)
         // Create Loading Bar
         this.createLoadingBar();
         // SpriteSheets
+        
     }
 
     create() {
@@ -68,8 +77,6 @@ export default class Preload extends Phaser.Scene {
         // Loading Bar
         let x = 10;
         let y = this.centerY + 5;
-        let w = 360 - 2 * x;
-        let h = 18;
         console.log(this.load.progress, 'Progress')
         this.progress = this.add.graphics({ x: x, y: y });
         this.border = this.add.graphics({ x: x, y: y })

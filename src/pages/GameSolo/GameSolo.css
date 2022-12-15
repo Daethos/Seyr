@@ -148,6 +148,9 @@
     background-color: red;
     font-size: 10px;
 }
+#story {
+  max-width: 34%;
+}
 .progress {
     position: absolute;
     overflow: hidden;

@@ -1,32 +1,6 @@
 {
     "frames": [
         {
-            "filename": "knight_legs_move_4",
-            "frame": {
-                "w": 11,
-                "h": 34,
-                "x": 0,
-                "y": 0
-            },
-            "anchor": {
-                "x": 0.5,
-                "y": 0.5
-            }
-        },
-        {
-            "filename": "knight_legs_move_5",
-            "frame": {
-                "w": 7,
-                "h": 33,
-                "x": 11,
-                "y": 0
-            },
-            "anchor": {
-                "x": 0.5,
-                "y": 0.5
-            }
-        },
-        {
             "filename": "knight_legs_move_3",
             "frame": {
                 "w": 16,

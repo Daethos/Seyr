@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Phaser from "phaser";
 import '../PhaserGame.css'
 import MainScene from '../../scenes/MainScene';
@@ -8,6 +8,7 @@ import Boot from '../Boot';
 import Preload from '../Preload';
 import Menu from '../Menu';
 import Play from '../Play';
+import StoryAscean from '../../components/GameCompiler/StoryAscean';
 // import { resizeGame } from '../Resize';
 
 
@@ -25,6 +26,8 @@ interface Props {
 
 const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense }: Props) => {
     const [gameState, setGameState] = useState<any>({});
+    const [loading, setLoading] = useState<boolean>(false)
+    const gameRef = useRef<any>({});
     const [IS_DEV, setIS_DEV] = useState<boolean>(true);
     const [VERSION, setVERSION] = useState<string>('0.0.1');
     let scenes: any[] = [];
@@ -33,27 +36,31 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     scenes.push(Menu);
     scenes.push(Play);
 
-
+// console.log(ascean, user, 'Ascean and User')
     const [config, setConfig] = useState({
         type: Phaser.AUTO,
         // orientation: 'LANDSCAPE',
         parent: 'story-game',
         width: 360,
         height: 640,
-        centerX: Math.round(0.5 * 360),
-        centerY: Math.round(0.5 * 640),
-        tileSize: 32,
-        ascean: ascean,
-        user: user,
+        // centerX: Math.round(0.5 * 360),
+        // centerY: Math.round(0.5 * 640),
+        // tileSize: 32,
+        // ascean: ascean,
+        // user: user,
+        // gameVersion: VERSION,
         scene: scenes,
-        gameVersion: VERSION,
         scale: {
             zoom: 1,
+        },
+        data: {
+            ascean: ascean,
+            user: user
         },
         physics: {
             default: 'matter',
             matter: {
-                debug: true,
+                debug: false,
                 gravity: { y: 0 },
             }
         },
@@ -121,8 +128,29 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     // };
 
     useEffect(() => {
-        startGame();
-    }, [])
+        // if (!gameRef.current) {
+            setLoading(true);
+            gameRef.current = new Phaser.Game(config);
+            console.log(gameRef.current, 'New Game?');
+            const gameDataEvent = new CustomEvent('game-data-updated', {
+                detail: ascean
+            });
+
+            window.dispatchEvent(gameDataEvent);
+            setLoading(false);
+        // }
+        // startGame();
+
+    }, [ascean])
+
+    useEffect(() => {
+        window.addEventListener('get-ascean', ascean);
+    
+      return () => {
+        window.removeEventListener('get-ascean', ascean);
+      }
+    }, [ascean])
+    
     const startGame = async () => {
          try {
             let game = new Phaser.Game(config);
@@ -164,9 +192,22 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
 
     return (
         <div id='story-game' style={{ textAlign: 'center' }} className='my-5'>
+            {/* <StoryAscean 
+                        ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading}
+                        currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
+                    /> */}
+            {
+                gameState?.scene?.scenes?.map((scene: any) => console.log(scene, 'Scene ???'))
+            }
             {
                 gameState?.scene?.scenes?.find((scene: any) => scene?.scene?.key === 'Play' && scene?.scene?.settings?.active === true)
-                ? ''
+                ? 
+                    <>
+                    <StoryAscean 
+                        ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading}
+                        currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
+                    />
+                    </>
                 : ''
             }
         </div>
