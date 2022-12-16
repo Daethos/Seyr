@@ -1,0 +1,124 @@
+{
+    "anims": [
+        {
+            "key": "astral_legs_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "astral",
+                    "frame": "astral_legs_idle"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_legs_move_1"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_legs_move_2"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_legs_move_3"
+                }
+            ]
+        },
+        {
+            "key": "astral_legs_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "astral",
+                    "frame": "astral_legs_idle"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_legs_move_1"
+                }
+            ]
+        },
+        {
+            "key": "astral_helm_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "astral",
+                    "frame": "astral_helm_idle"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_helm_move_1"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_helm_move_2"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_helm_move_3"
+                }
+            ]
+        },
+        {
+            "key": "astral_helm_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "astral",
+                    "frame": "astral_helm_idle"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_helm_move_1"
+                }
+            ]
+        },
+        {
+            "key": "astral_armor_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "astral",
+                    "frame": "astral_armor_idle"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_armor_move_1"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_armor_move_2"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_armor_move_3"
+                }
+            ]
+        },
+        {
+            "key": "astral_armor_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "astral",
+                    "frame": "astral_armor_idle"
+                },
+                {
+                    "key": "astral",
+                    "frame": "astral_armor_move_1"
+                }
+            ]
+        }
+    ]
+}

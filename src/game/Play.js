@@ -13,16 +13,12 @@ export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
         this.ascean = null;
-        console.log(this, 'Events ?')
-        // this.events.on('game-data-updated', this.onGameUpdated, this);
     }
     
-    onGameUpdated(e) {
-        this.ascean = e.detail;
-        
-    }
-    
-    init() {
+    init(data) {
+        console.log(data, 'Data from Play');
+        this.data = data;
+        this.gameData = this.data.gameData.ascean.gameData.ascean;
         this.CONFIG = this.sys.game.config;
         
         this.DEPTH = {
@@ -36,31 +32,109 @@ export default class Play extends Phaser.Scene {
         this.thumbSprite = this.add.sprite(0, 0, stick);
     }
     
-    
     create() {
-        const asceanFinishedEventListener = ({ ascean }) => {
-            this.ascean = ascean;
-            console.log(ascean, 'Another stab at an Ascean')
-            window.removeEventListener('get-ascean', asceanFinishedEventListener);
-        };
-        window.addEventListener('get-ascean', asceanFinishedEventListener)
+        console.log(this, 'What is this?')
+        let player_armor = this.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
+        let player_helm = this.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
+        let player_legs = this.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
+        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes("knight's") || player_helm.includes("marauder's")) {
+            player_helm = player_helm.replace(/quor'ite/g, 'earth');
+            player_helm = player_helm.replace(/hood/g, 'helm');
+            player_helm = player_helm.replace(/knight's/g, 'knight');
+            player_helm = player_helm.replace(/marauder's/g, 'marauder');
+        }
+        if (player_armor.includes('cuirass') || player_armor.includes('robes') || player_armor.includes("quor'ite") || player_armor.includes("knight's") || player_armor.includes("marauder's")) {
+            player_armor = player_armor.replace(/cuirass/g, 'armor');
+            player_armor = player_armor.replace(/robes/g, 'armor');
+            player_armor = player_armor.replace(/quor'ite/g, 'earth');
+            player_armor = player_armor.replace(/knight's/g, 'knight');
+            player_armor = player_armor.replace(/marauder's/g, 'marauder');
+        }
+        if (player_legs.includes('greaves') || player_legs.includes('pants') || player_legs.includes("quor'ite") || player_legs.includes("knight's") || player_legs.includes("marauder's")) {
+            player_legs = player_legs.replace(/greaves/g, 'legs');
+            player_legs = player_legs.replace(/pants/g, 'legs');
+            player_legs = player_legs.replace(/quor'ite/g, 'earth');
+            player_legs = player_legs.replace(/knight's/g, 'knight');
+            player_legs = player_legs.replace(/marauder's/g, 'marauder');
+        }
 
-        console.log(this.ascean, 'Ascean?')
+        let armor_texture = player_armor.replace('_armor', '');
+        let helm_texture = player_helm.replace('_helm', '');
+        let legs_texture = player_legs.replace('_legs', '');
+
+        console.log(player_armor, player_helm, player_legs, ' <- Player Frames', armor_texture, helm_texture, legs_texture, ' <- Player Textures');
         const map = this.make.tilemap({ key: 'map' });
         const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
         const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
-        console.log(this, 'This in Play')
-        // if (this.gameRef.current) {
-        //     const { ascean, user } = this.gameRef.current.data;
-        //     console.log(ascean, user, 'Ascean and User?')
-        //     // Use gameData and setGameData in your scene
-        //   }
 
-        this.playerHelm = new PlayerHelm({scene: this, x: 100.25, y: 100, texture: 'knight_helm', frame: 'knight_helm_idle'});
-        this.playerArmor = new PlayerArmor({scene: this, x: 99, y: 110, texture: 'knight_armor', frame: 'knight_armor_idle'});
-        this.playerLegs = new PlayerLegs({scene: this, x: 105, y: 120, texture: 'knight_legs', frame: 'knight_legs_idle'});
+        this.playerHelm = new PlayerHelm({scene: this, x: 100, y: 100, texture: helm_texture, frame: `${player_helm}_idle`});
+        this.playerArmor = new PlayerArmor({scene: this, x: 100, y: 110, texture: armor_texture, frame: `${player_armor}_idle`});
+        this.playerLegs = new PlayerLegs({scene: this, x: 100, y: 120, texture: legs_texture, frame: `${player_legs}_idle`});
+
+        // this.playerHelm.setScale(1);
+        // this.playerArmor.setScale(1);
+        // this.playerLegs.setScale(1);
+
+        // Get the top and bottom coordinates of each object
+        let objectATop = this.playerHelm.getTopLeft().y;
+        let objectABottom = this.playerHelm.getBottomRight().y;
+        let objectBTop = this.playerArmor.getTopLeft().y;
+        let objectBBottom = this.playerArmor.getBottomRight().y;
+        let objectCTop = this.playerLegs.getTopLeft().y;
+        let objectCBottom = this.playerLegs.getBottomRight().y;
+
+        // Calculate the total height of all three objects
+        let totalHeight = objectATop - objectABottom + objectBTop - objectBBottom + objectCTop - objectCBottom;
+
+        // Set the y property of each object's Transform component to align them vertically
+        this.playerHelm.y = -totalHeight / 2 + (objectATop - objectABottom) / 2;
+        this.playerArmor.y = 0;
+        this.playerLegs.y = totalHeight / 2 - (objectCTop - objectCBottom) / 2;
+
+        // TODO:FIXME: This is the code I'll try tomorrow to align all the sprites together
+        // import objectA from './objectA';
+        // import objectB from './objectB';
+        // import objectC from './objectC';
+
+        // // Get the bounding box of each object
+        // let objectABounds = objectA.body.getBounds();
+        // let objectBBounds = objectB.body.getBounds();
+        // let objectCBounds = objectC.body.getBounds();
+
+        // // Get the bottom and top points of the circular colliders
+        // let objectABottom = objectABounds.bottom;
+        // let objectATop = objectABounds.top;
+        // let objectBBottom = objectBBounds.bottom;
+        // let objectBTop = objectBBounds.top;
+        // let objectCBottom = objectCBounds.bottom;
+        // let objectCTop = objectCBounds.top;
+
+        // // Calculate the total height of all three objects
+        // let totalHeight = objectATop - objectABottom + objectBTop - objectBBottom + objectCTop - objectCBottom;
+
+        // // Set the y property of each object's Transform component to align them vertically
+        // objectA.y = -totalHeight / 2 + (objectATop - objectABottom) / 2;
+        // objectB.y = 0;
+        // objectC.y = totalHeight / 2 - (objectCTop - objectCBottom) / 2;
+
+
+
+
+        // this.playerArmor.setScale(0.375);
+        // this.playerHelm.setScale(0.225);
+        // this.playerLegs.setScale(0.45);
+
+        // this.playerArmor.y = this.playerHelm.y + 10;
+        // this.playerLegs.y = this.playerArmor.y + 10;
+
+        // let playerArmor = this.playerArmor;
+        // let playerLegs = this.playerLegs;
+
+        // playerArmor.alignTo(this.playerHelm, Phaser.Display.Align.BOTTOM_CENTER, 0, 0);
+        // playerLegs.alignTo(this.playerArmor, Phaser.Display.Align.BOTTOM_CENTER, 0, 0);
+
         let camera = this.cameras.main;
-        camera.zoom = 1;
+        camera.zoom = 2;
         camera.startFollow(this.playerArmor);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 1024, 1024);
@@ -77,27 +151,17 @@ export default class Play extends Phaser.Scene {
             // fixed: true,
             // enable: true
         });
-        console.log(joystick.angle, 'New Joystick')
         joystick.setScrollFactor(0);
         this.playerArmor.joystick = joystick;
         this.playerLegs.joystick = joystick;
         this.playerHelm.joystick = joystick;
-        console.log(this.game, 'Game ?')
-        // this.virtualJoystick = new VirtualJoyStick(this, {
-        //     baseSprite,
-        //     thumbSprite
-        // })
-        // this.virtualJoystick.add(200, 300);
-
-        // this.pad = this.game.plugins.get(Phaser.VirtualJoystick);
-        // console.log(this.pad, 'this.pad ?')
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
         // this.stick.alignBottomLeft(20);
     }
 
     update() {
-        this.playerHelm.update();
-        this.playerArmor.update();
-        this.playerLegs.update();
+        this.playerHelm.update(this);
+        this.playerArmor.update(this);
+        this.playerLegs.update(this);
     }
 }

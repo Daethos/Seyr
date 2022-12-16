@@ -1,0 +1,164 @@
+{
+    "frames": [
+        {
+            "filename": "achreon_helm_move_3",
+            "frame": {
+                "w": 26,
+                "h": 40,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_helm_move_2",
+            "frame": {
+                "w": 28,
+                "h": 36,
+                "x": 28,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_armor_move_3",
+            "frame": {
+                "w": 24,
+                "h": 36,
+                "x": 1,
+                "y": 42
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_helm_idle",
+            "frame": {
+                "w": 34,
+                "h": 31,
+                "x": 57,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_armor_move_2",
+            "frame": {
+                "w": 27,
+                "h": 34,
+                "x": 26,
+                "y": 42
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_legs_move_3",
+            "frame": {
+                "w": 18,
+                "h": 34,
+                "x": 54,
+                "y": 38
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_helm_move_1",
+            "frame": {
+                "w": 33,
+                "h": 32,
+                "x": 1,
+                "y": 79
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_armor_idle",
+            "frame": {
+                "w": 32,
+                "h": 33,
+                "x": 35,
+                "y": 77
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_armor_move_1",
+            "frame": {
+                "w": 31,
+                "h": 32,
+                "x": 92,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_legs_move_2",
+            "frame": {
+                "w": 19,
+                "h": 32,
+                "x": 68,
+                "y": 73
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_legs_idle",
+            "frame": {
+                "w": 24,
+                "h": 31,
+                "x": 73,
+                "y": 34
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "achreon_legs_move_1",
+            "frame": {
+                "w": 22,
+                "h": 31,
+                "x": 98,
+                "y": 34
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -6,7 +6,6 @@ export default class Menu extends Phaser.Scene {
         super({ key: 'Menu', active: false });
         this.centerX = 180;
         this.centerY = 320;
-        console.log(this, 'This Menu')
         
     }
 
@@ -16,11 +15,13 @@ export default class Menu extends Phaser.Scene {
         return { centerX , centerY }
     }
 
-    init() {
-
+    init(data) {
+        console.log(data, 'Any Data?')
+        this.gameData = data;
     }
 
     create() {
+        console.log(this.gameData, 'This Menu')
 
         this.createBackground();
         // Game Title
@@ -67,6 +68,10 @@ export default class Menu extends Phaser.Scene {
     }
 
     goPlay() {
-        this.scene.start('Play');
+        this.scene.start('Play', {
+            gameData: {
+                ascean: this.gameData
+            }
+        });
     }
 }

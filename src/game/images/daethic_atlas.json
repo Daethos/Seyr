@@ -1,0 +1,164 @@
+{
+    "frames": [
+        {
+            "filename": "daethic_armor_move_3",
+            "frame": {
+                "w": 19,
+                "h": 39,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_armor_move_2",
+            "frame": {
+                "w": 21,
+                "h": 36,
+                "x": 21,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_armor_idle",
+            "frame": {
+                "w": 26,
+                "h": 34,
+                "x": 1,
+                "y": 41
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_armor_move_1",
+            "frame": {
+                "w": 24,
+                "h": 34,
+                "x": 43,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_legs_move_3",
+            "frame": {
+                "w": 16,
+                "h": 32,
+                "x": 28,
+                "y": 38
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_helm_move_3",
+            "frame": {
+                "w": 19,
+                "h": 31,
+                "x": 45,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_legs_move_2",
+            "frame": {
+                "w": 18,
+                "h": 31,
+                "x": 68,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_helm_idle",
+            "frame": {
+                "w": 25,
+                "h": 30,
+                "x": 1,
+                "y": 76
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_helm_move_2",
+            "frame": {
+                "w": 21,
+                "h": 30,
+                "x": 65,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_legs_idle",
+            "frame": {
+                "w": 22,
+                "h": 30,
+                "x": 27,
+                "y": 76
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_legs_move_1",
+            "frame": {
+                "w": 20,
+                "h": 30,
+                "x": 65,
+                "y": 67
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "daethic_helm_move_1",
+            "frame": {
+                "w": 23,
+                "h": 29,
+                "x": 87,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -26,7 +26,18 @@ interface Props {
 
 const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense }: Props) => {
     const [gameState, setGameState] = useState<any>({});
-    const [loading, setLoading] = useState<boolean>(false)
+    const [gameData, setGameData] = useState<any>({
+        ascean: ascean,
+        user: user,
+        weapon_one: weaponOne,
+        weapon_two: weaponTwo,
+        weapon_three: weaponThree,
+        total_player_health: totalPlayerHealth,
+        current_player_health: currentPlayerHealth,
+        player_attributes: attributes,
+        player_efense: playerDefense
+    });
+    const [loading, setLoading] = useState<boolean>(false);
     const gameRef = useRef<any>({});
     const [IS_DEV, setIS_DEV] = useState<boolean>(true);
     const [VERSION, setVERSION] = useState<string>('0.0.1');
@@ -39,16 +50,9 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
 // console.log(ascean, user, 'Ascean and User')
     const [config, setConfig] = useState({
         type: Phaser.AUTO,
-        // orientation: 'LANDSCAPE',
         parent: 'story-game',
         width: 360,
         height: 640,
-        // centerX: Math.round(0.5 * 360),
-        // centerY: Math.round(0.5 * 640),
-        // tileSize: 32,
-        // ascean: ascean,
-        // user: user,
-        // gameVersion: VERSION,
         scene: scenes,
         scale: {
             zoom: 1,
@@ -60,7 +64,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         physics: {
             default: 'matter',
             matter: {
-                debug: false,
+                debug: true,
                 gravity: { y: 0 },
             }
         },
@@ -87,69 +91,50 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         backgroundColor: '#000',
     })
 
-    // const config = {
-    //     type: Phaser.AUTO,
-    //     // orientation: 'LANDSCAPE',
-    //     parent: 'story-game',
-    //     width: 1024,
-    //     height: 1024,
-    //     scene: [MainScene],
-    //     scale: {
-    //         zoom: 1,
-    //     },
-    //     physics: {
-    //         default: 'matter',
-    //         matter: {
-    //             debug: true,
-    //             gravity: { y: 0 },
-    //         }
-    //     },
-    //     plugins: {
-    //         global: [{
-    //             key: 'rexVirtualJoystick',
-    //             plugin: VirtualJoystickPlugin,
-    //             start: true
-    //         }],
-    //         scene: [
-    //             {
-    //                 plugin: PhaserMatterCollisionPlugin,
-    //                 key: 'matterCollision',
-    //                 mapping: 'matterCollision'
-    //             }
-    //         ],
-    //         src: [
-    //             'VirtualJoysticks/plugin/src/Pad.js',
-    //             'VirtualJoysticks/plugin/src/Stick.js',
-    //             'VirtualJoysticks/plugin/src/Button.js',
-    //             'VirtualJoysticks/plugin/src/DPad.js',
-    //         ],
-    //     },
-    //     backgroundColor: '#000',
-    // };
-
     useEffect(() => {
         // if (!gameRef.current) {
             setLoading(true);
             gameRef.current = new Phaser.Game(config);
-            console.log(gameRef.current, 'New Game?');
-            const gameDataEvent = new CustomEvent('game-data-updated', {
-                detail: ascean
-            });
-
-            window.dispatchEvent(gameDataEvent);
+            // console.log(gameRef.current, 'New Game?');
+           
             setLoading(false);
         // }
         // startGame();
 
     }, [ascean])
 
-    useEffect(() => {
-        window.addEventListener('get-ascean', ascean);
+    const sendAscean = async () => {
+        console.log('Event Listener Added');
+        const asceanData = new CustomEvent('get-ascean', {
+            detail: gameData
+        });
+        window.dispatchEvent(asceanData);
+    }
+
+useEffect(() => {
+    window.addEventListener('request-ascean', sendAscean);
+
+
+  return () => {
+    window.removeEventListener('request-ascean', sendAscean);
+
+  }
+}, [])
+
+    // useEffect(() => {
+    //     window.addEventListener('get-ascean', ascean);
+    //     console.log('Event Listener Added');
+        
+    //     return () => {
+    //         window.removeEventListener('get-ascean', ascean);
+    //     }
+    // }, [ascean])
+
+    // const asceanData = new CustomEvent('get-ascean', {
+    //     detail: ascean
+    // });
+    // window.dispatchEvent(asceanData);
     
-      return () => {
-        window.removeEventListener('get-ascean', ascean);
-      }
-    }, [ascean])
     
     const startGame = async () => {
          try {

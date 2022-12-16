@@ -20,14 +20,12 @@ export default class Preload extends Phaser.Scene {
         this.ascean = {};
     }
 
-    init() {
-        const getAscean = () => {
-            // const response = storyAscean();
-        }
-
+    init(data) {
+        this.gameData = data;
     }
 
     preload() {
+        console.log(this, 'This Preload')
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x8A2BE2', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
@@ -39,23 +37,36 @@ export default class Preload extends Phaser.Scene {
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
         this.load.image('tiles', Tileset);
         this.load.tilemapTiledJSON('map', TileJson);
-        // this.load.atlas('generic', joystickPng, joystickJson)
-        // Create Loading Bar
+ 
         this.createLoadingBar();
-        // SpriteSheets
+
         
     }
 
     create() {
         this.time.addEvent({
             delay: 1000,
-            callback: () => { this.scene.start('Menu'); },
+            callback: () => { this.scene.start('Menu', {
+                gameData: {
+                    ascean: this.ascean
+                }
+            }); 
+        },
             callbackScope: this
         });
+        
+        window.addEventListener('get-ascean', this.asceanFinishedEventListener)
+        const getAscean = new CustomEvent('request-ascean');
+        window.dispatchEvent(getAscean);
     }
+    
+    asceanFinishedEventListener = (e) => {
+        this.ascean = e.detail;
+        console.log(e.detail, 'Another stab at an Ascean')
+        window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
+    };
 
     createLoadingBar() {
-        // Title 
         this.title = new NewText(
             this,
             this.centerX,
@@ -64,7 +75,6 @@ export default class Preload extends Phaser.Scene {
             'preload',
             0.5
         )
-        // Progress Text
         this.txt_progress = new NewText(
             this,
             this.centerX,
@@ -73,14 +83,13 @@ export default class Preload extends Phaser.Scene {
             'preload',
             { x: 0.5, y: 1 }
         )
-        console.log(this.title, this.txt_progress)
-        // Loading Bar
+        // console.log(this.title, this.txt_progress)
         let x = 10;
         let y = this.centerY + 5;
-        console.log(this.load.progress, 'Progress')
+        // console.log(this.load.progress, 'Progress')
         this.progress = this.add.graphics({ x: x, y: y });
         this.border = this.add.graphics({ x: x, y: y })
-        console.log(this.load, 'This mean anythning?')
+        // console.log(this.load, 'This mean anythning?')
         this.load.on('progress', this.onProgress, this);
     }
     onProgress(val) {

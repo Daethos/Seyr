@@ -1,0 +1,164 @@
+{
+    "frames": [
+        {
+            "filename": "fireland_armor_move_2",
+            "frame": {
+                "w": 18,
+                "h": 34,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_armor_move_3",
+            "frame": {
+                "w": 16,
+                "h": 34,
+                "x": 20,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_armor_idle",
+            "frame": {
+                "w": 22,
+                "h": 33,
+                "x": 1,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_armor_move_1",
+            "frame": {
+                "w": 20,
+                "h": 33,
+                "x": 24,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_legs_move_3",
+            "frame": {
+                "w": 16,
+                "h": 32,
+                "x": 37,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_legs_move_2",
+            "frame": {
+                "w": 18,
+                "h": 31,
+                "x": 45,
+                "y": 34
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_legs_idle",
+            "frame": {
+                "w": 22,
+                "h": 30,
+                "x": 54,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_legs_move_1",
+            "frame": {
+                "w": 20,
+                "h": 30,
+                "x": 1,
+                "y": 70
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_helm_idle",
+            "frame": {
+                "w": 22,
+                "h": 29,
+                "x": 22,
+                "y": 70
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_helm_move_2",
+            "frame": {
+                "w": 18,
+                "h": 29,
+                "x": 45,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_helm_move_1",
+            "frame": {
+                "w": 20,
+                "h": 28,
+                "x": 77,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fireland_helm_move_3",
+            "frame": {
+                "w": 16,
+                "h": 28,
+                "x": 77,
+                "y": 30
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

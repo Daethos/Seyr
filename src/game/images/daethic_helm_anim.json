@@ -1,0 +1,124 @@
+{
+    "anims": [
+        {
+            "key": "daethic_legs_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "daethic",
+                    "frame": "daethic_legs_idle"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_legs_move_1"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_legs_move_2"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_legs_move_3"
+                }
+            ]
+        },
+        {
+            "key": "daethic_legs_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "daethic",
+                    "frame": "daethic_legs_idle"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_legs_move_1"
+                }
+            ]
+        },
+        {
+            "key": "daethic_helm_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "daethic",
+                    "frame": "daethic_helm_idle"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_helm_move_1"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_helm_move_2"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_helm_move_3"
+                }
+            ]
+        },
+        {
+            "key": "daethic_helm_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "daethic",
+                    "frame": "daethic_helm_idle"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_helm_move_1"
+                }
+            ]
+        },
+        {
+            "key": "daethic_armor_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "daethic",
+                    "frame": "daethic_armor_idle"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_armor_move_1"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_armor_move_2"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_armor_move_3"
+                }
+            ]
+        },
+        {
+            "key": "daethic_armor_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "daethic",
+                    "frame": "daethic_armor_idle"
+                },
+                {
+                    "key": "daethic",
+                    "frame": "daethic_armor_move_1"
+                }
+            ]
+        }
+    ]
+}

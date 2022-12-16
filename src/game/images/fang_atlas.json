@@ -1,0 +1,164 @@
+{
+    "frames": [
+        {
+            "filename": "fang_helm_move_3",
+            "frame": {
+                "w": 21,
+                "h": 31,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_helm_idle",
+            "frame": {
+                "w": 28,
+                "h": 30,
+                "x": 23,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_helm_move_2",
+            "frame": {
+                "w": 23,
+                "h": 30,
+                "x": 1,
+                "y": 33
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_helm_move_1",
+            "frame": {
+                "w": 26,
+                "h": 29,
+                "x": 25,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_armor_move_3",
+            "frame": {
+                "w": 16,
+                "h": 28,
+                "x": 52,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_armor_move_2",
+            "frame": {
+                "w": 17,
+                "h": 27,
+                "x": 1,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_armor_idle",
+            "frame": {
+                "w": 21,
+                "h": 26,
+                "x": 19,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_armor_move_1",
+            "frame": {
+                "w": 20,
+                "h": 26,
+                "x": 41,
+                "y": 62
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_legs_idle",
+            "frame": {
+                "w": 20,
+                "h": 18,
+                "x": 69,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_legs_move_1",
+            "frame": {
+                "w": 19,
+                "h": 18,
+                "x": 69,
+                "y": 20
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_legs_move_3",
+            "frame": {
+                "w": 15,
+                "h": 19,
+                "x": 52,
+                "y": 30
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fang_legs_move_2",
+            "frame": {
+                "w": 16,
+                "h": 18,
+                "x": 68,
+                "y": 39
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -1,0 +1,124 @@
+{
+    "anims": [
+        {
+            "key": "fyers_legs_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "fyers",
+                    "frame": "fyers_legs_idle"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_legs_move_1"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_legs_move_2"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_legs_move_3"
+                }
+            ]
+        },
+        {
+            "key": "fyers_legs_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "fyers",
+                    "frame": "fyers_legs_idle"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_legs_move_1"
+                }
+            ]
+        },
+        {
+            "key": "fyers_helm_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "fyers",
+                    "frame": "fyers_helm_idle"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_helm_move_1"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_helm_move_2"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_helm_move_3"
+                }
+            ]
+        },
+        {
+            "key": "fyers_helm_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "fyers",
+                    "frame": "fyers_helm_idle"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_helm_move_1"
+                }
+            ]
+        },
+        {
+            "key": "fyers_armor_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "fyers",
+                    "frame": "fyers_armor_idle"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_armor_move_1"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_armor_move_2"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_armor_move_3"
+                }
+            ]
+        },
+        {
+            "key": "fyers_armor_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "fyers",
+                    "frame": "fyers_armor_idle"
+                },
+                {
+                    "key": "fyers",
+                    "frame": "fyers_armor_move_1"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,124 @@
+{
+    "anims": [
+        {
+            "key": "dae_legs_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "dae",
+                    "frame": "dae_legs_idle"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_legs_move_1"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_legs_move_2"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_legs_move_3"
+                }
+            ]
+        },
+        {
+            "key": "dae_legs_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "dae",
+                    "frame": "dae_legs_idle"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_legs_move_1"
+                }
+            ]
+        },
+        {
+            "key": "dae_helm_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "dae",
+                    "frame": "dae_helm_idle"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_helm_move_1"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_helm_move_2"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_helm_move_3"
+                }
+            ]
+        },
+        {
+            "key": "dae_helm_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "dae",
+                    "frame": "dae_helm_idle"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_helm_move_1"
+                }
+            ]
+        },
+        {
+            "key": "dae_armor_move",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 8,
+            "frames": [
+                {
+                    "key": "dae",
+                    "frame": "dae_armor_idle"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_armor_move_1"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_armor_move_2"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_armor_move_3"
+                }
+            ]
+        },
+        {
+            "key": "dae_armor_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 2,
+            "frames": [
+                {
+                    "key": "dae",
+                    "frame": "dae_armor_idle"
+                },
+                {
+                    "key": "dae",
+                    "frame": "dae_armor_move_1"
+                }
+            ]
+        }
+    ]
+}

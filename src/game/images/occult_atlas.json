@@ -1,0 +1,164 @@
+{
+    "frames": [
+        {
+            "filename": "occult_armor_idle",
+            "frame": {
+                "w": 23,
+                "h": 34,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_armor_move_2",
+            "frame": {
+                "w": 18,
+                "h": 34,
+                "x": 25,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_armor_move_3",
+            "frame": {
+                "w": 17,
+                "h": 34,
+                "x": 1,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_legs_move_3",
+            "frame": {
+                "w": 16,
+                "h": 34,
+                "x": 19,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_armor_move_1",
+            "frame": {
+                "w": 21,
+                "h": 33,
+                "x": 44,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_legs_move_2",
+            "frame": {
+                "w": 18,
+                "h": 32,
+                "x": 36,
+                "y": 36
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_legs_idle",
+            "frame": {
+                "w": 22,
+                "h": 31,
+                "x": 66,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_legs_move_1",
+            "frame": {
+                "w": 20,
+                "h": 31,
+                "x": 66,
+                "y": 33
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_helm_idle",
+            "frame": {
+                "w": 26,
+                "h": 30,
+                "x": 1,
+                "y": 71
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_helm_move_1",
+            "frame": {
+                "w": 24,
+                "h": 30,
+                "x": 28,
+                "y": 71
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_helm_move_2",
+            "frame": {
+                "w": 21,
+                "h": 30,
+                "x": 53,
+                "y": 69
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "occult_helm_move_3",
+            "frame": {
+                "w": 19,
+                "h": 30,
+                "x": 89,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

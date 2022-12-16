@@ -11,6 +11,7 @@ export default class Boot extends Phaser.Scene {
     constructor() {
         super({ key: 'Boot', active: true });
         console.log(this, 'What is this?')
+        this.ascean = {};
     }
     
     init() {
@@ -27,8 +28,19 @@ export default class Boot extends Phaser.Scene {
     }
     
     create() {
-        // this.centerX = Math.round(0.5 * this.sys.game.config.width);
-        // this.centerY = Math.round(0.5 & this.sys.game.config.height);
-        this.scene.start('Preload');
+        window.addEventListener('get-ascean', this.asceanFinishedEventListener)
+        const getAscean = new CustomEvent('request-ascean');
+        window.dispatchEvent(getAscean);
+
+        
+        this.scene.start('Preload', {
+            gameData: this.ascean
+        });
     }
+
+    asceanFinishedEventListener = (e) => {
+        this.ascean = e.detail;
+        console.log(e.detail, 'Booting Ascean')
+        window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
+    };
 }
