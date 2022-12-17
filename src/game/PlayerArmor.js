@@ -22,10 +22,7 @@ export default class PlayerArmor extends Entity {
         });
         this.setExistingBody(compoundBody);
         this.setFixedRotation();
-        this.player_armor = '';
-        // define the player's movement speed
-        this.movementSpeed = 160;
-        console.log(this, 'This in PalyerArmor')
+        this.scene.input.on('pointermove', pointer => { if (!this.dead) this.setFlipX(pointer.worldX < this.x)});
     }
 
     static preload(scene) {

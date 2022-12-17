@@ -22,6 +22,7 @@ export default class PlayerHelm extends Entity {
         });
         this.setExistingBody(compoundBody)
         this.setFixedRotation();
+        this.scene.input.on('pointermove', pointer => { if (!this.dead) this.setFlipX(pointer.worldX < this.x)});
     }
 
     static preload(scene) {

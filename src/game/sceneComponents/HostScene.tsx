@@ -64,7 +64,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         physics: {
             default: 'matter',
             matter: {
-                debug: true,
+                debug: false,
                 gravity: { y: 0 },
             }
         },

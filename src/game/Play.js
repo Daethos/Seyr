@@ -87,54 +87,50 @@ export default class Play extends Phaser.Scene {
         let totalHeight = objectATop - objectABottom + objectBTop - objectBBottom + objectCTop - objectCBottom;
 
         // Set the y property of each object's Transform component to align them vertically
-        this.playerHelm.y = -totalHeight / 2 + (objectATop - objectABottom) / 2;
-        this.playerArmor.y = 0;
-        this.playerLegs.y = totalHeight / 2 - (objectCTop - objectCBottom) / 2;
+        // this.playerHelm.y = -totalHeight / 2 + (objectATop - objectABottom) / 2;
+        // this.playerArmor.y = 0;
+        // this.playerLegs.y = totalHeight / 2 - (objectCTop - objectCBottom) / 2;
 
         // TODO:FIXME: This is the code I'll try tomorrow to align all the sprites together
         // import objectA from './objectA';
         // import objectB from './objectB';
         // import objectC from './objectC';
 
-        // // Get the bounding box of each object
-        // let objectABounds = objectA.body.getBounds();
-        // let objectBBounds = objectB.body.getBounds();
-        // let objectCBounds = objectC.body.getBounds();
+        let objectA = this.playerHelm;
+        let objectB = this.playerArmor;
+        let objectC = this.playerLegs;
 
-        // // Get the bottom and top points of the circular colliders
-        // let objectABottom = objectABounds.bottom;
-        // let objectATop = objectABounds.top;
-        // let objectBBottom = objectBBounds.bottom;
-        // let objectBTop = objectBBounds.top;
-        // let objectCBottom = objectCBounds.bottom;
-        // let objectCTop = objectCBounds.top;
+        let totalWidth = (objectA.width * objectA.scale) + (objectB.width * objectB.scale) + (objectC.width * objectC.scale);
 
-        // // Calculate the total height of all three objects
-        // let totalHeight = objectATop - objectABottom + objectBTop - objectBBottom + objectCTop - objectCBottom;
+        console.log(objectA.displayHeight, objectB.displayHeight, objectC.displayHeight, ' <- Widths');
 
-        // // Set the y property of each object's Transform component to align them vertically
-        // objectA.y = -totalHeight / 2 + (objectATop - objectABottom) / 2;
-        // objectB.y = 0;
-        // objectC.y = totalHeight / 2 - (objectCTop - objectCBottom) / 2;
+        objectB.setOrigin(0.5, 0.5);
+        objectB.setPosition(objectA.x, objectA.y + objectA.displayHeight / 2 + objectB.displayHeight / 2 - 1);
+
+        objectC.setOrigin(0.5, 0.5);
+        objectC.setPosition(objectB.x, objectB.y + objectB.displayHeight / 2 + objectC.displayHeight / 2 - 1);
+
+        // objectB.setPosition(objectA.x + objectA.displayWidth / 2 - objectB.displayWidth / 2, objectA.y);
+        // objectC.setPosition(objectB.x + objectB.displayWidth / 2 - objectC.displayWidth / 2, objectB.y);
+
+        this.playerHelm = objectA;
+        this.playerArmor = objectB;
+        this.playerLegs = objectC;
+
+        // objectA.x = 100;
+        // objectB.x = objectA.x + (objectA.width * objectA.scale);
+        // objectC.x = objectB.x + (objectB.width * objectB.scale);
+        // console.log(objectA.x, objectB.x, objectC.x, ' <- X Positions');
+
+        // this.playerHelm.y = objectA.x
+        // this.playerArmor.y = objectB.x
+        // this.playerLegs.y = objectC.x
 
 
-
-
-        // this.playerArmor.setScale(0.375);
-        // this.playerHelm.setScale(0.225);
-        // this.playerLegs.setScale(0.45);
-
-        // this.playerArmor.y = this.playerHelm.y + 10;
-        // this.playerLegs.y = this.playerArmor.y + 10;
-
-        // let playerArmor = this.playerArmor;
-        // let playerLegs = this.playerLegs;
-
-        // playerArmor.alignTo(this.playerHelm, Phaser.Display.Align.BOTTOM_CENTER, 0, 0);
-        // playerLegs.alignTo(this.playerArmor, Phaser.Display.Align.BOTTOM_CENTER, 0, 0);
+  
 
         let camera = this.cameras.main;
-        camera.zoom = 2;
+        camera.zoom = 1;
         camera.startFollow(this.playerArmor);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 1024, 1024);
