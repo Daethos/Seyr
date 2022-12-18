@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useParams } from 'react-router-dom';
 import Phaser from "phaser";
 import '../PhaserGame.css'
 import MainScene from '../../scenes/MainScene';
@@ -37,6 +38,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         player_attributes: attributes,
         player_efense: playerDefense
     });
+    const { asceanID } = useParams();
     const [loading, setLoading] = useState<boolean>(false);
     const gameRef = useRef<any>({});
     const [IS_DEV, setIS_DEV] = useState<boolean>(true);
@@ -64,7 +66,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         physics: {
             default: 'matter',
             matter: {
-                debug: false,
+                debug: true,
                 gravity: { y: 0 },
             }
         },
@@ -91,17 +93,33 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         backgroundColor: '#000',
     })
 
-    useEffect(() => {
-        // if (!gameRef.current) {
-            setLoading(true);
-            gameRef.current = new Phaser.Game(config);
-            // console.log(gameRef.current, 'New Game?');
-           
-            setLoading(false);
-        // }
-        // startGame();
+    // useEffect(() => {
+    //     // if (!gameRef.current) {
+    //         setLoading(true);
+    //         gameRef.current = new Phaser.Game(config);
+    //         // console.log(gameRef.current, 'New Game?');
+    //     //    const game = new Phaser.Game(config);
+    //         setLoading(false);
+    //     // }
+    //     // startGame();
 
-    }, [ascean])
+    // }, [])
+
+    const startGame = useCallback(async () => {
+        try {
+            setLoading(true);
+            let game = new Phaser.Game(config);
+            // console.log(game.scene.scenes, 'New Game');
+            setGameState(game);
+            setLoading(false);
+        } catch (err: any) {
+            console.log(err.message, 'Error Starting Game')
+        }
+    }, [asceanID])
+
+    useEffect(() => {
+        startGame();
+    }, [asceanID])
 
     const sendAscean = async () => {
         console.log('Event Listener Added');
@@ -120,32 +138,6 @@ useEffect(() => {
 
   }
 }, [])
-
-    // useEffect(() => {
-    //     window.addEventListener('get-ascean', ascean);
-    //     console.log('Event Listener Added');
-        
-    //     return () => {
-    //         window.removeEventListener('get-ascean', ascean);
-    //     }
-    // }, [ascean])
-
-    // const asceanData = new CustomEvent('get-ascean', {
-    //     detail: ascean
-    // });
-    // window.dispatchEvent(asceanData);
-    
-    
-    const startGame = async () => {
-         try {
-            let game = new Phaser.Game(config);
-            console.log(game.scene.scenes, 'New Game');
-            setGameState(game);
-         } catch (err: any) {
-            console.log(err.message, 'Error Starting Game')
-         }
-        
-    }
 
     const resizeGame = () => {
         // Width-Height Ration of Game Resolution

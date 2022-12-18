@@ -3,6 +3,9 @@ import PlayerHelm from "../game/PlayerHelm";
 import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
 import VirtualJoystick from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
+import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
+
+
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
 import stick from './images/stick.png';
@@ -13,6 +16,7 @@ export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
         this.ascean = null;
+        
     }
     
     init(data) {
@@ -30,6 +34,7 @@ export default class Play extends Phaser.Scene {
         this.is_gameover = false;
         this.baseSprite = this.add.sprite(0, 0, base);
         this.thumbSprite = this.add.sprite(0, 0, stick);
+        this.map = null;
     }
     
     create() {
@@ -65,7 +70,15 @@ export default class Play extends Phaser.Scene {
         console.log(player_armor, player_helm, player_legs, ' <- Player Frames', armor_texture, helm_texture, legs_texture, ' <- Player Textures');
         const map = this.make.tilemap({ key: 'map' });
         const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
-        const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
+        const atlasTerrain = map.addTilesetImage('Atlas Terrain', 'terrain', 32, 32, 0, 0);
+        const layer1 = map.createLayer('Tile Layer 1', atlasTerrain, 0, 0);
+        const layer2 = map.createLayer('Tile Layer 2', atlasTerrain, 0, 0);
+        layer1.setCollisionByProperty({ collides: true });
+        layer2.setCollisionByProperty({ collides: true });
+        this.matter.world.convertTilemapLayer(layer1);
+        this.matter.world.convertTilemapLayer(layer2);
+        this.map = map;
+
 
         this.playerHelm = new PlayerHelm({scene: this, x: 100, y: 100, texture: helm_texture, frame: `${player_helm}_idle`});
         this.playerArmor = new PlayerArmor({scene: this, x: 100, y: 110, texture: armor_texture, frame: `${player_armor}_idle`});
@@ -153,11 +166,62 @@ export default class Play extends Phaser.Scene {
         this.playerHelm.joystick = joystick;
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
         // this.stick.alignBottomLeft(20);
+
+
     }
 
+ 
+
     update() {
+
+        // console.log(this, 'This in this')
+        
+        const gameObjects = this.add.group([this.playerHelm, this.playerArmor, this.playerLegs]);
+        // const boundaries = this.getBoundaryTiles.bind(this)();
+        const boundaryTiles = this.map.filterTiles((tile) => {
+            return tile.properties.collides;
+          }, this, 0, 0, this.map.width, this.map.height);
+          
+
         this.playerHelm.update(this);
         this.playerArmor.update(this);
         this.playerLegs.update(this);
+
+        // this.matterCollision.addOnCollideEnd({
+        //     objectA: [this.playerHelm, this.playerArmor, this.playerLegs], 
+        //     objectB: boundaryTiles, 
+        //     callback: () => this.snapIntoAlignment(), 
+        //     context: this
+        // });          
+
+        // this.matterCollision.addOnCollideEnd(gameObjects, boundaryTiles, this, this.snapIntoAlignment());
+        this.snapIntoAlignment();
+    }
+
+    // getBoundaryTiles() {
+    //     // Filter the tiles based on the 'collides' property
+    //     const boundaryTiles = this.map.filterTiles(tile => {
+    //       return tile.properties.collides;
+    //     }, this, 0, 0, this.map.width, this.map.height);
+      
+    //     // Return a group of boundary tiles
+    //     return this.add.group(boundaryTiles);
+    //   }
+      
+
+    snapIntoAlignment() {
+        let objectA = this.playerHelm;
+        let objectB = this.playerArmor;
+        let objectC = this.playerLegs;
+
+        objectB.setOrigin(0.5, 0.5);
+        objectB.setPosition(objectA.x, objectA.y + objectA.displayHeight / 2 + objectB.displayHeight / 2 - 1);
+
+        objectC.setOrigin(0.5, 0.5);
+        objectC.setPosition(objectB.x, objectB.y + objectB.displayHeight / 2 + objectC.displayHeight / 2 - 1);
+
+        this.playerHelm = objectA;
+        this.playerArmor = objectB;
+        this.playerLegs = objectC;
     }
 }

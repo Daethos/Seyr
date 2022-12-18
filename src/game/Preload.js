@@ -5,6 +5,7 @@ import PlayerHelm from "../game/PlayerHelm";
 import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
 import Tileset from '../game/images/Tileset.png';
+import AtlasTerrain from '../game/images/Atlas Terrain.png';
 import TileJson from '../game/images/map.json';
 import storyAscean from './StoryAscean';
 import joystickPng from './images/generic-joystick.png';
@@ -36,6 +37,7 @@ export default class Preload extends Phaser.Scene {
         PlayerLegs.preload(this);
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
         this.load.image('tiles', Tileset);
+        this.load.image('terrain', AtlasTerrain);
         this.load.tilemapTiledJSON('map', TileJson);
  
         this.createLoadingBar();

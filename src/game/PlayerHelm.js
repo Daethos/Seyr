@@ -70,23 +70,23 @@ export default class PlayerHelm extends Entity {
         // this.setVelocity(playerVelocity.x, playerVelocity.y);
 
 
-        if (this.joystick.touchCursor.forceX < 10 || this.joystick.touchCursor.forceX > -10) {
+        if (this.joystick.touchCursor.forceX < 15 || this.joystick.touchCursor.forceX > -15) {
             this.setVelocityX(0);
         } 
-        if (this.joystick.touchCursor.forceX > 10) {
+        if (this.joystick.touchCursor.forceX > 15) {
             this.setVelocityX(1);
         } 
-        if (this.joystick.touchCursor.forceX < -10) {
+        if (this.joystick.touchCursor.forceX < -15) {
             this.setVelocityX(-1);
         }
 
-        if (this.joystick.touchCursor.forceY < 10 || this.joystick.touchCursor.forceY > -10) {
+        if (this.joystick.touchCursor.forceY < 15 || this.joystick.touchCursor.forceY > -15) {
             this.setVelocityY(0);
         } 
-        if (this.joystick.touchCursor.forceY > 10) {
+        if (this.joystick.touchCursor.forceY > 15) {
             this.setVelocityY(1);
         } 
-        if (this.joystick.touchCursor.forceY < -10) {
+        if (this.joystick.touchCursor.forceY < -15) {
             this.setVelocityY(-1);
         }
      
