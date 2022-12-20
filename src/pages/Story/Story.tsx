@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
+import './Story.css'
 import * as asceanAPI from '../../utils/asceanApi';  
 import Loading from '../../components/Loading/Loading';
 import TileMap from '../../components/Story/TileMap'

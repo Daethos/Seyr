@@ -13,7 +13,7 @@ interface Props {
     player: any;
 }
 
-const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
+const StoryPlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
     let totalConstitution: number = attributes.totalConstitution + weaponAttributes?.constitution;
     let totalStrength: number = attributes.totalStrength + weaponAttributes?.strength;
     let totalAgility: number = attributes.totalAgility + weaponAttributes?.agility;
@@ -72,12 +72,12 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
         </Popover>
       );
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
     <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
-        <Button variant=""  >
+        <Button variant=""  id='ascean-stats'>
             {/* <div className="actions"> */}
-        <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mb-5'>
-        <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
+        <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mt-3 mb-5'>
+        <span id="story-popover-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="story-pic" /></span>{' '}
             {player.name}</h3>
         {/* </div> */}
         </Button>
@@ -86,4 +86,4 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
   )
 }
 
-export default GamePlayerStats
+export default StoryPlayerStats

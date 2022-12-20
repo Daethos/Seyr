@@ -74,7 +74,6 @@ export default class PlayerArmor extends Entity {
         playerVelocity.normalize();
         playerVelocity.scale(speed);
         // this.setVelocity(playerVelocity.x, playerVelocity.y);
-        console.log(this.joystick.touchCursor.forceX)
         if (this.joystick.touchCursor.forceX < 15 || this.joystick.touchCursor.forceX > -15) {
             this.setVelocityX(0);
         } 
