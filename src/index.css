@@ -490,7 +490,7 @@ html, body {
   width: 100%;
 }
 #story-ascean {
-  top: 0%;
+  top: 12.5%;
   pointer-events: visible;
 }
 .ascean-ui {
@@ -503,7 +503,7 @@ html, body {
 }
 .story-ascean {
   background-color: rgba(0, 0, 0, 0.7);
-  margin-top: 14.25%;
+  margin-top: -5%;
 
 }
 

@@ -31,6 +31,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     const [gameState, setGameState] = useState<any>({});
     const [showPlayer, setShowPlayer] = useState<boolean>(false)
     const [pauseState, setPauseState] = useState<boolean>(false)
+    const [fullScreen, setFullScreen] = useState<boolean>(false)
     const [gameData, setGameData] = useState<any>({
         ascean: ascean,
         user: user,
@@ -57,6 +58,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     const [config, setConfig] = useState({
         type: Phaser.AUTO,
         parent: 'story-game',
+        fullscreenTarget: 'story-game',
         width: 360,
         height: 640,
         scene: scenes,
@@ -115,6 +117,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             let game = new Phaser.Game(config);
             // console.log(game.scene.scenes, 'New Game');
             setGameState(game);
+            gameRef.current = game;
             setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game')
@@ -133,38 +136,21 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         window.dispatchEvent(asceanData);
     }
 
-useEffect(() => {
-    window.addEventListener('request-ascean', sendAscean);
-
-  return () => {
-    window.removeEventListener('request-ascean', sendAscean);
-
-  }
-}, [])
+    useEffect(() => {
+        window.addEventListener('request-ascean', sendAscean);
+    return () => {
+        window.removeEventListener('request-ascean', sendAscean);
+    }
+    }, [])
 
     const resizeGame = () => {
         // Width-Height Ration of Game Resolution
         let game_ratio = 360 / 640;
     
-        // // Make Div Full Height of Browser and Keep the Ratin of Game Resolution
-        // let div = document.getElementById('story-game');
-        // div!.style.width = (window.innerHeight * game_ratio) + 'px';
-        // div!.style.height = window.innerHeight + 'px';
-    
         // Check if Device DPI messes up the Width-Height Ratio
         let canvas = document.getElementsByTagName('canvas')[0];
-    
-        // let dpi_w = (parseInt(div!.style.width) / canvas.width);
-        // let dpi_h = (parseInt(div!.style.height) / canvas.width);
-    
-        // let height = window.innerHeight * (dpi_w / dpi_h);
-        // let width = height * game_ratio;
-    
-        // // Scale Canvas
-        // canvas.style.width = width + 'px';
-        // canvas.style.height = height + 'px';
 
-          // Calculate the new width and height of the canvas
+        // Calculate the new width and height of the canvas
         // based on the current window size and the game ratio
         let newWidth = window.innerWidth;
         let newHeight = newWidth / game_ratio;
@@ -176,11 +162,11 @@ useEffect(() => {
             newWidth = newHeight * game_ratio;
         }
 
-  // Set the canvas width and height
-  canvas.style.width = newWidth + 'px';
-  canvas.style.height = newHeight + 'px';
-    
+        // Set the canvas width and height
+        canvas.style.width = newWidth + 'px';
+        canvas.style.height = newHeight + 'px';
     }
+
     useEffect(() => {
         window.addEventListener('resize', resizeGame);
       return () => {
@@ -189,35 +175,33 @@ useEffect(() => {
     }, [])
 
     const toggleFullscreen = () => {
-        let canvas = document.getElementsByTagName('canvas')[0];
-        // if (canvas.requestFullscreen) {
-          canvas.requestFullscreen();
-        // } else if (canvas.mozRequestFullScreen) {
-        //   /* Firefox */
-        //   canvas.mozRequestFullScreen();
-        // } else if (canvas.webkitRequestFullscreen) {
-        //   /* Chrome, Safari & Opera */
-        //   canvas.webkitRequestFullscreen();
-        // } else if (canvas.msRequestFullscreen) {
-        //   /* IE/Edge */
-        //   canvas.msRequestFullscreen();
-        // }
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+            console.log('Exit Full Screen')
+          } else {
+            gameRef.current.requestFullscreen();
+            console.log('Full Screen')
+          }
     };
-      
 
     const togglePause = () => {
-        if (pauseState) {
-            // Resume the game
-            //TODO:FIXME: This will be where the addeventlistener function will be to call for a pause
-            // this.scene.resume();
-            setPauseState(false);
-        } else {
-            // Pause the game
-            //TODO:FIXME: This will be where the removeeventlistener function will be to call to resume
-            // this.scene.pause();
-            const pauseGame = new CustomEvent('pause-game');
-            window.dispatchEvent(pauseGame);
+        const pause = () => {
+            let scene = gameRef.current.scene.getScene('Play');
+            console.log(scene, 'What is this Scene I made?')
+            // scene.time.paused = true;
+            scene.pause();
+        }
+        const resume = () => {
+            let scene = gameRef.current.scene.getScene('Play');
+            // scene.time.paused = false;
+            scene.resume();
+        }
+        if (!pauseState) {
+            pause();
             setPauseState(true);
+        } else {
+            resume();
+            setPauseState(false);
         }
     };
 
@@ -227,8 +211,8 @@ useEffect(() => {
     // TODO:FIXME: game.scene.scenes[0].scene.key
 
     return (
-        <Container fluid>
-            <div id='story-game' style={{ textAlign: 'center' }} className='my-4'>
+        // <Container fluid>
+            <div id='story-game' style={{ textAlign: 'center' }} className='my-4' ref={gameRef}>
             <div id='ui-hud' className='mt-3'>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ascean.name}</h3>
@@ -236,14 +220,14 @@ useEffect(() => {
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Inventory</h3>
             </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Objectives</h3>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleFullscreen}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Full Screen</h3>
             </Button>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
             </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={togglePause}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ pauseState ? 'Resume' : 'Pause' } Game</h3>
             </Button>
             </div>
             {
@@ -258,7 +242,7 @@ useEffect(() => {
                 )
             }
 
-            {
+            {/* {
                 gameState?.scene?.scenes?.find((scene: any) => scene?.scene?.key === 'Play' && scene?.scene?.settings?.active === true)
                 ? 
                     <>
@@ -268,10 +252,10 @@ useEffect(() => {
                     />
                     </>
                 : ''
-            }
+            } */}
         </div>
 
-        </Container>
+        // </Container>
   )
 }
 

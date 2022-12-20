@@ -24,7 +24,7 @@ export default class Play extends Phaser.Scene {
         this.data = data;
         this.gameData = this.data.gameData.ascean.gameData.ascean;
         this.CONFIG = this.sys.game.config;
-        
+        this.isFullScren = this.scale.isFullscreen;
         this.DEPTH = {
             floor: 0
         };
@@ -35,10 +35,15 @@ export default class Play extends Phaser.Scene {
         this.baseSprite = this.add.sprite(0, 0, base);
         this.thumbSprite = this.add.sprite(0, 0, stick);
         this.map = null;
+
     }
     
     create() {
         console.log(this, 'What is this?')
+
+        // window.addEventListener('full-screen', this.fullScreenEventListener(this));
+        // window.addEventListener('exit-full-screen', this.exitFullScreenEventListener(this));
+
         let player_armor = this.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
         let player_helm = this.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
         let player_legs = this.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
@@ -187,7 +192,13 @@ export default class Play extends Phaser.Scene {
     //     // Return a group of boundary tiles
     //     return this.add.group(boundaryTiles);
     //   }
-      
+
+    pause() {
+        this.scene.pause();
+    }
+    resume() {
+        this.scene.resume();
+    }
 
     snapIntoAlignment() {
         let objectA = this.playerHelm;

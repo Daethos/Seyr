@@ -27,7 +27,7 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
     }
     return (
         <>
-        <div className="story-block mt-4" id='story-ascean'>
+        <div className="story-block" id='story-ascean'>
             {/* <div id='ui-hud' className=''>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ascean.name}</h3>

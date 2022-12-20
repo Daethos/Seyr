@@ -54,46 +54,8 @@ const Story = ({ user }: Props) => {
         getAscean();
     }, [asceanID, getAscean])
 
-    // This will be I guess the 'AsceanScene' that will be the Player Character UI pop-up to toggle.
-    //<GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
-
-
     // TODO:FIXME: Use stock models underneath the three frames of armor so they're not invisible, properly
 
-
-    // useEffect(() => {
-    //     const game = new Phaser.Game({
-    //         type: Phaser.AUTO,
-    //         // orientation: 'LANDSCAPE',
-    //         parent: 'story-game',
-    //         width: 512,
-    //         height: 512,
-    //         scene: [MainScene],
-    //         scale: {
-    //             zoom: 1,
-    //         },
-    //         physics: {
-    //             default: 'matter',
-    //             matter: {
-    //                 debug: true,
-    //                 gravity: { y: 0 },
-    //             }
-    //         },
-    //         plugins: {
-    //             scene: [
-    //                 {
-    //                     plugin: PhaserMatterCollisionPlugin,
-    //                     key: 'matterCollision',
-    //                     mapping: 'matterCollision'
-    //                 }
-    //             ]
-    //         },
-    //         backgroundColor: '#000',
-    //     });
-
-    //     // let isClicking = false;
-      
-    // }, [])
     
     if (loading) {
         return (
