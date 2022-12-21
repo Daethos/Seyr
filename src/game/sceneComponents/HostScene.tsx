@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Phaser from "phaser";
 import '../PhaserGame.css'
 import MainScene from '../../scenes/MainScene';
+import Modal from 'react-bootstrap/Modal';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 import Boot from '../Boot';
@@ -29,9 +30,10 @@ interface Props {
 
 const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense }: Props) => {
     const [gameState, setGameState] = useState<any>({});
-    const [showPlayer, setShowPlayer] = useState<boolean>(false)
-    const [pauseState, setPauseState] = useState<boolean>(false)
-    const [fullScreen, setFullScreen] = useState<boolean>(false)
+    const [showPlayer, setShowPlayer] = useState<boolean>(false);
+    const [pauseState, setPauseState] = useState<boolean>(false);
+    const [muteState, setMuteState] = useState<boolean>(false);
+    const [fullScreen, setFullScreen] = useState<boolean>(false);
     const [gameData, setGameData] = useState<any>({
         ascean: ascean,
         user: user,
@@ -45,6 +47,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     });
     const { asceanID } = useParams();
     const [loading, setLoading] = useState<boolean>(false);
+    const [modalShow, setModalShow] = useState<boolean>(false)
     const gameRef = useRef<any>({});
     const [IS_DEV, setIS_DEV] = useState<boolean>(true);
     const [VERSION, setVERSION] = useState<string>('0.0.1');
@@ -98,18 +101,6 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         },
         backgroundColor: '#000',
     })
-
-    // useEffect(() => {
-    //     // if (!gameRef.current) {
-    //         setLoading(true);
-    //         gameRef.current = new Phaser.Game(config);
-    //         // console.log(gameRef.current, 'New Game?');
-    //     //    const game = new Phaser.Game(config);
-    //         setLoading(false);
-    //     // }
-    //     // startGame();
-
-    // }, [])
 
     const startGame = useCallback(async () => {
         try {
@@ -178,22 +169,41 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         if (document.fullscreenElement) {
             document.exitFullscreen();
             console.log('Exit Full Screen')
+            setFullScreen(false);
           } else {
+              console.log('Full Screen')
             gameRef.current.requestFullscreen();
-            console.log('Full Screen')
+            setFullScreen(true);
           }
+    };
+
+    const toggleMute = () => {
+        const mute = () => {
+            let scene = gameRef.current.scene.getScene('Play');
+            console.log(scene, 'What is this Scene I made?')
+            scene.sound.setMute();
+        }
+        const unmute = () => {
+            let scene = gameRef.current.scene.getScene('Play');
+            scene.sound.setMute();
+        }
+        if (!muteState) {
+            mute();
+            setMuteState(true);
+        } else {
+            unmute();
+            setMuteState(false);
+        }
     };
 
     const togglePause = () => {
         const pause = () => {
             let scene = gameRef.current.scene.getScene('Play');
             console.log(scene, 'What is this Scene I made?')
-            // scene.time.paused = true;
             scene.pause();
         }
         const resume = () => {
             let scene = gameRef.current.scene.getScene('Play');
-            // scene.time.paused = false;
             scene.resume();
         }
         if (!pauseState) {
@@ -205,13 +215,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         }
     };
 
-    
-    
-    
-    // TODO:FIXME: game.scene.scenes[0].scene.key
-
     return (
-        // <Container fluid>
             <div id='story-game' style={{ textAlign: 'center' }} className='my-4' ref={gameRef}>
             <div id='ui-hud' className='mt-3'>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
@@ -226,9 +230,22 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
             </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={togglePause}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ pauseState ? 'Resume' : 'Pause' } Game</h3>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
             </Button>
+            <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
+                <Modal.Body>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => toggleFullscreen()}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ fullScreen ? 'Exit' : 'Enter' } Full Screen</h3>
+                </Button>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleMute}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ muteState ? 'Unmute' : 'Mute' } Game</h3>
+                </Button>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => togglePause()}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ pauseState ? 'Resume' : 'Pause' } Game</h3>
+                </Button>
+                </Modal.Body>
+            </Modal>
             </div>
             {
                 showPlayer ?
@@ -255,7 +272,6 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             } */}
         </div>
 
-        // </Container>
   )
 }
 
