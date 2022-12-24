@@ -15,7 +15,7 @@ export default class Preload extends Phaser.Scene {
     constructor() {
         super({ key: 'Preload', active: false });
         this.centerX = 180;
-        this.centerY = 320;
+        this.centerY = 240;
         this.width = 340;
         this.height = 36;
         this.ascean = {};

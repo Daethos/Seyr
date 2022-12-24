@@ -11,6 +11,7 @@ import Preload from '../Preload';
 import Menu from '../Menu';
 import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
+import DialogBox from '../DialogBox';
 import { Container } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 // import { resizeGame } from '../Resize';
@@ -34,6 +35,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
     const [fullScreen, setFullScreen] = useState<boolean>(false);
+    const [messages, setMessages] = useState<any>([])
     const [gameData, setGameData] = useState<any>({
         ascean: ascean,
         user: user,
@@ -47,7 +49,8 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     });
     const { asceanID } = useParams();
     const [loading, setLoading] = useState<boolean>(false);
-    const [modalShow, setModalShow] = useState<boolean>(false)
+    const [modalShow, setModalShow] = useState<boolean>(false);
+    const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const gameRef = useRef<any>({});
     const [IS_DEV, setIS_DEV] = useState<boolean>(true);
     const [VERSION, setVERSION] = useState<string>('0.0.1');
@@ -63,7 +66,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         parent: 'story-game',
         fullscreenTarget: 'story-game',
         width: 360,
-        height: 640,
+        height: 480,
         scene: scenes,
         scale: {
             zoom: 1,
@@ -75,7 +78,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         physics: {
             default: 'matter',
             matter: {
-                debug: true,
+                debug: false,
                 gravity: { y: 0 },
             }
         },
@@ -127,16 +130,27 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         window.dispatchEvent(asceanData);
     }
 
+    const createDialog = async (e: any) => {
+        // I need to create a dialog box here
+        console.log('Dialog Box Event Listener Added');
+        setMessages({
+            author: e.detail.author,
+            message: e.detail.message,
+        });
+    }
+
     useEffect(() => {
         window.addEventListener('request-ascean', sendAscean);
+        window.addEventListener('dialog-box', createDialog);
     return () => {
         window.removeEventListener('request-ascean', sendAscean);
+        window.removeEventListener('dialog-box', createDialog);
     }
     }, [])
 
     const resizeGame = () => {
         // Width-Height Ration of Game Resolution
-        let game_ratio = 360 / 640;
+        let game_ratio = 360 / 480;
     
         // Check if Device DPI messes up the Width-Height Ratio
         let canvas = document.getElementsByTagName('canvas')[0];
@@ -172,7 +186,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             setFullScreen(false);
           } else {
               console.log('Full Screen')
-            gameRef.current.requestFullscreen();
+            gameRef.current.scale.startFullscreen();
             setFullScreen(true);
           }
     };
@@ -185,7 +199,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         }
         const unmute = () => {
             let scene = gameRef.current.scene.getScene('Play');
-            scene.sound.setMute();
+            scene.sound.setMute(false);
         }
         if (!muteState) {
             mute();
@@ -216,23 +230,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     };
 
     return (
-            <div id='story-game' style={{ textAlign: 'center' }} className='my-4' ref={gameRef}>
-            <div id='ui-hud' className='mt-3'>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ascean.name}</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Inventory</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleFullscreen}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Full Screen</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
-            </Button>
+        <>
             <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
                 <Modal.Body>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => toggleFullscreen()}>
@@ -246,31 +244,43 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                 </Button>
                 </Modal.Body>
             </Modal>
+            <Modal show={worldModalShow} onHide={() => setWorldModalShow(false)} centered>
+                <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Latency: {' '}</h3>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Friends: {' '}</h3>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
+                </Modal.Body>
+            </Modal>
+            <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
+            <div id='ui-hud' className='mt-3'>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ascean.name}</h3>
+            </Button>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Inventory</h3>
+            </Button>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleFullscreen}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Full Screen</h3>
+            </Button>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
+            </Button>
+            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
+            </Button>
             </div>
-            {
-                showPlayer ?
-                (
-                    <StoryAscean 
-                        ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading}
-                        currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
+            { showPlayer ?
+                ( <StoryAscean ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading}
+                    currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
                     />
-                ) : (
-                    ''
-                )
-            }
-
-            {/* {
-                gameState?.scene?.scenes?.find((scene: any) => scene?.scene?.key === 'Play' && scene?.scene?.settings?.active === true)
-                ? 
-                    <>
-                    <StoryAscean 
-                        ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading}
-                        currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
-                    />
-                    </>
-                : ''
-            } */}
+                ) : ( '' ) }
         </div>
+        {
+            messages.length > 0 ?
+            <DialogBox gameRef={gameRef} text={messages} />
+            : ''
+        }
+        </>
 
   )
 }

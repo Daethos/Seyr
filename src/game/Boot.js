@@ -14,24 +14,14 @@ export default class Boot extends Phaser.Scene {
         this.ascean = {};
     }
     
-    init() {
-        
-    }
+    init() { }
     
-    preload() {
-        
-        // Bitmap font for PreloadScene
-        
-        // ...path
-        
-        // ...files
-    }
+    preload() { }
     
     create() {
         window.addEventListener('get-ascean', this.asceanFinishedEventListener)
         const getAscean = new CustomEvent('request-ascean');
         window.dispatchEvent(getAscean);
-
         
         this.scene.start('Preload', {
             gameData: this.ascean

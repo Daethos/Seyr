@@ -4,7 +4,7 @@ import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
 import VirtualJoystick from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
-
+import NewText from './NewText.js'
 
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
@@ -16,7 +16,8 @@ export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
         this.ascean = null;
-        
+        this.centerX = 180;
+        this.centerY = 240;
     }
     
     init(data) {
@@ -133,7 +134,7 @@ export default class Play extends Phaser.Scene {
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 1024, 1024);
         var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
-            x: 100,
+            x: 50,
             y: 400,
             radius: 50,
             // base: this.baseSprite,
@@ -152,17 +153,37 @@ export default class Play extends Phaser.Scene {
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
         // this.stick.alignBottomLeft(20);
 
+        this.createWelcome();
 
     }
 
+    createWelcome() {
+        console.log(this.gameData, 'Game Data')
+        this.time.addEvent({
+            delay: 500,
+            callback: () => {  this.welcome = new NewText(
+                this,
+                this.centerX,
+                this.centerY + 140,
+                `Welcome to the game, ${this.gameData.ascean.name}!`,
+                'play',
+                0.5,
+            )
+        },
+            callbackScope: this
+        });
+        this.time.addEvent({
+            delay: 3000,
+            callback: () => {  this.welcome.destroy();
+        },
+            callbackScope: this
+        });
+    }
  
 
     update() {
-
-        // console.log(this, 'This in this')
         
         const gameObjects = this.add.group([this.playerHelm, this.playerArmor, this.playerLegs]);
-        // const boundaries = this.getBoundaryTiles.bind(this)();
         const boundaryTiles = this.map.filterTiles((tile) => {
             return tile.properties.collides;
           }, this, 0, 0, this.map.width, this.map.height);
@@ -172,26 +193,11 @@ export default class Play extends Phaser.Scene {
         this.playerArmor.update(this);
         this.playerLegs.update(this);
 
-        // this.matterCollision.addOnCollideEnd({
-        //     objectA: [this.playerHelm, this.playerArmor, this.playerLegs], 
-        //     objectB: boundaryTiles, 
-        //     callback: () => this.snapIntoAlignment(), 
-        //     context: this
-        // });          
-
-        // this.matterCollision.addOnCollideEnd(gameObjects, boundaryTiles, this, this.snapIntoAlignment());
-        this.snapIntoAlignment();
+        if (this.alignmentCheck( this.playerHelm, this.playerArmor, this.playerLegs)) {
+            // console.log('Out of Alignment')
+            this.snapIntoAlignment();
+        }
     }
-
-    // getBoundaryTiles() {
-    //     // Filter the tiles based on the 'collides' property
-    //     const boundaryTiles = this.map.filterTiles(tile => {
-    //       return tile.properties.collides;
-    //     }, this, 0, 0, this.map.width, this.map.height);
-      
-    //     // Return a group of boundary tiles
-    //     return this.add.group(boundaryTiles);
-    //   }
 
     pause() {
         this.scene.pause();
@@ -200,15 +206,29 @@ export default class Play extends Phaser.Scene {
         this.scene.resume();
     }
 
+    alignmentCheck(helm, armor, legs) {
+        if (helm.x !== armor.x || helm.x !== legs.x || armor.x !== legs.x) {
+            return true;
+        }
+        if (armor.y !== (helm.y + helm.displayHeight / 2 + armor.displayHeight / 2 - 1) && (armor.y - (helm.y +helm.displayHeight / 2 + armor.displayHeight / 2 - 1)) > 0.2 ) {
+            return true;
+        }
+        if (legs.y !== (armor.y + armor.displayHeight / 2 + legs.displayHeight / 2 - 1) && (legs.y - (armor.y + armor.displayHeight / 2 + legs.displayHeight / 2 - 1)) > 0.2) {
+            return true;
+        }
+        return false;
+    }
+
     snapIntoAlignment() {
+        console.log('Is this being called?')
         let objectA = this.playerHelm;
         let objectB = this.playerArmor;
         let objectC = this.playerLegs;
 
-        objectB.setOrigin(0.5, 0.5);
+        // objectB.setOrigin(0.5, 0.5);
         objectB.setPosition(objectA.x, objectA.y + objectA.displayHeight / 2 + objectB.displayHeight / 2 - 1);
 
-        objectC.setOrigin(0.5, 0.5);
+        // objectC.setOrigin(0.5, 0.5);
         objectC.setPosition(objectB.x, objectB.y + objectB.displayHeight / 2 + objectC.displayHeight / 2 - 1);
 
         this.playerHelm = objectA;
