@@ -1,15 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
-import './Story.css'
 import * as asceanAPI from '../../utils/asceanApi';  
 import Loading from '../../components/Loading/Loading';
-import TileMap from '../../components/Story/TileMap'
-import Phaser from "phaser";
-
-import { calculateGameSize } from '../../game/utility';
-import MainScene from '../../scenes/MainScene';
 import HostScene from '../../game/sceneComponents/HostScene';
-const { width, height, multiplier } = calculateGameSize();
 
 interface Props {
     user: any;
@@ -27,11 +20,8 @@ const Story = ({ user }: Props) => {
     const [attributes, setAttributes] = useState<any>([]);
     const [playerDefense, setPlayerDefense] = useState<any>([]);
 
-    
-
     const getAscean = useCallback(async () => {
         try {
-            // const game = new Phaser.Game(config);
             const response = await asceanAPI.getOneAscean(asceanID);
             setAscean(response.data);
             const stats = await asceanAPI.getAsceanStats(asceanID);
@@ -55,7 +45,6 @@ const Story = ({ user }: Props) => {
     }, [asceanID, getAscean])
 
     // TODO:FIXME: Use stock models underneath the three frames of armor so they're not invisible, properly
-
     
     if (loading) {
         return (
@@ -71,8 +60,6 @@ const Story = ({ user }: Props) => {
             totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} 
             attributes={attributes} playerDefense={playerDefense}
         />
-        <div id='story-game' style={{ textAlign: 'center' }} className='my-5'>
-        </div>
         </>
     )
 }

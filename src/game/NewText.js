@@ -15,18 +15,19 @@ export default class NewText {
         console.log(key, 'The Key of the new Text')
         let style = {
             fontFamily: 'Cinzel',
-            fontSize: 32,
-            color: '0xfdf6d8',
-            backgroundColor: '0x000000',
-            border: '0xFFFFFF 2px solid',
-            align: 'center'
+            fontSize: 16,
+            color: '#fdf6d8',
+            backgroundColor: '#800080',
+            border: '2px solid black',
+            align: 'center',
+            padding: 5,
         };
         switch (key.toLowerCase()) {
             case 'title':
-                style.fontSize = 64;
+                style.fontSize = 32;
                 break;
             case 'preload':
-                style.fontSize = 48;
+                style.fontSize = 24;
                 break;
         }
         return style;
