@@ -75,11 +75,13 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
     <div style={{ textAlign: 'center' }}>
     <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
         <Button variant=""  >
-            {/* <div className="actions"> */}
-        <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mb-5'>
-        <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
-            {player.name}</h3>
-        {/* </div> */}
+            <div className="actions">
+        <h3 
+        style={{ fontSize: 10 + 'px', color: '#fdf6d8' }} 
+        className=''>
+        {/* <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span> */}
+            {player.name} Stats</h3>
+        </div>
         </Button>
     </OverlayTrigger>
   </div>

@@ -1,5 +1,5 @@
 import { isDisabled } from '@testing-library/user-event/dist/utils';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Form from 'react-bootstrap/Form'
 import './GameCompiler.css'
 
@@ -23,11 +23,14 @@ interface Props {
     PvP?: boolean;
     timeLeft: number;
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
+    combatInitiated: boolean;
+    setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
-  const [displayedAction, setDisplayedAction] = useState<any>([])
-  const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
+const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+  const [displayedAction, setDisplayedAction] = useState<any>([]);
+  const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
+  const dropdownRef = useRef<HTMLSelectElement | null>(null);
   useEffect(() => {
     // console.log('Displaying new action: ', currentAction)
     if (currentAction === 'counter') {
@@ -43,6 +46,15 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeL
     setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
   }, [currentWeapon])
 
+  useEffect(() => {
+    if (combatInitiated) {
+        if (dropdownRef.current) {
+            dropdownRef!.current.selectedIndex = 0;
+            console.log('Resetting counter dropdown to "none"')
+        }
+        setCombatInitiated(false);
+    }
+}, [combatInitiated])
 
   const dodgeButton = document.querySelector('#dodge-button');
   const actionButton = document.querySelector('#initiate-button')
@@ -103,7 +115,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, timeLeft, setTimeL
           <button value='initiate' type='submit' className='btn btn-outline ' disabled={actionStatus ? true : false} id='initiate-button'>Initiate</button>
       </Form>
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
-      <select onChange={handleCounter} className='btn btn-outline' id='action-button'>
+      <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
         <option>Counter</option>
         {counters.map((counter: string, index: number) => ( 
           <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 

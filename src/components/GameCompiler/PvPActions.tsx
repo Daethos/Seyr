@@ -1,5 +1,5 @@
 import { isDisabled } from '@testing-library/user-event/dist/utils';
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Form from 'react-bootstrap/Form'
 import './GameCompiler.css'
 
@@ -23,13 +23,16 @@ interface Props {
     PvP?: boolean;
     yourData: any;
     enemyData: any;
+    combatInitiated: boolean;
+    setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, combatInitiated, setCombatInitiated, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
     const [displayedAction, setDisplayedAction] = useState<any>([])
     const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
+    const dropdownRef = useRef<HTMLSelectElement | null>(null);
     useEffect(() => {
-        console.log('Displaying new action: ', currentAction)
+        // console.log('Displaying new action: ', currentAction)
         if (currentAction === 'counter') {
         setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1))
         } else {
@@ -39,9 +42,19 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData
     }, [currentAction, currentCounter])
 
     useEffect(() => {
-        console.log('Displaying new weapon ', currentWeapon?.name)
+        // console.log('Displaying new weapon ', currentWeapon?.name)
         setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
     }, [currentWeapon])
+
+    useEffect(() => {
+        if (combatInitiated) {
+            if (dropdownRef.current) {
+                dropdownRef!.current.selectedIndex = 0;
+                console.log('Resetting counter dropdown to "none"')
+            }
+            setCombatInitiated(false);
+        }
+    }, [combatInitiated])
 
     useEffect(() => {
 
@@ -55,6 +68,7 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData
         // actionButton?.classList.add('hide');
         // actionButton?.classList.remove('hide')
         const initiateTimer = setTimeout(() => {
+            
         setActionStatus(false)
         }, 4000)
         return () => clearTimeout(initiateTimer);
@@ -76,7 +90,7 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData
             <button value='initiate' type='submit' className='btn btn-outline ' disabled={actionStatus ? true : false} id='initiate-button'>Initiate</button>
         </Form>
         <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
-        <select onChange={handleCounter} className='btn btn-outline' id='action-button'>
+        <select onChange={handleCounter} defaultValue='Counter' className='btn btn-outline' id='action-button' ref={dropdownRef}>
             <option>Counter</option>
             {counters.map((counter: string, index: number) => ( 
             <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 

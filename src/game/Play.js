@@ -48,25 +48,28 @@ export default class Play extends Phaser.Scene {
         let player_armor = this.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
         let player_helm = this.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
         let player_legs = this.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
-        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes("knight's") || player_helm.includes("marauder's")) {
+        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
             player_helm = player_helm.replace(/quor'ite/g, 'earth');
             player_helm = player_helm.replace(/hood/g, 'helm');
             player_helm = player_helm.replace(/knight's/g, 'knight');
             player_helm = player_helm.replace(/marauder's/g, 'marauder');
+            player_helm = player_helm.replace(/licivitan/g, 'legion');
         }
-        if (player_armor.includes('cuirass') || player_armor.includes('robes') || player_armor.includes("quor'ite") || player_armor.includes("knight's") || player_armor.includes("marauder's")) {
+        if (player_armor.includes('cuirass') || player_armor.includes('robes') || player_armor.includes("quor'ite") || player_armor.includes("knight's") || player_armor.includes("marauder's") || player_armor.includes('licivitan')) {
             player_armor = player_armor.replace(/cuirass/g, 'armor');
             player_armor = player_armor.replace(/robes/g, 'armor');
             player_armor = player_armor.replace(/quor'ite/g, 'earth');
             player_armor = player_armor.replace(/knight's/g, 'knight');
             player_armor = player_armor.replace(/marauder's/g, 'marauder');
+            player_armor = player_armor.replace(/licivitan/g, 'legion');
         }
-        if (player_legs.includes('greaves') || player_legs.includes('pants') || player_legs.includes("quor'ite") || player_legs.includes("knight's") || player_legs.includes("marauder's")) {
+        if (player_legs.includes('greaves') || player_legs.includes('pants') || player_legs.includes("quor'ite") || player_legs.includes("knight's") || player_legs.includes("marauder's") || player_legs.includes('licivitan')) {
             player_legs = player_legs.replace(/greaves/g, 'legs');
             player_legs = player_legs.replace(/pants/g, 'legs');
             player_legs = player_legs.replace(/quor'ite/g, 'earth');
             player_legs = player_legs.replace(/knight's/g, 'knight');
             player_legs = player_legs.replace(/marauder's/g, 'marauder');
+            player_legs = player_legs.replace(/licivitan/g, 'legion');
         }
 
         let armor_texture = player_armor.replace('_armor', '');

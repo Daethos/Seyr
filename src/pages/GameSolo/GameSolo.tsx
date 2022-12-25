@@ -679,7 +679,7 @@ const GameSolo = ({ user }: GameProps) => {
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
-                weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} 
+                weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
                 setCombatData={setCombatData} setEmergencyText={setEmergencyText} timeLeft={timeLeft} setTimeLeft={setTimeLeft}

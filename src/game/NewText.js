@@ -17,6 +17,8 @@ export default class NewText {
             fontFamily: 'Cinzel',
             fontSize: 32,
             color: '0xfdf6d8',
+            backgroundColor: '0x000000',
+            border: '0xFFFFFF 2px solid',
             align: 'center'
         };
         switch (key.toLowerCase()) {
@@ -47,13 +49,18 @@ export default class NewText {
     }
 
     createText () {
+        console.log(this.style, 'THis Style')
         let obj = this.ctx.add.text(
             this.x,
             this.y,
             this.text,
-            this.style.fontSize,
-            this.style.fontFamily,
-            this.style.align
+            this.style,
+            // this.style.fontSize,
+            // this.style.fontFamily,
+            // this.style.color,
+            // this.style.backgroundColor,
+            // this.style.border,
+            // this.style.align
         );
 
         obj.setOrigin(this.origin.x, this.origin.y);

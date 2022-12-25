@@ -535,7 +535,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} PvP={true}
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} yourData={yourData} enemyData={enemyData}
                 weapons={yourData.player === 1 ? combatData.player_one_weapons : combatData.player_two_weapons} setWeaponOrder={setWeaponOrder} 
-                handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
+                handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
                 currentWeapon={yourData.player === 1 ? combatData.player_one_weapons[0] : combatData.player_two_weapons[0]} 
                 currentAction={yourData.player === 1 ? combatData.player_one_action : combatData.player_two_action} 
                 currentCounter={yourData.player === 1 ? combatData.player_one_counter_guess : combatData.player_two_counter_guess} 
