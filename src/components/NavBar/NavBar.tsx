@@ -250,23 +250,21 @@ async function getAllAscean() {
           </thead>
         { highScores.map((ascean: any, index: number) => {
           return (
-            <>
-            <tbody key={index}>
-            { index < 10 
-            ? <tr key={ascean._id}>
-                  <td>
-                  <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                    style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
-                  </td>
-                  <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
-                    <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' onClick={handleSoloClose}>{ascean[0].ascean}</Nav.Link>
-                  </td>
-                  <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
-                  <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
-                </tr>
+            <tbody>
+            { index < 10 ? 
+              <tr key={index}>
+                <td>
+                <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                  style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
+                </td>
+                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
+                  <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' onClick={handleSoloClose}>{ascean[0].ascean}</Nav.Link>
+                </td>
+                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
+                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
+              </tr>
             : '' }
             </tbody>
-            </>
           )
         })}
         </Table>

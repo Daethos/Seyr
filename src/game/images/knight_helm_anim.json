@@ -7,19 +7,19 @@
             "frameRate": 8,
             "frames": [
                 {
-                    "key": "knight_helm",
+                    "key": "knight",
                     "frame": "knight_helm_idle"
                 },
                 {
-                    "key": "knight_helm",
+                    "key": "knight",
                     "frame": "knight_helm_move_1"
                 },
                 {
-                    "key": "knight_helm",
+                    "key": "knight",
                     "frame": "knight_helm_move_2"
                 },
                 {
-                    "key": "knight_helm",
+                    "key": "knight",
                     "frame": "knight_helm_move_3"
                 }
             ]
@@ -31,11 +31,11 @@
             "frameRate": 2,
             "frames": [
                 {
-                    "key": "knight_helm",
+                    "key": "knight",
                     "frame": "knight_helm_idle"
                 },
                 {
-                    "key": "knight_helm",
+                    "key": "knight",
                     "frame": "knight_helm_move_1"
                 }
             ]

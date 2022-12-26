@@ -30,8 +30,9 @@ export default class PlayerHelm extends Entity {
         // let player_armor = scene.gameData.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
         let player_helm = scene.gameData.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
         // let player_legs = scene.gameData.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
-        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
+        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes('mask') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
             player_helm = player_helm.replace(/quor'ite/g, 'earth');
+            player_helm = player_helm.replace(/mask/g, 'helm');
             player_helm = player_helm.replace(/hood/g, 'helm');
             player_helm = player_helm.replace(/knight's/g, 'knight');
             player_helm = player_helm.replace(/marauder's/g, 'marauder');
@@ -57,7 +58,7 @@ export default class PlayerHelm extends Entity {
         // let legs_texture = player_legs.replace('_legs', '');
         this.player_helm = player_helm;
 
-        // console.log(player_armor, player_helm, player_legs, ' <- Preloading Player Frames', armor_texture, helm_texture, legs_texture, ' <- Preloading Player Textures');
+        console.log(player_helm, ' <- Preloading Player Helm Frames', helm_texture, ' <- Preloading Player Helm Textures');
 
         scene.load.atlas(`${helm_texture}`, equipment[player_helm].png, equipment[player_helm].json);
         scene.load.animation(`${player_helm}_anim`, equipment[player_helm].anim);
@@ -92,15 +93,16 @@ export default class PlayerHelm extends Entity {
         }
      
         let player_helm = scene.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
-        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
+        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes('mask') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
             player_helm = player_helm.replace(/quor'ite/g, 'earth');
+            player_helm = player_helm.replace(/mask/g, 'helm');
             player_helm = player_helm.replace(/hood/g, 'helm');
             player_helm = player_helm.replace(/knight's/g, 'knight');
             player_helm = player_helm.replace(/marauder's/g, 'marauder');
             player_helm = player_helm.replace(/licivitan/g, 'legion');
         }
         this.player_helm = player_helm;
-
+        console.log(this.player_helm, ' <- Player Helm')
         if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1 ) {
             this.anims.play(`${this.player_helm}_move`, true);
         } else {

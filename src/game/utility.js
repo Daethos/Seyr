@@ -1,11 +1,11 @@
-import knight_legs_json from '../game/images/knight_legs_atlas.json';
-import knight_legs_png  from '../game/images/knight_legs.png'
+import knight_legs_json from '../game/images/knight_atlas.json';
+import knight_legs_png  from '../game/images/knight.png'
 import knight_legs_anim from '../game/images/knight_legs_anim.json';
-import knight_helm_json from '../game/images/knight_helm_atlas.json';
-import knight_helm_png  from '../game/images/knight_helm.png'
+import knight_helm_json from '../game/images/knight_atlas.json';
+import knight_helm_png  from '../game/images/knight.png'
 import knight_helm_anim from '../game/images/knight_helm_anim.json';
-import knight_armor_json from '../game/images/knight_armor_atlas.json';
-import knight_armor_png  from '../game/images/knight_armor.png'
+import knight_armor_json from '../game/images/knight_atlas.json';
+import knight_armor_png  from '../game/images/knight.png'
 import knight_armor_anim from '../game/images/knight_armor_anim.json';
 
 import achreon_legs_json from '../game/images/achreon_atlas.json';

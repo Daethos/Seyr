@@ -6,9 +6,13 @@ export default class NewText {
         this.x = x;
         this.y = y;
         this.text = string;
+        this.code = style;
         this.style = this.initStyle(style);
         this.origin = this.initOrigin(origin);
         this.obj = this.createText();
+        if (this.code.toLowerCase() === 'play') {
+            this.getBorder(this.obj);
+        }
     }
 
     initStyle(key) {
@@ -18,7 +22,16 @@ export default class NewText {
             fontSize: 16,
             color: '#fdf6d8',
             backgroundColor: '#800080',
-            border: '2px solid black',
+            stroke: '#FFFFFF',
+            strokeThickness: 2,
+            shadow: {
+                offsetX: 2,
+                offsetY: 2,
+                color: '#000000',
+                blur: 2,
+                stroke: true,
+                fill: true
+            },
             align: 'center',
             padding: 5,
         };
@@ -28,6 +41,10 @@ export default class NewText {
                 break;
             case 'preload':
                 style.fontSize = 24;
+                break;
+            case 'play':
+                style.strokeThickness = 1;
+                style.shadow.blur = 1;
                 break;
         }
         return style;
@@ -56,12 +73,6 @@ export default class NewText {
             this.y,
             this.text,
             this.style,
-            // this.style.fontSize,
-            // this.style.fontFamily,
-            // this.style.color,
-            // this.style.backgroundColor,
-            // this.style.border,
-            // this.style.align
         );
 
         obj.setOrigin(this.origin.x, this.origin.y);
@@ -75,44 +86,72 @@ export default class NewText {
         this.obj = false;
     }
 
+    getBorder(text) {
+        console.log('Get Border')
+        let container = this.ctx.add.container(
+          // Set container position to the top-left corner of the text
+          text.x - text.width * text.originX,
+          text.y - text.height * text.originY
+        );
+        container.add(text);
+        container.setSize(text.width, text.height);
+        container.setInteractive();
+        container.setScrollFactor(0, 0);
+      
+        // Add a border to the container
+        let border = this.ctx.add.rectangle(
+          // Set border position to the top-left corner of the container
+          container.x,
+          container.y,
+          container.width,
+          container.height,
+          0xFFFFFF,
+          1
+        );
+        container.add(border);
+      
+        return container;
+      }
+      
+
     // Setters 
     setText(string) {
         this.obj.text = string;
-        // this.obj.setText(string);
+        this.obj.setText(string);
     }
-    // setX(x) {
-    //     this.x = x;
-    //     this.obj.setX(x);
-    // }
-    // setY(y) {
-    //     this.y = y;
-    //     this.obj.setY(y);
-    // }
-    // setOrigin(origin) [
-    //     this.origin = this.initOrigin(origin);
-    //     this.obj.setOrigin(origin);
-    // ]
-    // setDepth(depth) {
-    //     this.obj.setDepth(depth);
-    // }
-    // setScrollFactor(scrollX, scrollY) {
-    //     this.obj.setScrollFactor(scrollX, scrollY);
-    // }
+    setX(x) {
+        this.x = x;
+        this.obj.setX(x);
+    }
+    setY(y) {
+        this.y = y;
+        this.obj.setY(y);
+    }
+    setOrigin(origin) {
+        this.origin = this.initOrigin(origin);
+        this.obj.setOrigin(origin);
+    }
+    setDepth(depth) {
+        this.obj.setDepth(depth);
+    }
+    setScrollFactor(scrollX, scrollY) {
+        this.obj.setScrollFactor(scrollX, scrollY);
+    }
 
-    // // Getters 
-    // getCenter() {
-    //     return this.obj.getCenter();
-    // }
-    // getTopLeft() {
-    //     return this.obj.getTopLeft();
-    // }
-    // getTopRight() {
-    //     return this.obj.getTopRight();
-    // }
-    // getBottomLeft() {
-    //     return this.obj.getBottomLeft();
-    // }
-    // getBottomRight() {
-    //     return this.obj.getBottomRight();
-    // }
+    // Getters 
+    getCenter() {
+        return this.obj.getCenter();
+    }
+    getTopLeft() {
+        return this.obj.getTopLeft();
+    }
+    getTopRight() {
+        return this.obj.getTopRight();
+    }
+    getBottomLeft() {
+        return this.obj.getBottomLeft();
+    }
+    getBottomRight() {
+        return this.obj.getBottomRight();
+    }
 }

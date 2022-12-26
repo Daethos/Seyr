@@ -48,9 +48,10 @@ export default class Play extends Phaser.Scene {
         let player_armor = this.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
         let player_helm = this.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
         let player_legs = this.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
-        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
+        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes('mask') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
             player_helm = player_helm.replace(/quor'ite/g, 'earth');
             player_helm = player_helm.replace(/hood/g, 'helm');
+            player_helm = player_helm.replace(/mask/g, 'helm');
             player_helm = player_helm.replace(/knight's/g, 'knight');
             player_helm = player_helm.replace(/marauder's/g, 'marauder');
             player_helm = player_helm.replace(/licivitan/g, 'legion');
