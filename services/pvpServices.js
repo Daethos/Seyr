@@ -1114,11 +1114,11 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
     
     console.log(firstWeaponCrit, secondWeaponCrit)
 
-    player_two_weapon_one_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100 )));
-    player_two_weapon_one_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[0].magical_penetration  / 100 )));
+    player_two_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
+    player_two_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
 
-    player_two_weapon_two_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100 )));
-    player_two_weapon_two_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100 )));
+    player_two_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
+    player_two_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
     player_two_weapon_one_total_damage = player_two_weapon_one_physical_damage + player_two_weapon_one_magical_damage;
     player_two_weapon_two_total_damage = player_two_weapon_two_physical_damage + player_two_weapon_two_magical_damage;
@@ -1324,8 +1324,8 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
     }
 
     // If you made it here, your basic attack now resolves itself
-    computer_physical_damage *= (player_physical_defense_multiplier * (1 - (combatData.player_two_weapons[0].physical_penetration / 100)));
-    computer_magical_damage *= (player_magical_defense_multiplier * (1 - (combatData.player_two_weapons[0].magical_penetration / 100)));
+    computer_physical_damage *= 1 - (( 1 - player_physical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].physical_penetration / 100)));
+    computer_magical_damage *= 1 - (( 1 - player_magical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].magical_penetration / 100)));
 
     computer_total_damage = computer_physical_damage + computer_magical_damage;
     if (computer_total_damage < 0) {
@@ -1351,42 +1351,35 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
 }
 
 const computerCriticalCompiler = async (combatData, weapon, computer_physical_damage, computer_magical_damage) => {
-    console.log('Computer Critical Firing', computer_physical_damage, computer_magical_damage)
+    console.log('Computer Critical Firing', computer_physical_damage, computer_magical_damage);
     computer_physical_damage *= weapon.critical_damage;
     computer_magical_damage *= weapon.critical_damage;
-    console.log('Computer Post-Crit Multiplier', computer_physical_damage, computer_magical_damage)
+    console.log('Computer Post-Crit Multiplier', computer_physical_damage, computer_magical_damage);
 
-    return {
-        combatData,
-        computer_physical_damage,
-        computer_magical_damage
-    }
+    return combatData;
 }
 
 const computerCounterCompiler = async (combatData, player_one_action, player_two_action) => {
-    console.log('Computer Counter Firing')
-    player_two_action = 'attack';
-    await attackCompiler(combatData, player_two_action)
-    return {
-        combatData,
-        player_two_action
-    }
+    console.log('Computer Counter Firing');
+    await attackCompiler(combatData, player_two_action);
+    return combatData;
+    
 }
     
 const p2RollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
-    console.log(player_two_action, 'Computer Roll Firing')
+    console.log(player_two_action, 'Computer Roll Firing');
     const computer_roll = combatData.player_two_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.player_one_attributes.kyosirMod;
-    console.log(computer_roll, 'Computer Roll %', roll_catch, 'Roll # To Beat')
+    console.log(computer_roll, 'Computer Roll %', roll_catch, 'Roll # To Beat');
     if (computer_roll > roll_catch) {
         combatData.player_two_roll_success = true;
         combatData.player_two_special_description = 
                 `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-        await p2AttackCompiler(combatData, player_two_action)
+        await p2AttackCompiler(combatData, player_two_action);
     } else {
         combatData.player_two_special_description = 
             `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-        return combatData
+        return combatData;
         // if (player_one_initiative > player_two_initiative) {
         //     await p2AttackCompiler(combatData, player_two_action)
         //     await attackCompiler(combatData, player_one_action)
@@ -1442,11 +1435,11 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
         console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
 
-    player_weapon_one_physical_damage *= (computer_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100)));
-    player_weapon_one_magical_damage *= (computer_magical_defense_multiplier * (1 - (weapons[0].magical_penetration / 100)));
+    player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration / 100)));
 
-    player_weapon_one_physical_damage *= (computer_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100)));
-    player_weapon_one_magical_damage *= (computer_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100)));
+    player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
 
     player_weapon_one_total_damage = player_weapon_one_physical_damage + player_weapon_one_magical_damage;
     player_weapon_two_total_damage = player_weapon_two_physical_damage + player_weapon_two_magical_damage;
@@ -1658,8 +1651,8 @@ const attackCompiler = async (combatData, player_one_action) => {
     }
 
     // If you made it here, your basic attack now resolves itself
-    player_physical_damage *= (computer_physical_defense_multiplier * (1 - (combatData.player_one_weapons[0].physical_penetration / 100)));
-    player_magical_damage *= (computer_magical_defense_multiplier * (1 - (combatData.player_one_weapons[0].magical_penetration / 100)));
+    player_physical_damage *= 1 - (( 1 - computer_physical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].physical_penetration / 100)));
+    player_magical_damage *= 1 - (( 1 - computer_magical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].magical_penetration / 100)));
 
     player_total_damage = player_physical_damage + player_magical_damage;
     if (player_total_damage < 0) {

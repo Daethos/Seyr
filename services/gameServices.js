@@ -1403,13 +1403,12 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
         combatData.computer_critical_success = true;
     }
     
-    console.log(firstWeaponCrit, secondWeaponCrit)
+    // console.log(firstWeaponCrit, secondWeaponCrit)
+    computer_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
+    computer_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
 
-    computer_weapon_one_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100 )));
-    computer_weapon_one_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[0].magical_penetration  / 100 )));
-
-    computer_weapon_two_physical_damage *= (player_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100 )));
-    computer_weapon_two_magical_damage *= (player_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100 )));
+    computer_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
+    computer_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
     computer_weapon_one_total_damage = computer_weapon_one_physical_damage + computer_weapon_one_magical_damage;
     computer_weapon_two_total_damage = computer_weapon_two_physical_damage + computer_weapon_two_magical_damage;
@@ -1615,8 +1614,8 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     }
 
     // If you made it here, your basic attack now resolves itself
-    computer_physical_damage *= (player_physical_defense_multiplier * (1 - (combatData.computer_weapons[0].physical_penetration / 100)));
-    computer_magical_damage *= (player_magical_defense_multiplier * (1 - (combatData.computer_weapons[0].magical_penetration / 100)));
+    computer_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (combatData.computer_weapons[0].physical_penetration / 100)));
+    computer_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (combatData.computer_weapons[0].magical_penetration / 100)));
 
     computer_total_damage = computer_physical_damage + computer_magical_damage;
     if (computer_total_damage < 0) {
@@ -1741,11 +1740,11 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
         console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
 
-    player_weapon_one_physical_damage *= (computer_physical_defense_multiplier * (1 - (weapons[0].physical_penetration / 100)));
-    player_weapon_one_magical_damage *= (computer_magical_defense_multiplier * (1 - (weapons[0].magical_penetration / 100)));
+    player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration / 100)));
 
-    player_weapon_one_physical_damage *= (computer_physical_defense_multiplier * (1 - (weapons[1].physical_penetration / 100)));
-    player_weapon_one_magical_damage *= (computer_magical_defense_multiplier * (1 - (weapons[1].magical_penetration / 100)));
+    player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
 
     player_weapon_one_total_damage = player_weapon_one_physical_damage + player_weapon_one_magical_damage;
     player_weapon_two_total_damage = player_weapon_two_physical_damage + player_weapon_two_magical_damage;
@@ -1956,8 +1955,13 @@ const attackCompiler = async (combatData, player_action) => {
     }
 
     // If you made it here, your basic attack now resolves itself
-    player_physical_damage *= (computer_physical_defense_multiplier * (1 - (combatData.weapons[0].physical_penetration / 100)));
-    player_magical_damage *= (computer_magical_defense_multiplier * (1 - (combatData.weapons[0].magical_penetration / 100)));
+    // The plan is to get the player's number as close to 1x as possible when calculating penetration.
+    player_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (combatData.weapons[0].physical_penetration / 100)));
+    player_magical_damage *=1 - ((1 - computer_magical_defense_multiplier) * (1 - (combatData.weapons[0].magical_penetration / 100)));
+
+    console.log(1 - ((1 - computer_physical_defense_multiplier) * (1 - (combatData.weapons[0].physical_penetration / 100))), 
+    1 - computer_physical_defense_multiplier, 1 - (combatData.weapons[0].physical_penetration / 100), 
+    'Combined Physical Defense Mitigation, Computer Physical Defense, Player Weapon Physical Penetration')
 
     player_total_damage = player_physical_damage + player_magical_damage;
     if (player_total_damage < 0) {

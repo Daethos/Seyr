@@ -5,7 +5,8 @@ import PlayerLegs from "../game/PlayerLegs";
 import VirtualJoystick from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import NewText from './NewText.js'
-
+import { addBorderToText } from './TextBorder';
+import { Graphics } from 'phaser';
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
 import stick from './images/stick.png';
@@ -161,25 +162,51 @@ export default class Play extends Phaser.Scene {
 
     }
 
+    createTextBorder(text) {
+        const border = this.add.graphics();
+        
+        border.lineStyle(4, 0x000000, 1);
+        
+        border.strokeRect(
+            text.x - text.width * text.originX - 2.5, // Subtract half of the border width and the x origin from the x position
+            text.y - text.height * text.originY - 2.5, // Subtract half of the border width and the y origin from the y position
+            text.width + 5, // Add the border width to the width of the text
+            text.height + 5 // Add the border width to the height of the text
+          );
+          
+        this.add.existing(border);
+        console.log(border, 'Border')
+        return border;
+      }
+      
+      
+      
+
     createWelcome() {
         console.log(this.gameData, 'Game Data')
         this.time.addEvent({
             delay: 500,
-            callback: () => {  this.welcome = new NewText(
-                this,
-                this.centerX,
-                this.centerY + 140,
-                `Welcome to the game, ${this.gameData.ascean.name}!`,
-                'play',
-                0.5,
-            )
-        },
+            callback: () => {  
+                this.welcome = new NewText(
+                    this,
+                    this.centerX,
+                    this.centerY + 140,
+                    `Welcome to the Seyr of Daethos, ${this.gameData.ascean.name}! What do you do when you don't know what to do?`,
+                    'play',
+                    0.5,
+                    this.game,
+                );
+                console.log(this.welcome.obj, 'Welcome')
+                    this.border = this.createTextBorder(this.welcome.obj);
+            },
             callbackScope: this
         });
         this.time.addEvent({
             delay: 3000,
-            callback: () => {  this.welcome.destroy();
-        },
+            callback: () => {  
+                this.welcome.destroy();
+                this.border.destroy();
+            },
             callbackScope: this
         });
     }

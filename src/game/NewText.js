@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 
 export default class NewText {
-    constructor(ctx, x, y, string, style, origin) {
+    constructor(ctx, x, y, string, style, origin, game) {
+        this.game = game;
         this.ctx = ctx;
         this.x = x;
         this.y = y;
@@ -10,10 +11,10 @@ export default class NewText {
         this.style = this.initStyle(style);
         this.origin = this.initOrigin(origin);
         this.obj = this.createText();
-        if (this.code.toLowerCase() === 'play') {
-            this.getBorder(this.obj);
-        }
+       
     }
+
+    
 
     initStyle(key) {
         console.log(key, 'The Key of the new Text')
@@ -34,6 +35,10 @@ export default class NewText {
             },
             align: 'center',
             padding: 5,
+            wordWrap: {
+                width: 340,
+                useAdvancedWrap: true
+            },
         };
         switch (key.toLowerCase()) {
             case 'title':
@@ -76,7 +81,7 @@ export default class NewText {
         );
 
         obj.setOrigin(this.origin.x, this.origin.y);
-
+        console.log(obj, 'The Text Object')
         return obj;
     }
 
@@ -85,33 +90,6 @@ export default class NewText {
 
         this.obj = false;
     }
-
-    getBorder(text) {
-        console.log('Get Border')
-        let container = this.ctx.add.container(
-          // Set container position to the top-left corner of the text
-          text.x - text.width * text.originX,
-          text.y - text.height * text.originY
-        );
-        container.add(text);
-        container.setSize(text.width, text.height);
-        container.setInteractive();
-        container.setScrollFactor(0, 0);
-      
-        // Add a border to the container
-        let border = this.ctx.add.rectangle(
-          // Set border position to the top-left corner of the container
-          container.x,
-          container.y,
-          container.width,
-          container.height,
-          0xFFFFFF,
-          1
-        );
-        container.add(border);
-      
-        return container;
-      }
       
 
     // Setters 
