@@ -174,13 +174,26 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
             )
         })
         const response = await newWeaponOrder();
-        playWO()
+        playWO();
         // console.log(response, '<- Response re-ordering weapons')
         if (yourData.player === 1) {
             setCombatData({...combatData, 'player_one_weapons': response})
-            setTimeLeft(10)
+            setTimeLeft(10);
         } else {
             setCombatData({...combatData, 'player_two_weapons': response})
+            setTimeLeft(10);
+        }
+    }
+
+    async function setDamageType(damageType: any) {
+        console.log(damageType.target.value, '<- Damage Type')
+        playWO();
+        if (yourData.player === 1) {
+            setCombatData({...combatData, 'player_one_damage_type': damageType.target.value});
+            setTimeLeft(10);
+        } else {
+            setCombatData({...combatData, 'player_two_damage_type': damageType.target.value});
+            setTimeLeft(10);
         }
     }
 
@@ -304,48 +317,48 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
             setComputerWin(enemyData.player === 2 ? response.player_two_win : response.player_one_win)
             if (yourData.player === 1) {
                 if (response.player_one_critical_success === true) {
-                    if (response.player_one_weapons[0].damage_type[0] === 'Spooky' || response.player_one_weapons[0].damage_type[0] === 'Righteous') {
-                        playDaethic()
+                    if (response.player_one_damage_type === 'Spooky' || response.player_one_damage_type === 'Righteous') {
+                        playDaethic();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Wild') {
-                        playWild()
+                    if (response.player_one_damage_type === 'Wild') {
+                        playWild();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Earth') {
-                        playEarth()
+                    if (response.player_one_damage_type === 'Earth') {
+                        playEarth();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Fire') {
-                        playFire()
+                    if (response.player_one_damage_type === 'Fire') {
+                        playFire();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Frost') {
-                        playFrost()
+                    if (response.player_one_damage_type === 'Frost') {
+                        playFrost();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Lightning') {
-                        playLightning()
+                    if (response.player_one_damage_type === 'Lightning') {
+                        playLightning();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Sorcery') {
-                        playSorcery()
+                    if (response.player_one_damage_type === 'Sorcery') {
+                        playSorcery();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Wind') {
-                        playWind()
+                    if (response.player_one_damage_type === 'Wind') {
+                        playWind();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Pierce' && response.player_one_weapons[0].type !== 'Bow') {
-                        playPierce()
+                    if (response.player_one_damage_type === 'Pierce' && response.player_one_weapons[0].type !== 'Bow') {
+                        playPierce();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Blunt') {
-                        playBlunt()
+                    if (response.player_one_damage_type === 'Blunt') {
+                        playBlunt();
                     }
-                    if (response.player_one_weapons[0].damage_type[0] === 'Slash') {
-                        playSlash()
+                    if (response.player_one_damage_type === 'Slash') {
+                        playSlash();
                     }
                     if (response.player_one_weapons[0].type === 'Bow') {
-                        playBow()
+                        playBow();
                     }
                 }
                 if (response.player_one_religious_success === true) {
-                    playReligion()
+                    playReligion();
                 }
                 if (response.player_one_win === true) {
-                    playWin()
+                    playWin();
                     setWinStreak((winStreak) => winStreak + 1)
                     // if (winStreak + 1 > highScore) {
                     //     setHighScore((score) => score + 1)
@@ -365,37 +378,37 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
             } 
             if (yourData.player === 2) {
                 if (response.player_two_critical_success === true) {
-                    if (response.player_two_weapons[0].damage_type[0] === 'Spooky' || response.player_two_weapons[0].damage_type[0] === 'Righteous') {
+                    if (response.player_two_damage_type === 'Spooky' || response.player_two_damage_type === 'Righteous') {
                         playDaethic()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Wild') {
+                    if (response.player_two_damage_type === 'Wild') {
                         playWild()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Earth') {
+                    if (response.player_two_damage_type === 'Earth') {
                         playEarth()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Fire') {
+                    if (response.player_two_damage_type === 'Fire') {
                         playFire()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Frost') {
+                    if (response.player_two_damage_type === 'Frost') {
                         playFrost()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Lightning') {
+                    if (response.player_two_damage_type === 'Lightning') {
                         playLightning()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Sorcery') {
+                    if (response.player_two_damage_type === 'Sorcery') {
                         playSorcery()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Wind') {
+                    if (response.player_two_damage_type === 'Wind') {
                         playWind()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Pierce' && response.player_two_weapons[0].type !== 'Bow') {
+                    if (response.player_two_damage_type === 'Pierce' && response.player_two_weapons[0].type !== 'Bow') {
                         playPierce()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Blunt') {
+                    if (response.player_two_damage_type === 'Blunt') {
                         playBlunt()
                     }
-                    if (response.player_two_weapons[0].damage_type[0] === 'Slash') {
+                    if (response.player_two_damage_type === 'Slash') {
                         playSlash()
                     }
                     if (response.player_two_weapons[0].type === 'Bow') {
@@ -512,7 +525,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
             <span style={{ float: 'right' }} id='chat-button'>
                 <Button variant='outline-danger'
                     style={{ color: '#fdf6d8', borderRadius: 50 + '%',
-                        marginTop: 42.5 + 'vh', 
+                        marginTop: 46 + 'vh', 
                         marginLeft: 45 + 'vw',
                         border: 1.5 + 'px' + ' solid ' + 'red' 
                     }} 
@@ -535,6 +548,8 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} PvP={true}
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} yourData={yourData} enemyData={enemyData}
                 weapons={yourData.player === 1 ? combatData.player_one_weapons : combatData.player_two_weapons} setWeaponOrder={setWeaponOrder} 
+                damageType={yourData.player === 1 ? combatData.player_one_weapons[0].damage_type : combatData.player_two_weapons[0].damage_type} setDamageType={setDamageType}
+                currentDamageType={yourData.player === 1 ? combatData.player_one_damage_type : combatData.player_two_damage_type}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
                 currentWeapon={yourData.player === 1 ? combatData.player_one_weapons[0] : combatData.player_two_weapons[0]} 
                 currentAction={yourData.player === 1 ? combatData.player_one_action : combatData.player_two_action} 

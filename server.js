@@ -161,6 +161,7 @@ io.on("connection", (socket) => {
       player_one_weapon_one: {},
       player_one_weapon_two: {},
       player_one_weapon_three: {},
+      player_one_damage_type: '',
       player_one_defense: {},
       player_one_attributes: {},
       current_player_one_health: 0,
@@ -188,6 +189,7 @@ io.on("connection", (socket) => {
       player_two_weapon_one: {},
       player_two_weapon_two: {},
       player_two_weapon_three: {},
+      player_two_damage_type: '',
       player_two_defense: {},
       player_two_attributes: {},
       player_two_start_description: '',
@@ -216,6 +218,7 @@ io.on("connection", (socket) => {
       newUser.combatData.player_one_weapon_one = response.data.combat_weapon_one,
       newUser.combatData.player_one_weapon_two = response.data.combat_weapon_two,
       newUser.combatData.player_one_weapon_three = response.data.combat_weapon_three,
+      newUser.combatData.player_one_damage_type = response.data.combat_weapon_one.damage_type,
       newUser.combatData.player_one_defense = response.data.defense,
       newUser.combatData.player_one_attributes = response.data.attributes
       
@@ -228,6 +231,7 @@ io.on("connection", (socket) => {
       combatData.player_one_weapon_one = response.data.combat_weapon_one,
       combatData.player_one_weapon_two = response.data.combat_weapon_two,
       combatData.player_one_weapon_three = response.data.combat_weapon_three,
+      combatData.player_one_damage_type = response.data.combat_weapon_one.damage_type,
       combatData.player_one_defense = response.data.defense,
       combatData.player_one_attributes = response.data.attributes
     
@@ -242,6 +246,7 @@ io.on("connection", (socket) => {
       newUser.combatData.player_two_weapon_one = response.data.combat_weapon_one,
       newUser.combatData.player_two_weapon_two = response.data.combat_weapon_two,
       newUser.combatData.player_two_weapon_three = response.data.combat_weapon_three,
+      newUser.combatData.player_two_damage_type = response.data.combat_weapon_one.damage_type,
       newUser.combatData.player_two_defense = response.data.defense,
       newUser.combatData.player_two_attributes = response.data.attributes
     
@@ -254,6 +259,7 @@ io.on("connection", (socket) => {
       combatData.player_two_weapon_one = response.data.combat_weapon_one,
       combatData.player_two_weapon_two = response.data.combat_weapon_two,
       combatData.player_two_weapon_three = response.data.combat_weapon_three,
+      combatData.player_two_damage_type = response.data.combat_weapon_one.damage_type,
       combatData.player_two_defense = response.data.defense,
       combatData.player_two_attributes = response.data.attributes
     

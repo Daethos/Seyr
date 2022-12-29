@@ -25,9 +25,12 @@ interface Props {
     enemyData: any;
     combatInitiated: boolean;
     setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
+    damageType: any;
+    setDamageType: any;
+    currentDamageType: string;
 }
 
-const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, combatInitiated, setCombatInitiated, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, damageType, setDamageType, currentDamageType, yourData, enemyData, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, combatInitiated, setCombatInitiated, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
     const [displayedAction, setDisplayedAction] = useState<any>([])
     const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
     const dropdownRef = useRef<HTMLSelectElement | null>(null);
@@ -45,6 +48,11 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData
         // console.log('Displaying new weapon ', currentWeapon?.name)
         setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
     }, [currentWeapon])
+
+    useEffect(() => {
+        // console.log('Displaying new damage type ', currentDamageType)
+        setDisplayedAction(`Damage Type: ${currentDamageType}`)
+      }, [currentDamageType])
 
     useEffect(() => {
         if (combatInitiated) {
@@ -77,8 +85,14 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, yourData, enemyData
     return (
         <>
         <textarea className='action-reader' value={displayedAction} readOnly></textarea>
-        <select name="Attacks" id="attack-options" value={PvP ? combatData.player_one_weapons[0] : combatData.weapons[0]} onChange={setWeaponOrder}>
-            <option value="">Weapon Order</option>
+        <select name="Damage" id="damage-options" value={yourData.player === 1 ? combatData.player_one_damage_type : combatData.player_two_damage_type} onChange={setDamageType}>
+        {
+            damageType ?
+            damageType.map((damage: string, index: number) => { return ( <option value={damage} key={index} >{damage}</option> ) } )
+            : ''
+        }
+        </select>
+        <select name="Attacks" id="attack-options" value={yourData.player === 1 ? combatData.player_one_weapons[0].name : combatData.player_two_weapons[0].name} onChange={setWeaponOrder}>
             {
             weapons ?
             weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )

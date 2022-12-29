@@ -178,6 +178,7 @@ const GamePvPLobby = ({ user }: Props) => {
         player_one_weapon_one: playerOneWeaponOne,
         player_one_weapon_two: playerOneWeaponTwo,
         player_one_weapon_three: playerOneWeaponThree,
+        player_one_damage_type: '',
         player_one_defense: playerOneDefense,
         player_one_attributes: playerOneAttributes,
         current_player_one_health: currentPlayerOneHealth,
@@ -210,6 +211,7 @@ const GamePvPLobby = ({ user }: Props) => {
         player_two_weapon_one: playerTwoWeaponOne,
         player_two_weapon_two: playerTwoWeaponTwo,
         player_two_weapon_three: playerTwoWeaponThree,
+        player_two_damage_type: '',
         player_two_defense: playerTwoDefense,
         player_two_attributes: playerTwoAttributes,
         player_two_start_description: '',
@@ -233,7 +235,7 @@ const GamePvPLobby = ({ user }: Props) => {
     })
 
     useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com") 
+        socket = io.connect("http://localhost:3001") 
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
         socket.emit("setup", user);
@@ -340,6 +342,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 'player_one_weapon_one': data.player_one_weapon_one,
                 'player_one_weapon_two': data.player_one_weapon_two,
                 'player_one_weapon_three': data.player_one_weapon_three,
+                'player_one_damage_type': data.player_one_weapon_one.damage_type[0],
                 'player_one_defense': data.player_one_defense,
                 'player_one_attributes': data.player_one_attributes
             })
@@ -362,6 +365,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 'player_two_weapon_one': data.player_two_weapon_one,
                 'player_two_weapon_two': data.player_two_weapon_two,
                 'player_two_weapon_three': data.player_two_weapon_three,
+                'player_two_damage_type': data.player_two_weapon_one.damage_type[0],
                 'player_two_defense': data.player_two_defense,
                 'player_two_attributes': data.player_two_attributes
             })
@@ -384,6 +388,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 'player_one_weapon_one': data.player_one_weapon_one,
                 'player_one_weapon_two': data.player_one_weapon_two,
                 'player_one_weapon_three': data.player_one_weapon_three,
+                'player_one_damage_type': data.player_one_weapon_one.damage_type[0],
                 'player_one_defense': data.player_one_defense,
                 'player_one_attributes': data.player_one_attributes
             })
@@ -406,6 +411,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 'player_two_weapon_one': data.player_two_weapon_one,
                 'player_two_weapon_two': data.player_two_weapon_two,
                 'player_two_weapon_three': data.player_two_weapon_three,
+                'player_two_damage_type': data.player_two_weapon_one.damage_type[0],
                 'player_two_defense': data.player_two_defense,
                 'player_two_attributes': data.player_two_attributes
             })
@@ -451,6 +457,7 @@ const GamePvPLobby = ({ user }: Props) => {
                     'player_one_weapon_one': you.combatData.player_one_weapon_one,
                     'player_one_weapon_two': you.combatData.player_one_weapon_two,
                     'player_one_weapon_three': you.combatData.player_one_weapon_three,
+                    'player_one_damage_type': you.combatData.player_one_weapon_one.damage_type[0],
                     'player_one_defense': you.combatData.player_one_defense,
                     'player_one_attributes': you.combatData.player_one_attributes,
     
@@ -462,6 +469,7 @@ const GamePvPLobby = ({ user }: Props) => {
                     'player_two_weapon_one': enemy.combatData.player_two_weapon_one,
                     'player_two_weapon_two': enemy.combatData.player_two_weapon_two,
                     'player_two_weapon_three': enemy.combatData.player_two_weapon_three,
+                    'player_two_damage_type': enemy.combatData.player_two_weapon_one.damage_type[0],
                     'player_two_defense': enemy.combatData.player_two_defense,
                     'player_two_attributes': enemy.combatData.player_two_attributes
                 })
@@ -477,6 +485,7 @@ const GamePvPLobby = ({ user }: Props) => {
                     'player_one_weapon_one': enemy.combatData.player_one_weapon_one,
                     'player_one_weapon_two': enemy.combatData.player_one_weapon_two,
                     'player_one_weapon_three': enemy.combatData.player_one_weapon_three,
+                    'player_one_damage_type': enemy.combatData.player_one_weapon_one.damage_type[0],
                     'player_one_defense': enemy.combatData.player_one_defense,
                     'player_one_attributes': enemy.combatData.player_one_attributes,
     
@@ -488,6 +497,7 @@ const GamePvPLobby = ({ user }: Props) => {
                     'player_two_weapon_one': you.combatData.player_two_weapon_one,
                     'player_two_weapon_two': you.combatData.player_two_weapon_two,
                     'player_two_weapon_three': you.combatData.player_two_weapon_three,
+                    'player_two_damage_type': you.combatData.player_two_weapon_one.damage_type[0],
                     'player_two_defense': you.combatData.player_two_defense,
                     'player_two_attributes': you.combatData.player_two_attributes
                 })

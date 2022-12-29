@@ -25,9 +25,12 @@ interface Props {
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
     combatInitiated: boolean;
     setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
+    setDamageType: any;
+    damageType: any;
+    currentDamageType: string;
 }
 
-const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, damageType, currentDamageType, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
@@ -45,6 +48,11 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, combatInitiated, s
     // console.log('Displaying new weapon ', currentWeapon?.name)
     setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
   }, [currentWeapon])
+
+  useEffect(() => {
+    // console.log('Displaying new damage type ', currentDamageType)
+    setDisplayedAction(`Damage Type: ${currentDamageType}`)
+  }, [currentDamageType])
 
   useEffect(() => {
     if (combatInitiated) {
@@ -82,28 +90,18 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, combatInitiated, s
   }, [actionStatus])
   
 
-  // async function hideInitiate() {
-  //   try {
-  //     // await sleep(250)
-  //     actionButton?.classList.add('hide');
-  //     setCombatData({ ...combatData, 'action': '' })
-  //     await sleep(3500)
-  //     actionButton?.classList.remove('hide')
-  //     // setActionStatus(false)
-  //   } catch (err: any) {
-  //     console.log(err.message, 'Error Hiding Action Bar')
-  //   }
-  // }
 
-  // if (actionStatus) {
-  //   hideInitiate()
-  //   setActionStatus(false)
-  // }
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
-      <select name="Attacks" id="attack-options" value={PvP ? combatData.player_one_weapons[0] : combatData.weapons[0]} onChange={setWeaponOrder}>
-        <option value="" id='attack-option'>Weapon Order</option>
+    <select name="Damage" id="damage-options" value={combatData.player_damage_type} onChange={setDamageType}>
+      {
+        damageType ?
+        damageType.map((damage: string, index: number) => { return ( <option value={damage} key={index} >{damage}</option> ) } )
+        : ''
+      }
+    </select>
+      <select name="Attacks" id="attack-options" value={PvP ? combatData.player_one_weapons[0] : combatData.weapons[0].name} onChange={setWeaponOrder}>
         {
         weapons ?
         weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )

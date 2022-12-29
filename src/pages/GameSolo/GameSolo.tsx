@@ -129,6 +129,7 @@ const GameSolo = ({ user }: GameProps) => {
         weapon_one: weaponOne,
         weapon_two: weaponTwo,
         weapon_three: weaponThree,
+        player_damage_type: '',
         player_defense: playerDefense,
         player_attributes: attributes,
         computer: '',
@@ -139,6 +140,7 @@ const GameSolo = ({ user }: GameProps) => {
         computer_weapon_one: computerWeaponOne,
         computer_weapon_two: computerWeaponTwo,
         computer_weapon_three: computerWeaponThree,
+        computer_damage_type: '',
         computer_defense: computerDefense,
         computer_attributes: computerAttributes,
         player_start_description: '',
@@ -219,12 +221,12 @@ const GameSolo = ({ user }: GameProps) => {
             const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
             setOpponent(secondResponse.data.ascean[randomOpponent]);
             // console.log(secondResponse.data.ascean[randomOpponent], '<- New Opponent');
-            const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean[randomOpponent]._id)
+            const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean[randomOpponent]._id);
             // console.log(response.data.data, 'Response Compiling Stats')
-            setComputerDefense(opponentResponse.data.data.defense)
-            setComputerAttributes(opponentResponse.data.data.attributes)
-            setTotalComputerHealth(opponentResponse.data.data.attributes.healthTotal)
-            setCurrentComputerHealth(opponentResponse.data.data.attributes.healthTotal)
+            setComputerDefense(opponentResponse.data.data.defense);
+            setComputerAttributes(opponentResponse.data.data.attributes);
+            setTotalComputerHealth(opponentResponse.data.data.attributes.healthTotal);
+            setCurrentComputerHealth(opponentResponse.data.data.attributes.healthTotal);
             setComputerWeapons([opponentResponse.data.data.combat_weapon_one, opponentResponse.data.data.combat_weapon_two, opponentResponse.data.data.combat_weapon_three])
             setCombatData({
                 ...combatData,
@@ -239,6 +241,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'weapon_three': response.data.data.combat_weapon_three,
                 'player_defense': response.data.data.defense,
                 'player_attributes': response.data.data.attributes,
+                'player_damage_type': response.data.data.combat_weapon_one.damage_type[0],
 
                 'computer': opponentResponse.data.data.ascean,
                 'computer_health': opponentResponse.data.data.attributes.healthTotal,
@@ -249,14 +252,15 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_weapon_two': opponentResponse.data.data.combat_weapon_two,
                 'computer_weapon_three': opponentResponse.data.data.combat_weapon_three,
                 'computer_defense': opponentResponse.data.data.defense,
-                'computer_attributes': opponentResponse.data.data.attributes
-            })
+                'computer_attributes': opponentResponse.data.data.attributes,
+                'computer_damage_type': opponentResponse.data.data.combat_weapon_one.damage_type[0],
+            });
             setComputerWin(false);
             setPlayerWin(false);
             setGameIsLive(true);
-            playOpponent()
+            playOpponent();
 
-            setLoading(false)
+            setLoading(false);
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
             setLoading(false)
@@ -484,8 +488,8 @@ const GameSolo = ({ user }: GameProps) => {
             ...combatData,
             'action': 'counter',
             'counter_guess': counter.target.value
-        })
-        setTimeLeft(10)
+        });
+        setTimeLeft(10);
     }
 
     async function setWeaponOrder(weapon: any) {
@@ -496,12 +500,19 @@ const GameSolo = ({ user }: GameProps) => {
             return (
                 a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
             )
-        })
+        });
         const response = await newWeaponOrder();
-        playWO()
+        playWO();
         // console.log(response, '<- Response re-ordering weapons')
-        setCombatData({...combatData, 'weapons': response})
-        setTimeLeft(10)
+        setCombatData({...combatData, 'weapons': response, 'player_damage_type': response[0].damage_type[0]});
+        setTimeLeft(10);
+    }
+
+    async function setDamageType(damageType: any) {
+        console.log(damageType.target.value, '<- Damage Type')
+        playWO();
+        setCombatData({...combatData, 'player_damage_type': damageType.target.value});
+        setTimeLeft(10);
     }
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
@@ -528,37 +539,37 @@ const GameSolo = ({ user }: GameProps) => {
             setPlayerWin(response.data.player_win)
             setComputerWin(response.data.computer_win)
             if (response.data.critical_success === true) {
-                if (response.data.weapons[0].damage_type[0] === 'Spooky' || response.data.weapons[0].damage_type[0] === 'Righteous') {
+                if (response.data.player_damage_type === 'Spooky' || response.data.player_damage_type === 'Righteous') {
                     playDaethic()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Wild') {
+                if (response.data.player_damage_type === 'Wild') {
                     playWild()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Earth') {
+                if (response.data.player_damage_type === 'Earth') {
                     playEarth()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Fire') {
+                if (response.data.player_damage_type === 'Fire') {
                     playFire()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Frost') {
+                if (response.data.player_damage_type === 'Frost') {
                     playFrost()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Lightning') {
+                if (response.data.player_damage_type === 'Lightning') {
                     playLightning()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Sorcery') {
+                if (response.data.player_damage_type === 'Sorcery') {
                     playSorcery()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Wind') {
+                if (response.data.player_damage_type === 'Wind') {
                     playWind()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
+                if (response.data.player_damage_type === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
                     playPierce()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Blunt') {
+                if (response.data.player_damage_type === 'Blunt') {
                     playBlunt()
                 }
-                if (response.data.weapons[0].damage_type[0] === 'Slash') {
+                if (response.data.player_damage_type === 'Slash') {
                     playSlash()
                 }
                 if (response.data.weapons[0].type === 'Bow') {
@@ -677,11 +688,11 @@ const GameSolo = ({ user }: GameProps) => {
             
             { playerWin || computerWin ? '' : combatData?.weapons ?
             <GameActions 
-                setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} 
+                setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} setDamageType={setDamageType}
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
-                weapons={combatData.weapons} setWeaponOrder={setWeaponOrder} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
+                weapons={combatData.weapons} damageType={combatData.weapons[0].damage_type} setWeaponOrder={setWeaponOrder} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
-                currentWeapon={combatData.weapons[0]} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
+                currentWeapon={combatData.weapons[0]} currentDamageType={combatData.player_damage_type} currentAction={combatData.action} currentCounter={combatData.counter_guess} 
                 setCombatData={setCombatData} setEmergencyText={setEmergencyText} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             /> : <Loading Combat={true} />
             }

@@ -202,7 +202,7 @@ export default class Play extends Phaser.Scene {
             callbackScope: this
         });
         this.time.addEvent({
-            delay: 3000,
+            delay: 5000,
             callback: () => {  
                 this.welcome.destroy();
                 this.border.destroy();

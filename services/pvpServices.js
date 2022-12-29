@@ -1120,6 +1120,14 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
     player_two_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
     player_two_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
+    const damageType = await damageTypeCompiler(combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage);
+    player_two_weapon_one_physical_damage = damageType.player_physical_damage;
+    player_two_weapon_one_magical_damage = damageType.player_magical_damage;
+
+    const damageTypeTwo = await damageTypeCompiler(combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage);
+    player_two_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
+    player_two_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
+
     player_two_weapon_one_total_damage = player_two_weapon_one_physical_damage + player_two_weapon_one_magical_damage;
     player_two_weapon_two_total_damage = player_two_weapon_two_physical_damage + player_two_weapon_two_magical_damage;
 
@@ -1272,8 +1280,8 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
             }
             if (combatData.player_two_weapons[0].type === 'Bow') {
                 if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir') {
-                    computer_physical_damage *= 2.25;
-                    computer_magical_damage *= 2.25;
+                    computer_physical_damage *= 2;
+                    computer_magical_damage *= 2;
                 } else {
                     computer_physical_damage *= 1.25;
                     computer_magical_damage *= 1.25;
@@ -1326,6 +1334,10 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
     // If you made it here, your basic attack now resolves itself
     computer_physical_damage *= 1 - (( 1 - player_physical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].physical_penetration / 100)));
     computer_magical_damage *= 1 - (( 1 - player_magical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].magical_penetration / 100)));
+
+    const damageType = await damageTypeCompiler(combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, computer_physical_damage, computer_magical_damage);
+    computer_physical_damage = damageType.player_physical_damage;
+    computer_magical_damage = damageType.player_magical_damage;
 
     computer_total_damage = computer_physical_damage + computer_magical_damage;
     if (computer_total_damage < 0) {
@@ -1438,8 +1450,16 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
     player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration / 100)));
 
-    player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
-    player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
+    player_weapon_two_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
+    player_weapon_two_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
+
+    const damageType = await damageTypeCompiler(combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    player_weapon_one_physical_damage = damageType.player_physical_damage;
+    player_weapon_one_magical_damage = damageType.player_magical_damage;
+
+    const damageTypeTwo = await damageTypeCompiler(combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    player_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
+    player_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
 
     player_weapon_one_total_damage = player_weapon_one_physical_damage + player_weapon_one_magical_damage;
     player_weapon_two_total_damage = player_weapon_two_physical_damage + player_weapon_two_magical_damage;
@@ -1597,8 +1617,8 @@ const attackCompiler = async (combatData, player_one_action) => {
             }
                 if (combatData.player_one_weapons[0].type === 'Bow') {
                     if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir') {
-                        player_physical_damage *= 2.25;
-                        player_magical_damage *= 2.25;
+                        player_physical_damage *= 2;
+                        player_magical_damage *= 2;
                     } else {
                         player_physical_damage *= 1.25;
                         player_magical_damage *= 1.25;
@@ -1654,6 +1674,10 @@ const attackCompiler = async (combatData, player_one_action) => {
     player_physical_damage *= 1 - (( 1 - computer_physical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].physical_penetration / 100)));
     player_magical_damage *= 1 - (( 1 - computer_magical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].magical_penetration / 100)));
 
+    const damageType = await damageTypeCompiler(combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_physical_damage, player_magical_damage);
+    player_physical_damage = damageType.player_physical_damage;
+    player_magical_damage = damageType.player_magical_damage;
+
     player_total_damage = player_physical_damage + player_magical_damage;
     if (player_total_damage < 0) {
         player_total_damage = 0;
@@ -1673,6 +1697,165 @@ const attackCompiler = async (combatData, player_one_action) => {
     console.log(player_total_damage, 'Total Player Damage');
 
     return combatData
+}
+
+const damageTypeCompiler = async (damage_type, helmet, chest, legs, player_physical_damage, player_magical_damage) => {
+    console.log('Damage Type Compiler Firing', player_physical_damage, player_magical_damage);
+    if (damage_type === 'Blunt' || damage_type === 'Fire' || damage_type === 'Earth' || damage_type === 'Spooky') {
+        if (helmet === 'Plate-Mail') {
+            player_physical_damage *= 1.1;
+            player_magical_damage *= 1.1;
+        }
+        if (helmet === 'Chain-Mail') {
+            player_physical_damage *= 1.05;
+            player_magical_damage *= 1.05;
+        }
+        if (helmet === 'Leather-Mail') {
+            player_physical_damage *= 0.95;
+            player_magical_damage *= 0.95;
+        }
+        if (helmet === 'Leather-Cloth') {
+            player_physical_damage *= 0.9;
+            player_magical_damage *= 0.9;
+        }
+        if (chest === 'Plate-Mail') {
+            player_physical_damage *= 1.07;
+            player_magical_damage *= 1.07;
+        }
+        if (chest === 'Chain-Mail') {
+            player_physical_damage *= 1.03;
+            player_magical_damage *= 1.03;
+        }
+        if (chest === 'Leather-Mail') {
+            player_physical_damage *= 0.97;
+            player_magical_damage *= 0.97;
+        }
+        if (chest === 'Leather-Cloth') {
+            player_physical_damage *= 0.93;
+            player_magical_damage *= 0.93;
+        }
+        if (legs === 'Plate-Mail') {
+            player_physical_damage *= 1.03;
+            player_magical_damage *= 1.03;
+        }
+        if (legs === 'Chain-Mail') {
+            player_physical_damage *= 1.015;
+            player_magical_damage *= 1.015;
+        }
+        if (legs === 'Leather-Mail') {
+            player_physical_damage *= 0.985;
+            player_magical_damage *= 0.985;
+        }
+        if (legs === 'Leather-Cloth') {
+            player_physical_damage *= 0.97;
+            player_magical_damage *= 0.97;
+        }
+    }
+    if (damage_type === 'Pierce' || damage_type === 'Lightning' || damage_type === 'Frost' || damage_type === 'Sorcery') {
+        if (helmet === 'Plate-Mail') {
+            player_physical_damage *= 0.9;
+            player_magical_damage *= 0.9;
+        }
+        if (helmet === 'Chain-Mail') {
+            player_physical_damage *= 0.95;
+            player_magical_damage *= 0.95;
+        }
+        if (helmet === 'Leather-Mail') {
+            player_physical_damage *= 1.05;
+            player_magical_damage *= 1.05;
+        }
+        if (helmet === 'Leather-Cloth') {
+            player_physical_damage *= 1.1;
+            player_magical_damage *= 1.1;
+        }
+        if (chest === 'Plate-Mail') {
+            player_physical_damage *= 0.93;
+            player_magical_damage *= 0.93;
+        }
+        if (chest === 'Chain-Mail') {
+            player_physical_damage *= 0.97;
+            player_magical_damage *= 0.97;
+        }
+        if (chest === 'Leather-Mail') {
+            player_physical_damage *= 1.03;
+            player_magical_damage *= 1.03;
+        }
+        if (chest === 'Leather-Cloth') {
+            player_physical_damage *= 1.07;
+            player_magical_damage *= 1.07;
+        }
+        if (legs === 'Plate-Mail') {
+            player_physical_damage *= 0.97;
+            player_magical_damage *= 0.97;
+        }   
+        if (legs === 'Chain-Mail') {
+            player_physical_damage *= 0.985;
+            player_magical_damage *= 0.985;
+        }
+        if (legs === 'Leather-Mail') {
+            player_physical_damage *= 1.015;
+            player_magical_damage *= 1.015;
+        }
+        if (legs === 'Leather-Cloth') {
+            player_physical_damage *= 1.03;
+            player_magical_damage *= 1.03;
+        }
+    }
+    if (damage_type === 'Slash' || damage_type === 'Wind' || damage_type === 'Righteous' || damage_type === 'Wild') {
+        if (helmet === 'Plate-Mail') {
+            player_physical_damage *= 1.05;
+            player_magical_damage *= 1.05;
+        }
+        if (helmet === 'Chain-Mail') {
+            player_physical_damage *= 0.9;
+            player_magical_damage *= 0.9;
+        }   
+        if (helmet === 'Leather-Mail') {
+            player_physical_damage *= 1.1;
+            player_magical_damage *= 1.1;
+        }
+        if (helmet === 'Leather-Cloth') {
+            player_physical_damage *= 0.95;
+            player_magical_damage *= 0.95;
+        }
+        if (chest === 'Plate-Mail') {
+            player_physical_damage *= 1.03;
+            player_magical_damage *= 1.03;
+        }
+        if (chest === 'Chain-Mail') {
+            player_physical_damage *= 0.93;
+            player_magical_damage *= 0.93;
+        }
+        if (chest === 'Leather-Mail') {
+            player_physical_damage *= 1.07;
+            player_magical_damage *= 1.07;
+        }
+        if (chest === 'Leather-Cloth') {
+            player_physical_damage *= 0.97;
+            player_magical_damage *= 0.97;
+        }
+        if (legs === 'Plate-Mail') {
+            player_physical_damage *= 1.015;
+            player_magical_damage *= 1.015;
+        }
+        if (legs === 'Chain-Mail') {
+            player_physical_damage *= 0.97;
+            player_magical_damage *= 0.97;
+        }
+        if (legs === 'Leather-Mail') {
+            player_physical_damage *= 1.03;
+            player_magical_damage *= 1.03;
+        }
+        if (legs === 'Leather-Cloth') {
+            player_physical_damage *= 0.985;
+            player_magical_damage *= 0.985;
+        }
+    }
+    console.log('Player Post-Damage Type Multiplier', player_physical_damage, player_magical_damage);
+    return {
+        player_physical_damage,
+        player_magical_damage
+    }
 }
 
 const criticalCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
@@ -1807,6 +1990,7 @@ const actionSplitter = async (combatData) => {
         player_one_weapons: combatData.player_one_weapons, // All 3 Weapons
         player_one_defense: combatData.player_one_defense, // Posseses Base + Postured Defenses
         player_one_attributes: combatData.player_one_attributes, // Possesses compiled Attributes, Initiative
+        player_one_damage_type: combatData.player_one_damage_type, // Damage Type of the Weapon
 
         player_two: combatData.player_two, // Computer Enemy
         player_two_attributes: combatData.player_two_attributes, // Possesses compiled Attributes, Initiative
@@ -1815,6 +1999,7 @@ const actionSplitter = async (combatData) => {
         player_two_action: combatData.action_two, // Action Chosen By Computer
         player_two_counter_guess: combatData.player_two_counter_guess, // Comp's Counter Guess if Action === 'Counter'
         player_two_weapons: combatData.player_two_weapons,  // All 3 Weapons
+        player_two_damage_type: combatData.player_two_damage_type, // Damage Type of the Weapon
 
         potential_player_one_damage: 0, // All the Damage that is possible on hit for a player
         potential_player_two_damage: 0, // All the Damage that is possible on hit for a computer
@@ -1859,7 +2044,7 @@ const actionSplitter = async (combatData) => {
         player_two_win: false,
         player_two_critical_success: false
     }
-    // console.log(newData, 'Combat Data in the Action Splitter')
+    console.log(newData, 'Combat Data in the Action Splitter')
     const player_one_initiative = newData.player_one_attributes.initiative;
     const player_two_initiative = newData.player_two_attributes.initiative;
     let player_one_action = newData.action;
@@ -2090,7 +2275,7 @@ const actionSplitter = async (combatData) => {
             `${newData.player_one.name} has been defeated. Hail ${newData.player_two.name}, the new va'Esai!`
     }
     
-
+    console.log(newData.player_one_damage_type, newData.player_two_damage_type, 'Damage Types')
     return newData
 }
 
