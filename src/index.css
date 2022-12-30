@@ -506,6 +506,17 @@ html, body {
   margin-top: -5%;
 
 }
+#level-up {
+  /* float: right; */
+  position: absolute;
+  grid-column-start: 3;
+  margin-left: 75%;
+  margin-top: 5%;
+  font-variant: small-caps;
+  font-weight: 400;
+  color: #fdf6d8;
+  font-size: 25px;
+}
 
 #story-health {
   background-color: red;

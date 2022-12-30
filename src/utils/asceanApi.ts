@@ -116,3 +116,19 @@ export async function highScore(vaEsai: any) {
         })
     })
 }
+
+export async function levelUp(vaEsai: any) {
+    return fetch(BASE_URL + 'levelup', {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+    }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, '<- Response in Level Up Utility Return')
+        });
+    });
+}

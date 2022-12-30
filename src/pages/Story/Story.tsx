@@ -19,6 +19,7 @@ const Story = ({ user }: Props) => {
     const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(-5)
     const [attributes, setAttributes] = useState<any>([]);
     const [playerDefense, setPlayerDefense] = useState<any>([]);
+    const [levelUp, setLevelUp] = useState<boolean>(false);
 
     const getAscean = useCallback(async () => {
         try {
@@ -42,7 +43,7 @@ const Story = ({ user }: Props) => {
 
     useEffect(() => {
         getAscean();
-    }, [asceanID, getAscean])
+    }, [asceanID, getAscean, levelUp])
 
     // TODO:FIXME: Use stock models underneath the three frames of armor so they're not invisible, properly
     
@@ -58,7 +59,7 @@ const Story = ({ user }: Props) => {
             user={user} ascean={ascean} 
             weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} 
             totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} 
-            attributes={attributes} playerDefense={playerDefense}
+            attributes={attributes} playerDefense={playerDefense} levelUp={levelUp} setLevelUp={setLevelUp}
         />
         </>
     )

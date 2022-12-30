@@ -5,8 +5,8 @@ import FaithCard from '../FaithCard/FaithCard';
 interface Props {
     asceanState: any;
     setAsceanState: React.Dispatch<any>;
-    faithModalShow: boolean;
-    setFaithModalShow: React.Dispatch<React.SetStateAction<boolean>>;
+    faithModalShow?: boolean;
+    setFaithModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow }: Props) => {
@@ -50,7 +50,7 @@ const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow 
     </div>
     <div className="property-block">
     <Form.Select value={asceanState.faith} onChange={handleFaith}>
-        <option>Faith Selection Here</option>
+        <option>None</option>
         {faithState.map((faith: any, index: number) => {
             return (
                 <option value={faith.worshipers} key={index}>{faith.name}</option>

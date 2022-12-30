@@ -30,19 +30,22 @@ const StoryPlayerStats = ({ attributes, weaponAttributes, magicalDefense, magica
 
     const playerPopover = (
         <Popover id="popover">
-            <Popover.Header id="popover-header" as="h2">Player Statistics
+            <Popover.Header id="popover-header" as="h2">{player.name}'s Statistics
             </Popover.Header>
             <Popover.Body id="popover-body">
-                <div className="">
-                Magical Defense:  {magicalDefense}% / [{magicalPosture}%]
-                </div>
-                <div className="">
-                Physical Defense:  {physicalDefense}% / [{physicalPosture}%]
-                </div>
-                <div className="">
-                Initiative:  {attributes.initiative}
-                </div>
-                <div>Constitution: {attributes.totalConstitution} [ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ] </div>
+            <div className='creature-heading'>
+                <h2>
+                {player.description}
+                </h2>
+            </div>
+            <div>
+                Level: {player.level}<br />
+                Experience: {player.experience} / {player.level * 1000}<br />
+                Magical Defense:  {magicalDefense}% / [{magicalPosture}%]<br />
+                Physical Defense:  {physicalDefense}% / [{physicalPosture}%]<br />
+                Initiative:  {attributes.initiative}<br />
+            </div>
+            <div>Constitution: {attributes.totalConstitution} [ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ] </div>
             <div>Strength: {attributes.totalStrength} [ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</div>
             <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
             <div>Agility: {attributes.totalAgility} [ {attributes.totalAgility < 10 ? '- ' + attributes.agilityMod : '+ ' + attributes.agilityMod} ]</div>

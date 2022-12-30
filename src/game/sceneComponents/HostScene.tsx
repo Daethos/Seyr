@@ -11,9 +11,13 @@ import Preload from '../Preload';
 import Menu from '../Menu';
 import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
+import * as asceanAPI from '../../utils/asceanApi';
 import DialogBox from '../DialogBox';
 import { Container } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import Attributes from '../LevelUp/Attributes';
+import Mastery from '../../components/AsceanBuilder/Mastery';
+import Faith from '../../components/AsceanBuilder/Faith';
 // import { resizeGame } from '../Resize';
 
 
@@ -27,15 +31,17 @@ interface Props {
     currentPlayerHealth: number;
     attributes: any;
     playerDefense: any;
+    levelUp: boolean;
+    setLevelUp: any;
 }
 
-const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense }: Props) => {
+const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense, levelUp, setLevelUp }: Props) => {
     const [gameState, setGameState] = useState<any>({});
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
     const [fullScreen, setFullScreen] = useState<boolean>(false);
-    const [messages, setMessages] = useState<any>([])
+    const [messages, setMessages] = useState<any>([]);
     const [gameData, setGameData] = useState<any>({
         ascean: ascean,
         user: user,
@@ -47,6 +53,20 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         player_attributes: attributes,
         player_efense: playerDefense
     });
+    const [asceanState, setAsceanState] = useState({
+        ascean: ascean,
+        constitution: 0,
+        strength: 0,
+        agility: 0,
+        achre: 0,
+        caeren: 0,
+        kyosir: 0,
+        level: ascean.level,
+        experience: ascean.experience,
+        experienceNeeded: ascean.level * 1000,
+        mastery: ascean.mastery,
+        faith: ascean.faith,
+    })
     const { asceanID } = useParams();
     const [loading, setLoading] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
@@ -78,7 +98,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         physics: {
             default: 'matter',
             matter: {
-                debug: false,
+                debug: true,
                 gravity: { y: 0 },
             }
         },
@@ -108,6 +128,10 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     const startGame = useCallback(async () => {
         try {
             setLoading(true);
+
+            const oldGame = document.querySelector('.phaser-game');
+            if (oldGame) oldGame.remove();
+
             let game = new Phaser.Game(config);
             // console.log(game.scene.scenes, 'New Game');
             setGameState(game);
@@ -117,10 +141,22 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             console.log(err.message, 'Error Starting Game')
         }
     }, [asceanID])
+    
+    const levelUpAscean = async (vaEsai: any) => {
+        try {
+            console.log(vaEsai, 'Va Esai');
+            let response = await asceanAPI.levelUp(vaEsai);
+            console.log(response, 'Level Up');
+            setLevelUp(true);
+        } catch (err: any) {
+            console.log(err.message, 'Error Leveling Up')
+        }
+    }
 
     useEffect(() => {
         startGame();
-    }, [asceanID])
+    }, [asceanID]);
+
 
     const sendAscean = async () => {
         console.log('Event Listener Added');
@@ -251,6 +287,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
                 </Modal.Body>
             </Modal>
+            
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
             <div id='ui-hud' className='mt-3'>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
@@ -259,21 +296,19 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Inventory</h3>
             </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleFullscreen}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Full Screen</h3>
-            </Button>
+
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
             </Button>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
                 <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
             </Button>
-            </div>
             { showPlayer ?
-                ( <StoryAscean ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading}
+                ( <StoryAscean ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean}
                     currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
                     />
                 ) : ( '' ) }
+            </div>
         </div>
         {
             messages.length > 0 ?

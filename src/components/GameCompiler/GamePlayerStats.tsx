@@ -30,9 +30,14 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
 
     const playerPopover = (
         <Popover id="popover">
-            <Popover.Header id="popover-header" as="h2">Player Statistics
+            <Popover.Header id="popover-header" as="h2">{player.name}'s Statistics
             </Popover.Header>
             <Popover.Body id="popover-body">
+                <div className='creature-heading'>
+                    <h2>
+                    {player.description}
+                    </h2>
+                </div>
                 <div className="">
                 Magical Defense:  {magicalDefense}% / [{magicalPosture}%]
                 </div>

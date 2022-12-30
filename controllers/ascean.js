@@ -9,7 +9,8 @@ module.exports = {
     getOneAscean,
     delete: deleteAscean,
     getAsceanStats,
-    updateHighScore
+    updateHighScore,
+    updateLevel
 }
 
 
@@ -60,15 +61,45 @@ async function editAscean(req, res) {
     }
 }
 
+async function updateLevel(req, res) {
+    let constitution = Number(req.body.constitution);
+    let strength = Number(req.body.strength);
+    let agility = Number(req.body.agility);
+    let achre = Number(req.body.achre);
+    let caeren = Number(req.body.caeren);
+    let kyosir = Number(req.body.kyosir);
+    let mastery = req.body.ascean.mastery;
+    let newMastery = req.body.mastery;
+    try {
+        const ascean = await Ascean.findByIdAndUpdate(req.body.ascean._id, {
+            level: req.body.ascean.level + 1,
+            experience: 0,
+            constitution: Math.round((req.body.ascean.constitution + constitution) * (newMastery === 'Constitution' ? 1.1 : 1.05)),
+            strength: Math.round((req.body.ascean.strength + strength) * (newMastery === 'Strength' ? 1.1 : 1.05)),
+            agility: Math.round((req.body.ascean.agility + agility) * (newMastery === 'Agility' ? 1.1 : 1.05)),
+            achre: Math.round((req.body.ascean.achre + achre) * (newMastery === 'Achre' ? 1.1 : 1.05)),
+            caeren: Math.round((req.body.ascean.caeren + caeren) * (newMastery === 'Caeren' ? 1.1 : 1.05)),
+            kyosir: Math.round((req.body.ascean.kyosir + kyosir) * (newMastery === 'Kyosir' ? 1.1 : 1.05)),
+            mastery: newMastery, 
+            faith: req.body.faith,
+        }, { new: true });
+        console.log(ascean, '<- Ascean Leveled Up in the Controller');
+        res.status(200).json({ data: ascean });
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Updating the Level!')
+        res.status(400).json({ err });
+    }
+}
+
 async function updateHighScore(req, res) {
     const { asceanId, highScore } = req.body
     console.log(asceanId, highScore, 'Are we updating in the Controller?')
     try {
         const ascean = await Ascean.findByIdAndUpdate(asceanId, {
             high_score: highScore }, { new: true})
-        res.status(200).json({ data: ascean })
+        res.status(200).json({ data: ascean });
     } catch (err) {
-        res.status(400).json({ err })
+        res.status(400).json({ err });
     }
 }
 

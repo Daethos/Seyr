@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import StoryHealthBar from './StoryHealthBar';
 import StoryPlayerStats from './StoryPlayerStats';
+import LevelUpModal from '../../game/LevelUpModal';
 
 interface Props {
   ascean: any;
@@ -16,9 +17,12 @@ interface Props {
   weaponOne: any;
   weaponTwo: any;
   weaponThree: any;
+  asceanState: any;
+  setAsceanState: any;
+  levelUpAscean: any;
 }
 
-const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerHealth, totalPlayerHealth, loading, attributes, playerDefense }: Props) => {
+const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerHealth, totalPlayerHealth, loading, attributes, playerDefense, asceanState, setAsceanState, levelUpAscean }: Props) => {
     const [showPlayer, setShowPlayer] = useState<boolean>(false)
     if (loading) {
         return (
@@ -49,6 +53,9 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
             !showPlayer ? 
             (
             <div className='story-ascean'>
+            { asceanState.experience !== asceanState.experienceNeeded ? (
+                <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+            ) : ( '' ) }
             <div className="actions" style={{ marginBottom: 0 + '%'}}>
                 <StoryHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} story={true} />
             </div>
