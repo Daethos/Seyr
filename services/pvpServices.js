@@ -23,12 +23,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
     combatData.player_two_weapons[1].critical_chance = Number(combatData.player_two_weapons[1].critical_chance)
     combatData.player_two_weapons[1].critical_damage = Number(combatData.player_two_weapons[1].critical_damage)
 
-
-    // console.log(combatData.player_one_weapons[0].magical_penetration, typeof(combatData.player_one_weapons[0].magical_penetration))
-    // console.log(combatData.player_one_weapons[0].physical_penetration, typeof(combatData.player_one_weapons[0].physical_penetration))
-    // console.log(combatData.player_one_weapons[0].roll, typeof(combatData.player_one_weapons[0].roll))
-    // console.log(combatData.player_one_weapons[0].dodge, typeof(combatData.player_one_weapons[0].dodge))
-
     if (combatData.player_one.faith === 'devoted' && combatData.player_one_weapons[0].influences[0] === 'Daethos') {
         player_one_faith_number += 5;
         player_one_faith_number_two += 5;
@@ -64,18 +58,9 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_two_health -= daethos;
             combatData.current_player_one_health += daethos;
             combatData.current_player_two_health -= daethos;
-            // if (combatData.current_player_two_health < 0) {
-            //     combatData.current_player_two_health = 0;
-            //     combatData.player_one_win = true;
-            // }
-            // if (combatData.new_player_two_health < 0) {
-            //     combatData.new_player_two_health = 0;
-            //     combatData.player_one_win = true;
-            // }
     }
         if (combatData.player_one_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
-            // combatData.player_one_weapons[0].critical_chance = Number(combatData.player_one_weapons[0].critical_chance + 1);
             let achreo = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
             combatData.new_player_one_health += achreo;
             combatData.current_player_one_health += achreo;
@@ -100,10 +85,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
             combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-            //     combatData.new_player_two_health = 0;
-            //     combatData.player_one_win = true;
-            // }
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Astra') { // Lightning
             let astra = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
@@ -125,11 +106,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
             combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
-
-            // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-            //     combatData.new_player_two_health = 0;
-            //     combatData.player_one_win = true;
-            // }    
+    
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Chiomyr') { // Humor
             let chiomyr = 2 * (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[0].kyosir);
@@ -192,12 +169,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
             combatData.new_player_two_health -= kyrna;
             combatData.current_player_two_health -= kyrna;
-            // if (combatData.current_player_two_health < 0) {
-            //     combatData.current_player_two_health = 0;
-            // }
-            // if (combatData.new_player_two_health < 0) {
-            //     combatData.new_player_two_health = 0;
-            // }
         }
         if (combatData.player_one_weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
@@ -272,11 +243,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
             combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
-
-            // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-            //     combatData.new_player_two_health = 0;
-            //     combatData.player_one_win = true;
-            // }
         }
         if (combatData.player_one_weapons[0].influences[0] === "Se'vas") { // War
             let sevas = 2 * (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength)
@@ -322,12 +288,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_two_health -= daethos;
                 combatData.current_player_one_health += daethos;
                 combatData.current_player_two_health -= daethos;
-                // if (combatData.current_player_two_health < 0) {
-                //     combatData.current_player_two_health = 0;
-                // }
-                // if (combatData.new_player_two_health < 0) {
-                //     combatData.new_player_two_health = 0;
-                // }
+
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
@@ -349,17 +310,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_influence_description_two = 
                     `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
                 player_one_action = 'attack';
-                // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }
                 combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
                 combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                //     combatData.new_player_two_health = 0;
-                //     combatData.player_one_win = true;
-                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Astra') { // Lightning
                 let astra = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
@@ -375,17 +331,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_influence_description_two = 
                     `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
                 player_one_action = 'attack';
-                // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }
                 combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
                 combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                //     combatData.new_player_two_health = 0;
-                //     combatData.player_one_win = true;
-                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Chiomyr') { // Humor
                 let chiomyr = 2 * (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[1].kyosir);
@@ -440,12 +391,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
                 combatData.new_player_two_health -= kyrna;
                 combatData.current_player_two_health -= kyrna;
-                // if (combatData.current_player_two_health < 0) {
-                //     combatData.current_player_two_health = 0;
-                // }
-                // if (combatData.new_player_two_health < 0) {
-                //     combatData.new_player_two_health = 0;
-                // }
+
             }
             if (combatData.player_one_weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 5 * (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren);
@@ -508,17 +454,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_influence_description_two = 
                     `The Caer of Se'dyro sings into ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
                 player_one_action = 'attack';
-                // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }
                 combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
                 combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                //     combatData.new_player_two_health = 0;
-                //     combatData.player_one_win = true;
-                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === "Se'vas") { // War
                 let sevas = 2 * (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[1].strength)
@@ -563,12 +504,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_one_health -= daethos;
             combatData.current_player_two_health += daethos;
             combatData.current_player_one_health -= daethos;
-            // if (combatData.current_player_one_health < 0) {
-            //     combatData.current_player_one_health = 0;
-            // }
-            // if (combatData.new_player_one_health < 0) {
-            //     combatData.new_player_one_health = 0;
-            // }
+
     }
         if (combatData.player_two_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
@@ -598,10 +534,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                //     combatData.new_player_one_health = 0;
-                //     combatData.player_two_win = true;
-                // }
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Astra') { // Lightning
             let astra = 2 * (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre)
@@ -619,17 +551,11 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_two_influence_description = 
                 `${combatData.player_two.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player_one.name} for ${Math.round(combatData.realized_player_two_damage)}.`
             player_one_action = 'attack';
-            // await attackCompiler(combatData, player_one_action)
             if (combatData.realized_player_two_damage < 0) {
                     combatData.realized_player_two_damage = 0;
                 }
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-
-                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                //     combatData.new_player_one_health = 0;
-                //     combatData.player_two_win = true;
-                // }    
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Chiomyr') { // Humor
             let chiomyr = 2 * (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[0].kyosir);
@@ -689,12 +615,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
             combatData.new_player_one_health -= kyrna;
             combatData.current_player_one_health -= kyrna;
-            // if (combatData.current_player_one_health < 0) {
-            //     combatData.current_player_one_health = 0;
-            // }
-            // if (combatData.new_player_one_health < 0) {
-            //     combatData.new_player_one_health = 0;
-            // }
+
         }
         if (combatData.player_two_weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
@@ -761,17 +682,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.player_two_influence_description = 
                 `The Caer of Se'dyro sings into their ${combatData.player_two_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_two_damage)} more damage!`    
             player_one_action = 'attack';
-            // await attackCompiler(combatData, player_one_action)
             if (combatData.realized_player_two_damage < 0) {
-                    combatData.realized_player_two_damage = 0;
-                }
-                combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-                combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
+                combatData.realized_player_two_damage = 0;
+            }
+            combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
+            combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                //     combatData.new_player_one_health = 0;
-                //     combatData.player_two_win = true;
-                // }
         }
         if (combatData.player_two_weapons[0].influences[0] === "Se'vas") { // War
             let sevas = 2 * (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength)
@@ -813,16 +729,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.current_player_two_health += combatData.realized_player_two_damage;
                 combatData.player_two_influence_description_two = 
                     `Daethos wraps through ${combatData.player_two.name}'s Caer, ${combatData.player_two_weapons[1].name} healing them for ${Math.round(combatData.realized_player_two_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-                    combatData.new_player_two_health += daethos;
-                    combatData.new_player_one_health -= daethos;
-                    combatData.current_player_two_health += daethos;
-                    combatData.current_player_one_health -= daethos;
-                    // if (combatData.current_player_one_health < 0) {
-                    //     combatData.current_player_one_health = 0;
-                    // }
-                    // if (combatData.new_player_one_health < 0) {
-                    //     combatData.new_player_one_health = 0;
-                    // }
+                combatData.new_player_two_health += daethos;
+                combatData.new_player_one_health -= daethos;
+                combatData.current_player_two_health += daethos;
+                combatData.current_player_one_health -= daethos;
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
@@ -844,17 +754,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_player_two_damage)} more damage.`
                 player_one_action = 'attack';
-                // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_two_damage < 0) {
                     combatData.realized_player_two_damage = 0;
                 }
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                //     combatData.new_player_one_health = 0;
-                //     combatData.player_two_win = true;
-                // }
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Astra') { // Lightning
                 let astra = 2 * (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre)
@@ -869,18 +774,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_two_weapons[1].influences[0] === 'Cambire') { // Potential
                 combatData.player_two_influence_description_two = 
                     `${combatData.player_two.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player_one.name} for ${Math.round(combatData.realized_player_two_damage)}.`
-                player_one_action = 'attack';
-                // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_two_damage < 0) {
                     combatData.realized_player_two_damage = 0;
                 }
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-
-                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                //     combatData.new_player_one_health = 0;
-                //     combatData.player_two_win = true;
-                // }    
+   
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Chiomyr') { // Humor
                 let chiomyr = 2 * (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[1].kyosir);
@@ -935,12 +834,6 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
                 combatData.new_player_one_health -= kyrna;
                 combatData.current_player_one_health -= kyrna;
-                // if (combatData.current_player_one_health < 0) {
-                //     combatData.current_player_one_health = 0;
-                // }
-                // if (combatData.new_player_one_health < 0) {
-                //     combatData.new_player_one_health = 0;
-                // }
             }
             if (combatData.player_two_weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 5 * (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren);
@@ -1003,17 +896,11 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_two_influence_description_two = 
                     `The Caer of Se'dyro sings into their ${combatData.player_two_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_two_damage)} more damage!`    
                 player_one_action = 'attack';
-                // await attackCompiler(combatData, player_one_action)
                 if (combatData.realized_player_two_damage < 0) {
                     combatData.realized_player_two_damage = 0;
                 }
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-
-                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                //     combatData.new_player_one_health = 0;
-                //     combatData.player_two_win = true;
-                // }
             }
             if (combatData.player_two_weapons[1].influences[0] === "Se'vas") { // War
                 let sevas = 2 * (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[1].strength)
@@ -1185,11 +1072,7 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
 }
 
 const p2AttackCompiler = async (combatData, player_two_action) => {
-    if (combatData.player_one_win === true) {
-        // combatData.player_two_action_description = 
-        // `${combatData.player_two.name} has been defeated. Hail ${combatData.player_one.name}, you are the new va'Esai!`
-        return
-    }
+    if (combatData.player_one_win === true) { return };
     console.log('Computer Attack Compiler Firing')
     let computer_physical_damage = combatData.player_two_weapons[0].physical_damage;
     let computer_magical_damage = combatData.player_two_weapons[0].magical_damage;
@@ -1521,12 +1404,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 }
     
 const attackCompiler = async (combatData, player_one_action) => {
-    if (combatData.player_two_win === true) {
-        // combatData.player_one_action_description = 
-        // `${combatData.player_one.name} has been defeated. Hail ${combatData.player_two.name}, the new va'Esai!`
-        return
-    }
-    console.log('In the Player Attack Compiler')
+    if (combatData.player_two_win === true) { return }
     let player_physical_damage = combatData.player_one_weapons[0].physical_damage;
     let player_magical_damage = combatData.player_one_weapons[0].magical_damage;
     let player_total_damage;
@@ -1539,9 +1417,6 @@ const attackCompiler = async (combatData, player_one_action) => {
         computer_physical_defense_multiplier = 1 - (combatData.player_two_defense.physicalPosture / 100);
         computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalPosture / 100);
     }
-
-    // TODO:FIXME:TODO:FIXME: May not do Damage Type Armor Modifiers Yet TODO:FIXME:TODO:FIXME:
-    // checkDamageTypes(combatData)
 
     // This is for the Focused Attack Action i.e. you chose to Attack over adding a defensive component
     if (combatData.action === 'attack') {
@@ -1677,17 +1552,6 @@ const attackCompiler = async (combatData, player_one_action) => {
     combatData = criticalResult.combatData;
     player_physical_damage = criticalResult.player_physical_damage;
     player_magical_damage = criticalResult.player_magical_damage;
-
-    // This is for Critical Strikes
-    // if (combatData.player_one_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-    //     console.log('Player Critical Firing', player_physical_damage, player_magical_damage)
-    //     player_physical_damage *= combatData.player_one_weapons[0].critical_damage;
-    //     player_magical_damage *= combatData.player_one_weapons[0].critical_damage;
-    //     // criticalCompiler(combatData, combatData.player_one_weapons[0], player_physical_damage, player_magical_damage)
-    //     // return combatData
-    //     console.log('Attack Compiler Post-Crit Multiplier', player_physical_damage, player_magical_damage)
-    //     combatData.player_one_critical_success = true;
-    // }
 
     // If you made it here, your basic attack now resolves itself
     player_physical_damage *= 1 - (( 1 - computer_physical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].physical_penetration / 100)));
@@ -2050,15 +1914,6 @@ const p1RollCompiler = async (combatData, player_one_initiative, player_two_init
         combatData.player_one_special_description =
             `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
         return combatData
-        // if (player_one_initiative > player_two_initiative) {
-        //     await attackCompiler(combatData, player_one_action)
-        //     await p2AttackCompiler(combatData, player_two_action)
-        // } else {
-        //     combatData.player_one_special_description =
-        //     `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
-        //     await p2AttackCompiler(combatData, player_two_action)
-        //     await attackCompiler(combatData, player_one_action)
-        // }
     }
     return (
         combatData
@@ -2433,7 +2288,7 @@ const actionCompiler = async (combatData) => {
         return result
     } catch (err) {
         // res.status(400).json({ err })
-        console.log(err, 'Error ni PvP!')
+        console.log(err, 'Error in PvP!')
     }
 }
 

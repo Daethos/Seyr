@@ -33,9 +33,11 @@ interface Props {
     playerDefense: any;
     levelUp: boolean;
     setLevelUp: any;
+    gameChange: boolean;
+    setGameChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense, levelUp, setLevelUp }: Props) => {
+const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense, levelUp, setLevelUp, gameChange, setGameChange }: Props) => {
     const [gameState, setGameState] = useState<any>({});
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
@@ -51,7 +53,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         total_player_health: totalPlayerHealth,
         current_player_health: currentPlayerHealth,
         player_attributes: attributes,
-        player_efense: playerDefense
+        player_defense: playerDefense
     });
     const [asceanState, setAsceanState] = useState({
         ascean: ascean,
@@ -124,23 +126,47 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         },
         backgroundColor: '#000',
     })
-
+    let canvasElement: any;
     const startGame = useCallback(async () => {
         try {
             setLoading(true);
-
-            const oldGame = document.querySelector('.phaser-game');
-            if (oldGame) oldGame.remove();
-
-            let game = new Phaser.Game(config);
-            // console.log(game.scene.scenes, 'New Game');
-            setGameState(game);
-            gameRef.current = game;
-            setLoading(false);
+            if (canvasElement) {
+                canvasElement.lastElementChild.remove();
+                canvasElement.removeChild(canvasElement.lastElementChild);
+                canvasElement.removeChild(canvasElement.children[canvasElement.children.length - 1]);
+                gameRef.current = null;
+                console.log(canvasElement, 'Canvas Element Before')
+            }
+            gameRef.current = new Phaser.Game(config);
+            setGameState(gameRef.current);
+            canvasElement = document.querySelector('#story-game');
+            console.log(gameRef.current, 'New Game Created')
+            console.log(canvasElement, 'Canvas Element Created');
+            // Need to make setLoading to false a set timeout for 1 second
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
+            // setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game')
         }
-    }, [asceanID])
+    }, [ascean])
+
+    // const startGame = async () => {
+    //     try {
+    //         setLoading(true);
+    //         if (canvasElement) {
+    //             canvasElement.remove();
+    //         }
+    //         const game = new Phaser.Game(config);
+    //         setGameState(game);
+    //         gameRef.current = game;
+    //         canvasElement = document.querySelector('.phaser-game');
+    //         setLoading(false);
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error Starting Game')
+    //     }
+    // }
     
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -148,14 +174,42 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             let response = await asceanAPI.levelUp(vaEsai);
             console.log(response, 'Level Up');
             setLevelUp(true);
+            setAsceanState({
+                ...asceanState,
+                ascean: response.data,
+                constitution: 0,
+                strength: 0,
+                agility: 0,
+                achre: 0,
+                caeren: 0,
+                kyosir: 0,
+                level: response.data.level,
+                experience: response.data.experience,
+                experienceNeeded: response.data.level * 1000,
+                mastery: response.data.mastery,
+                faith: response.data.faith,
+            })
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up')
         }
     }
 
     useEffect(() => {
-        startGame();
-    }, [asceanID]);
+        setGameData({
+            ascean: ascean,
+            user: user,
+            weapon_one: weaponOne,
+            weapon_two: weaponTwo,
+            weapon_three: weaponThree,
+            total_player_health: totalPlayerHealth,
+            current_player_health: currentPlayerHealth,
+            player_attributes: attributes,
+            player_defense: playerDefense
+        });
+        setTimeout(() => {
+            startGame();
+        }, 500);
+    }, [ascean, asceanID]);
 
 
     const sendAscean = async () => {
@@ -182,7 +236,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         window.removeEventListener('request-ascean', sendAscean);
         window.removeEventListener('dialog-box', createDialog);
     }
-    }, [])
+    }, [ascean])
 
     const resizeGame = () => {
         // Width-Height Ration of Game Resolution
@@ -287,21 +341,18 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
                 </Modal.Body>
             </Modal>
-            
-            <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
-            <div id='ui-hud' className='mt-3'>
+            <div id='ui-hud' className='mt-3 ui-hud'>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ascean.name}</h3>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>{ascean.name}</h3>
             </Button>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Inventory</h3>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Inventory</h3>
             </Button>
-
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>World Status</h3>
             </Button>
             <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
+                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Settings</h3>
             </Button>
             { showPlayer ?
                 ( <StoryAscean ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean}
@@ -309,6 +360,8 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                     />
                 ) : ( '' ) }
             </div>
+            
+            <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
         </div>
         {
             messages.length > 0 ?

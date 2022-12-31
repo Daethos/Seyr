@@ -1,9 +1,3 @@
-
-// =================================== HELPER CONSTANTS ======================================= \\
-
-
-// =================================== HELPER FUNCTIONS ======================================= \\
-
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.computer_win === true) {
         return
@@ -1276,22 +1270,6 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     return combatData
 }
 
-// TODO: QueryFunctions -------
-// FIXME: Weapon -> Grip / Attack Type / Damage Type
-// FIXME: Attack ? Weapon[0].grip: 1h ? weapon[0].attack_type === 'Physical' ?  
-// So I need to do some wild nesting and if statements which suck unfortunately
-// So what's the first thing that needs to be resolved? Presumably who goes first!
-// This is solved with initiative, but what if someone with low initiative rolls against high?
-// Should initiative be used as the trump card if the actions are the same?
-// Sort of like if both parties guessed the other was countering, the person with first initiative gets priority?
-// So at beginning of action splitter, it'll evaluate player and computer action
-// Hierarchy is... 
-// COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
-// Add difference between Initiatives for roll % ONLY IF person not rolling has higher?
-// 
-// 
-// 
-
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
 const computerActionCompiler = async (newData, player_action, computer_action, computer_counter) => {
@@ -1438,22 +1416,6 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
         secondWeaponCrit = true;
     }
 
-    // This is for Critical Strikes
-    // if (weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-    //     computer_weapon_one_physical_damage *= weapons[0].critical_damage;
-    //     computer_weapon_one_magical_damage *= weapons[0].critical_damage;
-    //     console.log('Comp DW1 Post-Crit Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-    //     firstWeaponCrit = true;
-    //     combatData.computer_critical_success = true;
-    // }
-
-    // if (weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-    //     computer_weapon_two_physical_damage *= weapons[1].critical_damage;
-    //     computer_weapon_two_magical_damage *= weapons[1].critical_damage;
-    //     console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-    //     secondWeaponCrit = true;
-    //     combatData.computer_critical_success = true;
-    // }
     
     // console.log(firstWeaponCrit, secondWeaponCrit)
     computer_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
@@ -1510,18 +1472,14 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     }
     
     combatData.computer_action_description = 
-        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${combatData.computer_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
     )
 }
 
 const computerAttackCompiler = async (combatData, computer_action) => {
-    if (combatData.player_win === true) {
-        // combatData.computer_action_description = 
-        // `${combatData.computer.name} has been defeated. Hail ${combatData.player.name}, you are the new va'Esai!`
-        return
-    }
+    if (combatData.player_win === true) { return }
     console.log('Computer Attack Compiler Firing')
     let computer_physical_damage = combatData.computer_weapons[0].physical_damage;
     let computer_magical_damage = combatData.computer_weapons[0].magical_damage;
@@ -1632,7 +1590,6 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         }
     } 
 
-    // Checking For Player Actions
     if (computer_action === 'counter') {
         if (combatData.computer_counter_success === true) {
             computer_physical_damage *= 3;
@@ -1673,17 +1630,6 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         criticalResult.combatData.computer_critical_success, criticalResult.combatData.computer_glancing_blow, 
         criticalResult.computer_physical_damage, criticalResult.computer_magical_damage)
 
-
-    // This is for Critical Strikes
-    // if (combatData.computer_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-    //     computer_physical_damage *= combatData.computer_weapons[0].critical_damage;
-    //     computer_magical_damage *= combatData.computer_weapons[0].critical_damage;
-    //     // computerCriticalCompiler(combatData, combatData.weapons[0], computer_physical_damage, computer_magical_damage)
-    //     // return combatData
-    //     console.log('Computer Critical Post-Multiplier Inside Computer Attack Function', computer_physical_damage, computer_magical_damage);
-    //     combatData.computer_critical_success = true;
-    // }
-
     // If you made it here, your basic attack now resolves itself
     computer_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (combatData.computer_weapons[0].physical_penetration / 100)));
     computer_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (combatData.computer_weapons[0].magical_penetration / 100)));
@@ -1701,7 +1647,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
     combatData.computer_action_description = 
-        `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ? ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_damage_type} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
@@ -2017,20 +1963,9 @@ const computerRollCompiler = async (combatData, player_initiative, computer_init
                 `${combatData.computer.name} successfully rolls against you, avoiding your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
         await computerAttackCompiler(combatData, computer_action)
     } else {
-        // if (player_initiative > computer_initiative) {
         combatData.computer_special_description = 
             `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
         return combatData
-            // await computerAttackCompiler(combatData, computer_action)
-            // await attackCompiler(combatData, player_action)
-        // } else {
-        //     console.log('Computer failed yet had higher initiative')
-        //     combatData.computer_special_description = 
-        //         `${combatData.computer.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
-        //     return combatData
-        //     // await attackCompiler(combatData, player_action)
-        //     // await computerAttackCompiler(combatData, computer_action)
-        // }
     }
     return (
         combatData
@@ -2132,7 +2067,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     }
     
     combatData.player_action_description = 
-        `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${combatData.player_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     console.log(combatData.realized_player_damage)
     return (
         combatData
@@ -2140,12 +2075,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 }
     
 const attackCompiler = async (combatData, player_action) => {
-    if (combatData.computer_win === true) {
-        // combatData.player_action_description = 
-        // `You have been defeated. Hail ${combatData.computer.name}, the new va'Esai!`
-        return
-    }
-    console.log('In the Player Attack Compiler')
+    if (combatData.computer_win === true) { return }
     let player_physical_damage = combatData.weapons[0].physical_damage;
     let player_magical_damage = combatData.weapons[0].magical_damage;
     let player_total_damage;
@@ -2158,9 +2088,6 @@ const attackCompiler = async (combatData, player_action) => {
         computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalPosture / 100);
         computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalPosture / 100);
     }
-
-    // TODO:FIXME:TODO:FIXME: May not do Damage Type Armor Modifiers Yet TODO:FIXME:TODO:FIXME:
-    // checkDamageTypes(combatData)
 
     // This is for the Focused Attack Action i.e. you chose to Attack over adding a defensive component
     if (combatData.action === 'attack') {
@@ -2290,20 +2217,18 @@ const attackCompiler = async (combatData, player_action) => {
         }
     }
 
-
     // This is for Critical Strikes
     const criticalClearance = Math.floor(Math.random() * 101);
     const criticalChance = combatData.weapons[0].critical_chance;
-    console.log('Critical Chance', criticalChance, 'Critical Clearance', criticalClearance)
+    // console.log('Critical Chance', criticalChance, 'Critical Clearance', criticalClearance)
     const criticalResult = await criticalCompiler(combatData, criticalChance, criticalClearance, combatData.weapons[0], player_physical_damage, player_magical_damage);
-    console.log('Results for [Crit] [Glancing] [Phys Dam] [Mag Dam]', criticalResult.combatData.critical_success, criticalResult.combatData.glancing_blow, criticalResult.player_physical_damage, criticalResult.player_magical_damage)
+    // console.log('Results for [Crit] [Glancing] [Phys Dam] [Mag Dam]', criticalResult.combatData.critical_success, criticalResult.combatData.glancing_blow, criticalResult.player_physical_damage, criticalResult.player_magical_damage)
 
     combatData = criticalResult.combatData;
     player_physical_damage = criticalResult.player_physical_damage;
     player_magical_damage = criticalResult.player_magical_damage;
 
     // If you made it here, your basic attack now resolves itself
-    // The plan is to get the player's number as close to 1x as possible when calculating penetration.
     player_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (combatData.weapons[0].physical_penetration / 100)));
     player_magical_damage *=1 - ((1 - computer_magical_defense_multiplier) * (1 - (combatData.weapons[0].magical_penetration / 100)));
 
@@ -2326,7 +2251,7 @@ const attackCompiler = async (combatData, player_action) => {
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
 
     combatData.player_action_description = 
-        `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.weapons[0].damage_type[0] ? combatData.weapons[0].damage_type[0] : ''}${combatData.weapons[0].damage_type[1] ? ' / ' + combatData.weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_damage_type} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;

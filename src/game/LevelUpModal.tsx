@@ -14,16 +14,25 @@ interface Props {
 const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => {
     const [levelUpModalShow, setLevelUpModalShow] = useState<boolean>(false);
 
+    const finishLevelUp = () => {
+        setLevelUpModalShow(false);
+        levelUpAscean(asceanState);
+    }
+
     return (
         <>            
         <Modal show={levelUpModalShow} onHide={() => setLevelUpModalShow(false)} centered>
             <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', height: 65 + 'vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!</h3>
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
-            <Attributes asceanState={asceanState} setAsceanState={setAsceanState} />
+            {
+                asceanState.level % 2 !== 0 ? (
+                    <Attributes asceanState={asceanState} setAsceanState={setAsceanState} />
+                ) : ( '' )
+            }
             <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
             <Button variant='outline-warning' 
-            onClick={() => levelUpAscean(asceanState)}
+            onClick={finishLevelUp}
             className='mt-5'
             style={{ 
                 float: 'right',

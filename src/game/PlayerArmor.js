@@ -26,7 +26,7 @@ export default class PlayerArmor extends Entity {
     }
 
     static preload(scene) {
-        console.log(scene, 'Preloading Player Armor')
+        // console.log(scene, 'Preloading Player Armor')
 
         let player_armor = scene.gameData.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
         // let player_helm = scene.gameData.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
@@ -62,7 +62,7 @@ export default class PlayerArmor extends Entity {
 
         
         // console.log(player_armor, player_helm, player_legs, ' <- Player Armor Frames', armor_texture, helm_texture, legs_texture, ' <- Player Armor Textures');
-        console.log(equipment[player_armor], 'What did she just do?')
+        // console.log(equipment[player_armor], 'What did she just do?')
 
         scene.load.atlas(`${armor_texture}`, equipment[player_armor].png, equipment[player_armor].json);
         scene.load.animation(`${player_armor}_anim`, equipment[player_armor].anim);

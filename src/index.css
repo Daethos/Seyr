@@ -483,7 +483,9 @@ html, body {
   left: 0%;
 }
 #ui-hud {
-  position: fixed;
+  width: 100%;
+  justify-content: space-evenly;
+  position: absolute;
   top: 6.5%;
 }
 #ascean-stats {
@@ -493,14 +495,14 @@ html, body {
   top: 12.5%;
   pointer-events: visible;
 }
-.ascean-ui {
+/* .ascean-ui {
   top: 7.5%;
   left: 5.75%;
   z-index: 9;
-}
-#world-status {
+} */
+/* #world-status {
   float: right;
-}
+} */
 .story-ascean {
   background-color: rgba(0, 0, 0, 0.7);
   margin-top: -5%;
@@ -510,8 +512,8 @@ html, body {
   /* float: right; */
   position: absolute;
   grid-column-start: 3;
-  margin-left: 75%;
-  margin-top: 5%;
+  margin-left: 65%;
+  margin-top: -0.5%;
   font-variant: small-caps;
   font-weight: 400;
   color: #fdf6d8;

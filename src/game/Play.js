@@ -22,7 +22,7 @@ export default class Play extends Phaser.Scene {
     }
     
     init(data) {
-        console.log(data, 'Data from Play');
+        // console.log(data, 'Data from Play');
         this.data = data;
         this.gameData = this.data.gameData.ascean.gameData.ascean;
         this.CONFIG = this.sys.game.config;
@@ -41,7 +41,7 @@ export default class Play extends Phaser.Scene {
     }
     
     create() {
-        console.log(this, 'What is this?')
+        // console.log(this, 'What is this?')
 
         // window.addEventListener('full-screen', this.fullScreenEventListener(this));
         // window.addEventListener('exit-full-screen', this.exitFullScreenEventListener(this));
@@ -78,7 +78,7 @@ export default class Play extends Phaser.Scene {
         let helm_texture = player_helm.replace('_helm', '');
         let legs_texture = player_legs.replace('_legs', '');
 
-        console.log(player_armor, player_helm, player_legs, ' <- Player Frames', armor_texture, helm_texture, legs_texture, ' <- Player Textures');
+        // console.log(player_armor, player_helm, player_legs, ' <- Player Frames', armor_texture, helm_texture, legs_texture, ' <- Player Textures');
         const map = this.make.tilemap({ key: 'map' });
         const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
         const atlasTerrain = map.addTilesetImage('Atlas Terrain', 'terrain', 32, 32, 0, 0);
@@ -175,7 +175,7 @@ export default class Play extends Phaser.Scene {
           );
           
         this.add.existing(border);
-        console.log(border, 'Border')
+        // console.log(border, 'Border')
         return border;
       }
       
@@ -183,7 +183,7 @@ export default class Play extends Phaser.Scene {
       
 
     createWelcome() {
-        console.log(this.gameData, 'Game Data')
+        // console.log(this.gameData, 'Game Data')
         this.time.addEvent({
             delay: 500,
             callback: () => {  
@@ -196,7 +196,7 @@ export default class Play extends Phaser.Scene {
                     0.5,
                     this.game,
                 );
-                console.log(this.welcome.obj, 'Welcome')
+                // console.log(this.welcome.obj, 'Welcome')
                     this.border = this.createTextBorder(this.welcome.obj);
             },
             callbackScope: this
@@ -251,7 +251,7 @@ export default class Play extends Phaser.Scene {
     }
 
     snapIntoAlignment() {
-        console.log('Is this being called?')
+        // console.log('Is this being called?')
         let objectA = this.playerHelm;
         let objectB = this.playerArmor;
         let objectC = this.playerLegs;

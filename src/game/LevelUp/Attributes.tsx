@@ -21,7 +21,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     const kyoPlusButton = document.getElementById('kyo-plus');
 
     let poolOutput = document.getElementById('pool-output') as HTMLOutputElement | null;
-    const [poolTotal, setPoolTotal] = useState<number>(3);
+    const [poolTotal, setPoolTotal] = useState<number>(5);
 
     const [constitutionCurrent, setConstitutionCurrent] = useState<number>(asceanState.ascean.constitution);
     const [strengthCurrent, setStrengthCurrent] = useState<number>(asceanState.ascean.strength);
@@ -96,7 +96,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
 
     async function checkPoolTotal() {
         if (poolOutput != null) {
-            poolOutput!.innerHTML = poolTotal + ' Points / 3 Points';
+            poolOutput!.innerHTML = poolTotal + ' Points / 5 Points';
         }
         if (constitutionOutput > 0) {
             conMinusButton!.style.display = 'inline-block';
@@ -128,7 +128,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
         } else if (kyosirOutput <= 0) {
             kyoMinusButton!.style.display = 'none';
         }
-        if (poolTotal >= 3) {
+        if (poolTotal >= 5) {
             conPlusButton!.style.display = 'none';
             strPlusButton!.style.display = 'none';
             agiPlusButton!.style.display = 'none';
@@ -136,7 +136,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             caerPlusButton!.style.display = 'none';
             kyoPlusButton!.style.display = 'none';
         }
-        if (poolTotal > 0 && poolTotal < 3) {
+        if (poolTotal > 0 && poolTotal < 5) {
             conPlusButton!.style.display = 'inline-block';
             strPlusButton!.style.display = 'inline-block';
             agiPlusButton!.style.display = 'inline-block';

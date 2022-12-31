@@ -10,7 +10,7 @@ import TileJson from '../game/images/map.json';
 export default class Boot extends Phaser.Scene {
     constructor() {
         super({ key: 'Boot', active: true });
-        console.log(this, 'What is this?')
+        // console.log(this, 'What is this?')
         this.ascean = {};
     }
     
@@ -22,7 +22,7 @@ export default class Boot extends Phaser.Scene {
         window.addEventListener('get-ascean', this.asceanFinishedEventListener)
         const getAscean = new CustomEvent('request-ascean');
         window.dispatchEvent(getAscean);
-        
+        console.log(this.ascean, 'Creating Ascean in Boot Scene')
         this.scene.start('Preload', {
             gameData: this.ascean
         });

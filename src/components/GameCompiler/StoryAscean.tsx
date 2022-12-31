@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import Loading from '../Loading/Loading';
 import Container from 'react-bootstrap/Container'
@@ -62,8 +62,6 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
                 loading={loading}
                 key={ascean._id}
             />
-            {/* <div className="actions" style={{ marginTop: 12.5 + '%' }}>
-            </div> */}
             </div>
             ) : ( '' )
         }

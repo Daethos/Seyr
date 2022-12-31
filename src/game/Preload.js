@@ -26,7 +26,7 @@ export default class Preload extends Phaser.Scene {
     }
 
     preload() {
-        console.log(this, 'This Preload')
+        // console.log(this, 'This Preload')
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x8A2BE2', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
@@ -64,7 +64,7 @@ export default class Preload extends Phaser.Scene {
     
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
-        console.log(e.detail, 'Another stab at an Ascean')
+        // console.log(e.detail, 'Another stab at an Ascean')
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
     };
 

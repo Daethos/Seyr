@@ -20,9 +20,11 @@ const Story = ({ user }: Props) => {
     const [attributes, setAttributes] = useState<any>([]);
     const [playerDefense, setPlayerDefense] = useState<any>([]);
     const [levelUp, setLevelUp] = useState<boolean>(false);
+    const [gameChange, setGameChange] = useState<boolean>(true);
 
     const getAscean = useCallback(async () => {
         try {
+            setGameChange(true);
             const response = await asceanAPI.getOneAscean(asceanID);
             setAscean(response.data);
             const stats = await asceanAPI.getAsceanStats(asceanID);
@@ -33,7 +35,8 @@ const Story = ({ user }: Props) => {
             setAttributes(stats.data.data.attributes)
             setTotalPlayerHealth(stats.data.data.attributes.healthTotal)
             setCurrentPlayerHealth(stats.data.data.attributes.healthTotal)
-            console.log(stats, 'The Ascean Returned!')
+            console.log(stats, 'The Ascean Returned!');
+            setGameChange(false);
             setLoading(false)
         } catch (err: any) {
             setLoading(false)
@@ -55,12 +58,17 @@ const Story = ({ user }: Props) => {
         
     return (
         <>
-        <HostScene 
-            user={user} ascean={ascean} 
-            weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} 
-            totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} 
-            attributes={attributes} playerDefense={playerDefense} levelUp={levelUp} setLevelUp={setLevelUp}
-        />
+        {
+            gameChange ?
+            ''
+            :
+            <HostScene 
+                user={user} ascean={ascean} setGameChange={setGameChange} gameChange={gameChange}
+                weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} 
+                totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} 
+                attributes={attributes} playerDefense={playerDefense} levelUp={levelUp} setLevelUp={setLevelUp}
+            />
+        }
         </>
     )
 }

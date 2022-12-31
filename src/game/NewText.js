@@ -17,7 +17,7 @@ export default class NewText {
     
 
     initStyle(key) {
-        console.log(key, 'The Key of the new Text')
+        // console.log(key, 'The Key of the new Text')
         let style = {
             fontFamily: 'Cinzel',
             fontSize: 16,
@@ -72,7 +72,7 @@ export default class NewText {
     }
 
     createText () {
-        console.log(this.style, 'THis Style')
+        // console.log(this.style, 'THis Style')
         let obj = this.ctx.add.text(
             this.x,
             this.y,
@@ -81,7 +81,7 @@ export default class NewText {
         );
 
         obj.setOrigin(this.origin.x, this.origin.y);
-        console.log(obj, 'The Text Object')
+        // console.log(obj, 'The Text Object')
         return obj;
     }
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -20,13 +19,6 @@ const StoryPlayerStats = ({ attributes, weaponAttributes, magicalDefense, magica
     let totalAchre: number = attributes.totalAchre + weaponAttributes?.achre;
     let totalCaeren: number = attributes.totalCaeren + weaponAttributes?.caeren;
     let totalKyosir: number = attributes.totalKyosir + weaponAttributes?.kyosir;
-
-    let constitutionMod: number = Math.round((totalConstitution - 10) / 2); 
-    let strengthMod: number = Math.round((totalStrength - 10) / 2);
-    let agilityMod: number = Math.round((totalAgility - 10) / 2);
-    let achreMod: number = Math.round((totalAchre - 10) / 2);
-    let caerenMod: number = Math.round((totalCaeren - 10) / 2);
-    let kyosirMod: number = Math.round((totalKyosir - 10) / 2);
 
     const playerPopover = (
         <Popover id="popover">
@@ -78,11 +70,9 @@ const StoryPlayerStats = ({ attributes, weaponAttributes, magicalDefense, magica
     <div style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
     <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
         <Button variant=""  id='ascean-stats'>
-            {/* <div className="actions"> */}
         <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mt-3 mb-5'>
         <span id="story-popover-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="story-pic" /></span>{' '}
             {player.name}</h3>
-        {/* </div> */}
         </Button>
     </OverlayTrigger>
   </div>

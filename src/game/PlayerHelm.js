@@ -58,7 +58,7 @@ export default class PlayerHelm extends Entity {
         // let legs_texture = player_legs.replace('_legs', '');
         this.player_helm = player_helm;
 
-        console.log(player_helm, ' <- Preloading Player Helm Frames', helm_texture, ' <- Preloading Player Helm Textures');
+        // console.log(player_helm, ' <- Preloading Player Helm Frames', helm_texture, ' <- Preloading Player Helm Textures');
 
         scene.load.atlas(`${helm_texture}`, equipment[player_helm].png, equipment[player_helm].json);
         scene.load.animation(`${player_helm}_anim`, equipment[player_helm].anim);
@@ -102,7 +102,6 @@ export default class PlayerHelm extends Entity {
             player_helm = player_helm.replace(/licivitan/g, 'legion');
         }
         this.player_helm = player_helm;
-        console.log(this.player_helm, ' <- Player Helm')
         if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1 ) {
             this.anims.play(`${this.player_helm}_move`, true);
         } else {

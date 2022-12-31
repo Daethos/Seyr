@@ -16,12 +16,12 @@ export default class Menu extends Phaser.Scene {
     }
 
     init(data) {
-        console.log(data, 'Any Data?')
+        // console.log(data, 'Any Data?')
         this.gameData = data;
     }
 
     create() {
-        console.log(this.gameData, 'This Menu')
+        // console.log(this.gameData, 'This Menu')
 
         this.createBackground();
         // Game Title
