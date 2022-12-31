@@ -32,23 +32,6 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
     return (
         <>
         <div className="story-block" id='story-ascean'>
-            {/* <div id='ui-hud' className=''>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ascean.name}</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Inventory</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Objectives</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>World Status</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Settings</h3>
-            </Button>
-            </div> */}
         {
             !showPlayer ? 
             (

@@ -41,7 +41,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
             // style={{ marginTop: -10 + 'px' }}
             >
                 <h4>Experience</h4>
-                <p> {ascean.experience}</p>
+                <p> {ascean.experience} / {ascean.level * 1000}</p>
             </div>
             <div className="property-line">
                 <h4>Level</h4>
@@ -51,44 +51,14 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 <h4>High Score</h4>
                 <p> {ascean.high_score}</p>
             </div>
+            <div className="property-line">
+                <h4>Faith</h4>
+                <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
+            </div>
             <div className="property-line last">
                 <h4>Mastery</h4>
                 <p> {ascean.mastery}</p>
             </div>
-            {
-                userProfile
-                ? 
-                <>
-                <svg height="5" width="100%" className="tapered-rule mt-3">
-                    <polyline points="0,0 550,2.5 0,5"></polyline>
-                </svg>
-                <div className="property-line first">
-                    <h4>Constitution</h4>
-                    <p> Crit Damage, Defense, Health, Posturing</p>
-                </div>
-                <div className="property-line">
-                    <h4>Strength</h4>
-                    <p> Crit Damage, Phys Damage, Posturing</p>
-                </div>
-                <div className="property-line">
-                    <h4>Agility</h4>
-                    <p> Crit Chance, Dodge, Phys Damage, Roll</p>
-                </div>
-                <div className="property-line">
-                    <h4>Achre</h4>
-                    <p> Crit Chance, Dodge, Spell Damage, Roll</p>
-                </div>
-                <div className="property-line">
-                    <h4>Caeren</h4>
-                    <p> Crit Damage, Defense, Health, Spell Damage</p>
-                </div>
-                <div className="property-line last">
-                    <h4>Kyosir</h4>
-                    <p> Defense, Penetration</p>
-                </div>
-                </>
-                : ''
-            }
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
@@ -129,7 +99,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
         <div className="section-right">
             
             <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
-            <svg height="5" width="100%" className="tapered-rule mt-3">
+            {/* <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>
             <div className="actions">
@@ -155,7 +125,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                     : 'No fucking way man'
                 }</p>
                 
-            </div>
+            </div> */}
             
             {
                 userProfile

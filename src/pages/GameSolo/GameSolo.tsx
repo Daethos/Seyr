@@ -181,7 +181,9 @@ const GameSolo = ({ user }: GameProps) => {
         player_win: false,
         computer_win: false,
         critical_success: false,
-        computer_critical_success: false
+        computer_critical_success: false,
+        glancing_blow: false,
+        computer_glancing_blow: false,
     })
 
     const getAscean = useCallback(async () => {

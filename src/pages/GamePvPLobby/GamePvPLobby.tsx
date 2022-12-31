@@ -188,6 +188,7 @@ const GamePvPLobby = ({ user }: Props) => {
         player_one_religious_success: false,
         player_one_dual_wielding: false,
         player_one_critical_success: false,
+        player_one_glancing_blow: false,
         player_one_counter_success: false,
         player_one_roll_success: false,
         player_one_win: false,
@@ -226,6 +227,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
         player_two_ready: false,
         player_two_critical_success: false,
+        player_two_glancing_blow: false,
         player_two_dual_wielding: false,
         player_two_roll_success: false,
         player_two_counter_success: false,
@@ -235,7 +237,7 @@ const GamePvPLobby = ({ user }: Props) => {
     })
 
     useEffect(() => {
-        socket = io.connect("http://localhost:3001") 
+        socket = io.connect("https://ascea.herokuapp.com") 
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
         socket.emit("setup", user);

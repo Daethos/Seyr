@@ -1418,38 +1418,42 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     let computer_weapon_two_total_damage;
     let firstWeaponCrit = false;
     let secondWeaponCrit = false;
-    
-    console.log(player_physical_defense_multiplier, player_magical_defense_multiplier, 'Player Defenses in Computer Dual Wield')
-    // console.log(weapons, 'Computer Weapons in Dual Wield Compiler')
+
+    const weapOneClearance = Math.floor(Math.random() * 101);
+    const weapTwoClearance = Math.floor(Math.random() * 101);
+    const weapOneCrit = combatData.computer_weapons[0].critical_chance;
+    const weapTwoCrit = combatData.computer_weapons[1].critical_chance;
+    const resultOne = await computerCriticalCompiler(combatData, weapOneCrit, weapOneClearance, combatData.computer_weapons[0], computer_weapon_one_physical_damage, computer_weapon_one_magical_damage);
+    combatData = resultOne.combatData;
+    computer_weapon_one_physical_damage = resultOne.computer_physical_damage;
+    computer_weapon_one_magical_damage = resultOne.computer_magical_damage;
+    if (weapOneCrit >= weapOneClearance) {
+        firstWeaponCrit = true;
+    }
+    const resultTwo = await computerCriticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.computer_weapons[1], computer_weapon_two_physical_damage, computer_weapon_two_magical_damage);
+    combatData = resultTwo.combatData;
+    computer_weapon_two_physical_damage = resultTwo.computer_physical_damage;
+    computer_weapon_two_magical_damage = resultTwo.computer_magical_damage;
+    if (weapTwoCrit >= weapTwoClearance) {
+        secondWeaponCrit = true;
+    }
 
     // This is for Critical Strikes
-    if (weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        // console.log('Comp DW1 Critical Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        computer_weapon_one_physical_damage *= weapons[0].critical_damage;
-        computer_weapon_one_magical_damage *= weapons[0].critical_damage;
-        // if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        //     await computerCriticalCompiler(combatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        //     await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        //     firstWeaponCrit = true;
-        //     secondWeaponCrit = true;
-        // } else {
-            
-        // await computerCriticalCompiler(combatDatacombatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        console.log('Comp DW1 Post-Crit Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
-        firstWeaponCrit = true;
-        combatData.computer_critical_success = true;
-        // }
-    }
+    // if (weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
+    //     computer_weapon_one_physical_damage *= weapons[0].critical_damage;
+    //     computer_weapon_one_magical_damage *= weapons[0].critical_damage;
+    //     console.log('Comp DW1 Post-Crit Firing', computer_weapon_one_physical_damage, computer_weapon_one_magical_damage)
+    //     firstWeaponCrit = true;
+    //     combatData.computer_critical_success = true;
+    // }
 
-    if (weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        // console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        computer_weapon_two_physical_damage *= weapons[1].critical_damage;
-        computer_weapon_two_magical_damage *= weapons[1].critical_damage;
-        //await computerCriticalCompiler(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
-        secondWeaponCrit = true;
-        combatData.computer_critical_success = true;
-    }
+    // if (weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
+    //     computer_weapon_two_physical_damage *= weapons[1].critical_damage;
+    //     computer_weapon_two_magical_damage *= weapons[1].critical_damage;
+    //     console.log('Comp DW2 Critical Firing', computer_weapon_two_physical_damage, computer_weapon_two_magical_damage)
+    //     secondWeaponCrit = true;
+    //     combatData.computer_critical_success = true;
+    // }
     
     // console.log(firstWeaponCrit, secondWeaponCrit)
     computer_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
@@ -1458,11 +1462,11 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     computer_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
     computer_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
-    const damageType = await computerDamageTypeCompiter(combatData, computer_weapon_one_physical_damage, computer_weapon_one_magical_damage);
+    const damageType = await computerDamageTypeCompiter(combatData, weapons[0], computer_weapon_one_physical_damage, computer_weapon_one_magical_damage);
     computer_weapon_one_physical_damage = damageType.computer_physical_damage;
     computer_weapon_one_magical_damage = damageType.computer_magical_damage;
 
-    const damageTypeTwo = await computerDamageTypeCompiter(combatData, computer_weapon_two_physical_damage, computer_weapon_two_magical_damage);
+    const damageTypeTwo = await computerDamageTypeCompiter(combatData, weapons[1], computer_weapon_two_physical_damage, computer_weapon_two_magical_damage);
     computer_weapon_two_physical_damage = damageTypeTwo.computer_physical_damage;
     computer_weapon_two_magical_damage = damageTypeTwo.computer_magical_damage;
 
@@ -1506,7 +1510,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     }
     
     combatData.computer_action_description = 
-        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
     )
@@ -1617,7 +1621,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
                 }
             }
             if (combatData.computer_weapons[0].type === 'Bow') {
-                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
+                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
                     computer_physical_damage *= 2;
                     computer_magical_damage *= 2;
                 } else {
@@ -1659,21 +1663,32 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         }
     }
 
+    const criticalClearance = Math.floor(Math.random() * 101);
+    const criticalChance = combatData.computer_weapons[0].critical_chance;
+    const criticalResult = await computerCriticalCompiler(combatData, criticalChance, criticalClearance, combatData.computer_weapons[0], computer_physical_damage, computer_magical_damage)
+    combatData = criticalResult.combatData;
+    computer_physical_damage = criticalResult.computer_physical_damage;
+    computer_magical_damage = criticalResult.computer_magical_damage;
+    console.log('Results for Computer [Crit] [Glancing] [Phys Dam] [Mag Dam]', 
+        criticalResult.combatData.computer_critical_success, criticalResult.combatData.computer_glancing_blow, 
+        criticalResult.computer_physical_damage, criticalResult.computer_magical_damage)
+
+
     // This is for Critical Strikes
-    if (combatData.computer_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        computer_physical_damage *= combatData.computer_weapons[0].critical_damage;
-        computer_magical_damage *= combatData.computer_weapons[0].critical_damage;
-        // computerCriticalCompiler(combatData, combatData.weapons[0], computer_physical_damage, computer_magical_damage)
-        // return combatData
-        console.log('Computer Critical Post-Multiplier Inside Computer Attack Function', computer_physical_damage, computer_magical_damage);
-        combatData.computer_critical_success = true;
-    }
+    // if (combatData.computer_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
+    //     computer_physical_damage *= combatData.computer_weapons[0].critical_damage;
+    //     computer_magical_damage *= combatData.computer_weapons[0].critical_damage;
+    //     // computerCriticalCompiler(combatData, combatData.weapons[0], computer_physical_damage, computer_magical_damage)
+    //     // return combatData
+    //     console.log('Computer Critical Post-Multiplier Inside Computer Attack Function', computer_physical_damage, computer_magical_damage);
+    //     combatData.computer_critical_success = true;
+    // }
 
     // If you made it here, your basic attack now resolves itself
     computer_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (combatData.computer_weapons[0].physical_penetration / 100)));
     computer_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (combatData.computer_weapons[0].magical_penetration / 100)));
 
-    const damageType = await computerDamageTypeCompiter(combatData, computer_physical_damage, computer_magical_damage);
+    const damageType = await computerDamageTypeCompiter(combatData, combatData.computer_weapons[0], computer_physical_damage, computer_magical_damage);
     computer_physical_damage = damageType.computer_physical_damage;
     computer_magical_damage = damageType.computer_magical_damage;
 
@@ -1686,7 +1701,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
     combatData.computer_action_description = 
-        `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ? ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_weapons[0].damage_type[0] ? combatData.computer_weapons[0].damage_type[0] : ''}${combatData.computer_weapons[0].damage_type[1] ? ' / ' + combatData.computer_weapons[0].damage_type[1] : ''} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
@@ -1708,156 +1723,242 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     )
 }
 
-const computerDamageTypeCompiter = async (combatData, computer_physical_damage, computer_magical_damage) => {
+const computerDamageTypeCompiter = async (combatData, weapon, computer_physical_damage, computer_magical_damage) => {
     console.log('Computer Damage Type Compiler Firing', computer_physical_damage, computer_magical_damage);
     if (combatData.computer_damage_type === 'Blunt' || combatData.computer_damage_type === 'Fire' || combatData.computer_damage_type === 'Earth' || combatData.computer_damage_type === 'Spooky') {
-        if (combatData.player.helmet.type === 'Plate-Mail') {
-            computer_physical_damage *= 1.1;
-            computer_magical_damage *= 1.1;
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                computer_physical_damage *= 1.15;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                computer_physical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                computer_physical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                computer_physical_damage *= 0.85;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                computer_physical_damage *= 1.1;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                computer_physical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                computer_physical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                computer_physical_damage *= 0.9;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                computer_physical_damage *= 1.05;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                computer_physical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                computer_physical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                computer_physical_damage *= 0.95;
+            }
         }
-        if (combatData.player.helmet.type === 'Chain-Mail') {
-            computer_physical_damage *= 1.05;
-            computer_magical_damage *= 1.05;
-        }
-        if (combatData.player.helmet.type === 'Leather-Mail') {
-            computer_physical_damage *= 0.95;
-            computer_magical_damage *= 0.95;
-        }
-        if (combatData.player.helmet.type === 'Leather-Cloth') {
-            computer_physical_damage *= 0.9;
-            computer_magical_damage *= 0.9;
-        }
-        if (combatData.player.chest.type === 'Plate-Mail') {
-            computer_physical_damage *= 1.07;
-            computer_magical_damage *= 1.07;
-        }
-        if (combatData.player.chest.type === 'Chain-Mail') {
-            computer_physical_damage *= 1.03;
-            computer_magical_damage *= 1.03;
-        }
-        if (combatData.player.chest.type === 'Leather-Mail') {
-            computer_physical_damage *= 0.97;
-            computer_magical_damage *= 0.97;
-        }
-        if (combatData.player.chest.type === 'Leather-Cloth') {
-            computer_physical_damage *= 0.93;
-            computer_magical_damage *= 0.93;
-        }
-        if (combatData.player.legs.type === 'Plate-Mail') {
-            computer_physical_damage *= 1.03;
-            computer_magical_damage *= 1.03;
-        }
-        if (combatData.player.legs.type === 'Chain-Mail') {
-            computer_physical_damage *= 1.015;
-            computer_magical_damage *= 1.015;
-        }
-        if (combatData.player.legs.type === 'Leather-Mail') {
-            computer_physical_damage *= 0.985;
-            computer_magical_damage *= 0.985;
-        }
-        if (combatData.player.legs.type === 'Leather-Cloth') {
-            computer_physical_damage *= 0.97;
-            computer_magical_damage *= 0.97;
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                computer_magical_damage *= 1.15;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                computer_magical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                computer_magical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                computer_magical_damage *= 0.85;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                computer_magical_damage *= 1.1;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                computer_magical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                computer_magical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                computer_magical_damage *= 0.9;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                computer_magical_damage *= 1.05;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                computer_magical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                computer_magical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                computer_magical_damage *= 0.95;
+            }
         }
     }
     if (combatData.computer_damage_type === 'Pierce' || combatData.computer_damage_type === 'Lightning' || combatData.computer_damage_type === 'Frost' || combatData.computer_damage_type === 'Sorcery') {
-        if (combatData.player.helmet.type === 'Plate-Mail') {
-            computer_physical_damage *= 0.9;
-            computer_magical_damage *= 0.9;
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                computer_physical_damage *= 0.85;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                computer_physical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                computer_physical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                computer_physical_damage *= 1.15;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                computer_physical_damage *= 0.9;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                computer_physical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                computer_physical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                computer_physical_damage *= 1.1;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                computer_physical_damage *= 0.95;
+            }   
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                computer_physical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                computer_physical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                computer_physical_damage *= 1.05;
+            }
         }
-        if (combatData.player.helmet.type === 'Chain-Mail') {
-            computer_physical_damage *= 0.95;
-            computer_magical_damage *= 0.95;
-        }
-        if (combatData.player.helmet.type === 'Leather-Mail') {
-            computer_physical_damage *= 1.05;
-            computer_magical_damage *= 1.05;
-        }
-        if (combatData.player.helmet.type === 'Leather-Cloth') {
-            computer_physical_damage *= 1.1;
-            computer_magical_damage *= 1.1;
-        }
-        if (combatData.player.chest.type === 'Plate-Mail') {
-            computer_physical_damage *= 0.93;
-            computer_magical_damage *= 0.93;
-        }
-        if (combatData.player.chest.type === 'Chain-Mail') {
-            computer_physical_damage *= 0.97;
-            computer_magical_damage *= 0.97;
-        }
-        if (combatData.player.chest.type === 'Leather-Mail') {
-            computer_physical_damage *= 1.03;
-            computer_magical_damage *= 1.03;
-        }
-        if (combatData.player.chest.type === 'Leather-Cloth') {
-            computer_physical_damage *= 1.07;
-            computer_magical_damage *= 1.07;
-        }
-        if (combatData.player.legs.type === 'Plate-Mail') {
-            computer_physical_damage *= 0.97;
-            computer_magical_damage *= 0.97;
-        }   
-        if (combatData.player.legs.type === 'Chain-Mail') {
-            computer_physical_damage *= 0.985;
-            computer_magical_damage *= 0.985;
-        }
-        if (combatData.player.legs.type === 'Leather-Mail') {
-            computer_physical_damage *= 1.015;
-            computer_magical_damage *= 1.015;
-        }
-        if (combatData.player.legs.type === 'Leather-Cloth') {
-            computer_physical_damage *= 1.03;
-            computer_magical_damage *= 1.03;
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                computer_magical_damage *= 0.85;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                computer_magical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                computer_magical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                computer_magical_damage *= 1.15;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                computer_magical_damage *= 0.9;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                computer_magical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                computer_magical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                computer_magical_damage *= 1.1;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                computer_magical_damage *= 0.95;
+            }   
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                computer_magical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                computer_magical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                computer_magical_damage *= 1.05;
+            }
         }
     }
     if (combatData.computer_damage_type === 'Slash' || combatData.computer_damage_type === 'Wind' || combatData.computer_damage_type === 'Righteous' || combatData.computer_damage_type === 'Wild') {
-        if (combatData.player.helmet.type === 'Plate-Mail') {
-            computer_physical_damage *= 1.05;
-            computer_magical_damage *= 1.05;
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                computer_physical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                computer_physical_damage *= 0.92;
+            }   
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                computer_physical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                computer_physical_damage *= 1.08;
+            }
+    
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                computer_physical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                computer_physical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                computer_physical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                computer_physical_damage *= 1.05;
+            }
+    
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                computer_physical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                computer_physical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                computer_physical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                computer_physical_damage *= 1.03;
+            }
         }
-        if (combatData.player.helmet.type === 'Chain-Mail') {
-            computer_physical_damage *= 0.9;
-            computer_magical_damage *= 0.9;
-        }   
-        if (combatData.player.helmet.type === 'Leather-Mail') {
-            computer_physical_damage *= 1.1;
-            computer_magical_damage *= 1.1;
-        }
-        if (combatData.player.helmet.type === 'Leather-Cloth') {
-            computer_physical_damage *= 0.95;
-            computer_magical_damage *= 0.95;
-        }
-        if (combatData.player.chest.type === 'Plate-Mail') {
-            computer_physical_damage *= 1.03;
-            computer_magical_damage *= 1.03;
-        }
-        if (combatData.player.chest.type === 'Chain-Mail') {
-            computer_physical_damage *= 0.93;
-            computer_magical_damage *= 0.93;
-        }
-        if (combatData.player.chest.type === 'Leather-Mail') {
-            computer_physical_damage *= 1.07;
-            computer_magical_damage *= 1.07;
-        }
-        if (combatData.player.chest.type === 'Leather-Cloth') {
-            computer_physical_damage *= 0.97;
-            computer_magical_damage *= 0.97;
-        }
-        if (combatData.player.legs.type === 'Plate-Mail') {
-            computer_physical_damage *= 1.015;
-            computer_magical_damage *= 1.015;
-        }
-        if (combatData.player.legs.type === 'Chain-Mail') {
-            computer_physical_damage *= 0.97;
-            computer_magical_damage *= 0.97;
-        }
-        if (combatData.player.legs.type === 'Leather-Mail') {
-            computer_physical_damage *= 1.03;
-            computer_magical_damage *= 1.03;
-        }
-        if (combatData.player.legs.type === 'Leather-Cloth') {
-            computer_physical_damage *= 0.985;
-            computer_magical_damage *= 0.985;
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                computer_magical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                computer_magical_damage *= 0.92;
+            }   
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                computer_magical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                computer_magical_damage *= 1.08;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                computer_magical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                computer_magical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                computer_magical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                computer_magical_damage *= 1.05;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                computer_magical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                computer_magical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                computer_magical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                computer_magical_damage *= 1.03;
+            }
         }
     }
     console.log('Computer Post-Damage Type Multiplier', computer_physical_damage, computer_magical_damage);
@@ -1868,11 +1969,25 @@ const computerDamageTypeCompiter = async (combatData, computer_physical_damage, 
     }
 }
 
-const computerCriticalCompiler = async (combatData, weapon, computer_physical_damage, computer_magical_damage) => {
-    console.log('Computer Critical Firing', computer_physical_damage, computer_magical_damage)
-    computer_physical_damage *= weapon.critical_damage;
-    computer_magical_damage *= weapon.critical_damage;
-    console.log('Computer Post-Crit Multiplier', computer_physical_damage, computer_magical_damage)
+const computerCriticalCompiler = async (combatData, critChance, critClearance, weapon, computer_physical_damage, computer_magical_damage) => {
+    if (critChance >= critClearance) {
+        computer_physical_damage *= weapon.critical_damage;
+        computer_magical_damage *= weapon.critical_damage;
+        combatData.computer_critical_success = true;
+    }
+    if (critClearance > critChance * 2.5) {
+        computer_physical_damage *= 0.7;
+        computer_magical_damage *= 0.7;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance * 2) {
+        computer_physical_damage *= 0.8;
+        computer_magical_damage *= 0.8;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance * 1.5) {
+        computer_physical_damage *= 0.9;
+        computer_magical_damage *= 0.9;
+        combatData.computer_glancing_blow = true;
+    }
 
     return {
         combatData,
@@ -1942,22 +2057,23 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     let computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalDefenseModifier / 100);
     let computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalDefenseModifier / 100);
 
-    // This is for Critical Strikes
-    if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-            player_weapon_one_physical_damage *= combatData.weapons[0].critical_damage;
-            player_weapon_one_magical_damage *= combatData.weapons[0].critical_damage;
-            firstWeaponCrit = true;
-            combatData.critical_success = true;
-        console.log(player_weapon_one_physical_damage, player_weapon_one_magical_damage, 'Weapon 1 Post-Crit Modifier')
+    const weapOneClearance = Math.floor(Math.random() * 101);
+    const weapTwoClearance = Math.floor(Math.random() * 101);
+    const weapOneCrit = combatData.weapons[0].critical_chance;
+    const weapTwoCrit = combatData.weapons[1].critical_chance;
+    const resultOne = await criticalCompiler(combatData, weapOneCrit, weapOneClearance, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    combatData = resultOne.combatData;
+    player_weapon_one_physical_damage = resultOne.player_physical_damage;
+    player_weapon_one_magical_damage = resultOne.player_magical_damage;
+    if (weapOneCrit >= weapOneClearance) {
+        firstWeaponCrit = true;
     }
-
-    if (combatData.weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        player_weapon_two_physical_damage *= combatData.weapons[1].critical_damage;
-        player_weapon_two_magical_damage *= combatData.weapons[1].critical_damage;
-        // await criticalCompiler(combatData, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
+    const resultTwo = await criticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    combatData = resultTwo.combatData;
+    player_weapon_two_physical_damage = resultTwo.player_physical_damage;
+    player_weapon_two_magical_damage = resultTwo.player_magical_damage;
+    if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
-        combatData.critical_success = true;
-        console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
 
     player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
@@ -1968,11 +2084,11 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     console.log('Attack Compiler Pre-Damage Type Multiplier', player_weapon_one_physical_damage, player_weapon_one_magical_damage)
 
-    const damageType = await damageTypeCompiler(combatData, player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    const damageType = await damageTypeCompiler(combatData, weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage);
     player_weapon_one_physical_damage = damageType.player_physical_damage;
     player_weapon_one_magical_damage = damageType.player_magical_damage;
 
-    const damageTypeTwo = await damageTypeCompiler(combatData, player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    const damageTypeTwo = await damageTypeCompiler(combatData, weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
     player_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
     player_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
 
@@ -2016,7 +2132,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     }
     
     combatData.player_action_description = 
-        `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     console.log(combatData.realized_player_damage)
     return (
         combatData
@@ -2132,7 +2248,7 @@ const attackCompiler = async (combatData, player_action) => {
                 }
             }
             if (combatData.weapons[0].type === 'Bow') {
-                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir' || combatData.player.mastery === 'Constitution') {
                     player_physical_damage *= 2;
                     player_magical_damage *= 2;
                 } else {
@@ -2176,15 +2292,15 @@ const attackCompiler = async (combatData, player_action) => {
 
 
     // This is for Critical Strikes
-    if (combatData.weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        console.log('Player Critical Firing', player_physical_damage, player_magical_damage)
-        player_physical_damage *= combatData.weapons[0].critical_damage;
-        player_magical_damage *= combatData.weapons[0].critical_damage;
-        // criticalCompiler(combatData, combatData.weapons[0], player_physical_damage, player_magical_damage)
-        // return combatData
-        console.log('Attack Compiler Post-Crit Multiplier', player_physical_damage, player_magical_damage)
-        combatData.critical_success = true;
-    }
+    const criticalClearance = Math.floor(Math.random() * 101);
+    const criticalChance = combatData.weapons[0].critical_chance;
+    console.log('Critical Chance', criticalChance, 'Critical Clearance', criticalClearance)
+    const criticalResult = await criticalCompiler(combatData, criticalChance, criticalClearance, combatData.weapons[0], player_physical_damage, player_magical_damage);
+    console.log('Results for [Crit] [Glancing] [Phys Dam] [Mag Dam]', criticalResult.combatData.critical_success, criticalResult.combatData.glancing_blow, criticalResult.player_physical_damage, criticalResult.player_magical_damage)
+
+    combatData = criticalResult.combatData;
+    player_physical_damage = criticalResult.player_physical_damage;
+    player_magical_damage = criticalResult.player_magical_damage;
 
     // If you made it here, your basic attack now resolves itself
     // The plan is to get the player's number as close to 1x as possible when calculating penetration.
@@ -2192,7 +2308,7 @@ const attackCompiler = async (combatData, player_action) => {
     player_magical_damage *=1 - ((1 - computer_magical_defense_multiplier) * (1 - (combatData.weapons[0].magical_penetration / 100)));
 
     // console.log('Attack Compiler Pre-Damage Type Multiplier', player_physical_damage, player_magical_damage)
-    const damageType = await damageTypeCompiler(combatData, player_physical_damage, player_magical_damage);
+    const damageType = await damageTypeCompiler(combatData, combatData.weapons[0], player_physical_damage, player_magical_damage);
     player_physical_damage = damageType.player_physical_damage;
     player_magical_damage = damageType.player_magical_damage;
     // console.log('Attack Compiler Post-Damage Type Multiplier', player_physical_damage, player_magical_damage)
@@ -2210,7 +2326,7 @@ const attackCompiler = async (combatData, player_action) => {
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
 
     combatData.player_action_description = 
-        `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.weapons[0].damage_type[0] ? combatData.weapons[0].damage_type[0] : ''}${combatData.weapons[0].damage_type[1] ? ' / ' + combatData.weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.weapons[0].damage_type[0] ? combatData.weapons[0].damage_type[0] : ''}${combatData.weapons[0].damage_type[1] ? ' / ' + combatData.weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
@@ -2222,157 +2338,248 @@ const attackCompiler = async (combatData, player_action) => {
     return combatData
 }
 
-const damageTypeCompiler = async (combatData, player_physical_damage, player_magical_damage) => {
+const damageTypeCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
     console.log('Damage Type Compiler Firing', player_physical_damage, player_magical_damage);
     if (combatData.player_damage_type === 'Blunt' || combatData.player_damage_type === 'Fire' || combatData.player_damage_type === 'Earth' || combatData.player_damage_type === 'Spooky') {
-        if (combatData.computer.helmet.type === 'Plate-Mail') {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.computer.helmet.type === 'Plate-Mail') {
+                player_physical_damage *= 1.15;
+            }
+            if (combatData.computer.helmet.type === 'Chain-Mail') {
+                player_physical_damage *= 1.08;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Mail') {
+                player_physical_damage *= 0.92;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Cloth') {
+                player_physical_damage *= 0.85;
+            }
+            if (combatData.computer.chest.type === 'Plate-Mail') {
+                player_physical_damage *= 1.1;
+            }
+            if (combatData.computer.chest.type === 'Chain-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (combatData.computer.chest.type === 'Leather-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Leather-Cloth') {
+                player_physical_damage *= 0.9;
+            }
+            if (combatData.computer.legs.type === 'Plate-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (combatData.computer.legs.type === 'Chain-Mail') {
+                player_physical_damage *= 1.03;
+            }
+            if (combatData.computer.legs.type === 'Leather-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Leather-Cloth') {
+                player_physical_damage *= 0.95;
+            }
         }
-        if (combatData.computer.helmet.type === 'Chain-Mail') {
-            player_physical_damage *= 1.05;
-            player_magical_damage *= 1.05;
-        }
-        if (combatData.computer.helmet.type === 'Leather-Mail') {
-            player_physical_damage *= 0.95;
-            player_magical_damage *= 0.95;
-        }
-        if (combatData.computer.helmet.type === 'Leather-Cloth') {
-            player_physical_damage *= 0.9;
-            player_magical_damage *= 0.9;
-        }
-        if (combatData.computer.chest.type === 'Plate-Mail') {
-            player_physical_damage *= 1.07;
-            player_magical_damage *= 1.07;
-        }
-        if (combatData.computer.chest.type === 'Chain-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (combatData.computer.chest.type === 'Leather-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (combatData.computer.chest.type === 'Leather-Cloth') {
-            player_physical_damage *= 0.93;
-            player_magical_damage *= 0.93;
-        }
-        if (combatData.computer.legs.type === 'Plate-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (combatData.computer.legs.type === 'Chain-Mail') {
-            player_physical_damage *= 1.015;
-            player_magical_damage *= 1.015;
-        }
-        if (combatData.computer.legs.type === 'Leather-Mail') {
-            player_physical_damage *= 0.985;
-            player_magical_damage *= 0.985;
-        }
-        if (combatData.computer.legs.type === 'Leather-Cloth') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.computer.helmet.type === 'Plate-Mail') {
+                player_magical_damage *= 1.15;
+            }
+            if (combatData.computer.helmet.type === 'Chain-Mail') {
+                player_magical_damage *= 1.08;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Mail') {
+                player_magical_damage *= 0.92;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Cloth') {
+                player_magical_damage *= 0.85;
+            }
+            if (combatData.computer.chest.type === 'Plate-Mail') {
+                player_magical_damage *= 1.1;
+            }
+            if (combatData.computer.chest.type === 'Chain-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (combatData.computer.chest.type === 'Leather-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Leather-Cloth') {
+                player_magical_damage *= 0.9;
+            }
+            if (combatData.computer.legs.type === 'Plate-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (combatData.computer.legs.type === 'Chain-Mail') {
+                player_magical_damage *= 1.03;
+            }
+            if (combatData.computer.legs.type === 'Leather-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Leather-Cloth') {
+                player_magical_damage *= 0.95;
+            }
         }
     }
+
     if (combatData.player_damage_type === 'Pierce' || combatData.player_damage_type === 'Lightning' || combatData.player_damage_type === 'Frost' || combatData.player_damage_type === 'Sorcery') {
-        if (combatData.computer.helmet.type === 'Plate-Mail') {
-            player_physical_damage *= 0.9;
-            player_magical_damage *= 0.9;
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.computer.helmet.type === 'Plate-Mail') {
+                player_physical_damage *= 0.85;
+            }
+            if (combatData.computer.helmet.type === 'Chain-Mail') {
+                player_physical_damage *= 0.92;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Mail') {
+                player_physical_damage *= 1.08;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Cloth') {
+                player_physical_damage *= 1.15;
+            }
+            if (combatData.computer.chest.type === 'Plate-Mail') {
+                player_physical_damage *= 0.9;
+            }
+            if (combatData.computer.chest.type === 'Chain-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Leather-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (combatData.computer.chest.type === 'Leather-Cloth') {
+                player_physical_damage *= 1.1;
+            }
+            if (combatData.computer.legs.type === 'Plate-Mail') {
+                player_physical_damage *= 0.95;
+            }   
+            if (combatData.computer.legs.type === 'Chain-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Leather-Mail') {
+                player_physical_damage *= 1.03;
+            }
+            if (combatData.computer.legs.type === 'Leather-Cloth') {
+                player_physical_damage *= 1.05;
+            }
         }
-        if (combatData.computer.helmet.type === 'Chain-Mail') {
-            player_physical_damage *= 0.95;
-            player_magical_damage *= 0.95;
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.computer.helmet.type === 'Plate-Mail') {
+                player_magical_damage *= 0.85;
+            }
+            if (combatData.computer.helmet.type === 'Chain-Mail') {
+                player_magical_damage *= 0.92;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Mail') {
+                player_magical_damage *= 1.08;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Cloth') {
+                player_magical_damage *= 1.15;
+            }
+            if (combatData.computer.chest.type === 'Plate-Mail') {
+                player_magical_damage *= 0.9;
+            }
+            if (combatData.computer.chest.type === 'Chain-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Leather-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (combatData.computer.chest.type === 'Leather-Cloth') {
+                player_magical_damage *= 1.1;
+            }
+            if (combatData.computer.legs.type === 'Plate-Mail') {
+                player_magical_damage *= 0.95;
+            }   
+            if (combatData.computer.legs.type === 'Chain-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Leather-Mail') {
+                player_magical_damage *= 1.03;
+            }
+            if (combatData.computer.legs.type === 'Leather-Cloth') {
+                player_magical_damage *= 1.05;
+            }
         }
-        if (combatData.computer.helmet.type === 'Leather-Mail') {
-            player_physical_damage *= 1.05;
-            player_magical_damage *= 1.05;
-        }
-        if (combatData.computer.helmet.type === 'Leather-Cloth') {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
-        }
-        if (combatData.computer.chest.type === 'Plate-Mail') {
-            player_physical_damage *= 0.93;
-            player_magical_damage *= 0.93;
-        }
-        if (combatData.computer.chest.type === 'Chain-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (combatData.computer.chest.type === 'Leather-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (combatData.computer.chest.type === 'Leather-Cloth') {
-            player_physical_damage *= 1.07;
-            player_magical_damage *= 1.07;
-        }
-        if (combatData.computer.legs.type === 'Plate-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }   
-        if (combatData.computer.legs.type === 'Chain-Mail') {
-            player_physical_damage *= 0.985;
-            player_magical_damage *= 0.985;
-        }
-        if (combatData.computer.legs.type === 'Leather-Mail') {
-            player_physical_damage *= 1.015;
-            player_magical_damage *= 1.015;
-        }
-        if (combatData.computer.legs.type === 'Leather-Cloth') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
+        
     }
     if (combatData.player_damage_type === 'Slash' || combatData.player_damage_type === 'Wind' || combatData.player_damage_type === 'Righteous' || combatData.player_damage_type === 'Wild') {
-        if (combatData.computer.helmet.type === 'Plate-Mail') {
-            player_physical_damage *= 1.05;
-            player_magical_damage *= 1.05;
+
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.computer.helmet.type === 'Plate-Mail') {
+                player_physical_damage *= 0.92;
+            }
+            if (combatData.computer.helmet.type === 'Chain-Mail') {
+                player_physical_damage *= 0.92;
+            }   
+            if (combatData.computer.helmet.type === 'Leather-Mail') {
+                player_physical_damage *= 1.08;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Cloth') {
+                player_physical_damage *= 1.08;
+            }
+    
+            if (combatData.computer.chest.type === 'Plate-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Chain-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Leather-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (combatData.computer.chest.type === 'Leather-Cloth') {
+                player_physical_damage *= 1.05;
+            }
+    
+            if (combatData.computer.legs.type === 'Plate-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Chain-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Leather-Mail') {
+                player_physical_damage *= 1.03;
+            }
+            if (combatData.computer.legs.type === 'Leather-Cloth') {
+                player_physical_damage *= 1.03;
+            }
         }
-        if (combatData.computer.helmet.type === 'Chain-Mail') {
-            player_physical_damage *= 0.9;
-            player_magical_damage *= 0.9;
-        }   
-        if (combatData.computer.helmet.type === 'Leather-Mail') {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.computer.helmet.type === 'Plate-Mail') {
+                player_magical_damage *= 0.92;
+            }
+            if (combatData.computer.helmet.type === 'Chain-Mail') {
+                player_magical_damage *= 0.92;
+            }   
+            if (combatData.computer.helmet.type === 'Leather-Mail') {
+                player_magical_damage *= 1.08;
+            }
+            if (combatData.computer.helmet.type === 'Leather-Cloth') {
+                player_magical_damage *= 1.08;
+            }
+            if (combatData.computer.chest.type === 'Plate-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Chain-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (combatData.computer.chest.type === 'Leather-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (combatData.computer.chest.type === 'Leather-Cloth') {
+                player_magical_damage *= 1.05;
+            }
+            if (combatData.computer.legs.type === 'Plate-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Chain-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (combatData.computer.legs.type === 'Leather-Mail') {
+                player_magical_damage *= 1.03;
+            }
+            if (combatData.computer.legs.type === 'Leather-Cloth') {
+                player_magical_damage *= 1.03;
+            }
         }
-        if (combatData.computer.helmet.type === 'Leather-Cloth') {
-            player_physical_damage *= 0.95;
-            player_magical_damage *= 0.95;
-        }
-        if (combatData.computer.chest.type === 'Plate-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (combatData.computer.chest.type === 'Chain-Mail') {
-            player_physical_damage *= 0.93;
-            player_magical_damage *= 0.93;
-        }
-        if (combatData.computer.chest.type === 'Leather-Mail') {
-            player_physical_damage *= 1.07;
-            player_magical_damage *= 1.07;
-        }
-        if (combatData.computer.chest.type === 'Leather-Cloth') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (combatData.computer.legs.type === 'Plate-Mail') {
-            player_physical_damage *= 1.015;
-            player_magical_damage *= 1.015;
-        }
-        if (combatData.computer.legs.type === 'Chain-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (combatData.computer.legs.type === 'Leather-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (combatData.computer.legs.type === 'Leather-Cloth') {
-            player_physical_damage *= 0.985;
-            player_magical_damage *= 0.985;
-        }
+
+        
     }
     console.log('Player Post-Damage Type Multiplier', player_physical_damage, player_magical_damage);
     return {
@@ -2382,14 +2589,30 @@ const damageTypeCompiler = async (combatData, player_physical_damage, player_mag
     }
 }
 
-const criticalCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
-    console.log('Player Critical Firing', player_physical_damage, player_magical_damage)
-    player_physical_damage *= weapon.critical_damage;
-    player_magical_damage *= weapon.critical_damage;
-    
-    console.log('Player Post-Crit Multiplier', player_physical_damage, player_magical_damage)
+const criticalCompiler = async (combatData, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
+    console.log(critChance, critClearance, 'Crit Chance and Clearance');
+    if (critChance >= critClearance) {
+        player_physical_damage *= weapon.critical_damage;
+        player_magical_damage *= weapon.critical_damage;
+        combatData.critical_success = true;
+    }
+    if (critClearance > critChance * 2.5) {
+        player_physical_damage *= 0.7;
+        player_magical_damage *= 0.7;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance * 2) {
+        player_physical_damage *= 0.8;
+        player_magical_damage *= 0.8;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance * 1.5) {
+        player_physical_damage *= 0.9;
+        player_magical_damage *= 0.9;
+        combatData.glancing_blow = true;
+    }
     return {
-        combatData
+        combatData,
+        player_physical_damage,
+        player_magical_damage
     }
 }
 
@@ -2563,7 +2786,9 @@ const actionSplitter = async (combatData) => {
         player_win: false,
         computer_win: false,
         critical_success: false,
-        computer_critical_success: false
+        computer_critical_success: false,
+        glancing_blow: false,
+        computer_glancing_blow: false,
     }
     // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;

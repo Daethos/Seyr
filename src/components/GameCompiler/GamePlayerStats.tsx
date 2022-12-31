@@ -27,27 +27,24 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
     let achreMod: number = Math.round((totalAchre - 10) / 2);
     let caerenMod: number = Math.round((totalCaeren - 10) / 2);
     let kyosirMod: number = Math.round((totalKyosir - 10) / 2);
-
     const playerPopover = (
         <Popover id="popover">
             <Popover.Header id="popover-header" as="h2">{player.name}'s Statistics
             </Popover.Header>
             <Popover.Body id="popover-body">
-                <div className='creature-heading'>
-                    <h2>
-                    {player.description}
-                    </h2>
-                </div>
-                <div className="">
-                Magical Defense:  {magicalDefense}% / [{magicalPosture}%]
-                </div>
-                <div className="">
-                Physical Defense:  {physicalDefense}% / [{physicalPosture}%]
-                </div>
-                <div className="">
-                Initiative:  {attributes.initiative}
-                </div>
-                <div>Constitution: {attributes.totalConstitution} [ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ] </div>
+            <div className='creature-heading'>
+                <h2>
+                {player.description}
+                </h2>
+            </div>
+            <div>
+            Level: {player.level}<br />
+            Mastery: {player.mastery}<br />
+            Magical Defense:  {magicalDefense}% / [{magicalPosture}%]<br />
+            Physical Defense:  {physicalDefense}% / [{physicalPosture}%]<br />
+            Initiative:  {attributes.initiative}
+            </div>
+            <div>Constitution: {attributes.totalConstitution} [ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ] </div>
             <div>Strength: {attributes.totalStrength} [ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</div>
             <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
             <div>Agility: {attributes.totalAgility} [ {attributes.totalAgility < 10 ? '- ' + attributes.agilityMod : '+ ' + attributes.agilityMod} ]</div>
@@ -57,40 +54,19 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
             </Popover.Body>
         </Popover>
       );
-      const attributePopover = (
-        <Popover id="popover">
-            <Popover.Header id="popover-header" as="h2">Player Statistics</Popover.Header>
-            <Popover.Body id="popover-body">
-                <div className="" >
-                Health:  {attributes.healthTotal}
-                </div>
-                <div className="">
-                Magical Defense:  {magicalDefense}% / [{magicalPosture}%]
-                </div>
-                <div className="">
-                Physical Defense:  {physicalDefense}% / [{physicalPosture}%]
-                </div>
-                <div className="">
-                Initiative:  {attributes.initiative}
-                </div>
-            </Popover.Body>
-        </Popover>
-      );
-  return (
-    <div style={{ textAlign: 'center' }}>
-    <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
-        <Button variant=""  >
-            <div className="actions">
-        <h3 
-        style={{ fontSize: 10 + 'px', color: '#fdf6d8' }} 
-        className=''>
-        {/* <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span> */}
-            {player.name} Stats</h3>
-        </div>
+    return (
+        <div style={{ textAlign: 'center' }}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
+        <Button variant="">
+            <div className="">
+            <h3 style={{ fontSize: 12 + 'px', color: '#fdf6d8', textDecoration: 'none' }} className=''>
+            {/* <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span> */}
+            {player.name}</h3>
+            </div>
         </Button>
-    </OverlayTrigger>
-  </div>
-  )
+        </OverlayTrigger>
+    </div>
+    )
 }
 
 export default GamePlayerStats

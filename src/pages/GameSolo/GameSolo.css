@@ -20,7 +20,7 @@
   #game-block {
     margin-left: 7.5%;
     transform: scale(1.1);
-    margin-top: -20%;
+    margin-top: 50%;
   }
   #opponent-block {
     grid-row-start: 1;

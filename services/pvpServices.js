@@ -64,12 +64,14 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_two_health -= daethos;
             combatData.current_player_one_health += daethos;
             combatData.current_player_two_health -= daethos;
-            if (combatData.current_player_two_health < 0) {
-                combatData.current_player_two_health = 0;
-            }
-            if (combatData.new_player_two_health < 0) {
-                combatData.new_player_two_health = 0;
-            }
+            // if (combatData.current_player_two_health < 0) {
+            //     combatData.current_player_two_health = 0;
+            //     combatData.player_one_win = true;
+            // }
+            // if (combatData.new_player_two_health < 0) {
+            //     combatData.new_player_two_health = 0;
+            //     combatData.player_one_win = true;
+            // }
     }
         if (combatData.player_one_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
@@ -77,6 +79,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             let achreo = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
             combatData.new_player_one_health += achreo;
             combatData.current_player_one_health += achreo;
+            
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
             combatData.player_one_weapons[0].physical_damage += 2;
@@ -88,7 +91,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             let ahnve = 2 * (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren)
             combatData.new_player_one_health += ahnve
             combatData.current_player_one_health += ahnve
-            console.log("Achreo!")
+            console.log("Ahnve!")
             combatData.player_one_influence_description = 
                 `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
             if (combatData.realized_player_one_damage < 0) {
@@ -97,10 +100,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
             combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                combatData.new_player_two_health = 0;
-                combatData.player_one_win = true;
-            }
+            // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+            //     combatData.new_player_two_health = 0;
+            //     combatData.player_one_win = true;
+            // }
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Astra') { // Lightning
             let astra = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
@@ -123,10 +126,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
             combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                combatData.new_player_two_health = 0;
-                combatData.player_one_win = true;
-            }    
+            // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+            //     combatData.new_player_two_health = 0;
+            //     combatData.player_one_win = true;
+            // }    
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Chiomyr') { // Humor
             let chiomyr = 2 * (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[0].kyosir);
@@ -189,12 +192,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
             combatData.new_player_two_health -= kyrna;
             combatData.current_player_two_health -= kyrna;
-            if (combatData.current_player_two_health < 0) {
-                combatData.current_player_two_health = 0;
-            }
-            if (combatData.new_player_two_health < 0) {
-                combatData.new_player_two_health = 0;
-            }
+            // if (combatData.current_player_two_health < 0) {
+            //     combatData.current_player_two_health = 0;
+            // }
+            // if (combatData.new_player_two_health < 0) {
+            //     combatData.new_player_two_health = 0;
+            // }
         }
         if (combatData.player_one_weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
@@ -270,10 +273,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
             combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-            if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                combatData.new_player_two_health = 0;
-                combatData.player_one_win = true;
-            }
+            // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+            //     combatData.new_player_two_health = 0;
+            //     combatData.player_one_win = true;
+            // }
         }
         if (combatData.player_one_weapons[0].influences[0] === "Se'vas") { // War
             let sevas = 2 * (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength)
@@ -319,12 +322,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_two_health -= daethos;
                 combatData.current_player_one_health += daethos;
                 combatData.current_player_two_health -= daethos;
-                if (combatData.current_player_two_health < 0) {
-                    combatData.current_player_two_health = 0;
-                }
-                if (combatData.new_player_two_health < 0) {
-                    combatData.new_player_two_health = 0;
-                }
+                // if (combatData.current_player_two_health < 0) {
+                //     combatData.current_player_two_health = 0;
+                // }
+                // if (combatData.new_player_two_health < 0) {
+                //     combatData.new_player_two_health = 0;
+                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
@@ -353,10 +356,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
                 combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                    combatData.new_player_two_health = 0;
-                    combatData.player_one_win = true;
-                }
+                // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+                //     combatData.new_player_two_health = 0;
+                //     combatData.player_one_win = true;
+                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Astra') { // Lightning
                 let astra = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
@@ -379,10 +382,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
                 combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                    combatData.new_player_two_health = 0;
-                    combatData.player_one_win = true;
-                }
+                // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+                //     combatData.new_player_two_health = 0;
+                //     combatData.player_one_win = true;
+                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Chiomyr') { // Humor
                 let chiomyr = 2 * (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[1].kyosir);
@@ -437,12 +440,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
                 combatData.new_player_two_health -= kyrna;
                 combatData.current_player_two_health -= kyrna;
-                if (combatData.current_player_two_health < 0) {
-                    combatData.current_player_two_health = 0;
-                }
-                if (combatData.new_player_two_health < 0) {
-                    combatData.new_player_two_health = 0;
-                }
+                // if (combatData.current_player_two_health < 0) {
+                //     combatData.current_player_two_health = 0;
+                // }
+                // if (combatData.new_player_two_health < 0) {
+                //     combatData.new_player_two_health = 0;
+                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 5 * (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren);
@@ -512,10 +515,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
                 combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
-                if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-                    combatData.new_player_two_health = 0;
-                    combatData.player_one_win = true;
-                }
+                // if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+                //     combatData.new_player_two_health = 0;
+                //     combatData.player_one_win = true;
+                // }
             }
             if (combatData.player_one_weapons[1].influences[0] === "Se'vas") { // War
                 let sevas = 2 * (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[1].strength)
@@ -560,12 +563,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             combatData.new_player_one_health -= daethos;
             combatData.current_player_two_health += daethos;
             combatData.current_player_one_health -= daethos;
-            if (combatData.current_player_one_health < 0) {
-                combatData.current_player_one_health = 0;
-            }
-            if (combatData.new_player_one_health < 0) {
-                combatData.new_player_one_health = 0;
-            }
+            // if (combatData.current_player_one_health < 0) {
+            //     combatData.current_player_one_health = 0;
+            // }
+            // if (combatData.new_player_one_health < 0) {
+            //     combatData.new_player_one_health = 0;
+            // }
     }
         if (combatData.player_two_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
@@ -595,10 +598,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                    combatData.new_player_one_health = 0;
-                    combatData.player_two_win = true;
-                }
+                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+                //     combatData.new_player_one_health = 0;
+                //     combatData.player_two_win = true;
+                // }
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Astra') { // Lightning
             let astra = 2 * (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre)
@@ -623,10 +626,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                    combatData.new_player_one_health = 0;
-                    combatData.player_two_win = true;
-                }    
+                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+                //     combatData.new_player_one_health = 0;
+                //     combatData.player_two_win = true;
+                // }    
         }
         if (combatData.player_two_weapons[0].influences[0] === 'Chiomyr') { // Humor
             let chiomyr = 2 * (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[0].kyosir);
@@ -686,12 +689,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
             combatData.new_player_one_health -= kyrna;
             combatData.current_player_one_health -= kyrna;
-            if (combatData.current_player_one_health < 0) {
-                combatData.current_player_one_health = 0;
-            }
-            if (combatData.new_player_one_health < 0) {
-                combatData.new_player_one_health = 0;
-            }
+            // if (combatData.current_player_one_health < 0) {
+            //     combatData.current_player_one_health = 0;
+            // }
+            // if (combatData.new_player_one_health < 0) {
+            //     combatData.new_player_one_health = 0;
+            // }
         }
         if (combatData.player_two_weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
@@ -765,10 +768,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                    combatData.new_player_one_health = 0;
-                    combatData.player_two_win = true;
-                }
+                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+                //     combatData.new_player_one_health = 0;
+                //     combatData.player_two_win = true;
+                // }
         }
         if (combatData.player_two_weapons[0].influences[0] === "Se'vas") { // War
             let sevas = 2 * (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength)
@@ -814,12 +817,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     combatData.new_player_one_health -= daethos;
                     combatData.current_player_two_health += daethos;
                     combatData.current_player_one_health -= daethos;
-                    if (combatData.current_player_one_health < 0) {
-                        combatData.current_player_one_health = 0;
-                    }
-                    if (combatData.new_player_one_health < 0) {
-                        combatData.new_player_one_health = 0;
-                    }
+                    // if (combatData.current_player_one_health < 0) {
+                    //     combatData.current_player_one_health = 0;
+                    // }
+                    // if (combatData.new_player_one_health < 0) {
+                    //     combatData.new_player_one_health = 0;
+                    // }
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
@@ -848,10 +851,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                    combatData.new_player_one_health = 0;
-                    combatData.player_two_win = true;
-                }
+                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+                //     combatData.new_player_one_health = 0;
+                //     combatData.player_two_win = true;
+                // }
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Astra') { // Lightning
                 let astra = 2 * (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre)
@@ -874,10 +877,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                    combatData.new_player_one_health = 0;
-                    combatData.player_two_win = true;
-                }    
+                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+                //     combatData.new_player_one_health = 0;
+                //     combatData.player_two_win = true;
+                // }    
             }
             if (combatData.player_two_weapons[1].influences[0] === 'Chiomyr') { // Humor
                 let chiomyr = 2 * (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[1].kyosir);
@@ -932,12 +935,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                     `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
                 combatData.new_player_one_health -= kyrna;
                 combatData.current_player_one_health -= kyrna;
-                if (combatData.current_player_one_health < 0) {
-                    combatData.current_player_one_health = 0;
-                }
-                if (combatData.new_player_one_health < 0) {
-                    combatData.new_player_one_health = 0;
-                }
+                // if (combatData.current_player_one_health < 0) {
+                //     combatData.current_player_one_health = 0;
+                // }
+                // if (combatData.new_player_one_health < 0) {
+                //     combatData.new_player_one_health = 0;
+                // }
             }
             if (combatData.player_two_weapons[1].influences[0] === "Lilos") { // Life
                 let lilos = 5 * (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren);
@@ -1007,10 +1010,10 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
                 combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-                if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
-                    combatData.new_player_one_health = 0;
-                    combatData.player_two_win = true;
-                }
+                // if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+                //     combatData.new_player_one_health = 0;
+                //     combatData.player_two_win = true;
+                // }
             }
             if (combatData.player_two_weapons[1].influences[0] === "Se'vas") { // War
                 let sevas = 2 * (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[1].strength)
@@ -1059,13 +1062,22 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
     combatData.player_two_weapons[1].critical_chance = Number(combatData.player_two_weapons[1].critical_chance)
     combatData.player_two_weapons[1].critical_damage = Number(combatData.player_two_weapons[1].critical_damage)
 
-    if (combatData.new_player_one_health > 0) {
+    if (combatData.new_player_one_health <= 0 || combatData.current_player_one_health <= 0) {
+        combatData.new_player_one_health = 0;
+        combatData.current_player_one_health = 0;
+        combatData.player_two_win = true;
+    }
+    if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+        combatData.new_player_two_health = 0;
+        combatData.current_player_two_health = 0;
+        combatData.player_one_win = true;
+    }
+    if (combatData.new_player_one_health > 0 || combatData.current_player_one_health > 0) {
         combatData.player_two_win = false;
     }
-    if (combatData.new_player_two_health > 0) {
+    if (combatData.new_player_two_health > 0 || combatData.current_player_two_health > 0) {
         combatData.player_one_win = false;
     }
-
 
     return combatData
 }
@@ -1090,29 +1102,26 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
     console.log(player_physical_defense_multiplier, player_magical_defense_multiplier, 'Player Defenses in Computer Dual Wield')
     // console.log(weapons, 'Computer Weapons in Dual Wield Compiler')
 
-    // This is for Critical Strikes
-    if (weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        // console.log('Comp DW1 Critical Firing', player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage)
-        player_two_weapon_one_physical_damage *= weapons[0].critical_damage;
-        player_two_weapon_one_magical_damage *= weapons[0].critical_damage;
-        // await computerCriticalCompiler(combatDatacombatData, player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage)
-        console.log('Comp DW1 Post-Crit Firing', player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage)
+    const weapOneCritClear = Math.floor(Math.random() * 101);
+    const weapOneCrit = weapons[0].critical_chance;
+    const weapOneResult = await criticalCompiler(combatData, 'player_two', weapOneCrit, weapOneCritClear, weapons[0], player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage);
+    combatData = weapOneResult.combatData;
+    player_two_weapon_one_physical_damage = weapOneResult.player_physical_damage;
+    player_two_weapon_one_magical_damage = weapOneResult.player_magical_damage;
+    if (weapOneCrit >= weapOneCritClear) {
         firstWeaponCrit = true;
-        combatData.player_two_critical_success = true;
-        // }
     }
 
-    if (weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        // console.log('Comp DW2 Critical Firing', player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage)
-        player_two_weapon_two_physical_damage *= weapons[1].critical_damage;
-        player_two_weapon_two_magical_damage *= weapons[1].critical_damage;
-        //await computerCriticalCompiler(combatData, player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage)
-        console.log('Comp DW2 Critical Firing', player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage)
+    const weapTwoCritClear = Math.floor(Math.random() * 101);
+    const weapTwoCrit = weapons[1].critical_chance;
+    const weapTwoResult = await criticalCompiler(combatData, 'player_two', weapTwoCrit, weapTwoCritClear, weapons[1], player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage);
+    combatData = weapTwoResult.combatData;
+    player_two_weapon_two_physical_damage = weapTwoResult.player_physical_damage;
+    player_two_weapon_two_magical_damage = weapTwoResult.player_magical_damage;
+    if (weapTwoCrit >= weapTwoCritClear) {
         secondWeaponCrit = true;
-        combatData.player_two_critical_success = true;
     }
     
-    console.log(firstWeaponCrit, secondWeaponCrit)
 
     player_two_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
     player_two_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
@@ -1120,11 +1129,11 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
     player_two_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
     player_two_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
-    const damageType = await damageTypeCompiler(combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage);
+    const damageType = await damageTypeCompiler(weapons[0], combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage);
     player_two_weapon_one_physical_damage = damageType.player_physical_damage;
     player_two_weapon_one_magical_damage = damageType.player_magical_damage;
 
-    const damageTypeTwo = await damageTypeCompiler(combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage);
+    const damageTypeTwo = await damageTypeCompiler(weapons[1], combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage);
     player_two_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
     player_two_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
 
@@ -1162,13 +1171,14 @@ const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplie
     combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
     combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
-    if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+    if (combatData.new_player_one_health <= 0 || combatData.current_player_one_health <= 0) {
+        combatData.current_player_one_health = 0;
         combatData.new_player_one_health = 0;
         combatData.player_two_win = true;
     }
     
     combatData.player_two_action_description = 
-        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_two_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_two_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.player_two_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
     )
@@ -1279,7 +1289,7 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
                 }
             }
             if (combatData.player_two_weapons[0].type === 'Bow') {
-                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir') {
+                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir' || combatData.player_two.mastery === 'Constitution') {
                     computer_physical_damage *= 2;
                     computer_magical_damage *= 2;
                 } else {
@@ -1321,21 +1331,18 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
         }
     }
 
-    // This is for Critical Strikes
-    if (combatData.player_two_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        computer_physical_damage *= combatData.player_two_weapons[0].critical_damage;
-        computer_magical_damage *= combatData.player_two_weapons[0].critical_damage;
-        // computerCriticalCompiler(combatData, combatData.player_one_weapons[0], computer_physical_damage, computer_magical_damage)
-        // return combatData
-        console.log('Computer Critical Post-Multiplier Inside Computer Attack Function', computer_physical_damage, computer_magical_damage);
-        combatData.player_two_critical_success = true;
-    }
+    const critClearance = Math.floor(Math.random() * 101);
+    const critChance = combatData.player_two_weapons[0].critical_chance;
+    const criticalResult = await criticalCompiler(combatData, 'player_two', critChance, critClearance, combatData.player_two_weapons[0], computer_physical_damage, computer_magical_damage);
+    combatData = criticalResult.combatData;
+    computer_physical_damage = criticalResult.player_physical_damage;
+    computer_magical_damage = criticalResult.player_magical_damage;
 
     // If you made it here, your basic attack now resolves itself
     computer_physical_damage *= 1 - (( 1 - player_physical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].physical_penetration / 100)));
     computer_magical_damage *= 1 - (( 1 - player_magical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, computer_physical_damage, computer_magical_damage);
+    const damageType = await damageTypeCompiler(combatData.player_two_weapons[0], combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, computer_physical_damage, computer_magical_damage);
     computer_physical_damage = damageType.player_physical_damage;
     computer_magical_damage = damageType.player_magical_damage;
 
@@ -1348,10 +1355,11 @@ const p2AttackCompiler = async (combatData, player_two_action) => {
     combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
 
     combatData.player_two_action_description = 
-        `${combatData.player_two.name} attacks ${combatData.player_one.name} with their ${combatData.player_two_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.player_two_weapons[0].damage_type[0] ? combatData.player_two_weapons[0].damage_type[0] : ''}${combatData.player_two_weapons[0].damage_type[1] ? ' / ' + combatData.player_two_weapons[0].damage_type[1] : ''} ${combatData.player_two_critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `${combatData.player_two.name} attacks ${combatData.player_one.name} with their ${combatData.player_two_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.player_two_weapons[0].damage_type[0] ? combatData.player_two_weapons[0].damage_type[0] : ''}${combatData.player_two_weapons[0].damage_type[1] ? ' / ' + combatData.player_two_weapons[0].damage_type[1] : ''} ${combatData.player_two_critical_success === true ? 'Critical Strike Damage' : combatData.player_two_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
-    if (combatData.new_player_one_health < 0 || combatData.current_player_one_health <= 0) {
+    if (combatData.new_player_one_health <= 0 || combatData.current_player_one_health <= 0) {
         combatData.new_player_one_health = 0;
+        combatData.current_player_one_health = 0;
         combatData.player_two_win = true;
     }
 
@@ -1430,21 +1438,25 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     let computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalDefenseModifier / 100);
 
     // This is for Critical Strikes
-    if (combatData.player_one_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-            player_weapon_one_physical_damage *= combatData.player_one_weapons[0].critical_damage;
-            player_weapon_one_magical_damage *= combatData.player_one_weapons[0].critical_damage;
-            firstWeaponCrit = true;
-            combatData.player_one_critical_success = true;
-        console.log(player_weapon_one_physical_damage, player_weapon_one_magical_damage, 'Weapon 1 Post-Crit Modifier')
+   
+    const weapOneCritClear = Math.floor(Math.random() * 101);
+    const weapOneCrit = combatData.player_one_weapons[0].critical_chance;
+    const weapOneResult = await criticalCompiler(combatData, 'player_one', weapOneCrit, weapOneCritClear, combatData.player_one_weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    combatData = weapOneResult.combatData;
+    player_weapon_one_physical_damage = weapOneResult.player_physical_damage;
+    player_weapon_one_magical_damage = weapOneResult.player_magical_damage;
+    if (weapOneCrit >= weapOneCritClear) {
+        firstWeaponCrit = true;
     }
 
-    if (combatData.player_one_weapons[1].critical_chance > Math.floor(Math.random() * 101)) {
-        player_weapon_two_physical_damage *= combatData.player_one_weapons[1].critical_damage;
-        player_weapon_two_magical_damage *= combatData.player_one_weapons[1].critical_damage;
-        // await criticalCompiler(combatData, combatData.player_one_weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage)
+    const weapTwoCritClear = Math.floor(Math.random() * 101);
+    const weapTwoCrit = combatData.player_one_weapons[1].critical_chance;
+    const weapTwoResult = await criticalCompiler(combatData, 'player_one', weapTwoCrit, weapTwoCritClear, combatData.player_one_weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    combatData = weapTwoResult.combatData;
+    player_weapon_two_physical_damage = weapTwoResult.player_physical_damage;
+    player_weapon_two_magical_damage = weapTwoResult.player_magical_damage;
+    if (weapTwoCrit >= weapTwoCritClear) {
         secondWeaponCrit = true;
-        combatData.player_one_critical_success = true;
-        console.log(player_weapon_two_physical_damage, player_weapon_two_magical_damage, 'Weapon 2 Post-Crit Modifier')
     }
 
     player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
@@ -1453,11 +1465,11 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     player_weapon_two_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
     player_weapon_two_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    const damageType = await damageTypeCompiler(weapons[0], combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_one_physical_damage, player_weapon_one_magical_damage);
     player_weapon_one_physical_damage = damageType.player_physical_damage;
     player_weapon_one_magical_damage = damageType.player_magical_damage;
 
-    const damageTypeTwo = await damageTypeCompiler(combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    const damageTypeTwo = await damageTypeCompiler(weapons[1], combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_two_physical_damage, player_weapon_two_magical_damage);
     player_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
     player_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
 
@@ -1496,11 +1508,12 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
         combatData.new_player_two_health = 0;
+        combatData.current_player_two_health = 0;
         combatData.player_one_win = true;
     }
     
     combatData.player_one_action_description = 
-        `${combatData.player_one.name} attacks ${computer.name} with both ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_one_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : 'Damage'}.`    
+        `${combatData.player_one.name} attacks ${computer.name} with both ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_one_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.player_one_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     console.log(combatData.realized_player_one_damage)
     return (
         combatData
@@ -1580,7 +1593,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                     if (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.player_one_weapons[1].type !== 'Bow') {
                             combatData.player_one_dual_wielding = true;
-                            await dualWieldCompiler(combatData)
+                            await dualWieldCompiler(combatData);
                             return combatData
                         } else {
                             player_physical_damage *= 1.6;
@@ -1600,7 +1613,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                     if (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_weapons[1].caeren >= 30) {
                         if (combatData.player_one_weapons[1].type !== 'Bow') {
                             combatData.player_one_dual_wielding = true;
-                            await dualWieldCompiler(combatData)
+                            await dualWieldCompiler(combatData);
                                 return combatData
                         } else {
                             player_physical_damage *= 1.4;
@@ -1616,7 +1629,7 @@ const attackCompiler = async (combatData, player_one_action) => {
                 }
             }
                 if (combatData.player_one_weapons[0].type === 'Bow') {
-                    if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir') {
+                    if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
                         player_physical_damage *= 2;
                         player_magical_damage *= 2;
                     } else {
@@ -1658,23 +1671,29 @@ const attackCompiler = async (combatData, player_one_action) => {
         }
     }
 
+    const critClearance = Math.floor(Math.random() * 101);
+    const critChance = combatData.player_one_weapons[0].critical_chance;
+    const criticalResult = await criticalCompiler(combatData, 'player_one', critChance, critClearance, combatData.player_one_weapons[0], player_physical_damage, player_magical_damage);
+    combatData = criticalResult.combatData;
+    player_physical_damage = criticalResult.player_physical_damage;
+    player_magical_damage = criticalResult.player_magical_damage;
 
     // This is for Critical Strikes
-    if (combatData.player_one_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
-        console.log('Player Critical Firing', player_physical_damage, player_magical_damage)
-        player_physical_damage *= combatData.player_one_weapons[0].critical_damage;
-        player_magical_damage *= combatData.player_one_weapons[0].critical_damage;
-        // criticalCompiler(combatData, combatData.player_one_weapons[0], player_physical_damage, player_magical_damage)
-        // return combatData
-        console.log('Attack Compiler Post-Crit Multiplier', player_physical_damage, player_magical_damage)
-        combatData.player_one_critical_success = true;
-    }
+    // if (combatData.player_one_weapons[0].critical_chance > Math.floor(Math.random() * 101)) {
+    //     console.log('Player Critical Firing', player_physical_damage, player_magical_damage)
+    //     player_physical_damage *= combatData.player_one_weapons[0].critical_damage;
+    //     player_magical_damage *= combatData.player_one_weapons[0].critical_damage;
+    //     // criticalCompiler(combatData, combatData.player_one_weapons[0], player_physical_damage, player_magical_damage)
+    //     // return combatData
+    //     console.log('Attack Compiler Post-Crit Multiplier', player_physical_damage, player_magical_damage)
+    //     combatData.player_one_critical_success = true;
+    // }
 
     // If you made it here, your basic attack now resolves itself
     player_physical_damage *= 1 - (( 1 - computer_physical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].physical_penetration / 100)));
     player_magical_damage *= 1 - (( 1 - computer_magical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_physical_damage, player_magical_damage);
+    const damageType = await damageTypeCompiler(combatData.player_one_weapons[0], combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_physical_damage, player_magical_damage);
     player_physical_damage = damageType.player_physical_damage;
     player_magical_damage = damageType.player_magical_damage;
 
@@ -1687,9 +1706,10 @@ const attackCompiler = async (combatData, player_one_action) => {
     combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
 
     combatData.player_one_action_description = 
-        `${combatData.player_one.name} attacks ${combatData.player_two.name} with their ${combatData.player_one_weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_one_weapons[0].damage_type[0] ? combatData.player_one_weapons[0].damage_type[0] : ''}${combatData.player_one_weapons[0].damage_type[1] ? ' / ' + combatData.player_one_weapons[0].damage_type[1] : ''} ${combatData.critical_success === true ? 'Critical Strike Damage' : 'Damage'}.`    
+        `${combatData.player_one.name} attacks ${combatData.player_two.name} with their ${combatData.player_one_weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_one_weapons[0].damage_type[0] ? combatData.player_one_weapons[0].damage_type[0] : ''}${combatData.player_one_weapons[0].damage_type[1] ? ' / ' + combatData.player_one_weapons[0].damage_type[1] : ''} ${combatData.player_one_critical_success === true ? 'Critical Strike Damage' : combatData.player_one_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
+        combatData.current_player_two_health = 0;
         combatData.new_player_two_health = 0;
         combatData.player_one_win = true;
     }
@@ -1699,156 +1719,240 @@ const attackCompiler = async (combatData, player_one_action) => {
     return combatData
 }
 
-const damageTypeCompiler = async (damage_type, helmet, chest, legs, player_physical_damage, player_magical_damage) => {
+const damageTypeCompiler = async (weapon, damage_type, helmet, chest, legs, player_physical_damage, player_magical_damage) => {
     console.log('Damage Type Compiler Firing', player_physical_damage, player_magical_damage);
     if (damage_type === 'Blunt' || damage_type === 'Fire' || damage_type === 'Earth' || damage_type === 'Spooky') {
-        if (helmet === 'Plate-Mail') {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
+        if (weapon.attack_type === 'Physical') {
+            if (helmet === 'Plate-Mail') {
+                player_physical_damage *= 1.15;
+            }
+            if (helmet === 'Chain-Mail') {
+                player_physical_damage *= 1.08;
+            }
+            if (helmet === 'Leather-Mail') {
+                player_physical_damage *= 0.92;
+            }
+            if (helmet === 'Leather-Cloth') {
+                player_physical_damage *= 0.85;
+            }
+            if (chest === 'Plate-Mail') {
+                player_physical_damage *= 1.1;
+            }
+            if (chest === 'Chain-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (chest === 'Leather-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (chest === 'Leather-Cloth') {
+                player_physical_damage *= 0.9;
+            }
+            if (legs === 'Plate-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (legs === 'Chain-Mail') {
+                player_physical_damage *= 1.03;
+            }
+            if (legs === 'Leather-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (legs === 'Leather-Cloth') {
+                player_physical_damage *= 0.95;
+            }
         }
-        if (helmet === 'Chain-Mail') {
-            player_physical_damage *= 1.05;
-            player_magical_damage *= 1.05;
-        }
-        if (helmet === 'Leather-Mail') {
-            player_physical_damage *= 0.95;
-            player_magical_damage *= 0.95;
-        }
-        if (helmet === 'Leather-Cloth') {
-            player_physical_damage *= 0.9;
-            player_magical_damage *= 0.9;
-        }
-        if (chest === 'Plate-Mail') {
-            player_physical_damage *= 1.07;
-            player_magical_damage *= 1.07;
-        }
-        if (chest === 'Chain-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (chest === 'Leather-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (chest === 'Leather-Cloth') {
-            player_physical_damage *= 0.93;
-            player_magical_damage *= 0.93;
-        }
-        if (legs === 'Plate-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (legs === 'Chain-Mail') {
-            player_physical_damage *= 1.015;
-            player_magical_damage *= 1.015;
-        }
-        if (legs === 'Leather-Mail') {
-            player_physical_damage *= 0.985;
-            player_magical_damage *= 0.985;
-        }
-        if (legs === 'Leather-Cloth') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
+        if (weapon.attack_type === 'Magic') {
+            if (helmet === 'Plate-Mail') {
+                player_magical_damage *= 1.15;
+            }
+            if (helmet === 'Chain-Mail') {
+                player_magical_damage *= 1.08;
+            }
+            if (helmet === 'Leather-Mail') {
+                player_magical_damage *= 0.92;
+            }
+            if (helmet === 'Leather-Cloth') {
+                player_magical_damage *= 0.85;
+            }
+            if (chest === 'Plate-Mail') {
+                player_magical_damage *= 1.1;
+            }
+            if (chest === 'Chain-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (chest === 'Leather-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (chest === 'Leather-Cloth') {
+                player_magical_damage *= 0.9;
+            }
+            if (legs === 'Plate-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (legs === 'Chain-Mail') {
+                player_magical_damage *= 1.03;
+            }
+            if (legs === 'Leather-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (legs === 'Leather-Cloth') {
+                player_magical_damage *= 0.95;
+            }
         }
     }
     if (damage_type === 'Pierce' || damage_type === 'Lightning' || damage_type === 'Frost' || damage_type === 'Sorcery') {
-        if (helmet === 'Plate-Mail') {
-            player_physical_damage *= 0.9;
-            player_magical_damage *= 0.9;
+        if (weapon.attack_type === 'Physical') {
+            if (helmet === 'Plate-Mail') {
+                player_physical_damage *= 0.85;
+            }
+            if (helmet === 'Chain-Mail') {
+                player_physical_damage *= 0.92;
+            }
+            if (helmet === 'Leather-Mail') {
+                player_physical_damage *= 1.08;
+            }
+            if (helmet === 'Leather-Cloth') {
+                player_physical_damage *= 1.15;
+            }
+            if (chest === 'Plate-Mail') {
+                player_physical_damage *= 0.9;
+            }
+            if (chest === 'Chain-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (chest === 'Leather-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (chest === 'Leather-Cloth') {
+                player_physical_damage *= 1.1;
+            }
+            if (legs === 'Plate-Mail') {
+                player_physical_damage *= 0.95;
+            }   
+            if (legs === 'Chain-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (legs === 'Leather-Mail') {
+                player_physical_damage *= 1.03;
+            }
+            if (legs === 'Leather-Cloth') {
+                player_physical_damage *= 1.05;
+            }
         }
-        if (helmet === 'Chain-Mail') {
-            player_physical_damage *= 0.95;
-            player_magical_damage *= 0.95;
-        }
-        if (helmet === 'Leather-Mail') {
-            player_physical_damage *= 1.05;
-            player_magical_damage *= 1.05;
-        }
-        if (helmet === 'Leather-Cloth') {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
-        }
-        if (chest === 'Plate-Mail') {
-            player_physical_damage *= 0.93;
-            player_magical_damage *= 0.93;
-        }
-        if (chest === 'Chain-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (chest === 'Leather-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (chest === 'Leather-Cloth') {
-            player_physical_damage *= 1.07;
-            player_magical_damage *= 1.07;
-        }
-        if (legs === 'Plate-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }   
-        if (legs === 'Chain-Mail') {
-            player_physical_damage *= 0.985;
-            player_magical_damage *= 0.985;
-        }
-        if (legs === 'Leather-Mail') {
-            player_physical_damage *= 1.015;
-            player_magical_damage *= 1.015;
-        }
-        if (legs === 'Leather-Cloth') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
+        if (weapon.attack_type === 'Magic') {
+            if (helmet === 'Plate-Mail') {
+                player_magical_damage *= 0.85;
+            }
+            if (helmet === 'Chain-Mail') {
+                player_magical_damage *= 0.92;
+            }
+            if (helmet === 'Leather-Mail') {
+                player_magical_damage *= 1.08;
+            }
+            if (helmet === 'Leather-Cloth') {
+                player_magical_damage *= 1.15;
+            }
+            if (chest === 'Plate-Mail') {
+                player_magical_damage *= 0.9;
+            }
+            if (chest === 'Chain-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (chest === 'Leather-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (chest === 'Leather-Cloth') {
+                player_magical_damage *= 1.1;
+            }
+            if (legs === 'Plate-Mail') {
+                player_magical_damage *= 0.95;
+            }   
+            if (legs === 'Chain-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (legs === 'Leather-Mail') {
+                player_magical_damage *= 1.03;
+            }
+            if (legs === 'Leather-Cloth') {
+                player_magical_damage *= 1.05;
+            }
         }
     }
     if (damage_type === 'Slash' || damage_type === 'Wind' || damage_type === 'Righteous' || damage_type === 'Wild') {
-        if (helmet === 'Plate-Mail') {
-            player_physical_damage *= 1.05;
-            player_magical_damage *= 1.05;
+        if (weapon.attack_type === 'Physical') {
+            if (helmet === 'Plate-Mail') {
+                player_physical_damage *= 0.92;
+            }
+            if (helmet === 'Chain-Mail') {
+                player_physical_damage *= 0.92;
+            }   
+            if (helmet === 'Leather-Mail') {
+                player_physical_damage *= 1.08;
+            }
+            if (helmet === 'Leather-Cloth') {
+                player_physical_damage *= 1.08;
+            }
+            if (chest === 'Plate-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (chest === 'Chain-Mail') {
+                player_physical_damage *= 0.95;
+            }
+            if (chest === 'Leather-Mail') {
+                player_physical_damage *= 1.05;
+            }
+            if (chest === 'Leather-Cloth') {
+                player_physical_damage *= 1.05;
+            }
+            if (legs === 'Plate-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (legs === 'Chain-Mail') {
+                player_physical_damage *= 0.97;
+            }
+            if (legs === 'Leather-Mail') {
+                player_physical_damage *= 1.03;
+            }
+            if (legs === 'Leather-Cloth') {
+                player_physical_damage *= 1.03;
+            }
         }
-        if (helmet === 'Chain-Mail') {
-            player_physical_damage *= 0.9;
-            player_magical_damage *= 0.9;
-        }   
-        if (helmet === 'Leather-Mail') {
-            player_physical_damage *= 1.1;
-            player_magical_damage *= 1.1;
-        }
-        if (helmet === 'Leather-Cloth') {
-            player_physical_damage *= 0.95;
-            player_magical_damage *= 0.95;
-        }
-        if (chest === 'Plate-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (chest === 'Chain-Mail') {
-            player_physical_damage *= 0.93;
-            player_magical_damage *= 0.93;
-        }
-        if (chest === 'Leather-Mail') {
-            player_physical_damage *= 1.07;
-            player_magical_damage *= 1.07;
-        }
-        if (chest === 'Leather-Cloth') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (legs === 'Plate-Mail') {
-            player_physical_damage *= 1.015;
-            player_magical_damage *= 1.015;
-        }
-        if (legs === 'Chain-Mail') {
-            player_physical_damage *= 0.97;
-            player_magical_damage *= 0.97;
-        }
-        if (legs === 'Leather-Mail') {
-            player_physical_damage *= 1.03;
-            player_magical_damage *= 1.03;
-        }
-        if (legs === 'Leather-Cloth') {
-            player_physical_damage *= 0.985;
-            player_magical_damage *= 0.985;
+        if (weapon.attack_type === 'Magic') {
+            if (helmet === 'Plate-Mail') {
+                player_magical_damage *= 0.92;
+            }
+            if (helmet === 'Chain-Mail') {
+                player_magical_damage *= 0.92;
+            }   
+            if (helmet === 'Leather-Mail') {
+                player_magical_damage *= 1.08;
+            }
+            if (helmet === 'Leather-Cloth') {
+                player_magical_damage *= 1.08;
+            }
+            if (chest === 'Plate-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (chest === 'Chain-Mail') {
+                player_magical_damage *= 0.95;
+            }
+            if (chest === 'Leather-Mail') {
+                player_magical_damage *= 1.05;
+            }
+            if (chest === 'Leather-Cloth') {
+                player_magical_damage *= 1.05;
+            }
+            if (legs === 'Plate-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (legs === 'Chain-Mail') {
+                player_magical_damage *= 0.97;
+            }
+            if (legs === 'Leather-Mail') {
+                player_magical_damage *= 1.03;
+            }
+            if (legs === 'Leather-Cloth') {
+                player_magical_damage *= 1.03;
+            }
         }
     }
     console.log('Player Post-Damage Type Multiplier', player_physical_damage, player_magical_damage);
@@ -1858,14 +1962,52 @@ const damageTypeCompiler = async (damage_type, helmet, chest, legs, player_physi
     }
 }
 
-const criticalCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
-    console.log('Player Critical Firing', player_physical_damage, player_magical_damage)
-    player_physical_damage *= weapon.critical_damage;
-    player_magical_damage *= weapon.critical_damage;
+const criticalCompiler = async (combatData, player, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
+    if (player === 'player_one') {
+        if (critChance >= critClearance) {
+            player_physical_damage *= weapon.critical_damage;
+            player_magical_damage *= weapon.critical_damage;
+            combatData.player_one_critical_success = true;
+        }
+        if (critClearance > critChance * 2.5) {
+            player_physical_damage *= 0.7;
+            player_magical_damage *= 0.7;
+            combatData.player_one_glancing_blow = true;
+        } else if (critClearance > critChance * 2) {
+            player_physical_damage *= 0.8;
+            player_magical_damage *= 0.8;
+            combatData.player_one_glancing_blow = true;
+        } else if (critClearance > critChance * 1.5) {
+            player_physical_damage *= 0.9;
+            player_magical_damage *= 0.9;
+            combatData.player_one_glancing_blow = true;
+        }
+    }
+    if (player === 'player_two') {
+        if (critChance >= critClearance) {
+            player_physical_damage *= weapon.critical_damage;
+            player_magical_damage *= weapon.critical_damage;
+            combatData.player_two_critical_success = true;
+        }
+        if (critClearance > critChance * 2.5) {
+            player_physical_damage *= 0.7;
+            player_magical_damage *= 0.7;
+            combatData.player_two_glancing_blow = true;
+        } else if (critClearance > critChance * 2) {
+            player_physical_damage *= 0.8;
+            player_magical_damage *= 0.8;
+            combatData.player_two_glancing_blow = true;
+        } else if (critClearance > critChance * 1.5) {
+            player_physical_damage *= 0.9;
+            player_magical_damage *= 0.9;
+            combatData.player_two_glancing_blow = true;
+        }
+    }
     
-    console.log('Player Post-Crit Multiplier', player_physical_damage, player_magical_damage)
     return {
-        combatData
+        combatData,
+        player_physical_damage,
+        player_magical_damage
     }
 }
 
@@ -2032,6 +2174,7 @@ const actionSplitter = async (combatData) => {
         player_one_roll_success: false,
         player_one_win: false,
         player_one_critical_success: false,
+        player_one_glancing_blow: false,
         player_one_counter_success: false,
         player_one_initiated: false,
         player_one_reduel: false,
@@ -2042,7 +2185,8 @@ const actionSplitter = async (combatData) => {
         player_two_roll_success: false,
         player_two_counter_success: false,
         player_two_win: false,
-        player_two_critical_success: false
+        player_two_critical_success: false,
+        player_two_glancing_blow: false,
     }
     console.log(newData, 'Combat Data in the Action Splitter')
     const player_one_initiative = newData.player_one_attributes.initiative;

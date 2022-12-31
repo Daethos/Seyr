@@ -36,8 +36,9 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
       <div id='game-block' className="game-block" 
         // style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}
       >
-      <div className="actions">
-      <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
+      <div className="">
+            <GamePlayerStats attributes={combatData.player_attributes} player={combatData.player} weaponAttributes={combatData.weapons[0]} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
+      {/* <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3> */}
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
       {/* {
@@ -60,15 +61,15 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
         />
       {/* } */}
       <div className="actions">
-      <GamePlayerStats attributes={combatData.player_attributes} player={combatData.player} weaponAttributes={combatData.weapons[0]} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
       </div>
       </div>
     : 
     <div className="game-block" id='opponent-block'
       // style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}
     >
-    <div className="actions">
-    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
+    <div className="">
+    <GamePlayerStats attributes={combatData.computer_attributes} player={combatData.computer} weaponAttributes={combatData.computer_weapons[0]} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
+    {/* <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3> */}
     <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
     </div>
     {/* {
@@ -91,7 +92,6 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
       />
     {/* } */}
     <div className="actions">
-    <GamePlayerStats attributes={combatData.computer_attributes} player={combatData.computer} weaponAttributes={combatData.computer_weapons[0]} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
     </div>
     </div>
     }
