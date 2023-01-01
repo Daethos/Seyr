@@ -36,7 +36,8 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 Critical Damage: {weapon.critical_damage}x <br />
                 Dodge Timer: {weapon.dodge}s <br />
                 Roll Chance: {weapon.roll}% <br />
-                Influence: {weapon.influences}
+                Influence: {weapon.influences} <br /><br />
+                {weapon.rarity}
             </Popover.Body>
         </Popover>
     )
@@ -56,7 +57,8 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 Critical Damage: {weapon_one?.critical_damage}x <br />
                 Dodge Timer: {weapon_one?.dodge}s <br />
                 Roll Chance: {weapon_one?.roll}% <br />
-                Influence: {weapon_one.influences}
+                Influence: {weapon_one.influences} <br /><br />
+                {weapon_one.rarity}
             </Popover.Body>
         </Popover>
     )
@@ -76,7 +78,8 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 Critical Damage: {weapon_two?.critical_damage}x <br />
                 Dodge Timer: {weapon_two?.dodge}s <br />
                 Roll Chance: {weapon_two?.roll}% <br />
-                Influence: {weapon_two.influences}
+                Influence: {weapon_two.influences} <br /><br />
+                {weapon_two.rarity}
             </Popover.Body>
         </Popover>
     )
@@ -96,7 +99,8 @@ const WeaponsCard = ({ weapon, index, weapon_one, weapon_two, weapon_three, user
                 Critical Damage: {weapon_three.critical_damage}x <br />
                 Dodge Timer: {weapon_three.dodge}s <br />
                 Roll Chance: {weapon_three.roll}% <br />
-                Influence: {weapon_three.influences}
+                Influence: {weapon_three.influences} <br /><br />
+                {weapon_three.rarity}
             </Popover.Body>
         </Popover>
     )

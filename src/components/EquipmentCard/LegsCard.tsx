@@ -29,7 +29,8 @@ const LegsCard = ({ leg, index, userProfile }: LegProps) => {
                 Critical Chance: +{leg.critical_chance}% <br />
                 Critical Damage: {leg.critical_damage}x <br />
                 Dodge Timer: +{leg.dodge}s <br />
-                Roll Chance: +{leg.roll}% <br />
+                Roll Chance: +{leg.roll}% <br /><br />
+                {leg.rarity}
             </Popover.Body>
         </Popover>
     )

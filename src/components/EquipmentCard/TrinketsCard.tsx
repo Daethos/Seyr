@@ -29,7 +29,8 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
                 Critical Damage: {trinket.critical_damage}x <br />
                 Dodge Timer: +{trinket.dodge}s <br />
                 Roll Chance: +{trinket.roll}% <br />
-                Influences: {trinket.influences}
+                Influences: {trinket.influences} <br /><br />
+                {trinket.rarity}
             </Popover.Body>
         </Popover>
     )

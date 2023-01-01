@@ -790,10 +790,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === 'Fyer') { // Fire
-            let fyer = 2 * combatData.computer_attributes.totalCaeren
-            combatData.new_computer_health += fyer
-            combatData.current_computer_health += fyer
             console.log("Fyer!")
+            let fyer = 2 * combatData.computer_attributes.totalCaeren;
+            combatData.new_computer_health += fyer;
+            combatData.current_computer_health += fyer;
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
             combatData.computer_weapons[0].critical_damage += 0.9;
@@ -803,10 +803,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === 'Ilios') { // Sun
+            console.log("Ilios!")
             let ilios = combatData.realized_computer_damage;
             combatData.new_computer_health += ilios;
             combatData.current_computer_health += ilios;
-            console.log("Ilios!")
             combatData.computer_influence_description = 
                 `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
             player_action = 'attack';   

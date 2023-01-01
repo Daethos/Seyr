@@ -29,7 +29,8 @@ const ChestsCard = ({ chest, index, userProfile }: ChestProps) => {
                 Critical Chance: +{chest.critical_chance}% <br />
                 Critical Damage: {chest.critical_damage}x <br />
                 Dodge Timer: +{chest.dodge}s <br />
-                Roll Chance: +{chest.roll}% <br />
+                Roll Chance: +{chest.roll}% <br /><br />
+                {chest.rarity}
             </Popover.Body>
         </Popover>
     )

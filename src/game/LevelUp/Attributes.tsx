@@ -308,7 +308,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
   return (
     <>
     <div className="actions">
-        <h3>+3 Attribute Points</h3>
+        <h3>+5 Attribute Points</h3>
         <h3 id="pool-output"></h3>
     </div>
     <div className="property-line first">

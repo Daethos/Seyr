@@ -30,7 +30,8 @@ const RingsCard = ({ ring, index, ring_one, ring_two, userProfile }: RingProps) 
                 Critical Chance: +{ring.critical_chance}% <br />
                 Critical Damage: {ring.critical_damage}x <br />
                 Dodge Timer: +{ring.dodge}s <br />
-                Roll Chance: +{ring.roll}% <br />
+                Roll Chance: +{ring.roll}% <br /><br />
+                {ring.rarity}
             </Popover.Body>
         </Popover>
     )
@@ -52,7 +53,8 @@ const RingsCard = ({ ring, index, ring_one, ring_two, userProfile }: RingProps) 
                 Critical Chance: +{ring_one.critical_chance}% <br />
                 Critical Damage: {ring_one.critical_damage}x <br />
                 Dodge Timer: +{ring_one.dodge}s <br />
-                Roll Chance: +{ring_one.roll}% <br />
+                Roll Chance: +{ring_one.roll}% <br /><br />
+                {ring_one.rarity}
             </Popover.Body>
         </Popover>
     )
@@ -74,7 +76,8 @@ const RingsCard = ({ ring, index, ring_one, ring_two, userProfile }: RingProps) 
                 Critical Chance: +{ring_two.critical_chance}% <br />
                 Critical Damage: {ring_two.critical_damage}x <br />
                 Dodge Timer: +{ring_two.dodge}s <br />
-                Roll Chance: +{ring_two.roll}% <br />
+                Roll Chance: +{ring_two.roll}% <br /><br />
+                {ring_two.rarity}
             </Popover.Body>
         </Popover>
     )

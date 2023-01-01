@@ -29,7 +29,8 @@ const ShieldsCard = ({ shield, index, userProfile }: ShieldProps) => {
                 Critical Chance: +{shield.critical_chance}% <br />
                 Critical Damage: {shield.critical_damage}x <br />
                 Dodge Timer: +{shield.dodge}s <br />
-                Roll Chance: +{shield.roll}% <br />
+                Roll Chance: +{shield.roll}% <br /><br />
+                {shield.rarity}
             </Popover.Body>
         </Popover>
     )

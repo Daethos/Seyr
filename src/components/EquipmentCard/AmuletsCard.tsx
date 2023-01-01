@@ -29,7 +29,8 @@ const AmuletsCard = ({ amulet, index, userProfile }: AmuletProps) => {
                 Critical Damage: {amulet.critical_damage}x <br />
                 Dodge Timer: +{amulet.dodge}s <br />
                 Roll Chance: +{amulet.roll}% <br />
-                Influences: {amulet.influences}
+                Influences: {amulet.influences} <br /><br />
+                {amulet.rarity}
             </Popover.Body>
         </Popover>
     )

@@ -29,7 +29,8 @@ const HelmetsCard = ({ helmet, index, userProfile }: HelmetProps) => {
                 Critical Chance: +{helmet.critical_chance}% <br />
                 Critical Damage: {helmet.critical_damage}x <br />
                 Dodge Timer: +{helmet.dodge}s <br />
-                Roll Chance: +{helmet.roll}% <br />
+                Roll Chance: +{helmet.roll}% <br /><br />
+                {helmet.rarity}
             </Popover.Body>
         </Popover>
     )
