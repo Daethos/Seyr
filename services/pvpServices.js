@@ -1,15 +1,11 @@
-
-// =================================== HELPER CONSTANTS ======================================= \\
-
-
-// =================================== HELPER FUNCTIONS ======================================= \\
-
 const faithFinder = async (combatData, player_one_action, player_two_action) => { // The influence will add a chance to have a special effect occur
     let player_one_faith_number = Math.floor(Math.random() * 101);
     let player_one_faith_number_two = Math.floor(Math.random() * 101);
     let faith_check = Math.floor(Math.random() * 101);
     let player_two_faith_number = Math.floor(Math.random() * 101);
     let player_two_faith_number_two = Math.floor(Math.random() * 101);
+
+    //TODO:FIXME: Need a metric for healing. Based off a specific attribute * (10 / player level)
 
     combatData.player_one_weapons[0].critical_chance = Number(combatData.player_one_weapons[0].critical_chance)
     combatData.player_one_weapons[0].critical_damage = Number(combatData.player_one_weapons[0].critical_damage)
@@ -50,7 +46,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren);
-            daethos = Math.round(daethos / 2);
+            daethos = Math.round(daethos * (combatData.player_one.level));
             combatData.new_player_one_health += combatData.realized_player_one_damage;
             combatData.player_one_influence_description = 
                 `Daethos wraps through ${combatData.player_one.name}'s Caer, ${combatData.player_one_weapons[0].name} healing them for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
@@ -62,6 +58,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         if (combatData.player_one_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
             let achreo = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
+            achreo = Math.round(achreo * (combatData.player_one.level));
             combatData.new_player_one_health += achreo;
             combatData.current_player_one_health += achreo;
             
@@ -74,6 +71,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         }
         if (combatData.player_one_weapons[0].influences[0] === "Ahn've") { // Wind
             let ahnve = 2 * (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren)
+            ahnve = Math.round(ahnve * combatData.player_one.level / 10);
             combatData.new_player_one_health += ahnve
             combatData.current_player_one_health += ahnve
             console.log("Ahnve!")
@@ -88,6 +86,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Astra') { // Lightning
             let astra = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
+            astra = Math.round(astra * combatData.player_one.level / 10);
             combatData.new_player_one_health += astra;
             combatData.current_player_one_health += astra;
             console.log("Astra!")
@@ -99,8 +98,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
         }
         if (combatData.player_one_weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
+            let cambire = combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren;
+            cambire = Math.round(cambire * combatData.player_one.level / 10);
+            combatData.new_player_one_health += cambire;
+            combatData.current_player_one_health += cambire;
             combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
+                `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage, gifting ${cambire}.`
             if (combatData.realized_player_one_damage < 0) {
                 combatData.realized_player_one_damage = 0;
             }
@@ -279,7 +282,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren);
-                daethos = Math.round(daethos / 2);
+                daethos = Math.round(daethos * (combatData.player_one.level));
                 combatData.new_player_one_health += combatData.realized_player_one_damage;
                 combatData.current_player_one_health += combatData.realized_player_one_damage;
                 combatData.player_one_influence_description_two = 
@@ -293,6 +296,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             if (combatData.player_one_weapons[1].influences[0] === 'Achreo') { // Wild
                 console.log("Achreo!")
                 let achreo = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
+                achreo = Math.round(achreo * (combatData.player_one.level));
                 combatData.new_player_one_health += achreo
                 combatData.current_player_one_health += achreo
                 combatData.player_one_influence_description_two = 
@@ -304,6 +308,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             if (combatData.player_one_weapons[1].influences[0] === "Ahn've") { // Wind
                 let ahnve = 2 * (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren)
+                ahnve = Math.round(ahnve * combatData.player_one.level / 10);
                 combatData.new_player_one_health += ahnve
                 combatData.current_player_one_health += ahnve
                 console.log("Ahn've!")
@@ -319,6 +324,7 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Astra') { // Lightning
                 let astra = 2 * (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
+                astra = Math.round(astra * combatData.player_one.level / 10);
                 combatData.new_player_one_health += astra;
                 combatData.current_player_one_health += astra;
                 combatData.player_one_influence_description_two = 
@@ -328,9 +334,12 @@ const faithFinder = async (combatData, player_one_action, player_two_action) => 
                 combatData.player_one_weapons[1].critical_damage += 0.1;
             }
             if (combatData.player_one_weapons[1].influences[0] === 'Cambire') { // Potential
+                let cambire = combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren;
+                cambire = Math.round(cambire * combatData.player_one.level / 10);
+                combatData.new_player_one_health += cambire;
+                combatData.current_player_one_health += cambire;
                 combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
-                player_one_action = 'attack';
+                    `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage, gifting ${cambire}.`
                 if (combatData.realized_player_one_damage < 0) {
                     combatData.realized_player_one_damage = 0;
                 }

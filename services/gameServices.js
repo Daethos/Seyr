@@ -100,7 +100,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
-            daethos = Math.round(daethos / 2);
+            daethos = Math.round(daethos * (combatData.player.level / 10));
             combatData.new_player_health += combatData.realized_player_damage;
             combatData.player_influence_description = 
                 `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
@@ -121,7 +121,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
             // combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance + 1);
-            let achreo = 2 * (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+            let achreo = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+            achreo = Math.round(achreo * (combatData.player.level / 10));
             combatData.new_player_health += achreo
             combatData.current_player_health += achreo
             if (combatData.new_player_health > 0) {
@@ -135,7 +136,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.weapons[0].critical_damage += 0.2;
         }
         if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
-            let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            ahnve = Math.round(ahnve * combatData.player.level / 10);
             combatData.new_player_health += ahnve
             combatData.current_player_health += ahnve
             console.log("Ahn've!")
@@ -153,7 +155,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.weapons[0].influences[0] === 'Astra') { // Lightning
-            let astra = 2 * (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+            let astra = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+            astra = Math.round(astra * combatData.player.level / 10);
             console.log("Astra!")
             combatData.player_influence_description = 
                 `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
@@ -168,8 +171,12 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
             console.log("Cambire!")
+            let cambire = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
+            cambire = Math.round(cambire * combatData.player.level / 10);
+            combatData.new_player_health += cambire;
+            combatData.current_player_health += cambire;
             combatData.player_influence_description = 
-                `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
+                `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage, gifting ${cambire}.`
             if (combatData.realized_player_damage < 0) {
                 combatData.realized_player_damage = 0;
             }
@@ -182,7 +189,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }    
         }
         if (combatData.weapons[0].influences[0] === 'Chiomyr') { // Humor
-            let chiomyr = 2 * (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
+            let chiomyr = (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
+            chiomyr = Math.round(chiomyr * combatData.player.level / 10);
             combatData.new_player_health += chiomyr;
             combatData.current_player_health += chiomyr;
             combatData.player_influence_description = 
@@ -196,7 +204,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === 'Fyer') { // Fire
             console.log("Fyer!")
-            let fyer = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+            let fyer = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+            fyer = Math.round(fyer * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `Your Caer ushers forth the favor of Fyer igniting through you.`
             combatData.weapons[0].critical_chance += 1;
@@ -226,7 +235,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
             console.log("Kyn'gi!")
-            let kyngi = 2 * (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
+            let kyngi = (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
+            kyngi = Math.round(kyngi * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `Your keening Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
             combatData.weapons[0].roll += 3;
@@ -238,7 +248,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.weapons[0].influences[0] === "Kyrisos") { // Gold
-            let kyrisos = 2 * (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
+            let kyrisos = (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
+            kyrisos = Math.round(kyrisos * combatData.player.level / 10);
             combatData.new_player_health += kyrisos;
             combatData.current_player_health += kyrisos;
             console.log("Kyrisos!")
@@ -251,7 +262,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Kyr'na") { // Time
             console.log("Kyr'na!")
-            let kyrna = 4 * (combatData.player_attributes.totalAchre + combatData.weapons[0].achre);
+            let kyrna = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre);
+            kyrna = Math.round(kyrna * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
             combatData.new_computer_health -= kyrna;
@@ -265,7 +277,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
-            let lilos = 5 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+            let lilos = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+            lilos = Math.round(lilos * combatData.player.level / 5);
             combatData.player_influence_description = 
                 `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
             combatData.new_player_health += lilos;
@@ -291,7 +304,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Nyrolus") { // Water
             console.log("Nyrolus!")
-            let nyrolus = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            let nyrolus = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            nyrolus = Math.round(nyrolus * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
             combatData.player_defense.physicalDefenseModifier += 2;
@@ -306,7 +320,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Quor'ei") { // Earth
             console.log("Quor'ei!")
-            let quorei = 2 * (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+            let quorei = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+            quorei = Math.round(quorei * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
             combatData.player_defense.physicalDefenseModifier += 2;
@@ -320,7 +335,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.weapons[0].influences[0] === "Rahvre") { // Dreams
-            let rahvre = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            let rahvre = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+            rahvre = Math.round(rahvre * combatData.player.level / 10);
             console.log("Rahvre!")
             combatData.player_influence_description = 
             `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
@@ -339,7 +355,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.weapons[0].dodge -= 3;
         }
         if (combatData.weapons[0].influences[0] === "Se'dyro") { // Iron
-            let sedyro = 2 * (combatData.player_attributes.totalAgility + combatData.weapons[0].agility)
+            let sedyro = (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
+            sedyro = Math.round(sedyro * combatData.player.level / 10);
             combatData.new_player_health += sedyro
             combatData.current_player_health += sedyro
             console.log("Se'dyro!")
@@ -358,7 +375,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Se'vas") { // War
             console.log("Se'vas!")
-            let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength) * 2
+            let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength);
+            sevas = Math.round(sevas * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `The Caer of Se'vas scorns your ${combatData.weapons[0].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
             combatData.weapons[0].critical_chance += 3;
@@ -383,7 +401,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.weapons[0].influences[0] === "Tshaer") { // Animal
             console.log("Tshaer!")
-            let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength) * 2
+            let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength);
+            tshaer = Math.round(tshaer * combatData.player.level / 10);
             combatData.player_influence_description = 
                 `Your fervor unleashes the bestial nature of Tshaer within you for ${tshaer}.`
             combatData.weapons[0].physical_damage += 5;
@@ -400,7 +419,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             if (combatData.weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
-                daethos = Math.round(daethos / 2);
+                daethos = Math.round(daethos * (combatData.player.level / 10));
                 combatData.new_player_health += combatData.realized_player_damage;
                 combatData.current_player_health += combatData.realized_player_damage;
                 combatData.player_influence_description_two = 
@@ -420,10 +439,11 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
         }
             if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
-                console.log("Achreo!")
-                let achreo = 2 * (combatData.player_attributes.totalAchre + combatData.weapons[1].achre)
-                combatData.new_player_health += achreo
-                combatData.current_player_health += achreo
+                console.log("Achreo!");
+                let achreo = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+                achreo = Math.round(achreo * (combatData.player.level / 10));
+                combatData.new_player_health += achreo;
+                combatData.current_player_health += achreo;
                 combatData.player_influence_description_two = 
                     `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
                 combatData.weapons[1].physical_damage += 2;
@@ -435,9 +455,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Ahn've") { // Wind
-                let ahnve = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
-                combatData.new_player_health += ahnve
-                combatData.current_player_health += ahnve
+                let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                ahnve = Math.round(ahnve * combatData.player.level / 10);
+                combatData.new_player_health += ahnve;
+                combatData.current_player_health += ahnve;
                 console.log("Ahn've!")
                 combatData.player_influence_description_two = 
                     `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
@@ -455,22 +476,26 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Astra') { // Lightning
-                let astra = 2 * (combatData.player_attributes.totalAchre + combatData.weapons[1].achre)
+                let astra = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+                astra = Math.round(astra * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
                 combatData.weapons[1].critical_chance += 4;
                 combatData.weapons[1].roll += 2;
                 combatData.weapons[1].critical_damage += 0.1;
-                combatData.new_player_health += astra
-                combatData.current_player_health += astra
+                combatData.new_player_health += astra;
+                combatData.current_player_health += astra;
                 if (combatData.new_player_health > 0) {
                     combatData.computer_win = false;
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
+                let cambire = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
+                cambire = Math.round(cambire * combatData.player.level / 10);
+                combatData.new_player_health += cambire;
+                combatData.current_player_health += cambire;
                 combatData.player_influence_description_two = 
-                    `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-
+                    `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage, gifting ${cambire}.`
                 // await attackCompiler(combatData, player_action)
                 if (combatData.realized_player_damage < 0) {
                     combatData.realized_player_damage = 0;
@@ -484,7 +509,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Chiomyr') { // Humor
-                let chiomyr = 2 * (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
+                let chiomyr = (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
+                chiomyr = Math.round(chiomyr * combatData.player.level / 10);
                 combatData.new_player_health += chiomyr;
                 combatData.current_player_health += chiomyr;
                 combatData.weapons[1].physical_penetration += 3;
@@ -494,7 +520,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Fyer') { // Fire
-                let fyer = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                let fyer = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                fyer = Math.round(fyer * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `Your Caer ushers forth the favor of Fyer igniting through you.`
                 combatData.weapons[1].critical_chance += 1;
@@ -511,7 +538,6 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_player_health += ilios;
                 combatData.player_influence_description_two = 
                     `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
-   
                 combatData.weapons[1].magical_penetration += 2;
                 combatData.weapons[1].physical_penetration += 2;
                 combatData.player_defense.physicalDefenseModifier += 1;
@@ -523,7 +549,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
-                let kyngi = 2 * (combatData.player_attributes.totalAgility + combatData.weapons[1].agility);
+                let kyngi = (combatData.player_attributes.totalAgility + combatData.weapons[1].agility);
+                kyngi = Math.round(kyngi * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `Your keen Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
                 combatData.weapons[1].roll += 3;
@@ -535,7 +562,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
-                let kyrisos = 2 * (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
+                let kyrisos = (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
+                kyrisos = Math.round(kyrisos * combatData.player.level / 10);
                 combatData.new_player_health += kyrisos;
                 combatData.current_player_health += kyrisos;
                 combatData.player_influence_description_two = 
@@ -546,7 +574,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Kyr'na") { // Time
-                let kyrna = 4 * (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+                let kyrna = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+                kyrna = Math.round(kyrna * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
                 combatData.new_computer_health -= kyrna;
@@ -559,9 +588,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = 5 * (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                let lilos = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                lilos = Math.round(lilos * combatData.player.level / 5);
                 combatData.player_influence_description_two = 
-                    `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`
+                    `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`;
                 combatData.new_player_health += lilos;
                 combatData.current_player_health += lilos;
                 if (combatData.new_player_health > 0) {
@@ -573,7 +603,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.new_player_health += maanre;
                 combatData.current_player_health += maanre;
                 combatData.player_influence_description_two = 
-                    `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
+                    `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.`; 
                 combatData.weapons[1].roll += 2;
                 combatData.weapons[1].dodge -= 2;
                 combatData.weapons[1].critical_chance += 2;
@@ -583,9 +613,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
+                let nyrolus = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+                nyrolus = Math.round(nyrolus * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
-                    `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
+                    `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`;
                 combatData.player_defense.physicalDefenseModifier += 2;
                 combatData.player_defense.magicalDefenseModifier += 2;
                 combatData.player_defense.physicalPosture += 2;
@@ -598,7 +629,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
             if (combatData.weapons[1].influences[0] === "Quor'ei") { // Earth
                 console.log("Quor'ei W2")
-                let quorei = 2 * (combatData.player_attributes.totalAchre + combatData.weapons[1].achre)
+                let quorei = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre)
+                quorei = Math.round(quorei * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
                 combatData.player_defense.physicalDefenseModifier += 2;
@@ -612,7 +644,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Rahvre") { // Dreams
-                let rahvre = 2 * (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
+                let rahvre = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
+                rahvre = Math.round(rahvre * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                 `Your calming Caer reaches its tendrils to Rahvre, intertwining you for ${rahvre}.`
                 combatData.weapons[1].magical_damage += 5;
@@ -629,7 +662,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.weapons[1].dodge -= 3;
             }
             if (combatData.weapons[1].influences[0] === "Se'dyro") { // Iron
-                let sedyro = 2 * (combatData.player_attributes.totalAgility + combatData.weapons[1].agility)
+                let sedyro = (combatData.player_attributes.totalAgility + combatData.weapons[1].agility)
+                sedyro = Math.round(sedyro * combatData.player.level / 10);
                 combatData.new_player_health += sedyro
                 combatData.current_player_health += sedyro
                 combatData.player_influence_description_two = 
@@ -648,7 +682,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Se'vas") { // War
-                let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength) * 2
+                let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength);
+                sevas = Math.round(sevas * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `The Caer of Se'vas scorns your ${combatData.weapons[1].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
                 combatData.weapons[1].critical_chance += 3;
@@ -672,7 +707,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
-                let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength) * 2
+                let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength);
+                tshaer = Math.round(tshaer * combatData.player.level / 10);
                 combatData.player_influence_description_two = 
                     `Your Caer unleashes the bestial nature of Tshaer within you for ${tshaer}.`
                 combatData.weapons[1].physical_damage += 5;
@@ -690,7 +726,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (combatData.computer_weapons[0].influences[0] === 'Daethos') { // God
             console.log('Daethos!')
             let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
-            daethos = Math.round(daethos / 2);
+            daethos = Math.round(daethos * combatData.computer.level / 10);
             combatData.new_computer_health += combatData.realized_computer_damage;
             combatData.current_computer_health += combatData.realized_computer_damage;
             combatData.computer_influence_description = 
@@ -712,9 +748,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     }
         if (combatData.computer_weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
-            let achreo = 2 * (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre)
-            combatData.new_computer_health += achreo
-            combatData.current_computer_health += achreo
+            let achreo = (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre);
+            achreo = Math.round(achreo * combatData.computer.level / 10);
+            combatData.new_computer_health += achreo;
+            combatData.current_computer_health += achreo;
             // combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance + 1);
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise and soft as whispers he grants renewal of ${achreo}.`
@@ -728,10 +765,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Ahn've") { // Wind
             console.log("Ahn've!")
-
-            let ahnve = 2 * (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren)
-            combatData.new_computer_health += ahnve
-            combatData.current_computer_health += ahnve
+            let ahnve = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren);
+            ahnve = Math.round(ahnve * combatData.computer.level / 10);
+            combatData.new_computer_health += ahnve;
+            combatData.current_computer_health += ahnve;
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage. The surge renews ${combatData.computer.name} for ${ahnve}.`
             // player_action = 'attack';
@@ -748,7 +785,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
         }
         if (combatData.computer_weapons[0].influences[0] === 'Astra') { // Lightning
-            let achreo = 2 * combatData.computer_attributes.totalAchre
+            let achreo = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+            achreo = Math.round(achreo * combatData.computer.level / 10);
             combatData.new_computer_health += achreo
             combatData.current_computer_health += achreo
             combatData.computer_weapons[0].critical_damage += 0.1;
@@ -762,11 +800,11 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === 'Cambire') { // Potential
+            let cambire = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+            cambire = Math.round(cambire * combatData.computer.level / 10);
             console.log("Cambire!")
             combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}.`
-            player_action = 'attack';
-            // await attackCompiler(combatData, player_action)
+                `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}, gifting ${cambire}.`
             if (combatData.realized_computer_damage < 0) {
                     combatData.realized_computer_damage = 0;
                 }
@@ -779,7 +817,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }    
         }
         if (combatData.computer_weapons[0].influences[0] === 'Chiomyr') { // Humor
-            let chiomyr = 2 * combatData.computer_attributes.totalKyosir;
+            let chiomyr = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[0].kyosir;
+            chiomyr = Math.round(chiomyr * combatData.computer.level / 10);
             combatData.new_computer_health += chiomyr;
             combatData.current_computer_health += chiomyr;
             console.log("Chiomyr!")
@@ -791,7 +830,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === 'Fyer') { // Fire
             console.log("Fyer!")
-            let fyer = 2 * combatData.computer_attributes.totalCaeren;
+            let fyer = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+            fyer = Math.round(fyer * combatData.computer.level / 10);
             combatData.new_computer_health += fyer;
             combatData.current_computer_health += fyer;
             combatData.computer_influence_description = 
@@ -821,7 +861,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
-            let kyngi = 2 * combatData.computer_attributes.totalAgility
+            let kyngi = combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility;
+            kyngi = Math.round(kyngi * combatData.computer.level / 10);
             combatData.new_computer_health += kyngi
             combatData.current_computer_health += kyngi
             console.log("Kyn'gi!")
@@ -834,7 +875,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyrisos") { // Gold
-            let kyrisos = 2 * combatData.computer_attributes.totalKyosir;
+            let kyrisos = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[0].kyosir;
+            kyrisos = Math.round(kyrisos * combatData.computer.level / 10);
             combatData.new_computer_health += kyrisos;
             combatData.current_computer_health += kyrisos;
             console.log("Kyrisos!")
@@ -847,7 +889,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Kyr'na") { // Time
             console.log("Kyr'na!")
-            let kyrna = 4 * combatData.computer_attributes.totalAchre;
+            let kyrna = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+            kyrna = Math.round(kyrna * combatData.computer.level / 10);
             combatData.computer_influence_description = 
                 `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
             combatData.new_player_health -= kyrna;
@@ -861,7 +904,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Lilos") { // Life
             console.log("Lilos!")
-            let lilos = 5 * combatData.computer_attributes.totalCaeren;
+            let lilos = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+            lilos = Math.round(lilos * combatData.computer.level / 5);
             combatData.computer_influence_description = 
                 `Lilos breathes her Cear into ${combatData.computer.name}, healing ${combatData.computer.name} for ${lilos}.`
             combatData.new_computer_health += lilos;
@@ -887,7 +931,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Nyrolus") { // Water
             console.log("Nyrolus!")
-            let nyrolus = (2 * combatData.computer_attributes.totalCaeren)
+            let nyrolus = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren);
+            nyrolus = Math.round(nyrolus * combatData.computer.level / 10);
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
             combatData.computer_defense.physicalDefenseModifier += 2;
@@ -902,7 +947,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Quor'ei") { // Earth
             console.log("Quor'ei!")
-            let quorei = 2 * combatData.computer_attributes.totalAchre
+            let quorei = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+            quorei = Math.round(quorei * combatData.computer.level / 10);
             combatData.computer_influence_description = 
                 `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
             combatData.computer_defense.physicalDefenseModifier += 2;
@@ -916,7 +962,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === "Rahvre") { // Dreams
-            let rahvre = 2 * combatData.computer_attributes.totalCaeren
+            let rahvre = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+            rahvre = Math.round(rahvre * combatData.computer.level / 10);
             combatData.new_computer_health += rahvre
             combatData.current_computer_health += rahvre
             console.log("Rahvre!")
@@ -935,10 +982,11 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_weapons[0].dodge -= 3;
         }
         if (combatData.computer_weapons[0].influences[0] === "Se'dyro") { // Iron
-            let sedyro = 2 * (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility)
-            combatData.new_computer_health += sedyro
-            combatData.current_computer_health += sedyro
-            console.log("Se'dyro!")
+            let sedyro = (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility);
+            sedyro = Math.round(sedyro * combatData.computer.level / 10);
+            combatData.new_computer_health += sedyro;
+            combatData.current_computer_health += sedyro;
+            console.log("Se'dyro!");
             combatData.computer_influence_description = 
                 `The Caer of Se'dyro sings into their ${combatData.computer_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
             player_action = 'attack';
@@ -955,7 +1003,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === "Se'vas") { // War
-            let sevas = 2 * combatData.computer_attributes.totalStrength
+            let sevas = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
+            sevas = Math.round(sevas * combatData.computer.level / 10);
             combatData.new_computer_health += sevas
             combatData.current_computer_health += sevas
             console.log("Se'vas!")
@@ -969,6 +1018,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }
         if (combatData.computer_weapons[0].influences[0] === "Shrygei") { // Song
             let shrygei = combatData.comoputer_attributes.totalAchre + combatData.comoputer_attributes.totalCaeren + combatData.comoputer_attributes.totalConstitution;
+            shrygei = Math.round(shrygei * combatData.computer.level / 10);
             combatData.computer_influence_description =
             `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, the resplendence renews them for ${shrygei}`
                 combatData.computer_weapons[0].magical_penetration += 2
@@ -980,7 +1030,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
         }
         if (combatData.computer_weapons[0].influences[0] === "Tshaer") { // Animal
-            let tshaer = 2 * combatData.computer_attributes.totalStrength
+            let tshaer = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
+            tshaer = Math.round(tshaer * combatData.computer.level / 10);
             combatData.new_computer_health += tshaer
             combatData.current_computer_health += tshaer
             console.log("Tshaer!")
@@ -998,7 +1049,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             if (combatData.computer_weapons[1].influences[0] === 'Daethos') { // God
                 console.log("Daethos!")
                 let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
-                daethos = Math.round(daethos / 2);
+                daethos = Math.round(daethos * combatData.computer.level / 10);
                 combatData.new_computer_health += combatData.realized_computer_damage;
                 combatData.current_computer_health += combatData.realized_computer_damage;
                 combatData.computer_influence_description_two = 
@@ -1018,9 +1069,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
         }
             if (combatData.computer_weapons[1].influences[0] === 'Achreo') { // Wild
-                console.log("Achreo!")
+                let achreo = (combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre);
+                achreo = Math.round(achreo * combatData.computer.level / 10);
+                combatData.new_computer_health += achreo;
+                combatData.current_computer_health += achreo;
+                console.log("Achreo!");
                 combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise.`
+                    `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise, renewing them for ${achreo}.`
                 combatData.computer_weapons[1].physical_damage += 2;
                 combatData.computer_weapons[1].magical_damage += 2;
                 combatData.computer_weapons[1].critical_chance += 2;
@@ -1030,9 +1085,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === "Ahn've") { // Wind
-                let ahnve = 2 * (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren)
-                combatData.new_computer_health += ahnve
-                combatData.current_computer_health += ahnve
+                let ahnve = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren);
+                ahnve = Math.round(ahnve * combatData.computer.level / 10);
+                combatData.new_computer_health += ahnve;
+                combatData.current_computer_health += ahnve;
                 console.log("Ahn've!")
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage. The surge renews ${combatData.computer.name} for ${ahnve}.`
@@ -1050,7 +1106,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === 'Astra') { // Lightning
-                let astra = 2 * combatData.computer_attributes.totalAchre
+                let astra = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
+                astra = Math.round(astra * combatData.computer.level / 10);
                 combatData.new_computer_health += astra
                 combatData.current_computer_health += astra
                 combatData.computer_influence_description_two = 
@@ -1063,6 +1120,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === 'Cambire') { // Potential
+                let cambire = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+                cambire = Math.round(cambire * combatData.computer.level / 10);
+                combatData.new_computer_health += cambire;
+                combatData.current_computer_health += cambire;
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}.`
                 player_action = 'attack';
@@ -1079,18 +1140,20 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }    
             }
             if (combatData.computer_weapons[1].influences[0] === 'Chiomyr') { // Humor
-                let chiomyr = 2 * combatData.computer_attributes.totalKyosir;
+                let chiomyr = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[1].kyosir;
+                chiomyr = Math.round(chiomyr * combatData.computer.level / 10); 
                 combatData.new_computer_health += chiomyr;
                 combatData.current_computer_health += chiomyr;
                 combatData.computer_weapons[1].physical_penetration += 3;
                 combatData.computer_weapons[1].magical_penetration += 3;
             }
             if (combatData.computer_weapons[1].influences[0] === 'Fyer') { // Fire
-                let fyer = 2 * combatData.computer_attributes.totalCaeren
-                combatData.new_computer_health += fyer
-                combatData.current_computer_health += fyer
+                let fyer = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+                fyer = Math.round(fyer * combatData.computer.level / 10);
+                combatData.new_computer_health += fyer;
+                combatData.current_computer_health += fyer;
                 combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
+                    `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`;
                 combatData.computer_weapons[1].critical_damage += 0.9;
                 combatData.computer_weapons[1].critical_chance += 1;
             }
@@ -1109,7 +1172,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.player_defense.magicalPosture += 1;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
-                let kyngi = 2 * combatData.computer_attributes.totalAgility
+                let kyngi = combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility;
+                kyngi = Math.round(kyngi * combatData.computer.level / 10);
                 combatData.new_computer_health += kyngi
                 combatData.current_computer_health += kyngi
                 combatData.computer_influence_description_two = 
@@ -1118,7 +1182,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_chance += 3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyrisos") { // Gold
-                let kyrisos = 2 * combatData.computer_attributes.totalKyosir;
+                let kyrisos = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[1].kyosir;
+                kyrisos = Math.round(kyrisos * combatData.computer.level / 10);
                 combatData.new_computer_health += kyrisos;
                 combatData.current_computer_health += kyrisos;
                 combatData.computer_influence_description_two = 
@@ -1126,7 +1191,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_attributes.kyosirMod += 3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Kyr'na") { // Time
-                let kyrna = 4 * combatData.computer_attributes.totalAchre;
+                let kyrna = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
+                kyrna = Math.round(kyrna * combatData.computer.level / 10);
                 combatData.computer_influence_description_two = 
                     `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
                 combatData.new_player_health -= kyrna;
@@ -1139,7 +1205,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = 5 * combatData.computer_attributes.totalCaeren;
+                let lilos = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+                lilos = Math.round(lilos * combatData.computer.level / 10);
                 combatData.computer_influence_description_two = 
                     `Lilos breathes her Caer into ${combatData.computer.name}, healing them for ${lilos}.`
                 combatData.new_computer_health += lilos;
@@ -1157,7 +1224,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_damage += 0.2;
             }
             if (combatData.computer_weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = (2 * combatData.computer_attributes.totalCaeren)
+                let nyrolus = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren);
+                nyrolus = Math.round(nyrolus * combatData.computer.level / 10);
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
                 combatData.computer_defense.physicalDefenseModifier += 2;
@@ -1168,7 +1236,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_computer_health += nyrolus
             }
             if (combatData.computer_weapons[1].influences[0] === "Quor'ei") { // Earth
-                let quorei = 2 * combatData.computer_attributes.totalAchre
+                let quorei = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
+                quorei = Math.round(quorei * combatData.computer.level / 10);
                 combatData.computer_influence_description_two = 
                     `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
                 combatData.computer_defense.physicalDefenseModifier += 2;
@@ -1179,7 +1248,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.current_computer_health += quorei
             }
             if (combatData.computer_weapons[1].influences[0] === "Rahvre") { // Dreams
-                let rahvre = 2 * combatData.computer_attributes.totalCaeren
+                let rahvre = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+                rahvre = Math.round(rahvre * combatData.computer.level / 10);
                 combatData.new_computer_health += rahvre
                 combatData.current_computer_health += rahvre
                 combatData.computer_influence_description_two = 
@@ -1193,7 +1263,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].dodge -= 3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Se'dyro") { // Iron
-                let sedyro = 2 * (combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility)
+                let sedyro = (combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility);
+                sedyro = Math.round(sedyro * combatData.computer.level / 10);
                 combatData.new_computer_health += sedyro
                 combatData.current_computer_health += sedyro
                 combatData.computer_influence_description_two = 
@@ -1212,7 +1283,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.computer_weapons[1].influences[0] === "Se'vas") { // War
-                let sevas = 2 * combatData.computer_attributes.totalStrength
+                let sevas = combatData.computer_attributes.totalStrength + combatData.computer_weapons[1].strength;
+                sevas = Math.round(sevas * combatData.computer.level / 10);
                 combatData.new_computer_health += sevas
                 combatData.current_computer_health += sevas
                 combatData.computer_influence_description_two = 
@@ -1222,6 +1294,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
             if (combatData.computer_weapons[1].influences[0] === "Shrygei") { // Song
                 let shrygei = combatData.comoputer_attributes.totalAchre + combatData.comoputer_attributes.totalCaeren + combatData.comoputer_attributes.totalConstitution;
+                shrygei = Math.round(shrygei * combatData.computer.level / 10);
                 combatData.computer_influence_description_two =
                 `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, the resplendence renews them for ${shrygei}`
                     combatData.computer_weapons[1].magical_penetration += 2
@@ -1230,7 +1303,8 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     combatData.current_computer_health += shrygei
             }
             if (combatData.computer_weapons[1].influences[0] === "Tshaer") { // Animal
-                let tshaer = 2 * combatData.computer_attributes.totalStrength
+                let tshaer = combatData.computer_attributes.totalStrength + combatData.computer_weapons[1].strength;
+                tshaer = Math.round(tshaer * combatData.computer.level / 10);
                 combatData.new_computer_health += tshaer
                 combatData.current_computer_health += tshaer
                 combatData.computer_influence_description_two = 
