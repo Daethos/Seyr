@@ -5,6 +5,7 @@ const legsSchema = new Schema(
     {
         name: String,
         type: String,
+        rarity: String,
         physical_damage: Number,
         magical_damage: Number,
         critical_chance: Number,

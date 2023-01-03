@@ -79,12 +79,12 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
         <polyline points="0,0 400,2.5 0,5"></polyline>
     </svg>
     : <svg height="5" width="100%" className="tapered-rule my-1">
-        <polyline points="0,0 550,2.5 0,5"></polyline>
+        <polyline points="0,0 400,2.5 0,5"></polyline>
     </svg>
     }
     {
-        weaponOne
-        ?
+        weaponOne ?
+        <>
     <div className="property-line">
     <h4>{weaponOne?.name} [{weaponOne?.type}]</h4><br /> 
     <h4>{Math.round(weaponOne?.physical_damage)}</h4><p> Physical /</p> <h4> {Math.round(weaponOne?.magical_damage)}</h4> <p>Magical Damage</p><br />
@@ -94,22 +94,16 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <h4>Penetration:</h4>  <p>{weaponOne?.magical_penetration} Mag / {weaponOne?.physical_penetration} Phys</p><br />
     <h4>Roll:</h4>  <p>{weaponOne?.roll}% </p>
     </div>
-        : ''
-    }
-
-   { 
-    communityFocus ?
     <svg height="5" width="100%" className="tapered-rule my-1">
         <polyline points="0,0 400,2.5 0,5"></polyline>
     </svg>
-    : <svg height="5" width="100%" className="tapered-rule my-1">
-        <polyline points="0,0 550,2.5 0,5"></polyline>
-    </svg>
+    </>
+        : ''
     }
 
     {
-        weaponTwo
-        ?
+        weaponTwo?.name !== 'Empty Weapon Slot' ?
+        <>
     <div className="property-line">
     <h4>{weaponTwo?.name} [{weaponTwo?.type}]</h4><br />
     <h4> {Math.round(weaponTwo?.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponTwo?.magical_damage)}</h4> <p>Magical Damage</p><br />
@@ -119,20 +113,15 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <h4>Penetration:</h4>  <p>{weaponTwo?.magical_penetration} Mag / {weaponTwo?.physical_penetration} Phys</p><br />
     <h4>Roll:</h4>  <p>{weaponTwo?.roll}% </p><br />
     </div>
+    <svg height="5" width="100%" className="tapered-rule my-1">
+    <polyline points="0,0 400,2.5 0,5"></polyline>
+    </svg>
+    </>
         : ''
     }
-    { 
-    communityFocus ?
-    <svg height="5" width="100%" className="tapered-rule my-1">
-        <polyline points="0,0 400,2.5 0,5"></polyline>
-    </svg>
-    : <svg height="5" width="100%" className="tapered-rule my-1">
-        <polyline points="0,0 550,2.5 0,5"></polyline>
-    </svg>
-    }
     {
-        weaponThree
-        ?
+        weaponThree?.name !== 'Empty Weapon Slot' ?
+        <>
     <div className="property-line">
     <h4>{weaponThree?.name} [{weaponThree?.type}]</h4><br /> 
     <h4> {Math.round(weaponThree?.physical_damage)}</h4> <p> Physical /</p> <h4>{Math.round(weaponThree?.magical_damage)}</h4> <p>Magical Damage</p> <br />
@@ -142,6 +131,10 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     <h4>Penetration:</h4>  <p>{weaponThree?.magical_penetration} Mag / {weaponThree?.physical_penetration} Phys</p><br />
     <h4>Roll:</h4>  <p>{weaponThree?.roll}% </p>
     </div>
+    <svg height="5" width="100%" className="tapered-rule mt-3">
+        <polyline points="0,0 400,2.5 0,5"></polyline>
+    </svg>
+    </>
         : ''
     }
     </>

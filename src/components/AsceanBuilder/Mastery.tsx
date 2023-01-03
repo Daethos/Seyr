@@ -40,7 +40,7 @@ const Mastery = ({ asceanState, setAsceanState }: Props) => {
     <div className="actions">
       <h3>Attribute Mastery</h3>
       <Form.Select value={asceanState.mastery} onChange={handleMastery} className="mt-4">
-        <option>Origin Selection Here</option>
+        <option>Armor Selection Here</option>
           {masteryState.map((mastery: any, index: number) => {
               return (
                   <option value={mastery.name} key={index}>{mastery.name}</option>

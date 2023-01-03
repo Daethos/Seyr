@@ -5,6 +5,7 @@ const weaponSchema = new Schema(
     {
         name: String,
         type: String,
+        rarity: String,
         grip: String,
         attack_type: String,
         damage_type: {

@@ -1,4 +1,3 @@
-import './CommunityFocus.css'
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'; 

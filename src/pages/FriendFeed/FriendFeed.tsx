@@ -1,4 +1,3 @@
-import './FriendFeed.css'
 import { useEffect, useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'

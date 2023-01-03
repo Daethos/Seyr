@@ -41,7 +41,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Dodge Timer: {weapon_one?.dodge}s <br />
                 Roll Chance: {weapon_one?.roll}% <br />
                 Influence: {weapon_one?.influences[0]}<br /><br />
-                {weapon_one.rarity}
+                {weapon_one?.rarity}
             </Popover.Body>
         </Popover>
     )
@@ -49,6 +49,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_two?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_two?.imgURL} alt={weapon_two?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {weapon_two?.name === 'Empty Weapon Slot' ? '' : <>
             {weapon_two?.type} [{weapon_two?.grip}] <br />
                 {weapon_two?.attack_type} [{weapon_two?.damage_type?.[0]}{weapon_two?.damage_type?.[1] ? ' / ' + weapon_two.damage_type[1] : '' }] <br />
                 {weapon_two?.constitution > 0 ? 'CON: +' + weapon_two?.constitution + ' ' : ''}
@@ -65,6 +66,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Roll Chance: {weapon_two?.roll}% <br />
                 Influence: {weapon_two?.influences[0]}<br /><br />
                 {weapon_two?.rarity}
+                </>}
             </Popover.Body>
         </Popover>
     )
@@ -72,6 +74,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_three?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_three?.imgURL} alt={weapon_three?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {weapon_three?.name === 'Empty Weapon Slot' ? '' : <>
                 {weapon_three?.type} [{weapon_three?.grip}] <br />
                 {weapon_three?.attack_type} [{weapon_three?.damage_type?.[0]}{weapon_three?.damage_type?.[1] ? ' / ' + weapon_three.damage_type[1] : '' }] <br />
                 {weapon_three?.constitution > 0 ? 'CON: +' + weapon_three?.constitution + ' ' : ''}
@@ -88,6 +91,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Roll Chance: {weapon_three?.roll}% <br />
                 Influence: {weapon_three?.influences[0]}<br /><br />
                 {weapon_three?.rarity}
+                </>}
             </Popover.Body>
         </Popover>
     )
@@ -95,6 +99,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{shield?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield?.imgURL}  alt={shield?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {shield?.name === 'Empty Shield Slot' ? '' : <>
                 {shield?.constitution > 0 ? 'CON: +' + shield?.constitution + ' ' : ''}
                 {shield?.strength > 0 ? 'STR: +' + shield?.strength + ' ' : ''}
                 {shield?.agility > 0 ? 'AGI: +' + shield?.agility + ' ' : ''}
@@ -112,6 +117,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Dodge Timer: +{shield?.dodge}s <br />
                 Roll Chance: +{shield?.roll}% <br /><br />
                 {shield?.rarity}
+                </>}
             </Popover.Body>
         </Popover>
     )
@@ -192,6 +198,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{amulet?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + amulet?.imgURL} alt={amulet?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {amulet?.name === 'Empty Amulet Slot' ? '' : <>
                 {amulet?.constitution > 0 ? 'CON: +' + amulet?.constitution + ' ' : ''}
                 {amulet?.strength > 0 ? 'STR: +' + amulet?.strength + ' ' : ''}
                 {amulet?.agility > 0 ? 'AGI: +' + amulet?.agility + ' ' : ''}
@@ -209,6 +216,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Roll Chance: +{amulet?.roll}% <br />
                 Influence: {amulet?.influences[0]} <br /><br />
                 {amulet?.rarity}
+                </>}
             </Popover.Body>
         </Popover>
     )
@@ -216,6 +224,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{ring_one?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_one?.imgURL} alt={ring_one?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                { ring_one?.name === 'Empty Ring Slot' ? '' :
+                <>
                 {ring_one?.constitution > 0 ? 'CON: +' + ring_one?.constitution + ' ' : ''}
                 {ring_one?.strength > 0 ? 'STR: +' + ring_one?.strength + ' ' : ''}
                 {ring_one?.agility > 0 ? 'AGI: +' + ring_one?.agility + ' ' : ''}
@@ -232,6 +242,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Dodge Timer: +{ring_one?.dodge}s <br />
                 Roll Chance: +{ring_one?.roll}% <br /><br />
                 {ring_one?.rarity}
+                </>
+                }
             </Popover.Body>
         </Popover>
     )
@@ -239,6 +251,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{ring_two?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_two?.imgURL} alt={ring_two?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {ring_two?.name === 'Empty Ring Slot' ? '' : 
+                <>
                 {ring_two?.constitution > 0 ? 'CON: +' + ring_two?.constitution + ' ' : ''}
                 {ring_two?.strength > 0 ? 'STR: +' + ring_two?.strength + ' ' : ''}
                 {ring_two?.agility > 0 ? 'AGI: +' + ring_two?.agility + ' ' : ''}
@@ -255,6 +269,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Dodge Timer: +{ring_two?.dodge}s <br />
                 Roll Chance: +{ring_two?.roll}% <br /><br />
                 {ring_two?.rarity}
+                </> 
+                }
             </Popover.Body>
         </Popover>
     )
@@ -262,6 +278,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{trinket?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket?.imgURL} alt={trinket?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
+                {trinket?.name === 'Empty Trinket Slot' ? '' : <>
                 {trinket?.constitution > 0 ? 'CON: +' + trinket?.constitution + ' ' : ''}
                 {trinket?.strength > 0 ? 'STR: +' + trinket?.strength + ' ' : ''}
                 {trinket?.agility > 0 ? 'AGI: +' + trinket?.agility + ' ' : ''}
@@ -279,9 +296,61 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Roll Chance: +{trinket?.roll}% <br />
                 Influence: {trinket?.influences[0]} <br /><br />
                 {trinket?.rarity}
+                </>}
             </Popover.Body>
         </Popover>
     )
+
+    function getBorderStyle(rarity: string) {
+        switch (rarity) {
+            case 'Common':
+                return 2 + 'px solid white';
+            case 'Uncommon':
+                return '2px solid green';
+            case 'Rare':
+                return '2px solid blue';
+            case 'Epic':
+                return '2px solid purple';
+            case 'Legendary':
+                return '2px solid orange';
+            default:
+                return 2 + 'px solid white';
+        }
+    }
+    const getWeaponOneStyle = {
+        border: getBorderStyle(weapon_one?.rarity)
+    }
+    const getWeaponTwoStyle = {
+        border: getBorderStyle(weapon_two?.rarity)
+    }
+    const getWeaponThreeStyle = {
+        border: getBorderStyle(weapon_three?.rarity)
+    }
+    const getShieldStyle = {
+        border: getBorderStyle(shield?.rarity)
+    }
+    const getHelmStyle = {
+        border: getBorderStyle(helmet?.rarity)
+    }
+    const getChestStyle = {
+        border: getBorderStyle(chest?.rarity)
+    }
+    const getLegsStyle = {
+        border: getBorderStyle(legs?.rarity)
+    }
+    const getAmuletStyle = {
+        border: getBorderStyle(amulet?.rarity)
+    }
+    const getRingOneStyle = {
+        border: getBorderStyle(ring_one?.rarity)
+    }
+    const getRingTwoStyle = {
+        border: getBorderStyle(ring_one?.rarity)
+    }
+    const getTrinketStyle = {
+        border: getBorderStyle(trinket?.rarity)
+    }
+
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -303,47 +372,47 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
             className="my-4">
             <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponOnePopover}>
-            <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" alt={weapon_one?.name} />
+            <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" alt={weapon_one?.name} style={getWeaponOneStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponTwoPopover}>
-            <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" alt={weapon_two?.name} />
+            <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" alt={weapon_two?.name} style={getWeaponTwoStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponThreePopover}>
-            <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" alt={weapon_three?.name} />
+            <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" alt={weapon_three?.name} style={getWeaponThreeStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={shieldPopover}>
-            <img src={shield?.imgURL} className="m-1 eqp-popover spec" alt={shield?.name} />
+            <img src={shield?.imgURL} className="m-1 eqp-popover spec" alt={shield?.name} style={getShieldStyle} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-2">
             <OverlayTrigger trigger="click" placement="auto-start" overlay={helmetPopover}>
-            <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} />
+            <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={chestPopover}>
-            <img src={chest?.imgURL} className="m-1 eqp-popover spec" alt={chest?.name} />
+            <img src={chest?.imgURL} className="m-1 eqp-popover spec" alt={chest?.name} style={getChestStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={legsPopover}>
-            <img src={legs?.imgURL} className="m-1 eqp-popover spec" alt={legs?.name} />
+            <img src={legs?.imgURL} className="m-1 eqp-popover spec" alt={legs?.name} style={getLegsStyle} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-2">
             <OverlayTrigger trigger="click" placement="auto-start" overlay={amuletPopover}>
-            <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} />
+            <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getAmuletStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={ringOnePopover}>
-            <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" alt={ring_one?.name} />
+            <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" alt={ring_one?.name} style={getRingOneStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={ringTwoPopover}>
-            <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" alt={ring_two?.name} />
+            <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" alt={ring_two?.name} style={getRingTwoStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
-            <img src={trinket?.imgURL} className="m-1 eqp-popover spec" alt={trinket?.name} />
+            <img src={trinket?.imgURL} className="m-1 eqp-popover spec" alt={trinket?.name} style={getTrinketStyle} />
             </OverlayTrigger>
             </Col>
 
@@ -359,47 +428,47 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
             className="my-4">
             <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponOnePopover}>
-            <img src={weapon_one?.imgURL} className="m-2 eqp-popover spec" alt={weapon_one?.name} />
+            <img src={weapon_one?.imgURL} className="m-2 eqp-popover spec" alt={weapon_one?.name} style={getWeaponOneStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponTwoPopover}>
-            <img src={weapon_two?.imgURL} className="m-2 eqp-popover spec" alt={weapon_two?.name} />
+            <img src={weapon_two?.imgURL} className="m-2 eqp-popover spec" alt={weapon_two?.name} style={getWeaponTwoStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={weaponThreePopover}>
-            <img src={weapon_three?.imgURL} className="m-2 eqp-popover spec" alt={weapon_three?.name} />
+            <img src={weapon_three?.imgURL} className="m-2 eqp-popover spec" alt={weapon_three?.name} style={getWeaponThreeStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={shieldPopover}>
-            <img src={shield?.imgURL} className="m-2 eqp-popover spec" alt={shield?.name} />
+            <img src={shield?.imgURL} className="m-2 eqp-popover spec" alt={shield?.name} style={getShieldStyle} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
             <OverlayTrigger trigger="click" placement="auto-start" overlay={helmetPopover}>
-            <img src={helmet?.imgURL} className="m-3 eqp-popover spec" alt={helmet?.name} />
+            <img src={helmet?.imgURL} className="m-3 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={chestPopover}>
-            <img src={chest?.imgURL} className="m-3 eqp-popover spec" alt={chest?.name} />
+            <img src={chest?.imgURL} className="m-3 eqp-popover spec" alt={chest?.name} style={getChestStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={legsPopover}>
-            <img src={legs?.imgURL} className="m-3 eqp-popover spec" alt={legs?.name} />
+            <img src={legs?.imgURL} className="m-3 eqp-popover spec" alt={legs?.name} style={getLegsStyle} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
             <OverlayTrigger trigger="click" placement="auto-start" overlay={amuletPopover}>
-            <img src={amulet?.imgURL} className="m-2 eqp-popover spec" alt={amulet?.name} />
+            <img src={amulet?.imgURL} className="m-2 eqp-popover spec" alt={amulet?.name} style={getAmuletStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={ringOnePopover}>
-            <img src={ring_one?.imgURL} className="m-2 eqp-popover spec" alt={ring_one?.name} />
+            <img src={ring_one?.imgURL} className="m-2 eqp-popover spec" alt={ring_one?.name} style={getRingOneStyle} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" placement="auto-start" overlay={ringTwoPopover}>
-            <img src={ring_two?.imgURL} className="m-2 eqp-popover spec" alt={ring_two?.name} />
+            <img src={ring_two?.imgURL} className="m-2 eqp-popover spec" alt={ring_two?.name} style={getRingTwoStyle} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
-            <img src={trinket?.imgURL} className="m-2 eqp-popover spec" alt={trinket?.name} />
+            <img src={trinket?.imgURL} className="m-2 eqp-popover spec" alt={trinket?.name} style={getTrinketStyle} />
             </OverlayTrigger>
             </Col>
 

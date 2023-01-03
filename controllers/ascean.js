@@ -10,7 +10,8 @@ module.exports = {
     delete: deleteAscean,
     getAsceanStats,
     updateHighScore,
-    updateLevel
+    updateLevel,
+    saveItemToAscean
 }
 
 
@@ -115,6 +116,45 @@ async function deleteAscean(req, res) {
 
 async function create(req, res) {
     console.log(req.body, '<- Hopefully the Ascean!', req.user)
+        if (req.body.preference === 'Plate-Mail') {
+            req.body.helmet = '63b322831c4ece0f04812082';
+            req.body.chest = '63b322841c4ece0f04812088';
+            req.body.legs = '63b290634f446b7348cf61de';
+        }
+        if (req.body.preference === 'Chain-Mail') {
+            req.body.helmet = '63b322831c4ece0f04812083';
+            req.body.chest = '63b322841c4ece0f04812089';
+            req.body.legs = '63b322841c4ece0f0481208e';
+        }
+        if (req.body.preference === 'Leather-Mail') {
+            req.body.helmet = '63b322831c4ece0f04812084';
+            req.body.chest = '63b322841c4ece0f0481208a';
+            req.body.legs = '63b322841c4ece0f0481208f';
+        }
+        if (req.body.preference === 'Leather-Cloth') {
+            req.body.helmet = '63b322831c4ece0f04812085'
+            req.body.chest = '63b322841c4ece0f0481208b';
+            req.body.legs = '63b322841c4ece0f04812090';
+        }
+        if (req.body.strength + req.body.agility >= req.body.achre + req.body.caeren) {
+            if (req.body.strength > req.body.agility) { // Pernach
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e56f';
+            } else if (req.body.strength < req.body.agility) { // Pugio
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e56e';
+            } else { // Same Value LongSword
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
+            }
+        }
+        if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
+            if (req.body.achre > req.body.caeren) { // Caeren Barrage
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e57c';
+            } else if (req.body.achre < req.body.caeren) { // Lava Spit
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e57e';
+            } else { // Same Value Arctic Bolt
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e580';
+            }
+        }
+
         try {
             const ascean = await Ascean.create({
                 user: req.user,
@@ -131,16 +171,16 @@ async function create(req, res) {
                 kyosir: req.body.kyosir,
                 mastery: req.body.mastery,
                 weapon_one: req.body.weapon_one,
-                weapon_two: req.body.weapon_two ? req.body.weapon_two : 'Nothing of Note',
-                weapon_three: req.body.weapon_three ? req.body.weapon_three : 'Nothing of Note',
-                shield: req.body.shield,
-                helmet: req.body.helmet ? req.body.helmet : 'Nothing of Note',
-                chest: req.body.chest ? req.body.chest : 'Nothing of Note',
+                weapon_two: '63b34b5ed5326753b191846b',
+                weapon_three: '63b34b5ed5326753b191846c',
+                shield: '63b34b5fd5326753b191846f',
+                helmet: req.body.helmet,
+                chest: req.body.chest,
                 legs: req.body.legs,
-                ring_one: req.body.ring_one ? req.body.ring_one : 'Nothing of Note',
-                ring_two: req.body.ring_two ? req.body.ring_two : 'Nothing of Note',
-                amulet: req.body.amulet ? req.body.amulet : 'Nothing of Note',
-                trinket: req.body.trinket ? req.body.trinket : 'Nothing of Note',
+                ring_one: '63b3491009fa8aa7e4495996',
+                ring_two: '63b3491009fa8aa7e4495996',
+                amulet: '63b3491109fa8aa7e4495999',
+                trinket: '63b3491109fa8aa7e449599b',
                 faith: req.body.faith,
             })
             res.status(201).json({ ascean: ascean });
@@ -213,6 +253,17 @@ async function getAsceanStats(req, res) {
         const data = await asceanService.asceanCompiler(ascean)
         //console.log(data)
         res.status(200).json({ data })
+    } catch (err) {
+        res.status(400).json({ err });
+    }
+}
+
+async function saveItemToAscean(req, res) {
+    try {
+       const ascean = await Ascean.findById(req.params.id);
+       ascean.inventory.push(req.body.itemId);
+       await ascean.save();
+        res.status(201).json({ data: ascean });
     } catch (err) {
         res.status(400).json({ err });
     }

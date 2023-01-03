@@ -23,51 +23,42 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
     <Col className="stat-block wide">
     <hr className="orange-border" />
         <div className="section-left">
-            {/* <div className="actions">
-                <h3>Character</h3>
-            </div> */}
-            <div className="creature-heading">
-                    <h1>{ascean.name}</h1>
-                    <h2>{ascean.description}</h2>
-            </div>
-            <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-pic" />
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
-            {/* <div className="actions">
-                <h3>Player Statistics</h3>
-            </div> */}
-            <div className="property-line first" 
-            // style={{ marginTop: -10 + 'px' }}
-            >
-                <h4>Experience</h4>
-                <p> {ascean.experience} / {ascean.level * 1000}</p>
-            </div>
-            <div className="property-line">
-                <h4>Level</h4>
-                <p> {ascean.level}</p>
-            </div>
-            <div className="property-line">
-                <h4>High Score</h4>
-                <p> {ascean.high_score}</p>
-            </div>
-            <div className="property-line">
-                <h4>Faith</h4>
-                <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
-            </div>
-            <div className="property-line last">
-                <h4>Mastery</h4>
-                <p> {ascean.mastery}</p>
-            </div>
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
-            <div className="actions mt-1">
-            <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
-            {/* <h3>Eccentricities & Equipment</h3> */}
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
+        <div className="creature-heading">
+                <h1>{ascean.name}</h1>
+                <h2>{ascean.description}</h2>
+        </div>
+        <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-pic" />
+        <svg height="5" width="100%" className="tapered-rule mt-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
+        <div className="property-line first">
+            <h4>Experience</h4>
+            <p> {ascean.experience} / {ascean.level * 1000}</p>
+        </div>
+        <div className="property-line">
+            <h4>Level</h4>
+            <p> {ascean.level}</p>
+        </div>
+        <div className="property-line">
+            <h4>High Score</h4>
+            <p> {ascean.high_score}</p>
+        </div>
+        <div className="property-line">
+            <h4>Faith</h4>
+            <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
+        </div>
+        <div className="property-line last">
+            <h4>Mastery</h4>
+            <p> {ascean.mastery}</p>
+        </div>
+        <svg height="5" width="100%" className="tapered-rule mt-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
+        <div className="actions mt-1">
+        <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
+        <svg height="5" width="100%" className="tapered-rule mt-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
         <AsceanImageCard
             weapon_one={ascean.weapon_one}
             weapon_two={ascean.weapon_two}
@@ -82,58 +73,17 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
             trinket={ascean.trinket}
             key={ascean._id}
         />
-            </div>
-            <div className="top-stats">
-            {/* <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg> */}
-            {/* FIXME: Check in the morning, ES Lint is complaining! */}
-            
-
+        </div>
+        <div className="top-stats">
             <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
+                <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            
-            </div>
+        </div>
         </div>
         <div className="section-right">
-            
             <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
-            {/* <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
-            <div className="actions">
-                <h3>Faith</h3>
-            </div>
-            <div className="property-line first">
-                <h4>Adherence ?{' '}</h4>
-                <p id="adherence"> {' '}
-                {
-                    ascean.faith === 'adherent'
-                    ? 'You bet your ass'
-                    : 'No fucking way man'
-                }
-                </p>
-                
-            </div>
-            <div className="property-line first">
-                <h4>Devotion ?{' '}</h4>
-                <p>{' '}
-                {
-                    ascean.faith === 'devoted'
-                    ? 'You bet your ass'
-                    : 'No fucking way man'
-                }</p>
-                
-            </div> */}
-            
-            {
-                userProfile
-                ? 
-                <>
-                <svg height="5" width="100%" className="tapered-rule mt-3">
-                    <polyline points="0,0 550,2.5 0,5"></polyline>
-                </svg>
+            { userProfile ? 
+            <>
                 <div className="actions">
                 <h3>Communal</h3>
                 </div>
@@ -145,31 +95,20 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
                 <h4>Shareable to the Community ? </h4>
                 <p>{ascean.shareable.charAt(0).toUpperCase() + ascean.shareable.slice(1)}</p>
                 </div>
-                </>
-                : ''
-            }
-            </div>
-            <div className='property-block'>
+            </>
+            : '' }
             </div>
             <div className="actions">
-            <div className='property-block'>
-            </div>
-            
-        </div>
         
-        {
-            userProfile
-            ? <>
+        </div>
+        { userProfile ? 
+        <>
             <Update ascean={ascean} NavBar={false} />
             <Delete ascean={ascean} deleteAscean={deleteAscean} />
-            
-            </>
-            : ''
-        }
-        
+        </>
+        : '' }
          <hr className='orange-border bottom' />
     </Col>
-    
     </Row>
     </React.Fragment>
   )
