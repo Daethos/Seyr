@@ -304,7 +304,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     function getBorderStyle(rarity: string) {
         switch (rarity) {
             case 'Common':
-                return 2 + 'px solid white';
+                return '2px solid white';
             case 'Uncommon':
                 return '2px solid green';
             case 'Rare':
@@ -314,7 +314,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             case 'Legendary':
                 return '2px solid orange';
             default:
-                return 2 + 'px solid white';
+                return '2px solid grey';
         }
     }
     const getWeaponOneStyle = {

@@ -119,7 +119,7 @@ async function create(req, res) {
         if (req.body.preference === 'Plate-Mail') {
             req.body.helmet = '63b322831c4ece0f04812082';
             req.body.chest = '63b322841c4ece0f04812088';
-            req.body.legs = '63b290634f446b7348cf61de';
+            req.body.legs = '63b322841c4ece0f0481208d';
         }
         if (req.body.preference === 'Chain-Mail') {
             req.body.helmet = '63b322831c4ece0f04812083';
@@ -136,24 +136,47 @@ async function create(req, res) {
             req.body.chest = '63b322841c4ece0f0481208b';
             req.body.legs = '63b322841c4ece0f04812090';
         }
-        if (req.body.strength + req.body.agility >= req.body.achre + req.body.caeren) {
-            if (req.body.strength > req.body.agility) { // Pernach
-                req.body.weapon_one = '63b3460cd5c6cfea02a5e56f';
-            } else if (req.body.strength < req.body.agility) { // Pugio
-                req.body.weapon_one = '63b3460cd5c6cfea02a5e56e';
-            } else { // Same Value LongSword
-                req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
+
+        if (req.body.faith === 'devoted') { // Devoted to Daethos
+            if (req.body.strength + req.body.agility >= req.body.achre + req.body.caeren) {
+                if (req.body.strength > req.body.agility) { // Halberd
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e575';
+                } else if (req.body.strength < req.body.agility) { // Gladius
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e56c';
+                } else { // Same Value Daethic Bow
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e586';
+                }
+            }
+            if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
+                if (req.body.achre > req.body.caeren) { // Tendril
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e583';
+                } else if (req.body.achre < req.body.caeren) { // Hush
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57d';
+                } else { // Same Value Caeren Barrage
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57c';
+                }
+            }
+        } else { // Adherent to the Ancients or Irreligious
+            if (req.body.strength + req.body.agility >= req.body.achre + req.body.caeren) {
+                if (req.body.strength > req.body.agility) { // War Hammer
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e578';
+                } else if (req.body.strength < req.body.agility) { // Longsword
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
+                } else { // Same Value Longbow
+                    req.body.weapon_one = '635b855d9095eea18746cddc';
+                }
+            }
+            if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
+                if (req.body.achre > req.body.caeren) { // Astral Spear
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57f';
+                } else if (req.body.achre < req.body.caeren) { // Lava Spit
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57e';
+                } else { // Same Value Arctic Bolt
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e580';
+                }
             }
         }
-        if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
-            if (req.body.achre > req.body.caeren) { // Caeren Barrage
-                req.body.weapon_one = '63b3460cd5c6cfea02a5e57c';
-            } else if (req.body.achre < req.body.caeren) { // Lava Spit
-                req.body.weapon_one = '63b3460cd5c6cfea02a5e57e';
-            } else { // Same Value Arctic Bolt
-                req.body.weapon_one = '63b3460cd5c6cfea02a5e580';
-            }
-        }
+
 
         try {
             const ascean = await Ascean.create({

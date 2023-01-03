@@ -87,9 +87,9 @@ async function originCompiler(weapon, ascean) {
 }
 
 async function gripCompiler(weapon, attributes) {
-    console.log((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2), 'One Hand Physical Damage');
+    console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2), 'One Hand Physical Damage');
     console.log((weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2), 'One Hand Magical Damage');
-    console.log((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod), 'Bow Physical Damage');
+    console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod), 'Bow Physical Damage');
     console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Bow Magical Damage');
     console.log((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2), 'Two Hand Physical Damage');
     console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Two Hand Magical Damage');
@@ -189,6 +189,7 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
     const weaponOne = {
         name: weapon.name,
         type: weapon.type,
+        rarity: weapon.rarity,
         grip: weapon.grip,
         attack_type: weapon.attack_type,
         damage_type: weapon.damage_type,
