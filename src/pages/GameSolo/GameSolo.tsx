@@ -30,6 +30,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [saveExp, setSaveExp] = useState<boolean>(false);
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -223,7 +224,7 @@ const GameSolo = ({ user }: GameProps) => {
                 ...asceanState,
                 'ascean': response.data.data.ascean,
                 'level': response.data.data.ascean.level,
-                'experience': response.data.data.ascean.experience,
+                'experience': 0,
                 'experienceNeeded': response.data.data.ascean.level * 1000,
                 'mastery': response.data.data.ascean.mastery,
                 'faith': response.data.data.ascean.faith,
@@ -242,9 +243,37 @@ const GameSolo = ({ user }: GameProps) => {
             //     'player_attributes': response.data.data.attributes
             // })
             setLoadingAscean(false)
-
+            let minLevel: number = 0;
+            let maxLevel: number = 0;
+            if (ascean.level < 3) {
+                minLevel = 1;
+                maxLevel = 3;
+            } else if (ascean.level < 5) {
+                minLevel = 2;
+                maxLevel = 5;
+            } else if (ascean.level < 8) {
+                minLevel = 4;
+                maxLevel = 10;
+            } else if (ascean.level < 11) {
+                minLevel = 6;
+                maxLevel = 13;
+            } else if (ascean.level < 14) {
+                minLevel = 9;
+                maxLevel = 16;
+            } else if (ascean.level < 17) {
+                minLevel = 12;
+                maxLevel = 18;
+            } else if (ascean.level <= 20) {
+                minLevel = 15;
+                maxLevel = 20;
+            }
             setLoading(true)
             const secondResponse = await userService.getProfile('mirio');
+
+            // const profilesInRange = secondResponse.data.ascean.filter(ascean: any => ascean.level >= minLevel && ascean.level <= maxLevel);
+            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
+            // setOpponent(profilesInRange[randomOpponent]);
+
             const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
             setOpponent(secondResponse.data.ascean[randomOpponent]);
             // console.log(secondResponse.data.ascean[randomOpponent], '<- New Opponent');
@@ -320,8 +349,39 @@ const GameSolo = ({ user }: GameProps) => {
         console.log('2?')
         setLoading(true)
         try {
-            const firstResponse = await userService.getProfile('daethos');
+            let minLevel: number = 0;
+            let maxLevel: number = 0;
+            if (ascean.level < 3) {
+                minLevel = 1;
+                maxLevel = 3;
+            } else if (ascean.level < 5) {
+                minLevel = 2;
+                maxLevel = 5;
+            } else if (ascean.level < 8) {
+                minLevel = 4;
+                maxLevel = 10;
+            } else if (ascean.level < 11) {
+                minLevel = 6;
+                maxLevel = 13;
+            } else if (ascean.level < 14) {
+                minLevel = 9;
+                maxLevel = 16;
+            } else if (ascean.level < 17) {
+                minLevel = 12;
+                maxLevel = 18;
+            } else if (ascean.level <= 20) {
+                minLevel = 15;
+                maxLevel = 20;
+            }
+
+            const firstResponse = await userService.getProfile('mirio');
+            // const profilesInRange = firstResponse.data.ascean.filter(ascean: any => ascean.level >= minLevel && ascean.level <= maxLevel);
+            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
+            // setOpponent(profilesInRange[randomOpponent]);
+
             const randomOpponent = Math.floor(Math.random() * firstResponse.data.ascean.length);
+
+
             setOpponent(firstResponse.data.ascean[randomOpponent]);
             // console.log(firstResponse.data.ascean[randomOpponent], '<- New Opponent');
             const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean[randomOpponent]._id)
@@ -471,19 +531,7 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-    useEffect(() => {
-        console.log(asceanState, 'Ascean State')
-        // if (asceanState.experience === asceanState.experienceNeeded) {
-        //     saveExperience();
-        // }
-        if (combatData.player_win === true && asceanState.experience !== asceanState.experienceNeeded) {
-            saveExperience();
-            setCombatData({
-                ...combatData,
-                'player_win': false,
-            });
-        }
-    }, [asceanState]);
+
 
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -500,40 +548,57 @@ const GameSolo = ({ user }: GameProps) => {
                 caeren: 0,
                 kyosir: 0,
                 level: response.data.level,
-                experience: response.data.experience,
+                experience: 0,
                 experienceNeeded: response.data.level * 1000,
                 mastery: response.data.mastery,
                 faith: response.data.faith,
             });
-            setAscean(response.data);
+            getAscean();
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up')
         }
     }
 
+    useEffect(() => {
+        console.log(asceanState, 'Ascean State')
+        if (saveExp === false) return;
+        saveExperience();
+    }, [asceanState, combatData]);
+
     const saveExperience = async () => {
+        if (saveExp === false || combatData.player_win === false) {
+            console.log('Either A Loss or Already At Max Exp')
+            return;
+        }
+
         try {
             setLoadingAscean(true);
             const response = await asceanAPI.saveExperience(asceanState);
             console.log(response.data, 'Response Saving Experience');
+            // setAscean(response.data);
+            const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            setAscean(firstResponse.data);
+            setCombatData({
+                ...combatData,
+                'player': firstResponse.data,
+                'player_win': false,
+            })
             setAsceanState({
-                ascean: response.data,
+                ascean: firstResponse.data,
                 constitution: 0,
                 strength: 0,
                 agility: 0,
                 achre: 0,
                 caeren: 0,
                 kyosir: 0,
-                level: response.data.level,
-                experience: response.data.experience,
-                experienceNeeded: response.data.level * 1000,
-                mastery: response.data.mastery,
-                faith: response.data.faith,
+                level: firstResponse.data.level,
+                experience: 0,
+                experienceNeeded: firstResponse.data.level * 1000,
+                mastery: firstResponse.data.mastery,
+                faith: firstResponse.data.faith,
             });
-            setAscean(response.data);
-            setTimeout(() => {
-                setLoadingAscean(false);
-            }, 1500);
+            setSaveExp(false);
+            setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error Saving Experience')
         }
@@ -541,18 +606,21 @@ const GameSolo = ({ user }: GameProps) => {
 
     const gainExperience = async () => {
         try {
-            let opponentExp: number = combatData.computer.level * 120 * (combatData.computer.level / combatData.player.level) + combatData.player_attributes.rawKyosir;
+            let opponentExp: number = combatData.computer.level * 100 * (combatData.computer.level / combatData.player.level) + combatData.player_attributes.rawKyosir;
             console.log(opponentExp, 'Experience Gained')
-            if (ascean.experience + opponentExp >= ascean.experienceNeeded) {
+            if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
                     ...asceanState,
                     experience: asceanState.experienceNeeded,
                 });
-            } else {
+                setSaveExp(true);
+            } 
+            if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
                 setAsceanState({
                     ...asceanState,
                     experience: asceanState.experience + opponentExp,
                 });
+                setSaveExp(true);
             }
         } catch (err: any) {
             console.log(err.message, 'Error Gaining Experience')
@@ -797,7 +865,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
             {
-                asceanState.experience == asceanState.experienceNeeded ?
+                asceanState.ascean.experience == asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 : ''
             }

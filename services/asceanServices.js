@@ -8,9 +8,61 @@ const attributeStats = {}
 
 // ================================== HELPER FUNCTIONS =================================== \\
 
-const attributeCompiler = async (ascean) => {
+const attributeCompiler = async (ascean, rarities) => {
 
     const newAttributes = await Object.create(attributeStats);
+
+    let itemRarity = {
+        helmCon: ascean.helmet.constitution * rarities.helmet,
+        helmStr: ascean.helmet.strength * rarities.helmet,
+        helmAgi: ascean.helmet.agility * rarities.helmet,
+        helmAch: ascean.helmet.achre * rarities.helmet,
+        helmCae: ascean.helmet.caeren * rarities.helmet,
+        helmKyo: ascean.helmet.kyosir * rarities.helmet,
+        chestCon: ascean.chest.constitution * rarities.chest,
+        chestStr: ascean.chest.strength * rarities.chest,
+        chestAgi: ascean.chest.agility * rarities.chest,
+        chestAch: ascean.chest.achre * rarities.chest,
+        chestCae: ascean.chest.caeren * rarities.chest,
+        chestKyo: ascean.chest.kyosir * rarities.chest,
+        legsCon: ascean.legs.constitution * rarities.legs,
+        legsStr: ascean.legs.strength * rarities.legs,
+        legsAgi: ascean.legs.agility * rarities.legs,
+        legsAch: ascean.legs.achre * rarities.legs,
+        legsCae: ascean.legs.caeren * rarities.legs,
+        legsKyo: ascean.legs.kyosir * rarities.legs,
+        ringOneCon: ascean.ring_one.constitution * rarities.ring_one,
+        ringOneStr: ascean.ring_one.strength * rarities.ring_one,
+        ringOneAgi: ascean.ring_one.agility * rarities.ring_one,
+        ringOneAch: ascean.ring_one.achre * rarities.ring_one,
+        ringOneCae: ascean.ring_one.caeren * rarities.ring_one,
+        ringOneKyo: ascean.ring_one.kyosir * rarities.ring_one,
+        ringTwoCon: ascean.ring_two.constitution * rarities.ring_two,
+        ringTwoStr: ascean.ring_two.strength * rarities.ring_two,
+        ringTwoAgi: ascean.ring_two.agility * rarities.ring_two,
+        ringTwoAch: ascean.ring_two.achre * rarities.ring_two,
+        ringTwoCae: ascean.ring_two.caeren * rarities.ring_two,
+        ringTwoKyo: ascean.ring_two.kyosir * rarities.ring_two,
+        amuletCon: ascean.amulet.constitution * rarities.amulet,
+        amuletStr: ascean.amulet.strength * rarities.amulet,
+        amuletAgi: ascean.amulet.agility * rarities.amulet,
+        amuletAch: ascean.amulet.achre * rarities.amulet,
+        amuletCae: ascean.amulet.caeren * rarities.amulet,
+        amuletKyo: ascean.amulet.kyosir * rarities.amulet,
+        shieldCon: ascean.shield.constitution * rarities.shield,
+        shieldStr: ascean.shield.strength * rarities.shield,
+        shieldAgi: ascean.shield.agility * rarities.shield,
+        shieldAch: ascean.shield.achre * rarities.shield,
+        shieldCae: ascean.shield.caeren * rarities.shield,
+        shieldKyo: ascean.shield.kyosir * rarities.shield,
+        trinketCon: ascean.trinket.constitution * rarities.trinket,
+        trinketStr: ascean.trinket.strength * rarities.trinket,
+        trinketAgi: ascean.trinket.agility * rarities.trinket,
+        trinketAch: ascean.trinket.achre * rarities.trinket,
+        trinketCae: ascean.trinket.caeren * rarities.trinket,
+        trinketKyo: ascean.trinket.kyosir * rarities.trinket,
+    }
+    console.log(itemRarity, 'Item Rarity Compiling')
         
     newAttributes.rawConstitution =  Math.round((ascean.constitution + (ascean?.origin === "Notheo" || ascean?.origin === 'Nothos' ? 2 : 0)) * (ascean?.mastery === 'Constitution' ? 1.1 : 1));
     newAttributes.rawStrength =  Math.round(((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0)) * (ascean?.mastery === 'Strength' ? 1.15 : 1));
@@ -20,13 +72,20 @@ const attributeCompiler = async (ascean) => {
     newAttributes.rawKyosir =  Math.round(((ascean?.kyosir + (ascean?.origin === "Fyers" || ascean?.origin === "Quor'eite" ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Woman' ? 2 : 0)) * (ascean.mastery === 'Kyosir' ? 1.15 : 1));
 
     // // Total Attributes
-    newAttributes.totalStrength = newAttributes.rawStrength + ascean?.shield?.strength + ascean?.helmet?.strength + ascean?.chest?.strength + ascean?.legs?.strength + ascean?.ring_one?.strength + ascean?.ring_two?.strength + ascean?.amulet?.strength + ascean?.trinket?.strength;
-    newAttributes.totalAgility = newAttributes.rawAgility + ascean?.shield?.agility + ascean?.helmet?.agility + ascean?.chest?.agility + ascean?.legs?.agility + ascean?.ring_one?.agility + ascean?.ring_two?.agility + ascean?.amulet?.agility + ascean?.trinket?.agility;
-    newAttributes.totalConstitution = newAttributes.rawConstitution + ascean?.shield?.constitution + ascean?.helmet?.constitution + ascean?.chest?.constitution + ascean?.legs?.constitution + ascean?.ring_one?.constitution + ascean?.ring_two?.constitution + ascean?.amulet?.constitution + ascean?.trinket?.constitution;
-    newAttributes.totalAchre = newAttributes.rawAchre + ascean?.shield?.achre + ascean?.helmet?.achre + ascean?.chest?.achre + ascean?.legs?.achre + ascean?.ring_one?.achre + ascean?.ring_two?.achre + ascean?.amulet?.achre + ascean?.trinket?.achre;
-    newAttributes.totalCaeren = newAttributes.rawCaeren + ascean?.shield?.caeren + ascean?.helmet?.caeren + ascean?.chest?.caeren + ascean?.legs?.caeren + ascean?.ring_one?.caeren + ascean?.ring_two?.caeren + ascean?.amulet?.caeren + ascean?.trinket?.caeren;
-    newAttributes.totalKyosir = newAttributes.rawKyosir + ascean?.shield?.kyosir + ascean?.helmet?.kyosir + ascean?.chest?.kyosir + ascean?.legs?.kyosir + ascean?.ring_one?.kyosir + ascean?.ring_two?.kyosir + ascean?.amulet?.kyosir + ascean?.trinket?.kyosir;
-        
+    newAttributes.totalStrength = newAttributes.rawStrength + itemRarity.shieldStr + itemRarity.helmStr + itemRarity.chestStr + itemRarity.legsStr + itemRarity.ringOneStr + itemRarity.ringTwoStr + itemRarity.amuletStr + itemRarity.trinketStr;
+    newAttributes.totalAgility = newAttributes.rawAgility + itemRarity.shieldAgi + itemRarity.helmAgi + itemRarity.chestAgi + itemRarity.legsAgi + itemRarity.ringOneAgi + itemRarity.ringTwoAgi + itemRarity.amuletAgi + itemRarity.trinketAgi;
+    newAttributes.totalConstitution = newAttributes.rawConstitution + itemRarity.shieldCon + itemRarity.helmCon + itemRarity.chestCon + itemRarity.legsCon + itemRarity.ringOneCon + itemRarity.ringTwoCon + itemRarity.amuletCon + itemRarity.trinketCon;
+    newAttributes.totalAchre = newAttributes.rawAchre + itemRarity.shieldAch + itemRarity.helmAch + itemRarity.chestAch + itemRarity.legsAch + itemRarity.ringOneAch + itemRarity.ringTwoAch + itemRarity.amuletAch + itemRarity.trinketAch;
+    newAttributes.totalCaeren = newAttributes.rawCaeren + itemRarity.shieldCae + itemRarity.helmCae + itemRarity.chestCae + itemRarity.legsCae + itemRarity.ringOneCae + itemRarity.ringTwoCae + itemRarity.amuletCae + itemRarity.trinketCae;
+    newAttributes.totalKyosir = newAttributes.rawKyosir + itemRarity.shieldKyo + itemRarity.helmKyo + itemRarity.chestKyo + itemRarity.legsKyo + itemRarity.ringOneKyo + itemRarity.ringTwoKyo + itemRarity.amuletKyo + itemRarity.trinketKyo;
+    
+    newAttributes.totalStrength = Math.round(newAttributes.totalStrength);
+    newAttributes.totalAgility = Math.round(newAttributes.totalAgility);
+    newAttributes.totalConstitution = Math.round(newAttributes.totalConstitution);
+    newAttributes.totalAchre = Math.round(newAttributes.totalAchre);
+    newAttributes.totalCaeren = Math.round(newAttributes.totalCaeren);
+    newAttributes.totalKyosir = Math.round(newAttributes.totalKyosir);
+
     // Attribute Modifier
     newAttributes.strengthMod =  Math.floor((newAttributes.totalStrength - 10) / 2);
     newAttributes.agilityMod =  Math.floor((newAttributes.totalAgility - 10) / 2);
@@ -43,7 +102,7 @@ const attributeCompiler = async (ascean) => {
     newAttributes.equipCaeren = newAttributes.totalCaeren - newAttributes.rawCaeren;
     newAttributes.equipKyosir = newAttributes.totalKyosir - newAttributes.rawKyosir;
 
-    newAttributes.healthTotal = ((newAttributes.totalConstitution * ascean.level) + ((newAttributes.constitutionMod + Math.round((newAttributes.caerenMod + newAttributes.strengthMod) / 2 )) * ascean.level));
+    newAttributes.healthTotal = 15 + ((newAttributes.totalConstitution * ascean.level) + ((newAttributes.constitutionMod + Math.round((newAttributes.caerenMod + newAttributes.strengthMod) / 2)) * ascean.level));
     newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2)
 
     return (
@@ -87,12 +146,12 @@ async function originCompiler(weapon, ascean) {
 }
 
 async function gripCompiler(weapon, attributes, ascean) {
-    console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2), 'One Hand Physical Damage');
-    console.log((weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2), 'One Hand Magical Damage');
-    console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod), 'Bow Physical Damage');
-    console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Bow Magical Damage');
-    console.log((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2), 'Two Hand Physical Damage');
-    console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Two Hand Magical Damage');
+    // console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2), 'One Hand Physical Damage');
+    // console.log((weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2), 'One Hand Magical Damage');
+    // console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod), 'Bow Physical Damage');
+    // console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Bow Magical Damage');
+    // console.log((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2), 'Two Hand Physical Damage');
+    // console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Two Hand Magical Damage');
     
     // if (weapon.physical_damage === 0) {
     //     weapon.physical_damage = 1;
@@ -126,8 +185,8 @@ async function gripCompiler(weapon, attributes, ascean) {
 }
 
 async function penetrationCompiler(weapon, attributes, combatStats) { 
-    weapon.magical_penetration += combatStats.penetrationMagical + attributes.kyosirMod + (weapon.kyosir / 2);
-    weapon.physical_penetration += combatStats.penetrationPhysical + attributes.kyosirMod + (weapon.kyosir / 2);
+    weapon.magical_penetration += Math.round(combatStats.penetrationMagical + attributes.kyosirMod + (weapon.kyosir / 2));
+    weapon.physical_penetration += Math.round(combatStats.penetrationPhysical + attributes.kyosirMod + (weapon.kyosir / 2));
 }
 
 async function critCompiler(weapon, attributes, combatStats) { 
@@ -191,7 +250,7 @@ async function faithCompiler(weapon, ascean) {
 
 // =============================== COMPILER FUNCTIONS ================================== \\
 
-const weaponCompiler = async (weapon, ascean, attributes, combatStats) => { 
+const weaponCompiler = async (weapon, ascean, attributes, combatStats, rarity) => { 
     const weaponOne = {
         name: weapon.name,
         type: weapon.type,
@@ -199,53 +258,119 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
         grip: weapon.grip,
         attack_type: weapon.attack_type,
         damage_type: weapon.damage_type,
-        physical_damage: weapon.physical_damage,
-        magical_damage: weapon.magical_damage,
-        physical_penetration: weapon.physical_penetration,
-        magical_penetration: weapon.magical_penetration,
-        critical_chance: weapon.critical_chance,
-        critical_damage: weapon.critical_damage,
-        dodge: weapon.dodge,
-        roll: weapon.roll,
-        constitution: weapon.constitution,
-        strength: weapon.strength,
-        agility: weapon.agility,
-        achre: weapon.achre,
-        caeren: weapon.caeren,
-        kyosir: weapon.kyosir,
+        physical_damage: (weapon.physical_damage * rarity),
+        magical_damage: (weapon.magical_damage * rarity),
+        physical_penetration: (weapon.physical_penetration * rarity),
+        magical_penetration: (weapon.magical_penetration * rarity),
+        critical_chance: (weapon.critical_chance * rarity),
+        critical_damage: (weapon.critical_damage),
+        dodge: (weapon.dodge),
+        roll: (weapon.roll * rarity),
+        constitution: (weapon.constitution * rarity),
+        strength: (weapon.strength * rarity),
+        agility: (weapon.agility * rarity),
+        achre: (weapon.achre * rarity),
+        caeren: (weapon.caeren * rarity),
+        kyosir: (weapon.kyosir * rarity),
         influences: weapon.influences,
         imgURL: weapon.imgURL,
     }
-    originCompiler(weaponOne, ascean)
-    gripCompiler(weaponOne, attributes, ascean)
-    penetrationCompiler(weaponOne, attributes, combatStats)
-    critCompiler(weaponOne, attributes, combatStats)
-    faithCompiler(weaponOne, ascean)
+    originCompiler(weaponOne, ascean);
+    gripCompiler(weaponOne, attributes, ascean);
+    penetrationCompiler(weaponOne, attributes, combatStats);
+    critCompiler(weaponOne, attributes, combatStats);
+    faithCompiler(weaponOne, ascean);
     weaponOne.dodge += (30 + (combatStats.dodgeCombat * 1.5));
     weaponOne.roll += combatStats.rollCombat;
-    console.log(weaponOne.magical_damage,  weaponOne.physical_damage, 'Damage Before Weapon Multiplier')
-    console.log(combatStats.damageMagical, combatStats.damagePhysical, 'Damage Multiplier After Compiling')
+    // console.log(weaponOne.magical_damage,  weaponOne.physical_damage, 'Damage Before Weapon Multiplier');
+    // console.log(combatStats.damageMagical, combatStats.damagePhysical, 'Damage Multiplier After Compiling');
     weaponOne.physical_damage = Math.round(weaponOne.physical_damage * combatStats.damagePhysical);
     weaponOne.magical_damage = Math.round(weaponOne.magical_damage * combatStats.damageMagical);
     return weaponOne
 }
 
-const defenseCompiler = async (ascean, attributes, combatStats) => { 
+const defenseCompiler = async (ascean, attributes, combatStats, rarities) => { 
     const defense = {
-        physicalDefenseModifier: ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance 
+        physicalDefenseModifier: 
+            Math.round((ascean.helmet.physical_resistance * rarities.helmet) + (ascean.chest.physical_resistance * rarities.chest) + (ascean.legs.physical_resistance * rarities.legs) + 
+            (ascean.ring_one.physical_resistance * rarities.ring_one) + (ascean.ring_two.physical_resistance * rarities.ring_two) + (ascean.amulet.physical_resistance * rarities.amulet) + (ascean.trinket.physical_resistance * rarities.trinket) 
             + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 8)) 
-            + combatStats.originPhysDef, // Need to create these in the backend as well
+            + combatStats.originPhysDef), // Need to create these in the backend as well
         
-        magicalDefenseModifier: ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance 
+        magicalDefenseModifier: 
+            Math.round((ascean.helmet.magical_resistance * rarities.helmet) + (ascean.chest.magical_resistance * rarities.chest) + (ascean.legs.magical_resistance * rarities.legs) + 
+           (ascean.ring_one.magical_resistance * rarities.ring_one) + (ascean.ring_two.magical_resistance * rarities.ring_two) + (ascean.amulet.magical_resistance * rarities.amulet) + (ascean.trinket.magical_resistance * rarities.trinket) 
             + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 8)) 
-            + combatStats.originMagDef,
+            + combatStats.originMagDef),
 
-        physicalPosture: combatStats.defensePhysical + ascean.shield.physical_resistance,
-        magicalPosture: combatStats.defenseMagical + ascean.shield.magical_resistance,
+        physicalPosture: combatStats.defensePhysical + Math.round(ascean.shield.physical_resistance * rarities.shield),
+        magicalPosture: combatStats.defenseMagical + Math.round(ascean.shield.magical_resistance * rarities.shield),
     }
 
 
     return defense
+}
+
+const coefficientCompiler = async (ascean, item) => {
+    let coefficient = 0;
+    switch (item.rarity) {
+        case 'Common':
+            coefficient = ascean.level / 4;
+            break;
+        case 'Uncommon':
+            coefficient = ascean.level / 8;
+            break;
+        case 'Rare':
+            coefficient = ascean.level / 15;
+            break;
+        case 'Epic':
+            coefficient = ascean.level / 20;
+            break;
+        case 'Legendary':
+            coefficient = ascean.level / 25;
+            break;
+    }
+    if (coefficient > 1) coefficient = 1;
+
+    // console.log(ascean.name, item.name, coefficient, 'coefficient Compiler')
+    return coefficient
+}
+
+const rarityCompiler = async (ascean) => {
+    let rarities = {};
+    try {
+        const helmetCoefficient = await coefficientCompiler(ascean, ascean.helmet);
+        const chestCoefficient = await coefficientCompiler(ascean, ascean.chest);
+        const legsCoefficient = await coefficientCompiler(ascean, ascean.legs);
+        const ringOneCoefficient = await coefficientCompiler(ascean, ascean.ring_one);
+        const ringTwoCoefficient = await coefficientCompiler(ascean, ascean.ring_two);
+        const amuletCoefficient = await coefficientCompiler(ascean, ascean.amulet);
+        const trinketCoefficient = await coefficientCompiler(ascean, ascean.trinket);
+        const shieldCoefficient = await coefficientCompiler(ascean, ascean.shield);
+        const weaponOneCoefficient = await coefficientCompiler(ascean, ascean.weapon_one);
+        const weaponTwoCoefficient = await coefficientCompiler(ascean, ascean.weapon_two);
+        const WeaponThreeCoefficient = await coefficientCompiler(ascean, ascean.weapon_three);
+        
+        rarities = {
+            helmet: helmetCoefficient,
+            chest: chestCoefficient,
+            legs: legsCoefficient,
+            ring_one: ringOneCoefficient,
+            ring_two: ringTwoCoefficient,
+            amulet: amuletCoefficient,
+            trinket: trinketCoefficient,
+            shield: shieldCoefficient,
+            weapon_one: weaponOneCoefficient,
+            weapon_two: weaponTwoCoefficient,
+            weapon_three: WeaponThreeCoefficient,
+        }
+
+        return rarities
+
+    } catch (err) {
+        console.log(err, 'Rarity Compiler Error');
+    }
+    
 }
 
 // ================================== CONTROLLER - SERVICE ================================= \\
@@ -253,22 +378,41 @@ const defenseCompiler = async (ascean, attributes, combatStats) => {
 
 const asceanCompiler = async (ascean) => {
     //console.log(ascean,'Ascean in the Service Compiler')
+
     try {
-        const attributes = await attributeCompiler(ascean);
+        const rarities = await rarityCompiler(ascean);
+        const attributes = await attributeCompiler(ascean, rarities);
         const physicalDamageModifier = ascean.helmet.physical_damage * ascean.chest.physical_damage * ascean.legs.physical_damage * ascean.ring_one.physical_damage * ascean.ring_two.physical_damage * ascean.amulet.physical_damage * ascean.trinket.physical_damage;
         const magicalDamageModifier = ascean.helmet.magical_damage * ascean.chest.magical_damage * ascean.legs.magical_damage * ascean.ring_one.magical_damage * ascean.ring_two.magical_damage * ascean.amulet.magical_damage * ascean.trinket.magical_damage;
-        const critChanceModifier = ascean.helmet.critical_chance + ascean.chest.critical_chance + ascean.legs.critical_chance + ascean.ring_one.critical_chance + ascean.ring_two.critical_chance + ascean.amulet.critical_chance + ascean.trinket.critical_chance;
-        const critDamageModifier = ascean.helmet.critical_damage * ascean.chest.critical_damage * ascean.legs.critical_damage * ascean.ring_one.critical_damage * ascean.ring_two.critical_damage * ascean.amulet.critical_damage * ascean.trinket.critical_damage;
-        const dodgeModifier = ascean.shield.dodge + ascean.helmet.dodge + ascean.chest.dodge + ascean.legs.dodge + ascean.ring_one.dodge + ascean.ring_two.dodge + ascean.amulet.dodge + ascean.trinket.dodge - Math.round(((attributes.agilityMod + attributes.achreMod) / 2));
-        const rollModifier = ascean.shield.roll + ascean.helmet.roll + ascean.chest.roll + ascean.legs.roll + ascean.ring_one.roll + ascean.ring_two.roll + ascean.amulet.roll + ascean.trinket.roll + Math.round(((attributes.agilityMod + attributes.achreMod) / 2));
+        const critChanceModifier = 
+            (ascean.helmet.critical_chance * rarities.helmet) + (ascean.chest.critical_chance * rarities.chest) + (ascean.legs.critical_chance * rarities.legs) + 
+            (ascean.ring_one.critical_chance * rarities.ring_one) + (ascean.ring_two.critical_chance * rarities.ring_two) + (ascean.amulet.critical_chance * rarities.amulet) + (ascean.trinket.critical_chance * rarities.trinket);
+        const critDamageModifier = 
+            (ascean.helmet.critical_damage * rarities.helmet) + (ascean.chest.critical_damage * rarities.chest) + (ascean.legs.critical_damage * rarities.legs) + 
+            (ascean.ring_one.critical_damage * rarities.ring_one) + (ascean.ring_two.critical_damage * rarities.ring_two) + (ascean.amulet.critical_damage * rarities.amulet) + (ascean.trinket.critical_damage * rarities.trinket);
+        const dodgeModifier = 
+            Math.round((ascean.shield.dodge * rarities.shield) + (ascean.helmet.dodge * rarities.helmet) + (ascean.chest.dodge * rarities.chest) + (ascean.legs.dodge * rarities.legs) + 
+            (ascean.ring_one.dodge * rarities.ring_one) + (ascean.ring_two.dodge * rarities.ring_two) + (ascean.amulet.dodge * rarities.amulet) + (ascean.trinket.dodge * rarities.trinket) - Math.round(((attributes.agilityMod + attributes.achreMod) / 2)));
+        const rollModifier = 
+            Math.round((ascean.shield.roll * rarities.shield) + (ascean.helmet.roll * rarities.helmet) + (ascean.chest.roll * rarities.chest) + (ascean.legs.roll * rarities.legs) + 
+            (ascean.ring_one.roll * rarities.ring_one) + (ascean.ring_two.roll * rarities.ring_two) + (ascean.amulet.roll * rarities.amulet) + (ascean.trinket.roll * rarities.trinket) + 
+            Math.round(((attributes.agilityMod + attributes.achreMod) / 2)));
         const originPhysPenMod = (ascean.origin === 'Fyers' || ascean.origin === 'Notheo' ? 3 : 0)
         const originMagPenMod = (ascean.origin === 'Fyers' || ascean.origin === 'Nothos' ? 3 : 0)
-        const physicalPenetration = ascean.ring_one.physical_penetration + ascean.ring_two.physical_penetration + ascean.amulet.physical_penetration + ascean.trinket.physical_penetration + originPhysPenMod;
-        const magicalPenetration = ascean.ring_one.magical_penetration + ascean.ring_two.magical_penetration + ascean.amulet.magical_penetration + ascean.trinket.magical_penetration + originMagPenMod;
+        const physicalPenetration = 
+            (ascean.ring_one.physical_penetration * rarities.ring_one) + (ascean.ring_two.physical_penetration * rarities.ring_two) + (ascean.amulet.physical_penetration * rarities.amulet) + (ascean.trinket.physical_penetration * rarities.trinket) + originPhysPenMod;
+        const magicalPenetration = 
+            (ascean.ring_one.magical_penetration * rarities.ring_one) + (ascean.ring_two.magical_penetration * rarities.ring_two) + (ascean.amulet.magical_penetration * rarities.amulet) + (ascean.trinket.magical_penetration * rarities.trinket) + originMagPenMod;
         const originPhysDefMod = (ascean.origin === 'Sedyreal' || ascean.origin === 'Nothos' ? 3 : 0);
         const originMagDefMod = (ascean.origin === 'Sedyreal' || ascean.origin === 'Notheo' ? 3 : 0);
-        const physicalDefenseModifier = ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 4)) + originPhysDefMod;
-        const magicalDefenseModifier = ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 4)) + originMagDefMod;
+        const physicalDefenseModifier = 
+            Math.round((ascean.helmet.physical_resistance * rarities.helmet) + (ascean.chest.physical_resistance * rarities.chest) + (ascean.legs.physical_resistance * rarities.legs) + 
+            (ascean.ring_one.physical_resistance * rarities.ring_one) + (ascean.ring_two.physical_resistance * rarities.ring_two) + (ascean.amulet.physical_resistance * rarities.amulet) + (ascean.trinket.physical_resistance * rarities.trinket) + 
+            Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 8)) + originPhysDefMod);
+        const magicalDefenseModifier = 
+            Math.round((ascean.helmet.magical_resistance * rarities.helmet) + (ascean.chest.magical_resistance * rarities.chest) + (ascean.legs.magical_resistance * rarities.legs) + 
+            (ascean.ring_one.magical_resistance * rarities.ring_one) + (ascean.ring_two.magical_resistance * rarities.ring_two) + (ascean.amulet.magical_resistance * rarities.amulet) + (ascean.trinket.magical_resistance * rarities.trinket) + 
+            Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 8)) + originMagDefMod);
     
         // console.log(critDamageModifier, '<- Crit Damage Modifier w/ Base EQP')
 
@@ -289,10 +433,10 @@ const asceanCompiler = async (ascean) => {
 
         }
         //console.log(combatStats, 'Are the combat stats loaded?')
-        const combat_weapon_one = await weaponCompiler(ascean.weapon_one, ascean, attributes, combatStats)
-        const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats)
-        const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats)
-        const defense = await defenseCompiler(ascean, attributes, combatStats)
+        const combat_weapon_one = await weaponCompiler(ascean.weapon_one, ascean, attributes, combatStats, rarities.weapon_one)
+        const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats, rarities.weapon_two)
+        const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats, rarities.weapon_three)
+        const defense = await defenseCompiler(ascean, attributes, combatStats, rarities)
         // console.log(physicalDamageModifier, magicalDamageModifier, 'Did the weapon compile?')
         return {
     

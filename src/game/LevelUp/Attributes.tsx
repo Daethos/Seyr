@@ -101,48 +101,48 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
         if (constitutionOutput > 0) {
             conMinusButton!.style.display = 'inline-block';
         } else if (constitutionOutput <= 0) {
-            conMinusButton!.style.display = 'none';
+            if (conMinusButton !== null) conMinusButton!.style.display = 'none';
         }
         if (strengthOutput > 0) {
             strMinusButton!.style.display = 'inline-block';
         } else if (strengthOutput <= 0) {
-            strMinusButton!.style.display = 'none';
+            if (strMinusButton !== null) strMinusButton!.style.display = 'none';
         }
         if (agilityOutput > 0) {
             agiMinusButton!.style.display = 'inline-block';
         } else if (agilityOutput <= 0) {
-            agiMinusButton!.style.display = 'none';
+            if (agiMinusButton !== null) agiMinusButton!.style.display = 'none';
         }
         if (achreOutput > 0) {
             achMinusButton!.style.display = 'inline-block';
         } else if (achreOutput <= 0) {
-            achMinusButton!.style.display = 'none';
+            if (achMinusButton !== null) achMinusButton!.style.display = 'none';
         }
         if (caerenOutput > 0) {
             caerMinusButton!.style.display = 'inline-block';
         } else if (caerenOutput <= 0) {
-            caerMinusButton!.style.display = 'none';
+            if (caerMinusButton !== null) caerMinusButton!.style.display = 'none';
         }
         if (kyosirOutput > 0) {
             kyoMinusButton!.style.display = 'inline-block';
         } else if (kyosirOutput <= 0) {
-            kyoMinusButton!.style.display = 'none';
+            if (kyoMinusButton !== null) kyoMinusButton!.style.display = 'none';
         }
         if (poolTotal >= 4) {
-            conPlusButton!.style.display = 'none';
-            strPlusButton!.style.display = 'none';
-            agiPlusButton!.style.display = 'none';
-            achPlusButton!.style.display = 'none';
-            caerPlusButton!.style.display = 'none';
-            kyoPlusButton!.style.display = 'none';
+            if (conPlusButton !== null) conPlusButton!.style.display = 'none';
+            if (strPlusButton !== null) strPlusButton!.style.display = 'none';
+            if (agiPlusButton !== null) agiPlusButton!.style.display = 'none';
+            if (achPlusButton !== null) achPlusButton!.style.display = 'none';
+            if (caerPlusButton !== null) caerPlusButton!.style.display = 'none';
+            if (kyoPlusButton !== null) kyoPlusButton!.style.display = 'none';
         }
         if (poolTotal > 0 && poolTotal < 4) {
-            conPlusButton!.style.display = 'inline-block';
-            strPlusButton!.style.display = 'inline-block';
-            agiPlusButton!.style.display = 'inline-block';
-            achPlusButton!.style.display = 'inline-block';
-            caerPlusButton!.style.display = 'inline-block';
-            kyoPlusButton!.style.display = 'inline-block';
+            if (conPlusButton !== null) conPlusButton!.style.display = 'inline-block';
+            if (strPlusButton !== null) strPlusButton!.style.display = 'inline-block';
+            if (agiPlusButton !== null) agiPlusButton!.style.display = 'inline-block';
+            if (achPlusButton !== null) achPlusButton!.style.display = 'inline-block';
+            if (caerPlusButton !== null) caerPlusButton!.style.display = 'inline-block';
+            if (kyoPlusButton !== null) kyoPlusButton!.style.display = 'inline-block';
         }
         if (poolTotal <= 0) {
             if (conMinusButton !== null) {

@@ -19,14 +19,14 @@ module.exports = {
 async function indexEquipment(req, res) {
     console.log('%c We have made it to the Index in the Equipment Controller!', 'color: blue')
     try {
-        const weapons = await Weapon.find({}).populate().exec();
-        const shields = await Shield.find({}).populate().exec();
-        const helmets = await Helmet.find({}).populate().exec();
-        const chests = await Chest.find({}).populate().exec();
-        const legs = await Legs.find({}).populate().exec();
-        const rings = await Ring.find({}).populate().exec();
-        const amulets = await Amulet.find({}).populate().exec();
-        const trinkets = await Trinket.find({}).populate().exec();
+        const weapons = await Weapon.find({ rarity: { $in: ['Default', 'Common', 'Uncommon'] } }).populate().exec();
+        const shields = await Shield.find({ rarity: { $in: ['Default', 'Common', 'Uncommon'] } }).populate().exec();
+        const helmets = await Helmet.find({ rarity: { $in: ['Common', 'Uncommon'] } }).populate().exec();
+        const chests = await Chest.find({ rarity: { $in: ['Common', 'Uncommon'] } }).populate().exec();
+        const legs = await Legs.find({ rarity: { $in: ['Common', 'Uncommon'] } }).populate().exec();
+        const rings = await Ring.find({ rarity: { $in: ['Default', 'Uncommon'] } }).populate().exec();
+        const amulets = await Amulet.find({ rarity: { $in: ['Default', 'Uncommon'] } }).populate().exec();
+        const trinkets = await Trinket.find({ rarity: { $in: ['Default', 'Uncommon'] } }).populate().exec();
         res.status(200).json({ data: {
             weapons,
             shields,

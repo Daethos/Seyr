@@ -96,9 +96,10 @@ async function updateLevel(req, res) {
 async function saveExperience(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
-        ascean.experience += req.body.experience;
-        if (ascean.experience > ascean.level * 1000) {
+        if (ascean.experience + req.body.experience > ascean.level * 1000) {
             ascean.experience = ascean.level * 1000;
+        } else {
+            ascean.experience += req.body.experience;
         }
         await ascean.save();
         res.status(200).json({ data: ascean });
@@ -179,7 +180,7 @@ async function create(req, res) {
                 } else if (req.body.strength < req.body.agility) { // Longsword
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
                 } else { // Same Value Longbow
-                    req.body.weapon_one = '635b855d9095eea18746cddc';
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e585';
                 }
             }
             if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
