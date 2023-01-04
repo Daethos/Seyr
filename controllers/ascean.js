@@ -11,7 +11,8 @@ module.exports = {
     getAsceanStats,
     updateHighScore,
     updateLevel,
-    saveItemToAscean
+    saveItemToAscean,
+    saveExperience,
 }
 
 
@@ -75,12 +76,12 @@ async function updateLevel(req, res) {
         const ascean = await Ascean.findByIdAndUpdate(req.body.ascean._id, {
             level: req.body.ascean.level + 1,
             experience: 0,
-            constitution: Math.round((req.body.ascean.constitution + constitution) * (newMastery === 'Constitution' ? 1.1 : 1.05)),
-            strength: Math.round((req.body.ascean.strength + strength) * (newMastery === 'Strength' ? 1.1 : 1.05)),
-            agility: Math.round((req.body.ascean.agility + agility) * (newMastery === 'Agility' ? 1.1 : 1.05)),
-            achre: Math.round((req.body.ascean.achre + achre) * (newMastery === 'Achre' ? 1.1 : 1.05)),
-            caeren: Math.round((req.body.ascean.caeren + caeren) * (newMastery === 'Caeren' ? 1.1 : 1.05)),
-            kyosir: Math.round((req.body.ascean.kyosir + kyosir) * (newMastery === 'Kyosir' ? 1.1 : 1.05)),
+            constitution: Math.round((req.body.ascean.constitution + constitution) * (newMastery === 'Constitution' ? 1.07 : 1.04)), // 1.04 = +1 stat once the stat is 13 as it rounds up from .52 (1.04 * 13 = 13.52)
+            strength: Math.round((req.body.ascean.strength + strength) * (newMastery === 'Strength' ? 1.07 : 1.04)), // 1.07 = +1 stat always, even at base 8. Requires 22 Stat points to increase by 2 / level. 22 * 1.07 = 23.54, rounded up to 24 
+            agility: Math.round((req.body.ascean.agility + agility) * (newMastery === 'Agility' ? 1.07 : 1.04)),
+            achre: Math.round((req.body.ascean.achre + achre) * (newMastery === 'Achre' ? 1.07 : 1.04)),
+            caeren: Math.round((req.body.ascean.caeren + caeren) * (newMastery === 'Caeren' ? 1.07 : 1.04)),
+            kyosir: Math.round((req.body.ascean.kyosir + kyosir) * (newMastery === 'Kyosir' ? 1.07 : 1.04)),
             mastery: newMastery, 
             faith: req.body.faith,
         }, { new: true });
@@ -88,6 +89,21 @@ async function updateLevel(req, res) {
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Updating the Level!')
+        res.status(400).json({ err });
+    }
+}
+
+async function saveExperience(req, res) {
+    try {
+        const ascean = await Ascean.findById(req.body.ascean._id);
+        ascean.experience += req.body.experience;
+        if (ascean.experience > ascean.level * 1000) {
+            ascean.experience = ascean.level * 1000;
+        }
+        await ascean.save();
+        res.status(200).json({ data: ascean });
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Saving Experience!')
         res.status(400).json({ err });
     }
 }

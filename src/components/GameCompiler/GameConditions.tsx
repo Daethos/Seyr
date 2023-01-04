@@ -44,9 +44,10 @@ interface Props {
     playReligion: Function;
     timeLeft: number;
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
+    gainExperience: any;
 }
 
-const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gainExperience, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -140,7 +141,8 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, setD
                 playCounter()
             }
             if (response.data.player_win === true) {
-                playWin()
+                playWin();
+                gainExperience();
                 setWinStreak((winStreak) => winStreak + 1)
                 if (winStreak + 1 > highScore) {
                     setHighScore((score) => score + 1)

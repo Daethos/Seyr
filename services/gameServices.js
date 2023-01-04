@@ -1523,17 +1523,17 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 
     if (combatData.computer_weapons[0].grip === 'One Hand') {
         if (combatData.computer_weapons[0].attack_type === 'Physical') {
-            combatData.realized_computer_damage *= (agility / 45)
+            combatData.realized_computer_damage *= (agility / 75)
         } else {
-            combatData.realized_computer_damage *= (achre / 45)
+            combatData.realized_computer_damage *= (achre / 75)
         }
     }
 
     if (combatData.computer_weapons[0].grip === 'Two Hand') {
         if (combatData.computer_weapons[0].attack_type === 'Physical') {
-            combatData.realized_computer_damage *= (strength / 60) 
+            combatData.realized_computer_damage *= (strength / 100) 
         } else {
-            combatData.realized_computer_damage *= (caeren / 60)
+            combatData.realized_computer_damage *= (caeren / 100)
         }
     }
 
@@ -1572,93 +1572,93 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         if (combatData.computer_weapons[0].grip === 'One Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {
                 if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Constitution') {
-                    if (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility + combatData.computer_weapons[1].agility >= 30) {
+                    if (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility + combatData.computer_weapons[1].agility >= 25) {
                         if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                            combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else {
-                            computer_physical_damage *= 1.6;
-                            computer_magical_damage *= 1.4;
+                            computer_physical_damage *= 1.3;
+                            computer_magical_damage *= 1.15;
                         }
                     } else {
-                        computer_physical_damage *= 1.6;
-                        computer_magical_damage *= 1.4;
+                        computer_physical_damage *= 1.3;
+                        computer_magical_damage *= 1.15;
                     }
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.25;
+                    computer_physical_damage *= 1.1;
+                    computer_magical_damage *= 1.1;
                 }
             } 
             if (combatData.computer_weapons[0].attack_type === 'Magic') {
                 if (combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
-                    if (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre + combatData.computer_weapons[1].achre >= 30) {
+                    if (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre + combatData.computer_weapons[1].achre >= 25) {
                         if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else {
-                            computer_physical_damage *= 1.4;
-                            computer_magical_damage *= 1.6;
+                            computer_physical_damage *= 1.15;
+                            computer_magical_damage *= 1.3;
                         }
                     } else {
-                        computer_physical_damage *= 1.4;
-                        computer_magical_damage *= 1.6;
+                        computer_physical_damage *= 1.15;
+                        computer_magical_damage *= 1.3;
                     }
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.25;
+                    computer_physical_damage *= 1.1;
+                    computer_magical_damage *= 1.1;
                 }
             } 
         }
         if (combatData.computer_weapons[0].grip === 'Two Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical' && combatData.computer_weapons[0].type !== 'Bow') {
                 if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Constitution') {
-                    if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
+                    if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 33) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.computer_weapons[1].type !== 'Bow') {
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else { // Less than 50 Srength 
-                            computer_physical_damage *= 1.6;
-                            computer_magical_damage *= 1.4;
+                            computer_physical_damage *= 1.3;
+                            computer_magical_damage *= 1.15;
                         }
                     } else { // Less than 50 Srength 
-                        computer_physical_damage *= 1.6;
-                        computer_magical_damage *= 1.4;
+                        computer_physical_damage *= 1.3;
+                        computer_magical_damage *= 1.15;
                     }
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.25;
+                    computer_physical_damage *= 1.1;
+                    computer_magical_damage *= 1.1;
                 }
             }
             if (combatData.computer_weapons[0].attack_type === 'Magic') {
                 if (combatData.computer.mastery === 'Caeren' || combatData.computer.mastery === 'Kyosir') {
-                    if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 30) {
+                    if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 33) {
                         if (combatData.computer_weapons[1].type !== 'Bow') {
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else {
-                            computer_physical_damage *= 1.4;
-                            computer_magical_damage *= 1.6;
+                            computer_physical_damage *= 1.15;
+                            computer_magical_damage *= 1.3;
                         }
                     } else {
-                        computer_physical_damage *= 1.25;
-                        computer_magical_damage *= 1.25;
+                        computer_physical_damage *= 1.15;
+                        computer_magical_damage *= 1.3;
                     }
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.25;
+                    computer_physical_damage *= 1.1;
+                    computer_magical_damage *= 1.1;
                 }
             }
             if (combatData.computer_weapons[0].type === 'Bow') {
                 if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
-                    computer_physical_damage *= 2;
-                    computer_magical_damage *= 2;
+                    computer_physical_damage *= 1.4;
+                    computer_magical_damage *= 1.4;
                 } else {
-                    computer_physical_damage *= 1.25;
-                    computer_magical_damage *= 1.25;
+                    computer_physical_damage *= 1.1;
+                    computer_magical_damage *= 1.1;
                 }
             }
         }
@@ -1679,18 +1679,18 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         computer_magical_damage *= 0.9;
     }
 
-    if (computer_action === 'posture') {
-        computer_physical_damage *= 0.95;
-        computer_magical_damage *= 0.95;
-    }
+    // if (computer_action === 'posture') {
+    //     computer_physical_damage *= 0.95;
+    //     computer_magical_damage *= 0.95;
+    // }
 
     if (computer_action === 'roll' ) {
         if (combatData.computer_roll_success === true) {
             computer_physical_damage *= 1.15;
             computer_magical_damage *= 1.15;
         } else {
-            computer_physical_damage *= 0.85;
-            computer_magical_damage *= 0.85;
+            computer_physical_damage *= 0.95;
+            computer_magical_damage *= 0.95;
         }
     }
 
@@ -1995,20 +1995,45 @@ const computerCriticalCompiler = async (combatData, critChance, critClearance, w
         computer_magical_damage *= weapon.critical_damage;
         combatData.computer_critical_success = true;
     }
-    if (critClearance > critChance * 2.5) {
+    if (critClearance > critChance + 90) {
+        computer_physical_damage *= 0.1;
+        computer_magical_damage *= 0.1;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + 80) {
+        computer_physical_damage *= 0.2;
+        computer_magical_damage *= 0.2;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + 70) {
+        computer_physical_damage *= 0.3;
+        computer_magical_damage *= 0.3;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + 60) {
+        computer_physical_damage *= 0.4;
+        computer_magical_damage *= 0.4;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + 50) {
+        computer_physical_damage *= 0.5;
+        computer_magical_damage *= 0.5;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + 40) {
+        computer_physical_damage *= 0.6;
+        computer_magical_damage *= 0.6;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + 30) {
         computer_physical_damage *= 0.7;
         computer_magical_damage *= 0.7;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance * 2) {
-        computer_physical_damage *= 0.8;
-        computer_magical_damage *= 0.8;
-        combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance * 1.5) {
-        computer_physical_damage *= 0.9;
-        computer_magical_damage *= 0.9;
-        combatData.computer_glancing_blow = true;
-    }
-
+    } 
+    // else if (critClearance > critChance + 20) {
+    //     computer_physical_damage *= 0.8;
+    //     computer_magical_damage *= 0.8;
+    //     combatData.computer_glancing_blow = true;
+    // } 
+    // else if (critClearance > critChance + 10) {
+    //     computer_physical_damage *= 0.9;
+    //     computer_magical_damage *= 0.9;
+    //     combatData.computer_glancing_blow = true;
+    // }
     return {
         combatData,
         computer_physical_damage,
@@ -2118,17 +2143,17 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     if (combatData.weapons[0].grip === 'One Hand') {
         if (combatData.weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_damage *= (agility / 45)
+            combatData.realized_player_damage *= (agility / 75)
         } else {
-            combatData.realized_player_damage *= (achre / 45)
+            combatData.realized_player_damage *= (achre / 75)
         }
     }
 
     if (combatData.weapons[0].grip === 'Two Hand') {
         if (combatData.weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_damage *= (strength / 60) 
+            combatData.realized_player_damage *= (strength / 100) 
         } else {
-            combatData.realized_player_damage *= (caeren / 60)
+            combatData.realized_player_damage *= (caeren / 100)
         }
     }
 
@@ -2168,93 +2193,93 @@ const attackCompiler = async (combatData, player_action) => {
         if (combatData.weapons[0].grip === 'One Hand') {
             if (combatData.weapons[0].attack_type === 'Physical') {
                 if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Constitution') {
-                    if (combatData.player_attributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 30) {
+                    if (combatData.player_attributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 25) {
                         if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                             combatData.dual_wielding = true;
-                            await dualWieldCompiler(combatData)
+                            await dualWieldCompiler(combatData);
                             return combatData
                         } else {
-                            player_physical_damage *= 1.6;
-                            player_magical_damage *= 1.4;
+                            player_physical_damage *= 1.3;
+                            player_magical_damage *= 1.15;
                         }
                     } else {
-                        player_physical_damage *= 1.6;
-                        player_magical_damage *= 1.4;
+                        player_physical_damage *= 1.3;
+                        player_magical_damage *= 1.15;
                     }
                 } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.25;
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
                 }
             } 
             if (combatData.weapons[0].attack_type === 'Magic') {
                 if (combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
-                    if (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 30) {
+                    if (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 25) {
                         if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
                             return combatData
                         } else {
-                            player_physical_damage *= 1.4;
-                            player_magical_damage *= 1.6;
+                            player_physical_damage *= 1.15;
+                            player_magical_damage *= 1.3;
                         }
                     } else {
-                        player_physical_damage *= 1.4;
-                        player_magical_damage *= 1.6;
+                        player_physical_damage *= 1.15;
+                        player_magical_damage *= 1.3;
                     }
                 } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.25;
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
                 }
             }
         } 
         if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow') {
                 if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Constitution') {
-                    if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 30) { // Might be a dual-wield compiler instead to take the rest of it
+                    if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 33) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
                             return combatData
                         } else { // Less than 40 Srength 
-                            player_physical_damage *= 1.6;
-                            player_magical_damage *= 1.4;
+                            player_physical_damage *= 1.3;
+                            player_magical_damage *= 1.15;
                         }
                     } else { // Less than 40 Srength 
-                        player_physical_damage *= 1.6;
-                        player_magical_damage *= 1.4;
+                        player_physical_damage *= 1.3;
+                        player_magical_damage *= 1.15;
                     }
                 } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.25;
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
                 }
             }
             if (combatData.weapons[0].attack_type === 'Magic') {
                 if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir') {
-                    if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 30) {
+                    if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 33) {
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
                             return combatData
                         } else {
-                            player_physical_damage *= 1.4;
-                            player_magical_damage *= 1.6;
+                            player_physical_damage *= 1.15;
+                            player_magical_damage *= 1.3;
                         }
                     } else {
-                        player_physical_damage *= 1.4;
-                        player_magical_damage *= 1.6;
+                        player_physical_damage *= 1.15;
+                        player_magical_damage *= 1.3;
                     }
                 } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.25;
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
                 }
             }
             if (combatData.weapons[0].type === 'Bow') {
                 if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir' || combatData.player.mastery === 'Constitution') {
-                    player_physical_damage *= 2;
-                    player_magical_damage *= 2;
+                    player_physical_damage *= 1.4;
+                    player_magical_damage *= 1.4;
                 } else {
-                    player_physical_damage *= 1.25;
-                    player_magical_damage *= 1.25;
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
                 }
             }
         } 
@@ -2276,18 +2301,18 @@ const attackCompiler = async (combatData, player_action) => {
         player_magical_damage *= 0.9;
     }
 
-    if (player_action === 'posture') {
-        player_physical_damage *= 0.95;
-        player_magical_damage *= 0.95;
-    }
+    // if (player_action === 'posture') {
+    //     player_physical_damage *= 0.95;
+    //     player_magical_damage *= 0.95;
+    // }
 
     if (player_action === 'roll' ) {
         if (combatData.roll_success === true) {
             player_physical_damage *= 1.15;
             player_magical_damage *= 1.15;
         } else {
-            player_physical_damage *= 0.85;
-            player_magical_damage *= 0.85;
+            player_physical_damage *= 0.95;
+            player_magical_damage *= 0.95;
         }
     }
 
@@ -2595,19 +2620,45 @@ const criticalCompiler = async (combatData, critChance, critClearance, weapon, p
         player_magical_damage *= weapon.critical_damage;
         combatData.critical_success = true;
     }
-    if (critClearance > critChance * 2.5) {
+
+    if (critClearance > critChance + 90) {
+        player_physical_damage *= 0.1;
+        player_magical_damage *= 0.1;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + 80) {
+        player_physical_damage *= 0.2;
+        player_magical_damage *= 0.2;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + 70) {
+        player_physical_damage *= 0.3;
+        player_magical_damage *= 0.3;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + 60) {
+        player_physical_damage *= 0.4;
+        player_magical_damage *= 0.4;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + 50) {
+        player_physical_damage *= 0.5;
+        player_magical_damage *= 0.5;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + 40) {
+        player_physical_damage *= 0.6;
+        player_magical_damage *= 0.6;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + 30) {
         player_physical_damage *= 0.7;
         player_magical_damage *= 0.7;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance * 2) {
-        player_physical_damage *= 0.8;
-        player_magical_damage *= 0.8;
-        combatData.glancing_blow = true;
-    } else if (critClearance > critChance * 1.5) {
-        player_physical_damage *= 0.9;
-        player_magical_damage *= 0.9;
-        combatData.glancing_blow = true;
-    }
+    } 
+    // else if (critClearance > critChance + 20) {
+    //     player_physical_damage *= 0.8;
+    //     player_magical_damage *= 0.8;
+    //     combatData.glancing_blow = true;
+    // } else if (critClearance > critChance + 10) {
+    //     player_physical_damage *= 0.9;
+    //     player_magical_damage *= 0.9;
+    //     combatData.glancing_blow = true;
+    // }
     return {
         combatData,
         player_physical_damage,

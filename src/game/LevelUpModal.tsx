@@ -23,7 +23,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
         <>            
         <Modal show={levelUpModalShow} onHide={() => setLevelUpModalShow(false)} centered>
             <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', height: 65 + 'vh', overflowY: 'auto' }}>
-            <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!</h3>
+            <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!!</h3>
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             {
                 asceanState.level % 2 !== 0 ? (
@@ -47,7 +47,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
             </Modal.Body>
         </Modal>
         <Button variant='outline' style={{ }} id='level-up' onClick={() => setLevelUpModalShow(true)}>
-            <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Level++!</h3>
+            <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Level++!!</h3>
         </Button>
         </>
   )

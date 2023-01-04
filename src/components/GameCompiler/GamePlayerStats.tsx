@@ -38,6 +38,7 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
             </div>
             <div>
             Level: {player.level}<br />
+            Experience: {player.experience} / {player.level * 1000}<br />
             Mastery: {player.mastery}<br />
             Magical Defense:  {magicalDefense}% / [{magicalPosture}%]<br />
             Physical Defense:  {physicalDefense}% / [{physicalPosture}%]<br />

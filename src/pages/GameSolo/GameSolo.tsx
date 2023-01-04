@@ -12,6 +12,7 @@ import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
+import LevelUpModal from '../../game/LevelUpModal';
 
 interface GameProps {
     user: any;
@@ -184,7 +185,22 @@ const GameSolo = ({ user }: GameProps) => {
         computer_critical_success: false,
         glancing_blow: false,
         computer_glancing_blow: false,
-    })
+    });
+
+    const [asceanState, setAsceanState] = useState({
+        ascean: ascean,
+        constitution: 0,
+        strength: 0,
+        agility: 0,
+        achre: 0,
+        caeren: 0,
+        kyosir: 0,
+        level: ascean.level,
+        experience: ascean.experience,
+        experienceNeeded: ascean.level * 1000,
+        mastery: ascean.mastery,
+        faith: ascean.faith,
+    });
 
     const getAscean = useCallback(async () => {
         console.log('1?')
@@ -202,7 +218,16 @@ const GameSolo = ({ user }: GameProps) => {
             setAttributes(response.data.data.attributes)
             setTotalPlayerHealth(response.data.data.attributes.healthTotal)
             setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
-            setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
+            setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three]);
+            setAsceanState({
+                ...asceanState,
+                'ascean': response.data.data.ascean,
+                'level': response.data.data.ascean.level,
+                'experience': response.data.data.ascean.experience,
+                'experienceNeeded': response.data.data.ascean.level * 1000,
+                'mastery': response.data.data.ascean.mastery,
+                'faith': response.data.data.ascean.faith,
+            })
             // setCombatData({
             //     ...combatData,
             //     'player': response.data.data.ascean,
@@ -437,14 +462,103 @@ const GameSolo = ({ user }: GameProps) => {
                 'weapon_three': weaponThree,
                 'player_defense': playerDefense,
                 'player_attributes': attributes
-            })
-            setGameIsLive(true)
-            setUndefined(false)
-            setLoadingAscean(false)
+            });
+            setGameIsLive(true);
+            setUndefined(false);
+            setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
         }
     }
+
+    useEffect(() => {
+        console.log(asceanState, 'Ascean State')
+        // if (asceanState.experience === asceanState.experienceNeeded) {
+        //     saveExperience();
+        // }
+        if (combatData.player_win === true && asceanState.experience !== asceanState.experienceNeeded) {
+            saveExperience();
+            setCombatData({
+                ...combatData,
+                'player_win': false,
+            });
+        }
+    }, [asceanState]);
+
+    const levelUpAscean = async (vaEsai: any) => {
+        try {
+            console.log(vaEsai, 'Va Esai');
+            let response = await asceanAPI.levelUp(vaEsai);
+            console.log(response, 'Level Up');
+            setAsceanState({
+                ...asceanState,
+                ascean: response.data,
+                constitution: 0,
+                strength: 0,
+                agility: 0,
+                achre: 0,
+                caeren: 0,
+                kyosir: 0,
+                level: response.data.level,
+                experience: response.data.experience,
+                experienceNeeded: response.data.level * 1000,
+                mastery: response.data.mastery,
+                faith: response.data.faith,
+            });
+            setAscean(response.data);
+        } catch (err: any) {
+            console.log(err.message, 'Error Leveling Up')
+        }
+    }
+
+    const saveExperience = async () => {
+        try {
+            setLoadingAscean(true);
+            const response = await asceanAPI.saveExperience(asceanState);
+            console.log(response.data, 'Response Saving Experience');
+            setAsceanState({
+                ascean: response.data,
+                constitution: 0,
+                strength: 0,
+                agility: 0,
+                achre: 0,
+                caeren: 0,
+                kyosir: 0,
+                level: response.data.level,
+                experience: response.data.experience,
+                experienceNeeded: response.data.level * 1000,
+                mastery: response.data.mastery,
+                faith: response.data.faith,
+            });
+            setAscean(response.data);
+            setTimeout(() => {
+                setLoadingAscean(false);
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Saving Experience')
+        }
+    }
+
+    const gainExperience = async () => {
+        try {
+            let opponentExp: number = combatData.computer.level * 120 * (combatData.computer.level / combatData.player.level) + combatData.player_attributes.rawKyosir;
+            console.log(opponentExp, 'Experience Gained')
+            if (ascean.experience + opponentExp >= ascean.experienceNeeded) {
+                setAsceanState({
+                    ...asceanState,
+                    experience: asceanState.experienceNeeded,
+                });
+            } else {
+                setAsceanState({
+                    ...asceanState,
+                    experience: asceanState.experience + opponentExp,
+                });
+            }
+        } catch (err: any) {
+            console.log(err.message, 'Error Gaining Experience')
+        }
+    }
+
 
     
     useEffect(() => {
@@ -592,8 +706,8 @@ const GameSolo = ({ user }: GameProps) => {
                 setWinStreak(winStreak + 1)
                 if (winStreak + 1 > highScore) {
                     setHighScore((score) => score + 1)
-                    
                 }
+                gainExperience();
                 setLoseStreak(0)
                 setGameIsLive(false)
                 setDodgeStatus(false)
@@ -672,7 +786,7 @@ const GameSolo = ({ user }: GameProps) => {
             <GameConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText}
                 setCurrentPlayerHealth={setCurrentPlayerHealth} setCurrentComputerHealth={setCurrentComputerHealth}
-                setPlayerWin={setPlayerWin} setComputerWin={setComputerWin}
+                setPlayerWin={setPlayerWin} setComputerWin={setComputerWin} gainExperience={gainExperience}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak} playDeath={playDeath}
                 playerWin={playerWin} computerWin={computerWin} playCounter={playCounter} playRoll={playRoll}
                 winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive} highScore={highScore}
@@ -682,11 +796,12 @@ const GameSolo = ({ user }: GameProps) => {
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
-
-            {/* { combatData?.player_attributes?.healthTotal && currentPlayerHealth >= 0 ? */}
-                <GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
-                {/* : <>{combatDataCompiler}</>
-            } */}
+            {
+                asceanState.experience == asceanState.experienceNeeded ?
+                <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                : ''
+            }
+            <GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
             
             { playerWin || computerWin ? '' : combatData?.weapons ?
             <GameActions 

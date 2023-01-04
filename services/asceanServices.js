@@ -86,7 +86,7 @@ async function originCompiler(weapon, ascean) {
     }
 }
 
-async function gripCompiler(weapon, attributes) {
+async function gripCompiler(weapon, attributes, ascean) {
     console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2), 'One Hand Physical Damage');
     console.log((weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2), 'One Hand Magical Damage');
     console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod), 'Bow Physical Damage');
@@ -94,27 +94,33 @@ async function gripCompiler(weapon, attributes) {
     console.log((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2), 'Two Hand Physical Damage');
     console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Two Hand Magical Damage');
     
+    // if (weapon.physical_damage === 0) {
+    //     weapon.physical_damage = 1;
+    // }
+    // if (weapon.magical_damage === 0) {
+    //     weapon.magical_damage = 1;
+    // }
 
     if (weapon.grip === 'One Hand') {
-        weapon.physical_damage += ((((weapon.agility / 4)) + attributes.agilityMod / 2) + ((weapon.strength / 8) + attributes.strengthMod / 4));
-        weapon.magical_damage += ((weapon.achre / 4) + (weapon.caeren / 8) + attributes.achreMod / 2 + (attributes.caerenMod / 4));
+        weapon.physical_damage += ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod / 3));
+        weapon.magical_damage += ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3));
 
-        weapon.physical_damage *= 1 + ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2)) / 100;
-        weapon.magical_damage *= 1 + ((weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2)) / 100;
+        weapon.physical_damage *= 1 + ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod / 3)) / (100 + (20 / ascean.level));
+        weapon.magical_damage *= 1 + ((weapon.achre / 4) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 2)) / (100 + (20 / ascean.level));
     }
     if (weapon.type === 'Bow') {
-        weapon.physical_damage += ((((weapon.agility / 4)) + attributes.agilityMod / 2) + ((weapon.strength / 4) + attributes.strengthMod / 2));
-        weapon.magical_damage += ((weapon.achre / 4) + (weapon.caeren / 4) + attributes.achreMod / 2 + (attributes.caerenMod / 2));
+        weapon.physical_damage += ((weapon.agility / 4) + attributes.agilityMod + (weapon.strength / 12) + (attributes.strengthMod / 3));
+        weapon.magical_damage += ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3));
 
-        weapon.physical_damage *= 1 + ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod)) / 100;
-        weapon.magical_damage *= 1 + ((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod)) / 100;
+        weapon.physical_damage *= 1 + ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod)) / (100 + (20 / ascean.level));
+        weapon.magical_damage *= 1 + ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3)) / (100 + (20 / ascean.level));
     }  
     if (weapon.grip === 'Two Hand' && weapon.type !== 'Bow') {
-        weapon.physical_damage += ((weapon.strength / 2) + attributes.strengthMod / 2 + (weapon.agility / 8) + (attributes.agilityMod / 2));
-        weapon.magical_damage += ((weapon.achre / 8) + (weapon.caeren / 8) + attributes.achreMod / 4 + (attributes.caerenMod / 4));
+        weapon.physical_damage += ((weapon.strength / 4) + attributes.strengthMod + (weapon.agility / 12) + (attributes.agilityMod / 3));
+        weapon.magical_damage += ((weapon.achre / 12) + (weapon.caeren / 4) + (attributes.achreMod / 3) + (attributes.caerenMod));
 
-        weapon.physical_damage *= 1 + ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2)) / 100;
-        weapon.magical_damage *= 1 + (((weapon.achre / 4) + (weapon.caeren / 4) + (attributes.achreMod / 2)) + attributes.caerenMod / 2) / 100;
+        weapon.physical_damage *= 1 + ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2)) / (100 + (20 / ascean.level));
+        weapon.magical_damage *= 1 + (((weapon.achre / 4) + (weapon.caeren / 4) + (attributes.achreMod / 2)) + attributes.caerenMod / 2) / (100 + (20 / ascean.level));
     }
     console.log(weapon.physical_damage, weapon.magical_damage, 'Damage After Attributes')
 }
@@ -127,10 +133,10 @@ async function penetrationCompiler(weapon, attributes, combatStats) {
 async function critCompiler(weapon, attributes, combatStats) { 
     weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 2);
     weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 25);
-    weapon.critical_chance = weapon.critical_chance.toFixed(2)
-    weapon.critical_damage = weapon.critical_damage.toFixed(2)
-    weapon.critical_chance = Number(weapon.critical_chance)
-    weapon.critical_damage = Number(weapon.critical_damage)
+    weapon.critical_chance = weapon.critical_chance.toFixed(2);
+    weapon.critical_damage = weapon.critical_damage.toFixed(2);
+    weapon.critical_chance = Number(weapon.critical_chance);
+    weapon.critical_damage = Number(weapon.critical_damage);
 }
 
 async function faithCompiler(weapon, ascean) { 
@@ -179,8 +185,8 @@ async function faithCompiler(weapon, ascean) {
         weapon.dodge -= 2;
 
     }
-    weapon.critical_chance = Number(weapon.critical_chance)
-    weapon.critical_damage = Number(weapon.critical_damage)
+    weapon.critical_chance = Number(weapon.critical_chance);
+    weapon.critical_damage = Number(weapon.critical_damage);
 }
 
 // =============================== COMPILER FUNCTIONS ================================== \\
@@ -211,7 +217,7 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
         imgURL: weapon.imgURL,
     }
     originCompiler(weaponOne, ascean)
-    gripCompiler(weaponOne, attributes)
+    gripCompiler(weaponOne, attributes, ascean)
     penetrationCompiler(weaponOne, attributes, combatStats)
     critCompiler(weaponOne, attributes, combatStats)
     faithCompiler(weaponOne, ascean)
@@ -227,11 +233,11 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats) => {
 const defenseCompiler = async (ascean, attributes, combatStats) => { 
     const defense = {
         physicalDefenseModifier: ascean.helmet.physical_resistance + ascean.chest.physical_resistance + ascean.legs.physical_resistance + ascean.ring_one.physical_resistance + ascean.ring_two.physical_resistance + ascean.amulet.physical_resistance + ascean.trinket.physical_resistance 
-            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 4)) 
+            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 8)) 
             + combatStats.originPhysDef, // Need to create these in the backend as well
         
         magicalDefenseModifier: ascean.helmet.magical_resistance + ascean.chest.magical_resistance + ascean.legs.magical_resistance + ascean.ring_one.magical_resistance + ascean.ring_two.magical_resistance + ascean.amulet.magical_resistance + ascean.trinket.magical_resistance 
-            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 4)) 
+            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 8)) 
             + combatStats.originMagDef,
 
         physicalPosture: combatStats.defensePhysical + ascean.shield.physical_resistance,
