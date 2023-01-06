@@ -363,11 +363,6 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
         </div>
-        {
-            messages.length > 0 ?
-            <DialogBox gameRef={gameRef} text={messages} />
-            : ''
-        }
         </>
 
   )

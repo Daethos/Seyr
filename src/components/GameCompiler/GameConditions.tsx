@@ -45,9 +45,11 @@ interface Props {
     timeLeft: number;
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
     gainExperience: any;
+    combatEngaged: boolean;
+    setCombatEngaged: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gainExperience, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gainExperience, combatEngaged, setCombatEngaged, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -147,16 +149,18 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
                 if (winStreak + 1 > highScore) {
                     setHighScore((score) => score + 1)
                 }
-                setLoseStreak(0)
-                setGameIsLive(false)
-                setDodgeStatus(false)
+                setLoseStreak(0);
+                setGameIsLive(false);
+                setCombatEngaged(false);
+                setDodgeStatus(false);
             }
             if (response.data.computer_win === true) {
-                playDeath()
-                setLoseStreak((loseStreak) => loseStreak + 1)
-                setWinStreak(0)
-                setGameIsLive(false)
-                setDodgeStatus(false)
+                playDeath();
+                setLoseStreak((loseStreak) => loseStreak + 1);
+                setWinStreak(0);
+                setGameIsLive(false);
+                setCombatEngaged(false);
+                setDodgeStatus(false);
             }
             setLoading(false)
         } catch (err: any) {
@@ -173,14 +177,14 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
 
   return (
     <>            
-    {playerWin ? <div className="win-condition" id='win-condition'>
+    {/* {playerWin ? <div className="win-condition" id='win-condition'>
     You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
     <button className='btn text-success' onClick={getOpponent}>Continue Dueling</button> 
-    <button className='btn text-info' onClick={resetAscean} >Fresh Duel</button></div> : ''}
+    <button className='btn text-info' onClick={resetAscean}>Fresh Duel</button></div> : ''}
     {computerWin ? <div className="win-condition" id='win-condition'>
     You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
-    <button className='btn text-info' onClick={resetAscean} >Fresh Duel?</button></div> : ''}
-    { playerWin || computerWin ? '' : 
+    <button className='btn text-info' onClick={resetAscean}>Fresh Duel?</button></div> : ''} */}
+    { playerWin || computerWin || !combatEngaged ? '' : 
     
     <button className="btn" id='auto-engage' onClick={autoEngage}>
         {!gameIsLive ? `Auto Engage` : `Disengage`}

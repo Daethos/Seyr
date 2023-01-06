@@ -62,7 +62,7 @@ const attributeCompiler = async (ascean, rarities) => {
         trinketCae: ascean.trinket.caeren * rarities.trinket,
         trinketKyo: ascean.trinket.kyosir * rarities.trinket,
     }
-    console.log(itemRarity, 'Item Rarity Compiling')
+    // console.log(itemRarity, 'Item Rarity Compiling')
         
     newAttributes.rawConstitution =  Math.round((ascean.constitution + (ascean?.origin === "Notheo" || ascean?.origin === 'Nothos' ? 2 : 0)) * (ascean?.mastery === 'Constitution' ? 1.1 : 1));
     newAttributes.rawStrength =  Math.round(((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0)) * (ascean?.mastery === 'Strength' ? 1.15 : 1));
@@ -388,8 +388,8 @@ const asceanCompiler = async (ascean) => {
             (ascean.helmet.critical_chance * rarities.helmet) + (ascean.chest.critical_chance * rarities.chest) + (ascean.legs.critical_chance * rarities.legs) + 
             (ascean.ring_one.critical_chance * rarities.ring_one) + (ascean.ring_two.critical_chance * rarities.ring_two) + (ascean.amulet.critical_chance * rarities.amulet) + (ascean.trinket.critical_chance * rarities.trinket);
         const critDamageModifier = 
-            (ascean.helmet.critical_damage * rarities.helmet) + (ascean.chest.critical_damage * rarities.chest) + (ascean.legs.critical_damage * rarities.legs) + 
-            (ascean.ring_one.critical_damage * rarities.ring_one) + (ascean.ring_two.critical_damage * rarities.ring_two) + (ascean.amulet.critical_damage * rarities.amulet) + (ascean.trinket.critical_damage * rarities.trinket);
+            (ascean.helmet.critical_damage * rarities.helmet) * (ascean.chest.critical_damage * rarities.chest) * (ascean.legs.critical_damage * rarities.legs) * 
+            (ascean.ring_one.critical_damage * rarities.ring_one) * (ascean.ring_two.critical_damage * rarities.ring_two) * (ascean.amulet.critical_damage * rarities.amulet) * (ascean.trinket.critical_damage * rarities.trinket);
         const dodgeModifier = 
             Math.round((ascean.shield.dodge * rarities.shield) + (ascean.helmet.dodge * rarities.helmet) + (ascean.chest.dodge * rarities.chest) + (ascean.legs.dodge * rarities.legs) + 
             (ascean.ring_one.dodge * rarities.ring_one) + (ascean.ring_two.dodge * rarities.ring_two) + (ascean.amulet.dodge * rarities.amulet) + (ascean.trinket.dodge * rarities.trinket) - Math.round(((attributes.agilityMod + attributes.achreMod) / 2)));

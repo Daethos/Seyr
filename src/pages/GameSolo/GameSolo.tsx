@@ -13,24 +13,28 @@ import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
 import LevelUpModal from '../../game/LevelUpModal';
+import { getNpcDialog } from '../../components/GameCompiler/Dialog';
+import DialogBox from '../../game/DialogBox';
 
 interface GameProps {
     user: any;
 }
 
 const GameSolo = ({ user }: GameProps) => {
-    const [ascean, setAscean] = useState<any>({})
-    const [opponent, setOpponent] = useState<any>({})
+    const [ascean, setAscean] = useState<any>({});
+    const [opponent, setOpponent] = useState<any>({});
     const [loading, setLoading] = useState(true);
-    const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
-    const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
-    const [actionStatus, setActionStatus] = useState<boolean>(false)
-    const [highScore, setHighScore] = useState<number>(0)
-    const [winStreak, setWinStreak] = useState<number>(0)
-    const [loseStreak, setLoseStreak] = useState<number>(0)
-    const [emergencyText, setEmergencyText] = useState<any[]>([])
+    const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
+    const [combatInitiated, setCombatInitiated] = useState<boolean>(false);
+    const [actionStatus, setActionStatus] = useState<boolean>(false);
+    const [highScore, setHighScore] = useState<number>(0);
+    const [winStreak, setWinStreak] = useState<number>(0);
+    const [loseStreak, setLoseStreak] = useState<number>(0);
+    const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [saveExp, setSaveExp] = useState<boolean>(false);
+    const [dialog, setDialog] = useState<any>({});
+    const [combatEngaged, setCombatEngaged] = useState<boolean>(false);
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -208,6 +212,7 @@ const GameSolo = ({ user }: GameProps) => {
         setLoadingAscean(true)
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            console.log(firstResponse.data, 'First Response Ascean')
             setAscean(firstResponse.data);
 
             const response = await asceanAPI.getAsceanStats(asceanID)
@@ -245,39 +250,40 @@ const GameSolo = ({ user }: GameProps) => {
             setLoadingAscean(false)
             let minLevel: number = 0;
             let maxLevel: number = 0;
-            if (ascean.level < 3) {
+            if (firstResponse.data.level < 3) {
                 minLevel = 1;
                 maxLevel = 3;
-            } else if (ascean.level < 5) {
+            } else if (firstResponse.data.level < 5) {
                 minLevel = 2;
                 maxLevel = 5;
-            } else if (ascean.level < 8) {
+            } else if (firstResponse.data.level < 8) {
                 minLevel = 4;
                 maxLevel = 10;
-            } else if (ascean.level < 11) {
+            } else if (firstResponse.data.level < 11) {
                 minLevel = 6;
                 maxLevel = 13;
-            } else if (ascean.level < 14) {
+            } else if (firstResponse.data.level < 14) {
                 minLevel = 9;
                 maxLevel = 16;
-            } else if (ascean.level < 17) {
+            } else if (firstResponse.data.level < 17) {
                 minLevel = 12;
                 maxLevel = 18;
-            } else if (ascean.level <= 20) {
+            } else if (firstResponse.data.level <= 20) {
                 minLevel = 15;
                 maxLevel = 20;
             }
             setLoading(true)
             const secondResponse = await userService.getProfile('mirio');
 
-            // const profilesInRange = secondResponse.data.ascean.filter(ascean: any => ascean.level >= minLevel && ascean.level <= maxLevel);
-            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            // setOpponent(profilesInRange[randomOpponent]);
+            const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
+            const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
+            setOpponent(profilesInRange[randomOpponent]);
+            const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
 
-            const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
-            setOpponent(secondResponse.data.ascean[randomOpponent]);
+            // const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
+            // setOpponent(secondResponse.data.ascean[randomOpponent]);
             // console.log(secondResponse.data.ascean[randomOpponent], '<- New Opponent');
-            const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean[randomOpponent]._id);
+            // const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean[randomOpponent]._id);
             // console.log(response.data.data, 'Response Compiling Stats')
             setComputerDefense(opponentResponse.data.data.defense);
             setComputerAttributes(opponentResponse.data.data.attributes);
@@ -313,7 +319,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
             setComputerWin(false);
             setPlayerWin(false);
-            setGameIsLive(true);
+            // setGameIsLive(true);
             playOpponent();
 
             setLoading(false);
@@ -327,22 +333,25 @@ const GameSolo = ({ user }: GameProps) => {
         getAscean();
     }, [asceanID, getAscean])
 
-    // useEffect(() => {
-    //     getOpponent();
-    // }, [getAscean])
+
 
     useEffect(() => {
         console.log(combatData, 'Update')
     }, [combatData])
 
 
-    // useEffect(() => {
-    //     opponentStatCompiler()
-    // }, [opponent, undefinedComputer])
+    useEffect(() => {
+        getOpponentDialog();
+    }, [opponent])
 
-    // useEffect(() => {
-    //     opponentDataCompiler();
-    //   }, [opponent])
+    const getOpponentDialog = async () => {
+        try {
+            const response = getNpcDialog(opponent.name);
+            setDialog(response);
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+        }
+    }
       
 
     const getOpponent = async () => {
@@ -375,16 +384,14 @@ const GameSolo = ({ user }: GameProps) => {
             }
 
             const firstResponse = await userService.getProfile('mirio');
-            // const profilesInRange = firstResponse.data.ascean.filter(ascean: any => ascean.level >= minLevel && ascean.level <= maxLevel);
-            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            // setOpponent(profilesInRange[randomOpponent]);
-
-            const randomOpponent = Math.floor(Math.random() * firstResponse.data.ascean.length);
-
-
-            setOpponent(firstResponse.data.ascean[randomOpponent]);
+            const profilesInRange = firstResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
+            const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
+            setOpponent(profilesInRange[randomOpponent]);
+            const response = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
+            // const randomOpponent = Math.floor(Math.random() * firstResponse.data.ascean.length);
+            // setOpponent(firstResponse.data.ascean[randomOpponent]);
             // console.log(firstResponse.data.ascean[randomOpponent], '<- New Opponent');
-            const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean[randomOpponent]._id)
+            // const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean[randomOpponent]._id)
             console.log(response.data.data, 'Response Compiling Stats For Opponent')
             setComputerDefense(response.data.data.defense)
             setComputerAttributes(response.data.data.attributes)
@@ -393,6 +400,8 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
             setCombatData({
                 ...combatData,
+                'current_player_health': currentPlayerHealth === 0 || currentPlayerHealth > totalPlayerHealth ? totalPlayerHealth : currentPlayerHealth,
+                'new_player_health': currentPlayerHealth === 0 || currentPlayerHealth > totalPlayerHealth ? totalPlayerHealth : currentPlayerHealth,
                 'computer': response.data.data.ascean,
                 'computer_health': response.data.data.attributes.healthTotal,
                 'current_computer_health': response.data.data.attributes.healthTotal,
@@ -403,11 +412,14 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_weapon_three': response.data.data.combat_weapon_three,
                 'computer_defense': response.data.data.defense,
                 'computer_attributes': response.data.data.attributes
-            })
+            });
+            if (currentPlayerHealth === 0 || currentPlayerHealth > totalPlayerHealth) {
+                setCurrentPlayerHealth(totalPlayerHealth);
+            }
             setComputerWin(false);
             setPlayerWin(false);
-            setGameIsLive(true);
-            playOpponent()
+            // setGameIsLive(true);
+            playOpponent();
             setLoading(false)
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
@@ -466,10 +478,6 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-    // useEffect(() => {
-    //   asceanStatCompiler()
-    // }, [getAscean]) // Says to remove it?
-
     const asceanStatCompiler = async () => {
         setLoading(true)
         try {
@@ -502,11 +510,6 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Compiling Ascean Stats')
         }
     }
-    
-    // useEffect(() => {
-    //     console.log('3?')
-    //     combatDataCompiler()
-    // }, [getAscean, undefined])
 
     const combatDataCompiler = async () => {
         // setLoadingAscean(true)
@@ -523,15 +526,13 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': playerDefense,
                 'player_attributes': attributes
             });
-            setGameIsLive(true);
+            // setGameIsLive(true);
             setUndefined(false);
             setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error compiling combat data')
         }
     }
-
-
 
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -626,8 +627,6 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Gaining Experience')
         }
     }
-
-
     
     useEffect(() => {
         if (highScore > ascean.high_score) {
@@ -776,16 +775,18 @@ const GameSolo = ({ user }: GameProps) => {
                     setHighScore((score) => score + 1)
                 }
                 gainExperience();
-                setLoseStreak(0)
-                setGameIsLive(false)
-                setDodgeStatus(false)
+                setLoseStreak(0);
+                setGameIsLive(false);
+                setCombatEngaged(false);
+                setDodgeStatus(false);
             }
             if (response.data.computer_win === true) {
-                playDeath()
-                setLoseStreak((loseStreak) => loseStreak + 1)
-                setWinStreak(0)
-                setGameIsLive(false)
-                setDodgeStatus(false)
+                playDeath();
+                setLoseStreak((loseStreak) => loseStreak + 1);
+                setWinStreak(0);
+                setGameIsLive(false);
+                setCombatEngaged(false);
+                setDodgeStatus(false);
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -795,22 +796,50 @@ const GameSolo = ({ user }: GameProps) => {
     const resetAscean = async () => {
         try {
             // await getOpponent();
-            setCombatData({
-                ...combatData,
-                'player_defense': playerDefense,
-                'player_attributes': attributes,
-                'current_player_health': totalPlayerHealth,
-                'new_player_health': totalPlayerHealth,
-                'current_computer_health': totalComputerHealth,
-                'new_computer_health': totalComputerHealth,
-                'weapons': [weaponOne, weaponTwo, weaponThree],
-                'player_win': false,
-                'computer_win': false
-            });
-            setCurrentPlayerHealth(totalPlayerHealth);
+            if (currentPlayerHealth > totalPlayerHealth) {
+                setCurrentPlayerHealth(totalPlayerHealth);
+                setCombatData({
+                    ...combatData,
+                    'player_defense': playerDefense,
+                    'player_attributes': attributes,
+                    'current_player_health': totalPlayerHealth,
+                    'new_player_health': totalPlayerHealth,
+                    'current_computer_health': totalComputerHealth,
+                    'new_computer_health': totalComputerHealth,
+                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    'player_win': false,
+                    'computer_win': false
+                });
+            } else if (currentPlayerHealth === 0) {
+                setCurrentPlayerHealth(totalPlayerHealth);
+                setCombatData({
+                    ...combatData,
+                    'player_defense': playerDefense,
+                    'player_attributes': attributes,
+                    'current_player_health': totalPlayerHealth,
+                    'new_player_health': totalPlayerHealth,
+                    'current_computer_health': totalComputerHealth,
+                    'new_computer_health': totalComputerHealth,
+                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    'player_win': false,
+                    'computer_win': false
+                });
+            } else {
+                setCombatData({
+                    ...combatData,
+                    'player_defense': playerDefense,
+                    'player_attributes': attributes,
+                    'current_computer_health': totalComputerHealth,
+                    'new_computer_health': totalComputerHealth,
+                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    'player_win': false,
+                    'computer_win': false
+                });
+            }
             setCurrentComputerHealth(totalComputerHealth);
             setComputerWin(false);
             setPlayerWin(false);
+            setCombatEngaged(true);
             setGameIsLive(true);
             setWinStreak(0);
             playReplay()
@@ -857,13 +886,23 @@ const GameSolo = ({ user }: GameProps) => {
                 setPlayerWin={setPlayerWin} setComputerWin={setComputerWin} gainExperience={gainExperience}
                 setWinStreak={setWinStreak} setLoseStreak={setLoseStreak} playDeath={playDeath}
                 playerWin={playerWin} computerWin={computerWin} playCounter={playCounter} playRoll={playRoll}
-                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive} highScore={highScore}
+                winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive} highScore={highScore} combatEngaged={combatEngaged}
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} setHighScore={setHighScore}
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
                 playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
-                playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
+                playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild} setCombatEngaged={setCombatEngaged}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
+            {
+                !combatEngaged ?
+                <DialogBox 
+                    npc={opponent.name} dialog={dialog} setCombatEngaged={setCombatEngaged} setGameIsLive={setGameIsLive} 
+                    playerWin={playerWin} computerWin={computerWin}
+                    winStreak={winStreak} loseStreak={loseStreak} highScore={highScore}
+                    resetAscean={resetAscean} getOpponent={getOpponent} 
+                />
+                : ''
+            }
             {
                 asceanState.ascean.experience == asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
@@ -871,7 +910,7 @@ const GameSolo = ({ user }: GameProps) => {
             }
             <GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
             
-            { playerWin || computerWin ? '' : combatData?.weapons ?
+            { playerWin || computerWin || !combatEngaged ? '' : combatData?.weapons ?
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} setDamageType={setDamageType}
                 combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
