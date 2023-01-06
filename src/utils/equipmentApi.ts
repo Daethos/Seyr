@@ -16,3 +16,18 @@ export async function index() {
         })
     })
 }
+
+export async function getLootDrop(level: number) {
+    return fetch(BASE_URL + 'lootdrop/' + level, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    })
+    .then((res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response);
+            throw new Error(response.err);
+        })
+    })
+}

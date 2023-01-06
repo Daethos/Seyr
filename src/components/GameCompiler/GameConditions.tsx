@@ -47,9 +47,10 @@ interface Props {
     gainExperience: any;
     combatEngaged: boolean;
     setCombatEngaged: React.Dispatch<React.SetStateAction<boolean>>;
+    setLootRoll: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gainExperience, combatEngaged, setCombatEngaged, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gainExperience, combatEngaged, setCombatEngaged, setLootRoll, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -153,6 +154,7 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
                 setGameIsLive(false);
                 setCombatEngaged(false);
                 setDodgeStatus(false);
+                setLootRoll(true);
             }
             if (response.data.computer_win === true) {
                 playDeath();

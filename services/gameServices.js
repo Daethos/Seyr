@@ -101,9 +101,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             console.log('Daethos!')
             let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
             daethos = Math.round(daethos * (combatData.player.level / 10));
-            combatData.new_player_health += combatData.realized_player_damage;
+            combatData.current_player_health += combatData.realized_player_damage / 2;
+            combatData.new_player_health += combatData.realized_player_damage / 2;
             combatData.player_influence_description = 
-                `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+                `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage / 2)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
             combatData.new_player_health += daethos;
             combatData.new_computer_health -= daethos;
             if (combatData.new_player_health > 0) {
@@ -217,7 +218,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
-            let ilios = combatData.realized_player_damage;
+            let ilios = combatData.realized_player_damage / 2;
             combatData.new_player_health += ilios;
             combatData.current_player_health += ilios;
             console.log("Ilios!")
@@ -288,7 +289,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.weapons[0].influences[0] === "Ma'anre") { // Moon
-            let maanre = combatData.realized_player_damage;
+            let maanre = combatData.realized_player_damage / 2;
             combatData.new_player_health += maanre;
             combatData.current_player_health += maanre;
             console.log("Ma'anre!")
@@ -420,10 +421,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 console.log("Daethos!")
                 let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
                 daethos = Math.round(daethos * (combatData.player.level / 10));
-                combatData.new_player_health += combatData.realized_player_damage;
-                combatData.current_player_health += combatData.realized_player_damage;
+                combatData.new_player_health += combatData.realized_player_damage / 2;
+                combatData.current_player_health += combatData.realized_player_damage / 2;
                 combatData.player_influence_description_two = 
-                    `Daethos wraps through your Caer, ${combatData.weapons[1].name} healing you for ${Math.round(combatData.realized_player_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+                    `Daethos wraps through your Caer, ${combatData.weapons[1].name} healing you for ${Math.round(combatData.realized_player_damage / 2)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
                 combatData.new_player_health += daethos;
                 combatData.new_computer_health -= daethos;
                 combatData.current_player_health += daethos;
@@ -533,7 +534,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
-                let ilios = combatData.realized_player_damage;
+                let ilios = combatData.realized_player_damage / 2;
                 combatData.new_player_health += ilios;
                 combatData.current_player_health += ilios;
                 combatData.player_influence_description_two = 
@@ -599,7 +600,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             }
             if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
-                let maanre = combatData.realized_player_damage;
+                let maanre = combatData.realized_player_damage / 2;
                 combatData.new_player_health += maanre;
                 combatData.current_player_health += maanre;
                 combatData.player_influence_description_two = 

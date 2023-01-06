@@ -44,6 +44,7 @@ async function indexEquipment(req, res) {
 }
 
 const determineRarityByLevel = (level) => {
+    console.log(level, '%c We have made it to the determineRarityByLevel in the Equipment Controller!', 'color: blue')
     const chance = Math.random();
     let rarity = '';
     let uScale = level / 12;
@@ -79,24 +80,27 @@ const determineRarityByLevel = (level) => {
             rarity = 'Uncommon';
         }
     }
+    console.log(rarity, 'Rarity ?')
     return rarity;
 }
 
 const determineEquipmentType = () => {
-    const type = Math.floor(Math.random() * 100  + 1);
-    if (type <= 30) {
+    console.log('%c We have made it to the determineEquipmentType in the Equipment Controller!', 'color: blue')
+    const roll = Math.floor(Math.random() * 100  + 1);
+    
+    if (roll <= 30) {
         return 'Weapon';
-    } else if (type > 40) {
+    } else if (roll > 40) {
         return 'Shield';
-    } else if (type > 50) {
+    } else if (roll > 50) {
         return 'Helmet';
-    } else if (type > 60) {
+    } else if (roll > 60) {
         return 'Chest';
-    } else if (type > 70) {
+    } else if (roll > 70) {
         return 'Legs';
-    } else if (type > 80) {
+    } else if (roll > 80) {
         return 'Ring';
-    } else if (type > 90) {
+    } else if (roll > 90) {
         return 'Amulet';
     } else {
         return 'Trinket';
@@ -104,26 +108,55 @@ const determineEquipmentType = () => {
 }
 
  async function getOneEquipment (req, res) {
+    console.log('%c We have made it to the getOneEquipment in the Equipment Controller!', 'color: blue')
     try {
-        const rarity = determineRarityByLevel(req.body.level);
+        const rarity = determineRarityByLevel(req.params.level);
         const type = determineEquipmentType();
-        if (type === 'Weapon') {
-            const equipment = await Weapon.findOne({ rarity: rarity }).populate().exec();
-        } else if (type === 'Shield') {
-            const equipment = await Shield.findOne({ rarity }).populate().exec();
-        } else if (type === 'Helmet') {
-            const equipment = await Helmet.findOne({ rarity }).populate().exec();
-        } else if (type === 'Chest') {
-            const equipment = await Chest.findOne({ rarity }).populate().exec();
-        } else if (type === 'Legs') {
-            const equipment = await Legs.findOne({ rarity }).populate().exec();
-        } else if (type === 'Ring') {
-            const equipment = await Ring.findOne({ rarity }).populate().exec();
-        } else if (type === 'Amulet') {
-            const equipment = await Amulet.findOne({ rarity }).populate().exec();
-        } else {
-            const equipment = await Trinket.findOne({ rarity }).populate().exec();        
+        console.log(rarity, type, 'rarity, type')
+        let equipment;
+        if (req.params.level < 4) {
+            if (Math.random() > 0.3) {
+                // equipment = await Weapon.findOne({ rarity }).populate().exec();
+                equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                // let cursor = Weapon.find({ rarity }).cursor();
+                // equipment = await cursor.sample(1);
+                // equipment = await cursor.next();
+                
+                console.log(equipment, 'equipment ?')
+                res.status(200).json({ data: equipment });
+                return;
+            } else {
+                // equipment = await Shield.findOne({ rarity }).populate().exec();
+                equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                // let cursor = Shield.find({ rarity }).cursor();
+                // equipment = await cursor.sample(1);
+                // equipment = await cursor.next();
+                console.log(equipment, 'equipment ?')
+                res.status(200).json({ data: equipment });
+                return;
+            }
+
         }
+
+
+        if (type === 'Weapon') {
+            equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Shield') {
+            equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Helmet') {
+            equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Chest') {
+            equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Legs') {
+            equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Ring') {
+            equipment = await Ring.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Amulet') {
+            equipment = await Amulet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+        } else if (type === 'Trinket') {
+            equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
+        }
+        console.log(equipment, 'equipment ?')
         res.status(200).json({ data: equipment });
     } catch (err) {
         res.status(400).json(err);

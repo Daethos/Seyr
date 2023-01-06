@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import './GameSolo.css'
 import * as asceanAPI from '../../utils/asceanApi';  
+import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -35,6 +36,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [saveExp, setSaveExp] = useState<boolean>(false);
     const [dialog, setDialog] = useState<any>({});
     const [combatEngaged, setCombatEngaged] = useState<boolean>(false);
+    const [lootRoll, setLootRoll] = useState<boolean>(false);
+    const [lootDrop, setLootDrop] = useState<any>({})
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -627,6 +630,32 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Gaining Experience')
         }
     }
+
+    useEffect(() => {
+        if (lootRoll === false) return;
+        let roll = Math.floor(Math.random() * 100) + 1;
+        if (roll <= 25) {
+            getOneLootDrop(ascean.level);
+        }
+        getOneLootDrop(ascean.level);
+        return () => {
+            setLootRoll(false);
+        }
+    }, [lootRoll, playerWin])
+    
+    const getOneLootDrop = async (level: number) => {
+        try {
+            console.log(level, 'Level For Loot Drop')
+            let response = await eqpAPI.getLootDrop(level);
+            console.log(response.data[0], 'Loot Drop');
+            setLootDrop([
+                    response.data[0],
+                    ...lootDrop
+            ]);
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Loot Drop')
+        }
+    }
     
     useEffect(() => {
         if (highScore > ascean.high_score) {
@@ -769,8 +798,8 @@ const GameSolo = ({ user }: GameProps) => {
                 playCounter()
             }
             if (response.data.player_win === true) {
-                playWin()
-                setWinStreak(winStreak + 1)
+                playWin();
+                setWinStreak(winStreak + 1);
                 if (winStreak + 1 > highScore) {
                     setHighScore((score) => score + 1)
                 }
@@ -779,6 +808,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setGameIsLive(false);
                 setCombatEngaged(false);
                 setDodgeStatus(false);
+                setLootRoll(true);
             }
             if (response.data.computer_win === true) {
                 playDeath();
@@ -889,7 +919,7 @@ const GameSolo = ({ user }: GameProps) => {
                 winStreak={winStreak} loseStreak={loseStreak} setGameIsLive={setGameIsLive} highScore={highScore} combatEngaged={combatEngaged}
                 getOpponent={getOpponent} resetAscean={resetAscean} gameIsLive={gameIsLive} setHighScore={setHighScore}
                 playDaethic={playDaethic} playEarth={playEarth} playFire={playFire} playBow={playBow} playFrost={playFrost}
-                playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce}
+                playLightning={playLightning} playSorcery={playSorcery} playWind={playWind} playPierce={playPierce} setLootRoll={setLootRoll}
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild} setCombatEngaged={setCombatEngaged}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
@@ -899,7 +929,7 @@ const GameSolo = ({ user }: GameProps) => {
                     npc={opponent.name} dialog={dialog} setCombatEngaged={setCombatEngaged} setGameIsLive={setGameIsLive} 
                     playerWin={playerWin} computerWin={computerWin}
                     winStreak={winStreak} loseStreak={loseStreak} highScore={highScore}
-                    resetAscean={resetAscean} getOpponent={getOpponent} 
+                    resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
                 />
                 : ''
             }

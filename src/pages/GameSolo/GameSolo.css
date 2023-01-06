@@ -55,6 +55,7 @@
 .dialog-text {
   height: 200px;
   width: 75%;
+  margin-top: 1%;
   color: #fdf6d8;
   overflow-y: scroll;
   text-align: center;
