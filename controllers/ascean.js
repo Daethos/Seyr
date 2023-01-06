@@ -1,6 +1,14 @@
 const User = require('../models/user');
 const Ascean = require('../models/ascean');
 const asceanService = require('../services/asceanServices')
+const Weapon = require('../models/weapon');
+const Shield = require('../models/shield');
+const Helmet = require('../models/helmet');
+const Chest = require('../models/chest');
+const Legs = require('../models/legs');
+const Ring = require('../models/ring');
+const Amulet = require('../models/amulet');
+const Trinket = require('../models/trinket');
 
 module.exports = {
     create,
@@ -11,8 +19,8 @@ module.exports = {
     getAsceanStats,
     updateHighScore,
     updateLevel,
-    saveItemToAscean,
     saveExperience,
+    saveToInventory,
 }
 
 
@@ -60,6 +68,42 @@ async function editAscean(req, res) {
         res.status(201).json({ ascean: ascean })
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Editing the Ascean!')
+    }
+}
+
+async function determineItemType(id) {
+    const models = {
+        Weapon: Weapon,
+        Shield: Shield,
+        Helmet: Helmet,
+        Chest: Chest,
+        Legs: Legs,
+        Ring: Ring,
+        Amulet: Amulet,
+        Trinket: Trinket,
+    }
+      
+    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
+    console.log(id, 'And did we make it here? 2')
+    for (const itemType of itemTypes) {
+        const item = await models[itemType].findById(id).exec();
+        console.log(item, 'And 3?')
+        if (item) {
+            return item;
+        }
+    }
+    return null;
+  }  
+
+async function saveToInventory(req, res) {
+    try {
+        console.log(req.body, 'Req Body in Saving to Inventory')
+        const ascean = await Ascean.findById(req.body.ascean._id);
+        ascean.inventory.push(req.body.lootDrop._id);
+        await ascean.save();
+        res.status(201).json({ ascean });
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Saving to Inventory!')
     }
 }
 
@@ -268,6 +312,19 @@ async function getOneAscean(req, res) {
                                     .populate("amulet")
                                     .populate("trinket")
                                     .exec();
+        const inventoryPopulated = ascean.inventory.map(async item => {
+            const itemType = determineItemType(item);
+            console.log('The Fourth Potential ?')
+            if (itemType) {
+                return itemType;
+                // return await (itemType).findById(item).populate().exec();
+            }
+            return null;
+        });
+        console.log(inventoryPopulated, '<- Inventory Populated 5')
+        const inventory = await Promise.all(inventoryPopulated);
+        console.log(inventory, '<- Inventory 6')
+        ascean.inventory = inventory;
         res.status(200).json({ data: ascean })
     } catch (err) {
         res.status(400).json({ err });
@@ -293,17 +350,6 @@ async function getAsceanStats(req, res) {
         const data = await asceanService.asceanCompiler(ascean)
         //console.log(data)
         res.status(200).json({ data })
-    } catch (err) {
-        res.status(400).json({ err });
-    }
-}
-
-async function saveItemToAscean(req, res) {
-    try {
-       const ascean = await Ascean.findById(req.params.id);
-       ascean.inventory.push(req.body.itemId);
-       await ascean.save();
-        res.status(201).json({ data: ascean });
     } catch (err) {
         res.status(400).json({ err });
     }

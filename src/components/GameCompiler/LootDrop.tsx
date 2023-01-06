@@ -1,13 +1,40 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import * as asceanAPI from '../../utils/asceanApi';
 
 interface Props {
     lootDrop: any;
+    setLootDrop: React.Dispatch<React.SetStateAction<any>>;
+    ascean: any;
+    itemSaved: boolean;
+    setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LootDrop = ({ lootDrop }: Props) => {
+const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Props) => {
+    const [saveSetting, setSaveSetting] = useState({
+        ascean: ascean,
+        lootDrop: lootDrop
+    })
+
+    useEffect(() => {
+        setSaveSetting({
+            ascean: ascean,
+            lootDrop: lootDrop
+        });
+    }, [lootDrop])
+
+    const saveItem = async () => {
+        try {
+            const res = await asceanAPI.saveToInventory(saveSetting);
+            console.log(res, 'Saved Item to Inventory!');
+            setLootDrop(null);
+            setItemSaved(true);
+        } catch (err: any) {
+            console.log(err.message, 'Error Saving Item to Inventory!');
+        }
+    }
 
     const lootDropPopover = (
         <Popover className="text-info" id="popover">
@@ -46,8 +73,21 @@ const LootDrop = ({ lootDrop }: Props) => {
                 Critical Damage: {lootDrop?.critical_damage}x <br />
                 Dodge Timer: {lootDrop?.dodge}s <br />
                 Roll Chance: {lootDrop?.roll}% <br />
-                Influence: {lootDrop?.influences} <br /><br />
+                {
+                    lootDrop?.influences ?
+                    <>
+                Influence: {lootDrop?.influences} <br />
+                    </>
+                    : ''
+                }
+                <br />
                 {lootDrop?.rarity}
+                {
+                    itemSaved ?
+                    ""
+                    :
+                    <Button variant='' style={{ color: 'green', fontWeight: 550, float: 'right' }} onClick={saveItem}>Save</Button>
+                }
             </Popover.Body>
         </Popover>
     )

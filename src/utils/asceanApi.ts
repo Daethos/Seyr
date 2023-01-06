@@ -147,3 +147,19 @@ export async function levelUp(vaEsai: any) {
         });
     });
 }
+
+export async function saveToInventory(vaEsai: any) {
+    return fetch(BASE_URL + 'inventory', {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+    }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, '<- Response in Save to Inventory Utility Return')
+        });
+    });
+}

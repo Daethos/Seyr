@@ -40,6 +40,7 @@ const CombatDialogButtons = ({ options, handleCombatAction }: { options: any, ha
 }
 
 interface Props {
+    ascean: any;
     npc: any;
     dialog: [];
     setCombatEngaged: React.Dispatch<React.SetStateAction<boolean>>;
@@ -53,10 +54,12 @@ interface Props {
     highScore: number;
     lootDrop: any;
     setLootDrop: React.Dispatch<React.SetStateAction<any>>;
+    itemSaved: boolean;
+    setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
-const DialogBox = ({ npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop }: Props) => {
+const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, itemSaved, setItemSaved }: Props) => {
     const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const handleCombatAction = (options: any, action: string) => {
@@ -75,6 +78,7 @@ const DialogBox = ({ npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, 
             const response = await eqpAPI.getLootDrop(2);
             console.log(response.data[0], 'Response!');
             setLootDrop(response.data[0]);
+            setItemSaved(false);
         } catch (err) {
             console.log(err, 'Error!')
         }
@@ -103,9 +107,11 @@ const DialogBox = ({ npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, 
                         playerWin 
                         ? <>
                         You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
-                        {lootDrop ?  
-                        <LootDrop lootDrop={lootDrop} />
-                        : ''}
+                        {
+                        lootDrop?._id ?  
+                        <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                        : ''
+                        }
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={resetAscean}>Refresh Duel With {npc}</Button>
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek New Duelist For More Experience</Button>
                         </> 
@@ -120,9 +126,15 @@ const DialogBox = ({ npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, 
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={engageCombat}>Duel {npc}?</Button>
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek New Duelist</Button>
                         <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button>
-                        {lootDrop ?  
-                        <LootDrop lootDrop={lootDrop} />
-                        : ''}
+                        {
+                            lootDrop?._id ?
+                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            : ''
+                        }
+                        {/* {
+                        lootDrop?.name !== '' ?  
+                        <LootDrop lootDrop={lootDrop} ascean={ascean} />
+                        : ''} */}
                         </> 
                     : currentIntent === 'conditions' ?
                     <>

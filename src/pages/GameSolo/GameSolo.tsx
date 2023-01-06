@@ -37,7 +37,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [dialog, setDialog] = useState<any>({});
     const [combatEngaged, setCombatEngaged] = useState<boolean>(false);
     const [lootRoll, setLootRoll] = useState<boolean>(false);
-    const [lootDrop, setLootDrop] = useState<any>({})
+    const [lootDrop, setLootDrop] = useState<any>([]);
+    const [itemSaved, setItemSaved] = useState<boolean>(false);
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -632,6 +633,14 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     useEffect(() => {
+        if (itemSaved === false) return;
+        getAscean();
+        return () => {
+            setItemSaved(false);
+        }
+    }, [itemSaved])
+
+    useEffect(() => {
         if (lootRoll === false) return;
         let roll = Math.floor(Math.random() * 100) + 1;
         if (roll <= 25) {
@@ -652,6 +661,7 @@ const GameSolo = ({ user }: GameProps) => {
                     response.data[0],
                     ...lootDrop
             ]);
+            setItemSaved(false);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop')
         }
@@ -927,7 +937,7 @@ const GameSolo = ({ user }: GameProps) => {
                 !combatEngaged ?
                 <DialogBox 
                     npc={opponent.name} dialog={dialog} setCombatEngaged={setCombatEngaged} setGameIsLive={setGameIsLive} 
-                    playerWin={playerWin} computerWin={computerWin}
+                    playerWin={playerWin} computerWin={computerWin} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved}
                     winStreak={winStreak} loseStreak={loseStreak} highScore={highScore}
                     resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
                 />

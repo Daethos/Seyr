@@ -114,23 +114,30 @@ const determineEquipmentType = () => {
         const type = determineEquipmentType();
         console.log(rarity, type, 'rarity, type')
         let equipment;
+        let eqpCheck = Math.floor(Math.random() * 100  + 1);
         if (req.params.level < 4) {
-            if (Math.random() > 0.3) {
-                // equipment = await Weapon.findOne({ rarity }).populate().exec();
+            if (eqpCheck > 80) {
                 equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                // let cursor = Weapon.find({ rarity }).cursor();
-                // equipment = await cursor.sample(1);
-                // equipment = await cursor.next();
-                
+                console.log(equipment, 'equipment ?')
+                res.status(200).json({ data: equipment });
+                return;
+            } else if (eqpCheck > 60) {
+                equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                console.log(equipment, 'equipment ?')
+                res.status(200).json({ data: equipment });
+                return;
+            } else if (eqpCheck > 40) {
+                equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                console.log(equipment, 'equipment ?')
+                res.status(200).json({ data: equipment });
+                return;
+            } else if (eqpCheck > 20) {
+                equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
                 res.status(200).json({ data: equipment });
                 return;
             } else {
-                // equipment = await Shield.findOne({ rarity }).populate().exec();
-                equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                // let cursor = Shield.find({ rarity }).cursor();
-                // equipment = await cursor.sample(1);
-                // equipment = await cursor.next();
+                equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
                 res.status(200).json({ data: equipment });
                 return;

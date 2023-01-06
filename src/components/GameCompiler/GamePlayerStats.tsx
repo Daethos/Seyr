@@ -1,6 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import Inventory from './Inventory';
 
 interface Props {
     attributes: any;
@@ -10,9 +11,10 @@ interface Props {
     physicalDefense: number;
     physicalPosture: number;
     player: any;
+    inventory?: any;
 }
 
-const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
+const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player, inventory }: Props) => {
     let totalConstitution: number = attributes.totalConstitution + weaponAttributes?.constitution;
     let totalStrength: number = attributes.totalStrength + weaponAttributes?.strength;
     let totalAgility: number = attributes.totalAgility + weaponAttributes?.agility;
@@ -26,6 +28,8 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
     let achreMod: number = Math.round((totalAchre - 10) / 2);
     let caerenMod: number = Math.round((totalCaeren - 10) / 2);
     let kyosirMod: number = Math.round((totalKyosir - 10) / 2);
+
+
     const playerPopover = (
         <Popover id="popover">
             <Popover.Header id="popover-header" as="h2">{player.name}'s Statistics
@@ -51,6 +55,16 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
             <div>Achre: {attributes.totalAchre} [ {attributes.totalAchre < 10 ? '- ' + attributes.achreMod : '+ ' + attributes.achreMod} ]</div>
             <div>Caeren: {attributes.totalCaeren} [ {attributes.totalCaeren < 10 ? '- ' + attributes.caerenMod : '+ ' + attributes.caerenMod} ]</div>
             <div>Kyosir: {attributes.totalKyosir} [ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</div>
+            {
+                inventory?.length > 0 ?
+                inventory.map((item: any, index: number) => {
+                    return (
+                        
+                        <Inventory inventory={item} key={index} />
+                        )
+                })
+                : ''
+            }
             </Popover.Body>
         </Popover>
       );
