@@ -675,14 +675,14 @@ const GameSolo = ({ user }: GameProps) => {
             setPlayerDefense(response.data.data.defense)
             setAttributes(response.data.data.attributes)
             setTotalPlayerHealth(response.data.data.attributes.healthTotal)
-            setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
+            // setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
             setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three]);
             setCombatData({
                 ...combatData,
                 'player': response.data.data.ascean,
                 'player_health': response.data.data.attributes.healthTotal,
-                'current_player_health': response.data.data.attributes.healthTotal,
-                'new_player_health': response.data.data.attributes.healthTotal,
+                // 'current_player_health': response.data.data.attributes.healthTotal,
+                // 'new_player_health': response.data.data.attributes.healthTotal,
                 'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
                 'weapon_one': response.data.data.combat_weapon_one,
                 'weapon_two': response.data.data.combat_weapon_two,

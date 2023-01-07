@@ -86,7 +86,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                     itemSaved ?
                     ""
                     :
-                    <Button variant='' style={{ color: 'green', fontWeight: 550, float: 'right' }} onClick={saveItem}>Save</Button>
+                    <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: -3 + '%', fontSize: 18 + 'px', marginRight: -5 + '%' }} onClick={saveItem}>Save</Button>
                 }
             </Popover.Body>
         </Popover>
