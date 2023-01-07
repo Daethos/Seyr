@@ -38,15 +38,15 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
 
     const lootDropPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{lootDrop?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + lootDrop.imgURL} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{lootDrop?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {
-                    lootDrop?.grip ?
+                    lootDrop?.type && lootDrop?.grip ?
                     <>
                 {lootDrop?.type} [{lootDrop?.grip}] <br />
                 {lootDrop?.attack_type} [{lootDrop?.damage_type?.[0]}{lootDrop?.damage_type?.[1] ? ' / ' + lootDrop?.damage_type[1] : '' }]  <br />
                     </>
-                    : ''
+                    : lootDrop?.type ? <>{lootDrop?.type} <br /></> : ''
                 }
                 {lootDrop?.constitution > 0 ? 'CON: +' + lootDrop?.constitution + ' ' : ''}
                 {lootDrop?.strength > 0 ? 'STR: +' + lootDrop?.strength + ' ' : ''}
@@ -56,9 +56,9 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                 {lootDrop?.kyosir > 0 ? 'KYO: +' + lootDrop?.kyosir + ' ' : ''}<br />
                 Damage: {lootDrop?.physical_damage} Physical | {lootDrop?.magical_damage} Magical <br />
                 {
-                    lootDrop?.physical_defense ?
+                    lootDrop?.physical_resistance ?
                     <>
-                    Defense: {lootDrop?.physical_defense} Physical | {lootDrop?.magical_defense} Magical <br />
+                    Defense: {lootDrop?.physical_resistance} Physical | {lootDrop?.magical_resistance} Magical <br />
                     </>
                     : ''
                 }
@@ -92,10 +92,35 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
         </Popover>
     )
 
+    function getBorderStyle(rarity: string) {
+        switch (rarity) {
+            case 'Common':
+                return '2px solid white';
+            case 'Uncommon':
+                return '2px solid green';
+            case 'Rare':
+                return '2px solid blue';
+            case 'Epic':
+                return '2px solid purple';
+            case 'Legendary':
+                return '2px solid orange';
+            default:
+                return '2px solid grey';
+        }
+    }
+
+    const getItemStyle = {
+        background: 'black',
+        border: getBorderStyle(lootDrop?.rarity)
+    }
+
     return (
+        <div>
+        You have found a {lootDrop?.name}. <br />
         <OverlayTrigger trigger="click" placement="auto-start" overlay={lootDropPopover}>
-            <Button variant="outline-danger"  className="m-3 p-4 eqp-popover">{lootDrop?.name}</Button>
+            <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></Button>
         </OverlayTrigger>
+        </div>
     )
 }
 

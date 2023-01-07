@@ -21,6 +21,8 @@ module.exports = {
     updateLevel,
     saveExperience,
     saveToInventory,
+    swapItems,
+    removeItem,
 }
 
 
@@ -84,10 +86,10 @@ async function determineItemType(id) {
     }
       
     const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
-    console.log(id, 'And did we make it here? 2')
+    // console.log(id, 'And did we make it here? 2')
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();
-        console.log(item, 'And 3?')
+        // console.log(item, 'And 3?')
         if (item) {
             return item;
         }
@@ -97,13 +99,55 @@ async function determineItemType(id) {
 
 async function saveToInventory(req, res) {
     try {
-        console.log(req.body, 'Req Body in Saving to Inventory')
+        // console.log(req.body, 'Req Body in Saving to Inventory')
         const ascean = await Ascean.findById(req.body.ascean._id);
         ascean.inventory.push(req.body.lootDrop._id);
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving to Inventory!')
+    }
+}
+//TODO:FIXME: It works generally, but need to run a filter to remove the item that is swapped from the inventory to the ascean so it looks like it's gone from the inventory
+//TODO:FIXME: Also if the item to place in the inventory includes the word 'Empty' then I know to not push it into the inventory.
+
+async function swapItems(req, res) {
+    try {
+        // console.log(req.body, 'Req Body in Swapping Items')
+        const ascean = await Ascean.findById(req.params.id);
+        const keyToUpdate = Object.keys(req.body).find(key => {
+            console.log(key, 'Key in Swapping Items');
+            return typeof req.body[key] === 'string' && req.body[key] !== '';
+        });
+        console.log(ascean, 'Ascean in Swap Items')
+        const itemType = keyToUpdate.replace('new_', '');
+        const currentItemId = ascean[itemType];
+        // console.log(keyToUpdate, 'Key To Update')
+        ascean[itemType] = req.body[keyToUpdate];
+        const currentItem = await determineItemType(currentItemId);
+        if (!currentItem.name.includes('Empty')) {
+            ascean.inventory.push(currentItemId);
+        }
+        const currentItemIndex = ascean.inventory.indexOf(req.body[keyToUpdate]);
+        ascean.inventory.splice(currentItemIndex, 1);
+        await ascean.save();
+        res.status(201).json({ ascean });
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Swapping Items!')
+    }
+}
+
+async function removeItem(req, res) {
+    try {
+        const ascean = await Ascean.findById(req.params.id);
+        const itemID = req.body.inventory._id;
+        const itemIndex = ascean.inventory.indexOf(itemID);
+        ascean.inventory.splice(itemIndex, 1);
+        await ascean.save();
+        res.status(201).json({ ascean });
+    } catch (err) {
+        res.status(400).json({ err });
+        console.log(err.message, '<- Error in the Controller Removing Items!')
     }
 }
 
@@ -314,16 +358,16 @@ async function getOneAscean(req, res) {
                                     .exec();
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = determineItemType(item);
-            console.log('The Fourth Potential ?')
+            // console.log('The Fourth Potential ?')
             if (itemType) {
                 return itemType;
                 // return await (itemType).findById(item).populate().exec();
             }
             return null;
         });
-        console.log(inventoryPopulated, '<- Inventory Populated 5')
+        // console.log(inventoryPopulated, '<- Inventory Populated 5')
         const inventory = await Promise.all(inventoryPopulated);
-        console.log(inventory, '<- Inventory 6')
+        // console.log(inventory, '<- Inventory 6')
         ascean.inventory = inventory;
         res.status(200).json({ data: ascean })
     } catch (err) {

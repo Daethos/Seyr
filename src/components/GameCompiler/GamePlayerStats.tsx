@@ -55,16 +55,6 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
             <div>Achre: {attributes.totalAchre} [ {attributes.totalAchre < 10 ? '- ' + attributes.achreMod : '+ ' + attributes.achreMod} ]</div>
             <div>Caeren: {attributes.totalCaeren} [ {attributes.totalCaeren < 10 ? '- ' + attributes.caerenMod : '+ ' + attributes.caerenMod} ]</div>
             <div>Kyosir: {attributes.totalKyosir} [ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</div>
-            {
-                inventory?.length > 0 ?
-                inventory.map((item: any, index: number) => {
-                    return (
-                        
-                        <Inventory inventory={item} key={index} />
-                        )
-                })
-                : ''
-            }
             </Popover.Body>
         </Popover>
       );

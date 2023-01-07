@@ -11,6 +11,8 @@ router.put('/highscore', protect, asceanCtrl.updateHighScore);
 router.put('/exp', protect, asceanCtrl.saveExperience);
 router.put('/levelup', protect, asceanCtrl.updateLevel);
 router.put('/inventory', protect, asceanCtrl.saveToInventory);
+router.put('/:id/swap', protect, asceanCtrl.swapItems);
+router.put('/remove/:id', protect, asceanCtrl.removeItem);
 router.put('/:id', protect, asceanCtrl.editAscean);
 router.post('/', protect, asceanCtrl.create);
 router.delete('/:id', protect, asceanCtrl.delete);

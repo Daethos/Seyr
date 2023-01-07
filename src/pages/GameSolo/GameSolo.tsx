@@ -16,6 +16,8 @@ import useSound from 'use-sound'
 import LevelUpModal from '../../game/LevelUpModal';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import DialogBox from '../../game/DialogBox';
+import Button from 'react-bootstrap/Button';
+import InventoryBag from '../../components/GameCompiler/InventoryBag';
 
 interface GameProps {
     user: any;
@@ -39,6 +41,9 @@ const GameSolo = ({ user }: GameProps) => {
     const [lootRoll, setLootRoll] = useState<boolean>(false);
     const [lootDrop, setLootDrop] = useState<any>([]);
     const [itemSaved, setItemSaved] = useState<boolean>(false);
+    const [showInventory, setShowInventory] = useState<boolean>(false);
+    const [eqpSwap, setEqpSwap] = useState<boolean>(false);
+    const [removeItem, setRemoveItem] = useState<boolean>(false);
 
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
@@ -634,11 +639,72 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (itemSaved === false) return;
-        getAscean();
+        getAsceanQuickly();
         return () => {
             setItemSaved(false);
         }
     }, [itemSaved])
+
+    useEffect(() => {
+        console.log(eqpSwap, 'Swapping Equipment');
+      if (eqpSwap === false) return;
+        getAsceanSlicker();
+      return () => {
+        setEqpSwap(false);
+      }
+    }, [eqpSwap])
+
+    useEffect(() => {
+      getAsceanSlicker();
+    
+      return () => {
+        setRemoveItem(false);
+      }
+    }, [removeItem])
+    
+
+    const getAsceanSlicker = async () => {
+        try {
+            const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            setAscean(firstResponse.data);
+            const response = await asceanAPI.getAsceanStats(asceanID)
+            console.log(response.data.data, 'Response Compiling Stats')
+            setWeaponOne(response.data.data.combat_weapon_one)
+            setWeaponTwo(response.data.data.combat_weapon_two)
+            setWeaponThree(response.data.data.combat_weapon_three)
+            setPlayerDefense(response.data.data.defense)
+            setAttributes(response.data.data.attributes)
+            setTotalPlayerHealth(response.data.data.attributes.healthTotal)
+            setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
+            setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three]);
+            setCombatData({
+                ...combatData,
+                'player': response.data.data.ascean,
+                'player_health': response.data.data.attributes.healthTotal,
+                'current_player_health': response.data.data.attributes.healthTotal,
+                'new_player_health': response.data.data.attributes.healthTotal,
+                'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+                'weapon_one': response.data.data.combat_weapon_one,
+                'weapon_two': response.data.data.combat_weapon_two,
+                'weapon_three': response.data.data.combat_weapon_three,
+                'player_defense': response.data.data.defense,
+                'player_attributes': response.data.data.attributes,
+                'player_damage_type': response.data.data.combat_weapon_one.damage_type[0],
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly')
+        }
+    }
+    
+
+    const getAsceanQuickly = async () => {
+        try {
+            const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            setAscean(firstResponse.data);
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly')
+        }
+    }
 
     useEffect(() => {
         if (lootRoll === false) return;
@@ -657,10 +723,7 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(level, 'Level For Loot Drop')
             let response = await eqpAPI.getLootDrop(level);
             console.log(response.data[0], 'Loot Drop');
-            setLootDrop([
-                    response.data[0],
-                    ...lootDrop
-            ]);
+            setLootDrop(response.data[0]);
             setItemSaved(false);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop')
@@ -935,13 +998,21 @@ const GameSolo = ({ user }: GameProps) => {
             />
             {
                 !combatEngaged ?
+                <>
                 <DialogBox 
                     npc={opponent.name} dialog={dialog} setCombatEngaged={setCombatEngaged} setGameIsLive={setGameIsLive} 
                     playerWin={playerWin} computerWin={computerWin} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved}
                     winStreak={winStreak} loseStreak={loseStreak} highScore={highScore}
                     resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
-                />
+                    />
+                <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>    
+                </>
                 : ''
+            }
+            {
+                showInventory ?
+                <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} />
+                : ""
             }
             {
                 asceanState.ascean.experience == asceanState.experienceNeeded ?

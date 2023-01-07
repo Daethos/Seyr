@@ -163,3 +163,35 @@ export async function saveToInventory(vaEsai: any) {
         });
     });
 }
+
+export async function equipmentSwap(vaEsai: any) {
+    return fetch(BASE_URL + vaEsai._id + '/swap', {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, '<- Response in Equipment Swap Utility Return');
+        });
+    });
+}
+
+export async function removeItem(vaEsai: any) {
+    return fetch(BASE_URL + 'remove/' + vaEsai.id, {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, '<- Response in Remove Item Utility Return');
+        });
+    });
+}
