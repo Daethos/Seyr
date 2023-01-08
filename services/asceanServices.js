@@ -102,7 +102,7 @@ const attributeCompiler = async (ascean, rarities) => {
     newAttributes.equipCaeren = newAttributes.totalCaeren - newAttributes.rawCaeren;
     newAttributes.equipKyosir = newAttributes.totalKyosir - newAttributes.rawKyosir;
 
-    newAttributes.healthTotal = 15 + ((newAttributes.totalConstitution * ascean.level) + ((newAttributes.constitutionMod + Math.round((newAttributes.caerenMod + newAttributes.strengthMod) / 2)) * ascean.level));
+    newAttributes.healthTotal = 15 + ((newAttributes.totalConstitution * ascean.level) + ((newAttributes.constitutionMod + Math.round((newAttributes.caerenMod + newAttributes.strengthMod) / 4)) * ascean.level));
     newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2)
 
     return (
@@ -321,7 +321,7 @@ const coefficientCompiler = async (ascean, item) => {
             coefficient = ascean.level / 8;
             break;
         case 'Rare':
-            coefficient = ascean.level / 15;
+            coefficient = ascean.level / 12;
             break;
         case 'Epic':
             coefficient = ascean.level / 20;
@@ -331,7 +331,7 @@ const coefficientCompiler = async (ascean, item) => {
             break;
     }
     if (coefficient > 1) coefficient = 1;
-
+    coefficient = 1;
     // console.log(ascean.name, item.name, coefficient, 'coefficient Compiler')
     return coefficient
 }

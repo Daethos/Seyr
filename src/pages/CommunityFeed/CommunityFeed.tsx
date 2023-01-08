@@ -8,7 +8,10 @@ import * as communityAPI from '../../utils/communityApi'
 import CommunityAscean from '../../components/CommunityAscean/CommunityAscean'
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-
+import Table from 'react-bootstrap/Table';
+import Accordion from 'react-bootstrap/Accordion';
+import { Nav } from 'react-bootstrap';
+import { Link, NavLink } from 'react-router-dom';
 
 interface CommunityProps {
     loggedUser: any;
@@ -17,20 +20,46 @@ interface CommunityProps {
 const CommunityFeed = ({ loggedUser }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [loading, setLoading] = useState(true);
+    const [highScores, setHighScores] = useState<any>([]);
 
     useEffect(() => {
         getAscean()
     }, [])
 
+    function compareScores(a: any, b: any) {
+        // console.log(a[0].ascean, ': ', a[0].score, ' vs ', b[0].ascean, ': ', b[0].score)
+        return a[0].score - b[0].score;
+       
+    }
+
     async function getAscean() {
         setLoading(true);
         try {
             const response = await communityAPI.getEveryone();
-            console.log(response, ' <- the response in getAscean')
-            setAscean([...response.data].reverse())
-            setLoading(false)
+            console.log(response, ' <- the response in getAscean');
+            const scores = await response.data.map((ascean: any, index: number) => {
+                // console.log(ascean, index, 'What is this?')
+                let scoreData = {
+                  ascean: ascean.name,
+                  score: ascean.high_score,
+                  key: index,
+                  _id: ascean._id,
+                  mastery: ascean.mastery,
+                  photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'
+                }
+                let newArr = []
+                newArr.push(scoreData)
+                return (
+                  newArr
+                )
+              })
+              const sortedScores = await scores.sort(compareScores)
+              // console.log(sortedScores, 'Sorted Scores ?!')
+              setHighScores(sortedScores.reverse())
+            setAscean([...response.data].reverse());
+            setLoading(false);
         } catch (err: any) {
-            setLoading(false)
+            setLoading(false);
             console.log(err.message);
         }
     }
@@ -113,7 +142,45 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
             }
             {/* <CommunitySearch ascean={ascean} loggedUser={loggedUser} /> */}
         </Row>
-        <Row className="justify-content-center my-5">
+        <Row className="justify-content-center my-2">
+            <h6 style={{ textAlign: 'center' }}className='mb-5' >
+        <Accordion>
+        <Accordion.Item eventKey="0">
+        <Accordion.Header>High Scores [Public] :</Accordion.Header>
+        <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
+        <Table responsive style={{ color: '#fdf6d8' }}>
+          <thead>
+            <tr>
+              <th>Ascean</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Mastery</th>
+            </tr>
+          </thead>
+        { highScores.map((ascean: any, index: number) => {
+          return (
+            <tbody>
+            { index < 10 ? 
+              <tr key={index}>
+                <td>
+                <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
+                  style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
+                </td>
+                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
+                  <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' >{ascean[0].ascean}</Nav.Link>
+                </td>
+                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
+                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
+              </tr>
+            : '' }
+            </tbody>
+          )
+        })}
+        </Table>
+        </Accordion.Body>
+        </Accordion.Item>
+        </Accordion>
+        </h6>
         {ascean.map((a: any) => {
             return (
                 <CommunityAscean

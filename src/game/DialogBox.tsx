@@ -88,6 +88,8 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
         console.log(currentIntent);
     }, [currentIntent]);
 
+    //TODO:FIXME: Note to self, make a Trader or Services type player, and create new dialog type, not Opponent, but the aforementioned name. With different options, some quests, with services, can trade or create items for the player.
+
     
     return (
         <div className='dialog-box'>
@@ -106,31 +108,35 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                     : currentIntent === 'challenge' ?
                         playerWin 
                         ? <>
+                        <p style={{ color: 'orangered' }}>
                         You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
+                        </p>
+                        "Well check you out, {ascean.name}, you've won the duel. Congratulations" <br /> <br /> 
                         {
                         lootDrop?._id ?  
                         <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
                         : ''
                         }
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={resetAscean}>Refresh Duel With {npc}</Button>
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek New Duelist For More Experience</Button>
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={resetAscean}>Refresh Your Duel With {npc}.</Button>
                         </> 
                         : computerWin 
                         ? <>
+                        <p style = {{ color: 'dodgerblue' }}>
                         You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
+                        </p>
+                        "Well now, {ascean.name}, can't say no one expected this, did we? Tell you what, we can keep at this till you bear luck's fortune."
                         <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={resetAscean}>Reduel {npc} To Win Back Your Honor?</Button>
-                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps' }} onClick={getOpponent}>Another Day, New Duelist.</Button>
                         </> 
                         :
                         <>
-                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={engageCombat}>Duel {npc}?</Button>
-                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek New Duelist</Button>
+                        "Oh is that why you're here, goodness. Very well, {ascean.name}. Shall we?"<br />
+                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={engageCombat}>Commence Duel with {npc}?</Button>
                         {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button> */}
-                        {
+                        {/* {
                             lootDrop?._id ?
                             <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
                             : ''
-                        }
+                        } */}
                         {/* {
                         lootDrop?.name !== '' ?  
                         <LootDrop lootDrop={lootDrop} ascean={ascean} />
@@ -139,6 +145,52 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                     : currentIntent === 'conditions' ?
                     <>
                         Conditions
+                    </>
+                    : currentIntent === 'farewell' ?
+                    <>
+                        <br />
+                        {
+                            playerWin ?
+                            <>
+                            "Perhaps it's for the best. May you seek a worthy opponent, {ascean.name}."<br />
+                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Potential Duelist For More Experience</Button>
+                            </>
+                            : computerWin ?
+                            <>
+                            "Take care {ascean.name}, and seek aid. You do not look well."<br />
+                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps' }} onClick={getOpponent}>Meh, Another Day, New Duelist.</Button>
+                            </>
+                            : 
+                            <>
+                            "Perhaps we'll meet again, {ascean.name}."<br />
+                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Duelist Instead</Button>
+                            </>
+                        }
+                    </>
+                    : currentIntent === 'localLore' ?
+
+                    <>
+                        Local Lore
+                    </>
+                    : currentIntent === 'localWhispers' ?
+                    <>
+                        Local Whispers
+                    </>
+                    : currentIntent === 'persuasion' ?
+                    <>
+                        Persuasion
+                    </>
+                    : currentIntent === 'services' ?
+                    <>
+                        Services
+                    </>
+                    : currentIntent === 'provincialWhispers' ?
+                    <>
+                        Provincial Whispers
+                    </>
+                    : currentIntent === 'worldLore' ?
+                    <>
+                        World Lore
                     </>
                     : ''
                 }

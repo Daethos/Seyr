@@ -215,6 +215,7 @@
   }
 #player-health {
     background-color: red;
+    /* border: 1.5px solid red; */
     font-size: 10px;
 }
 #story {
@@ -228,6 +229,7 @@
     color: white;
     font-weight: 700;
     background: transparent;
+    /* border: 2px solid purple; */
 }
 .progress-text {
     justify-content: center;
