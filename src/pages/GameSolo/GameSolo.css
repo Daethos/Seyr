@@ -260,11 +260,11 @@
     position: absolute;
     overflow: hidden;
     width: 100%;
-    font-size: 14px;
+    font-size: 16px;
     color: #fdf6d8;
-    font-weight: 650;
+    font-weight: 900;
     background: transparent;
-    -webkit-text-stroke-width: .9px;
+    -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
     /* border: 2px solid purple; */
   }
@@ -273,7 +273,7 @@
   margin-left: auto;
   margin-right: auto;
   /* justify-content: center; */
-  margin-top: -2.75%;
+  margin-top: -3.5%;
   
 }
 .progressxp {
