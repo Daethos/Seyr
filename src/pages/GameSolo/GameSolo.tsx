@@ -918,7 +918,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'new_player_health': totalPlayerHealth,
                     'current_computer_health': totalComputerHealth,
                     'new_computer_health': totalComputerHealth,
-                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    // 'weapons': [weaponOne, weaponTwo, weaponThree],
                     'player_win': false,
                     'computer_win': false
                 });
@@ -933,6 +933,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'current_computer_health': totalComputerHealth,
                     'new_computer_health': totalComputerHealth,
                     'weapons': [weaponOne, weaponTwo, weaponThree],
+                    'player_damage_type': weaponOne.damage_type[0],
                     'player_win': false,
                     'computer_win': false
                 });
@@ -943,7 +944,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'player_attributes': attributes,
                     'current_computer_health': totalComputerHealth,
                     'new_computer_health': totalComputerHealth,
-                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    // 'weapons': [weaponOne, weaponTwo, weaponThree],
                     'player_win': false,
                     'computer_win': false
                 });
@@ -971,12 +972,6 @@ const GameSolo = ({ user }: GameProps) => {
             <Loading Combat={true} />
         )
     }
-
-    // if (loadingAscean) {
-    //     return (
-    //         <Loading Combat={true} />
-    //     )
-    // }
 
     return (
         <Container fluid id="game-container">

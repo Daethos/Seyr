@@ -4,6 +4,7 @@ import Loading from '../Loading/Loading';
 import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
 import Container from 'react-bootstrap/Container'
+import ExperienceBar from './ExperienceBar';
 
 interface Props {
   ascean: any;
@@ -61,12 +62,13 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
         />
       {/* } */}
       <div className="actions">
+      <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} />
       </div>
       </div>
     : 
     <div className="game-block" id='opponent-block'
       // style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}
-    >
+      >
     <div className="">
     <GamePlayerStats attributes={combatData.computer_attributes} player={combatData.computer} weaponAttributes={combatData.computer_weapons[0]} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
     {/* <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3> */}

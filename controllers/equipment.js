@@ -48,11 +48,15 @@ const determineRarityByLevel = (level) => {
     const chance = Math.random();
     let rarity = '';
     let uScale = level / 12;
-    let rScale = level / 72;
+    let rScale = level / 60;
     let eScale = level / 300;
     let lScale = level / 10000;
     if (level < 4) {
-        rarity = 'Common';
+        if (uScale > chance) {
+            rarity = 'Uncommon';
+        } else { 
+            rarity = 'Common';
+        }
     } else if (level >= 4 && level < 12) {
         if (rScale > chance) {
             rarity = 'Rare';

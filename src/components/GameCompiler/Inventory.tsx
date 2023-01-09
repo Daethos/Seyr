@@ -255,7 +255,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
 
     return (
         <>
-        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ marginTop: 50 + '%', zIndex: 10 }}>
+        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ marginTop: 50 + '%' }}>
             <Modal.Header>
                 Do You Wish To Remove and Destroy Your {inventory?.name}?
             </Modal.Header>

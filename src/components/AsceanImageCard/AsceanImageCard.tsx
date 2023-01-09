@@ -345,7 +345,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         border: getBorderStyle(ring_one?.rarity)
     }
     const getRingTwoStyle = {
-        border: getBorderStyle(ring_one?.rarity)
+        border: getBorderStyle(ring_two?.rarity)
     }
     const getTrinketStyle = {
         border: getBorderStyle(trinket?.rarity)

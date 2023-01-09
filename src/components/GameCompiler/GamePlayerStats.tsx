@@ -63,7 +63,7 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
         <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
         <Button variant="">
             <div className="">
-            <h3 style={{ fontSize: 12 + 'px', color: '#fdf6d8', textDecoration: 'none' }} className=''>
+            <h3 style={{ fontSize: 13 + 'px', color: '#fdf6d8', textDecoration: 'none' }} className='gameplayername'>
             {/* <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span> */}
             {player.name}</h3>
             </div>

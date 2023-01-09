@@ -111,7 +111,7 @@
     margin-left: -12.5%;
     width: 112.5%;
   }
-#player-health {
+/* #player-health {
     background-color: red;
     font-size: 10px;
 }
@@ -119,16 +119,14 @@
     position: absolute;
     overflow: hidden;
     width: 100%;
-    font-size: 10px;
+    font-size: 11px;
     color: white;
     font-weight: 700;
     background: transparent;
 }
 .progress-text {
-    justify-content: center;
-    align-items: center;
-    margin-left: 25%;
-}
+  text-align: center;
+} */
 #attack-options {
     background-color: rgb(0, 0, 0);
     /* color: purple */
