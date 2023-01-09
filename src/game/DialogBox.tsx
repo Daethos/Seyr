@@ -54,12 +54,14 @@ interface Props {
     highScore: number;
     lootDrop: any;
     setLootDrop: React.Dispatch<React.SetStateAction<any>>;
+    lootDropTwo: any;
+    setLootDropTwo: React.Dispatch<React.SetStateAction<any>>;
     itemSaved: boolean;
     setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
-const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, itemSaved, setItemSaved }: Props) => {
+const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const handleCombatAction = (options: any, action: string) => {
@@ -75,9 +77,21 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
     }
     const getLoot = async () => {
         try {
-            const response = await eqpAPI.getLootDrop(2);
+            const response = await eqpAPI.getLootDrop(20);
             console.log(response.data[0], 'Response!');
             setLootDrop(response.data[0]);
+
+            let roll = Math.floor(Math.random() * 100) + 1;
+            if (roll <= 25) {
+                const responseTwo = await eqpAPI.getLootDrop(20);
+                console.log(responseTwo.data[0], 'Response Two!');
+                setLootDropTwo(responseTwo.data[0]);
+            } else {
+                setLootDropTwo(null);
+            }
+
+            
+            setItemSaved(false);
             setItemSaved(false);
         } catch (err) {
             console.log(err, 'Error!')
@@ -113,9 +127,16 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                         </p>
                         "Well check you out, {ascean.name}, you've won the duel. Congratulations" <br /> <br /> 
                         {
-                        lootDrop?._id ?  
-                        <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                        : ''
+                            lootDrop?._id && lootDropTwo?._id ?
+                            <>
+                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            </>
+                            : lootDrop?._id ?
+                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            : lootDropTwo?._id ?
+                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            : ''
                         }
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={resetAscean}>Refresh Your Duel With {npc}.</Button>
                         </> 
@@ -131,15 +152,22 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                         <>
                         "Oh is that why you're here, goodness. Very well, {ascean.name}. Shall we?"<br />
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={engageCombat}>Commence Duel with {npc}?</Button>
-                        {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button> */}
-                        {/* {
-                            lootDrop?._id ?
+                        {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button>
+                        {
+                            lootDrop?._id && lootDropTwo?._id ?
+                            <>
                             <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            </>
+                            : lootDrop?._id ?
+                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            : lootDropTwo?._id ?
+                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
                             : ''
                         } */}
                         {/* {
                         lootDrop?.name !== '' ?  
-                        <LootDrop lootDrop={lootDrop} ascean={ascean} />
+                        <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved}  />
                         : ''} */}
                         </> 
                     : currentIntent === 'conditions' ?

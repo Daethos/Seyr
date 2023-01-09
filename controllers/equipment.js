@@ -90,17 +90,17 @@ const determineEquipmentType = () => {
     
     if (roll <= 30) {
         return 'Weapon';
-    } else if (roll > 40) {
+    } else if (roll < 40) {
         return 'Shield';
-    } else if (roll > 50) {
+    } else if (roll < 50) {
         return 'Helmet';
-    } else if (roll > 60) {
+    } else if (roll < 60) {
         return 'Chest';
-    } else if (roll > 70) {
+    } else if (roll < 70) {
         return 'Legs';
-    } else if (roll > 80) {
+    } else if (roll < 80) {
         return 'Ring';
-    } else if (roll > 90) {
+    } else if (roll < 90) {
         return 'Amulet';
     } else {
         return 'Trinket';

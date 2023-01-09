@@ -1365,83 +1365,85 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     }
 
     if (player_action === 'attack') { 
-        if (computerActions.roll_rating > computerActions.armor_rating) {
-            newData.roll_weight += 2
-        } else {
-            newData.posture_weight += 2
-        }
-        newData.counter_weight += 1 
-        newData.attack_weight -= 3
-        newData.counter_attack_weight += 4
-        newData.counter_counter_weight -= 1
-        newData.counter_dodge_weight -= 1
-        newData.counter_posture_weight -= 1
-        newData.counter_roll_weight -= 1
+        // if (computerActions.roll_rating > computerActions.armor_rating) {
+        //     newData.roll_weight += 2
+        // } else {
+        //     newData.posture_weight += 2
+        // }
+        newData.roll_weight += 1;
+        newData.posture_weight += 1;
+        newData.counter_weight += 1;
+        newData.attack_weight -= 3;
+        newData.counter_attack_weight += 4;
+        newData.counter_counter_weight -= 1;
+        newData.counter_dodge_weight -= 1;
+        newData.counter_posture_weight -= 1;
+        newData.counter_roll_weight -= 1;
     }
     if (player_action === 'counter') { 
-        newData.counter_weight -= 3
-        // newData.dodge_weight += 2
-        newData.attack_weight += 1  
-        newData.posture_weight += 1
-        newData.roll_weight += 1
-        newData.counter_counter_weight += 2
-        newData.counter_attack_weight -= 1
-        newData.counter_dodge_weight -= 1
+        newData.counter_weight -= 3;
+        // newData.dodge_weight += 2;
+        newData.attack_weight += 1;
+        newData.posture_weight += 1;
+        newData.roll_weight += 1;
+        newData.counter_counter_weight += 2;
+        newData.counter_attack_weight -= 1;
+        newData.counter_dodge_weight -= 1;
     }
     if (player_action === 'dodge') { 
-        // newData.counter_weight += 2
-        // newData.dodge_weight -= 2
-        newData.counter_dodge_weight += 4
-        newData.counter_attack_weight -= 1
-        newData.counter_counter_weight -= 1
-        newData.counter_posture_weight -= 1
-        newData.counter_roll_weight -= 1
+        // newData.counter_weight += 2;
+        // newData.dodge_weight -= 2;
+        newData.counter_dodge_weight += 4;
+        newData.counter_attack_weight -= 1;
+        newData.counter_counter_weight -= 1;
+        newData.counter_posture_weight -= 1;
+        newData.counter_roll_weight -= 1;
     }
     if (player_action === 'posture') { 
-        newData.attack_weight += 2  
-        newData.posture_weight -= 3
-        newData.counter_weight += 1
-        newData.counter_posture_weight += 3
-        newData.counter_roll_weight -= 2
-        newData.counter_attack_weight -= 1
+        newData.attack_weight += 2;  
+        newData.posture_weight -= 3;
+        newData.counter_weight += 1;
+        newData.counter_posture_weight += 3;
+        newData.counter_roll_weight -= 2;
+        newData.counter_attack_weight -= 1;
     }
 
     if (player_action === 'roll') { 
-        newData.attack_weight += 2  
-        newData.roll_weight -= 3
-        newData.counter_weight += 1
-        newData.counter_roll_weight += 3
-        newData.counter_posture_weight -= 2
-        newData.counter_attack_weight -= 1
+        newData.attack_weight += 2;  
+        newData.roll_weight -= 3;
+        newData.counter_weight += 1;
+        newData.counter_roll_weight += 3;
+        newData.counter_posture_weight -= 2;
+        newData.counter_attack_weight -= 1;
     }
 
     // const computerAction = async (computerActions) => {
 
     let actionNumber = Math.floor(Math.random() * 101);
     if (actionNumber > (100 - computerActions.attack)) {
-        computer_action = 'attack'
+        computer_action = 'attack';
     } else if (actionNumber > (100 - computerActions.attack - computerActions.counter)) {
-        computer_action = 'counter'
+        computer_action = 'counter';
     } else if (actionNumber > (100 - computerActions.attack - computerActions.counter - computerActions.dodge)) {
-        computer_action = 'dodge'
+        computer_action = 'dodge';
     } else if (actionNumber > (100 - computerActions.attack - computerActions.counter - computerActions.dodge - computerActions.posture)) {
-        computer_action = 'posture'
+        computer_action = 'posture';
     } else {
-        computer_action = 'roll'
+        computer_action = 'roll';
     }
 
     if (computer_action === 'counter') {
         let counterNumber = Math.floor(Math.random() * 101);
         if (counterNumber > (100 - computerActions.counter_attack)) {
-            computer_counter = 'attack'
+            computer_counter = 'attack';
         } else if (counterNumber > (100 - computerActions.counter_attack - computerActions.counter_counter)) {
-            computer_counter = 'counter'
+            computer_counter = 'counter';
         } else if (counterNumber > (100 - computerActions.counter_attack - computerActions.counter_counter - computerActions.counter_dodge)) {
-            computer_counter = 'dodge'
+            computer_counter = 'dodge';
         } else if (counterNumber > (100 - computerActions.counter_attack - computerActions.counter_counter - computerActions.counter_dodge - computerActions.counter_posture)) {
-            computer_counter = 'posture'
+            computer_counter = 'posture';
         } else {
-            computer_counter = 'roll'
+            computer_counter = 'roll';
         }
         newData.counter_weight -= 3
         newData.attack_weight += 1  
@@ -1524,17 +1526,17 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
 
     if (combatData.computer_weapons[0].grip === 'One Hand') {
         if (combatData.computer_weapons[0].attack_type === 'Physical') {
-            combatData.realized_computer_damage *= (agility / 75)
+            combatData.realized_computer_damage *= (agility / 100)
         } else {
-            combatData.realized_computer_damage *= (achre / 75)
+            combatData.realized_computer_damage *= (achre / 100)
         }
     }
 
     if (combatData.computer_weapons[0].grip === 'Two Hand') {
         if (combatData.computer_weapons[0].attack_type === 'Physical') {
-            combatData.realized_computer_damage *= (strength / 100) 
+            combatData.realized_computer_damage *= (strength / 150) 
         } else {
-            combatData.realized_computer_damage *= (caeren / 100)
+            combatData.realized_computer_damage *= (caeren / 150)
         }
     }
 
@@ -1577,7 +1579,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         if (combatData.computer_weapons[0].grip === 'One Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {
                 if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Constitution') {
-                    if (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility + combatData.computer_weapons[1].agility >= 25) {
+                    if (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility + combatData.computer_weapons[1].agility >= 50) {
                         if (combatData.computer_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                            combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
@@ -1597,7 +1599,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             } 
             if (combatData.computer_weapons[0].attack_type === 'Magic') {
                 if (combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir') {
-                    if (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre + combatData.computer_weapons[1].achre >= 25) {
+                    if (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre + combatData.computer_weapons[1].achre >= 50) {
                         if (combatData.computer_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
@@ -1619,7 +1621,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         if (combatData.computer_weapons[0].grip === 'Two Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical' && combatData.computer_weapons[0].type !== 'Bow') {
                 if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Constitution') {
-                    if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 33) { // Might be a dual-wield compiler instead to take the rest of it
+                    if (combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength + combatData.computer_weapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.computer_weapons[1].type !== 'Bow') {
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
@@ -1639,7 +1641,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
             }
             if (combatData.computer_weapons[0].attack_type === 'Magic') {
                 if (combatData.computer.mastery === 'Caeren' || combatData.computer.mastery === 'Kyosir') {
-                    if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 33) {
+                    if (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren + combatData.computer_weapons[1].caeren >= 75) {
                         if (combatData.computer_weapons[1].type !== 'Bow') {
                             combatData.computer_dual_wielding = true;
                             await computerDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
@@ -1722,6 +1724,28 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         computer_total_damage = 0;
     }
     combatData.realized_computer_damage = computer_total_damage;
+
+    let strength = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
+    let agility = combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility;
+    let achre = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+    let caeren = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+
+    // if (combatData.computer_weapons[0].grip === 'One Hand') {
+    //     if (combatData.computer_weapons[0].attack_type === 'Physical') {
+    //         combatData.realized_computer_damage *= (agility / 67)
+    //     } else {
+    //         combatData.realized_computer_damage *= (achre / 67)
+    //     }
+    // }
+
+    // if (combatData.computer_weapons[0].grip === 'Two Hand') {
+    //     if (combatData.computer_weapons[0].attack_type === 'Physical') {
+    //         combatData.realized_computer_damage *= (strength / 100) 
+    //     } else {
+    //         combatData.realized_computer_damage *= (caeren / 100)
+    //     }
+    // }
+
 
     if (combatData.action === 'attack') {
         combatData.realized_computer_damage *= 1.1;
@@ -2148,22 +2172,22 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
 
     let strength = combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength;
     let agility = combatData.player_attributes.totalAgility + combatData.weapons[0].agility  + combatData.weapons[1].agility;
-    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre  + combatData.weapons[1].achre;
+    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[1].achre;
     let caeren = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren  + combatData.weapons[1].caeren;
 
     if (combatData.weapons[0].grip === 'One Hand') {
         if (combatData.weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_damage *= (agility / 75)
+            combatData.realized_player_damage *= (agility / 100)
         } else {
-            combatData.realized_player_damage *= (achre / 75)
+            combatData.realized_player_damage *= (achre / 100)
         }
     }
 
     if (combatData.weapons[0].grip === 'Two Hand') {
         if (combatData.weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_damage *= (strength / 100) 
+            combatData.realized_player_damage *= (strength / 150) 
         } else {
-            combatData.realized_player_damage *= (caeren / 100)
+            combatData.realized_player_damage *= (caeren / 150)
         }
     }
 
@@ -2207,7 +2231,7 @@ const attackCompiler = async (combatData, player_action) => {
         if (combatData.weapons[0].grip === 'One Hand') {
             if (combatData.weapons[0].attack_type === 'Physical') {
                 if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Constitution') {
-                    if (combatData.player_attributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 25) {
+                    if (combatData.player_attributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 50) {
                         if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData);
@@ -2227,7 +2251,7 @@ const attackCompiler = async (combatData, player_action) => {
             } 
             if (combatData.weapons[0].attack_type === 'Magic') {
                 if (combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
-                    if (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 25) {
+                    if (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 50) {
                         if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
@@ -2249,7 +2273,7 @@ const attackCompiler = async (combatData, player_action) => {
         if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
             if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow') {
                 if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Constitution') {
-                    if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 33) { // Might be a dual-wield compiler instead to take the rest of it
+                    if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
@@ -2269,7 +2293,7 @@ const attackCompiler = async (combatData, player_action) => {
             }
             if (combatData.weapons[0].attack_type === 'Magic') {
                 if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir') {
-                    if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 33) {
+                    if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 75) {
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
@@ -2360,6 +2384,27 @@ const attackCompiler = async (combatData, player_action) => {
         player_total_damage = 0;
     }
     combatData.realized_player_damage = player_total_damage;
+
+    let strength = combatData.player_attributes.totalStrength + combatData.weapons[0].strength;
+    let agility = combatData.player_attributes.totalAgility + combatData.weapons[0].agility;
+    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre;
+    let caeren = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
+
+    // if (combatData.weapons[0].grip === 'One Hand') {
+    //     if (combatData.weapons[0].attack_type === 'Physical') {
+    //         combatData.realized_player_damage *= (agility / 67)
+    //     } else {
+    //         combatData.realized_player_damage *= (achre / 67)
+    //     }
+    // }
+
+    // if (combatData.weapons[0].grip === 'Two Hand') {
+    //     if (combatData.weapons[0].attack_type === 'Physical') {
+    //         combatData.realized_player_damage *= (strength / 100) 
+    //     } else {
+    //         combatData.realized_player_damage *= (caeren / 100)
+    //     }
+    // }
 
     if (combatData.computer_action === 'attack') {
         combatData.realized_player_damage *= 1.1;

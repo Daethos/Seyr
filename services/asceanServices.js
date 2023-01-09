@@ -321,16 +321,19 @@ const coefficientCompiler = async (ascean, item) => {
             coefficient = ascean.level / 8;
             break;
         case 'Rare':
-            coefficient = ascean.level / 12;
+            coefficient = 1;
+            // coefficient = ascean.level / 12;
             break;
         case 'Epic':
-            coefficient = ascean.level / 20;
+            coefficient = 1;
+            // coefficient = ascean.level / 20;
             break;
         case 'Legendary':
             coefficient = ascean.level / 20;
             break;
     }
     if (coefficient > 1) coefficient = 1;
+    if (coefficient > 2) coefficient = 1.5;
     // coefficient = 1;
     // console.log(ascean.name, item.name, coefficient, 'coefficient Compiler')
     return coefficient

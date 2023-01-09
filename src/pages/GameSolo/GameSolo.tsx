@@ -40,6 +40,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [combatEngaged, setCombatEngaged] = useState<boolean>(false);
     const [lootRoll, setLootRoll] = useState<boolean>(false);
     const [lootDrop, setLootDrop] = useState<any>([]);
+    const [lootDropTwo, setLootDropTwo] = useState<any>([]);
     const [itemSaved, setItemSaved] = useState<boolean>(false);
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const [eqpSwap, setEqpSwap] = useState<boolean>(false);
@@ -344,9 +345,9 @@ const GameSolo = ({ user }: GameProps) => {
 
 
 
-    useEffect(() => {
-        console.log(combatData, 'Update')
-    }, [combatData])
+    // useEffect(() => {
+    //     console.log(combatData, 'Update')
+    // }, [combatData])
 
 
     useEffect(() => {
@@ -374,7 +375,7 @@ const GameSolo = ({ user }: GameProps) => {
                 maxLevel = 3;
             } else if (ascean.level < 5) {
                 minLevel = 2;
-                maxLevel = 5;
+                maxLevel = 6;
             } else if (ascean.level < 8) {
                 minLevel = 4;
                 maxLevel = 10;
@@ -616,7 +617,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const gainExperience = async () => {
         try {
-            let opponentExp: number = combatData.computer.level * 100 * (combatData.computer.level / combatData.player.level) + combatData.player_attributes.rawKyosir;
+            let opponentExp: number = Math.round(combatData.computer.level * 100 * (combatData.computer.level / combatData.player.level) + combatData.player_attributes.rawKyosir);
             console.log(opponentExp, 'Experience Gained')
             if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
@@ -628,7 +629,7 @@ const GameSolo = ({ user }: GameProps) => {
             if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
                 setAsceanState({
                     ...asceanState,
-                    experience: asceanState.experience + opponentExp,
+                    experience: Math.round(asceanState.experience + opponentExp),
                 });
                 setSaveExp(true);
             }
@@ -647,7 +648,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         console.log(eqpSwap, 'Swapping Equipment');
-      if (eqpSwap === false) return;
         getAsceanSlicker();
       return () => {
         setEqpSwap(false);
@@ -724,6 +724,15 @@ const GameSolo = ({ user }: GameProps) => {
             let response = await eqpAPI.getLootDrop(level);
             console.log(response.data[0], 'Loot Drop');
             setLootDrop(response.data[0]);
+
+            let roll = Math.floor(Math.random() * 100) + 1;
+            if (roll <= 25) {
+                let second = await eqpAPI.getLootDrop(level);
+                console.log(second.data[0], 'Second Loot Drop');
+                setLootDropTwo(second.data[0]);
+            } else {
+                setLootDrop(null);
+            }
             setItemSaved(false);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop')
@@ -1002,7 +1011,7 @@ const GameSolo = ({ user }: GameProps) => {
                 <DialogBox 
                     npc={opponent.name} dialog={dialog} setCombatEngaged={setCombatEngaged} setGameIsLive={setGameIsLive} 
                     playerWin={playerWin} computerWin={computerWin} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved}
-                    winStreak={winStreak} loseStreak={loseStreak} highScore={highScore}
+                    winStreak={winStreak} loseStreak={loseStreak} highScore={highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo}
                     resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
                     />
                 <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>    

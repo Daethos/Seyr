@@ -21,7 +21,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
 
     return (
         <>            
-        <Modal show={levelUpModalShow} onHide={() => setLevelUpModalShow(false)} centered>
+        <Modal show={levelUpModalShow} onHide={() => setLevelUpModalShow(false)} centered backdrop="static">
             <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', height: 65 + 'vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!!</h3>
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />

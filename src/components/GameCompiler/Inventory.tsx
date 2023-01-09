@@ -173,14 +173,14 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             console.log(newAscean, '<- newAscean in Swapping Equipment start');
             const response = await asceanAPI.equipmentSwap(newAscean);
             console.log(response, '<- Response in Swapping Equipment');
-            setEqpSwap(true);
+            setEqpSwap(!eqpSwap);
         } catch (err) {
             console.log(err, '<- This is the error in Swapping Equipment');
         }
       }
 
     const inventoryPopover = (
-        <Popover className="text-info" id="popover">
+        <Popover className="text-info" id="popover" style={{ zIndex: 1 }}>
             <Popover.Header id="popover-header" className="" as="h2">{inventory?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {
@@ -255,7 +255,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
 
     return (
         <>
-        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ marginTop: 50 + '%' }}>
+        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ marginTop: 50 + '%', zIndex: 10 }}>
             <Modal.Header>
                 Do You Wish To Remove and Destroy Your {inventory?.name}?
             </Modal.Header>

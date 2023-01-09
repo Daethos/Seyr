@@ -24,7 +24,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
             lootDrop: lootDrop
         });
     }, [lootDrop])
-
+    
     const saveItem = async () => {
         try {
             const res = await asceanAPI.saveToInventory(saveSetting);
