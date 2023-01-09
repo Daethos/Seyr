@@ -731,7 +731,7 @@ const GameSolo = ({ user }: GameProps) => {
                 console.log(second.data[0], 'Second Loot Drop');
                 setLootDropTwo(second.data[0]);
             } else {
-                setLootDrop(null);
+                setLootDropTwo(null);
             }
             setItemSaved(false);
         } catch (err: any) {
