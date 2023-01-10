@@ -318,37 +318,48 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         }
     }
     const getWeaponOneStyle = {
-        border: getBorderStyle(weapon_one?.rarity)
+        border: getBorderStyle(weapon_one?.rarity),
+        background: 'black'
     }
     const getWeaponTwoStyle = {
-        border: getBorderStyle(weapon_two?.rarity)
+        border: getBorderStyle(weapon_two?.rarity),
+        background: 'black'
     }
     const getWeaponThreeStyle = {
-        border: getBorderStyle(weapon_three?.rarity)
+        border: getBorderStyle(weapon_three?.rarity),
+        background: 'black'
     }
     const getShieldStyle = {
-        border: getBorderStyle(shield?.rarity)
+        border: getBorderStyle(shield?.rarity),
+        background: 'black'
     }
     const getHelmStyle = {
-        border: getBorderStyle(helmet?.rarity)
+        border: getBorderStyle(helmet?.rarity),
+        background: 'black'
     }
     const getChestStyle = {
-        border: getBorderStyle(chest?.rarity)
+        border: getBorderStyle(chest?.rarity),
+        background: 'black'
     }
     const getLegsStyle = {
-        border: getBorderStyle(legs?.rarity)
+        border: getBorderStyle(legs?.rarity),
+        background: 'black'
     }
     const getAmuletStyle = {
-        border: getBorderStyle(amulet?.rarity)
+        border: getBorderStyle(amulet?.rarity),
+        background: 'black'
     }
     const getRingOneStyle = {
-        border: getBorderStyle(ring_one?.rarity)
+        border: getBorderStyle(ring_one?.rarity),
+        background: 'black'
     }
     const getRingTwoStyle = {
-        border: getBorderStyle(ring_two?.rarity)
+        border: getBorderStyle(ring_two?.rarity),
+        background: 'black'
     }
     const getTrinketStyle = {
-        border: getBorderStyle(trinket?.rarity)
+        border: getBorderStyle(trinket?.rarity),
+        background: 'black'
     }
 
     if (loading) {

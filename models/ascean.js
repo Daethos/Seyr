@@ -61,6 +61,8 @@ const asceanSchema = new Schema(
                 default: 0
             },
         ],
+        silver: Number,
+        gold: Number,
         inventory: {
             type: [],
             default: null

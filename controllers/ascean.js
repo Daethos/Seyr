@@ -184,6 +184,64 @@ async function updateLevel(req, res) {
 async function saveExperience(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
+        console.log(req.body.opponent, 'Opponent Level in Save Experience')
+        // let silver = 0;
+        // let gold = 0;
+        // let currencyValue = req.body.opponent;
+        
+        // if (currencyValue === 1) { // Opponent Level 1, 1-2 Silver
+        //     silver = Math.floor(Math.random() * 2) + 1;
+        //     gold = 0;
+        // } else if (currencyValue > 2 && currencyValue < 11) {  // Opponent Level 2-10, 2-99 Silver
+        //     silver = Math.floor(Math.random() * 10) + 1;
+        //     silver *= currencyValue;
+        //     gold = 2;
+        //     if (silver > 99) {
+        //         silver = 99;
+        //     }
+        // } else if (currencyValue > 10 && currencyValue <= 20) { // Opponent Level 11-20, 5-30 Silver, 1-2 Gold
+        //     if (currencyValue > 15) { // Opponent Level 16-20, 5-30 Silver, 1-2 Gold
+        //         silver = Math.round(Math.floor(Math.random() * 25) + 5);
+        //         gold = Math.floor(Math.random() * 2) + 1;
+        //     } else { // Opponent Level 11-15, 1-99 Silver, 0-1 Gold
+        //         if (Math.random() >= 0.5) { // 50% chance of 1 gold and 1-10 silver
+        //             silver = Math.round(Math.floor(Math.random() * 10) + 1);
+        //             gold = 1;
+        //         } else { // 50% chance of 35-99 silver
+        //             silver = Math.round(Math.floor(Math.random() * 100) + 35);
+        //             if (silver > 99) {
+        //                 silver = 99;
+        //                 gold = 0;
+        //             }
+        //         }
+        //     }
+
+        // }
+        // if (ascean.currency.length === 0) {
+        //     // ascean.currency = { silver: 0, gold: 0 };
+        //     // ascean.currency.silver += silver;
+        //     // ascean.currency.gold += gold;
+        //     ascean.currency.push({ silver: silver });
+        //     ascean.currency.push({ gold: gold });
+        // } else {
+        //     ascean.currency[0].silver += silver;
+        //     if (ascean.currency.length === 1) {
+        //         ascean.currency.push({ gold: gold });
+        //     } else {
+        //         ascean.currency[1].gold += gold; 
+        //     }
+        // }
+
+
+        // console.log(silver, gold, ascean.currency, '<- Currency in the Controller Saving Experience!')
+
+        // if (ascean.currency.silver > 99) {
+        //     // ascean.currency.gold += Math.floor(ascean.currency.silver / 100);
+        //     // ascean.currency.silver = ascean.currency.silver % 100;
+        //     ascean.currency.gold += 1;
+        //     ascean.currency.silver -= 100;
+        // }
+
         if (ascean.experience + req.body.experience > ascean.level * 1000) {
             ascean.experience = ascean.level * 1000;
         } else {
@@ -310,6 +368,10 @@ async function create(req, res) {
                 amulet: '63b3491109fa8aa7e4495999',
                 trinket: '63b3491109fa8aa7e449599b',
                 faith: req.body.faith,
+                currency: {
+                    silver: 0,
+                    gold: 0,
+                },
             })
             res.status(201).json({ ascean: ascean });
         } catch (err) {

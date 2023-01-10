@@ -1018,7 +1018,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         }
         if (combatData.computer_weapons[0].influences[0] === "Shrygei") { // Song
-            let shrygei = combatData.comoputer_attributes.totalAchre + combatData.comoputer_attributes.totalCaeren + combatData.comoputer_attributes.totalConstitution;
+            let shrygei = combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren + combatData.computer_attributes.totalConstitution;
             shrygei = Math.round(shrygei * combatData.computer.level / 10);
             combatData.computer_influence_description =
             `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, the resplendence renews them for ${shrygei}`
@@ -1294,7 +1294,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_weapons[1].critical_damage += 0.3;
             }
             if (combatData.computer_weapons[1].influences[0] === "Shrygei") { // Song
-                let shrygei = combatData.comoputer_attributes.totalAchre + combatData.comoputer_attributes.totalCaeren + combatData.comoputer_attributes.totalConstitution;
+                let shrygei = combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren + combatData.computer_attributes.totalConstitution;
                 shrygei = Math.round(shrygei * combatData.computer.level / 10);
                 combatData.computer_influence_description_two =
                 `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, the resplendence renews them for ${shrygei}`
@@ -3131,6 +3131,7 @@ const actionCompiler = async (combatData) => {
         // console.log(result, 'Combat Result')
         return result
     } catch (err) {
+        console.log(err, 'Error in the Action Compiler of Game Services');
         res.status(400).json({ err })
     }
 }

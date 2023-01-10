@@ -47,7 +47,7 @@ const GameHealthBar = ({ totalPlayerHealth, currentPlayerHealth, story }: GamePr
         />
         <div className="progress">
             <p className='progress-text'>
-                {`${Math.round(currentPlayerHealth)} / ${totalPlayerHealth} [${playerHealthPercentage}%]`}
+                {`${Math.round(currentPlayerHealth)} / ${totalPlayerHealth} (${playerHealthPercentage}%)`}
             </p>
         </div>
         </div>

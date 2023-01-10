@@ -600,7 +600,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-    }, // Daethic Kingdom - Soverains
+    }, // Daethic Kingdom - Soverains || Lvl 4
     "Ahn'are Apostle": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -899,7 +899,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Firelands
+        },}, // Firelands || Lvl 4
     "Anashtre": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -1198,7 +1198,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Astralands
+        },}, // Astralands || Lvl 6
     "Astral Apostle": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -1497,7 +1497,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Astralands
+        },}, // Astralands || Lvl 4
     "Daethic Inquisitor": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -1796,7 +1796,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Licvitas
+        },}, // Licvitas || Lvl 6
     "Daethic Knight": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -2095,7 +2095,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Licivitas
+        },}, // Licivitas || Lvl 6
     "Fang Duelist" : {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -2394,7 +2394,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // West Fangs
+        },}, // West Fangs || Lvl 1
     "Fang Mercenary": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -2693,7 +2693,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },},  // West Fangs
+        },},  // West Fangs || Lvl 1
     "Firesworn": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -2992,7 +2992,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Firelands
+        },}, // Firelands || Lvl 6
     "Fyers Occultist": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -3291,7 +3291,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Firelands
+        },}, // Firelands || Lvl 4
     "Ilire Occultist": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -3590,7 +3590,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Daethic Kingdom - Soverains
+        },}, // Daethic Kingdom - Soverains || Lvl 4
     "Kingsman": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -3889,7 +3889,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Daethic Kingdom
+        },}, // Daethic Kingdom || Lvl 6
     "Licivitan Soldier": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -4188,7 +4188,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Licivitas
+        },}, // Licivitas || Lvl 6
     "Ma'ier Occultist": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -4487,7 +4487,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Firelands - Sedyrus
+        },}, // Firelands - Sedyrus || Lvl 4
     "Marauder": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -4786,7 +4786,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },},  // West Fangs
+        },},  // West Fangs || Lvl 1
     "Northern Wanderer" : {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -5085,7 +5085,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // No Man's Land
+        },}, // No Man's Land || Lvl 1
     "Quor'eite Occultist": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -5384,7 +5384,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Sedyrus
+        },}, // Sedyrus || Lvl 4
     "Quor'eite Stalker" : {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -5683,7 +5683,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Sedyrus
+        },}, // Sedyrus || Lvl 1
     "Sedyreal Guard": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -5982,7 +5982,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Sedyrus
+        },}, // Sedyrus || Lvl 6
     "Southron Wanderer" : {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -6281,7 +6281,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Sedyrus
+        },}, // Sedyrus || Lvl 1
     "Soverain Blood Cloak": {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -6580,7 +6580,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Soverains
+        },}, // Soverains || Lvl 6
     "Tshaeral Shaman" : {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
@@ -6879,7 +6879,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },}, // Sedyrus
+        },}, // Sedyrus || Lvl 4
 
     // // Named Opponents
     "Cyrian Shyne": {

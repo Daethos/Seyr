@@ -72,20 +72,18 @@
 }
 
 @media screen and (max-height: 820px) {
-  .dialog-box, .dialog-text, .dialog-options {
+  /* .dialog-box, .dialog-text, .dialog-options {
     height: 150px;
   }
   .dialog-box {
     margin-top: 5%;
-  }
-  #opponent-block {
+  } */
+  /* #opponent-block {
     transform: scaleY(.99);
-    /* margin-top: -30%; */
   }
   #game-block {
     transform: scaleY(.99);
-    /* margin-top: -5%; */
-  }
+  } */
 }
 @media screen and (max-height: 775px) {
   .dialog-box {
@@ -124,6 +122,7 @@
   grid-column-start: 4;
   grid-row-start: 7;
   color: #fdf6d8;
+  background: black;
   border: 2px solid #fdf6d8;
   width: 100%;
   height: 50%;
@@ -265,7 +264,7 @@
     font-weight: 900;
     background: transparent;
     -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
+    -webkit-text-stroke-color: purple;
     /* border: 2px solid purple; */
   }
 .progress-text {

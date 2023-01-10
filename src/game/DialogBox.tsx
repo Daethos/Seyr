@@ -77,7 +77,7 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
     }
     const getLoot = async () => {
         try {
-            const response = await eqpAPI.getLootDrop(20);
+            const response = await eqpAPI.getLootDrop(4);
             console.log(response.data[0], 'Response!');
             setLootDrop(response.data[0]);
 
@@ -126,6 +126,8 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                         You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
                         </p>
                         "Well check you out, {ascean.name}, you've won the duel. Congratulations" <br /> <br /> 
+                        {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button> */}
+
                         {
                             lootDrop?._id && lootDropTwo?._id ?
                             <>
@@ -153,6 +155,7 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                         "Oh is that why you're here, goodness. Very well, {ascean.name}. Shall we?"<br />
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={engageCombat}>Commence Duel with {npc}?</Button>
                         {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button>
+
                         {
                             lootDrop?._id && lootDropTwo?._id ?
                             <>

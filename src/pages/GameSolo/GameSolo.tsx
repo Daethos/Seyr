@@ -45,10 +45,11 @@ const GameSolo = ({ user }: GameProps) => {
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const [eqpSwap, setEqpSwap] = useState<boolean>(false);
     const [removeItem, setRemoveItem] = useState<boolean>(false);
-
+    
     const [playerWin, setPlayerWin] = useState<boolean>(false)
     const [computerWin, setComputerWin] = useState<boolean>(false)
-
+    
+    const [background, setBackground] = useState<any>(null);
     const [gameIsLive, setGameIsLive] = useState<boolean>(false)
     const [undefined, setUndefined] = useState<boolean>(false)
     const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
@@ -211,6 +212,7 @@ const GameSolo = ({ user }: GameProps) => {
         caeren: 0,
         kyosir: 0,
         level: ascean.level,
+        opponent: opponent.level,
         experience: ascean.experience,
         experienceNeeded: ascean.level * 1000,
         mastery: ascean.mastery,
@@ -235,15 +237,7 @@ const GameSolo = ({ user }: GameProps) => {
             setTotalPlayerHealth(response.data.data.attributes.healthTotal)
             setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
             setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three]);
-            setAsceanState({
-                ...asceanState,
-                'ascean': response.data.data.ascean,
-                'level': response.data.data.ascean.level,
-                'experience': 0,
-                'experienceNeeded': response.data.data.ascean.level * 1000,
-                'mastery': response.data.data.ascean.mastery,
-                'faith': response.data.data.ascean.faith,
-            })
+
             // setCombatData({
             //     ...combatData,
             //     'player': response.data.data.ascean,
@@ -327,6 +321,16 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_attributes': opponentResponse.data.data.attributes,
                 'computer_damage_type': opponentResponse.data.data.combat_weapon_one.damage_type[0],
             });
+            setAsceanState({
+                ...asceanState,
+                'ascean': response.data.data.ascean,
+                'level': response.data.data.ascean.level,
+                'opponent': opponentResponse.data.data.ascean.level,
+                'experience': 0,
+                'experienceNeeded': response.data.data.ascean.level * 1000,
+                'mastery': response.data.data.ascean.mastery,
+                'faith': response.data.data.ascean.faith,
+            })
             setComputerWin(false);
             setPlayerWin(false);
             // setGameIsLive(true);
@@ -370,26 +374,29 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             let minLevel: number = 0;
             let maxLevel: number = 0;
-            if (ascean.level < 3) {
+            if (ascean.level < 3) { // 1-2
                 minLevel = 1;
                 maxLevel = 3;
-            } else if (ascean.level < 5) {
+            } else if (ascean.level <= 4) { // 3-4
                 minLevel = 2;
-                maxLevel = 6;
-            } else if (ascean.level < 8) {
+                maxLevel = 4;
+            } else if (ascean.level <= 6) { // 5-6
+                minLevel = 4;
+                maxLevel = 8;
+            } else if (ascean.level <= 8) { // 7-8
                 minLevel = 4;
                 maxLevel = 10;
-            } else if (ascean.level < 11) {
+            } else if (ascean.level <= 10) { // 9-10
                 minLevel = 6;
-                maxLevel = 13;
-            } else if (ascean.level < 14) {
-                minLevel = 9;
+                maxLevel = 12;
+            } else if (ascean.level <= 14) { // 11-14
+                minLevel = 8;
                 maxLevel = 16;
-            } else if (ascean.level < 17) {
+            } else if (ascean.level <= 18) { // 15-18
                 minLevel = 12;
                 maxLevel = 18;
             } else if (ascean.level <= 20) {
-                minLevel = 15;
+                minLevel = 16;
                 maxLevel = 20;
             }
 
@@ -603,6 +610,7 @@ const GameSolo = ({ user }: GameProps) => {
                 caeren: 0,
                 kyosir: 0,
                 level: firstResponse.data.level,
+                opponent: opponent.level,
                 experience: 0,
                 experienceNeeded: firstResponse.data.level * 1000,
                 mastery: firstResponse.data.mastery,
@@ -955,11 +963,72 @@ const GameSolo = ({ user }: GameProps) => {
             setCombatEngaged(true);
             setGameIsLive(true);
             setWinStreak(0);
-            playReplay()
+            playReplay();
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
         }
     }
+
+
+    useEffect(() => {
+        console.log(background, 'Background')
+        if (ascean?.origin && background === null) {
+            const getPlayerBackground = {
+                background: "url(" + getBackgroundStyle(ascean.origin) + ")",
+                backgroundSize: "cover",
+            };
+            setBackground(getPlayerBackground);
+        }
+    }, [ascean])
+    
+
+    const num = Math.floor(Math.random() * 3) + 1;
+    const chance = Math.floor(Math.random() * 3) + 1;
+    function getBackgroundStyle(origin: string) {
+        console.log(origin, 'Origin of', ascean.name)
+        switch (origin) {
+            case 'Ashtre':
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/astralands_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
+                }
+            case 'Fyers':
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/firelands_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
+                }
+            case "Liivi":
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
+                }
+            case "Notheo":
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
+                }
+            case "Nothos":
+                console.log(process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`, 'You Are Nothos')
+                return process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`;
+            case "Quoreite":
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
+                }
+            case 'Sedyreal':
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/firelands_${num}.jpg`;
+                }
+        }
+    }
+      
 
     function sleep(ms: number) {
         return new Promise(
@@ -974,7 +1043,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     return (
-        <Container fluid id="game-container">
+        <Container fluid id="game-container" style={ background }>
             <GameAnimations 
                 sleep={sleep} playerCritical={combatData.critical_success} computerCritical={combatData.computer_critical_success}
                 combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated} 

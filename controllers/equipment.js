@@ -114,9 +114,16 @@ const determineEquipmentType = () => {
  async function getOneEquipment (req, res) {
     console.log('%c We have made it to the getOneEquipment in the Equipment Controller!', 'color: blue')
     try {
-        const rarity = determineRarityByLevel(req.params.level);
+        let rarity = determineRarityByLevel(req.params.level);
         const type = determineEquipmentType();
         console.log(rarity, type, 'rarity, type')
+
+        if (type === 'Amulet' || type === 'Ring' || type === 'Trinket') {
+            if (rarity === 'Common') {
+                rarity = 'Uncommon';
+            }
+        }
+
         let equipment;
         let eqpCheck = Math.floor(Math.random() * 100  + 1);
         if (req.params.level < 4) {
