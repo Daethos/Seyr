@@ -19,6 +19,34 @@ const doubleDislikeSchema = new Schema({
     userId: { type: mongoose.Schema.Types.Object }
 })
 
+const questSchema = new Schema({
+    title: String,
+    description: String,
+    requires: {
+        type: [],
+        default: null
+    },
+    level: Number,
+    repeatable: Boolean,
+    rewards: {
+        type: [],
+        default: null
+    },
+    completed: Boolean,
+});
+
+const statusSchema = new Schema({
+    name: String,
+    description: String,
+    duration: Number,
+    refreshes: Boolean,
+    stacks: Boolean,
+    type: String,
+    active: Boolean,
+    hidden: Boolean,
+    imgURL: String,
+});
+
 const asceanSchema = new Schema(
     {
         user: {type: Schema.Types.ObjectId, ref: 'User'},
@@ -51,18 +79,16 @@ const asceanSchema = new Schema(
         level: {type: Number, default: 1},
         experience: {type: Number, default: 0},
         high_score: { type: Number, default: 0 },
-        currency: [
-            {
-                silver: Number,
-                default: 0
+        currency: {
+            silver: {
+                type: Number,
+                default: 0,
             },
-            {
-                gold: Number,
-                default: 0
+            gold: {
+                type: Number,
+                default: 0,
             },
-        ],
-        silver: Number,
-        gold: Number,
+        },
         inventory: {
             type: [],
             default: null

@@ -4787,7 +4787,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },},  // West Fangs || Lvl 1
-    "Northern Wanderer" : {
+    "Northren Wanderer" : {
         combat: {
             actions: "Attack - A focused attack concentrating your offensive might into extraordinary potential, potentially unleashing dual wield techniques if you are of the ability. \n Counter - Your opponent, whether man or machine, will change its preference of attacks based on their own abilitiy and yours, in addition to your preference of actions. \n  Posture - This low priority attack focused on leaning into your stalwart, accepting the fate of a strike while using your shield's defense as an additional bulwark. \n Roll - This gambles fate with the chance of your % based on which weapon you're attempting it with. It's risk/reward as your ability to do heightened damage and avoiding an attack is depending on your or their success. \n Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?",
             character: "Your character is completely accessible with realized potential of your character's ability, equipment, and faith. You are able to manipulate which weapon(s) you wish to strike with, and how you want to if the weapon allows the concept.",

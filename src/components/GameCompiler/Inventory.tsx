@@ -137,7 +137,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             }
             if (inventory?.name.includes('Ring')) {
                 setInventoryType('ring_one');
-                setInventoryRingType('ring_one');
+                setInventoryRingType('ring_two');
                 type = 'ring_one';
                 ringType = 'ring_two';
             }
@@ -299,7 +299,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 <>
                 <br />
                  <Form.Select value={editState.ring_two} onChange={handleInventoryR2}>
-                    <option value={ascean[inventoryType]?._id}>{ascean[inventoryType]?.name}</option>
+                    <option value={ascean[inventoryRingType]?._id}>{ascean[inventoryRingType]?.name}</option>
                     <option value={inventory?._id}>{inventory?.name}</option>
                 </Form.Select>
                 </>

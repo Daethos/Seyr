@@ -149,6 +149,23 @@ const GameSolo = ({ user }: GameProps) => {
         player_damage_type: '',
         player_defense: playerDefense,
         player_attributes: attributes,
+        new_player_health: currentPlayerHealth,
+        new_computer_health: currentComputerHealth,
+        player_start_description: '',
+        player_special_description: '',
+        player_action_description: '',
+        player_influence_description: '',
+        player_influence_description_two: '',
+        player_death_description: '',
+        religious_success: false,
+        dual_wielding: false,
+        roll_success: false,
+        computer_roll_success: false,
+        player_win: false,
+        critical_success: false,
+        glancing_blow: false,
+        playerEffects: [],
+        
         computer: '',
         computer_health: currentComputerHealth,
         computer_action: '',
@@ -160,23 +177,14 @@ const GameSolo = ({ user }: GameProps) => {
         computer_damage_type: '',
         computer_defense: computerDefense,
         computer_attributes: computerAttributes,
-        player_start_description: '',
         computer_start_description: '',
-        player_special_description: '',
         computer_special_description: '',
-        player_action_description: '',
         computer_action_description: '',
-        player_influence_description: '',
         computer_influence_description: '',
-        player_influence_description_two: '',
         computer_influence_description_two: '',
-        player_death_description: '',
         computer_death_description: '',
-
         current_player_health: currentPlayerHealth,
         current_computer_health: currentComputerHealth,
-        new_player_health: currentPlayerHealth,
-        new_computer_health: currentComputerHealth,
         attack_weight: 0,
         counter_weight: 0,
         dodge_weight: 0,
@@ -187,20 +195,16 @@ const GameSolo = ({ user }: GameProps) => {
         counter_dodge_weight: 0,
         counter_posture_weight: 0,
         counter_roll_weight: 0,
-        religious_success: false,
         computer_religious_success: false,
-        dual_wielding: false,
         computer_dual_wielding: false,
-        roll_success: false,
         counter_success: false,
-        computer_roll_success: false,
         computer_counter_success: false,
-        player_win: false,
         computer_win: false,
-        critical_success: false,
         computer_critical_success: false,
-        glancing_blow: false,
         computer_glancing_blow: false,
+        computerEffects: [],
+
+        combatRound: 0,
     });
 
     const [asceanState, setAsceanState] = useState({
@@ -320,6 +324,8 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_defense': opponentResponse.data.data.defense,
                 'computer_attributes': opponentResponse.data.data.attributes,
                 'computer_damage_type': opponentResponse.data.data.combat_weapon_one.damage_type[0],
+
+                'combatRound': 1,
             });
             setAsceanState({
                 ...asceanState,
@@ -428,7 +434,8 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_weapon_two': response.data.data.combat_weapon_two,
                 'computer_weapon_three': response.data.data.combat_weapon_three,
                 'computer_defense': response.data.data.defense,
-                'computer_attributes': response.data.data.attributes
+                'computer_attributes': response.data.data.attributes,
+                'combatRound': 1,
             });
             if (currentPlayerHealth === 0 || currentPlayerHealth > totalPlayerHealth) {
                 setCurrentPlayerHealth(totalPlayerHealth);
@@ -842,50 +849,50 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerWin(response.data.computer_win)
             if (response.data.critical_success === true) {
                 if (response.data.player_damage_type === 'Spooky' || response.data.player_damage_type === 'Righteous') {
-                    playDaethic()
+                    playDaethic();
                 }
                 if (response.data.player_damage_type === 'Wild') {
-                    playWild()
+                    playWild();
                 }
                 if (response.data.player_damage_type === 'Earth') {
-                    playEarth()
+                    playEarth();
                 }
                 if (response.data.player_damage_type === 'Fire') {
-                    playFire()
+                    playFire();
                 }
                 if (response.data.player_damage_type === 'Frost') {
-                    playFrost()
+                    playFrost();
                 }
                 if (response.data.player_damage_type === 'Lightning') {
-                    playLightning()
+                    playLightning();
                 }
                 if (response.data.player_damage_type === 'Sorcery') {
-                    playSorcery()
+                    playSorcery();
                 }
                 if (response.data.player_damage_type === 'Wind') {
-                    playWind()
+                    playWind();
                 }
                 if (response.data.player_damage_type === 'Pierce' && response.data.weapons[0].type !== 'Bow') {
-                    playPierce()
+                    playPierce();
                 }
                 if (response.data.player_damage_type === 'Blunt') {
-                    playBlunt()
+                    playBlunt();
                 }
                 if (response.data.player_damage_type === 'Slash') {
-                    playSlash()
+                    playSlash();
                 }
                 if (response.data.weapons[0].type === 'Bow') {
-                    playBow()
+                    playBow();
                 }
             }
             if (response.data.religious_success === true) {
-                playReligion()
+                playReligion();
             }
             if (response.data.roll_success === true || response.data.computer_roll_success === true) {
-                playRoll()
+                playRoll();
             }
             if (response.data.counter_success === true || response.data.computer_counter_success === true) {
-                playCounter()
+                playCounter();
             }
             if (response.data.player_win === true) {
                 playWin();
@@ -928,7 +935,8 @@ const GameSolo = ({ user }: GameProps) => {
                     'new_computer_health': totalComputerHealth,
                     // 'weapons': [weaponOne, weaponTwo, weaponThree],
                     'player_win': false,
-                    'computer_win': false
+                    'computer_win': false,
+                    'combatRound': 1,
                 });
             } else if (currentPlayerHealth === 0) {
                 setCurrentPlayerHealth(totalPlayerHealth);
@@ -943,7 +951,8 @@ const GameSolo = ({ user }: GameProps) => {
                     'weapons': [weaponOne, weaponTwo, weaponThree],
                     'player_damage_type': weaponOne.damage_type[0],
                     'player_win': false,
-                    'computer_win': false
+                    'computer_win': false,
+                    'combatRound': 1,
                 });
             } else {
                 setCombatData({
@@ -954,7 +963,8 @@ const GameSolo = ({ user }: GameProps) => {
                     'new_computer_health': totalComputerHealth,
                     // 'weapons': [weaponOne, weaponTwo, weaponThree],
                     'player_win': false,
-                    'computer_win': false
+                    'computer_win': false,
+                    'combatRound': 1,
                 });
             }
             setCurrentComputerHealth(totalComputerHealth);
@@ -1012,8 +1022,11 @@ const GameSolo = ({ user }: GameProps) => {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
                 }
             case "Nothos":
-                console.log(process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`, 'You Are Nothos')
-                return process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`;
+                if (chance >= 2) {
+                    return process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`;
+                } else {
+                    return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
+                }
             case "Quoreite":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;

@@ -1,3 +1,81 @@
+//TODO:FIXME: Maybe create a faithServices.js file to handle all the faith related functions?
+//TODO:FIXME: Remake effect into a new class perhaps with getters and setters for the properties?
+const effectCompiler = async (combatData, statusEffects, player, enemy, weapon, faith, governance, attribute, style, behavior) => {
+    // governance is the attribute tied to the faith arg, i.e. Achreo is achre, Cambire is caeren, etc.
+    let existingEffect = statusEffects.find(effect => effect.name === `Gift of ${faith}`);
+    if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
+        existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
+        existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+        return {
+            combatData, effect: existingEffect
+        }
+    } else if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+        existingEffect.tick.end += 1;
+        existingEffect.intensity.value += attribute;
+        return {
+            combatData, effect: existingEffect
+        }
+    }
+    let effectDuration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
+    let effect = {
+        name: `Gift of ${faith}`,
+        duration: effectDuration,
+        intensity: {
+            value: attribute,
+            magnitude: player.level / 10,
+        },
+        tick: {
+            start: combatData.combatRound,
+            end: combatData.combatRound + effectDuration,
+        },
+        refreshes: style === 'refreshes' ? true : false, 
+        stacks: style === 'stacks' ? true : false,
+        type: style === 'refreshes' && behavior === 'offensive' ? 'Debuff' : style === 'refreshes' && behavior === 'defensive' ? 'Heal' : style === 'stacks' && behavior === 'offensive' ? 'Damage' : 'Buff',
+        effect: getEffect(weapon, faith, governance, this.intensity, this.type),
+        description: 
+            `${faith} has granted ${player.name} a gift through the use of their ${weapon.name}, 
+                ${style === 'refreshes' && behavior === 'offensive' ? `cursing ${enemy.name}` : // If Style = Refreshes + Behavior = Offensive, Create a Debuff
+                style === 'refreshes' && behavior === 'defensive' ? `renewing you for ${this.intensity.value * this.intensity.magnitude}` :  // If Style = Refreshes + Behavior = Defensive, Create a Heal over Time
+                style === 'stacks' && behavior === 'offensive' ? `damaging ${enemy.name} for ${this.intensity.value * this.intensity.magnitude}` : // If Style = Stacks + Behavior = Offensive, Create a Damage over Time
+                `blessing ${player.name}`} for ${this.duration} combat rounds.`, // If Style = Stacks + Behavior = Defensive, Create a Buff over Time
+        imgURL: weapon.imgURL,
+    };
+
+    function getEffect(faith, governance, intensity, type) {
+       
+    }
+
+    return {
+        combatData, effect
+    }
+}
+
+const checkStatus = (combatData, effects) => {
+    // Create an array to store expired effects
+    const expiredEffects = [];
+
+    // Iterate through each effect
+    effects.forEach((effect) => {
+        // Check if the effect's endTick is equal to the current combat round
+        if (effect.endTick === combatData.combatRound) {
+            // If it is, add the effect to the expiredEffects array
+            expiredEffects.push(effect);
+        }
+    });
+
+    // Iterate through the expiredEffects array
+    expiredEffects.forEach((expiredEffect) => {
+        // Find the index of the expired effect in the effects array
+        const index = effects.indexOf(expiredEffect);
+        // Remove the expired effect from the effects array
+        effects.splice(index, 1);
+    });
+
+    // Return the updated effects array
+    return effects;
+};
+
+
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.computer_win === true) {
         return
@@ -2506,7 +2584,6 @@ const damageTypeCompiler = async (combatData, weapon, player_physical_damage, pl
             }
         }
     }
-
     if (combatData.player_damage_type === 'Pierce' || combatData.player_damage_type === 'Lightning' || combatData.player_damage_type === 'Frost' || combatData.player_damage_type === 'Sorcery') {
         if (weapon.attack_type === 'Physical') {
             if (combatData.computer.helmet.type === 'Plate-Mail') {
@@ -2903,6 +2980,9 @@ const actionSplitter = async (combatData) => {
         computer_critical_success: false,
         glancing_blow: false,
         computer_glancing_blow: false,
+        combatRound: combatData.combatRound,
+        playerEffects: combatData.playerEffects,
+        computerEffects: combatData.computerEffects,
     }
     // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;
@@ -3117,7 +3197,8 @@ const actionSplitter = async (combatData) => {
         newData.player_death_description = 
             `You have been defeated. Hail ${newData.computer.name}, the new va'Esai!`
     }
-    
+
+    newData.combatRound += 1;
 
     return newData
 }
