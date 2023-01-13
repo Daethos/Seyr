@@ -55,62 +55,62 @@ const GameSolo = ({ user }: GameProps) => {
     const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`
-    const [playOpponent] = useSound(opponentSfx, { volume: 0.5 })
+    const [playOpponent] = useSound(opponentSfx, { volume: 0.3 })
 
     const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
-    const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
+    const [playWO] = useSound(weaponOrderSfx, { volume: 0.3 })
     const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
-    const [playCounter] = useSound(counterSfx, { volume: 0.5 })
+    const [playCounter] = useSound(counterSfx, { volume: 0.3 })
     const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`
-    const [playRoll] = useSound(rollSfx, { volume: 0.5 })
+    const [playRoll] = useSound(rollSfx, { volume: 0.3 })
 
     const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
-    const [playPierce] = useSound(pierceSfx, { volume: 0.5 });
+    const [playPierce] = useSound(pierceSfx, { volume: 0.3 });
 
     const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
-    const [playSlash] = useSound(slashSfx, { volume: 0.5 });
+    const [playSlash] = useSound(slashSfx, { volume: 0.3 });
 
     const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
-    const [playBlunt] = useSound(bluntSfx, { volume: 0.5 });
+    const [playBlunt] = useSound(bluntSfx, { volume: 0.3 });
 
     const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`
-    const [playDeath] = useSound(deathSfx, { volume: 0.5 })
+    const [playDeath] = useSound(deathSfx, { volume: 0.3 })
 
     const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`
-    const [playWin] = useSound(winSfx, { volume: 0.5 })
+    const [playWin] = useSound(winSfx, { volume: 0.3 })
 
     const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
-    const [playReplay] = useSound(replaySfx, { volume: 0.5 })
+    const [playReplay] = useSound(replaySfx, { volume: 0.3 })
 
     const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`
-    const [playReligion] = useSound(religiousSfx, { volume: 0.5 })
+    const [playReligion] = useSound(religiousSfx, { volume: 0.3 })
 
     const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
-    const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
+    const [playDaethic] = useSound(daethicSfx, { volume: 0.3 })
 
     const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`
-    const [playWild] = useSound(wildSfx, { volume: 0.5 })
+    const [playWild] = useSound(wildSfx, { volume: 0.3 })
 
     const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`
-    const [playEarth] = useSound(earthSfx, { volume: 0.5 })
+    const [playEarth] = useSound(earthSfx, { volume: 0.3 })
 
     const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`
-    const [playFire] = useSound(fireSfx, { volume: 0.5 })
+    const [playFire] = useSound(fireSfx, { volume: 0.3 })
 
     const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`
-    const [playBow] = useSound(bowSfx, { volume: 0.5 })
+    const [playBow] = useSound(bowSfx, { volume: 0.3 })
 
     const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`
-    const [playFrost] = useSound(frostSfx, { volume: 0.5 })
+    const [playFrost] = useSound(frostSfx, { volume: 0.3 })
 
     const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`
-    const [playLightning] = useSound(lightningSfx, { volume: 0.5 })
+    const [playLightning] = useSound(lightningSfx, { volume: 0.3 })
 
     const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`
-    const [playSorcery] = useSound(sorcerySfx, { volume: 0.5 })
+    const [playSorcery] = useSound(sorcerySfx, { volume: 0.3 })
 
     const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`
-    const [playWind] = useSound(windSfx, { volume: 0.5 })
+    const [playWind] = useSound(windSfx, { volume: 0.3 })
 
     const { asceanID } = useParams();
 
@@ -164,6 +164,7 @@ const GameSolo = ({ user }: GameProps) => {
         player_win: false,
         critical_success: false,
         glancing_blow: false,
+        playerBlessing: '',
         playerEffects: [],
         
         computer: '',
@@ -202,9 +203,11 @@ const GameSolo = ({ user }: GameProps) => {
         computer_win: false,
         computer_critical_success: false,
         computer_glancing_blow: false,
+        computerBlessing: '',
         computerEffects: [],
 
         combatRound: 0,
+        sessionRound: 0,
     });
 
     const [asceanState, setAsceanState] = useState({
@@ -326,6 +329,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_damage_type': opponentResponse.data.data.combat_weapon_one.damage_type[0],
 
                 'combatRound': 1,
+                'sessionRound': 1,
             });
             setAsceanState({
                 ...asceanState,
@@ -597,7 +601,7 @@ const GameSolo = ({ user }: GameProps) => {
         }
 
         try {
-            setLoadingAscean(true);
+            // setLoadingAscean(true);
             const response = await asceanAPI.saveExperience(asceanState);
             console.log(response.data, 'Response Saving Experience');
             // setAscean(response.data);
@@ -723,10 +727,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (lootRoll === false) return;
-        let roll = Math.floor(Math.random() * 100) + 1;
-        if (roll <= 25) {
-            getOneLootDrop(ascean.level);
-        }
         getOneLootDrop(ascean.level);
         return () => {
             setLootRoll(false);
@@ -896,7 +896,7 @@ const GameSolo = ({ user }: GameProps) => {
             }
             if (response.data.player_win === true) {
                 playWin();
-                setWinStreak(winStreak + 1);
+                setWinStreak((winStreak: number) => winStreak + 1);
                 if (winStreak + 1 > highScore) {
                     setHighScore((score) => score + 1)
                 }
@@ -909,7 +909,7 @@ const GameSolo = ({ user }: GameProps) => {
             }
             if (response.data.computer_win === true) {
                 playDeath();
-                setLoseStreak((loseStreak) => loseStreak + 1);
+                setLoseStreak((loseStreak: number) => loseStreak + 1);
                 setWinStreak(0);
                 setGameIsLive(false);
                 setCombatEngaged(false);
@@ -972,7 +972,9 @@ const GameSolo = ({ user }: GameProps) => {
             setPlayerWin(false);
             setCombatEngaged(true);
             setGameIsLive(true);
-            setWinStreak(0);
+            if (ascean.level > opponent.level) {
+                setWinStreak(0);
+            }
             playReplay();
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
@@ -986,6 +988,7 @@ const GameSolo = ({ user }: GameProps) => {
             const getPlayerBackground = {
                 background: "url(" + getBackgroundStyle(ascean.origin) + ")",
                 backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
             };
             setBackground(getPlayerBackground);
         }

@@ -1,80 +1,4 @@
-//TODO:FIXME: Maybe create a faithServices.js file to handle all the faith related functions?
-//TODO:FIXME: Remake effect into a new class perhaps with getters and setters for the properties?
-const effectCompiler = async (combatData, statusEffects, player, enemy, weapon, faith, governance, attribute, style, behavior) => {
-    // governance is the attribute tied to the faith arg, i.e. Achreo is achre, Cambire is caeren, etc.
-    let existingEffect = statusEffects.find(effect => effect.name === `Gift of ${faith}`);
-    if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
-        existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
-        existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
-        return {
-            combatData, effect: existingEffect
-        }
-    } else if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-        existingEffect.tick.end += 1;
-        existingEffect.intensity.value += attribute;
-        return {
-            combatData, effect: existingEffect
-        }
-    }
-    let effectDuration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
-    let effect = {
-        name: `Gift of ${faith}`,
-        duration: effectDuration,
-        intensity: {
-            value: attribute,
-            magnitude: player.level / 10,
-        },
-        tick: {
-            start: combatData.combatRound,
-            end: combatData.combatRound + effectDuration,
-        },
-        refreshes: style === 'refreshes' ? true : false, 
-        stacks: style === 'stacks' ? true : false,
-        type: style === 'refreshes' && behavior === 'offensive' ? 'Debuff' : style === 'refreshes' && behavior === 'defensive' ? 'Heal' : style === 'stacks' && behavior === 'offensive' ? 'Damage' : 'Buff',
-        effect: getEffect(weapon, faith, governance, this.intensity, this.type),
-        description: 
-            `${faith} has granted ${player.name} a gift through the use of their ${weapon.name}, 
-                ${style === 'refreshes' && behavior === 'offensive' ? `cursing ${enemy.name}` : // If Style = Refreshes + Behavior = Offensive, Create a Debuff
-                style === 'refreshes' && behavior === 'defensive' ? `renewing you for ${this.intensity.value * this.intensity.magnitude}` :  // If Style = Refreshes + Behavior = Defensive, Create a Heal over Time
-                style === 'stacks' && behavior === 'offensive' ? `damaging ${enemy.name} for ${this.intensity.value * this.intensity.magnitude}` : // If Style = Stacks + Behavior = Offensive, Create a Damage over Time
-                `blessing ${player.name}`} for ${this.duration} combat rounds.`, // If Style = Stacks + Behavior = Defensive, Create a Buff over Time
-        imgURL: weapon.imgURL,
-    };
-
-    function getEffect(faith, governance, intensity, type) {
-       
-    }
-
-    return {
-        combatData, effect
-    }
-}
-
-const checkStatus = (combatData, effects) => {
-    // Create an array to store expired effects
-    const expiredEffects = [];
-
-    // Iterate through each effect
-    effects.forEach((effect) => {
-        // Check if the effect's endTick is equal to the current combat round
-        if (effect.endTick === combatData.combatRound) {
-            // If it is, add the effect to the expiredEffects array
-            expiredEffects.push(effect);
-        }
-    });
-
-    // Iterate through the expiredEffects array
-    expiredEffects.forEach((expiredEffect) => {
-        // Find the index of the expired effect in the effects array
-        const index = effects.indexOf(expiredEffect);
-        // Remove the expired effect from the effects array
-        effects.splice(index, 1);
-    });
-
-    // Return the updated effects array
-    return effects;
-};
-
+const StatusEffect = require('./faithServices.js');
 
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.computer_win === true) {
@@ -166,13 +90,39 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         computer_faith_mod_one += 5;
         computer_faith_mod_two += 5;
     }
-    // console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0])
-    console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two, `Dual Wielding?`, combatData.dual_wielding)
-    console.log(combatData.player.name, `'s Faith Mod #`, faith_mod_one, `Faith Mod #2`, faith_mod_two, `Dual Wielding?`, combatData.dual_wielding)
+    // console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0]);
+    console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
+    console.log(combatData.player.name, `'s Faith Mod #`, faith_mod_one, `Faith Mod #2`, faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
 
-    // console.log(combatData.computer_weapons[0].influences[0], combatData.computer_weapons[1].influences[0])
-    console.log(combatData.computer.name, `'s Faith #`, computer_faith_number, `Faith #2`, computer_faith_number_two, `Dual Wielding?`, combatData.dual_wielding)
-    console.log(combatData.computer.name, `'s Faith Mod #`, computer_faith_mod_one, `Faith Mod #2`, computer_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding)
+    // console.log(combatData.computer_weapons[0].influences[0], combatData.computer_weapons[1].influences[0]);
+    console.log(combatData.computer.name, `'s Faith #`, computer_faith_number, `Faith #2`, computer_faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
+    console.log(combatData.computer.name, `'s Faith Mod #`, computer_faith_mod_one, `Faith Mod #2`, computer_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
+
+    // let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${faith}` && effect.type === combatData.playerBlessing);
+    // if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
+    //     existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
+    //     existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+    // } else if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+    //     existingEffect.tick.end += 1;
+    //     existingEffect.intensity.value += existingEffect.intensity.initial;
+    //     existingEffect.setEffect(combatData, combatData.weapons[0], this);
+    // } else {
+    //     existingEffect = new StatusEffect(combatData, combatData.player, combatData.opponent, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+    // }
+    // combatData.playerEffects = combatData.playerEffects.filter(effect => effect.name !== `Gift of ${faith}` || effect.type !== combatData.playerBlessing);
+    // combatData.playerEffects.push(existingEffect);
+
+    // if (existingEffect === undefined) {
+        // return 
+    // } else {
+        // switch (existingEffect.prayer) {
+            // case 'Buff':
+            // case: 'Damage':
+            // case 'Debuff':
+        //     case 'Heal':
+        // }
+    // }
+
     if (faith_number > 85) {
         combatData.religious_success = true;
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
@@ -1426,6 +1376,20 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
 const computerActionCompiler = async (newData, player_action, computer_action, computer_counter) => {
+
+    if (newData.sessionRound > 50) {
+        newData.sessionRound = 0;
+        newData.attack_weight = 0;
+        newData.counter_weight = 0;
+        newData.dodge_weight = 0;
+        newData.posture_weight = 0;
+        newData.roll_weight = 0;
+        newData.counter_attack_weight = 0;
+        newData.counter_counter_weight = 0;
+        newData.counter_dodge_weight = 0;
+        newData.counter_posture_weight = 0;
+        newData.counter_roll_weight = 0;
+    }
     
     const computerActions = {
         attack: 50 + newData.attack_weight,
@@ -1443,13 +1407,15 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
     }
 
     if (player_action === 'attack') { 
-        // if (computerActions.roll_rating > computerActions.armor_rating) {
-        //     newData.roll_weight += 2
-        // } else {
-        //     newData.posture_weight += 2
-        // }
-        newData.roll_weight += 1;
-        newData.posture_weight += 1;
+        if (computerActions.roll_rating > computerActions.armor_rating) {
+            newData.roll_weight += 1.5;
+            newData.posture_weight += 0.5;
+        } else {
+            newData.posture_weight += 1.5;
+            newData.roll_weight += 0.5;
+        }
+        // newData.roll_weight += 1;
+        // newData.posture_weight += 1;
         newData.counter_weight += 1;
         newData.attack_weight -= 3;
         newData.counter_attack_weight += 4;
@@ -1459,11 +1425,11 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_roll_weight -= 1;
     }
     if (player_action === 'counter') { 
-        newData.counter_weight -= 3;
+        newData.counter_weight += 3;
         // newData.dodge_weight += 2;
-        newData.attack_weight += 1;
-        newData.posture_weight += 1;
-        newData.roll_weight += 1;
+        newData.attack_weight -= 1;
+        newData.posture_weight -= 1;
+        newData.roll_weight -= 1;
         newData.counter_counter_weight += 2;
         newData.counter_attack_weight -= 1;
         newData.counter_dodge_weight -= 1;
@@ -1523,10 +1489,10 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         } else {
             computer_counter = 'roll';
         }
-        newData.counter_weight -= 3
-        newData.attack_weight += 1  
-        newData.posture_weight += 1
-        newData.roll_weight += 1
+        newData.counter_weight -= 3;
+        newData.attack_weight += 1;  
+        newData.posture_weight += 1;
+        newData.roll_weight += 1;
     }
     newData.computer_action = computer_action;
     newData.computer_counter_guess = computer_counter;
@@ -2981,6 +2947,7 @@ const actionSplitter = async (combatData) => {
         glancing_blow: false,
         computer_glancing_blow: false,
         combatRound: combatData.combatRound,
+        sessionRound: combatData.sessionRound,
         playerEffects: combatData.playerEffects,
         computerEffects: combatData.computerEffects,
     }
@@ -3199,6 +3166,7 @@ const actionSplitter = async (combatData) => {
     }
 
     newData.combatRound += 1;
+    newData.sessionRound += 1;
 
     return newData
 }

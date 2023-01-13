@@ -1,33 +1,51 @@
 //TODO:FIXME: Maybe create a faithServices.js file to handle all the faith related functions?
 //TODO:FIXME: Remake effect into a new class perhaps with getters and setters for the properties?
 
-// const statusEffect = new StatusEffect(combatData, combatData.playerEffects, combatData.player, combatdata.computer, weapons[0], combatData.player.faith e.g. 'Achreo', governance, combatData.player_attributes.totalAchre, style="Choice", behavior="Choice");
+// What needs to be sent to be dynamic? 
+// combatData, statusEffects (combatData.playerEffects), player (combatData.player), enemy (combatData.opponent)
+// weapon (combatData.weapons[0]), faith (combatData.weapons[0].influences[0] (( Not Necessary)) ), prayer (combatData.playerBlessing i.e. 'Heal' 'Debuff')
+// attributes (combatData.player_attributes), style, behavior = These are now generated via the prayer arg
+
 
 class StatusEffect {
-    constructor(combatData, statusEffects, player, enemy, weapon, faith, governance, attribute, style, behavior) {
+    constructor(combatData, player, enemy, weapon, attributes, prayer) {
         // May have to juggle the order of these args and the order of the properties and how they are derived. Not sure
-        this.name = this.setName(faith);
+        this.name = this.setName(weapon.influences[0]);
         this.duration = this.setDuration(player);
-        this.intensity = this.setIntensity(attribute, player);
         this.tick = this.setTick(combatData);
-        this.refreshes = this.setRefreshes(style);
-        this.stacks = this.setStacks(style);
-        this.type = this.setType(style, behavior);
-        this.effect = this.setEffect(statusEffects, faith, governance, attribute, this.intensity, this.type);
-        this.description = description;
+        this.intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
+        this.refreshes = this.setRefreshes(prayer);
+        this.stacks = this.setStacks(prayer);
+        this.activeStacks = this.setActiveStacks(this.intensity);
+        this.prayer = prayer;
+        this.effect = this.setEffect(combatData, player, weapon, this);
+        this.description = this.setDescription(combatData, player, enemy, weapon, attributes, prayer);
         this.imgURL = this.setImgURL(weapon);
     }
 
-    getEffect(faith, governance, intensity, type) {
+    getEffect() {
+        return this.effect;
     }
     getDuration() {
         return this.duration;
     }
-    getType() {
-        return this.type;
+    getTick() {
+        return this.tick;
+    }
+    getPrayer() {
+        return this.prayer;
     }
     getIntensity() {
         return this.intensity;
+    }
+    getActiveStacks() {
+        return this.activeStacks;
+    }
+    getEffect() {
+        return this.effect;
+    }
+    getDescription() {
+        return this.description;
     }
     getImgURL() {
         return this.imgURL;
@@ -38,13 +56,8 @@ class StatusEffect {
         this.name = `Gift of ${deity}`;
     }
     setDuration(player) {
-        this.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);;
-    }
-    setIntensity(attributeNumber, player) {
-        this.intensity = {
-            value: attributeNumber,
-            magnitude: player.level / 10,
-        };
+        let duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
+        this.duration = duration;
     }
     setTick(combatData) {
         this.tick = {
@@ -52,33 +65,191 @@ class StatusEffect {
             end: combatData.combatRound + this.duration,
         };
     }
-    setRefreshes(style) {
-        this.refreshes = style === 'refreshes' ? true : false;
+    setRefreshes(prayer) {
+        this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || prayer === 'Buff' || prayer === 'Damage' ? true : false;
     }
-    setStacks(style) {
-        this.stacks = style === 'stacks' ? true : false;
+    setStacks(prayer) {
+        this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
     }
-    setType(style, behavior) {
-        this.type = style === 'refreshes' && behavior === 'offensive' ? 'Debuff' : style === 'refreshes' && behavior === 'defensive' ? 'Heal' : style === 'stacks' && behavior === 'offensive' ? 'Damage' : 'Buff';
-    }
-    setEffect(statusEffects, faith, governance, attribute, intensity, type) {
-        // This Is What Creates The Effect
-        let existingEffect = statusEffects.find(effect => effect.name === `Gift of ${faith}` && effect.type === type);
-        if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
-            existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
-            existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
-            return this.effect = existingEffect;
-        } else if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-            existingEffect.tick.end += 1;
-            existingEffect.intensity.value += attribute;
-            return this.effect = existingEffect;
+    setIntensity(weapon, deity, attributes, player) {
+        let attribute = 0;
+        let type = '';
+
+        if (deity === 'Achreo' || deity === 'Astra' || deity === "Quor'ei" || deity === "Senari") {
+            attribute = attributes.totalAchre + weapon.achre;
+            type = 'achre';
+        } else if (deity === "Ahn've" || deity === "Cambire" || deity === "Fyer" || deity === "Nyrolus") {
+            attribute = attributes.totalCaeren + weapon.caeren;
+            type = 'caeren';
+        } else if (deity === "Kyn'gi" || deity === "Se'dyro" || deity === "Ma'anre") {
+            attribute = attributes.totalAgility + weapon.agility;
+            type = 'agility';
+        } else if (deity === "Ilios" || deity === "Se'vas" || deity === "Tshaer") {
+            attribute = attributes.totalStrength + weapon.strength;
+            type = 'strength';
+        } else if (deity === "Chiomyr" || deity === "Kyrisos" || deity === "Shrygei") {
+            attribute = attributes.totalKyosir + weapon.kyosir;
+            type = 'kyosir';
+        } else if (deity === "Lilos" || deity === "Kyr'na") {
+            attribute = attributes.totalConstitution + weapon.constitution;
+            type = 'constitution';
+        } else if (deity === "Daethos" || deity === "Rahvre") {
+            attribute = (attributes.totalAchre + weapon.achre + attributes.totalCaeren + weapon.caeren) / 2;
+            type = 'daethic';
         }
 
-        // Maybe I'll run this through the faithFinder function to get the effect and description. GENIUS 
+        this.intensity = {
+            initial: attribute,
+            value: attribute,
+            magnitude: player.level / 10,
+            governance: type,
+        };
+    }
+    setActiveStacks(intensity) {
+        this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
+    }
 
-        const faithCheck = faithFinder(combatData, this);
+    setEffect(combatData, player, weapon, statusEffect) {
+        // This Is What Creates The Effect
+        let effectModifiers = {
+            physical_damage: 0,
+            magical_damage: 0,
+            physical_penetration: 0,
+            magical_penetration: 0,
+            critical_chance: 0,
+            critical_damage: 0,
+            physicalDefenseModifier: 0,
+            magicalDefenseModifier: 0,
+            physicalPosture: 0,
+            magicalPosture: 0,
+            dodge: 0,
+            roll: 0,
+            constitution: 0,
+            strength: 0,
+            agility: 0,
+            achre: 0,
+            caeren: 0,
+            kyosir: 0,
+            healing: 0,
+            damage: 0,
+            buff: 0,
+            debuff: 0,
+        };
+
+        let realizedModifiers = {};
+
+        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
+        let playerIntensity = statusEffect.intensity.value * statusEffect.intensity.magnitude;
+        let playerMastery = combatData.player.name === player.name ? combatData.player.mastery : combatData.computer.mastery;
+        let weaponInfluence = weapon.influences[0];
+
+        // I am open in the future to tweaking the modifier of strictly value * magnitude, will scale poorly with higher levels.
+        switch (statusEffect.prayer) {
+            case 'Heal': {
+                effectModifiers.healing = playerIntensity;
+                break;
+            }
+            case 'Buff': {
+                effectModifiers.buff = playerIntensity;
+                break;
+            }
+            case 'Debuff': {
+                effectModifiers.debuff = playerIntensity;
+                break;
+            }
+            case 'Damage': {
+                effectModifiers.damage = playerIntensity;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+        switch (statusEffect.intensity.governance) {
+            case 'constitution': {
+                effectModifiers.physical_damage = playerIntensity / 4;
+                effectModifiers.magical_damage = playerIntensity / 4;
+                effectModifiers.physicalDefenseModifier = playerIntensity;
+                effectModifiers.magicalDefenseModifier = playerIntensity;
+                effectModifiers.critical_damage = playerIntensity / 20;
+                effectModifiers.critical_chance = playerIntensity / 4;
+                break;
+            }
+            case 'strength': {
+                effectModifiers.physical_damage = playerIntensity;
+                effectModifiers.critical_chance = playerIntensity / 2;
+                effectModifiers.critical_damage = playerIntensity / 10;
+                effectModifiers.physical_penetration = playerIntensity / 2;
+                effectModifiers.physicalDefenseModifier = playerIntensity;
+
+                break;
+            }
+            case 'agility': {
+                effectModifiers.physical_damage = playerIntensity / 2;
+                effectModifiers.critical_chance = playerIntensity;
+                effectModifiers.critical_damage = playerIntensity / 20;
+                effectModifiers.dodge = playerIntensity / 2;
+                effectModifiers.roll = playerIntensity / 2;
+                effectModifiers.physical_penetration = playerIntensity;
+                effectModifiers.physicalDefenseModifier = playerIntensity / 4;
+
+                break;
+            }
+            case 'achre': {
+                effectModifiers.magical_damage = playerIntensity / 2;
+                effectModifiers.critical_chance = playerIntensity;
+                effectModifiers.critical_damage = playerIntensity / 20;
+                effectModifiers.magical_penetration = playerIntensity;
+                effectModifiers.physical_penetration = playerIntensity / 2;
+                effectModifiers.dodge = playerIntensity / 2;
+                effectModifiers.roll = playerIntensity / 2;
+                effectModifiers.magicalDefenseModifier = playerIntensity / 4;
+                effectModifiers.physicalDefenseModifier = playerIntensity / 4;
+                break;
+            }
+            case 'caeren': {
+                effectModifiers.magical_damage = playerIntensity;
+                effectModifiers.critical_chance = playerIntensity / 2;
+                effectModifiers.critical_damage = playerIntensity / 10;
+                effectModifiers.magical_penetration = playerIntensity / 2;
+                effectModifiers.magicalDefenseModifier = playerIntensity;
+                effectModifiers.physical_penetration = playerIntensity / 4;
+                effectModifiers.physicalDefenseModifier = playerIntensity / 2;
+                break;
+            }
+            case 'kyosir': {
+                effectModifiers.physical_penetration = playerIntensity;
+                effectModifiers.magical_penetration = playerIntensity;
+                effectModifiers.physicalDefenseModifier = playerIntensity;
+                effectModifiers.magicalDefenseModifier = playerIntensity;
+                effectModifiers.critical_chance = playerIntensity / 2;
+                effectModifiers.roll = playerIntensity / 2;
+                effectModifiers.dodge = playerIntensity / 2;
+                break;
+            }
+            case 'daethic': {
+                effectModifiers.physical_damage = playerIntensity / 2;
+                effectModifiers.magical_damage = playerIntensity / 2;
+                effectModifiers.physical_penetration = playerIntensity / 2;
+                effectModifiers.magical_penetration = playerIntensity / 2;
+                effectModifiers.physicalDefenseModifier = playerIntensity / 2;
+                effectModifiers.magicalDefenseModifier = playerIntensity / 2;
+                effectModifiers.physicalPosture = playerIntensity / 2;
+                effectModifiers.magicalPosture = playerIntensity / 2;
+                effectModifiers.critical_chance = playerIntensity / 2;
+                effectModifiers.critical_damage = playerIntensity / 20;
+                effectModifiers.dodge = playerIntensity / 2;
+                effectModifiers.roll = playerIntensity / 2;
+            }
+            default: {
+                break;
+            }
+        }
+
         
-        this.effect;
+        this.effect = realizedModifiers;
     }
     setImgURL(weap) {
         this.imgURL = weap.imgURL;
@@ -130,7 +301,7 @@ const checkStatus = (combatData, effects) => {
     return effects;
 };
 
-const faithFinder = async (combatData, ) => { // The influence will add a chance to have a special effect occur
+const faithFinder = async (combatData, statusEffect) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.computer_win === true) {
         return
     }
@@ -145,17 +316,17 @@ const faithFinder = async (combatData, ) => { // The influence will add a chance
     let computer_faith_mod_one = 0;
     let computer_faith_mod_two = 0;
 
-    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
-    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
+    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance);
+    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage);
 
-    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
-    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance);
+    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage);
 
-    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance)
-    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage)
+    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance);
+    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage);
 
-    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
-    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
+    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance);
+    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage);
 
 
     // console.log(combatData.weapons[0].magical_penetration, typeof(combatData.weapons[0].magical_penetration))
@@ -227,6 +398,10 @@ const faithFinder = async (combatData, ) => { // The influence will add a chance
     // console.log(combatData.computer_weapons[0].influences[0], combatData.computer_weapons[1].influences[0])
     console.log(combatData.computer.name, `'s Faith #`, computer_faith_number, `Faith #2`, computer_faith_number_two, `Dual Wielding?`, combatData.dual_wielding)
     console.log(combatData.computer.name, `'s Faith Mod #`, computer_faith_mod_one, `Faith Mod #2`, computer_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding)
+
+
+    // if (faith_number > 85) let statusEffect = new StatusEffect();
+
     if (faith_number > 85) {
         combatData.religious_success = true;
         if (combatData.weapons[0].influences[0] === 'Daethos') { // God
@@ -250,6 +425,9 @@ const faithFinder = async (combatData, ) => { // The influence will add a chance
             if (combatData.new_computer_health < 0) {
                 combatData.new_computer_health = 0;
             }
+            let daethosBlessing = new StatusEffect(combatData, combatData.playerEffects, combatData.player, combatData.computer, weapons[0], combatData.player.faith, combatData.player.governance, combatData.player_attributes.totalAchre, 'refreshes', 'defensive');
+// const statusEffect = new StatusEffect(combatData, combatData.playerEffects, combatData.player, combatdata.computer, weapons[0], combatData.player.faith e.g. 'Achreo', governance, combatData.player_attributes.totalAchre, style="Choice", behavior="Choice");
+
     }
         if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
             console.log('Achreo!')
@@ -1447,23 +1625,23 @@ const faithFinder = async (combatData, ) => { // The influence will add a chance
         }
     }
 
-    combatData.weapons[0].critical_chance = combatData.weapons[0].critical_chance.toFixed(2)
-    combatData.weapons[0].critical_damage = combatData.weapons[0].critical_damage.toFixed(2)
-    combatData.weapons[1].critical_chance = combatData.weapons[1].critical_chance.toFixed(2)
-    combatData.weapons[1].critical_damage = combatData.weapons[1].critical_damage.toFixed(2)
-    combatData.computer_weapons[0].critical_chance = combatData.computer_weapons[0].critical_chance.toFixed(2)
-    combatData.computer_weapons[0].critical_damage = combatData.computer_weapons[0].critical_damage.toFixed(2)
-    combatData.computer_weapons[1].critical_chance = combatData.computer_weapons[1].critical_chance.toFixed(2)
-    combatData.computer_weapons[1].critical_damage = combatData.computer_weapons[1].critical_damage.toFixed(2)
+    combatData.weapons[0].critical_chance = combatData.weapons[0].critical_chance.toFixed(2);
+    combatData.weapons[0].critical_damage = combatData.weapons[0].critical_damage.toFixed(2);
+    combatData.weapons[1].critical_chance = combatData.weapons[1].critical_chance.toFixed(2);
+    combatData.weapons[1].critical_damage = combatData.weapons[1].critical_damage.toFixed(2);
+    combatData.computer_weapons[0].critical_chance = combatData.computer_weapons[0].critical_chance.toFixed(2);
+    combatData.computer_weapons[0].critical_damage = combatData.computer_weapons[0].critical_damage.toFixed(2);
+    combatData.computer_weapons[1].critical_chance = combatData.computer_weapons[1].critical_chance.toFixed(2);
+    combatData.computer_weapons[1].critical_damage = combatData.computer_weapons[1].critical_damage.toFixed(2);
 
-    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
-    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
-    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
-    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
-    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance)
-    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage)
-    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
-    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
+    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance);
+    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage);
+    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance);
+    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage);
+    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance);
+    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage);
+    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance);
+    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage);
 
 
 
@@ -1474,5 +1652,10 @@ const faithFinder = async (combatData, ) => { // The influence will add a chance
         combatData.player_win = false;
     }
 
-    return combatData
+    return {
+        combatData, 
+        statusEffect
+    }
 }
+
+module.exports = { StatusEffect }
