@@ -16,6 +16,9 @@ module.exports = {
     getOneEquipment
 }
 
+// Write in a function that will create an elevated rarity item of the same name when the user subm8its 3 of the same item name of a lower rarity
+// This would happen in a services tab of the dialog box
+
 async function indexEquipment(req, res) {
     console.log('%c We have made it to the Index in the Equipment Controller!', 'color: blue')
     try {

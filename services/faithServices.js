@@ -111,140 +111,291 @@ class StatusEffect {
 
     setEffect(combatData, player, weapon, statusEffect) {
         // This Is What Creates The Effect
-        let effectModifiers = {
-            physical_damage: 0,
-            magical_damage: 0,
-            physical_penetration: 0,
-            magical_penetration: 0,
-            critical_chance: 0,
-            critical_damage: 0,
-            physicalDefenseModifier: 0,
-            magicalDefenseModifier: 0,
-            physicalPosture: 0,
-            magicalPosture: 0,
-            dodge: 0,
-            roll: 0,
-            constitution: 0,
-            strength: 0,
-            agility: 0,
-            achre: 0,
-            caeren: 0,
-            kyosir: 0,
-            healing: 0,
-            damage: 0,
-            buff: 0,
-            debuff: 0,
-        };
+        let playerIntensity = statusEffect.intensity.value * statusEffect.intensity.magnitude;
 
+        let effectModifiers = {
+            physical_damage: playerIntensity,
+            magical_damage: playerIntensity,
+            physical_penetration: playerIntensity,
+            magical_penetration: playerIntensity,
+            critical_chance: playerIntensity,
+            critical_damage: playerIntensity / 10,
+            physicalDefenseModifier: playerIntensity,
+            magicalDefenseModifier: playerIntensity,
+            physicalPosture: playerIntensity,
+            magicalPosture: playerIntensity,
+            dodge: playerIntensity,
+            roll: playerIntensity,
+            constitution: playerIntensity,
+            strength: playerIntensity,
+            agility: playerIntensity,
+            achre: playerIntensity,
+            caeren: playerIntensity,
+            kyosir: playerIntensity,
+            healing: playerIntensity,
+            damage: playerIntensity,
+            buff: playerIntensity,
+            debuff: playerIntensity,
+        };
+        let potentialModifiers = {};
         let realizedModifiers = {};
 
         let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
         let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
-        let playerIntensity = statusEffect.intensity.value * statusEffect.intensity.magnitude;
         let playerMastery = combatData.player.name === player.name ? combatData.player.mastery : combatData.computer.mastery;
         let weaponInfluence = weapon.influences[0];
 
-        // I am open in the future to tweaking the modifier of strictly value * magnitude, will scale poorly with higher levels.
-        switch (statusEffect.prayer) {
-            case 'Heal': {
-                effectModifiers.healing = playerIntensity;
-                break;
+        // switch (statusEffect.intensity.governance) {
+        //     case 'constitution': {
+        //         effectModifiers.physical_damage = playerIntensity / 4;
+        //         effectModifiers.magical_damage = playerIntensity / 4;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity;
+        //         effectModifiers.magicalDefenseModifier = playerIntensity;
+        //         effectModifiers.critical_damage = playerIntensity / 20;
+        //         effectModifiers.critical_chance = playerIntensity / 4;
+        //         break;
+        //     }
+        //     case 'strength': {
+        //         effectModifiers.physical_damage = playerIntensity;
+        //         effectModifiers.critical_chance = playerIntensity / 2;
+        //         effectModifiers.critical_damage = playerIntensity / 10;
+        //         effectModifiers.physical_penetration = playerIntensity / 2;
+        //         effectModifiers.magical_penetration = playerIntensity / 8;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity;
+        //         effectModifiers.magicalDefenseModifier = playerIntensity / 4;
+        //         break;
+        //     }
+        //     case 'agility': {
+        //         effectModifiers.physical_damage = playerIntensity / 2;
+        //         effectModifiers.critical_chance = playerIntensity;
+        //         effectModifiers.critical_damage = playerIntensity / 20;
+        //         effectModifiers.dodge = playerIntensity / 2;
+        //         effectModifiers.roll = playerIntensity / 2;
+        //         effectModifiers.physical_penetration = playerIntensity;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity / 4;
+        //         break;
+        //     }
+        //     case 'achre': {
+        //         effectModifiers.magical_damage = playerIntensity / 2;
+        //         effectModifiers.critical_chance = playerIntensity;
+        //         effectModifiers.critical_damage = playerIntensity / 20;
+        //         effectModifiers.magical_penetration = playerIntensity;
+        //         effectModifiers.physical_penetration = playerIntensity / 2;
+        //         effectModifiers.dodge = playerIntensity / 2;
+        //         effectModifiers.roll = playerIntensity / 2;
+        //         effectModifiers.magicalDefenseModifier = playerIntensity / 4;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity / 4;
+        //         effectModifiers.physicalPosture = playerIntensity / 2;
+        //         effectModifiers.magicalPosture = playerIntensity / 2;
+        //         break;
+        //     }
+        //     case 'caeren': {
+        //         effectModifiers.magical_damage = playerIntensity;
+        //         effectModifiers.critical_chance = playerIntensity / 2;
+        //         effectModifiers.critical_damage = playerIntensity / 10;
+        //         effectModifiers.magical_penetration = playerIntensity / 2;
+        //         effectModifiers.magicalDefenseModifier = playerIntensity;
+        //         effectModifiers.physical_penetration = playerIntensity / 4;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity / 2;
+        //         break;
+        //     }
+        //     case 'kyosir': {
+        //         effectModifiers.physical_penetration = playerIntensity;
+        //         effectModifiers.magical_penetration = playerIntensity;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity;
+        //         effectModifiers.magicalDefenseModifier = playerIntensity;
+        //         effectModifiers.critical_chance = playerIntensity / 2;
+        //         effectModifiers.roll = playerIntensity / 2;
+        //         effectModifiers.dodge = playerIntensity / 2;
+        //         break;
+        //     }
+        //     case 'daethic': {
+        //         effectModifiers.physical_damage = playerIntensity / 2;
+        //         effectModifiers.magical_damage = playerIntensity / 2;
+        //         effectModifiers.physical_penetration = playerIntensity / 2;
+        //         effectModifiers.magical_penetration = playerIntensity / 2;
+        //         effectModifiers.physicalDefenseModifier = playerIntensity / 2;
+        //         effectModifiers.magicalDefenseModifier = playerIntensity / 2;
+        //         effectModifiers.physicalPosture = playerIntensity / 2;
+        //         effectModifiers.magicalPosture = playerIntensity / 2;
+        //         effectModifiers.critical_chance = playerIntensity / 2;
+        //         effectModifiers.critical_damage = playerIntensity / 20;
+        //         effectModifiers.dodge = playerIntensity / 2;
+        //         effectModifiers.roll = playerIntensity / 2;
+        //         break;
+        //     }
+        //     default: {
+        //         break;
+        //     }
+        // }
+
+
+        // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
+        switch(weapon.influences[0]) {
+            case "Daethos": {
+                potentialModifiers.physical_damage = effectModifiers.physical_damage / 2;
+                potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+                potentialModifiers.damage = playerDamage / 2;
+                potentialModifiers.healing = playerDamage / 2;
+
             }
-            case 'Buff': {
-                effectModifiers.buff = playerIntensity;
-                break;
+            case "Achreo": {
+                potentialModifiers.physical_damage = effectModifiers.physical_damage / 2;
+                potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
             }
-            case 'Debuff': {
-                effectModifiers.debuff = playerIntensity;
-                break;
+            case "Ahn've": {
+
+                potentialModifiers.damage = playerDamage;
+                potentialModifiers.healing = effectModifiers.healing;
             }
-            case 'Damage': {
-                effectModifiers.damage = playerIntensity;
-                break;
+            case "Astra": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+                potentialModifiers.roll = effectModifiers.roll / 2;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
             }
-            default: {
-                break;
+            case "Cambire": {
+                potentialModifiers.damage = playerDamage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Chiomyr": {
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Fyer": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage;
+            
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Ilios": {
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration / 2;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration / 2;
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier / 4;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier / 4;
+                potentialModifiers.physicalPosture = effectModifiers.physicalPosture / 4;
+                potentialModifiers.magicalPosture = effectModifiers.magicalPosture / 4;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = playerDamage / 2;
+            }
+            case "Kyn'gi": {
+
+               
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Kyrisos": {
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier;
+                potentialModifiers.roll = effectModifiers.roll;
+            
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Kyr'na": {
+                
+                
+                potentialModifiers.damage = effectModifiers.damage * 2;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Lilos": {
+
+
+                potentialModifiers.healing = effectModifiers.healing * 2;
+                potentialModifiers.damage = effectModifiers.damage;
+            }
+            case "Ma'anre": {
+                potentialModifiers.roll = effectModifiers.roll / 2;
+                potentialModifiers.dodge = effectModifiers.dodge / 2;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+
+                potentialModifiers.damage = playerDamage / 2;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Nyrolus": {
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier / 2;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier;
+                potentialModifiers.physicalPosture = effectModifiers.physicalPosture / 2;
+                potentialModifiers.magicalPosture = effectModifiers.magicalPosture;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Quor'ei": {
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier / 2;
+                potentialModifiers.physicalPosture = effectModifiers.physicalPosture;
+                potentialModifiers.magicalPosture = effectModifiers.magicalPosture / 2;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Rahvre": {
+                potentialModifiers.magical_damage = effectModifiers.magical_damage;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Senari": {
+                potentialModifiers.roll = effectModifiers.roll;
+                potentialModifiers.dodge = effectModifiers.dodge;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Se'dyro": {
+                
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Se'vas": {
+                
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Shrygei": {
+                
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+            }
+            case "Tshaer": {
+                
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
             }
         }
 
-        switch (statusEffect.intensity.governance) {
-            case 'constitution': {
-                effectModifiers.physical_damage = playerIntensity / 4;
-                effectModifiers.magical_damage = playerIntensity / 4;
-                effectModifiers.physicalDefenseModifier = playerIntensity;
-                effectModifiers.magicalDefenseModifier = playerIntensity;
-                effectModifiers.critical_damage = playerIntensity / 20;
-                effectModifiers.critical_chance = playerIntensity / 4;
-                break;
+        // Make the functions for the various status effects
+        switch (statusEffect.prayer) {
+            case "Buff": {
+                buff(potentialModifiers, realizedModifiers);
             }
-            case 'strength': {
-                effectModifiers.physical_damage = playerIntensity;
-                effectModifiers.critical_chance = playerIntensity / 2;
-                effectModifiers.critical_damage = playerIntensity / 10;
-                effectModifiers.physical_penetration = playerIntensity / 2;
-                effectModifiers.physicalDefenseModifier = playerIntensity;
-
-                break;
+            case "Damage": {
+                damage(potentialModifiers, realizedModifiers);
             }
-            case 'agility': {
-                effectModifiers.physical_damage = playerIntensity / 2;
-                effectModifiers.critical_chance = playerIntensity;
-                effectModifiers.critical_damage = playerIntensity / 20;
-                effectModifiers.dodge = playerIntensity / 2;
-                effectModifiers.roll = playerIntensity / 2;
-                effectModifiers.physical_penetration = playerIntensity;
-                effectModifiers.physicalDefenseModifier = playerIntensity / 4;
-
-                break;
+            case "Debuff": {
+                debuff(potentialModifiers, realizedModifiers);
             }
-            case 'achre': {
-                effectModifiers.magical_damage = playerIntensity / 2;
-                effectModifiers.critical_chance = playerIntensity;
-                effectModifiers.critical_damage = playerIntensity / 20;
-                effectModifiers.magical_penetration = playerIntensity;
-                effectModifiers.physical_penetration = playerIntensity / 2;
-                effectModifiers.dodge = playerIntensity / 2;
-                effectModifiers.roll = playerIntensity / 2;
-                effectModifiers.magicalDefenseModifier = playerIntensity / 4;
-                effectModifiers.physicalDefenseModifier = playerIntensity / 4;
-                break;
-            }
-            case 'caeren': {
-                effectModifiers.magical_damage = playerIntensity;
-                effectModifiers.critical_chance = playerIntensity / 2;
-                effectModifiers.critical_damage = playerIntensity / 10;
-                effectModifiers.magical_penetration = playerIntensity / 2;
-                effectModifiers.magicalDefenseModifier = playerIntensity;
-                effectModifiers.physical_penetration = playerIntensity / 4;
-                effectModifiers.physicalDefenseModifier = playerIntensity / 2;
-                break;
-            }
-            case 'kyosir': {
-                effectModifiers.physical_penetration = playerIntensity;
-                effectModifiers.magical_penetration = playerIntensity;
-                effectModifiers.physicalDefenseModifier = playerIntensity;
-                effectModifiers.magicalDefenseModifier = playerIntensity;
-                effectModifiers.critical_chance = playerIntensity / 2;
-                effectModifiers.roll = playerIntensity / 2;
-                effectModifiers.dodge = playerIntensity / 2;
-                break;
-            }
-            case 'daethic': {
-                effectModifiers.physical_damage = playerIntensity / 2;
-                effectModifiers.magical_damage = playerIntensity / 2;
-                effectModifiers.physical_penetration = playerIntensity / 2;
-                effectModifiers.magical_penetration = playerIntensity / 2;
-                effectModifiers.physicalDefenseModifier = playerIntensity / 2;
-                effectModifiers.magicalDefenseModifier = playerIntensity / 2;
-                effectModifiers.physicalPosture = playerIntensity / 2;
-                effectModifiers.magicalPosture = playerIntensity / 2;
-                effectModifiers.critical_chance = playerIntensity / 2;
-                effectModifiers.critical_damage = playerIntensity / 20;
-                effectModifiers.dodge = playerIntensity / 2;
-                effectModifiers.roll = playerIntensity / 2;
-            }
-            default: {
-                break;
+            case "Heal": {
+                heal(potentialModifiers, realizedModifiers);
             }
         }
 
@@ -449,8 +600,8 @@ const faithFinder = async (combatData, statusEffect) => { // The influence will 
         if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
             let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
             ahnve = Math.round(ahnve * combatData.player.level / 10);
-            combatData.new_player_health += ahnve
-            combatData.current_player_health += ahnve
+            combatData.new_player_health += ahnve;
+            combatData.current_player_health += ahnve;
             console.log("Ahn've!")
             combatData.player_influence_description = 
                 `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
