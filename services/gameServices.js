@@ -98,30 +98,45 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     console.log(combatData.computer.name, `'s Faith #`, computer_faith_number, `Faith #2`, computer_faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
     console.log(combatData.computer.name, `'s Faith Mod #`, computer_faith_mod_one, `Faith Mod #2`, computer_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
 
-    // let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${faith}` && effect.type === combatData.playerBlessing);
-    // if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
-    //     existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
-    //     existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
-    // } else if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-    //     existingEffect.tick.end += 1;
-    //     existingEffect.intensity.value += existingEffect.intensity.initial;
-    //     existingEffect.setEffect(combatData, combatData.weapons[0], this);
+    // let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);
+    // // if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
+    // //     existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
+    // //     existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+    // // } else 
+    // if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+    //     // existingEffect.tick.end += 1;
+    //     // existingEffect.intensity.value += existingEffect.intensity.initial;
+    //     existingEffect.activeStacks += 1;
+    //     existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
     // } else {
     //     existingEffect = new StatusEffect(combatData, combatData.player, combatData.opponent, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+    //     console.log(existingEffect, 'existingEffect -- Did this work?')
     // }
-    // combatData.playerEffects = combatData.playerEffects.filter(effect => effect.name !== `Gift of ${faith}` || effect.type !== combatData.playerBlessing);
-    // combatData.playerEffects.push(existingEffect);
 
-    // if (existingEffect === undefined) {
-        // return 
-    // } else {
-        // switch (existingEffect.prayer) {
-            // case 'Buff':
-            // case: 'Damage':
-            // case 'Debuff':
-        //     case 'Heal':
-        // }
+    // for (let key in combatData.weapons[0]) {
+    //     if (existingEffect.effect[key]) {
+    //         if (key !== 'dodge') {
+    //             combatData.weapons[0][key] += existingEffect.effect[key];
+    //         } else {
+    //             combatData.weapons[0][key] -= existingEffect.effect[key];
+    //         }
+    //     }
     // }
+
+    // for (let key in combatData.player_defense) {
+    //     if (existingEffect.effect[key]) {
+    //         combatData.player_defense[key] += existingEffect.effect[key];
+    //         console.log(combatData.player_defense[key], 'player_attributes[key] -- Did this work?');
+    //     }
+    // }
+
+    // if (existingEffect.effect.healing) {
+    //     combatData.new_player_health += existingEffect.effect.healing;
+    //     combatData.current_player_health += existingEffect.effect.healing;
+    // }
+
+    // combatData.playerEffects = combatData.playerEffects.filter(effect => effect.name !== `Gift of ${combatData.weapons[0].influences[0]}` || effect.prayer !== combatData.playerBlessing);
+    // combatData.playerEffects.push(existingEffect);
 
     if (faith_number > 85) {
         combatData.religious_success = true;
@@ -2950,6 +2965,7 @@ const actionSplitter = async (combatData) => {
         sessionRound: combatData.sessionRound,
         playerEffects: combatData.playerEffects,
         computerEffects: combatData.computerEffects,
+        playerBlessing: combatData.playerBlessing,
     }
     // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;

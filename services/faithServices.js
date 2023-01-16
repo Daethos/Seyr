@@ -16,9 +16,9 @@ class StatusEffect {
         this.intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
         this.refreshes = this.setRefreshes(prayer);
         this.stacks = this.setStacks(prayer);
-        this.activeStacks = this.setActiveStacks(this.intensity);
+        this.activeStacks = 1;
         this.prayer = prayer;
-        this.effect = this.setEffect(combatData, player, weapon, this);
+        this.effect = this.setEffect(combatData, player, weapon, attributes, prayer);
         this.description = this.setDescription(combatData, player, enemy, weapon, attributes, prayer);
         this.imgURL = this.setImgURL(weapon);
     }
@@ -53,23 +53,23 @@ class StatusEffect {
 
     
     setName(deity) {
-        this.name = `Gift of ${deity}`;
+        return this.name = `Gift of ${deity}`;
     }
     setDuration(player) {
-        let duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
-        this.duration = duration;
+        let duration = Math.floor(player.level / 3 + 1) > 6 ? 6 : Math.floor(player.level / 3 + 1);
+        return this.duration = duration;
     }
     setTick(combatData) {
-        this.tick = {
+        return this.tick = {
             start: combatData.combatRound,
             end: combatData.combatRound + this.duration,
         };
     }
     setRefreshes(prayer) {
-        this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || prayer === 'Buff' || prayer === 'Damage' ? true : false;
+        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || prayer === 'Buff' || prayer === 'Damage' ? true : false;
     }
     setStacks(prayer) {
-        this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
+        return this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
     }
     setIntensity(weapon, deity, attributes, player) {
         let attribute = 0;
@@ -98,20 +98,26 @@ class StatusEffect {
             type = 'daethic';
         }
 
-        this.intensity = {
+        return this.intensity = {
             initial: attribute,
             value: attribute,
-            magnitude: player.level / 10,
+            magnitude: player.level / 100,
             governance: type,
         };
+        
     }
-    setActiveStacks(intensity) {
-        this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
-    }
+    static updateEffectStack(statusEffect, combatData, player, weapon, attributes, prayer) {
+        console.log(statusEffect, 'Status Effect in Update Effect Stack');
 
-    setEffect(combatData, player, weapon, statusEffect) {
+        let intensity = {
+            initial: statusEffect.intensity.initial,
+            value: statusEffect.intensity.value,
+            magnitude: statusEffect.intensity.magnitude,
+        };
+
+        console.log(intensity, 'Status Effect in Update Effect Stack');
         // This Is What Creates The Effect
-        let playerIntensity = statusEffect.intensity.value * statusEffect.intensity.magnitude;
+        let playerIntensity = intensity.value * intensity.magnitude;
 
         let effectModifiers = {
             physical_damage: playerIntensity,
@@ -145,7 +151,325 @@ class StatusEffect {
         let playerMastery = combatData.player.name === player.name ? combatData.player.mastery : combatData.computer.mastery;
         let weaponInfluence = weapon.influences[0];
 
-        // switch (statusEffect.intensity.governance) {
+        // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
+        switch(weapon.influences[0]) {
+            case "Daethos": {
+                potentialModifiers.physical_damage = effectModifiers.physical_damage / 2;
+                potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+
+                potentialModifiers.damage = playerDamage / 2;
+                potentialModifiers.healing = playerDamage / 2;
+                break;
+            }
+            case "Achreo": {
+                potentialModifiers.physical_damage = effectModifiers.physical_damage / 2;
+                potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Ahn've": {
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+                potentialModifiers.dodge = effectModifiers.dodge / 2;
+
+                potentialModifiers.damage = playerDamage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Astra": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+                potentialModifiers.roll = effectModifiers.roll / 2;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Cambire": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.roll = effectModifiers.roll / 2;
+                potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+
+                potentialModifiers.damage = playerDamage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Chiomyr": {
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Fyer": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage;
+            
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Ilios": {
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration / 2;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration / 2;
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier / 4;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier / 4;
+                potentialModifiers.physicalPosture = effectModifiers.physicalPosture / 4;
+                potentialModifiers.magicalPosture = effectModifiers.magicalPosture / 4;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = playerDamage / 2;
+                break;
+            }
+            case "Kyn'gi": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.roll = effectModifiers.roll;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Kyrisos": {
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier;
+                potentialModifiers.roll = effectModifiers.roll;
+            
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Kyr'na": {
+                potentialModifiers.magical_damage = effectModifiers.magical_damage;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
+                
+                potentialModifiers.damage = effectModifiers.damage * 2;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Lilos": {
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+                potentialModifiers.physical_damage = effectModifiers.physical_damage;
+
+                potentialModifiers.healing = effectModifiers.healing * 2;
+                potentialModifiers.damage = effectModifiers.damage;
+                break;
+            }
+            case "Ma'anre": {
+                potentialModifiers.roll = effectModifiers.roll / 2;
+                potentialModifiers.dodge = effectModifiers.dodge / 2;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+
+                potentialModifiers.damage = playerDamage / 2;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Nyrolus": {
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier / 2;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier;
+                potentialModifiers.physicalPosture = effectModifiers.physicalPosture / 2;
+                potentialModifiers.magicalPosture = effectModifiers.magicalPosture;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Quor'ei": {
+                potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier;
+                potentialModifiers.magicalDefenseModifier = effectModifiers.magicalDefenseModifier / 2;
+                potentialModifiers.physicalPosture = effectModifiers.physicalPosture;
+                potentialModifiers.magicalPosture = effectModifiers.magicalPosture / 2;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Rahvre": {
+                potentialModifiers.magical_damage = effectModifiers.magical_damage;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Senari": {
+                potentialModifiers.roll = effectModifiers.roll;
+                potentialModifiers.dodge = effectModifiers.dodge;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Se'dyro": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration / 2;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration / 2;
+
+                potentialModifiers.damage = playerDamage;
+                potentialModifiers.healing = playerDamage / 2;
+                break;
+            }
+            case "Se'vas": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Shrygei": {
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            case "Tshaer": {
+                potentialModifiers.physical_damage = effectModifiers.physical_damage;
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+
+                potentialModifiers.damage = effectModifiers.damage;
+                potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        console.log(prayer, 'This is the prayer')
+        // Make the functions for the various status effects
+        switch (prayer) {
+            case "Buff": {
+                return this.effect = StatusEffect.updateBuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
+            }
+            case "Damage": {
+                return this.effect = StatusEffect.updateDamage(combatData, player, weapon, potentialModifiers, realizedModifiers);
+            }
+            case "Debuff": {
+                return this.effect = StatusEffect.updateDebuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
+            }
+            case "Heal": {
+                return this.effect = StatusEffect.heal(combatData, player, weapon, potentialModifiers, realizedModifiers);
+            }
+        }
+
+        console.log(realizedModifiers, 'Realized Modifiers From Set Effect');
+
+        return this.effect = realizedModifiers;
+    }
+
+    static updateBuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier) : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier) : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture) : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture) : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll) : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge) : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance) : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage) : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration) : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration) : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage) : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage) : 0;
+        
+        let cleanSlate = {};
+        for (let key in realizedModifiers) {
+            if (realizedModifiers[key] !== 0) {
+                cleanSlate[key] = realizedModifiers[key];
+            }
+        }
+        
+        console.log(cleanSlate, 'Realized Modifiers From Buff');
+        return cleanSlate;
+    }
+
+    static updateDamage(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+        realizedModifiers.damage = potentialModifiers.damage;
+    
+        return realizedModifiers;
+    }
+    static updateDebuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+        
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
+    
+        let cleanSlate = {};
+        for (let key in realizedModifiers) {
+            if (realizedModifiers[key] !== 0) {
+                cleanSlate[key] = realizedModifiers[key];
+            }
+        }
+        
+        console.log(cleanSlate, 'Realized Modifiers From De-Buff');
+        return cleanSlate;
+    }
+    static updateHeal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+        realizedModifiers.healing = potentialModifiers.healing;
+    
+        return realizedModifiers;
+    }
+
+    setActiveStacks(intensity) {
+        return this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
+    }
+
+    setEffect(combatData, player, weapon, attributes, prayer) {
+        let intensity = {};
+        intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player)
+        console.log(intensity, 'Status Effect in setEffect');
+        // This Is What Creates The Effect
+        let playerIntensity = intensity.value * intensity.magnitude;
+
+        let effectModifiers = {
+            physical_damage: playerIntensity,
+            magical_damage: playerIntensity,
+            physical_penetration: playerIntensity,
+            magical_penetration: playerIntensity,
+            critical_chance: playerIntensity,
+            critical_damage: playerIntensity / 10,
+            physicalDefenseModifier: playerIntensity,
+            magicalDefenseModifier: playerIntensity,
+            physicalPosture: playerIntensity,
+            magicalPosture: playerIntensity,
+            dodge: playerIntensity,
+            roll: playerIntensity,
+            constitution: playerIntensity,
+            strength: playerIntensity,
+            agility: playerIntensity,
+            achre: playerIntensity,
+            caeren: playerIntensity,
+            kyosir: playerIntensity,
+            healing: playerIntensity,
+            damage: playerIntensity,
+            buff: playerIntensity,
+            debuff: playerIntensity,
+        };
+        let potentialModifiers = {};
+        let realizedModifiers = {};
+
+        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
+        let playerMastery = combatData.player.name === player.name ? combatData.player.mastery : combatData.computer.mastery;
+        let weaponInfluence = weapon.influences[0];
+
+        // switch (intensity.intensity.governance) {
         //     case 'constitution': {
         //         effectModifiers.physical_damage = playerIntensity / 4;
         //         effectModifiers.magical_damage = playerIntensity / 4;
@@ -235,9 +559,10 @@ class StatusEffect {
             case "Daethos": {
                 potentialModifiers.physical_damage = effectModifiers.physical_damage / 2;
                 potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+
                 potentialModifiers.damage = playerDamage / 2;
                 potentialModifiers.healing = playerDamage / 2;
-
+                break;
             }
             case "Achreo": {
                 potentialModifiers.physical_damage = effectModifiers.physical_damage / 2;
@@ -247,11 +572,15 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Ahn've": {
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+                potentialModifiers.dodge = effectModifiers.dodge / 2;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Astra": {
                 potentialModifiers.critical_chance = effectModifiers.critical_chance;
@@ -260,10 +589,16 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Cambire": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
+                potentialModifiers.roll = effectModifiers.roll / 2;
+                potentialModifiers.magical_damage = effectModifiers.magical_damage / 2;
+
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Chiomyr": {
                 potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
@@ -272,6 +607,7 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Fyer": {
                 potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
@@ -279,6 +615,7 @@ class StatusEffect {
             
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Ilios": {
                 potentialModifiers.physical_penetration = effectModifiers.physical_penetration / 2;
@@ -290,12 +627,15 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = playerDamage / 2;
+                break;
             }
             case "Kyn'gi": {
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.roll = effectModifiers.roll;
 
-               
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Kyrisos": {
                 potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier;
@@ -304,18 +644,23 @@ class StatusEffect {
             
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Kyr'na": {
-                
+                potentialModifiers.magical_damage = effectModifiers.magical_damage;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
                 
                 potentialModifiers.damage = effectModifiers.damage * 2;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Lilos": {
-
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+                potentialModifiers.physical_damage = effectModifiers.physical_damage;
 
                 potentialModifiers.healing = effectModifiers.healing * 2;
                 potentialModifiers.damage = effectModifiers.damage;
+                break;
             }
             case "Ma'anre": {
                 potentialModifiers.roll = effectModifiers.roll / 2;
@@ -325,6 +670,7 @@ class StatusEffect {
 
                 potentialModifiers.damage = playerDamage / 2;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Nyrolus": {
                 potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier / 2;
@@ -334,6 +680,7 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Quor'ei": {
                 potentialModifiers.physicalDefenseModifier = effectModifiers.physicalDefenseModifier;
@@ -343,12 +690,15 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Rahvre": {
                 potentialModifiers.magical_damage = effectModifiers.magical_damage;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Senari": {
                 potentialModifiers.roll = effectModifiers.roll;
@@ -356,75 +706,144 @@ class StatusEffect {
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Se'dyro": {
-                
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration / 2;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration / 2;
 
-                potentialModifiers.damage = effectModifiers.damage;
-                potentialModifiers.healing = effectModifiers.healing;
+                potentialModifiers.damage = playerDamage;
+                potentialModifiers.healing = playerDamage / 2;
+                break;
             }
             case "Se'vas": {
-                
+                potentialModifiers.critical_chance = effectModifiers.critical_chance;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Shrygei": {
-                
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
             }
             case "Tshaer": {
-                
+                potentialModifiers.physical_damage = effectModifiers.physical_damage;
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
+                break;
+            }
+            default: {
+                break;
             }
         }
-
+        console.log(prayer, 'This is the prayer')
         // Make the functions for the various status effects
-        switch (statusEffect.prayer) {
+        switch (prayer) {
             case "Buff": {
-                buff(potentialModifiers, realizedModifiers);
+                return this.effect = this.buff(combatData, player, weapon, potentialModifiers, realizedModifiers);
             }
             case "Damage": {
-                damage(potentialModifiers, realizedModifiers);
+                return this.effect = this.damage(combatData, player, weapon, potentialModifiers, realizedModifiers);
             }
             case "Debuff": {
-                debuff(potentialModifiers, realizedModifiers);
+                return this.effect = this.debuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
             }
             case "Heal": {
-                heal(potentialModifiers, realizedModifiers);
+                return this.effect = this.heal(combatData, player, weapon, potentialModifiers, realizedModifiers);
             }
         }
 
+        console.log(realizedModifiers, 'Realized Modifiers From Set Effect')
+        return this.effect = realizedModifiers;
+    }
+
+    
+
+    buff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier) : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier) : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture) : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture) : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll) : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge) : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance) : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage) : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration) : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration) : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage) : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage) : 0;
         
-        this.effect = realizedModifiers;
+        let cleanSlate = {};
+        for (let key in realizedModifiers) {
+            if (realizedModifiers[key] !== 0) {
+                cleanSlate[key] = realizedModifiers[key];
+            }
+        }
+        
+        console.log(cleanSlate, 'Realized Modifiers From Buff');
+        return cleanSlate;
+    }
+    damage(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+        realizedModifiers.damage = potentialModifiers.damage;
+    
+        return realizedModifiers;
+    }
+    debuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+        
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
+    
+        let cleanSlate = {};
+        for (let key in realizedModifiers) {
+            if (realizedModifiers[key] !== 0) {
+                cleanSlate[key] = realizedModifiers[key];
+            }
+        }
+        
+        console.log(cleanSlate, 'Realized Modifiers From De-Buff');
+        return cleanSlate;
+    }
+    heal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+        realizedModifiers.healing = potentialModifiers.healing;
+    
+        return realizedModifiers;
+    }
+
+    setDescription(combatData, player, enemy, weapon, attributes, prayer) {
+        console.log('Did we make it here?')
+        let intensity = {};
+        intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
+        let duration = this.setDuration(player);
+        const article = ['a','e','i','o','u'].includes(weapon.name[0].toLowerCase()) ? "an" : "a";
+        let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing you for ${intensity.value * intensity.magnitude}` : prayer === 'Damage' ? `damaging ${enemy.name} for ${intensity.value * intensity.magnitude}` : `blessing ${player.name}`} for ${duration} combat rounds.`;
+        
+        return this.description = description;
     }
     setImgURL(weap) {
-        this.imgURL = weap.imgURL;
+        return this.imgURL = weap.imgURL;
     }
 
-}
 
-const effectCompiler = async (combatData, statusEffects, player, enemy, weapon, faith, governance, attribute, style, behavior) => {
-    // governance is the attribute tied to the faith arg, i.e. Achreo is achre, Cambire is caeren, etc.
-    
-    let effect = {
-        
-        description: 
-            `${faith} has granted ${player.name} a gift through the use of their ${weapon.name}, 
-                ${style === 'refreshes' && behavior === 'offensive' ? `cursing ${enemy.name}` : // If Style = Refreshes + Behavior = Offensive, Create a Debuff
-                style === 'refreshes' && behavior === 'defensive' ? `renewing you for ${this.intensity.value * this.intensity.magnitude}` :  // If Style = Refreshes + Behavior = Defensive, Create a Heal over Time
-                style === 'stacks' && behavior === 'offensive' ? `damaging ${enemy.name} for ${this.intensity.value * this.intensity.magnitude}` : // If Style = Stacks + Behavior = Offensive, Create a Damage over Time
-                `blessing ${player.name}`} for ${this.duration} combat rounds.`, // If Style = Stacks + Behavior = Defensive, Create a Buff over Time
-
-    };
-
-    return {
-        combatData, effect
-    }
 }
 
 const checkStatus = (combatData, effects) => {
@@ -1809,4 +2228,4 @@ const faithFinder = async (combatData, statusEffect) => { // The influence will 
     }
 }
 
-module.exports = { StatusEffect }
+module.exports = StatusEffect 

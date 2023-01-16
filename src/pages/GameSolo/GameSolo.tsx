@@ -164,7 +164,7 @@ const GameSolo = ({ user }: GameProps) => {
         player_win: false,
         critical_success: false,
         glancing_blow: false,
-        playerBlessing: '',
+        playerBlessing: 'Buff',
         playerEffects: [],
         
         computer: '',
@@ -300,10 +300,19 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerAttributes(opponentResponse.data.data.attributes);
             setTotalComputerHealth(opponentResponse.data.data.attributes.healthTotal);
             setCurrentComputerHealth(opponentResponse.data.data.attributes.healthTotal);
-            setComputerWeapons([opponentResponse.data.data.combat_weapon_one, opponentResponse.data.data.combat_weapon_two, opponentResponse.data.data.combat_weapon_three])
+            setAsceanState({
+                ...asceanState,
+                'ascean': response.data.data.ascean,
+                'level': response.data.data.ascean.level,
+                'opponent': opponentResponse.data.data.ascean.level,
+                'experience': 0,
+                'experienceNeeded': response.data.data.ascean.level * 1000,
+                'mastery': response.data.data.ascean.mastery,
+                'faith': response.data.data.ascean.faith,
+            })
             setCombatData({
                 ...combatData,
-
+                
                 'player': response.data.data.ascean,
                 'player_health': response.data.data.attributes.healthTotal,
                 'current_player_health': response.data.data.attributes.healthTotal,
@@ -315,7 +324,7 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_defense': response.data.data.defense,
                 'player_attributes': response.data.data.attributes,
                 'player_damage_type': response.data.data.combat_weapon_one.damage_type[0],
-
+                
                 'computer': opponentResponse.data.data.ascean,
                 'computer_health': opponentResponse.data.data.attributes.healthTotal,
                 'current_computer_health': opponentResponse.data.data.attributes.healthTotal,
@@ -327,20 +336,11 @@ const GameSolo = ({ user }: GameProps) => {
                 'computer_defense': opponentResponse.data.data.defense,
                 'computer_attributes': opponentResponse.data.data.attributes,
                 'computer_damage_type': opponentResponse.data.data.combat_weapon_one.damage_type[0],
-
+                
                 'combatRound': 1,
                 'sessionRound': 1,
             });
-            setAsceanState({
-                ...asceanState,
-                'ascean': response.data.data.ascean,
-                'level': response.data.data.ascean.level,
-                'opponent': opponentResponse.data.data.ascean.level,
-                'experience': 0,
-                'experienceNeeded': response.data.data.ascean.level * 1000,
-                'mastery': response.data.data.ascean.mastery,
-                'faith': response.data.data.ascean.faith,
-            })
+            setComputerWeapons([opponentResponse.data.data.combat_weapon_one, opponentResponse.data.data.combat_weapon_two, opponentResponse.data.data.combat_weapon_three])
             setComputerWin(false);
             setPlayerWin(false);
             // setGameIsLive(true);
