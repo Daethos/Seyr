@@ -11,6 +11,7 @@ class StatusEffect {
     constructor(combatData, player, enemy, weapon, attributes, prayer) {
         // May have to juggle the order of these args and the order of the properties and how they are derived. Not sure
         this.name = this.setName(weapon.influences[0]);
+        this.deity = weapon.influences[0];
         this.duration = this.setDuration(player);
         this.tick = this.setTick(combatData);
         this.intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
@@ -22,7 +23,9 @@ class StatusEffect {
         this.description = this.setDescription(combatData, player, enemy, weapon, attributes, prayer);
         this.imgURL = this.setImgURL(weapon);
     }
-
+    static getDeity() {
+        return this.deity;
+    }
     getEffect() {
         return this.effect;
     }
@@ -355,7 +358,7 @@ class StatusEffect {
                 return this.effect = StatusEffect.updateDebuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
             }
             case "Heal": {
-                return this.effect = StatusEffect.heal(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.updateHeal(combatData, player, weapon, potentialModifiers, realizedModifiers);
             }
         }
 
