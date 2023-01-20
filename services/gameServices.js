@@ -1,5 +1,227 @@
 const StatusEffect = require('./faithServices.js');
 
+const statusEffectCheck = async (combatData) => {
+    combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        console.log(effect.name, 'Effect in Game Services -- Filter')
+        const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+        const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
+        const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
+        if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.computer_win === true) { // The Effect Expires
+            if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                console.log('Player Buff Effect Expires');
+                for (let key in effect.effect) {
+                    if (key in combatData.weapons[matchingWeaponIndex]) {
+                        if (key !== 'dodge') {
+                            console.log(effect.effect, key, 'Buff Effect Expires in Weapon Loop');
+                            combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                        }
+                    }
+                    if (key in combatData.player_defense) {
+                        console.log(effect.effect, key, 'Buff Effect Expires in Defense Loop');
+                        combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                    }
+                }
+            }
+            if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                console.log(effect.name, 'The Effect Expiring Against the Debuff Target', effect.debuffTarget, matchingDebuffTarget, matchingDebuffTargetIndex);
+                for (let key in effect.effect) {
+
+                    if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
+                        if (key !== 'dodge') {
+                            console.log(effect.effect, key, 'Debuff Effect Expires in Weapon Loop');
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        }
+                    }
+                    if (key in combatData.computer_defense) {
+                        console.log(effect.effect, key, 'Debuff Effect Expires in Defense Loop');
+                        combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
+                    }
+                }
+            }
+            console.log(effect.name, effect.prayer, 'Player Effect Expiring');
+            return false;
+        } else { // The Effect Persists
+            switch (effect.prayer) {
+                case 'Buff': { // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
+                    if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                            } else {
+                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.player_defense) {
+                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                        }
+                    }
+                    console.log(effect.name, effect.prayer, 'Player Buff Ticking');
+                    break;
+                }
+                case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+                    if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
+                        effect.debuffTarget = combatData.computer_weapons[0].name;
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.computer_weapons[0][key] -= effect.effect[key];
+                            } else {
+                                combatData.computer_weapons[0][key] += effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.computer_defense) { // Buff
+                            if (effect.effect[key]) {
+                                combatData.computer_defense[key] -= effect.effect[key];
+                            }
+                        }
+                    }
+                    console.log(effect.name, effect.prayer, 'Computer Debuff Ticking');
+                    break;
+                }
+                case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                    combatData.new_computer_health -= effect.effect.damage * 0.33;
+                    combatData.current_computer_health -= effect.effect.damage * 0.33;
+
+                    console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
+
+                    if (combatData.current_computer_health < 0 || combatData.new_computer_health < 0) {
+                        combatData.new_computer_health = 0;
+                        combatData.current_computer_health = 0;
+                        combatData.computer_win = false;
+                        combatData.player_win = true;
+                    }
+                    break;
+                }
+                case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                    combatData.new_player_health += effect.effect.healing * 0.33;
+                    combatData.current_player_health += effect.effect.healing * 0.33;
+
+                    if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                        combatData.computer_win = false;
+                    }
+                    console.log(effect.name, effect.prayer, 'Heal Ticking');
+                    break;
+                }
+
+            }
+            return true;
+        }
+    });
+
+    combatData.computerEffects = combatData.computerEffects.filter(effect => {
+        console.log(effect, 'Effect in Game Services -- Filter')
+        const matchingWeapon = combatData.computer_weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.computer_weapons.indexOf(matchingWeapon);
+        const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
+        const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
+        if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.computer_win === true) { // The Effect Expires
+            if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                console.log('Computer Buff Effect Expires');
+                for (let key in effect.effect) {
+                    if (effect.effect[key] && key !== 'dodge') {
+                        console.log(combatData.computer_weapons[matchingWeaponIndex], effect.effect, key, 'Buff Effect Expires in Effect Loop');
+                        combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                    } else {
+                        combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                    }
+                }
+                for (let key in combatData.computer_defense) {
+                    if (effect.effect[key]) combatData.computer_defense[key] -= effect.effect[key] * effect.activeStacks;
+                }
+            }
+            if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                for (let key in effect.effect) {
+                    if (effect.effect[key] && key !== 'dodge') {
+                        combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+                    } else {
+                        combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
+                    }
+                }
+                for (let key in combatData.player_defense) {
+                    if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                }
+            }
+            console.log(effect.name, effect.prayer, 'Computer Effect Expiring')
+            return false;
+        } else { // The Effect Persists
+            switch (effect.prayer) {
+                case 'Buff': { // Buffs are applied
+                    if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key];
+                            } else {
+                                combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.computer_defense) {
+                            if (effect.effect[key]) combatData.computer_defense[key] += effect.effect[key];
+                        }
+                    }
+                    console.log(effect.name, effect.prayer, 'Computer Buff Ticking');
+                    break;
+                }
+                case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+                    if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
+                        effect.debuffTarget = combatData.weapons[0].name;
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[0][key] -= effect.effect[key];
+                            } else {
+                                combatData.weapons[0][key] += effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.player_defense) { // Buff
+                            if (effect.effect[key]) {
+                                combatData.player_defense[key] -= effect.effect[key];
+                            }
+                        }
+                    }
+                    console.log(effect.name, effect.prayer, 'Computer Debuff Ticking');
+                    break;
+                }
+                case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                    combatData.new_player_health -= effect.effect.damage * 0.33;
+                    combatData.current_player_health -= effect.effect.damage * 0.33;
+
+                    console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
+
+                    if (combatData.current_player_health < 0 || combatData.new_player_health < 0) {
+                        combatData.new_player_health = 0;
+                        combatData.current_player_health = 0;
+                        combatData.player_win = false;
+                        combatData.computer_win = true;
+                    }
+                    break;
+                }
+                case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                    combatData.new_computer_health += effect.effect.healing * 0.33;
+                    combatData.current_computer_health += effect.effect.healing * 0.33;
+
+                    if (combatData.current_computer_health > 0 || combatData.new_computer_health > 0) {
+                        combatData.player_win = false;
+                    }
+                    console.log(effect.name, effect.prayer, 'Heal Ticking');
+                    break;
+                }
+            }
+        }
+        return true;
+    });
+
+    if (combatData.new_player_health > 0) {
+        combatData.computer_win = false;
+    }
+    if (combatData.new_computer_health > 0) {
+        combatData.player_win = false;
+    }
+    return combatData;
+}
+
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.computer_win === true) {
         return
@@ -99,1360 +321,1517 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     console.log(combatData.computer.name, `'s Faith Mod #`, computer_faith_mod_one, `Faith Mod #2`, computer_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
 
 
-        // if (existingEffect && existingEffect.refreshes) { // If the effect already exists and it refreshes, update the endTick, for Heals and Debuffs
-    //     existingEffect.duration = Math.floor(player.level / 4 + 1) > 4 ? 4 : Math.floor(player.level / 4 + 1);
-    //     existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
-    // } else 
+    //TODO:FIXME: START OF CODE TESTING
 
-
-    let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);
-    if (existingEffect && existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-        existingEffect.tick.end += 1;
-        existingEffect.activeStacks += 1;
-        existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
-    } else {
-        existingEffect = new StatusEffect(combatData, combatData.player, combatData.opponent, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
-        console.log(existingEffect, 'existingEffect -- Did this work?')
+    if (faith_number > 5) {
+        combatData.religious_success = true;
+        let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+        // Handles the creation of a new Status Effect if it doesn't already exist
+        if (!existingEffect) {
+            existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+            combatData.playerEffects.push(existingEffect);
+            combatData.player_influence_description = existingEffect.description;
+            console.log(existingEffect, 'New Status Effect in Game Services');
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+            existingEffect.tick.end += 1;
+            existingEffect.activeStacks += 1;
+            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+            switch (existingEffect.prayer) {
+                case 'Buff': {
+                    for (let key in existingEffect.effect) {
+                        if (existingEffect.effect[key] && key !== 'dodge') {
+                            combatData.weapons[0][key] += existingEffect.effect[key];
+                        } else {
+                            combatData.weapons[0][key] -= existingEffect.effect[key];
+                        }
+                    }
+                    for (let key in combatData.player_defense) {
+                        if (existingEffect.effect[key]) {
+                            combatData.player_defense[key] += existingEffect.effect[key];
+                        }
+                    }
+                    break;
+                }
+                case 'Damage': {
+                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                    break;
+                }
+            }
+        } else if (existingEffect.refreshes) {
+            existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+            existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+            existingEffect.activeRefreshes += 1;
+        }    
+    }
+    if (combatData.dual_wielding === true) {
+        if (faith_number_two > 5) {
+            combatData.religious_success = true;
+            let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+            // Handles the creation of a new Status Effect if it doesn't already exist
+            if (!existingEffect) {
+                existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
+                combatData.playerEffects.push(existingEffect);
+                combatData.player_influence_description_two = existingEffect.description;
+                console.log(existingEffect, 'New Status Effect in Game Services');
+            } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+                existingEffect.tick.end += 1;
+                existingEffect.activeStacks += 1;
+                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
+                switch (existingEffect.prayer) {
+                    case 'Buff': {
+                        for (let key in existingEffect.effect) {
+                            if (existingEffect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[1][key] += existingEffect.effect[key];
+                            } else {
+                                combatData.weapons[1][key] -= existingEffect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.player_defense) {
+                            if (existingEffect.effect[key]) {
+                                combatData.player_defense[key] += existingEffect.effect[key];
+                            }
+                        }
+                        break;
+                    }
+                    case 'Damage': {
+                        existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                        break;
+                    }
+                }
+            } else if (existingEffect.refreshes) {
+                existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+                existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+                existingEffect.activeRefreshes += 1;
+            }    
+        }
+    }
+    if (computer_faith_number > 5) {
+        combatData.computer_religious_success = true;
+        let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[0].influences[0]}` && effect.prayer === combatData.computerBlessing);   
+        // Handles the creation of a new Status Effect if it doesn't already exist
+        if (!existingEffect) {
+            existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
+            combatData.computerEffects.push(existingEffect);
+            combatData.computer_influence_description = existingEffect.description;
+            console.log(existingEffect, 'New Status Effect in Game Services');
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+            existingEffect.tick.end += 1;
+            existingEffect.activeStacks += 1;
+            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
+            switch (existingEffect.prayer) {
+                case 'Buff': {
+                    for (let key in existingEffect.effect) {
+                        if (existingEffect.effect[key] && key !== 'dodge') {
+                            combatData.computer_weapons[0][key] += existingEffect.effect[key];
+                        } else {
+                            combatData.computer_weapons[0][key] -= existingEffect.effect[key];
+                        }
+                    }
+                    for (let key in combatData.computer_defense) {
+                        if (existingEffect.effect[key]) {
+                            combatData.computer_defense[key] += existingEffect.effect[key];
+                        }
+                    }
+                    break;
+                }
+                case 'Damage': {
+                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                    break;
+                }
+            }
+        } else if (existingEffect.refreshes) {
+            existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
+            existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+            existingEffect.activeRefreshes += 1;
+        }    
+    }
+    if (combatData.computer_dual_wielding === true) {
+        if (computer_faith_number_two > 5) {
+            combatData.computer_religious_success = true;
+        let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
+        // Handles the creation of a new Status Effect if it doesn't already exist
+        if (!existingEffect) {
+            existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
+            combatData.computerEffects.push(existingEffect);
+            combatData.computer_influence_description = existingEffect.description;
+            console.log(existingEffect, 'New Status Effect in Game Services');
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+            existingEffect.tick.end += 1;
+            existingEffect.activeStacks += 1;
+            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
+            switch (existingEffect.prayer) {
+                case 'Buff': {
+                    for (let key in existingEffect.effect) {
+                        if (existingEffect.effect[key] && key !== 'dodge') {
+                            combatData.computer_weapons[1][key] += existingEffect.effect[key];
+                        } else {
+                            combatData.computer_weapons[1][key] -= existingEffect.effect[key];
+                        }
+                    }
+                    for (let key in combatData.computer_defense) {
+                        if (existingEffect.effect[key]) {
+                            combatData.computer_defense[key] += existingEffect.effect[key];
+                        }
+                    }
+                    break;
+                }
+                case 'Damage': {
+                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                    break;
+                }
+            }
+        } else if (existingEffect.refreshes) {
+            existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
+            existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+            existingEffect.activeRefreshes += 1;
+        }    
+        }
     }
 
     // Filter Expired Status Effects
-    combatData.playerEffects = combatData.playerEffects.filter(effect => {
-        if (effect.tick.end >= combatData.combatRound) {
-            // This needs to reverse all +/- additions created for Buffs and Debuffs, and remove the effect from the combatData object.
-            // This also needs to account for the fact that some effects are 'stackable' and some are not, based on the activeStacks property.
-            
-            
-        } else {
-            return effect;
-        }
-    });
+    // await statusEffectCheck(combatData);
 
-    // Update Combat Data
-    combatData.playerEffects.forEach(effect => {
-        switch (effect.prayer) {
+    // combatData.playerEffects = combatData.playerEffects.filter(effect => {
+    //     console.log(effect, 'Effect in Game Services -- Filter')
+    //     const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+    //     const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+    //     const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
+    //     const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
+    //     if (effect.tick.end === combatData.combatRound) { // The Effect Expires
+    //         if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+    //             console.log('Buff Effect Expires');
+    //             for (let key in effect.effect) {
+                    
+    //                 if (effect.effect[key] && key !== 'dodge') {
+    //                     console.log(combatData.weapons[matchingWeaponIndex], effect.effect, key, 'Buff Effect Expires in Effect Loop');
+    //                     combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+    //                 } else {
+    //                     combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+    //                 }
+    //             }
+    //             for (let key in combatData.player_defense) {
+    //                 if (effect.effect[key]) combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+    //             }
+    //         }
+    //         if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+    //             for (let key in effect.effect) {
+    //                 if (effect.effect[key] && key !== 'dodge') {
+    //                     combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+    //                 } else {
+    //                     combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
+    //                 }
+    //             }
+    //             for (let key in combatData.computer_defense) {
+    //                 if (effect.effect[key]) combatData.computer_defense[key] += effect.effect[key];
+    //             }
+    //         }
+    //         console.log(effect.name, effect.prayer, 'Player Effect Expiring')
+    //         return false;
+    //     } else { // The Effect Persists
+    //         switch (effect.prayer) {
+    //             case 'Buff': { // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
+    //                 if (effect.activeStacks === 1) {
+    //                     for (let key in effect.effect) {
+    //                         if (effect.effect[key] && key !== 'dodge') {
+    //                             combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+    //                         } else {
+    //                             combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+    //                         }
+    //                     }
+    //                     for (let key in combatData.player_defense) {
+    //                         if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+    //                     }
+    //                 }
+    //                 console.log(effect.name, effect.prayer, 'Player Buff Ticking');
+    //                 break;
+    //             }
+    //             case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+    //                 if (effect.activeRefreshes === 0) {
+    //                     effect.debuffTarget = combatData.computer_weapons[0].name;
+    //                     for (let key in effect.effect) {
+    //                         if (effect.effect[key] && key !== 'dodge') {
+    //                             combatData.computer_weapons[0][key] -= effect.effect[key];
+    //                         } else {
+    //                             combatData.computer_weapons[0][key] += effect.effect[key];
+    //                         }
+    //                     }
+    //                     for (let key in combatData.computer_defense) { // Buff
+    //                         if (effect.effect[key]) {
+    //                             combatData.computer_defense[key] -= effect.effect[key];
+    //                         }
+    //                     }
+    //                 }
+    //                 console.log(effect.name, effect.prayer, 'Computer Debuff Ticking');
+    //                 break;
+    //             }
+    //             case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+    //                 combatData.new_computer_health -= effect.effect.damage * 0.33;
+    //                 combatData.current_computer_health -= effect.effect.damage * 0.33;
 
-            // Cannot use Buff and Debuff here because they don't 'tick' like Damage and Heal, they just apply a flat bonus or penalty on activate or stack.
+    //                 console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
+    //                 break;
+    //             }
+    //             case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+    //                 combatData.new_player_health += effect.effect.healing * 0.33;
+    //                 combatData.current_player_health += effect.effect.healing * 0.33;
 
-            // case 'Buff': {
-            //     for (let key in combatData.weapons[0]) {
-            //         if (effect.effect[key] && key !== 'dodge') {
-            //             combatData.weapons[0][key] += effect.effect[key];
-            //         } else {
-            //             combatData.weapons[0][key] -= effect.effect[key];
-            //         }
-            //     }
-            //     for (let key in combatData.player_defense) { // Buff
-            //         if (effect.effect[key]) {
-            //             combatData.player_defense[key] += effect.effect[key];
-            //             console.log(combatData.player_defense[key], 'player_attributes[key] -- Did this work?');
-            //         }
-            //     }
-            //     break;
-            // }
-            // case 'Debuff': {
-            //     for (let key in combatData.weapons[0]) {
-            //         if (effect.effect[key] && key !== 'dodge') {
-            //             combatData.computer_weapons[0][key] -= effect.effect[key];
-            //         } else {
-            //             combatData.computer_weapons[0][key] += effect.effect[key];
-            //         }
-            //     }
-            //     for (let key in combatData.computer_defense) { // Buff
-            //         if (effect.effect[key]) {
-            //             combatData.computer_defense[key] -= effect.effect[key];
-            //             console.log(combatData.computer_defense[key], 'player_attributes[key] -- Did this work?');
-            //         }
-            //     }
-            //     break;
-            // }
-            case 'Heal': {
-                combatData.new_player_health += effect.effect.healing * 0.33;
-                combatData.current_player_health += effect.effect.healing * 0.33;
-                break;
-            }
-            case 'Damage': {
-                combatData.new_computer_health -= effect.effect.damage * 0.33;
-                combatData.current_computer_health -= effect.effect.damage * 0.33;
-                break;
-            }
-        }
-        
-        
+    //                 console.log(effect.name, effect.prayer, 'Heal Ticking');
+    //                 break;
+    //             }
 
-    });
+    //         }
+    //         return true;
+    //     }
+    // });
 
+    //TODO:FIXME: END OF CODE TESTING
 
-    // for (let key in combatData.weapons[0]) {
-    //     if (existingEffect.effect[key]) {
-    //         if (key !== 'dodge') {
-    //             combatData.weapons[0][key] += existingEffect.effect[key];
-    //         } else {
-    //             combatData.weapons[0][key] -= existingEffect.effect[key];
+    // if (faith_number > 85) {
+    //     combatData.religious_success = true;
+    //     if (combatData.weapons[0].influences[0] === 'Daethos') { // God
+    //         console.log('Daethos!')
+    //         let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+    //         daethos = Math.round(daethos * (combatData.player.level / 10));
+    //         combatData.current_player_health += combatData.realized_player_damage / 2;
+    //         combatData.new_player_health += combatData.realized_player_damage / 2;
+    //         combatData.player_influence_description = 
+    //             `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage / 2)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+    //         combatData.new_player_health += daethos;
+    //         combatData.new_computer_health -= daethos;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //         combatData.current_player_health += daethos;
+    //         combatData.current_computer_health -= daethos;
+    //         if (combatData.current_computer_health < 0) {
+    //             combatData.current_computer_health = 0;
+    //         }
+    //         if (combatData.new_computer_health < 0) {
+    //             combatData.new_computer_health = 0;
+    //         }
+    // }
+    //     if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
+    //         console.log('Achreo!')
+    //         // combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance + 1);
+    //         let achreo = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+    //         achreo = Math.round(achreo * (combatData.player.level / 10));
+    //         combatData.new_player_health += achreo
+    //         combatData.current_player_health += achreo
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //         combatData.player_influence_description = 
+    //             `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
+    //         combatData.weapons[0].physical_damage += 2;
+    //         combatData.weapons[0].magical_damage += 2;
+    //         combatData.weapons[0].critical_chance += 2;
+    //         combatData.weapons[0].critical_damage += 0.2;
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
+    //         let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+    //         ahnve = Math.round(ahnve * combatData.player.level / 10);
+    //         combatData.new_player_health += ahnve
+    //         combatData.current_player_health += ahnve
+    //         console.log("Ahn've!")
+    //         combatData.player_influence_description = 
+    //             `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
+    //         if (combatData.realized_player_damage < 0) {
+    //             combatData.realized_player_damage = 0;
+    //         }
+    //         combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    //         combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    //         if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+    //             combatData.new_computer_health = 0;
+    //             combatData.player_win = true;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === 'Astra') { // Lightning
+    //         let astra = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+    //         astra = Math.round(astra * combatData.player.level / 10);
+    //         console.log("Astra!")
+    //         combatData.player_influence_description = 
+    //             `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
+    //         combatData.weapons[0].critical_chance += 4;
+    //         combatData.weapons[0].roll += 2;
+    //         combatData.weapons[0].critical_damage += 0.1;
+    //         combatData.new_player_health += astra
+    //         combatData.current_player_health += astra
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
+    //         console.log("Cambire!")
+    //         let cambire = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
+    //         cambire = Math.round(cambire * combatData.player.level / 10);
+    //         combatData.new_player_health += cambire;
+    //         combatData.current_player_health += cambire;
+    //         combatData.player_influence_description = 
+    //             `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage, gifting ${cambire}.`
+    //         if (combatData.realized_player_damage < 0) {
+    //             combatData.realized_player_damage = 0;
+    //         }
+    //         combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    //         combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    //         if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+    //             combatData.new_computer_health = 0;
+    //             combatData.player_win = true;
+    //         }    
+    //     }
+    //     if (combatData.weapons[0].influences[0] === 'Chiomyr') { // Humor
+    //         let chiomyr = (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
+    //         chiomyr = Math.round(chiomyr * combatData.player.level / 10);
+    //         combatData.new_player_health += chiomyr;
+    //         combatData.current_player_health += chiomyr;
+    //         combatData.player_influence_description = 
+    //             `Your Caer causes a faint cackle to fade around you.`
+    //         console.log("Chiomyr!")
+    //         combatData.weapons[0].physical_penetration += 3;
+    //         combatData.weapons[0].magical_penetration += 3;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === 'Fyer') { // Fire
+    //         console.log("Fyer!")
+    //         let fyer = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+    //         fyer = Math.round(fyer * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `Your Caer ushers forth the favor of Fyer igniting through you.`
+    //         combatData.weapons[0].critical_chance += 1;
+    //         combatData.weapons[0].critical_damage += 0.9;
+    //         combatData.new_player_health += fyer;
+    //         combatData.current_player_health += fyer;  
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
+    //         let ilios = combatData.realized_player_damage / 2;
+    //         combatData.new_player_health += ilios;
+    //         combatData.current_player_health += ilios;
+    //         console.log("Ilios!")
+    //         combatData.player_influence_description = 
+    //             `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`   
+    //         combatData.weapons[0].magical_penetration += 2;
+    //         combatData.weapons[0].physical_penetration += 2;
+    //         combatData.player_defense.physicalDefenseModifier += 1;
+    //         combatData.player_defense.magicalDefenseModifier += 1;
+    //         combatData.player_defense.physicalPosture += 1;
+    //         combatData.player_defense.magicalPosture += 1;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
+    //         console.log("Kyn'gi!")
+    //         let kyngi = (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
+    //         kyngi = Math.round(kyngi * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `Your keening Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
+    //         combatData.weapons[0].roll += 3;
+    //         combatData.weapons[0].critical_chance += 3;
+    //         combatData.new_player_health += kyngi;
+    //         combatData.current_player_health += kyngi;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Kyrisos") { // Gold
+    //         let kyrisos = (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
+    //         kyrisos = Math.round(kyrisos * combatData.player.level / 10);
+    //         combatData.new_player_health += kyrisos;
+    //         combatData.current_player_health += kyrisos;
+    //         console.log("Kyrisos!")
+    //         combatData.player_influence_description = 
+    //             `The Caer of Kyrisos imbues you with Kyosir!`
+    //         combatData.player_attributes.kyosirMod += 4;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Kyr'na") { // Time
+    //         console.log("Kyr'na!")
+    //         let kyrna = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre);
+    //         kyrna = Math.round(kyrna * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
+    //         combatData.new_computer_health -= kyrna;
+    //         combatData.current_computer_health -= kyrna;
+    //         if (combatData.current_computer_health < 0) {
+    //             combatData.current_computer_health = 0;
+    //         }
+    //         if (combatData.new_computer_health < 0) {
+    //             combatData.new_computer_health = 0;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Lilos") { // Life
+    //         console.log("Lilos!")
+    //         let lilos = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
+    //         lilos = Math.round(lilos * combatData.player.level / 5);
+    //         combatData.player_influence_description = 
+    //             `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
+    //         combatData.new_player_health += lilos;
+    //         combatData.current_player_health += lilos;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Ma'anre") { // Moon
+    //         let maanre = combatData.realized_player_damage / 2;
+    //         combatData.new_player_health += maanre;
+    //         combatData.current_player_health += maanre;
+    //         console.log("Ma'anre!")
+    //         combatData.player_influence_description = 
+    //             `Ma'anre wraps her tendrils about your ${combatData.weapons[0].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
+    //         combatData.weapons[0].roll += 2;
+    //         combatData.weapons[0].dodge -= 2;
+    //         combatData.weapons[0].critical_chance += 2;
+    //         combatData.weapons[0].critical_damage += 0.2;
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Nyrolus") { // Water
+    //         console.log("Nyrolus!")
+    //         let nyrolus = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+    //         nyrolus = Math.round(nyrolus * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
+    //         combatData.player_defense.physicalDefenseModifier += 2;
+    //         combatData.player_defense.magicalDefenseModifier += 2;
+    //         combatData.player_defense.physicalPosture += 2;
+    //         combatData.player_defense.magicalPosture += 2;
+    //         combatData.new_player_health += nyrolus
+    //         combatData.current_player_health += nyrolus
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Quor'ei") { // Earth
+    //         console.log("Quor'ei!")
+    //         let quorei = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
+    //         quorei = Math.round(quorei * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
+    //         combatData.player_defense.physicalDefenseModifier += 2;
+    //         combatData.player_defense.magicalDefenseModifier += 2;
+    //         combatData.player_defense.physicalPosture += 2;
+    //         combatData.player_defense.magicalPosture += 2;
+    //         combatData.new_player_health += quorei
+    //         combatData.current_player_health += quorei
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Rahvre") { // Dreams
+    //         let rahvre = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
+    //         rahvre = Math.round(rahvre * combatData.player.level / 10);
+    //         console.log("Rahvre!")
+    //         combatData.player_influence_description = 
+    //         `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
+    //         combatData.weapons[0].magical_damage += 5;
+    //         combatData.new_player_health += rahvre
+    //         combatData.current_player_health += rahvre
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Senari") { // Wisdom
+    //         console.log("Senari!")
+    //         combatData.player_influence_description = 
+    //             `Your calm swirls with the favor of Senari, holding you in her Caer.`
+    //         combatData.weapons[0].roll += 3;
+    //         combatData.weapons[0].dodge -= 3;
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Se'dyro") { // Iron
+    //         let sedyro = (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
+    //         sedyro = Math.round(sedyro * combatData.player.level / 10);
+    //         combatData.new_player_health += sedyro
+    //         combatData.current_player_health += sedyro
+    //         console.log("Se'dyro!")
+    //         combatData.player_influence_description = 
+    //             `The Caer of Se'dyro sings into your ${combatData.weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
+    //         if (combatData.realized_player_damage < 0) {
+    //             combatData.realized_player_damage = 0;
+    //         }
+    //         combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    //         combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    //         if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+    //             combatData.new_computer_health = 0;
+    //             combatData.player_win = true;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Se'vas") { // War
+    //         console.log("Se'vas!")
+    //         let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength);
+    //         sevas = Math.round(sevas * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `The Caer of Se'vas scorns your ${combatData.weapons[0].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
+    //         combatData.weapons[0].critical_chance += 3;
+    //         combatData.weapons[0].critical_damage += 0.3;
+    //         combatData.new_player_health += sevas
+    //         combatData.current_player_health += sevas
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Shrygei") { // Song
+    //         let shrygei = combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.player_attributes.totalConstitution;
+    //         combatData.player_influence_description =
+    //             `The Song of Shry'gei shrieks itself through your ${combatData.weapons[0].name}, the resplendence renews you for ${shrygei}`
+    //         combatData.weapons[0].magical_penetration += 3
+    //         combatData.weapons[0].physical_penetration += 3
+    //         combatData.new_player_health += shrygei
+    //         combatData.current_player_health += shrygei
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    //     if (combatData.weapons[0].influences[0] === "Tshaer") { // Animal
+    //         console.log("Tshaer!")
+    //         let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength);
+    //         tshaer = Math.round(tshaer * combatData.player.level / 10);
+    //         combatData.player_influence_description = 
+    //             `Your fervor unleashes the bestial nature of Tshaer within you for ${tshaer}.`
+    //         combatData.weapons[0].physical_damage += 5;
+    //         combatData.new_player_health += tshaer
+    //         combatData.current_player_health += tshaer
+    //         if (combatData.new_player_health > 0) {
+    //             combatData.computer_win = false;
+    //         }
+    //     }
+    // }
+    // if (combatData.dual_wielding === true) {
+    //     if (faith_number_two > 85) {
+    //         combatData.religious_success = true;
+    //         if (combatData.weapons[1].influences[0] === 'Daethos') { // God
+    //             console.log("Daethos!")
+    //             let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+    //             daethos = Math.round(daethos * (combatData.player.level / 10));
+    //             combatData.new_player_health += combatData.realized_player_damage / 2;
+    //             combatData.current_player_health += combatData.realized_player_damage / 2;
+    //             combatData.player_influence_description_two = 
+    //                 `Daethos wraps through your Caer, ${combatData.weapons[1].name} healing you for ${Math.round(combatData.realized_player_damage / 2)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+    //             combatData.new_player_health += daethos;
+    //             combatData.new_computer_health -= daethos;
+    //             combatData.current_player_health += daethos;
+    //             combatData.current_computer_health -= daethos;
+    //             if (combatData.current_computer_health < 0) {
+    //                 combatData.current_computer_health = 0;
+    //             }
+    //             if (combatData.new_computer_health < 0) {
+    //                 combatData.new_computer_health = 0;
+    //             }
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //     }
+    //         if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
+    //             console.log("Achreo!");
+    //             let achreo = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+    //             achreo = Math.round(achreo * (combatData.player.level / 10));
+    //             combatData.new_player_health += achreo;
+    //             combatData.current_player_health += achreo;
+    //             combatData.player_influence_description_two = 
+    //                 `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
+    //             combatData.weapons[1].physical_damage += 2;
+    //             combatData.weapons[1].magical_damage += 2;
+    //             combatData.weapons[1].critical_chance += 2;
+    //             combatData.weapons[1].critical_damage += 0.2;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Ahn've") { // Wind
+    //             let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+    //             ahnve = Math.round(ahnve * combatData.player.level / 10);
+    //             combatData.new_player_health += ahnve;
+    //             combatData.current_player_health += ahnve;
+    //             console.log("Ahn've!")
+    //             combatData.player_influence_description_two = 
+    //                 `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
+
+    //             // await attackCompiler(combatData, player_action)
+    //             if (combatData.realized_player_damage < 0) {
+    //                 combatData.realized_player_damage = 0;
+    //             }
+    //             combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    //             combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    //             if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+    //                 combatData.new_computer_health = 0;
+    //                 combatData.player_win = true;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === 'Astra') { // Lightning
+    //             let astra = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+    //             astra = Math.round(astra * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
+    //             combatData.weapons[1].critical_chance += 4;
+    //             combatData.weapons[1].roll += 2;
+    //             combatData.weapons[1].critical_damage += 0.1;
+    //             combatData.new_player_health += astra;
+    //             combatData.current_player_health += astra;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
+    //             let cambire = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
+    //             cambire = Math.round(cambire * combatData.player.level / 10);
+    //             combatData.new_player_health += cambire;
+    //             combatData.current_player_health += cambire;
+    //             combatData.player_influence_description_two = 
+    //                 `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage, gifting ${cambire}.`
+    //             // await attackCompiler(combatData, player_action)
+    //             if (combatData.realized_player_damage < 0) {
+    //                 combatData.realized_player_damage = 0;
+    //             }
+    //             combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    //             combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    //             if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+    //                 combatData.new_computer_health = 0;
+    //                 combatData.player_win = true;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === 'Chiomyr') { // Humor
+    //             let chiomyr = (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
+    //             chiomyr = Math.round(chiomyr * combatData.player.level / 10);
+    //             combatData.new_player_health += chiomyr;
+    //             combatData.current_player_health += chiomyr;
+    //             combatData.weapons[1].physical_penetration += 3;
+    //             combatData.weapons[1].magical_penetration += 3;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === 'Fyer') { // Fire
+    //             let fyer = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+    //             fyer = Math.round(fyer * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Your Caer ushers forth the favor of Fyer igniting through you.`
+    //             combatData.weapons[1].critical_chance += 1;
+    //             combatData.weapons[1].critical_damage += 0.9;
+    //             combatData.new_player_health += fyer;
+    //             combatData.current_player_health += fyer;  
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
+    //             let ilios = combatData.realized_player_damage / 2;
+    //             combatData.new_player_health += ilios;
+    //             combatData.current_player_health += ilios;
+    //             combatData.player_influence_description_two = 
+    //                 `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
+    //             combatData.weapons[1].magical_penetration += 2;
+    //             combatData.weapons[1].physical_penetration += 2;
+    //             combatData.player_defense.physicalDefenseModifier += 1;
+    //             combatData.player_defense.magicalDefenseModifier += 1;
+    //             combatData.player_defense.physicalPosture += 1;
+    //             combatData.player_defense.magicalPosture += 1;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
+    //             let kyngi = (combatData.player_attributes.totalAgility + combatData.weapons[1].agility);
+    //             kyngi = Math.round(kyngi * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Your keen Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
+    //             combatData.weapons[1].roll += 3;
+    //             combatData.weapons[1].critical_chance += 3;
+    //             combatData.new_player_health += kyngi;
+    //             combatData.current_player_health += kyngi;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
+    //             let kyrisos = (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
+    //             kyrisos = Math.round(kyrisos * combatData.player.level / 10);
+    //             combatData.new_player_health += kyrisos;
+    //             combatData.current_player_health += kyrisos;
+    //             combatData.player_influence_description_two = 
+    //                 `The Caer of Kyrisos imbues you with Kyosir!`
+    //             combatData.player_attributes.kyosirMod += 4;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Kyr'na") { // Time
+    //             let kyrna = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
+    //             kyrna = Math.round(kyrna * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
+    //             combatData.new_computer_health -= kyrna;
+    //             combatData.current_computer_health -= kyrna;
+    //             if (combatData.current_computer_health < 0) {
+    //                 combatData.current_computer_health = 0;
+    //             }
+    //             if (combatData.new_computer_health < 0) {
+    //                 combatData.new_computer_health = 0;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Lilos") { // Life
+    //             let lilos = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+    //             lilos = Math.round(lilos * combatData.player.level / 5);
+    //             combatData.player_influence_description_two = 
+    //                 `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`;
+    //             combatData.new_player_health += lilos;
+    //             combatData.current_player_health += lilos;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
+    //             let maanre = combatData.realized_player_damage / 2;
+    //             combatData.new_player_health += maanre;
+    //             combatData.current_player_health += maanre;
+    //             combatData.player_influence_description_two = 
+    //                 `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.`; 
+    //             combatData.weapons[1].roll += 2;
+    //             combatData.weapons[1].dodge -= 2;
+    //             combatData.weapons[1].critical_chance += 2;
+    //             combatData.weapons[1].critical_damage += 0.2;
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Nyrolus") { // Water
+    //             let nyrolus = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
+    //             nyrolus = Math.round(nyrolus * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`;
+    //             combatData.player_defense.physicalDefenseModifier += 2;
+    //             combatData.player_defense.magicalDefenseModifier += 2;
+    //             combatData.player_defense.physicalPosture += 2;
+    //             combatData.player_defense.magicalPosture += 2;
+    //             combatData.new_player_health += nyrolus
+    //             combatData.current_player_health += nyrolus
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Quor'ei") { // Earth
+    //             console.log("Quor'ei W2")
+    //             let quorei = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre)
+    //             quorei = Math.round(quorei * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
+    //             combatData.player_defense.physicalDefenseModifier += 2;
+    //             combatData.player_defense.magicalDefenseModifier += 2;
+    //             combatData.player_defense.physicalPosture += 2;
+    //             combatData.player_defense.magicalPosture += 2;
+    //             combatData.new_player_health += quorei
+    //             combatData.current_player_health += quorei
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Rahvre") { // Dreams
+    //             let rahvre = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
+    //             rahvre = Math.round(rahvre * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //             `Your calming Caer reaches its tendrils to Rahvre, intertwining you for ${rahvre}.`
+    //             combatData.weapons[1].magical_damage += 5;
+    //             combatData.new_player_health += rahvre
+    //             combatData.current_player_health += rahvre
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Senari") { // Wisdom
+    //             combatData.player_influence_description_two = 
+    //                 `Your calm swirls with the favor of Senari, holding you in her Caer.`
+    //             combatData.weapons[1].roll += 3;
+    //             combatData.weapons[1].dodge -= 3;
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Se'dyro") { // Iron
+    //             let sedyro = (combatData.player_attributes.totalAgility + combatData.weapons[1].agility)
+    //             sedyro = Math.round(sedyro * combatData.player.level / 10);
+    //             combatData.new_player_health += sedyro
+    //             combatData.current_player_health += sedyro
+    //             combatData.player_influence_description_two = 
+    //                 `The Caer of Se'dyro sings into your ${combatData.weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
+
+    //             // await attackCompiler(combatData, player_action)
+    //             if (combatData.realized_player_damage < 0) {
+    //                 combatData.realized_player_damage = 0;
+    //             }
+    //             combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    //             combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    //             if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+    //                 combatData.new_computer_health = 0;
+    //                 combatData.player_win = true;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Se'vas") { // War
+    //             let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength);
+    //             sevas = Math.round(sevas * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `The Caer of Se'vas scorns your ${combatData.weapons[1].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
+    //             combatData.weapons[1].critical_chance += 3;
+    //             combatData.weapons[1].critical_damage += 0.3;
+    //             combatData.new_player_health += sevas
+    //             combatData.current_player_health += sevas
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Shrygei") { // Song
+    //             let shrygei = combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.player_attributes.totalConstitution;
+    //             combatData.player_influence_description_two =
+    //             `The Song of Shry'gei shrieks itself through your ${combatData.weapons[1].name}, the resplendence renews you for ${shrygei}`
+    //             combatData.weapons[1].magical_penetration += 3
+    //             combatData.weapons[1].physical_penetration += 3
+    //             combatData.new_player_health += shrygei
+    //             combatData.current_player_health += shrygei
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
+    //         }
+    //         if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
+    //             let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength);
+    //             tshaer = Math.round(tshaer * combatData.player.level / 10);
+    //             combatData.player_influence_description_two = 
+    //                 `Your Caer unleashes the bestial nature of Tshaer within you for ${tshaer}.`
+    //             combatData.weapons[1].physical_damage += 5;
+    //             combatData.new_player_health += tshaer
+    //             combatData.current_player_health += tshaer
+    //             if (combatData.new_player_health > 0) {
+    //                 combatData.computer_win = false;
+    //             }
     //         }
     //     }
     // }
 
-    // for (let key in combatData.player_defense) {
-    //     if (existingEffect.effect[key]) {
-    //         combatData.player_defense[key] += existingEffect.effect[key];
-    //         console.log(combatData.player_defense[key], 'player_attributes[key] -- Did this work?');
+    // if (computer_faith_number > 85) {
+    //     combatData.computer_religious_success = true;
+    //     if (combatData.computer_weapons[0].influences[0] === 'Daethos') { // God
+    //         console.log('Daethos!')
+    //         let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
+    //         daethos = Math.round(daethos * combatData.computer.level / 10);
+    //         combatData.new_computer_health += combatData.realized_computer_damage;
+    //         combatData.current_computer_health += combatData.realized_computer_damage;
+    //         combatData.computer_influence_description = 
+    //             `Daethos wraps through ${combatData.computer.name}'s Caer, ${combatData.computer_weapons[0].name} healing them for ${Math.round(combatData.realized_computer_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+    //         combatData.new_computer_health += daethos;
+    //         combatData.new_player_health -= daethos;
+    //         combatData.current_computer_health += daethos;
+    //         combatData.current_player_health -= daethos;
+            
+    //         if (combatData.current_player_health < 0) {
+    //             combatData.current_player_health = 0;
+    //         }
+    //         if (combatData.new_player_health < 0) {
+    //             combatData.new_player_health = 0;
+    //         }
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    // }
+    //     if (combatData.computer_weapons[0].influences[0] === 'Achreo') { // Wild
+    //         console.log('Achreo!')
+    //         let achreo = (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre);
+    //         achreo = Math.round(achreo * combatData.computer.level / 10);
+    //         combatData.new_computer_health += achreo;
+    //         combatData.current_computer_health += achreo;
+    //         // combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance + 1);
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise and soft as whispers he grants renewal of ${achreo}.`
+    //         combatData.computer_weapons[0].physical_damage += 2;
+    //         combatData.computer_weapons[0].magical_damage += 2;
+    //         combatData.computer_weapons[0].critical_chance += 2;
+    //         combatData.computer_weapons[0].critical_damage += 0.2;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Ahn've") { // Wind
+    //         console.log("Ahn've!")
+    //         let ahnve = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren);
+    //         ahnve = Math.round(ahnve * combatData.computer.level / 10);
+    //         combatData.new_computer_health += ahnve;
+    //         combatData.current_computer_health += ahnve;
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage. The surge renews ${combatData.computer.name} for ${ahnve}.`
+    //         // player_action = 'attack';
+    //         // await attackCompiler(combatData, player_action)
+    //         if (combatData.realized_computer_damage < 0) {
+    //                 combatData.realized_computer_damage = 0;
+    //             }
+    //             combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    //             combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    //             if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+    //                 combatData.new_player_health = 0;
+    //                 combatData.computer_win = true;
+    //             }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === 'Astra') { // Lightning
+    //         let achreo = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+    //         achreo = Math.round(achreo * combatData.computer.level / 10);
+    //         combatData.new_computer_health += achreo
+    //         combatData.current_computer_health += achreo
+    //         combatData.computer_weapons[0].critical_damage += 0.1;
+    //         console.log("Astra!")
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
+    //         combatData.computer_weapons[0].critical_chance += 4;
+    //         combatData.computer_weapons[0].roll += 2;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === 'Cambire') { // Potential
+    //         let cambire = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+    //         cambire = Math.round(cambire * combatData.computer.level / 10);
+    //         console.log("Cambire!")
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}, gifting ${cambire}.`
+    //         if (combatData.realized_computer_damage < 0) {
+    //                 combatData.realized_computer_damage = 0;
+    //             }
+    //         combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    //         combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    //         if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+    //             combatData.new_player_health = 0;
+    //             combatData.computer_win = true;
+    //         }    
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === 'Chiomyr') { // Humor
+    //         let chiomyr = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[0].kyosir;
+    //         chiomyr = Math.round(chiomyr * combatData.computer.level / 10);
+    //         combatData.new_computer_health += chiomyr;
+    //         combatData.current_computer_health += chiomyr;
+    //         console.log("Chiomyr!")
+    //         combatData.computer_weapons[0].physical_penetration += 3;
+    //         combatData.computer_weapons[0].magical_penetration += 3;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === 'Fyer') { // Fire
+    //         console.log("Fyer!")
+    //         let fyer = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+    //         fyer = Math.round(fyer * combatData.computer.level / 10);
+    //         combatData.new_computer_health += fyer;
+    //         combatData.current_computer_health += fyer;
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
+    //         combatData.computer_weapons[0].critical_damage += 0.9;
+    //         combatData.computer_weapons[0].critical_chance += 1;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === 'Ilios') { // Sun
+    //         console.log("Ilios!")
+    //         let ilios = combatData.realized_computer_damage;
+    //         combatData.new_computer_health += ilios;
+    //         combatData.current_computer_health += ilios;
+    //         combatData.computer_influence_description = 
+    //             `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
+    //         player_action = 'attack';   
+    //         combatData.computer_weapons[0].magical_penetration += 2;
+    //         combatData.computer_weapons[0].physical_penetration += 2;
+    //         combatData.player_defense.physicalDefenseModifier += 1;
+    //         combatData.player_defense.magicalDefenseModifier += 1;
+    //         combatData.player_defense.physicalPosture += 1;
+    //         combatData.player_defense.magicalPosture += 1;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
+    //         let kyngi = combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility;
+    //         kyngi = Math.round(kyngi * combatData.computer.level / 10);
+    //         combatData.new_computer_health += kyngi
+    //         combatData.current_computer_health += kyngi
+    //         console.log("Kyn'gi!")
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
+    //         combatData.computer_weapons[0].roll += 3;
+    //         combatData.computer_weapons[0].critical_chance += 3;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Kyrisos") { // Gold
+    //         let kyrisos = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[0].kyosir;
+    //         kyrisos = Math.round(kyrisos * combatData.computer.level / 10);
+    //         combatData.new_computer_health += kyrisos;
+    //         combatData.current_computer_health += kyrisos;
+    //         console.log("Kyrisos!")
+    //         combatData.computer_influence_description = 
+    //             `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
+    //         combatData.computer_attributes.kyosirMod += 3;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Kyr'na") { // Time
+    //         console.log("Kyr'na!")
+    //         let kyrna = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+    //         kyrna = Math.round(kyrna * combatData.computer.level / 10);
+    //         combatData.computer_influence_description = 
+    //             `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
+    //         combatData.new_player_health -= kyrna;
+    //         combatData.current_player_health -= kyrna;
+    //         if (combatData.current_player_health < 0) {
+    //             combatData.current_player_health = 0;
+    //         }
+    //         if (combatData.new_player_health < 0) {
+    //             combatData.new_player_health = 0;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Lilos") { // Life
+    //         console.log("Lilos!")
+    //         let lilos = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+    //         lilos = Math.round(lilos * combatData.computer.level / 5);
+    //         combatData.computer_influence_description = 
+    //             `Lilos breathes her Cear into ${combatData.computer.name}, healing ${combatData.computer.name} for ${lilos}.`
+    //         combatData.new_computer_health += lilos;
+    //         combatData.current_computer_health += lilos;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Ma'anre") { // Moon
+    //         let maanre = combatData.realized_computer_damage;
+    //         combatData.new_computer_health += maanre;
+    //         combatData.current_computer_health += maanre;
+    //         console.log("Ma'anre!")
+    //         combatData.computer_influence_description = 
+    //             `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
+    //         combatData.computer_weapons[0].roll += 2;
+    //         combatData.computer_weapons[0].dodge -= 2;
+    //         combatData.computer_weapons[0].critical_chance += 2;
+    //         combatData.computer_weapons[0].critical_damage += 0.2;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Nyrolus") { // Water
+    //         console.log("Nyrolus!")
+    //         let nyrolus = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren);
+    //         nyrolus = Math.round(nyrolus * combatData.computer.level / 10);
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
+    //         combatData.computer_defense.physicalDefenseModifier += 2;
+    //         combatData.computer_defense.magicalDefenseModifier += 2;
+    //         combatData.computer_defense.physicalPosture += 2;
+    //         combatData.computer_defense.magicalPosture += 2;
+    //         combatData.new_computer_health += nyrolus;
+    //         combatData.current_computer_health += nyrolus;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Quor'ei") { // Earth
+    //         console.log("Quor'ei!")
+    //         let quorei = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
+    //         quorei = Math.round(quorei * combatData.computer.level / 10);
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
+    //         combatData.computer_defense.physicalDefenseModifier += 2;
+    //         combatData.computer_defense.magicalDefenseModifier += 2;
+    //         combatData.computer_defense.physicalPosture += 2;
+    //         combatData.computer_defense.magicalPosture += 2;
+    //         combatData.new_computer_health += quorei;
+    //         combatData.current_computer_health += quorei;    
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Rahvre") { // Dreams
+    //         let rahvre = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
+    //         rahvre = Math.round(rahvre * combatData.computer.level / 10);
+    //         combatData.new_computer_health += rahvre
+    //         combatData.current_computer_health += rahvre
+    //         console.log("Rahvre!")
+    //         combatData.computer_influence_description = 
+    //         `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
+    //         combatData.computer_weapons[0].magical_damage += 5;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Senari") { // Wisdom
+    //         console.log("Senari!")
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
+    //         combatData.computer_weapons[0].roll += 3;
+    //         combatData.computer_weapons[0].dodge -= 3;
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Se'dyro") { // Iron
+    //         let sedyro = (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility);
+    //         sedyro = Math.round(sedyro * combatData.computer.level / 10);
+    //         combatData.new_computer_health += sedyro;
+    //         combatData.current_computer_health += sedyro;
+    //         console.log("Se'dyro!");
+    //         combatData.computer_influence_description = 
+    //             `The Caer of Se'dyro sings into their ${combatData.computer_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
+    //         player_action = 'attack';
+    //         // await attackCompiler(combatData, player_action)
+    //         if (combatData.realized_computer_damage < 0) {
+    //                 combatData.realized_computer_damage = 0;
+    //             }
+    //         combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    //         combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    //         if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+    //             combatData.new_player_health = 0;
+    //             combatData.computer_win = true;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Se'vas") { // War
+    //         let sevas = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
+    //         sevas = Math.round(sevas * combatData.computer.level / 10);
+    //         combatData.new_computer_health += sevas
+    //         combatData.current_computer_health += sevas
+    //         console.log("Se'vas!")
+    //         combatData.computer_influence_description = 
+    //             `The Caer of Se'vas scorns their ${combatData.computer_weapons[0].name}, scarring it with the beauty of war.` 
+    //         combatData.computer_weapons[0].critical_chance += 3;
+    //         combatData.computer_weapons[0].critical_damage += 0.3;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Shrygei") { // Song
+    //         let shrygei = combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren + combatData.computer_attributes.totalConstitution;
+    //         shrygei = Math.round(shrygei * combatData.computer.level / 10);
+    //         combatData.computer_influence_description =
+    //         `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, the resplendence renews them for ${shrygei}`
+    //             combatData.computer_weapons[0].magical_penetration += 2
+    //             combatData.computer_weapons[0].physical_penetration += 2
+    //             combatData.new_computer_health += shrygei
+    //             combatData.current_computer_health += shrygei
+    //             if (combatData.new_computer_health > 0) {
+    //                 combatData.player_win = false;
+    //             }
+    //     }
+    //     if (combatData.computer_weapons[0].influences[0] === "Tshaer") { // Animal
+    //         let tshaer = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
+    //         tshaer = Math.round(tshaer * combatData.computer.level / 10);
+    //         combatData.new_computer_health += tshaer
+    //         combatData.current_computer_health += tshaer
+    //         console.log("Tshaer!")
+    //         combatData.computer_influence_description = 
+    //             `${combatData.computer.name}'s fervor unleashes the bestial nature of Tshaer within them.`
+    //         combatData.computer_weapons[0].physical_damage += 5;
+    //         if (combatData.new_computer_health > 0) {
+    //             combatData.player_win = false;
+    //         }
+    //     }
+    // }
+    // if (combatData.computer_dual_wielding === true) {
+    //     if (computer_faith_number_two > 85) {
+    //         combatData.computer_religious_success = true;
+    //         if (combatData.computer_weapons[1].influences[0] === 'Daethos') { // God
+    //             console.log("Daethos!")
+    //             let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
+    //             daethos = Math.round(daethos * combatData.computer.level / 10);
+    //             combatData.new_computer_health += combatData.realized_computer_damage;
+    //             combatData.current_computer_health += combatData.realized_computer_damage;
+    //             combatData.computer_influence_description_two = 
+    //                 `Daethos wraps through ${combatData.computer.name}'s Caer, ${combatData.computer_weapons[1].name} healing them for ${Math.round(combatData.realized_computer_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
+    //             combatData.new_computer_health += daethos;
+    //             combatData.new_player_health -= daethos;
+    //             combatData.current_computer_health += daethos;
+    //             combatData.current_player_health -= daethos;
+    //             if (combatData.current_player_health < 0) {
+    //                 combatData.current_player_health = 0;
+    //             }
+    //             if (combatData.new_player_health < 0) {
+    //                 combatData.new_player_health = 0;
+    //             }
+    //             if (combatData.new_computer_health > 0) {
+    //                 combatData.player_win = false;
+    //             }
+    //     }
+    //         if (combatData.computer_weapons[1].influences[0] === 'Achreo') { // Wild
+    //             let achreo = (combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre);
+    //             achreo = Math.round(achreo * combatData.computer.level / 10);
+    //             combatData.new_computer_health += achreo;
+    //             combatData.current_computer_health += achreo;
+    //             console.log("Achreo!");
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise, renewing them for ${achreo}.`
+    //             combatData.computer_weapons[1].physical_damage += 2;
+    //             combatData.computer_weapons[1].magical_damage += 2;
+    //             combatData.computer_weapons[1].critical_chance += 2;
+    //             combatData.computer_weapons[1].critical_damage += 0.2;
+    //             if (combatData.new_computer_health > 0) {
+    //                 combatData.player_win = false;
+    //             }
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Ahn've") { // Wind
+    //             let ahnve = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren);
+    //             ahnve = Math.round(ahnve * combatData.computer.level / 10);
+    //             combatData.new_computer_health += ahnve;
+    //             combatData.current_computer_health += ahnve;
+    //             console.log("Ahn've!")
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage. The surge renews ${combatData.computer.name} for ${ahnve}.`
+    //             player_action = 'attack';
+    //             // await attackCompiler(combatData, player_action)
+    //             if (combatData.realized_computer_damage < 0) {
+    //                 combatData.realized_computer_damage = 0;
+    //             }
+    //             combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    //             combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    //             if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+    //                 combatData.new_player_health = 0;
+    //                 combatData.computer_win = true;
+    //             }
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === 'Astra') { // Lightning
+    //             let astra = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
+    //             astra = Math.round(astra * combatData.computer.level / 10);
+    //             combatData.new_computer_health += astra
+    //             combatData.current_computer_health += astra
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
+    //             combatData.computer_weapons[1].critical_chance += 4;
+    //             combatData.computer_weapons[1].roll += 2;
+    //             combatData.computer_weapons[1].critical_damage += 0.1;
+    //             if (combatData.new_computer_health > 0) {
+    //                 combatData.player_win = false;
+    //             }
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === 'Cambire') { // Potential
+    //             let cambire = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+    //             cambire = Math.round(cambire * combatData.computer.level / 10);
+    //             combatData.new_computer_health += cambire;
+    //             combatData.current_computer_health += cambire;
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}.`
+    //             player_action = 'attack';
+    //             // await attackCompiler(combatData, player_action)
+    //             if (combatData.realized_computer_damage < 0) {
+    //                 combatData.realized_computer_damage = 0;
+    //             }
+    //             combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    //             combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    //             if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+    //                 combatData.new_player_health = 0;
+    //                 combatData.computer_win = true;
+    //             }    
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === 'Chiomyr') { // Humor
+    //             let chiomyr = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[1].kyosir;
+    //             chiomyr = Math.round(chiomyr * combatData.computer.level / 10); 
+    //             combatData.new_computer_health += chiomyr;
+    //             combatData.current_computer_health += chiomyr;
+    //             combatData.computer_weapons[1].physical_penetration += 3;
+    //             combatData.computer_weapons[1].magical_penetration += 3;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === 'Fyer') { // Fire
+    //             let fyer = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+    //             fyer = Math.round(fyer * combatData.computer.level / 10);
+    //             combatData.new_computer_health += fyer;
+    //             combatData.current_computer_health += fyer;
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`;
+    //             combatData.computer_weapons[1].critical_damage += 0.9;
+    //             combatData.computer_weapons[1].critical_chance += 1;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === 'Ilios') { // Sun
+    //             let ilios = combatData.realized_computer_damage;
+    //             combatData.new_computer_health += ilios;
+    //             combatData.current_computer_health += ilios;
+    //             combatData.computer_influence_description_two = 
+    //                 `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
+    //             player_action = 'attack';   
+    //             combatData.computer_weapons[1].magical_penetration += 2;
+    //             combatData.computer_weapons[1].physical_penetration += 2;
+    //             combatData.player_defense.physicalDefenseModifier += 1;
+    //             combatData.player_defense.magicalDefenseModifier += 1;
+    //             combatData.player_defense.physicalPosture += 1;
+    //             combatData.player_defense.magicalPosture += 1;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
+    //             let kyngi = combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility;
+    //             kyngi = Math.round(kyngi * combatData.computer.level / 10);
+    //             combatData.new_computer_health += kyngi
+    //             combatData.current_computer_health += kyngi
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
+    //             combatData.computer_weapons[1].roll += 3;
+    //             combatData.computer_weapons[1].critical_chance += 3;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Kyrisos") { // Gold
+    //             let kyrisos = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[1].kyosir;
+    //             kyrisos = Math.round(kyrisos * combatData.computer.level / 10);
+    //             combatData.new_computer_health += kyrisos;
+    //             combatData.current_computer_health += kyrisos;
+    //             combatData.computer_influence_description_two = 
+    //                 `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
+    //             combatData.computer_attributes.kyosirMod += 3;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Kyr'na") { // Time
+    //             let kyrna = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
+    //             kyrna = Math.round(kyrna * combatData.computer.level / 10);
+    //             combatData.computer_influence_description_two = 
+    //                 `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
+    //             combatData.new_player_health -= kyrna;
+    //             combatData.current_player_health -= kyrna;
+    //             if (combatData.current_player_health < 0) {
+    //                 combatData.current_player_health = 0;
+    //             }
+    //             if (combatData.new_player_health < 0) {
+    //                 combatData.new_player_health = 0;
+    //             }
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Lilos") { // Life
+    //             let lilos = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+    //             lilos = Math.round(lilos * combatData.computer.level / 10);
+    //             combatData.computer_influence_description_two = 
+    //                 `Lilos breathes her Caer into ${combatData.computer.name}, healing them for ${lilos}.`
+    //             combatData.new_computer_health += lilos;
+    //             combatData.current_computer_health += lilos;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Ma'anre") { // Moon
+    //             let maanre = combatData.realized_computer_damage;
+    //             combatData.new_computer_health += maanre;
+    //             combatData.current_computer_health += maanre;
+    //             combatData.computer_influence_description_two = 
+    //                 `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
+    //             combatData.computer_weapons[1].roll += 2;
+    //             combatData.computer_weapons[1].dodge -= 2;
+    //             combatData.computer_weapons[1].critical_chance += 2;
+    //             combatData.computer_weapons[1].critical_damage += 0.2;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Nyrolus") { // Water
+    //             let nyrolus = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren);
+    //             nyrolus = Math.round(nyrolus * combatData.computer.level / 10);
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
+    //             combatData.computer_defense.physicalDefenseModifier += 2;
+    //             combatData.computer_defense.magicalDefenseModifier += 2;
+    //             combatData.computer_defense.physicalPosture += 2;
+    //             combatData.computer_defense.magicalPosture += 2;
+    //             combatData.new_computer_health += nyrolus
+    //             combatData.current_computer_health += nyrolus
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Quor'ei") { // Earth
+    //             let quorei = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
+    //             quorei = Math.round(quorei * combatData.computer.level / 10);
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
+    //             combatData.computer_defense.physicalDefenseModifier += 2;
+    //             combatData.computer_defense.magicalDefenseModifier += 2;
+    //             combatData.computer_defense.physicalPosture += 2;
+    //             combatData.computer_defense.magicalPosture += 2;
+    //             combatData.new_computer_health += quorei
+    //             combatData.current_computer_health += quorei
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Rahvre") { // Dreams
+    //             let rahvre = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
+    //             rahvre = Math.round(rahvre * combatData.computer.level / 10);
+    //             combatData.new_computer_health += rahvre
+    //             combatData.current_computer_health += rahvre
+    //             combatData.computer_influence_description_two = 
+    //             `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
+    //         combatData.computer_weapons[1].magical_damage += 5;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Senari") { // Wisdom
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
+    //             combatData.computer_weapons[1].roll += 3;
+    //             combatData.computer_weapons[1].dodge -= 3;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Se'dyro") { // Iron
+    //             let sedyro = (combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility);
+    //             sedyro = Math.round(sedyro * combatData.computer.level / 10);
+    //             combatData.new_computer_health += sedyro
+    //             combatData.current_computer_health += sedyro
+    //             combatData.computer_influence_description_two = 
+    //                 `The Caer of Se'dyro sings into their ${combatData.computer_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
+    //             player_action = 'attack';
+    //             // await attackCompiler(combatData, player_action)
+    //             if (combatData.realized_computer_damage < 0) {
+    //                 combatData.realized_computer_damage = 0;
+    //             }
+    //             combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
+    //             combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    //             if (combatData.new_player_health <= 0 || combatData.current_player_health <= 0) {
+    //                 combatData.new_player_health = 0;
+    //                 combatData.computer_win = true;
+    //             }
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Se'vas") { // War
+    //             let sevas = combatData.computer_attributes.totalStrength + combatData.computer_weapons[1].strength;
+    //             sevas = Math.round(sevas * combatData.computer.level / 10);
+    //             combatData.new_computer_health += sevas
+    //             combatData.current_computer_health += sevas
+    //             combatData.computer_influence_description_two = 
+    //                 `The Caer of Se'vas scorns their ${combatData.computer_weapons[1].name}, scarring it with the beauty of war.` 
+    //             combatData.computer_weapons[1].critical_chance += 3;
+    //             combatData.computer_weapons[1].critical_damage += 0.3;
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Shrygei") { // Song
+    //             let shrygei = combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren + combatData.computer_attributes.totalConstitution;
+    //             shrygei = Math.round(shrygei * combatData.computer.level / 10);
+    //             combatData.computer_influence_description_two =
+    //             `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, the resplendence renews them for ${shrygei}`
+    //                 combatData.computer_weapons[1].magical_penetration += 2
+    //                 combatData.computer_weapons[1].physical_penetration += 2
+    //                 combatData.new_computer_health += shrygei
+    //                 combatData.current_computer_health += shrygei
+    //         }
+    //         if (combatData.computer_weapons[1].influences[0] === "Tshaer") { // Animal
+    //             let tshaer = combatData.computer_attributes.totalStrength + combatData.computer_weapons[1].strength;
+    //             tshaer = Math.round(tshaer * combatData.computer.level / 10);
+    //             combatData.new_computer_health += tshaer
+    //             combatData.current_computer_health += tshaer
+    //             combatData.computer_influence_description_two = 
+    //                 `${combatData.computer.name}'s Caer unleashes the bestial nature of Tshaer within them.`
+    //             combatData.computer_weapons[1].physical_damage += 5;
+    //         }
     //     }
     // }
 
-    // if (existingEffect.effect.healing) {
-    //     combatData.new_player_health += existingEffect.effect.healing;
-    //     combatData.current_player_health += existingEffect.effect.healing;
+    // combatData.weapons[0].critical_chance = combatData.weapons[0].critical_chance.toFixed(2)
+    // combatData.weapons[0].critical_damage = combatData.weapons[0].critical_damage.toFixed(2)
+    // combatData.weapons[1].critical_chance = combatData.weapons[1].critical_chance.toFixed(2)
+    // combatData.weapons[1].critical_damage = combatData.weapons[1].critical_damage.toFixed(2)
+    // combatData.computer_weapons[0].critical_chance = combatData.computer_weapons[0].critical_chance.toFixed(2)
+    // combatData.computer_weapons[0].critical_damage = combatData.computer_weapons[0].critical_damage.toFixed(2)
+    // combatData.computer_weapons[1].critical_chance = combatData.computer_weapons[1].critical_chance.toFixed(2)
+    // combatData.computer_weapons[1].critical_damage = combatData.computer_weapons[1].critical_damage.toFixed(2)
+
+    // combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
+    // combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
+    // combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
+    // combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+    // combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance)
+    // combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage)
+    // combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
+    // combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
+
+
+
+    // if (combatData.new_player_health > 0) {
+    //     combatData.computer_win = false;
     // }
-
-    combatData.playerEffects = combatData.playerEffects.filter(effect => effect.name !== `Gift of ${combatData.weapons[0].influences[0]}` || effect.prayer !== combatData.playerBlessing);
-    combatData.playerEffects.push(existingEffect);
-
-    if (faith_number > 85) {
-        combatData.religious_success = true;
-        if (combatData.weapons[0].influences[0] === 'Daethos') { // God
-            console.log('Daethos!')
-            let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
-            daethos = Math.round(daethos * (combatData.player.level / 10));
-            combatData.current_player_health += combatData.realized_player_damage / 2;
-            combatData.new_player_health += combatData.realized_player_damage / 2;
-            combatData.player_influence_description = 
-                `Daethos wraps through your Caer, ${combatData.weapons[0].name} healing you for ${Math.round(combatData.realized_player_damage / 2)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-            combatData.new_player_health += daethos;
-            combatData.new_computer_health -= daethos;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-            combatData.current_player_health += daethos;
-            combatData.current_computer_health -= daethos;
-            if (combatData.current_computer_health < 0) {
-                combatData.current_computer_health = 0;
-            }
-            if (combatData.new_computer_health < 0) {
-                combatData.new_computer_health = 0;
-            }
-    }
-        if (combatData.weapons[0].influences[0] === 'Achreo') { // Wild
-            console.log('Achreo!')
-            // combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance + 1);
-            let achreo = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
-            achreo = Math.round(achreo * (combatData.player.level / 10));
-            combatData.new_player_health += achreo
-            combatData.current_player_health += achreo
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-            combatData.player_influence_description = 
-                `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
-            combatData.weapons[0].physical_damage += 2;
-            combatData.weapons[0].magical_damage += 2;
-            combatData.weapons[0].critical_chance += 2;
-            combatData.weapons[0].critical_damage += 0.2;
-        }
-        if (combatData.weapons[0].influences[0] === "Ahn've") { // Wind
-            let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
-            ahnve = Math.round(ahnve * combatData.player.level / 10);
-            combatData.new_player_health += ahnve
-            combatData.current_player_health += ahnve
-            console.log("Ahn've!")
-            combatData.player_influence_description = 
-                `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-            if (combatData.realized_player_damage < 0) {
-                combatData.realized_player_damage = 0;
-            }
-            combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-            combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
-            if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-                combatData.new_computer_health = 0;
-                combatData.player_win = true;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === 'Astra') { // Lightning
-            let astra = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
-            astra = Math.round(astra * combatData.player.level / 10);
-            console.log("Astra!")
-            combatData.player_influence_description = 
-                `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
-            combatData.weapons[0].critical_chance += 4;
-            combatData.weapons[0].roll += 2;
-            combatData.weapons[0].critical_damage += 0.1;
-            combatData.new_player_health += astra
-            combatData.current_player_health += astra
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === 'Cambire') { // Potential
-            console.log("Cambire!")
-            let cambire = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
-            cambire = Math.round(cambire * combatData.player.level / 10);
-            combatData.new_player_health += cambire;
-            combatData.current_player_health += cambire;
-            combatData.player_influence_description = 
-                `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage, gifting ${cambire}.`
-            if (combatData.realized_player_damage < 0) {
-                combatData.realized_player_damage = 0;
-            }
-            combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-            combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
-            if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-                combatData.new_computer_health = 0;
-                combatData.player_win = true;
-            }    
-        }
-        if (combatData.weapons[0].influences[0] === 'Chiomyr') { // Humor
-            let chiomyr = (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
-            chiomyr = Math.round(chiomyr * combatData.player.level / 10);
-            combatData.new_player_health += chiomyr;
-            combatData.current_player_health += chiomyr;
-            combatData.player_influence_description = 
-                `Your Caer causes a faint cackle to fade around you.`
-            console.log("Chiomyr!")
-            combatData.weapons[0].physical_penetration += 3;
-            combatData.weapons[0].magical_penetration += 3;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === 'Fyer') { // Fire
-            console.log("Fyer!")
-            let fyer = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
-            fyer = Math.round(fyer * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `Your Caer ushers forth the favor of Fyer igniting through you.`
-            combatData.weapons[0].critical_chance += 1;
-            combatData.weapons[0].critical_damage += 0.9;
-            combatData.new_player_health += fyer;
-            combatData.current_player_health += fyer;  
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === 'Ilios') { // Sun
-            let ilios = combatData.realized_player_damage / 2;
-            combatData.new_player_health += ilios;
-            combatData.current_player_health += ilios;
-            console.log("Ilios!")
-            combatData.player_influence_description = 
-                `The Hush of Ilios bursts into you through your ${combatData.weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`   
-            combatData.weapons[0].magical_penetration += 2;
-            combatData.weapons[0].physical_penetration += 2;
-            combatData.player_defense.physicalDefenseModifier += 1;
-            combatData.player_defense.magicalDefenseModifier += 1;
-            combatData.player_defense.physicalPosture += 1;
-            combatData.player_defense.magicalPosture += 1;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Kyn'gi") { // Hunt
-            console.log("Kyn'gi!")
-            let kyngi = (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
-            kyngi = Math.round(kyngi * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `Your keening Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
-            combatData.weapons[0].roll += 3;
-            combatData.weapons[0].critical_chance += 3;
-            combatData.new_player_health += kyngi;
-            combatData.current_player_health += kyngi;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Kyrisos") { // Gold
-            let kyrisos = (combatData.player_attributes.totalKyosir + combatData.weapons[0].kyosir);
-            kyrisos = Math.round(kyrisos * combatData.player.level / 10);
-            combatData.new_player_health += kyrisos;
-            combatData.current_player_health += kyrisos;
-            console.log("Kyrisos!")
-            combatData.player_influence_description = 
-                `The Caer of Kyrisos imbues you with Kyosir!`
-            combatData.player_attributes.kyosirMod += 4;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Kyr'na") { // Time
-            console.log("Kyr'na!")
-            let kyrna = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre);
-            kyrna = Math.round(kyrna * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
-            combatData.new_computer_health -= kyrna;
-            combatData.current_computer_health -= kyrna;
-            if (combatData.current_computer_health < 0) {
-                combatData.current_computer_health = 0;
-            }
-            if (combatData.new_computer_health < 0) {
-                combatData.new_computer_health = 0;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Lilos") { // Life
-            console.log("Lilos!")
-            let lilos = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren);
-            lilos = Math.round(lilos * combatData.player.level / 5);
-            combatData.player_influence_description = 
-                `Lilos breathes her Cear into ${combatData.player.name}, healing you for ${lilos}.`
-            combatData.new_player_health += lilos;
-            combatData.current_player_health += lilos;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Ma'anre") { // Moon
-            let maanre = combatData.realized_player_damage / 2;
-            combatData.new_player_health += maanre;
-            combatData.current_player_health += maanre;
-            console.log("Ma'anre!")
-            combatData.player_influence_description = 
-                `Ma'anre wraps her tendrils about your ${combatData.weapons[0].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-            combatData.weapons[0].roll += 2;
-            combatData.weapons[0].dodge -= 2;
-            combatData.weapons[0].critical_chance += 2;
-            combatData.weapons[0].critical_damage += 0.2;
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Nyrolus") { // Water
-            console.log("Nyrolus!")
-            let nyrolus = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
-            nyrolus = Math.round(nyrolus * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`
-            combatData.player_defense.physicalDefenseModifier += 2;
-            combatData.player_defense.magicalDefenseModifier += 2;
-            combatData.player_defense.physicalPosture += 2;
-            combatData.player_defense.magicalPosture += 2;
-            combatData.new_player_health += nyrolus
-            combatData.current_player_health += nyrolus
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Quor'ei") { // Earth
-            console.log("Quor'ei!")
-            let quorei = (combatData.player_attributes.totalAchre + combatData.weapons[0].achre)
-            quorei = Math.round(quorei * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
-            combatData.player_defense.physicalDefenseModifier += 2;
-            combatData.player_defense.magicalDefenseModifier += 2;
-            combatData.player_defense.physicalPosture += 2;
-            combatData.player_defense.magicalPosture += 2;
-            combatData.new_player_health += quorei
-            combatData.current_player_health += quorei
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Rahvre") { // Dreams
-            let rahvre = (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren)
-            rahvre = Math.round(rahvre * combatData.player.level / 10);
-            console.log("Rahvre!")
-            combatData.player_influence_description = 
-            `Your calming Caer reaches its tendrils to Rahvre, intertwining you.`
-            combatData.weapons[0].magical_damage += 5;
-            combatData.new_player_health += rahvre
-            combatData.current_player_health += rahvre
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Senari") { // Wisdom
-            console.log("Senari!")
-            combatData.player_influence_description = 
-                `Your calm swirls with the favor of Senari, holding you in her Caer.`
-            combatData.weapons[0].roll += 3;
-            combatData.weapons[0].dodge -= 3;
-        }
-        if (combatData.weapons[0].influences[0] === "Se'dyro") { // Iron
-            let sedyro = (combatData.player_attributes.totalAgility + combatData.weapons[0].agility);
-            sedyro = Math.round(sedyro * combatData.player.level / 10);
-            combatData.new_player_health += sedyro
-            combatData.current_player_health += sedyro
-            console.log("Se'dyro!")
-            combatData.player_influence_description = 
-                `The Caer of Se'dyro sings into your ${combatData.weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
-            if (combatData.realized_player_damage < 0) {
-                combatData.realized_player_damage = 0;
-            }
-            combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-            combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
-            if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-                combatData.new_computer_health = 0;
-                combatData.player_win = true;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Se'vas") { // War
-            console.log("Se'vas!")
-            let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength);
-            sevas = Math.round(sevas * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `The Caer of Se'vas scorns your ${combatData.weapons[0].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
-            combatData.weapons[0].critical_chance += 3;
-            combatData.weapons[0].critical_damage += 0.3;
-            combatData.new_player_health += sevas
-            combatData.current_player_health += sevas
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Shrygei") { // Song
-            let shrygei = combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.player_attributes.totalConstitution;
-            combatData.player_influence_description =
-                `The Song of Shry'gei shrieks itself through your ${combatData.weapons[0].name}, the resplendence renews you for ${shrygei}`
-            combatData.weapons[0].magical_penetration += 3
-            combatData.weapons[0].physical_penetration += 3
-            combatData.new_player_health += shrygei
-            combatData.current_player_health += shrygei
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-        if (combatData.weapons[0].influences[0] === "Tshaer") { // Animal
-            console.log("Tshaer!")
-            let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[0].strength);
-            tshaer = Math.round(tshaer * combatData.player.level / 10);
-            combatData.player_influence_description = 
-                `Your fervor unleashes the bestial nature of Tshaer within you for ${tshaer}.`
-            combatData.weapons[0].physical_damage += 5;
-            combatData.new_player_health += tshaer
-            combatData.current_player_health += tshaer
-            if (combatData.new_player_health > 0) {
-                combatData.computer_win = false;
-            }
-        }
-    }
-    if (combatData.dual_wielding === true) {
-        if (faith_number_two > 85) {
-            combatData.religious_success = true;
-            if (combatData.weapons[1].influences[0] === 'Daethos') { // God
-                console.log("Daethos!")
-                let daethos = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
-                daethos = Math.round(daethos * (combatData.player.level / 10));
-                combatData.new_player_health += combatData.realized_player_damage / 2;
-                combatData.current_player_health += combatData.realized_player_damage / 2;
-                combatData.player_influence_description_two = 
-                    `Daethos wraps through your Caer, ${combatData.weapons[1].name} healing you for ${Math.round(combatData.realized_player_damage / 2)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-                combatData.new_player_health += daethos;
-                combatData.new_computer_health -= daethos;
-                combatData.current_player_health += daethos;
-                combatData.current_computer_health -= daethos;
-                if (combatData.current_computer_health < 0) {
-                    combatData.current_computer_health = 0;
-                }
-                if (combatData.new_computer_health < 0) {
-                    combatData.new_computer_health = 0;
-                }
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-        }
-            if (combatData.weapons[1].influences[0] === 'Achreo') { // Wild
-                console.log("Achreo!");
-                let achreo = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
-                achreo = Math.round(achreo * (combatData.player.level / 10));
-                combatData.new_player_health += achreo;
-                combatData.current_player_health += achreo;
-                combatData.player_influence_description_two = 
-                    `Your Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
-                combatData.weapons[1].physical_damage += 2;
-                combatData.weapons[1].magical_damage += 2;
-                combatData.weapons[1].critical_chance += 2;
-                combatData.weapons[1].critical_damage += 0.2;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Ahn've") { // Wind
-                let ahnve = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
-                ahnve = Math.round(ahnve * combatData.player.level / 10);
-                combatData.new_player_health += ahnve;
-                combatData.current_player_health += ahnve;
-                console.log("Ahn've!")
-                combatData.player_influence_description_two = 
-                    `Your Caer ushers forth Ahn've, a devastating storm posseses you to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage.`
-
-                // await attackCompiler(combatData, player_action)
-                if (combatData.realized_player_damage < 0) {
-                    combatData.realized_player_damage = 0;
-                }
-                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-                combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
-                if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-                    combatData.new_computer_health = 0;
-                    combatData.player_win = true;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === 'Astra') { // Lightning
-                let astra = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
-                astra = Math.round(astra * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Your Caer ushers forth the favor of Astra's Lightning, quickening you.`
-                combatData.weapons[1].critical_chance += 4;
-                combatData.weapons[1].roll += 2;
-                combatData.weapons[1].critical_damage += 0.1;
-                combatData.new_player_health += astra;
-                combatData.current_player_health += astra;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === 'Cambire') { // Potential
-                let cambire = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
-                cambire = Math.round(cambire * combatData.player.level / 10);
-                combatData.new_player_health += cambire;
-                combatData.current_player_health += cambire;
-                combatData.player_influence_description_two = 
-                    `Your Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.computer.name} for ${Math.round(combatData.realized_player_damage)} more damage, gifting ${cambire}.`
-                // await attackCompiler(combatData, player_action)
-                if (combatData.realized_player_damage < 0) {
-                    combatData.realized_player_damage = 0;
-                }
-                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-                combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
-                if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-                    combatData.new_computer_health = 0;
-                    combatData.player_win = true;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === 'Chiomyr') { // Humor
-                let chiomyr = (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
-                chiomyr = Math.round(chiomyr * combatData.player.level / 10);
-                combatData.new_player_health += chiomyr;
-                combatData.current_player_health += chiomyr;
-                combatData.weapons[1].physical_penetration += 3;
-                combatData.weapons[1].magical_penetration += 3;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === 'Fyer') { // Fire
-                let fyer = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
-                fyer = Math.round(fyer * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Your Caer ushers forth the favor of Fyer igniting through you.`
-                combatData.weapons[1].critical_chance += 1;
-                combatData.weapons[1].critical_damage += 0.9;
-                combatData.new_player_health += fyer;
-                combatData.current_player_health += fyer;  
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === 'Ilios') { // Sun
-                let ilios = combatData.realized_player_damage / 2;
-                combatData.new_player_health += ilios;
-                combatData.current_player_health += ilios;
-                combatData.player_influence_description_two = 
-                    `The Hush of Ilios bursts into you through your ${combatData.weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
-                combatData.weapons[1].magical_penetration += 2;
-                combatData.weapons[1].physical_penetration += 2;
-                combatData.player_defense.physicalDefenseModifier += 1;
-                combatData.player_defense.magicalDefenseModifier += 1;
-                combatData.player_defense.physicalPosture += 1;
-                combatData.player_defense.magicalPosture += 1;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Kyn'gi") { // Hunt
-                let kyngi = (combatData.player_attributes.totalAgility + combatData.weapons[1].agility);
-                kyngi = Math.round(kyngi * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Your keen Caer shrieks into Kyn'gi, his blessing emboldening the Hunt and healing you for ${kyngi}.`
-                combatData.weapons[1].roll += 3;
-                combatData.weapons[1].critical_chance += 3;
-                combatData.new_player_health += kyngi;
-                combatData.current_player_health += kyngi;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Kyrisos") { // Gold
-                let kyrisos = (combatData.player_attributes.totalKyosir + combatData.weapons[1].kyosir);
-                kyrisos = Math.round(kyrisos * combatData.player.level / 10);
-                combatData.new_player_health += kyrisos;
-                combatData.current_player_health += kyrisos;
-                combatData.player_influence_description_two = 
-                    `The Caer of Kyrisos imbues you with Kyosir!`
-                combatData.player_attributes.kyosirMod += 4;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Kyr'na") { // Time
-                let kyrna = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre);
-                kyrna = Math.round(kyrna * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Kyr'na withers ${combatData.computer.name}, brittling their Caer for ${kyrna} Damage.`
-                combatData.new_computer_health -= kyrna;
-                combatData.current_computer_health -= kyrna;
-                if (combatData.current_computer_health < 0) {
-                    combatData.current_computer_health = 0;
-                }
-                if (combatData.new_computer_health < 0) {
-                    combatData.new_computer_health = 0;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
-                lilos = Math.round(lilos * combatData.player.level / 5);
-                combatData.player_influence_description_two = 
-                    `Lilos breathes her Caer into ${combatData.player.name}, healing you for ${lilos}.`;
-                combatData.new_player_health += lilos;
-                combatData.current_player_health += lilos;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Ma'anre") { // Moon
-                let maanre = combatData.realized_player_damage / 2;
-                combatData.new_player_health += maanre;
-                combatData.current_player_health += maanre;
-                combatData.player_influence_description_two = 
-                    `Ma'anre wraps her tendrils about your ${combatData.weapons[1].name}, changing your perception of this world, its peculiarity resonating for ${Math.round(maanre)}.`; 
-                combatData.weapons[1].roll += 2;
-                combatData.weapons[1].dodge -= 2;
-                combatData.weapons[1].critical_chance += 2;
-                combatData.weapons[1].critical_damage += 0.2;
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren);
-                nyrolus = Math.round(nyrolus * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Your mercurial weapon intrigues Nyrolus, swarming you in their Caer for ${nyrolus}.`;
-                combatData.player_defense.physicalDefenseModifier += 2;
-                combatData.player_defense.magicalDefenseModifier += 2;
-                combatData.player_defense.physicalPosture += 2;
-                combatData.player_defense.magicalPosture += 2;
-                combatData.new_player_health += nyrolus
-                combatData.current_player_health += nyrolus
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Quor'ei") { // Earth
-                console.log("Quor'ei W2")
-                let quorei = (combatData.player_attributes.totalAchre + combatData.weapons[1].achre)
-                quorei = Math.round(quorei * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Your resolve beckons with the favor of your Quor'ei, steeling you in their Caer for ${quorei}.`
-                combatData.player_defense.physicalDefenseModifier += 2;
-                combatData.player_defense.magicalDefenseModifier += 2;
-                combatData.player_defense.physicalPosture += 2;
-                combatData.player_defense.magicalPosture += 2;
-                combatData.new_player_health += quorei
-                combatData.current_player_health += quorei
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Rahvre") { // Dreams
-                let rahvre = (combatData.player_attributes.totalCaeren + combatData.weapons[1].caeren)
-                rahvre = Math.round(rahvre * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                `Your calming Caer reaches its tendrils to Rahvre, intertwining you for ${rahvre}.`
-                combatData.weapons[1].magical_damage += 5;
-                combatData.new_player_health += rahvre
-                combatData.current_player_health += rahvre
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Senari") { // Wisdom
-                combatData.player_influence_description_two = 
-                    `Your calm swirls with the favor of Senari, holding you in her Caer.`
-                combatData.weapons[1].roll += 3;
-                combatData.weapons[1].dodge -= 3;
-            }
-            if (combatData.weapons[1].influences[0] === "Se'dyro") { // Iron
-                let sedyro = (combatData.player_attributes.totalAgility + combatData.weapons[1].agility)
-                sedyro = Math.round(sedyro * combatData.player.level / 10);
-                combatData.new_player_health += sedyro
-                combatData.current_player_health += sedyro
-                combatData.player_influence_description_two = 
-                    `The Caer of Se'dyro sings into your ${combatData.weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_damage)} more damage!`    
-
-                // await attackCompiler(combatData, player_action)
-                if (combatData.realized_player_damage < 0) {
-                    combatData.realized_player_damage = 0;
-                }
-                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-                combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
-                if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-                    combatData.new_computer_health = 0;
-                    combatData.player_win = true;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Se'vas") { // War
-                let sevas = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength);
-                sevas = Math.round(sevas * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `The Caer of Se'vas scorns your ${combatData.weapons[1].name}, scarring it with a beauty reinvigorating you for ${sevas}.` 
-                combatData.weapons[1].critical_chance += 3;
-                combatData.weapons[1].critical_damage += 0.3;
-                combatData.new_player_health += sevas
-                combatData.current_player_health += sevas
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Shrygei") { // Song
-                let shrygei = combatData.player_attributes.totalAchre + combatData.weapons[1].achre + combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.player_attributes.totalConstitution;
-                combatData.player_influence_description_two =
-                `The Song of Shry'gei shrieks itself through your ${combatData.weapons[1].name}, the resplendence renews you for ${shrygei}`
-                combatData.weapons[1].magical_penetration += 3
-                combatData.weapons[1].physical_penetration += 3
-                combatData.new_player_health += shrygei
-                combatData.current_player_health += shrygei
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-            if (combatData.weapons[1].influences[0] === "Tshaer") { // Animal
-                let tshaer = (combatData.player_attributes.totalStrength + combatData.weapons[1].strength);
-                tshaer = Math.round(tshaer * combatData.player.level / 10);
-                combatData.player_influence_description_two = 
-                    `Your Caer unleashes the bestial nature of Tshaer within you for ${tshaer}.`
-                combatData.weapons[1].physical_damage += 5;
-                combatData.new_player_health += tshaer
-                combatData.current_player_health += tshaer
-                if (combatData.new_player_health > 0) {
-                    combatData.computer_win = false;
-                }
-            }
-        }
-    }
-
-    if (computer_faith_number > 85) {
-        combatData.computer_religious_success = true;
-        if (combatData.computer_weapons[0].influences[0] === 'Daethos') { // God
-            console.log('Daethos!')
-            let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
-            daethos = Math.round(daethos * combatData.computer.level / 10);
-            combatData.new_computer_health += combatData.realized_computer_damage;
-            combatData.current_computer_health += combatData.realized_computer_damage;
-            combatData.computer_influence_description = 
-                `Daethos wraps through ${combatData.computer.name}'s Caer, ${combatData.computer_weapons[0].name} healing them for ${Math.round(combatData.realized_computer_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-            combatData.new_computer_health += daethos;
-            combatData.new_player_health -= daethos;
-            combatData.current_computer_health += daethos;
-            combatData.current_player_health -= daethos;
-            
-            if (combatData.current_player_health < 0) {
-                combatData.current_player_health = 0;
-            }
-            if (combatData.new_player_health < 0) {
-                combatData.new_player_health = 0;
-            }
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-    }
-        if (combatData.computer_weapons[0].influences[0] === 'Achreo') { // Wild
-            console.log('Achreo!')
-            let achreo = (combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre);
-            achreo = Math.round(achreo * combatData.computer.level / 10);
-            combatData.new_computer_health += achreo;
-            combatData.current_computer_health += achreo;
-            // combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance + 1);
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise and soft as whispers he grants renewal of ${achreo}.`
-            combatData.computer_weapons[0].physical_damage += 2;
-            combatData.computer_weapons[0].magical_damage += 2;
-            combatData.computer_weapons[0].critical_chance += 2;
-            combatData.computer_weapons[0].critical_damage += 0.2;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Ahn've") { // Wind
-            console.log("Ahn've!")
-            let ahnve = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren);
-            ahnve = Math.round(ahnve * combatData.computer.level / 10);
-            combatData.new_computer_health += ahnve;
-            combatData.current_computer_health += ahnve;
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage. The surge renews ${combatData.computer.name} for ${ahnve}.`
-            // player_action = 'attack';
-            // await attackCompiler(combatData, player_action)
-            if (combatData.realized_computer_damage < 0) {
-                    combatData.realized_computer_damage = 0;
-                }
-                combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
-                combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
-
-                if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-                    combatData.new_player_health = 0;
-                    combatData.computer_win = true;
-                }
-        }
-        if (combatData.computer_weapons[0].influences[0] === 'Astra') { // Lightning
-            let achreo = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
-            achreo = Math.round(achreo * combatData.computer.level / 10);
-            combatData.new_computer_health += achreo
-            combatData.current_computer_health += achreo
-            combatData.computer_weapons[0].critical_damage += 0.1;
-            console.log("Astra!")
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-            combatData.computer_weapons[0].critical_chance += 4;
-            combatData.computer_weapons[0].roll += 2;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === 'Cambire') { // Potential
-            let cambire = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
-            cambire = Math.round(cambire * combatData.computer.level / 10);
-            console.log("Cambire!")
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}, gifting ${cambire}.`
-            if (combatData.realized_computer_damage < 0) {
-                    combatData.realized_computer_damage = 0;
-                }
-            combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
-            combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
-
-            if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-                combatData.new_player_health = 0;
-                combatData.computer_win = true;
-            }    
-        }
-        if (combatData.computer_weapons[0].influences[0] === 'Chiomyr') { // Humor
-            let chiomyr = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[0].kyosir;
-            chiomyr = Math.round(chiomyr * combatData.computer.level / 10);
-            combatData.new_computer_health += chiomyr;
-            combatData.current_computer_health += chiomyr;
-            console.log("Chiomyr!")
-            combatData.computer_weapons[0].physical_penetration += 3;
-            combatData.computer_weapons[0].magical_penetration += 3;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === 'Fyer') { // Fire
-            console.log("Fyer!")
-            let fyer = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
-            fyer = Math.round(fyer * combatData.computer.level / 10);
-            combatData.new_computer_health += fyer;
-            combatData.current_computer_health += fyer;
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`
-            combatData.computer_weapons[0].critical_damage += 0.9;
-            combatData.computer_weapons[0].critical_chance += 1;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === 'Ilios') { // Sun
-            console.log("Ilios!")
-            let ilios = combatData.realized_computer_damage;
-            combatData.new_computer_health += ilios;
-            combatData.current_computer_health += ilios;
-            combatData.computer_influence_description = 
-                `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
-            player_action = 'attack';   
-            combatData.computer_weapons[0].magical_penetration += 2;
-            combatData.computer_weapons[0].physical_penetration += 2;
-            combatData.player_defense.physicalDefenseModifier += 1;
-            combatData.player_defense.magicalDefenseModifier += 1;
-            combatData.player_defense.physicalPosture += 1;
-            combatData.player_defense.magicalPosture += 1;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Kyn'gi") { // Hunt
-            let kyngi = combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility;
-            kyngi = Math.round(kyngi * combatData.computer.level / 10);
-            combatData.new_computer_health += kyngi
-            combatData.current_computer_health += kyngi
-            console.log("Kyn'gi!")
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
-            combatData.computer_weapons[0].roll += 3;
-            combatData.computer_weapons[0].critical_chance += 3;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Kyrisos") { // Gold
-            let kyrisos = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[0].kyosir;
-            kyrisos = Math.round(kyrisos * combatData.computer.level / 10);
-            combatData.new_computer_health += kyrisos;
-            combatData.current_computer_health += kyrisos;
-            console.log("Kyrisos!")
-            combatData.computer_influence_description = 
-                `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
-            combatData.computer_attributes.kyosirMod += 3;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Kyr'na") { // Time
-            console.log("Kyr'na!")
-            let kyrna = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
-            kyrna = Math.round(kyrna * combatData.computer.level / 10);
-            combatData.computer_influence_description = 
-                `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
-            combatData.new_player_health -= kyrna;
-            combatData.current_player_health -= kyrna;
-            if (combatData.current_player_health < 0) {
-                combatData.current_player_health = 0;
-            }
-            if (combatData.new_player_health < 0) {
-                combatData.new_player_health = 0;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Lilos") { // Life
-            console.log("Lilos!")
-            let lilos = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
-            lilos = Math.round(lilos * combatData.computer.level / 5);
-            combatData.computer_influence_description = 
-                `Lilos breathes her Cear into ${combatData.computer.name}, healing ${combatData.computer.name} for ${lilos}.`
-            combatData.new_computer_health += lilos;
-            combatData.current_computer_health += lilos;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Ma'anre") { // Moon
-            let maanre = combatData.realized_computer_damage;
-            combatData.new_computer_health += maanre;
-            combatData.current_computer_health += maanre;
-            console.log("Ma'anre!")
-            combatData.computer_influence_description = 
-                `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-            combatData.computer_weapons[0].roll += 2;
-            combatData.computer_weapons[0].dodge -= 2;
-            combatData.computer_weapons[0].critical_chance += 2;
-            combatData.computer_weapons[0].critical_damage += 0.2;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Nyrolus") { // Water
-            console.log("Nyrolus!")
-            let nyrolus = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren);
-            nyrolus = Math.round(nyrolus * combatData.computer.level / 10);
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-            combatData.computer_defense.physicalDefenseModifier += 2;
-            combatData.computer_defense.magicalDefenseModifier += 2;
-            combatData.computer_defense.physicalPosture += 2;
-            combatData.computer_defense.magicalPosture += 2;
-            combatData.new_computer_health += nyrolus;
-            combatData.current_computer_health += nyrolus;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Quor'ei") { // Earth
-            console.log("Quor'ei!")
-            let quorei = combatData.computer_attributes.totalAchre + combatData.computer_weapons[0].achre;
-            quorei = Math.round(quorei * combatData.computer.level / 10);
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
-            combatData.computer_defense.physicalDefenseModifier += 2;
-            combatData.computer_defense.magicalDefenseModifier += 2;
-            combatData.computer_defense.physicalPosture += 2;
-            combatData.computer_defense.magicalPosture += 2;
-            combatData.new_computer_health += quorei;
-            combatData.current_computer_health += quorei;    
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Rahvre") { // Dreams
-            let rahvre = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[0].caeren;
-            rahvre = Math.round(rahvre * combatData.computer.level / 10);
-            combatData.new_computer_health += rahvre
-            combatData.current_computer_health += rahvre
-            console.log("Rahvre!")
-            combatData.computer_influence_description = 
-            `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-            combatData.computer_weapons[0].magical_damage += 5;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Senari") { // Wisdom
-            console.log("Senari!")
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
-            combatData.computer_weapons[0].roll += 3;
-            combatData.computer_weapons[0].dodge -= 3;
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Se'dyro") { // Iron
-            let sedyro = (combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility);
-            sedyro = Math.round(sedyro * combatData.computer.level / 10);
-            combatData.new_computer_health += sedyro;
-            combatData.current_computer_health += sedyro;
-            console.log("Se'dyro!");
-            combatData.computer_influence_description = 
-                `The Caer of Se'dyro sings into their ${combatData.computer_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
-            player_action = 'attack';
-            // await attackCompiler(combatData, player_action)
-            if (combatData.realized_computer_damage < 0) {
-                    combatData.realized_computer_damage = 0;
-                }
-            combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
-            combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
-
-            if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-                combatData.new_player_health = 0;
-                combatData.computer_win = true;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Se'vas") { // War
-            let sevas = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
-            sevas = Math.round(sevas * combatData.computer.level / 10);
-            combatData.new_computer_health += sevas
-            combatData.current_computer_health += sevas
-            console.log("Se'vas!")
-            combatData.computer_influence_description = 
-                `The Caer of Se'vas scorns their ${combatData.computer_weapons[0].name}, scarring it with the beauty of war.` 
-            combatData.computer_weapons[0].critical_chance += 3;
-            combatData.computer_weapons[0].critical_damage += 0.3;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Shrygei") { // Song
-            let shrygei = combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren + combatData.computer_attributes.totalConstitution;
-            shrygei = Math.round(shrygei * combatData.computer.level / 10);
-            combatData.computer_influence_description =
-            `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[0].name}, the resplendence renews them for ${shrygei}`
-                combatData.computer_weapons[0].magical_penetration += 2
-                combatData.computer_weapons[0].physical_penetration += 2
-                combatData.new_computer_health += shrygei
-                combatData.current_computer_health += shrygei
-                if (combatData.new_computer_health > 0) {
-                    combatData.player_win = false;
-                }
-        }
-        if (combatData.computer_weapons[0].influences[0] === "Tshaer") { // Animal
-            let tshaer = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength;
-            tshaer = Math.round(tshaer * combatData.computer.level / 10);
-            combatData.new_computer_health += tshaer
-            combatData.current_computer_health += tshaer
-            console.log("Tshaer!")
-            combatData.computer_influence_description = 
-                `${combatData.computer.name}'s fervor unleashes the bestial nature of Tshaer within them.`
-            combatData.computer_weapons[0].physical_damage += 5;
-            if (combatData.new_computer_health > 0) {
-                combatData.player_win = false;
-            }
-        }
-    }
-    if (combatData.computer_dual_wielding === true) {
-        if (computer_faith_number_two > 85) {
-            combatData.computer_religious_success = true;
-            if (combatData.computer_weapons[1].influences[0] === 'Daethos') { // God
-                console.log("Daethos!")
-                let daethos = (combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren);
-                daethos = Math.round(daethos * combatData.computer.level / 10);
-                combatData.new_computer_health += combatData.realized_computer_damage;
-                combatData.current_computer_health += combatData.realized_computer_damage;
-                combatData.computer_influence_description_two = 
-                    `Daethos wraps through ${combatData.computer.name}'s Caer, ${combatData.computer_weapons[1].name} healing them for ${Math.round(combatData.realized_computer_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-                combatData.new_computer_health += daethos;
-                combatData.new_player_health -= daethos;
-                combatData.current_computer_health += daethos;
-                combatData.current_player_health -= daethos;
-                if (combatData.current_player_health < 0) {
-                    combatData.current_player_health = 0;
-                }
-                if (combatData.new_player_health < 0) {
-                    combatData.new_player_health = 0;
-                }
-                if (combatData.new_computer_health > 0) {
-                    combatData.player_win = false;
-                }
-        }
-            if (combatData.computer_weapons[1].influences[0] === 'Achreo') { // Wild
-                let achreo = (combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre);
-                achreo = Math.round(achreo * combatData.computer.level / 10);
-                combatData.new_computer_health += achreo;
-                combatData.current_computer_health += achreo;
-                console.log("Achreo!");
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer stirs Achreo, much to his own surprise, renewing them for ${achreo}.`
-                combatData.computer_weapons[1].physical_damage += 2;
-                combatData.computer_weapons[1].magical_damage += 2;
-                combatData.computer_weapons[1].critical_chance += 2;
-                combatData.computer_weapons[1].critical_damage += 0.2;
-                if (combatData.new_computer_health > 0) {
-                    combatData.player_win = false;
-                }
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Ahn've") { // Wind
-                let ahnve = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren);
-                ahnve = Math.round(ahnve * combatData.computer.level / 10);
-                combatData.new_computer_health += ahnve;
-                combatData.current_computer_health += ahnve;
-                console.log("Ahn've!")
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_computer_damage)} more damage. The surge renews ${combatData.computer.name} for ${ahnve}.`
-                player_action = 'attack';
-                // await attackCompiler(combatData, player_action)
-                if (combatData.realized_computer_damage < 0) {
-                    combatData.realized_computer_damage = 0;
-                }
-                combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
-                combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
-
-                if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-                    combatData.new_player_health = 0;
-                    combatData.computer_win = true;
-                }
-            }
-            if (combatData.computer_weapons[1].influences[0] === 'Astra') { // Lightning
-                let astra = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
-                astra = Math.round(astra * combatData.computer.level / 10);
-                combatData.new_computer_health += astra
-                combatData.current_computer_health += astra
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-                combatData.computer_weapons[1].critical_chance += 4;
-                combatData.computer_weapons[1].roll += 2;
-                combatData.computer_weapons[1].critical_damage += 0.1;
-                if (combatData.new_computer_health > 0) {
-                    combatData.player_win = false;
-                }
-            }
-            if (combatData.computer_weapons[1].influences[0] === 'Cambire') { // Potential
-                let cambire = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
-                cambire = Math.round(cambire * combatData.computer.level / 10);
-                combatData.new_computer_health += cambire;
-                combatData.current_computer_health += cambire;
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player.name} for ${Math.round(combatData.realized_computer_damage)}.`
-                player_action = 'attack';
-                // await attackCompiler(combatData, player_action)
-                if (combatData.realized_computer_damage < 0) {
-                    combatData.realized_computer_damage = 0;
-                }
-                combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
-                combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
-
-                if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-                    combatData.new_player_health = 0;
-                    combatData.computer_win = true;
-                }    
-            }
-            if (combatData.computer_weapons[1].influences[0] === 'Chiomyr') { // Humor
-                let chiomyr = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[1].kyosir;
-                chiomyr = Math.round(chiomyr * combatData.computer.level / 10); 
-                combatData.new_computer_health += chiomyr;
-                combatData.current_computer_health += chiomyr;
-                combatData.computer_weapons[1].physical_penetration += 3;
-                combatData.computer_weapons[1].magical_penetration += 3;
-            }
-            if (combatData.computer_weapons[1].influences[0] === 'Fyer') { // Fire
-                let fyer = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
-                fyer = Math.round(fyer * combatData.computer.level / 10);
-                combatData.new_computer_health += fyer;
-                combatData.current_computer_health += fyer;
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer ushers forth the favor of Fyer igniting through them.`;
-                combatData.computer_weapons[1].critical_damage += 0.9;
-                combatData.computer_weapons[1].critical_chance += 1;
-            }
-            if (combatData.computer_weapons[1].influences[0] === 'Ilios') { // Sun
-                let ilios = combatData.realized_computer_damage;
-                combatData.new_computer_health += ilios;
-                combatData.current_computer_health += ilios;
-                combatData.computer_influence_description_two = 
-                    `The Hush of Ilios bursts into ${combatData.computer.name} through their ${combatData.computer_weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
-                player_action = 'attack';   
-                combatData.computer_weapons[1].magical_penetration += 2;
-                combatData.computer_weapons[1].physical_penetration += 2;
-                combatData.player_defense.physicalDefenseModifier += 1;
-                combatData.player_defense.magicalDefenseModifier += 1;
-                combatData.player_defense.physicalPosture += 1;
-                combatData.player_defense.magicalPosture += 1;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Kyn'gi") { // Hunt
-                let kyngi = combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility;
-                kyngi = Math.round(kyngi * combatData.computer.level / 10);
-                combatData.new_computer_health += kyngi
-                combatData.current_computer_health += kyngi
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
-                combatData.computer_weapons[1].roll += 3;
-                combatData.computer_weapons[1].critical_chance += 3;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Kyrisos") { // Gold
-                let kyrisos = combatData.computer_attributes.totalKyosir + combatData.computer_weapons[1].kyosir;
-                kyrisos = Math.round(kyrisos * combatData.computer.level / 10);
-                combatData.new_computer_health += kyrisos;
-                combatData.current_computer_health += kyrisos;
-                combatData.computer_influence_description_two = 
-                    `The Caer of Kyrisos imbues ${combatData.computer.name}'s with Kyosir!`
-                combatData.computer_attributes.kyosirMod += 3;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Kyr'na") { // Time
-                let kyrna = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
-                kyrna = Math.round(kyrna * combatData.computer.level / 10);
-                combatData.computer_influence_description_two = 
-                    `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
-                combatData.new_player_health -= kyrna;
-                combatData.current_player_health -= kyrna;
-                if (combatData.current_player_health < 0) {
-                    combatData.current_player_health = 0;
-                }
-                if (combatData.new_player_health < 0) {
-                    combatData.new_player_health = 0;
-                }
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
-                lilos = Math.round(lilos * combatData.computer.level / 10);
-                combatData.computer_influence_description_two = 
-                    `Lilos breathes her Caer into ${combatData.computer.name}, healing them for ${lilos}.`
-                combatData.new_computer_health += lilos;
-                combatData.current_computer_health += lilos;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Ma'anre") { // Moon
-                let maanre = combatData.realized_computer_damage;
-                combatData.new_computer_health += maanre;
-                combatData.current_computer_health += maanre;
-                combatData.computer_influence_description_two = 
-                    `Ma'anre wraps her tendrils about ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-                combatData.computer_weapons[1].roll += 2;
-                combatData.computer_weapons[1].dodge -= 2;
-                combatData.computer_weapons[1].critical_chance += 2;
-                combatData.computer_weapons[1].critical_damage += 0.2;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = (combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren);
-                nyrolus = Math.round(nyrolus * combatData.computer.level / 10);
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-                combatData.computer_defense.physicalDefenseModifier += 2;
-                combatData.computer_defense.magicalDefenseModifier += 2;
-                combatData.computer_defense.physicalPosture += 2;
-                combatData.computer_defense.magicalPosture += 2;
-                combatData.new_computer_health += nyrolus
-                combatData.current_computer_health += nyrolus
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Quor'ei") { // Earth
-                let quorei = combatData.computer_attributes.totalAchre + combatData.computer_weapons[1].achre;
-                quorei = Math.round(quorei * combatData.computer.level / 10);
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
-                combatData.computer_defense.physicalDefenseModifier += 2;
-                combatData.computer_defense.magicalDefenseModifier += 2;
-                combatData.computer_defense.physicalPosture += 2;
-                combatData.computer_defense.magicalPosture += 2;
-                combatData.new_computer_health += quorei
-                combatData.current_computer_health += quorei
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Rahvre") { // Dreams
-                let rahvre = combatData.computer_attributes.totalCaeren + combatData.computer_weapons[1].caeren;
-                rahvre = Math.round(rahvre * combatData.computer.level / 10);
-                combatData.new_computer_health += rahvre
-                combatData.current_computer_health += rahvre
-                combatData.computer_influence_description_two = 
-                `${combatData.computer.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-            combatData.computer_weapons[1].magical_damage += 5;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Senari") { // Wisdom
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
-                combatData.computer_weapons[1].roll += 3;
-                combatData.computer_weapons[1].dodge -= 3;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Se'dyro") { // Iron
-                let sedyro = (combatData.computer_attributes.totalAgility + combatData.computer_weapons[1].agility);
-                sedyro = Math.round(sedyro * combatData.computer.level / 10);
-                combatData.new_computer_health += sedyro
-                combatData.current_computer_health += sedyro
-                combatData.computer_influence_description_two = 
-                    `The Caer of Se'dyro sings into their ${combatData.computer_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_computer_damage)} more damage!`    
-                player_action = 'attack';
-                // await attackCompiler(combatData, player_action)
-                if (combatData.realized_computer_damage < 0) {
-                    combatData.realized_computer_damage = 0;
-                }
-                combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
-                combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
-
-                if (combatData.new_player_health <= 0 || combatData.current_player_health <= 0) {
-                    combatData.new_player_health = 0;
-                    combatData.computer_win = true;
-                }
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Se'vas") { // War
-                let sevas = combatData.computer_attributes.totalStrength + combatData.computer_weapons[1].strength;
-                sevas = Math.round(sevas * combatData.computer.level / 10);
-                combatData.new_computer_health += sevas
-                combatData.current_computer_health += sevas
-                combatData.computer_influence_description_two = 
-                    `The Caer of Se'vas scorns their ${combatData.computer_weapons[1].name}, scarring it with the beauty of war.` 
-                combatData.computer_weapons[1].critical_chance += 3;
-                combatData.computer_weapons[1].critical_damage += 0.3;
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Shrygei") { // Song
-                let shrygei = combatData.computer_attributes.totalAchre + combatData.computer_attributes.totalCaeren + combatData.computer_attributes.totalConstitution;
-                shrygei = Math.round(shrygei * combatData.computer.level / 10);
-                combatData.computer_influence_description_two =
-                `The Song of Shry'gei shrieks itself through ${combatData.computer.name}'s ${combatData.computer_weapons[1].name}, the resplendence renews them for ${shrygei}`
-                    combatData.computer_weapons[1].magical_penetration += 2
-                    combatData.computer_weapons[1].physical_penetration += 2
-                    combatData.new_computer_health += shrygei
-                    combatData.current_computer_health += shrygei
-            }
-            if (combatData.computer_weapons[1].influences[0] === "Tshaer") { // Animal
-                let tshaer = combatData.computer_attributes.totalStrength + combatData.computer_weapons[1].strength;
-                tshaer = Math.round(tshaer * combatData.computer.level / 10);
-                combatData.new_computer_health += tshaer
-                combatData.current_computer_health += tshaer
-                combatData.computer_influence_description_two = 
-                    `${combatData.computer.name}'s Caer unleashes the bestial nature of Tshaer within them.`
-                combatData.computer_weapons[1].physical_damage += 5;
-            }
-        }
-    }
-
-    combatData.weapons[0].critical_chance = combatData.weapons[0].critical_chance.toFixed(2)
-    combatData.weapons[0].critical_damage = combatData.weapons[0].critical_damage.toFixed(2)
-    combatData.weapons[1].critical_chance = combatData.weapons[1].critical_chance.toFixed(2)
-    combatData.weapons[1].critical_damage = combatData.weapons[1].critical_damage.toFixed(2)
-    combatData.computer_weapons[0].critical_chance = combatData.computer_weapons[0].critical_chance.toFixed(2)
-    combatData.computer_weapons[0].critical_damage = combatData.computer_weapons[0].critical_damage.toFixed(2)
-    combatData.computer_weapons[1].critical_chance = combatData.computer_weapons[1].critical_chance.toFixed(2)
-    combatData.computer_weapons[1].critical_damage = combatData.computer_weapons[1].critical_damage.toFixed(2)
-
-    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
-    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
-    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
-    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
-    combatData.computer_weapons[0].critical_chance = Number(combatData.computer_weapons[0].critical_chance)
-    combatData.computer_weapons[0].critical_damage = Number(combatData.computer_weapons[0].critical_damage)
-    combatData.computer_weapons[1].critical_chance = Number(combatData.computer_weapons[1].critical_chance)
-    combatData.computer_weapons[1].critical_damage = Number(combatData.computer_weapons[1].critical_damage)
-
-
-
-    if (combatData.new_player_health > 0) {
-        combatData.computer_win = false;
-    }
-    if (combatData.new_computer_health > 0) {
-        combatData.player_win = false;
-    }
+    // if (combatData.new_computer_health > 0) {
+    //     combatData.player_win = false;
+    // }
 
     return combatData
 }
@@ -3035,6 +3414,7 @@ const actionSplitter = async (combatData) => {
         playerEffects: combatData.playerEffects,
         computerEffects: combatData.computerEffects,
         playerBlessing: combatData.playerBlessing,
+        computerBlessing: combatData.computerBlessing,
     }
     // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;
@@ -3084,6 +3464,11 @@ const actionSplitter = async (combatData) => {
     computer_action = newData.computer_action;
     console.log(newData.computer_action, 'Computer Action', newData.computer_counter_guess, '<- If Countering')
 
+    let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
+    let new_prayer = Math.floor(Math.random() * prayers.length);
+    console.log(prayers[new_prayer], 'New Prayer for Computer');
+    newData.computerBlessing = prayers[new_prayer];
+
     newData.computer_start_description = 
         `${newData.computer.name} sets to ${computer_action.charAt(0).toUpperCase() + computer_action.slice(1)}${computer_counter ? '-' + computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1) : ''} against you.`
 
@@ -3096,9 +3481,13 @@ const actionSplitter = async (combatData) => {
             if (player_initiative > computer_initiative) {
                 newData.counter_success = true;
                 newData.player_special_description = 
-                    `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`
-                await attackCompiler(newData, player_action)
+                    `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`;
+                await attackCompiler(newData, player_action);
                 await faithFinder(newData, player_action, computer_action);
+
+                await statusEffectCheck(newData);
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
                 return newData
             } else {
                 newData.computer_counter_success = true;
@@ -3106,6 +3495,10 @@ const actionSplitter = async (combatData) => {
                     `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`
                 await computerAttackCompiler(newData, computer_action);
                 await faithFinder(newData, player_action, computer_action);
+
+                await statusEffectCheck(newData);
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
                 return newData
             }    
         }
@@ -3116,6 +3509,9 @@ const actionSplitter = async (combatData) => {
                 `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`
             await attackCompiler(newData, player_action)
             await faithFinder(newData, player_action, computer_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         }
     
@@ -3126,6 +3522,9 @@ const actionSplitter = async (combatData) => {
                 `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`
             await computerAttackCompiler(newData, computer_action);
             await faithFinder(newData, player_action, computer_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         } 
     
@@ -3154,6 +3553,9 @@ const actionSplitter = async (combatData) => {
                 `You successfully Countered ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack.`
             await attackCompiler(newData, player_action)
             await faithFinder(newData, player_action, computer_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         } else {
             newData.player_special_description = 
@@ -3168,6 +3570,9 @@ const actionSplitter = async (combatData) => {
                 `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
             await computerAttackCompiler(newData, computer_action)
             await faithFinder(newData, player_action, computer_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         } else {
             newData.computer_special_description = 
@@ -3194,6 +3599,9 @@ const actionSplitter = async (combatData) => {
             `You successfully Dodge ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack`
         await attackCompiler(newData, player_action)
         await faithFinder(newData, player_action, computer_action);
+        await statusEffectCheck(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
         return newData
     }
 
@@ -3202,6 +3610,9 @@ const actionSplitter = async (combatData) => {
         `${newData.computer.name} successfully Dodges your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
         await computerAttackCompiler(newData, computer_action)
         await faithFinder(newData, player_action, computer_action);
+        await statusEffectCheck(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
         return newData
     }
 
@@ -3213,6 +3624,9 @@ const actionSplitter = async (combatData) => {
         await playerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
         if (newData.roll_success === true) {
             await faithFinder(newData, player_action, computer_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         }
     }
@@ -3221,6 +3635,9 @@ const actionSplitter = async (combatData) => {
         await computerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action)
         if (newData.computer_roll_success === true) {
             await faithFinder(newData, player_action, computer_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         }
     }
@@ -3240,6 +3657,7 @@ const actionSplitter = async (combatData) => {
     }
 
     await faithFinder(newData, player_action, computer_action);
+    await statusEffectCheck(newData);
     
     if (newData.player_win === true) {
         newData.computer_death_description = 
@@ -3247,8 +3665,14 @@ const actionSplitter = async (combatData) => {
     }
     if (newData.computer_win === true) {
         newData.player_death_description = 
-            `You have been defeated. Hail ${newData.computer.name}, the new va'Esai!`
+        `You have been defeated. Hail ${newData.computer.name}, the new va'Esai!`
     }
+
+    if (newData.player_win === true || newData.computer_win === true) {
+        // To Remove Effects
+        await statusEffectCheck(newData);
+    }
+    
 
     newData.combatRound += 1;
     newData.sessionRound += 1;

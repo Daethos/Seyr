@@ -5,6 +5,7 @@ import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
 import Container from 'react-bootstrap/Container'
 import ExperienceBar from './ExperienceBar';
+import StatusEffects from './StatusEffects';
 
 interface Props {
   ascean: any;
@@ -34,9 +35,11 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
   return (
     <>
     { playerCharacter ?
-      <div id='game-block' className="game-block" 
-        // style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}
-      >
+      <div id='game-block' className="game-block" style={{ marginTop: 25 + '%' }}>
+        {combatData.playerEffects.length > 0 ?
+          (combatData.playerEffects.map((effect: any, index: number) => {
+            return ( <StatusEffects effect={effect} player={true} key={index} /> )
+        })) : '' }
       <div className="">
             <GamePlayerStats attributes={combatData.player_attributes} player={combatData.player} inventory={ascean.inventory} weaponAttributes={combatData.weapons[0]} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
       {/* <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3> */}
@@ -95,6 +98,10 @@ const GameAscean = ({ ascean, player, PvP, currentPlayerHealth, combatData, tota
     {/* } */}
     <div className="actions">
     </div>
+    {combatData.computerEffects.length > 0 ?
+          (combatData.computerEffects.map((effect: any, index: number) => {
+            return ( <StatusEffects effect={effect} key={index} /> )
+        })) : '' }
     </div>
     }
     </>

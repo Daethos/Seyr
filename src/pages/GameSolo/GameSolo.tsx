@@ -599,7 +599,6 @@ const GameSolo = ({ user }: GameProps) => {
             console.log('Either A Loss or Already At Max Exp')
             return;
         }
-
         try {
             // setLoadingAscean(true);
             const response = await asceanAPI.saveExperience(asceanState);
@@ -802,26 +801,43 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     async function setWeaponOrder(weapon: any) {
-        const findWeapon = combatData.weapons.filter(
-            (weap: { name: any; }) => weap?.name === weapon.target.value
-        );
-        const newWeaponOrder = async () => combatData?.weapons.sort((a: any, b: any) => {
-            return (
-                a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
-            )
-        });
-        const response = await newWeaponOrder();
-        playWO();
-        // console.log(response, '<- Response re-ordering weapons')
-        setCombatData({...combatData, 'weapons': response, 'player_damage_type': response[0].damage_type[0]});
-        setTimeLeft(10);
+        try {
+            const findWeapon = combatData.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
+            const newWeaponOrder = async () => combatData?.weapons.sort((a: any, b: any) => {
+                return (
+                    a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
+                )
+            });
+            const response = await newWeaponOrder();
+            playWO();
+            // console.log(response, '<- Response re-ordering weapons')
+            setCombatData({...combatData, 'weapons': response, 'player_damage_type': response[0].damage_type[0]});
+            setTimeLeft(10);
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Weapon Order')
+        }
     }
 
     async function setDamageType(damageType: any) {
-        console.log(damageType.target.value, '<- Damage Type')
-        playWO();
-        setCombatData({...combatData, 'player_damage_type': damageType.target.value});
-        setTimeLeft(10);
+        try {    
+            console.log(damageType.target.value, '<- Damage Type')
+            playWO();
+            setCombatData({...combatData, 'player_damage_type': damageType.target.value});
+            setTimeLeft(10);
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Damage Type')
+        }
+    }
+
+    async function setPrayerBlessing(prayer: any) {
+        try {
+            console.log(prayer.target.value, '<- Prayer');
+            playWO();
+            setCombatData({...combatData, 'playerBlessing': prayer.target.value});
+            setTimeLeft(10);
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Prayer')
+        }
     }
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
@@ -836,17 +852,17 @@ const GameSolo = ({ user }: GameProps) => {
         }
         try {
             // console.log(combatData.action, 'Combat Action Being Initiated')
-            setEmergencyText([``])
-            setTimeLeft(10)
-            const response = await gameAPI.initiateAction(combatData)
-            setCombatInitiated(true)
-            setActionStatus(true)
-            console.log(response.data, 'Response Initiating Combat')
-            setCombatData({...response.data, 'action': ''}) // Guessing the variable, something along those lines. Should be all that's needed to update
-            setCurrentPlayerHealth(response.data.new_player_health)
-            setCurrentComputerHealth(response.data.new_computer_health)
-            setPlayerWin(response.data.player_win)
-            setComputerWin(response.data.computer_win)
+            setEmergencyText([``]);
+            setTimeLeft(10);
+            const response = await gameAPI.initiateAction(combatData);
+            setCombatInitiated(true);
+            setActionStatus(true);
+            console.log(response.data, 'Response Initiating Combat');
+            setCombatData({...response.data, 'action': ''}); // Guessing the variable, something along those lines. Should be all that's needed to update
+            setCurrentPlayerHealth(response.data.new_player_health);
+            setCurrentComputerHealth(response.data.new_computer_health);
+            setPlayerWin(response.data.player_win);
+            setComputerWin(response.data.computer_win);
             if (response.data.critical_success === true) {
                 if (response.data.player_damage_type === 'Spooky' || response.data.player_damage_type === 'Righteous') {
                     playDaethic();
@@ -929,11 +945,14 @@ const GameSolo = ({ user }: GameProps) => {
                     ...combatData,
                     'player_defense': playerDefense,
                     'player_attributes': attributes,
+                    'computer_defense': computerDefense,
                     'current_player_health': totalPlayerHealth,
                     'new_player_health': totalPlayerHealth,
                     'current_computer_health': totalComputerHealth,
                     'new_computer_health': totalComputerHealth,
-                    // 'weapons': [weaponOne, weaponTwo, weaponThree],
+                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    // 'playerEffects': [],
+                    // 'computerEffects': [],
                     'player_win': false,
                     'computer_win': false,
                     'combatRound': 1,
@@ -944,12 +963,15 @@ const GameSolo = ({ user }: GameProps) => {
                     ...combatData,
                     'player_defense': playerDefense,
                     'player_attributes': attributes,
+                    'computer_defense': computerDefense,
                     'current_player_health': totalPlayerHealth,
                     'new_player_health': totalPlayerHealth,
                     'current_computer_health': totalComputerHealth,
                     'new_computer_health': totalComputerHealth,
                     'weapons': [weaponOne, weaponTwo, weaponThree],
                     'player_damage_type': weaponOne.damage_type[0],
+                    // 'playerEffects': [],
+                    // 'computerEffects': [],
                     'player_win': false,
                     'computer_win': false,
                     'combatRound': 1,
@@ -958,10 +980,13 @@ const GameSolo = ({ user }: GameProps) => {
                 setCombatData({
                     ...combatData,
                     'player_defense': playerDefense,
+                    'computer_defense': computerDefense,
                     'player_attributes': attributes,
                     'current_computer_health': totalComputerHealth,
                     'new_computer_health': totalComputerHealth,
-                    // 'weapons': [weaponOne, weaponTwo, weaponThree],
+                    'weapons': [weaponOne, weaponTwo, weaponThree],
+                    // 'playerEffects': [],
+                    // 'computerEffects': [],
                     'player_win': false,
                     'computer_win': false,
                     'combatRound': 1,
@@ -980,7 +1005,6 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Resetting Ascean')
         }
     }
-
 
     useEffect(() => {
         console.log(background, 'Background')
@@ -1113,7 +1137,7 @@ const GameSolo = ({ user }: GameProps) => {
             { playerWin || computerWin || !combatEngaged ? '' : combatData?.weapons ?
             <GameActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} setDamageType={setDamageType}
-                combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} 
+                combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} setPrayerBlessing={setPrayerBlessing}
                 weapons={combatData.weapons} damageType={combatData.weapons[0].damage_type} setWeaponOrder={setWeaponOrder} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={combatData.weapons[0]} currentDamageType={combatData.player_damage_type} currentAction={combatData.action} currentCounter={combatData.counter_guess} 

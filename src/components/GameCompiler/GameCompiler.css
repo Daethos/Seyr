@@ -11,10 +11,11 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px black;
     font-variant: small-caps;
     font-size: 24px;
     /* border: 1px solid purple; */
-    font-weight: 600;
+    font-weight: 700;
     opacity: 0;
 }
 .hidden {
@@ -45,10 +46,11 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px black;
     font-variant: small-caps;
     font-size: 24px;
     /* border: 1px solid purple; */
-    font-weight: 600;
+    font-weight: 700;
     opacity: 0;
 }
 .pulse {

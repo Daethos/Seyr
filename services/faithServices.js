@@ -12,12 +12,15 @@ class StatusEffect {
         // May have to juggle the order of these args and the order of the properties and how they are derived. Not sure
         this.name = this.setName(weapon.influences[0]);
         this.deity = weapon.influences[0];
+        this.weapon = weapon.name;
+        this.debuffTarget = '';
         this.duration = this.setDuration(player);
         this.tick = this.setTick(combatData);
         this.intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
         this.refreshes = this.setRefreshes(prayer);
         this.stacks = this.setStacks(prayer);
         this.activeStacks = 1;
+        this.activeRefreshes = 0;
         this.prayer = prayer;
         this.effect = this.setEffect(combatData, player, weapon, attributes, prayer);
         this.description = this.setDescription(combatData, player, enemy, weapon, attributes, prayer);
@@ -69,7 +72,7 @@ class StatusEffect {
         };
     }
     setRefreshes(prayer) {
-        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || prayer === 'Buff' || prayer === 'Damage' ? true : false;
+        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' ? true : false;
     }
     setStacks(prayer) {
         return this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
@@ -394,7 +397,7 @@ class StatusEffect {
     }
 
     static updateDamage(combatData, player, weapon, potentialModifiers, realizedModifiers) {
-        realizedModifiers.damage = potentialModifiers.damage;
+        realizedModifiers.damage = potentialModifiers.damage * 10;
     
         return realizedModifiers;
     }
@@ -424,7 +427,7 @@ class StatusEffect {
         return cleanSlate;
     }
     static updateHeal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
-        realizedModifiers.healing = potentialModifiers.healing;
+        realizedModifiers.healing = potentialModifiers.healing * 10;
     
         return realizedModifiers;
     }
@@ -797,7 +800,7 @@ class StatusEffect {
         return cleanSlate;
     }
     damage(combatData, player, weapon, potentialModifiers, realizedModifiers) {
-        realizedModifiers.damage = potentialModifiers.damage;
+        realizedModifiers.damage = potentialModifiers.damage * 10;
     
         return realizedModifiers;
     }
@@ -827,7 +830,7 @@ class StatusEffect {
         return cleanSlate;
     }
     heal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
-        realizedModifiers.healing = potentialModifiers.healing;
+        realizedModifiers.healing = potentialModifiers.healing * 10;
     
         return realizedModifiers;
     }
@@ -838,7 +841,7 @@ class StatusEffect {
         intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
         let duration = this.setDuration(player);
         const article = ['a','e','i','o','u'].includes(weapon.name[0].toLowerCase()) ? "an" : "a";
-        let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing you for ${intensity.value * intensity.magnitude}` : prayer === 'Damage' ? `damaging ${enemy.name} for ${intensity.value * intensity.magnitude}` : `blessing ${player.name}`} for ${duration} combat rounds.`;
+        let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing you for ${intensity.value * intensity.magnitude * 10}` : prayer === 'Damage' ? `damaging ${enemy.name} for ${intensity.value * intensity.magnitude * 10}` : `blessing ${player.name}`} for ${duration} combat rounds.`;
         
         return this.description = description;
     }

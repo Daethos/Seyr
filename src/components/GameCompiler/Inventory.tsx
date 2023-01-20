@@ -312,7 +312,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             </Modal.Body>
         </Modal>
         <OverlayTrigger trigger="click" placement="auto-start" overlay={inventoryPopover}>
-            <Button variant="" className="inventory-icon" style={getItemStyle}><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></Button>
+            <Button variant="" className="inventory-icon" style={getItemStyle}><img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} /></Button>
         </OverlayTrigger>
         </>
     )

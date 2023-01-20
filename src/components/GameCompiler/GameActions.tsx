@@ -28,11 +28,13 @@ interface Props {
     setDamageType: any;
     damageType: any;
     currentDamageType: string;
+    setPrayerBlessing: any;
 }
 
-const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, damageType, currentDamageType, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, damageType, currentDamageType, setPrayerBlessing, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
+  const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
   useEffect(() => {
     // console.log('Displaying new action: ', currentAction)
@@ -53,6 +55,10 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, dam
     // console.log('Displaying new damage type ', currentDamageType)
     setDisplayedAction(`Damage Type: ${currentDamageType}`)
   }, [currentDamageType])
+
+  useEffect(() => {
+    setDisplayedAction(`Praying for: ${combatData.playerBlessing}`)
+  }, [combatData.playerBlessing])
 
   useEffect(() => {
     if (combatInitiated) {
@@ -94,6 +100,11 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, dam
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
+    <select name="Prayer" id="prayer-options" value={combatData.playerBlessing} onChange={setPrayerBlessing}>
+      {prayers.map((prayer, index) => {
+        return ( <option key={index} value={prayer}>{prayer}</option> )
+      })}
+    </select>
     <select name="Damage" id="damage-options" value={combatData.player_damage_type} onChange={setDamageType}>
       {
         damageType ?
