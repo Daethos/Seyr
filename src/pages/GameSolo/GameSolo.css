@@ -10,7 +10,9 @@
   #game-block {
     margin-left: 7.5%;
     transform: scale(1.1);
-    margin-top: 50%;
+    grid-row-start: 6;
+    position: relative;
+    /* margin-top: 10%; */
   }
   #opponent-block {
     grid-row-start: 1;
@@ -19,11 +21,15 @@
     transform: scale(1.1);
     margin-top: -10%;
   }
-  
-  /* .Chat-Window .chat-footer button:hover {
-    transform: scale(1.1);
-    background-color: purple;
-  } */
+  .status-effects {
+    grid-row-start: 6;
+    grid-column-start: 1;
+    background: black;
+    border: 2px solid gold;
+    box-shadow: 0 0 1em gold; 
+    width: 25%;
+    height: 35%;
+  }
 #textarea {
     grid-column-start: 3;
     grid-column-end: 5;
@@ -37,6 +43,7 @@
     display: inline-block;
     
 }
+
 .dialog-box {
   position: absolute; /* add this */
   top: 45%; /* position the dialog box in the center vertically */
@@ -272,7 +279,7 @@
   margin-left: auto;
   margin-right: auto;
   /* justify-content: center; */
-  margin-top: -3.5%;
+  margin-top: -4%;
   
 }
 .progressxp {
@@ -345,6 +352,20 @@
     /* margin-top: 35%; */
     grid-column-start: 1;
     grid-row-start: 6;
+}
+
+.combat-settings {
+  background-color: rgb(0, 0, 0);
+  font-size: 12px;
+  text-align: center;
+  justify-content: center;
+  color: purple;
+  font-weight: 600;
+  border: 2px solid purple;
+  border-radius: 6px;
+  height: 50%;
+  padding: 2.5%;
+  margin-right: 2.5%;
 }
 
 #computer-animation {

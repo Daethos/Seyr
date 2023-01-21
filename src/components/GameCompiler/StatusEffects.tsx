@@ -1,4 +1,3 @@
-import React from 'react'
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -14,7 +13,9 @@ const StatusEffects = ({ effect, player }: Props) => {
         <Popover className='text-info' id='popover'>
             <Popover.Header id='popover-header' as='h2'>{effect?.name}</Popover.Header>
             <Popover.Body id='popover-body'>
-                <p>Prayer: {effect?.prayer} {effect?.refreshes ? `[Refreshes]` : `[Stacks]`}</p>
+                <p>Prayer: {effect?.prayer} {effect?.refreshes ? `[Refreshes]` : `[Stacks]`}
+                {effect?.debuffTarget ? <><br />Debuff Target: {effect.debuffTarget} <br /></> : ''}
+                </p>
                 <p>{effect?.description}</p>
                     Duration: {effect?.duration} <br />
                     Intensity: {effect?.intensity?.value}
@@ -22,8 +23,8 @@ const StatusEffects = ({ effect, player }: Props) => {
                 <p>Effect(s): <br />
                     {effect?.effect?.physical_damage ? <>Physical Damage: {effect?.effect?.physical_damage} <br /> </> : ''}
                     {effect?.effect?.magical_damage ? <>Magical Damage: {effect?.effect?.magical_damage} <br /> </> : ''}
-                    {effect?.effect?.physical_penetration ? <>Physical Defense: {effect?.effect?.physical_penetration} <br /> </> : ''}
-                    {effect?.effect?.magical_penetration ? <>Magical Defense: {effect?.effect?.magical_penetration} <br /> </> : ''}
+                    {effect?.effect?.physical_penetration ? <>Physical Penetration: {effect?.effect?.physical_penetration} <br /> </> : ''}
+                    {effect?.effect?.magical_penetration ? <>Magical Penetration: {effect?.effect?.magical_penetration} <br /> </> : ''}
                     {effect?.effect?.critical_chance ? <>Critical Chance: {effect?.effect?.critical_chance} <br /> </> : ''}
                     {effect?.effect?.critical_damage ? <>Critical Damage: {effect?.effect?.critical_damage} <br /> </> : ''}
                     {effect?.effect?.physicalPosture ? <>Physical Posture: {effect?.effect?.physicalPosture} <br /> </> : ''}
@@ -37,18 +38,14 @@ const StatusEffects = ({ effect, player }: Props) => {
                 </p>
             </Popover.Body>
         </Popover>
-    )
-
-    const getOverlayStyle = {
-    }
+    );
 
     const getEffectStyle = {
-        background: 'black',
-        border: '2px solid gold',
-        width: '25%',
-        height: '35%',
-        marginTop: player ? '3px' : 0,
-        
+        // background: 'black',
+        // border: '2px solid gold',
+        // width: '25%',
+        // height: '35%',
+        marginTop: player ? '-10%' : 0,  
     }
 
     const getIconStyle = {
@@ -57,8 +54,9 @@ const StatusEffects = ({ effect, player }: Props) => {
     }
 
     return (
+
         <OverlayTrigger trigger='click' placement='auto-start' overlay={effectPopover}>
-            <Button variant='' style={getEffectStyle}><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/></Button>
+            <Button variant='' style={getEffectStyle} className='status-effects'><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/></Button>
         </OverlayTrigger>
     )
 }

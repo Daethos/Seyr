@@ -46,23 +46,21 @@ const GameSolo = ({ user }: GameProps) => {
     const [eqpSwap, setEqpSwap] = useState<boolean>(false);
     const [removeItem, setRemoveItem] = useState<boolean>(false);
     
-    const [playerWin, setPlayerWin] = useState<boolean>(false)
-    const [computerWin, setComputerWin] = useState<boolean>(false)
+    const [playerWin, setPlayerWin] = useState<boolean>(false);
+    const [computerWin, setComputerWin] = useState<boolean>(false);
     
     const [background, setBackground] = useState<any>(null);
-    const [gameIsLive, setGameIsLive] = useState<boolean>(false)
-    const [undefined, setUndefined] = useState<boolean>(false)
-    const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
+    const [gameIsLive, setGameIsLive] = useState<boolean>(false);
 
-    const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`
-    const [playOpponent] = useSound(opponentSfx, { volume: 0.3 })
+    const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
+    const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
 
-    const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
-    const [playWO] = useSound(weaponOrderSfx, { volume: 0.3 })
-    const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
-    const [playCounter] = useSound(counterSfx, { volume: 0.3 })
-    const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`
-    const [playRoll] = useSound(rollSfx, { volume: 0.3 })
+    const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`;
+    const [playWO] = useSound(weaponOrderSfx, { volume: 0.3 });
+    const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`;
+    const [playCounter] = useSound(counterSfx, { volume: 0.3 });
+    const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`;
+    const [playRoll] = useSound(rollSfx, { volume: 0.3 });
 
     const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
     const [playPierce] = useSound(pierceSfx, { volume: 0.3 });
@@ -73,68 +71,68 @@ const GameSolo = ({ user }: GameProps) => {
     const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
     const [playBlunt] = useSound(bluntSfx, { volume: 0.3 });
 
-    const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`
-    const [playDeath] = useSound(deathSfx, { volume: 0.3 })
+    const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`;
+    const [playDeath] = useSound(deathSfx, { volume: 0.3 });
 
-    const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`
-    const [playWin] = useSound(winSfx, { volume: 0.3 })
+    const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`;
+    const [playWin] = useSound(winSfx, { volume: 0.3 });
 
-    const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
-    const [playReplay] = useSound(replaySfx, { volume: 0.3 })
+    const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`;
+    const [playReplay] = useSound(replaySfx, { volume: 0.3 });
 
-    const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`
-    const [playReligion] = useSound(religiousSfx, { volume: 0.3 })
+    const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`;
+    const [playReligion] = useSound(religiousSfx, { volume: 0.3 });
 
-    const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
-    const [playDaethic] = useSound(daethicSfx, { volume: 0.3 })
+    const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`;
+    const [playDaethic] = useSound(daethicSfx, { volume: 0.3 });
 
-    const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`
-    const [playWild] = useSound(wildSfx, { volume: 0.3 })
+    const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`;
+    const [playWild] = useSound(wildSfx, { volume: 0.3 });
 
-    const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`
-    const [playEarth] = useSound(earthSfx, { volume: 0.3 })
+    const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`;
+    const [playEarth] = useSound(earthSfx, { volume: 0.3 });
 
-    const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`
-    const [playFire] = useSound(fireSfx, { volume: 0.3 })
+    const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`;
+    const [playFire] = useSound(fireSfx, { volume: 0.3 });
 
-    const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`
-    const [playBow] = useSound(bowSfx, { volume: 0.3 })
+    const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`;
+    const [playBow] = useSound(bowSfx, { volume: 0.3 });
 
-    const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`
-    const [playFrost] = useSound(frostSfx, { volume: 0.3 })
+    const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`;
+    const [playFrost] = useSound(frostSfx, { volume: 0.3 });
 
-    const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`
-    const [playLightning] = useSound(lightningSfx, { volume: 0.3 })
+    const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`;
+    const [playLightning] = useSound(lightningSfx, { volume: 0.3 });
 
-    const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`
-    const [playSorcery] = useSound(sorcerySfx, { volume: 0.3 })
+    const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`;
+    const [playSorcery] = useSound(sorcerySfx, { volume: 0.3 });
 
-    const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`
-    const [playWind] = useSound(windSfx, { volume: 0.3 })
+    const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`;
+    const [playWind] = useSound(windSfx, { volume: 0.3 });
 
     const { asceanID } = useParams();
 
-    const [weaponOne, setWeaponOne] = useState<any>({})
-    const [weaponTwo, setWeaponTwo] = useState<any>({})
-    const [weaponThree, setWeaponThree] = useState<any>({})
-    const [playerWeapons, setPlayerWeapons] = useState<any>([])
-    const [dodgeStatus, setDodgeStatus] = useState<boolean>(false)
+    const [weaponOne, setWeaponOne] = useState<any>({});
+    const [weaponTwo, setWeaponTwo] = useState<any>({});
+    const [weaponThree, setWeaponThree] = useState<any>({});
+    const [playerWeapons, setPlayerWeapons] = useState<any>([]);
+    const [dodgeStatus, setDodgeStatus] = useState<boolean>(false);
 
-    const [totalPlayerHealth, setTotalPlayerHealth] = useState<number>(0)
-    const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(-5)
+    const [totalPlayerHealth, setTotalPlayerHealth] = useState<number>(0);
+    const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(-5);
 
-    const [attributes, setAttributes] = useState<any>([])
-    const [playerDefense, setPlayerDefense] = useState<any>([])
+    const [attributes, setAttributes] = useState<any>([]);
+    const [playerDefense, setPlayerDefense] = useState<any>([]);
 
-    const [computerWeapons, setComputerWeapons] = useState<any>({})
-    const [computerWeaponOne, setComputerWeaponOne] = useState<object>({})
-    const [computerWeaponTwo, setComputerWeaponTwo] = useState<object>({})
-    const [computerWeaponThree, setComputerWeaponThree] = useState<object>({})
+    const [computerWeapons, setComputerWeapons] = useState<any>({});
+    const [computerWeaponOne, setComputerWeaponOne] = useState<object>({});
+    const [computerWeaponTwo, setComputerWeaponTwo] = useState<object>({});
+    const [computerWeaponThree, setComputerWeaponThree] = useState<object>({});
 
-    const [computerAttributes, setComputerAttributes] = useState<any>([])
-    const [computerDefense, setComputerDefense] = useState<any>([])
-    const [currentComputerHealth, setCurrentComputerHealth] = useState<number>(-5)
-    const [totalComputerHealth, setTotalComputerHealth] = useState<number>(0)
+    const [computerAttributes, setComputerAttributes] = useState<any>([]);
+    const [computerDefense, setComputerDefense] = useState<any>([]);
+    const [currentComputerHealth, setCurrentComputerHealth] = useState<number>(-5);
+    const [totalComputerHealth, setTotalComputerHealth] = useState<number>(0);
 
     const [combatData, setCombatData] = useState<any>({
         player: ascean,
@@ -300,6 +298,9 @@ const GameSolo = ({ user }: GameProps) => {
             setComputerAttributes(opponentResponse.data.data.attributes);
             setTotalComputerHealth(opponentResponse.data.data.attributes.healthTotal);
             setCurrentComputerHealth(opponentResponse.data.data.attributes.healthTotal);
+            setComputerWeaponOne(opponentResponse.data.data.combat_weapon_one);
+            setComputerWeaponTwo(opponentResponse.data.data.combat_weapon_two);
+            setComputerWeaponThree(opponentResponse.data.data.combat_weapon_three);
             setAsceanState({
                 ...asceanState,
                 'ascean': response.data.data.ascean,
@@ -454,113 +455,111 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-    const opponentStatCompiler = async () => {
-        setLoading(true)
-        try {
-            const response = await asceanAPI.getAsceanStats(opponent._id)
-            // console.log(response.data.data, 'Response Compiling Stats')
-            setComputerDefense(response.data.data.defense)
-            setComputerAttributes(response.data.data.attributes)
-            setTotalComputerHealth(response.data.data.attributes.healthTotal)
-            setCurrentComputerHealth(response.data.data.attributes.healthTotal)
-            setComputerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
-            setCombatData({
-                ...combatData,
-                'computer': response.data.data.ascean,
-                'computer_health': response.data.data.attributes.healthTotal,
-                'current_computer_health': response.data.data.attributes.healthTotal,
-                'new_computer_health': response.data.data.attributes.healthTotal,
-                'computer_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
-                'computer_weapon_one': response.data.data.combat_weapon_one,
-                'computer_weapon_two': response.data.data.combat_weapon_two,
-                'computer_weapon_three': response.data.data.combat_weapon_three,
-                'computer_defense': response.data.data.defense,
-                'computer_attributes': response.data.data.attributes
-            })
-            setUndefinedComputer(false)
-            setLoading(false)
-        } catch (err: any) {
-            setLoading(false)
-            console.log(err.message, 'Error Compiling Ascean Stats')
-        }
-    }
+    // const opponentStatCompiler = async () => {
+    //     setLoading(true)
+    //     try {
+    //         const response = await asceanAPI.getAsceanStats(opponent._id)
+    //         // console.log(response.data.data, 'Response Compiling Stats')
+    //         setComputerDefense(response.data.data.defense)
+    //         setComputerAttributes(response.data.data.attributes)
+    //         setTotalComputerHealth(response.data.data.attributes.healthTotal)
+    //         setCurrentComputerHealth(response.data.data.attributes.healthTotal)
+    //         setComputerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
+    //         setCombatData({
+    //             ...combatData,
+    //             'computer': response.data.data.ascean,
+    //             'computer_health': response.data.data.attributes.healthTotal,
+    //             'current_computer_health': response.data.data.attributes.healthTotal,
+    //             'new_computer_health': response.data.data.attributes.healthTotal,
+    //             'computer_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+    //             'computer_weapon_one': response.data.data.combat_weapon_one,
+    //             'computer_weapon_two': response.data.data.combat_weapon_two,
+    //             'computer_weapon_three': response.data.data.combat_weapon_three,
+    //             'computer_defense': response.data.data.defense,
+    //             'computer_attributes': response.data.data.attributes
+    //         })
+    //         setLoading(false)
+    //     } catch (err: any) {
+    //         setLoading(false)
+    //         console.log(err.message, 'Error Compiling Ascean Stats')
+    //     }
+    // }
 
-    async function opponentDataCompiler() {
-        setLoading(true)
-        try {
-            setCombatData({
-                ...combatData,
-                'computer_health': currentComputerHealth,
-                'current_computer_health': currentComputerHealth,
-                'new_computer_health': currentComputerHealth,
-                'computer_weapons': [computerWeaponOne, computerWeaponTwo, computerWeaponThree],
-                'computer_weapon_one': computerWeaponOne,
-                'computer_weapon_two': computerWeaponTwo,
-                'computer_weapon_three': computerWeaponThree,
-                'computer_defense': computerDefense,
-                'computer_attributes': computerAttributes
-            })
-            setLoading(false)
-        } catch (err: any) {
-            console.log(err.message, 'Error compiling combat data')
-        }
-    }
+    // async function opponentDataCompiler() {
+    //     setLoading(true)
+    //     try {
+    //         setCombatData({
+    //             ...combatData,
+    //             'computer_health': currentComputerHealth,
+    //             'current_computer_health': currentComputerHealth,
+    //             'new_computer_health': currentComputerHealth,
+    //             'computer_weapons': [computerWeaponOne, computerWeaponTwo, computerWeaponThree],
+    //             'computer_weapon_one': computerWeaponOne,
+    //             'computer_weapon_two': computerWeaponTwo,
+    //             'computer_weapon_three': computerWeaponThree,
+    //             'computer_defense': computerDefense,
+    //             'computer_attributes': computerAttributes
+    //         })
+    //         setLoading(false)
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error compiling combat data')
+    //     }
+    // }
 
-    const asceanStatCompiler = async () => {
-        setLoading(true)
-        try {
-            const response = await asceanAPI.getAsceanStats(asceanID)
-            // console.log(response.data.data, 'Response Compiling Stats')
-            setWeaponOne(response.data.data.combat_weapon_one)
-            setWeaponTwo(response.data.data.combat_weapon_two)
-            setWeaponThree(response.data.data.combat_weapon_three)
-            setPlayerDefense(response.data.data.defense)
-            setAttributes(response.data.data.attributes)
-            setTotalPlayerHealth(response.data.data.attributes.healthTotal)
-            setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
-            setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
-            setCombatData({
-                ...combatData,
-                'player': response.data.data.ascean,
-                'player_health': response.data.data.attributes.healthTotal,
-                'current_player_health': response.data.data.attributes.healthTotal,
-                'new_player_health': response.data.data.attributes.healthTotal,
-                'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
-                'weapon_one': response.data.data.combat_weapon_one,
-                'weapon_two': response.data.data.combat_weapon_two,
-                'weapon_three': response.data.data.combat_weapon_three,
-                'player_defense': response.data.data.defense,
-                'player_attributes': response.data.data.attributes
-            })
-            // setLoading(false)
-        } catch (err: any) {
-            setLoading(false)
-            console.log(err.message, 'Error Compiling Ascean Stats')
-        }
-    }
+    // const asceanStatCompiler = async () => {
+    //     setLoading(true)
+    //     try {
+    //         const response = await asceanAPI.getAsceanStats(asceanID)
+    //         // console.log(response.data.data, 'Response Compiling Stats')
+    //         setWeaponOne(response.data.data.combat_weapon_one)
+    //         setWeaponTwo(response.data.data.combat_weapon_two)
+    //         setWeaponThree(response.data.data.combat_weapon_three)
+    //         setPlayerDefense(response.data.data.defense)
+    //         setAttributes(response.data.data.attributes)
+    //         setTotalPlayerHealth(response.data.data.attributes.healthTotal)
+    //         setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
+    //         setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
+    //         setCombatData({
+    //             ...combatData,
+    //             'player': response.data.data.ascean,
+    //             'player_health': response.data.data.attributes.healthTotal,
+    //             'current_player_health': response.data.data.attributes.healthTotal,
+    //             'new_player_health': response.data.data.attributes.healthTotal,
+    //             'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
+    //             'weapon_one': response.data.data.combat_weapon_one,
+    //             'weapon_two': response.data.data.combat_weapon_two,
+    //             'weapon_three': response.data.data.combat_weapon_three,
+    //             'player_defense': response.data.data.defense,
+    //             'player_attributes': response.data.data.attributes
+    //         })
+    //         // setLoading(false)
+    //     } catch (err: any) {
+    //         setLoading(false)
+    //         console.log(err.message, 'Error Compiling Ascean Stats')
+    //     }
+    // }
 
-    const combatDataCompiler = async () => {
-        // setLoadingAscean(true)
-        try {
-            setCombatData({
-                ...combatData,
-                'player_health': currentPlayerHealth,
-                'current_player_health': currentPlayerHealth,
-                'new_player_health': currentPlayerHealth,
-                'weapons': [weaponOne, weaponTwo, weaponThree],
-                'weapon_one': weaponOne,
-                'weapon_two': weaponTwo,
-                'weapon_three': weaponThree,
-                'player_defense': playerDefense,
-                'player_attributes': attributes
-            });
-            // setGameIsLive(true);
-            setUndefined(false);
-            setLoadingAscean(false);
-        } catch (err: any) {
-            console.log(err.message, 'Error compiling combat data')
-        }
-    }
+    // const combatDataCompiler = async () => {
+    //     // setLoadingAscean(true)
+    //     try {
+    //         setCombatData({
+    //             ...combatData,
+    //             'player_health': currentPlayerHealth,
+    //             'current_player_health': currentPlayerHealth,
+    //             'new_player_health': currentPlayerHealth,
+    //             'weapons': [weaponOne, weaponTwo, weaponThree],
+    //             'weapon_one': weaponOne,
+    //             'weapon_two': weaponTwo,
+    //             'weapon_three': weaponThree,
+    //             'player_defense': playerDefense,
+    //             'player_attributes': attributes
+    //         });
+    //         // setGameIsLive(true);
+    //         setLoadingAscean(false);
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error compiling combat data')
+    //     }
+    // }
 
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -1093,7 +1092,7 @@ const GameSolo = ({ user }: GameProps) => {
                 counterSuccess={combatData.counter_success} computerCounterSuccess={combatData.computer_counter_success}
             />
             {/* { combatData?.computer_attributes?.healthTotal && currentComputerHealth >= 0 ? */}
-                <GameAscean ascean={opponent} totalPlayerHealth={totalComputerHealth} loading={loadingAscean} opponentStatCompiler={opponentStatCompiler} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
+                <GameAscean ascean={opponent} totalPlayerHealth={totalComputerHealth} loading={loadingAscean} player={false} combatData={combatData} currentPlayerHealth={currentComputerHealth} />
                 {/* : <>{opponentStatCompiler}</>
             } */}
             <GameConditions 
@@ -1128,11 +1127,11 @@ const GameSolo = ({ user }: GameProps) => {
                 : ""
             }
             {
-                asceanState.ascean.experience == asceanState.experienceNeeded ?
+                asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 : ''
             }
-            <GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth} opponentStatCompiler={opponentStatCompiler} combatData={combatData} undefined={undefined} setUndefined={setUndefined} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} combatDataCompiler={combatDataCompiler} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
+            <GameAscean ascean={ascean} player={true} totalPlayerHealth={totalPlayerHealth}  combatData={combatData} currentPlayerHealth={currentPlayerHealth} loading={loadingAscean} />
             
             { playerWin || computerWin || !combatEngaged ? '' : combatData?.weapons ?
             <GameActions 

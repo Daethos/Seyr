@@ -1,34 +1,17 @@
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import Inventory from './Inventory';
 
 interface Props {
     attributes: any;
-    weaponAttributes: any;
     magicalDefense: number;
     magicalPosture: number;
     physicalDefense: number;
     physicalPosture: number;
     player: any;
-    inventory?: any;
 }
 
-const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player, inventory }: Props) => {
-    let totalConstitution: number = attributes.totalConstitution + weaponAttributes?.constitution;
-    let totalStrength: number = attributes.totalStrength + weaponAttributes?.strength;
-    let totalAgility: number = attributes.totalAgility + weaponAttributes?.agility;
-    let totalAchre: number = attributes.totalAchre + weaponAttributes?.achre;
-    let totalCaeren: number = attributes.totalCaeren + weaponAttributes?.caeren;
-    let totalKyosir: number = attributes.totalKyosir + weaponAttributes?.kyosir;
-
-    let constitutionMod: number = Math.round((totalConstitution - 10) / 2); 
-    let strengthMod: number = Math.round((totalStrength - 10) / 2);
-    let agilityMod: number = Math.round((totalAgility - 10) / 2);
-    let achreMod: number = Math.round((totalAchre - 10) / 2);
-    let caerenMod: number = Math.round((totalCaeren - 10) / 2);
-    let kyosirMod: number = Math.round((totalKyosir - 10) / 2);
-
+const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
 
     const playerPopover = (
         <Popover id="popover">
@@ -65,7 +48,6 @@ const GamePlayerStats = ({ attributes, weaponAttributes, magicalDefense, magical
         <Button variant="">
             <div className="">
             <h3 style={{ fontSize: 13 + 'px', color: '#fdf6d8', textDecoration: 'none' }} className='gameplayername'>
-            {/* <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span> */}
             {player.name}</h3>
             </div>
         </Button>

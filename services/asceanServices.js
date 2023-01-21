@@ -192,10 +192,12 @@ async function penetrationCompiler(weapon, attributes, combatStats) {
 async function critCompiler(weapon, attributes, combatStats) { 
     weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 2);
     weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 25);
-    weapon.critical_chance = weapon.critical_chance.toFixed(2);
-    weapon.critical_damage = weapon.critical_damage.toFixed(2);
-    weapon.critical_chance = Number(weapon.critical_chance);
-    weapon.critical_damage = Number(weapon.critical_damage);
+    // weapon.critical_chance = weapon.critical_chance.toFixed(2);
+    // weapon.critical_damage = weapon.critical_damage.toFixed(2);
+    // weapon.critical_chance = Number(weapon.critical_chance);
+    // weapon.critical_damage = Number(weapon.critical_damage);
+    weapon.critical_chance = Math.round(weapon.critical_chance * 100) / 100;
+    weapon.critical_damage = Math.round(weapon.critical_damage * 100) / 100;
 }
 
 async function faithCompiler(weapon, ascean) { 
@@ -221,7 +223,7 @@ async function faithCompiler(weapon, ascean) {
             weapon.critical_chance += 2
         }
         weapon.critical_chance *= 1.05;
-        weapon.critical_chance = weapon.critical_chance.toFixed(2)
+        // weapon.critical_chance = weapon.critical_chance.toFixed(2)
         weapon.roll += 2;
     }
     if (ascean.faith === 'devoted') {
@@ -240,12 +242,14 @@ async function faithCompiler(weapon, ascean) {
             weapon.critical_damage *= 1.03;
         }
         weapon.critical_damage *= 1.05;
-        weapon.critical_damage = weapon.critical_damage.toFixed(2)
+        // weapon.critical_damage = weapon.critical_damage.toFixed(2)
         weapon.dodge -= 2;
 
     }
-    weapon.critical_chance = Number(weapon.critical_chance);
-    weapon.critical_damage = Number(weapon.critical_damage);
+    weapon.critical_chance = Math.round(weapon.critical_chance * 100) / 100;
+    weapon.critical_damage = Math.round(weapon.critical_damage * 100) / 100;
+    // weapon.critical_chance = Number(weapon.critical_chance);
+    // weapon.critical_damage = Number(weapon.critical_damage);
 }
 
 // =============================== COMPILER FUNCTIONS ================================== \\
@@ -306,7 +310,6 @@ const defenseCompiler = async (ascean, attributes, combatStats, rarities) => {
         physicalPosture: combatStats.defensePhysical + Math.round(ascean.shield.physical_resistance * rarities.shield),
         magicalPosture: combatStats.defenseMagical + Math.round(ascean.shield.magical_resistance * rarities.shield),
     }
-
 
     return defense
 }

@@ -1,7 +1,7 @@
-import { isDisabled } from '@testing-library/user-event/dist/utils';
-import { useEffect, useState, useRef } from 'react'
-import Form from 'react-bootstrap/Form'
-import './GameCompiler.css'
+import { useEffect, useState, useRef } from 'react';
+import Form from 'react-bootstrap/Form';
+import './GameCompiler.css';
+import CombatSettingModal from './CombatSettingModal';
 
 interface Props {
     handleAction: (action: any) => void;
@@ -20,7 +20,6 @@ interface Props {
     actionStatus: boolean;
     setActionStatus: React.Dispatch<React.SetStateAction<boolean>>;
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
-    PvP?: boolean;
     timeLeft: number;
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
     combatInitiated: boolean;
@@ -31,13 +30,12 @@ interface Props {
     setPrayerBlessing: any;
 }
 
-const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, damageType, currentDamageType, setPrayerBlessing, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const GameActions = ({ setDodgeStatus, setEmergencyText, setDamageType, damageType, currentDamageType, setPrayerBlessing, combatInitiated, setCombatInitiated, timeLeft, setTimeLeft, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
   useEffect(() => {
-    // console.log('Displaying new action: ', currentAction)
     if (currentAction === 'counter') {
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1))
     } else {
@@ -47,12 +45,10 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, dam
   }, [currentAction, currentCounter])
 
   useEffect(() => {
-    // console.log('Displaying new weapon ', currentWeapon?.name)
     setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
   }, [currentWeapon])
 
   useEffect(() => {
-    // console.log('Displaying new damage type ', currentDamageType)
     setDisplayedAction(`Damage Type: ${currentDamageType}`)
   }, [currentDamageType])
 
@@ -70,26 +66,17 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, dam
     }
 }, [combatInitiated])
 
-  const dodgeButton = document.querySelector('#dodge-button');
-  const actionButton = document.querySelector('#initiate-button')
 
   useEffect(() => {
-    // dodgeButton?.classList.add('hide');
-    // setEmergencyText([`Dodge Timer: ${40 + combatData.weapons[0].dodge} seconds\n`
-    //     ])
-    // console.log('Dodge Timer: ', 40 + combatData.weapons[0].dodge, ' seconds')
     const dodgeTimer = setTimeout(() => {
-      // dodgeButton?.classList.remove('hide');
       setDodgeStatus(false);
-    }, (PvP ? combatData?.player_one_weapons?.[0]?.dodge * 1000 : combatData?.weapons?.[0]?.dodge * 1000))
+      // setDisplayedAction(`Dodge: ${combatData?.weapons?.[0]?.dodge} seconds.`);
+    }, (combatData?.weapons?.[0]?.dodge * 1000))
     return () => clearTimeout(dodgeTimer)
   }, [dodgeStatus])
 
   useEffect(() => {
-    // actionButton?.classList.add('hide');
-    // setCombatData({ ...combatData, 'action': '' })
     const initiateTimer = setTimeout(() => {
-      // actionButton?.classList.remove('hide')
       setActionStatus(false)
     }, 3000)
     return () => clearTimeout(initiateTimer);
@@ -100,25 +87,7 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, PvP, setDamageType, dam
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
-    <select name="Prayer" id="prayer-options" value={combatData.playerBlessing} onChange={setPrayerBlessing}>
-      {prayers.map((prayer, index) => {
-        return ( <option key={index} value={prayer}>{prayer}</option> )
-      })}
-    </select>
-    <select name="Damage" id="damage-options" value={combatData.player_damage_type} onChange={setDamageType}>
-      {
-        damageType ?
-        damageType.map((damage: string, index: number) => { return ( <option value={damage} key={index} >{damage}</option> ) } )
-        : ''
-      }
-    </select>
-      <select name="Attacks" id="attack-options" value={PvP ? combatData.player_one_weapons[0] : combatData.weapons[0].name} onChange={setWeaponOrder}>
-        {
-        weapons ?
-        weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )
-        : ''
-        }
-      </select>
+    <CombatSettingModal combatData={combatData} damageType={damageType} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={weapons} prayers={prayers} />
     <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
           <button value='initiate' type='submit' className='btn btn-outline ' disabled={actionStatus ? true : false} id='initiate-button'>Initiate</button>

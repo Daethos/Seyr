@@ -323,7 +323,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
 
     //TODO:FIXME: START OF CODE TESTING
 
-    if (faith_number > 5) {
+    if (faith_number > 85) {
         combatData.religious_success = true;
         let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
         // Handles the creation of a new Status Effect if it doesn't already exist
@@ -364,7 +364,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }    
     }
     if (combatData.dual_wielding === true) {
-        if (faith_number_two > 5) {
+        if (faith_number_two > 85) {
             combatData.religious_success = true;
             let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
             // Handles the creation of a new Status Effect if it doesn't already exist
@@ -405,7 +405,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }    
         }
     }
-    if (computer_faith_number > 5) {
+    if (computer_faith_number > 85) {
         combatData.computer_religious_success = true;
         let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[0].influences[0]}` && effect.prayer === combatData.computerBlessing);   
         // Handles the creation of a new Status Effect if it doesn't already exist
@@ -446,7 +446,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         }    
     }
     if (combatData.computer_dual_wielding === true) {
-        if (computer_faith_number_two > 5) {
+        if (computer_faith_number_two > 85) {
             combatData.computer_religious_success = true;
         let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
         // Handles the creation of a new Status Effect if it doesn't already exist

@@ -13,7 +13,7 @@ class StatusEffect {
         this.name = this.setName(weapon.influences[0]);
         this.deity = weapon.influences[0];
         this.weapon = weapon.name;
-        this.debuffTarget = '';
+        this.debuffTarget = this.setDebuffTarget(combatData, player, prayer);
         this.duration = this.setDuration(player);
         this.tick = this.setTick(combatData);
         this.intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
@@ -60,6 +60,14 @@ class StatusEffect {
     
     setName(deity) {
         return this.name = `Gift of ${deity}`;
+    }
+    setDebuffTarget(data, player, prayer) {
+        if (prayer !== 'Debuff') return null;
+        if (player.name === data.player.name) {
+            return this.debuffTarget = data.computer_weapons[0].name;
+        } else {
+            return this.debuffTarget = data.weapons[0].name;
+        }
     }
     setDuration(player) {
         let duration = Math.floor(player.level / 3 + 1) > 6 ? 6 : Math.floor(player.level / 3 + 1);

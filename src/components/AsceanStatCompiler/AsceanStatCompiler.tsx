@@ -10,7 +10,6 @@ interface Props {
 const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     
-    const [asceanState, setAsceanState] = useState<any>(ascean)
     const [weaponOne, setWeaponOne] = useState<any>({})
     const [weaponTwo, setWeaponTwo] = useState<any>({})
     const [weaponThree, setWeaponThree] = useState<any>({})
@@ -21,11 +20,11 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     const [magicalPosture, setMagicalPosture] = useState<number>(0)
 
     const [attributes, setAttributes] = useState<any>([])
-    const [defense, setDefense] = useState<any>([])
+    // const [defense, setDefense] = useState<any>([])
 
     useEffect(() => {
       asceanStatCompiler()
-    //   console.log(typeof ((weaponOne.physical_damage)))
+      console.log(typeof (weaponOne.critical_chance), typeof (weaponOne.critical_damage))
     }, [])
     
 
@@ -37,7 +36,7 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
             setWeaponOne(response.data.data.combat_weapon_one)
             setWeaponTwo(response.data.data.combat_weapon_two)
             setWeaponThree(response.data.data.combat_weapon_three)
-            setDefense(response.data.data.defense)
+            // setDefense(response.data.data.defense)
             setAttributes(response.data.data.attributes)
             setPhysicalDefense(response.data.data.defense.physicalDefenseModifier)
             setMagicalDefense(response.data.data.defense.magicalDefenseModifier)
