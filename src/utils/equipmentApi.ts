@@ -31,3 +31,21 @@ export async function getLootDrop(level: number) {
         })
     })
 }
+
+export async function upgradeEquipment(data: object) {
+    return fetch(BASE_URL + 'upgrade', {
+        method: 'PUT',
+        headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        },
+        body: JSON.stringify(data)
+    })
+    .then((res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response);
+            throw new Error(response.err);
+        })
+    })
+}

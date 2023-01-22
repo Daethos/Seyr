@@ -136,7 +136,7 @@ async function originCompiler(weapon, ascean) {
         weapon.magical_penetration += 3;
         weapon.magical_damage *= 1.03;
     }
-    if (ascean.origin === "Quorieite") {
+    if (ascean.origin === "Quor'eite") {
         weapon.dodge -= 3;
         weapon.roll += 3;
     }

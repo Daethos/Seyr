@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
+import Inventory from '../components/GameCompiler/Inventory';
 import LootDrop from '../components/GameCompiler/LootDrop';
 import * as eqpAPI from '../utils/equipmentApi';
 
@@ -98,6 +99,8 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
         }
     }
 
+
+
     useEffect(() => {
         console.log(currentIntent);
     }, [currentIntent]);
@@ -176,6 +179,9 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                     : currentIntent === 'conditions' ?
                     <>
                         Conditions
+                        <br />
+
+
                     </>
                     : currentIntent === 'farewell' ?
                     <>

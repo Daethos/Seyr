@@ -8,12 +8,14 @@ const Legs = require('../models/legs');
 const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
+const Ascean = require('../models/ascean');
 
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports = {
     indexEquipment,
-    getOneEquipment
+    getOneEquipment,
+    upgradeEquipment
 }
 
 // Write in a function that will create an elevated rarity item of the same name when the user subm8its 3 of the same item name of a lower rarity
@@ -183,3 +185,66 @@ const determineEquipmentType = () => {
         res.status(400).json(err);
     }
 }
+
+async function createEquipment(req, res) {
+
+}
+
+async function upgradeEquipment(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.body.asceanID);
+        let item = getHigherRarity(req.body.upgradeID);
+        
+        // ascean.inventory.push(item._id);
+        const itemIndex = ascean.inventory.indexOf(req.body.upgradeID);
+        // ascean.inventory.splice(itemIndex, 1);
+        // ascean.inventory.splice(itemIndex, 1);
+        // ascean.inventory.splice(itemIndex, 1);
+        console.log(item, itemIndex, 'item, itemIndex')
+        await ascean.save();
+        res.status(201).json({ ascean });
+    } catch (err) {
+        console.log(err, 'err')
+        res.status(400).json(err);
+    }
+
+}
+
+async function getHigherRarity(id) {
+    const models = {
+        Weapon: Weapon,
+        Shield: Shield,
+        Helmet: Helmet,
+        Chest: Chest,
+        Legs: Legs,
+        Ring: Ring,
+        Amulet: Amulet,
+        Trinket: Trinket,
+    }
+      
+    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
+    // console.log(id, 'And did we make it here? 2')
+    for (const itemType of itemTypes) {
+        let item = await models[itemType].findById(id).exec();
+        // console.log(item, 'And 3?')
+        if (item) {
+            const name = item.name;
+            const rarity = item.rarity;
+            // Determine the next rarity level
+            let nextRarity;
+            if (rarity === 'Common') {
+                nextRarity = 'Uncommon';
+            } else if (rarity === 'Uncommon') {
+                nextRarity = 'Rare';
+            } else if (rarity === 'Rare') {
+                nextRarity = 'Epic';
+            }
+
+            // Find the next rarity item
+            const nextItem = await models[itemType].findOne({ name, rarity: nextRarity }).exec();
+
+            return nextItem;
+        }
+    }
+    return null;
+  }  

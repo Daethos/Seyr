@@ -1035,7 +1035,7 @@ const GameSolo = ({ user }: GameProps) => {
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
                 }
-            case "Liivi":
+            case "Li'ivi":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
                 } else {
@@ -1053,7 +1053,7 @@ const GameSolo = ({ user }: GameProps) => {
                 } else {
                     return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
                 }
-            case "Quoreite":
+            case "Quor'eite":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
                 } else {

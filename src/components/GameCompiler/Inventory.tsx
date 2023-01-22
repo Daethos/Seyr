@@ -6,7 +6,7 @@ import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-
+import * as eqpAPI from '../../utils/equipmentApi';
 
 
 interface Props {
@@ -16,9 +16,10 @@ interface Props {
     removeItem: boolean;
     setEqpSwap: React.Dispatch<React.SetStateAction<boolean>>;
     setRemoveItem: React.Dispatch<React.SetStateAction<boolean>>;
+    bag: any;
 }
 
-const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem }: Props) => {
+const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, bag }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [inventoryType, setInventoryType] = useState({});
@@ -62,7 +63,11 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
         console.log('unmounting...');
       }
     }, [editState])
-      
+
+    function canUpgrade(inventory: any[], id: string): boolean {
+        const matches = inventory.filter(item => item._id === id);
+        return matches.length >= 3;
+    }
 
     function handleInventory(equipment: any) {
         let type: string = '';
@@ -151,6 +156,20 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             }
         } catch (err: any) {
             console.log(err.message, '<- This is the error in checkInventory');
+        }
+    }
+
+    async function handleUpgradeItem() {
+        try {
+            const data = {
+                asceanID: ascean._id,
+                upgradeID: inventory._id,
+            }
+            const response = await eqpAPI.upgradeEquipment(data);
+            console.log(response, '<- This is the response from handleUpgradeItem');
+            setRemoveItem(true);
+        } catch (err: any) {
+            console.log(err.message, '<- Error upgrading item');
         }
     }
 
@@ -306,6 +325,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 : ''
             }
             <br />
+            { canUpgrade(bag, inventory._id) ? <Button variant='outline' className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
             <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
             <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>

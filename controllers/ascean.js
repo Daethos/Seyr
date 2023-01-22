@@ -291,7 +291,7 @@ async function create(req, res) {
         }
 
         if (req.body.faith === 'devoted') { // Devoted to Daethos
-            if (req.body.strength + req.body.agility >= req.body.achre + req.body.caeren) {
+            if ((req.body.strength + req.body.agility) >= (req.body.achre + req.body.caeren)) {
                 if (req.body.strength > req.body.agility) { // Halberd
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e575';
                 } else if (req.body.strength < req.body.agility) { // Gladius
@@ -299,18 +299,17 @@ async function create(req, res) {
                 } else { // Same Value Daethic Bow
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e586';
                 }
-            }
-            if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
+            } else {
                 if (req.body.achre > req.body.caeren) { // Tendril
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e583';
-                } else if (req.body.achre < req.body.caeren) { // Hush
-                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57d';
+                } else if (req.body.achre < req.body.caeren) { // Hush of Daethos
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e58e';
                 } else { // Same Value Caeren Barrage
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e57c';
                 }
             }
         } else { // Adherent to the Ancients or Irreligious
-            if (req.body.strength + req.body.agility >= req.body.achre + req.body.caeren) {
+            if ((req.body.strength + req.body.agility) >= (req.body.achre + req.body.caeren)) {
                 if (req.body.strength > req.body.agility) { // War Hammer
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e578';
                 } else if (req.body.strength < req.body.agility) { // Longsword
@@ -318,12 +317,11 @@ async function create(req, res) {
                 } else { // Same Value Longbow
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e585';
                 }
-            }
-            if (req.body.strength + req.body.agility < req.body.achre + req.body.caeren) {
+            } else {
                 if (req.body.achre > req.body.caeren) { // Astral Spear
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e57f';
-                } else if (req.body.achre < req.body.caeren) { // Lava Spit
-                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57e';
+                } else if (req.body.achre < req.body.caeren) { // Ashfyre
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e588';
                 } else { // Same Value Arctic Bolt
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e580';
                 }
