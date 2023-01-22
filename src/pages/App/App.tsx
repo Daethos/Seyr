@@ -40,26 +40,26 @@ function App() {
 
   async function handleAsceanCreate(newAscean: Object) {
     try {
-        console.log(newAscean, '<- newAscean in handleAsceanCreate start')
+        console.log(newAscean, '<- newAscean in handleAsceanCreate start');
         const response = await asceanAPI.create(newAscean);
         console.log(response, '<- Response in handleAsceanCreate');
         setAscean([response.data, ...ascean]);
-        setCreateSuccess(true)
+        setCreateSuccess(true);
         navigate("/");
     } catch (err) {
-        console.log(err, '<- This is the error in handleAsceanCreate')
+        console.log(err, '<- This is the error in handleAsceanCreate');
     }
   }
 
   async function editAscean(vaEsai: Object) {
     try {
-      console.log(vaEsai, '<- Ascean in editAscean start')
+      console.log(vaEsai, '<- Ascean in editAscean start');
       const response = await asceanAPI.edit(vaEsai);
-      console.log(response, '<- Response in editAscean')
+      console.log(response, '<- Response in editAscean');
       setAscean([response.data, ...ascean]);
       setCreateSuccess(true)
     } catch (err: any)  {
-      console.log(err.message, '<- You are having an error in the editAscean function in App.jsx')
+      console.log(err.message, '<- You are having an error in the editAscean function in App.jsx');
     }
   }
 
@@ -72,7 +72,7 @@ function App() {
   if (user) {
     return (
       <div> 
-      <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
+      <NavBar user={user} setUser={setUser} handleLogout={handleLogout} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />

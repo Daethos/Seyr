@@ -161,25 +161,25 @@ async function gripCompiler(weapon, attributes, ascean) {
     // }
 
     if (weapon.grip === 'One Hand') {
-        weapon.physical_damage += ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod / 3));
-        weapon.magical_damage += ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3));
+        weapon.physical_damage += ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 8) + attributes.strengthMod / 3));
+        weapon.magical_damage += ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3));
 
-        weapon.physical_damage *= 1 + ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod / 3)) / (100 + (20 / ascean.level));
-        weapon.magical_damage *= 1 + ((weapon.achre / 4) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 2)) / (100 + (20 / ascean.level));
+        weapon.physical_damage *= 1 + ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 8) + attributes.strengthMod / 3)) / (100 + (20 / ascean.level));
+        weapon.magical_damage *= 1 + ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3)) / (100 + (20 / ascean.level));
     }
     if (weapon.type === 'Bow') {
-        weapon.physical_damage += ((weapon.agility / 4) + attributes.agilityMod + (weapon.strength / 12) + (attributes.strengthMod / 3));
-        weapon.magical_damage += ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3));
+        weapon.physical_damage += ((weapon.agility / 2) + attributes.agilityMod + (weapon.strength / 8) + (attributes.strengthMod / 3));
+        weapon.magical_damage += ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3));
 
         weapon.physical_damage *= 1 + ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod)) / (100 + (20 / ascean.level));
         weapon.magical_damage *= 1 + ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3)) / (100 + (20 / ascean.level));
     }  
     if (weapon.grip === 'Two Hand' && weapon.type !== 'Bow') {
-        weapon.physical_damage += ((weapon.strength / 4) + attributes.strengthMod + (weapon.agility / 12) + (attributes.agilityMod / 3));
-        weapon.magical_damage += ((weapon.achre / 12) + (weapon.caeren / 4) + (attributes.achreMod / 3) + (attributes.caerenMod));
+        weapon.physical_damage += ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 8) + (attributes.agilityMod / 3));
+        weapon.magical_damage += ((weapon.achre / 8) + (weapon.caeren / 2) + (attributes.achreMod / 3) + (attributes.caerenMod));
 
-        weapon.physical_damage *= 1 + ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2)) / (100 + (20 / ascean.level));
-        weapon.magical_damage *= 1 + (((weapon.achre / 4) + (weapon.caeren / 4) + (attributes.achreMod / 2)) + attributes.caerenMod / 2) / (100 + (20 / ascean.level));
+        weapon.physical_damage *= 1 + ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 8) + (attributes.agilityMod / 3)) / (100 + (20 / ascean.level));
+        weapon.magical_damage *= 1 + (((weapon.achre / 8) + (weapon.caeren / 2) + (attributes.achreMod / 3)) + attributes.caerenMod) / (100 + (20 / ascean.level));
     }
     console.log(weapon.physical_damage, weapon.magical_damage, 'Damage After Attributes')
 }

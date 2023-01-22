@@ -23,9 +23,11 @@ interface NavProps {
     user: any;
     setUser: React.Dispatch<any>;
     handleLogout: () => void;
+    createSuccess: boolean;
+    setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
+const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }: NavProps) => {
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,7 +60,8 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
 
   useEffect(() => {
     getAscean();
-  }, [])
+    setCreateSuccess(false);
+  }, [createSuccess])
 
   async function getAscean() {
     setLoading(true);

@@ -193,21 +193,33 @@ async function createEquipment(req, res) {
 async function upgradeEquipment(req, res) {
     try {
         let ascean = await Ascean.findById(req.body.asceanID);
-        let item = getHigherRarity(req.body.upgradeID);
+        let item = await getHigherRarity(req.body.upgradeID);
         
-        // ascean.inventory.push(item._id);
+        ascean.inventory.push(item._id);
         const itemIndex = ascean.inventory.indexOf(req.body.upgradeID);
-        // ascean.inventory.splice(itemIndex, 1);
-        // ascean.inventory.splice(itemIndex, 1);
-        // ascean.inventory.splice(itemIndex, 1);
-        console.log(item, itemIndex, 'item, itemIndex')
+        ascean.inventory.splice(itemIndex, 1);
+        const secondItemIndex = ascean.inventory.indexOf(req.body.upgradeID);
+        ascean.inventory.splice(secondItemIndex, 1);
+        const thirdItemIndex = ascean.inventory.indexOf(req.body.upgradeID);
+        ascean.inventory.splice(thirdItemIndex, 1);
+        // let count = 0;
+        // for (let i = 0; i < ascean.inventory.length; i++) {
+        //     if (ascean.inventory[i] === req.body.upgradeID) {
+        //         ascean.inventory.splice(i, 1);
+        //         count += 1;
+        //         if (count === 3) {
+        //             break;
+        //         }
+        //     }
+        // }
+
+
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
         console.log(err, 'err')
         res.status(400).json(err);
     }
-
 }
 
 async function getHigherRarity(id) {
@@ -228,6 +240,7 @@ async function getHigherRarity(id) {
         let item = await models[itemType].findById(id).exec();
         // console.log(item, 'And 3?')
         if (item) {
+            console.log(item._id, 'item._id')
             const name = item.name;
             const rarity = item.rarity;
             // Determine the next rarity level
@@ -242,7 +255,7 @@ async function getHigherRarity(id) {
 
             // Find the next rarity item
             const nextItem = await models[itemType].findOne({ name, rarity: nextRarity }).exec();
-
+            console.log(nextItem, 'nextItem')
             return nextItem;
         }
     }
