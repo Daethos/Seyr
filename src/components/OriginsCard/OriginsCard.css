@@ -10,9 +10,14 @@
     max-width: 6.5vw;
     max-height: 6.5vh;
 }
-#popover-image {
+/* #popover-spec-image {
     float: right;
     margin-top: -5px;
+} */
+#popover-body {
+    max-height: 80vh;
+    /* overflow-y: auto; */
+    overflow-y: visible;
 }
 .eqp-popover {
     font-size: 20px;
@@ -22,11 +27,11 @@
     border: 2px solid purple;
 }
 
-#origin-pic {
+/* #origin-pic {
     width: 10vw;
     border: 2px solid purple;
     border-radius: 50%;
-}
+} */
 
 @media screen and (max-width: 675px) {
     .origin-popover {
@@ -37,9 +42,12 @@
     }
     #popover-spec-image {
         float: right;
-        margin-top: 4%;
+        margin-top: 0%;
+        margin-bottom: 5%;
+        margin-left: 10%;
         margin-right: 10%;
-        transform: scale(2.75);
+        transform: scale(3.5);
+        
     }
     #origin-pic {
         /* width: 20vw; */

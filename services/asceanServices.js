@@ -114,10 +114,12 @@ async function originCompiler(weapon, ascean) {
     if (ascean.origin === "Ashtre") {
         weapon.critical_chance += 3;
         weapon.physical_damage *= 1.03;
+        weapon.critical_damage *= 1.03;
     }
     if (ascean.origin === "Fyers") {
         weapon.magical_penetration += 3;
         weapon.physical_penetration += 3;
+        weapon.roll += 3;
     }
     if (ascean.origin === "Li'ivi") {
         weapon.magical_penetration += 1;
@@ -125,6 +127,7 @@ async function originCompiler(weapon, ascean) {
         weapon.magical_damage *= 1.01;
         weapon.physical_damage *= 1.01;
         weapon.critical_chance += 1;
+        weapon.critical_damage *= 1.01;
         weapon.dodge -= 1;
         weapon.roll += 1;
     }
@@ -139,9 +142,10 @@ async function originCompiler(weapon, ascean) {
     if (ascean.origin === "Quor'eite") {
         weapon.dodge -= 3;
         weapon.roll += 3;
+        weapon.critical_chance += 3;
     }
     if (ascean.origin === "Sedyreal") {
-
+        weapon.critical_damage *= 1.03;
     }
 }
 
@@ -335,8 +339,13 @@ const coefficientCompiler = async (ascean, item) => {
             coefficient = ascean.level / 20;
             break;
     }
-    if (coefficient > 1) coefficient = 1;
-    if (coefficient > 2) coefficient = 1.5;
+    if (coefficient > 1) {
+        if (coefficient > 2) {
+            coefficient = 1.5;
+        } else {
+            coefficient = 1;
+        }
+    }
     // coefficient = 1;
     // console.log(ascean.name, item.name, coefficient, 'coefficient Compiler')
     return coefficient

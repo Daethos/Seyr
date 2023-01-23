@@ -17,21 +17,21 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             name: "Ashtre",
             bio: "A hard people from an inhospitable land to the East in the Astralands, many are ashen from tempest weather. Martial and religious--monotheistic in nature to Astra, the Lightning Ancient, their governance forms of their leaders in a tetrarchy shored by commerce and law. Laconic and mistrusting, few outsiders get to know these folk, drawing further tension from being the only civilization not to collapse during the Shattering in the War of the Ancients a millenia prior.",
             index: 'ashtre',
-            bonus: '+2 STR, +2 AGI, +3% Crit, +3% Phys Dam',
+            bonus: '+2 STR, +2 AGI, +3% Crit, +3% Crit Dam, +3% Phys Dam',
             imgUrl: '/images/Ashtre-Man.jpg'
         },
         {
             name: "Fyers",
             bio: "Fair folk from the Firelands, these people enjoy mild weather and bountiful harvest, leaving themselves to leisure time in pursuit of broad body and mind, often advancing both fields in competition and technology. The Fyers Lord Protectorate Theogeni Spiras, the Ghost Hawk of Greyrock, came to govern the land, siezing power after civil warring against House Ashfyre whose lineage held the title for centuries. To note, also a former Ascean in 130 AE. Fyer is the Ancient heralded in the land and has been worshiped for centuries, influencing the people's culture and language, though not the only Ancient worshiped, with known allied Ancients in Ilios, Kyrisos, and Nyrolus were well celebrated. As of late, Daethic worship has seen its rise in the land, with Lord Spiras himself cozying to the Seyr, though his personal beliefs are unknown.",
             index: 'fyers',
-            bonus: '+2 ACH, +2 KYO, +3% Mag Pen, +3% Phys Pen',
+            bonus: '+2 ACH, +2 KYO, +3% Mag Pen, +3% Phys Pen, +3% Roll',
             imgUrl: '/images/Fyers-Woman.jpg'
         },
         {
             name: "Li'ivi",
             bio: "In the centralands of Licivitas live a keen and practical people whose ambition and drive has helped economically enhance and ensnare the other cultures. Whether bartering or brokering, peacemaking or warring, a Li'ivi excels. The One Above, Daethos, is founded and worshiped at the Seyr in its oldest city, Lor, and while not a theocracy, heavily leans on its teachings for guidance. Its governance is currently run by a loose-affiliate of city-states. Highest general Evrio Lorian Peroumes, current va'Esai, is waging a 10 years long war in the Northren border against the monstrous Cragore. Tension has risen over the years as only letters have been sent to Lor from General Peroumes, and the Noble Lorians have grown weary of the war's effect on the popularity of General Peroumes, whose had official leave to maintain the war after winning the Ascea, first boosting his popularity as being the first Li'ivi to be crowed the va'Esai this century.",
             index: "li'ivi",
-            bonus: '+1 STR, +1 AGI, +1 ACH, +1 CAER, +1 KYO, +1% Crit, +1% Roll, -1s Dodge, +1% Phys Dam, +1% Mag Dam, +1% Mag Pen, +1% Phys Pen',
+            bonus: '+1 STR, +1 AGI, +1 ACH, +1 CAER, +1 KYO, +1% Crit, +1% Crit Dam, +1% Roll, -1s Dodge, +1% Phys Dam, +1% Mag Dam, +1% Mag Pen, +1% Phys Pen',
             imgUrl: "/images/Li'ivi-Woman.jpg"
         },
         {
@@ -52,14 +52,14 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             name: "Quor'eite",
             bio: "Relaxed folk of the southernmost tip of the land, they owed much of their pleasure in life to the hospitable regions affording luxurious living and supply, thus Quor'ei, the Ancient of Earth, garnerning the most appreciation. This became disrupted during the invasion of the Sedyreal post-Sedyren War agianst Licivitas, culminating in the loss of life for many Quor'eite, many losing faith and seeking the word of Daethos as a means to calm their spirit. From the war, many of the 'Quor'ator's as their lords are to be called, have been displaced from settling Sedyreal and have sought refuge in the harsher lands of Sedyrus as the whole province came to be called, others in the never settled jungle that were sprase as the entire land was considered but dense pockets had been an effective natural barrier for sometime between the peoples and their cultures changing worldviews. Quor'ator Mauricio Capulo has recently come upon a windfall atop mountainous jungle ranges, a new crop becoming a local favorite and extending East toward the Alluring Isles. This is thought to be the genesis for the Sedyren Sun, Cyrian Shyne, betrothing his firstborn son to Capulo's third daughter, the first two already having wed to lower caste families.",
             index: "quor'eite",
-            bonus: '+2 AGI, +2 KYO, -3s Dodge, +3% Roll',
+            bonus: '+2 AGI, +2 KYO, -3s Dodge, +3% Roll, +3% Crit',
             imgUrl: "/images/Quor'eite-Man.jpg"
         },
         {
             name: "Sedyreal",
             bio: "Southron people living in the further temperate and wild jungles that await someone adventurous enough to travel south of Licivitas by land, it lies home to a festive people that find a fluidity to their lives in love of celebration for triumph of life's hardships, and curbing the penchant to show this excitement with love of warfare. Having lost territory to the elements and the Li'ivi in the hard fought double-sided loss in the Sedyrus Mountains, they've moved further south and took their frustrations out on the neighboring Quor'eite, taking over and displacing the peoples to claim full territories. The province of Sedyrus and Quor'eia now entirely merged into Sedyrus, with some Sedyren taking rich lands of the Quor'ators who passed, others whom has enviable locales. The Sedyren Sun, Cyrian Shyne has taken to a life of travel and exploration, having two homes with a new mountainous jungle range in the central lands of Sedyrus after the old fortress in the Sedyrus mountains were extinguished and melted from the eruption, killing many from Licivitas and Sedyrus alike. It is a wonder that the Sedyreal were still so capable, after having sustained such losses, to invade and capture a sizable portion of land and conquer a neighboring people. ",
             index: 'sedyreal',
-            bonus: '+2 STR, +2 CAER, +3% Mag Def, +3% Phys Def',
+            bonus: '+2 STR, +2 CAER, +3% Mag Def, +3% Phys Def, +3% Crit Dam',
             imgUrl: '/images/Sedyreal-Man.jpg'
         }
     ])

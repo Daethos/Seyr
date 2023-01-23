@@ -106,7 +106,7 @@
   position: absolute;
   display: grid;
   grid-template-columns: repeat(6, 16%);
-  grid-template-rows: repeat(12, 16%);
+  grid-template-rows: repeat(36, 16%);
   justify-content: space-evenly;
   /* display: flex;
   flex-wrap: wrap; 

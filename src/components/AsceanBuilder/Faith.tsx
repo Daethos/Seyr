@@ -10,8 +10,6 @@ interface Props {
 }
 
 const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow }: Props) => {
-    const adherentID = document.getElementById('adherentID');
-    const devotedID = document.getElementById('devotedID'); 
     const [faithState, setFaithState] = useState([
         {
             name: 'Ancients',

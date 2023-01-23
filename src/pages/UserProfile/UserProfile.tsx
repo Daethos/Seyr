@@ -9,9 +9,10 @@ import SearchCard from '../../components/SearchCard/SearchCard'
 
 interface UserProps {
     loggedUser: any;
+    setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const UserProfile = ({ loggedUser }: UserProps) => {
+const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
 
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,8 +36,9 @@ const UserProfile = ({ loggedUser }: UserProps) => {
 
   async function deleteAscean(ascean: any) {
     ascean.preventDefault();
-    console.log(ascean.target.value, '<- What are you in here?')
-    asceanAPI.deleteAscean(ascean.target.value)
+    console.log(ascean.target.value, '<- What are you in here?');
+    asceanAPI.deleteAscean(ascean.target.value);
+    setCreateSuccess(true);
     getAscean();
   }
 
@@ -70,10 +72,10 @@ const UserProfile = ({ loggedUser }: UserProps) => {
             No Characters? No worries ^_^ <br />
             Here's a Quick Overview of the NavBar to Catch You Up<br />
             
-            Castle: Home<br />
+            Castle: Home Page<br />
             Knight: New Character<br />
-            Quill: Edit Character<br />
-            Practice Target: Computer Arena<br />
+            {/* Quill: Edit Character<br /> */}
+            Target: Story Mode<br />
             Scroll: Home<br />
             Chat Bubbles: Direct Messages<br />
             Double-Axes: PvP Arena<br />
