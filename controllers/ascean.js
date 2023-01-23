@@ -23,6 +23,8 @@ module.exports = {
     saveToInventory,
     swapItems,
     removeItem,
+    purchaseToInventory
+
 }
 
 
@@ -108,9 +110,34 @@ async function saveToInventory(req, res) {
         console.log(err.message, '<- Error in the Controller Saving to Inventory!')
     }
 }
-//TODO:FIXME: It works generally, but need to run a filter to remove the item that is swapped from the inventory to the ascean so it looks like it's gone from the inventory
-//TODO:FIXME: Also if the item to place in the inventory includes the word 'Empty' then I know to not push it into the inventory.
 
+async function rebalanceCurrency(ascean) {
+    while (ascean.currency.silver < 0) {
+      ascean.currency.gold -= 1;
+      ascean.currency.silver += 100;
+    }
+    while (ascean.currency.gold < 0) {
+      ascean.currency.gold += 1;
+      ascean.currency.silver -= 100;
+    }
+  }
+  
+
+async function purchaseToInventory(req, res) {
+    try {
+        // console.log(req.body, 'Req Body in Saving to Inventory')
+        const ascean = await Ascean.findById(req.body.ascean._id);
+        ascean.inventory.push(req.body.item._id);
+        console.log(req.body.cost, 'Cost of EQP')
+        ascean.currency.silver -= req.body.cost.silver;
+        ascean.currency.gold -= req.body.cost.gold;
+        await rebalanceCurrency(ascean);
+        await ascean.save();
+        res.status(201).json({ ascean });
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Purchasing to Inventory!')
+    }
+}
 async function swapItems(req, res) {
     try {
         // console.log(req.body, 'Req Body in Swapping Items')

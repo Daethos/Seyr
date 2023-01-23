@@ -1,24 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Button from 'react-bootstrap/Button';
 import Inventory from '../components/GameCompiler/Inventory';
 import LootDrop from '../components/GameCompiler/LootDrop';
+import MerchantLoot from '../components/GameCompiler/MerchantLoot';
+import MerchantTable from '../components/GameCompiler/MerchantTable';
+import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
+// const MerchantLoot = lazy(() => import('../components/GameCompiler/MerchantLoot'));
 
-enum Intent {
-    GREETING = "greeting",
-    CHALLENGE = "challenge",
-    DEFEAT = "defeat",
-    FAREWELL = "farewell",
-    VICTORY = "victory",
-    TAUNT = "taunt",
-    PRAISE = "praise",
-    LOCAL_LORE = "localLore",
-    LOCAL_WHISPERS = "localWhispers",
-    PERSUASION_REQUEST = "persuasionRequest",
-    PERSUASION_OFFER = "persuasionOffer",
-    PERSUASION_ACCEPTANCE = "persuasionAcceptance",
-    PERSUASION_REJECTION = "persuasionRejection",
-}
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
     const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -65,6 +54,8 @@ interface Props {
 const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
+    const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
     const handleCombatAction = (options: any, action: string) => {
         console.log(options, action, 'Action')
         setCombatAction(action);
@@ -78,28 +69,22 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
     }
     const getLoot = async () => {
         try {
-            const response = await eqpAPI.getLootDrop(4);
-            console.log(response.data[0], 'Response!');
-            setLootDrop(response.data[0]);
-
-            let roll = Math.floor(Math.random() * 100) + 1;
-            if (roll <= 25) {
-                const responseTwo = await eqpAPI.getLootDrop(20);
-                console.log(responseTwo.data[0], 'Response Two!');
-                setLootDropTwo(responseTwo.data[0]);
-            } else {
-                setLootDropTwo(null);
-            }
-
-            
+            setLoading(true);
+            const response = await eqpAPI.getMerchantEquipment(ascean.level);
+            console.log(response.data, 'Response!');
+            setMerchantEquipment(response.data);
             setItemSaved(false);
-            setItemSaved(false);
+            setLoading(false);
         } catch (err) {
             console.log(err, 'Error!')
         }
     }
 
-
+    useEffect(() => {
+        if (merchantEquipment.length === 0) return;
+        console.log(merchantEquipment, 'merchantEquipment variable in DialogBox.tsx');
+    }, [merchantEquipment])
+    
 
     useEffect(() => {
         console.log(currentIntent);
@@ -107,7 +92,11 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
 
     //TODO:FIXME: Note to self, make a Trader or Services type player, and create new dialog type, not Opponent, but the aforementioned name. With different options, some quests, with services, can trade or create items for the player.
 
-    
+    if (loading) {
+        return (
+            <Loading Combat={true} />
+        )
+    }
     return (
         <div className='dialog-box'>
             <div className='dialog-text'>
@@ -180,8 +169,14 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
                     <>
                         Conditions
                         <br />
-
-
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getLoot}>Merchant Trader Equipment</Button>
+                        <br />
+                        {
+                            merchantEquipment?.length > 0 ?
+                            <MerchantTable table={merchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} />
+                            
+                            : ''
+                        }
                     </>
                     : currentIntent === 'farewell' ?
                     <>
@@ -240,3 +235,7 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
 }
 
 export default DialogBox;
+
+// function lazy(arg0: () => Promise<typeof import("../components/GameCompiler/MerchantLoot")>) {
+//     throw new Error('Function not implemented.');
+// }

@@ -656,7 +656,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     useEffect(() => {
-        if (itemSaved === false) return;
+        // if (itemSaved === false) return;
         getAsceanQuickly();
         return () => {
             setItemSaved(false);
@@ -718,6 +718,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
+            setCombatData({...combatData, 'player': firstResponse.data});
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
         }

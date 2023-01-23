@@ -15,7 +15,8 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 module.exports = {
     indexEquipment,
     getOneEquipment,
-    upgradeEquipment
+    upgradeEquipment,
+    getMerchantEquipment
 }
 
 // Write in a function that will create an elevated rarity item of the same name when the user subm8its 3 of the same item name of a lower rarity
@@ -116,6 +117,65 @@ const determineEquipmentType = () => {
     }
 }
 
+async function getMerchantEquipment(req, res) {
+    try {
+        let merchantEquipment = [];
+        for (let i = 0; i < 12; i++) {
+            let rarity = determineRarityByLevel(req.params.level);
+            let type = determineEquipmentType();
+            let equipment;
+            let eqpCheck = Math.floor(Math.random() * 100 + 1);
+
+            if (type === 'Amulet' || type === 'Ring' || type === 'Trinket') {
+                if (rarity === 'Common') {
+                    rarity = 'Uncommon';
+                }
+            }
+
+            if (req.params.level < 4) {
+                if (eqpCheck > 80) {
+                    equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    console.log(equipment, 'Weapon ?')
+                } else if (eqpCheck > 60) {
+                    equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    console.log(equipment, 'Shield ?')
+                } else if (eqpCheck > 40) {
+                    equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    console.log(equipment, 'Helmet ?')
+                } else if (eqpCheck > 20) {
+                    equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    console.log(equipment, 'Chest ?')
+                } else {
+                    equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    console.log(equipment, 'Legs ?')
+                }
+            } else if (type === 'Weapon') {
+                equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Shield') {
+                equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Helmet') {
+                equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Chest') {
+                equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Legs') {
+                equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Ring') {
+                equipment = await Ring.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Amulet') {
+                equipment = await Amulet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Trinket') {
+                equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
+            }
+            console.log(equipment, 'Equipment in Merchant Function')
+            merchantEquipment.push(equipment[0]);
+        }
+        res.status(200).json({ data: merchantEquipment });
+    } catch (err) {
+        console.log(err, 'Error in Merchant Function');
+        res.status(400).json({ err });
+    }
+}
+
  async function getOneEquipment (req, res) {
     console.log('%c We have made it to the getOneEquipment in the Equipment Controller!', 'color: blue')
     try {
@@ -202,17 +262,6 @@ async function upgradeEquipment(req, res) {
         ascean.inventory.splice(secondItemIndex, 1);
         const thirdItemIndex = ascean.inventory.indexOf(req.body.upgradeID);
         ascean.inventory.splice(thirdItemIndex, 1);
-        // let count = 0;
-        // for (let i = 0; i < ascean.inventory.length; i++) {
-        //     if (ascean.inventory[i] === req.body.upgradeID) {
-        //         ascean.inventory.splice(i, 1);
-        //         count += 1;
-        //         if (count === 3) {
-        //             break;
-        //         }
-        //     }
-        // }
-
 
         await ascean.save();
         res.status(201).json({ ascean });
