@@ -57,13 +57,6 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
       checkInventory();
     }, [ascean, inventory]);
 
-    useEffect(() => {
-      console.log(editState, '<- What is the edit state?');
-      return () => {
-        console.log('unmounting...');
-      }
-    }, [editState])
-
     function canUpgrade(inventory: any[], id: string): boolean {
         const matches = inventory.filter(item => item._id === id);
         return matches.length >= 3;

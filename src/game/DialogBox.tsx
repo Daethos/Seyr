@@ -31,6 +31,7 @@ const CombatDialogButtons = ({ options, handleCombatAction }: { options: any, ha
 
 interface Props {
     ascean: any;
+    enemy: any;
     npc: any;
     dialog: [];
     setCombatEngaged: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,7 +52,7 @@ interface Props {
 }
 
 
-const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
+const DialogBox = ({ ascean, enemy, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
@@ -70,7 +71,7 @@ const DialogBox = ({ ascean, npc, dialog, setCombatEngaged, getOpponent, setGame
     const getLoot = async () => {
         try {
             setLoading(true);
-            const response = await eqpAPI.getMerchantEquipment(ascean.level);
+            const response = await eqpAPI.getMerchantEquipment(enemy.level);
             console.log(response.data, 'Response!');
             setMerchantEquipment(response.data);
             setItemSaved(false);

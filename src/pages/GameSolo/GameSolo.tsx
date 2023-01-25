@@ -218,6 +218,7 @@ const GameSolo = ({ user }: GameProps) => {
         kyosir: 0,
         level: ascean.level,
         opponent: opponent.level,
+        opponentExp: 0,
         experience: ascean.experience,
         experienceNeeded: ascean.level * 1000,
         mastery: ascean.mastery,
@@ -225,11 +226,9 @@ const GameSolo = ({ user }: GameProps) => {
     });
 
     const getAscean = useCallback(async () => {
-        console.log('1?')
         setLoadingAscean(true)
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            console.log(firstResponse.data, 'First Response Ascean')
             setAscean(firstResponse.data);
 
             const response = await asceanAPI.getAsceanStats(asceanID)
@@ -289,11 +288,6 @@ const GameSolo = ({ user }: GameProps) => {
             setOpponent(profilesInRange[randomOpponent]);
             const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
 
-            // const randomOpponent = Math.floor(Math.random() * secondResponse.data.ascean.length);
-            // setOpponent(secondResponse.data.ascean[randomOpponent]);
-            // console.log(secondResponse.data.ascean[randomOpponent], '<- New Opponent');
-            // const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean[randomOpponent]._id);
-            // console.log(response.data.data, 'Response Compiling Stats')
             setComputerDefense(opponentResponse.data.data.defense);
             setComputerAttributes(opponentResponse.data.data.attributes);
             setTotalComputerHealth(opponentResponse.data.data.attributes.healthTotal);
@@ -358,13 +352,6 @@ const GameSolo = ({ user }: GameProps) => {
         getAscean();
     }, [asceanID, getAscean])
 
-
-
-    // useEffect(() => {
-    //     console.log(combatData, 'Update')
-    // }, [combatData])
-
-
     useEffect(() => {
         getOpponentDialog();
     }, [opponent])
@@ -380,7 +367,6 @@ const GameSolo = ({ user }: GameProps) => {
       
 
     const getOpponent = async () => {
-        console.log('2?')
         setLoading(true)
         try {
             let minLevel: number = 0;
@@ -455,112 +441,6 @@ const GameSolo = ({ user }: GameProps) => {
         }
     }
 
-    // const opponentStatCompiler = async () => {
-    //     setLoading(true)
-    //     try {
-    //         const response = await asceanAPI.getAsceanStats(opponent._id)
-    //         // console.log(response.data.data, 'Response Compiling Stats')
-    //         setComputerDefense(response.data.data.defense)
-    //         setComputerAttributes(response.data.data.attributes)
-    //         setTotalComputerHealth(response.data.data.attributes.healthTotal)
-    //         setCurrentComputerHealth(response.data.data.attributes.healthTotal)
-    //         setComputerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
-    //         setCombatData({
-    //             ...combatData,
-    //             'computer': response.data.data.ascean,
-    //             'computer_health': response.data.data.attributes.healthTotal,
-    //             'current_computer_health': response.data.data.attributes.healthTotal,
-    //             'new_computer_health': response.data.data.attributes.healthTotal,
-    //             'computer_weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
-    //             'computer_weapon_one': response.data.data.combat_weapon_one,
-    //             'computer_weapon_two': response.data.data.combat_weapon_two,
-    //             'computer_weapon_three': response.data.data.combat_weapon_three,
-    //             'computer_defense': response.data.data.defense,
-    //             'computer_attributes': response.data.data.attributes
-    //         })
-    //         setLoading(false)
-    //     } catch (err: any) {
-    //         setLoading(false)
-    //         console.log(err.message, 'Error Compiling Ascean Stats')
-    //     }
-    // }
-
-    // async function opponentDataCompiler() {
-    //     setLoading(true)
-    //     try {
-    //         setCombatData({
-    //             ...combatData,
-    //             'computer_health': currentComputerHealth,
-    //             'current_computer_health': currentComputerHealth,
-    //             'new_computer_health': currentComputerHealth,
-    //             'computer_weapons': [computerWeaponOne, computerWeaponTwo, computerWeaponThree],
-    //             'computer_weapon_one': computerWeaponOne,
-    //             'computer_weapon_two': computerWeaponTwo,
-    //             'computer_weapon_three': computerWeaponThree,
-    //             'computer_defense': computerDefense,
-    //             'computer_attributes': computerAttributes
-    //         })
-    //         setLoading(false)
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error compiling combat data')
-    //     }
-    // }
-
-    // const asceanStatCompiler = async () => {
-    //     setLoading(true)
-    //     try {
-    //         const response = await asceanAPI.getAsceanStats(asceanID)
-    //         // console.log(response.data.data, 'Response Compiling Stats')
-    //         setWeaponOne(response.data.data.combat_weapon_one)
-    //         setWeaponTwo(response.data.data.combat_weapon_two)
-    //         setWeaponThree(response.data.data.combat_weapon_three)
-    //         setPlayerDefense(response.data.data.defense)
-    //         setAttributes(response.data.data.attributes)
-    //         setTotalPlayerHealth(response.data.data.attributes.healthTotal)
-    //         setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
-    //         setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three])
-    //         setCombatData({
-    //             ...combatData,
-    //             'player': response.data.data.ascean,
-    //             'player_health': response.data.data.attributes.healthTotal,
-    //             'current_player_health': response.data.data.attributes.healthTotal,
-    //             'new_player_health': response.data.data.attributes.healthTotal,
-    //             'weapons': [response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three],
-    //             'weapon_one': response.data.data.combat_weapon_one,
-    //             'weapon_two': response.data.data.combat_weapon_two,
-    //             'weapon_three': response.data.data.combat_weapon_three,
-    //             'player_defense': response.data.data.defense,
-    //             'player_attributes': response.data.data.attributes
-    //         })
-    //         // setLoading(false)
-    //     } catch (err: any) {
-    //         setLoading(false)
-    //         console.log(err.message, 'Error Compiling Ascean Stats')
-    //     }
-    // }
-
-    // const combatDataCompiler = async () => {
-    //     // setLoadingAscean(true)
-    //     try {
-    //         setCombatData({
-    //             ...combatData,
-    //             'player_health': currentPlayerHealth,
-    //             'current_player_health': currentPlayerHealth,
-    //             'new_player_health': currentPlayerHealth,
-    //             'weapons': [weaponOne, weaponTwo, weaponThree],
-    //             'weapon_one': weaponOne,
-    //             'weapon_two': weaponTwo,
-    //             'weapon_three': weaponThree,
-    //             'player_defense': playerDefense,
-    //             'player_attributes': attributes
-    //         });
-    //         // setGameIsLive(true);
-    //         setLoadingAscean(false);
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error compiling combat data')
-    //     }
-    // }
-
     const levelUpAscean = async (vaEsai: any) => {
         try {
             console.log(vaEsai, 'Va Esai');
@@ -588,14 +468,17 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     useEffect(() => {
-        console.log(asceanState, 'Ascean State')
         if (saveExp === false) return;
+        console.log(asceanState, 'Ascean State')
         saveExperience();
-    }, [asceanState, combatData]);
+        return () => {
+            setSaveExp(false);
+        }
+    }, [asceanState, saveExp]);
 
     const saveExperience = async () => {
         if (saveExp === false || combatData.player_win === false) {
-            console.log('Either A Loss or Already At Max Exp')
+            console.log('Either A Loss or Already At Max Exp');
             return;
         }
         try {
@@ -611,42 +494,54 @@ const GameSolo = ({ user }: GameProps) => {
                 'player_win': false,
             })
             setAsceanState({
-                ascean: firstResponse.data,
-                constitution: 0,
-                strength: 0,
-                agility: 0,
-                achre: 0,
-                caeren: 0,
-                kyosir: 0,
-                level: firstResponse.data.level,
-                opponent: opponent.level,
-                experience: 0,
-                experienceNeeded: firstResponse.data.level * 1000,
-                mastery: firstResponse.data.mastery,
-                faith: firstResponse.data.faith,
+                ...asceanState,
+                'ascean': firstResponse.data,
+                'constitution': 0,
+                'strength': 0,
+                'agility': 0,
+                'achre': 0,
+                'caeren': 0,
+                'kyosir': 0,
+                'level': firstResponse.data.level,
+                'opponent': opponent.level,
+                'experience': 0,
+                'experienceNeeded': firstResponse.data.level * 1000,
+                'mastery': firstResponse.data.mastery,
+                'faith': firstResponse.data.faith,
             });
+            if (response.data.gold > 0 && response.data.silver > 0) {
+                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`]);
+            } else if (response.data.gold > 0 && response.data.silver === 0) { 
+                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`]);
+            } else if (response.data.gold === 0 && response.data.silver > 0) {
+                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`]);
+            } else {
+                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points.`]);
+            }
             setSaveExp(false);
             setLoadingAscean(false);
         } catch (err: any) {
-            console.log(err.message, 'Error Saving Experience')
+            console.log(err.message, 'Error Saving Experience');
         }
     }
 
     const gainExperience = async () => {
         try {
             let opponentExp: number = Math.round(combatData.computer.level * 100 * (combatData.computer.level / combatData.player.level) + combatData.player_attributes.rawKyosir);
-            console.log(opponentExp, 'Experience Gained')
+            console.log(opponentExp, 'Experience Gained');
             if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
                     ...asceanState,
-                    experience: asceanState.experienceNeeded,
+                    'opponentExp': opponentExp,
+                    'experience': asceanState.experienceNeeded,
                 });
                 setSaveExp(true);
             } 
             if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
                 setAsceanState({
                     ...asceanState,
-                    experience: Math.round(asceanState.experience + opponentExp),
+                    'opponentExp': opponentExp,
+                    'experience': Math.round(asceanState.experience + opponentExp),
                 });
                 setSaveExp(true);
             }
@@ -656,12 +551,12 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     useEffect(() => {
-        // if (itemSaved === false) return;
+        if (itemSaved === false) return;
         getAsceanQuickly();
         return () => {
             setItemSaved(false);
         }
-    }, [itemSaved])
+    }, [itemSaved, combatData])
 
     useEffect(() => {
         console.log(eqpSwap, 'Swapping Equipment');
@@ -684,14 +579,14 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
-            const response = await asceanAPI.getAsceanStats(asceanID)
-            console.log(response.data.data, 'Response Compiling Stats')
-            setWeaponOne(response.data.data.combat_weapon_one)
-            setWeaponTwo(response.data.data.combat_weapon_two)
-            setWeaponThree(response.data.data.combat_weapon_three)
-            setPlayerDefense(response.data.data.defense)
-            setAttributes(response.data.data.attributes)
-            setTotalPlayerHealth(response.data.data.attributes.healthTotal)
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            console.log(response.data.data, 'Response Compiling Stats');
+            setWeaponOne(response.data.data.combat_weapon_one);
+            setWeaponTwo(response.data.data.combat_weapon_two);
+            setWeaponThree(response.data.data.combat_weapon_three);
+            setPlayerDefense(response.data.data.defense);
+            setAttributes(response.data.data.attributes);
+            setTotalPlayerHealth(response.data.data.attributes.healthTotal);
             // setCurrentPlayerHealth(response.data.data.attributes.healthTotal)
             setPlayerWeapons([response.data.data.combat_weapon_one, response.data.data.combat_weapon_two, response.data.data.combat_weapon_three]);
             setCombatData({
@@ -726,7 +621,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (lootRoll === false) return;
-        getOneLootDrop(ascean.level);
+        getOneLootDrop(opponent.level);
         return () => {
             setLootRoll(false);
         }
@@ -755,26 +650,26 @@ const GameSolo = ({ user }: GameProps) => {
     
     useEffect(() => {
         if (highScore > ascean.high_score) {
-            console.log('Congratulations on the New High Score, Sir!')
+            console.log('Congratulations on the New High Score, Sir!');
             updateHighScore();
         } else {
-            return
+            return;
         }
     }, [highScore])
 
     const updateHighScore = async () => {
-        setLoadingAscean(true)
+        setLoadingAscean(true);
         try {
             const response = await asceanAPI.highScore({
                 asceanId: ascean._id,
                 highScore: highScore
-            })
+            });
             // console.log(response.data, 'Response Updating High Score')
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
             // setAscean(response.data)
             // getAscean()
-            setLoadingAscean(false)
+            setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error Updating High Score')
         }
@@ -786,8 +681,8 @@ const GameSolo = ({ user }: GameProps) => {
             ...combatData,
             'action': action.target.value,
             'counter_guess': ''
-        })
-        setTimeLeft(10)
+        });
+        setTimeLeft(10);
     }
 
     function handleCounter(counter: any) {
@@ -922,6 +817,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setCombatEngaged(false);
                 setDodgeStatus(false);
                 setLootRoll(true);
+                setTimeLeft(0);
             }
             if (response.data.computer_win === true) {
                 playDeath();
@@ -930,6 +826,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setGameIsLive(false);
                 setCombatEngaged(false);
                 setDodgeStatus(false);
+                setTimeLeft(0);
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -1007,7 +904,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     useEffect(() => {
-        console.log(background, 'Background')
+        // console.log(background, 'Background')
         if (ascean?.origin && background === null) {
             const getPlayerBackground = {
                 background: "url(" + getBackgroundStyle(ascean.origin) + ")",
@@ -1022,7 +919,7 @@ const GameSolo = ({ user }: GameProps) => {
     const num = Math.floor(Math.random() * 3) + 1;
     const chance = Math.floor(Math.random() * 3) + 1;
     function getBackgroundStyle(origin: string) {
-        console.log(origin, 'Origin of', ascean.name)
+        // console.log(origin, 'Origin of', ascean.name)
         switch (origin) {
             case 'Ashtre':
                 if (chance >= 2) {
@@ -1114,7 +1011,7 @@ const GameSolo = ({ user }: GameProps) => {
                 <>
                 <DialogBox 
                     npc={opponent.name} dialog={dialog} setCombatEngaged={setCombatEngaged} setGameIsLive={setGameIsLive} 
-                    playerWin={playerWin} computerWin={computerWin} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved}
+                    playerWin={playerWin} computerWin={computerWin} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
                     winStreak={winStreak} loseStreak={loseStreak} highScore={highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo}
                     resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
                     />

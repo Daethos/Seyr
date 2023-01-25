@@ -13,9 +13,6 @@ interface Props {
 
 const InventoryBag = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem }: Props) => {
 
-
-
-
   return (
     <div className='inventory-bag'>
         {

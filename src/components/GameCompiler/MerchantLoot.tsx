@@ -175,10 +175,9 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) 
                     ""
                     :
                     <>
-                    Price: {purchaseSetting?.cost?.silver}s{' '}
-                    {purchaseSetting?.cost?.gold}g
-                    {/* <p style={{  }}>
-                    </p> */}
+                    Price:{' '} 
+                    {purchaseSetting?.cost?.gold}g{' '}
+                    {purchaseSetting?.cost?.silver}s{' '}
                     <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: -4 + '%', fontSize: 18 + 'px', marginRight: -5 + '%' }} onClick={purchaseItem}>Purchase</Button>
                     </>
                 }

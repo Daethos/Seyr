@@ -265,7 +265,7 @@ async function saveExperience(req, res) {
             ascean.experience += req.body.experience;
         }
         await ascean.save();
-        res.status(200).json({ data: ascean });
+        res.status(200).json({ data: {ascean, silver, gold} });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving Experience!')
         res.status(400).json({ err });
@@ -320,7 +320,7 @@ async function create(req, res) {
         if (req.body.faith === 'devoted') { // Devoted to Daethos
             if ((req.body.strength + req.body.agility) >= (req.body.achre + req.body.caeren)) {
                 if (req.body.strength > req.body.agility) { // Halberd
-                    req.body.weapon_one = '63b3460cd5c6cfea02a5e575';
+                    req.body.weapon_one = '63d059865df7503ef9cd71f4';
                 } else if (req.body.strength < req.body.agility) { // Gladius
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e56c';
                 } else { // Same Value Daethic Bow
