@@ -206,6 +206,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {amulet?.caeren > 0 ? 'CAER: +' + amulet?.caeren + ' ' : ''}
                 {amulet?.kyosir > 0 ? 'KYO: +' + amulet?.kyosir + ' ' : ''}
                 <br />
+                Physical Penetration: +{amulet?.physical_penetration}% <br />
+                Magical Penetration: +{amulet?.magical_penetration}% <br />
                 Physical Defense: +{amulet?.physical_resistance}% <br />
                 Magical Defense: +{amulet?.magical_resistance}% <br />
                 Physical Damage: {amulet?.physical_damage}x <br />
@@ -233,6 +235,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {ring_one?.caeren > 0 ? 'CAER: +' + ring_one?.caeren + ' ' : ''}
                 {ring_one?.kyosir > 0 ? 'KYO: +' + ring_one?.kyosir + ' ' : ''}
                 <br />
+                Physical Penetration: +{ring_one?.physical_penetration}% <br />
+                Magical Penetration: +{ring_one?.magical_penetration}% <br />
                 Physical Defense: +{ring_one?.physical_resistance}% <br />
                 Magical Defense: +{ring_one?.magical_resistance}% <br />
                 Physical Damage: {ring_one?.physical_damage}x <br />
@@ -260,6 +264,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {ring_two?.caeren > 0 ? 'CAER: +' + ring_two?.caeren + ' ' : ''}
                 {ring_two?.kyosir > 0 ? 'KYO: +' + ring_two?.kyosir + ' ' : ''}
                 <br />
+                Physical Penetration: +{ring_two?.physical_penetration}% <br />
+                Magical Penetration: +{ring_two?.magical_penetration}% <br />
                 Physical Defense: +{ring_two?.physical_resistance}% <br />
                 Magical Defense: +{ring_two?.magical_resistance}% <br />
                 Physical Damage: {ring_two?.physical_damage}x <br />
@@ -286,6 +292,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {trinket?.caeren > 0 ? 'CAER: +' + trinket?.caeren + ' ' : ''}
                 {trinket?.kyosir > 0 ? 'KYO: +' + trinket?.kyosir + ' ' : ''}
                 <br />
+                Physical Penetration: +{trinket?.physical_penetration}% <br />
+                Magical Penetration: +{trinket?.magical_penetration}% <br />
                 Physical Defense: +{trinket?.physical_resistance}% <br />
                 Magical Defense: +{trinket?.magical_resistance}% <br />
                 Physical Damage: {trinket?.physical_damage}x <br />

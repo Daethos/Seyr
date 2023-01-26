@@ -37,47 +37,45 @@ const GameActions = ({ setDodgeStatus, setEmergencyText, setDamageType, damageTy
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
   useEffect(() => {
     if (currentAction === 'counter') {
-      setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1))
+      setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1));
     } else {
-      setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1))
-      setCombatData({ ...combatData, 'counter_guess': '' })
+      setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1));
+      setCombatData({ ...combatData, 'counter_guess': '' }); // Turns into Dispatch via useReducer
     }
   }, [currentAction, currentCounter])
 
   useEffect(() => {
-    setDisplayedAction(`Main Weapon: ${currentWeapon?.name}`)
+    setDisplayedAction(`Weapon: ${currentWeapon?.name}`);
   }, [currentWeapon])
 
   useEffect(() => {
-    setDisplayedAction(`Damage Type: ${currentDamageType}`)
+    setDisplayedAction(`Damage: ${currentDamageType}`);
   }, [currentDamageType])
 
   useEffect(() => {
-    setDisplayedAction(`Praying for: ${combatData.playerBlessing}`)
+    setDisplayedAction(`Prayer: ${combatData.playerBlessing}`);
   }, [combatData.playerBlessing])
 
   useEffect(() => {
     if (combatInitiated) {
         if (dropdownRef.current) {
             dropdownRef!.current.selectedIndex = 0;
-            console.log('Resetting counter dropdown to "none"')
         }
         setCombatInitiated(false);
     }
-}, [combatInitiated])
+  }, [combatInitiated])
 
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {
       setDodgeStatus(false);
-      // setDisplayedAction(`Dodge: ${combatData?.weapons?.[0]?.dodge} seconds.`);
     }, (combatData?.weapons?.[0]?.dodge * 1000))
     return () => clearTimeout(dodgeTimer)
   }, [dodgeStatus])
 
   useEffect(() => {
     const initiateTimer = setTimeout(() => {
-      setActionStatus(false)
+      setActionStatus(false);
     }, 3000)
     return () => clearTimeout(initiateTimer);
   }, [actionStatus])

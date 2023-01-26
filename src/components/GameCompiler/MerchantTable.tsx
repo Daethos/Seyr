@@ -10,7 +10,6 @@ interface Props {
 
 const MerchantTable = ({ table, ascean, itemPurchased, setItemPurchased }: Props) => {
 
-    console.log('At the Merchant Table', table)
     return (
         <>
             { table.map((item: any, index: number) => {

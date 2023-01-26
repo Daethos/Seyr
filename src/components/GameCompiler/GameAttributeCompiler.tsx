@@ -18,7 +18,6 @@ const GameAttributeCompiler = ({ ascean }: Props) => {
         setLoading(true)
         try {
             const response = await asceanAPI.getAsceanStats(ascean._id)
-            //console.log(response.data.data.attributes, 'Response Compiling Attributes')
             setAttributes(response.data.data.attributes)
             setLoading(false)
         } catch (err: any) {

@@ -91,7 +91,7 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, 'Response Auto Engaging');
-            setCombatData({...response.data, 'action': ''});
+            setCombatData({...response.data, 'action': ''}); // Turns into Dispatch via useReducer
             setCurrentPlayerHealth(response.data.new_player_health);
             setCurrentComputerHealth(response.data.new_computer_health);
             setPlayerWin(response.data.player_win);
