@@ -963,18 +963,10 @@ const GameSolo = ({ user }: GameProps) => {
             //     });
             // }
 
-            if (state.current_player_health === 0) {
+            if (state.current_player_health === 0 || state.new_player_health === 0) {
                 dispatch({
                     type: ACTIONS.RESET_PLAYER,
-                    payload: {
-                        defense: state.player_defense_default,
-                        attributes: state.attributes,
-                        health: state.player_health,
-                        weaponOne: state.weapon_one,
-                        weaponTwo: state.weapon_two,
-                        weaponThree: state.weapon_three,
-                        computerHealth: state.computer_health,
-                    }
+                    payload: state
                 });
             } else {
                 dispatch({

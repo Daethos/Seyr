@@ -8,9 +8,9 @@ interface CombatData {
     current_player_health: number;
     new_player_health: number;
     weapons: any[];
-    weapon_one: object;
-    weapon_two: object;
-    weapon_three: object;
+    weapon_one: any;
+    weapon_two: any;
+    weapon_three: any;
     playerEffects: any[];
     player_damage_type: string;
     player_defense: object;
@@ -242,20 +242,13 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
             };
-        case 'RESET_PLAYER': // Player Is Dead
+        case 'RESET_PLAYER':
             return {
                 ...state,
-                player_defense: action.payload.defense,
-                player_attributes: action.payload.attributes,
-                current_player_health: action.payload.health,
-                new_player_health: action.payload.health,
-                weapons: [action.payload.weaponOne, action.payload.weaponTwo, action.payload.weaponThree],
-                weapon_one: action.payload.weaponOne,
-                weapon_two: action.payload.weaponTwo,
-                weapon_three: action.payload.weaponThree,
-                player_damage_type: state.current_player_health === 0 ? action.payload.weaponOne.damage_type[0] : state.player_damage_type,
-                current_computer_health: action.payload.computerHealth,
-                new_computer_health: action.payload.computerHealth,
+                current_player_health: state.player_health,
+                new_player_health: state.player_health,
+                current_computer_health: state.computer_health,
+                new_computer_health: state.computer_health,
                 combatEngaged: true,
                 gameIsLive: true,
                 player_win: false,
@@ -264,7 +257,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
                 winStreak: 0,
             };
-        case 'RESET_COMPUTER': // Computer Is Dead
+        case 'RESET_COMPUTER':
             return {
                 ...state,
                 current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
@@ -279,7 +272,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
                 winStreak: state.player.level > state.computer.level ? 0: state.winStreak,
             };
-        case 'SET_NEW_COMPUTER': // Fetching New Opponent
+        case 'SET_NEW_COMPUTER':
             return {
                 ...state,
                 current_player_health: state.current_player_health === 0 || state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
