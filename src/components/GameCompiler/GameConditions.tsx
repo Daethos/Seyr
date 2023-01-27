@@ -2,29 +2,11 @@ import { Socket } from 'dgram';
 import { useEffect, useState } from 'react'
 import * as gameAPI from '../../utils/gameApi'
 import Loading from '../Loading/Loading';
+import { ACTIONS } from './CombatStore';
 
 
 interface Props {
-    playerWin: boolean;
-    computerWin: boolean;
-    winStreak: number;
-    loseStreak: number;
-    highScore: number;
-    setHighScore: React.Dispatch<React.SetStateAction<number>>;
-    getOpponent?: () => Promise<void>;
-    resetAscean: () => Promise<void>;
-    combatData: any;
-    setCombatData: React.Dispatch<any>;
-    setCurrentPlayerHealth: React.Dispatch<React.SetStateAction<number>>;
-    setCurrentComputerHealth: React.Dispatch<React.SetStateAction<number>>;
-    setPlayerWin: React.Dispatch<React.SetStateAction<boolean>>;
-    setComputerWin: React.Dispatch<React.SetStateAction<boolean>>;
-    setWinStreak: React.Dispatch<React.SetStateAction<number>>;
-    setLoseStreak: React.Dispatch<React.SetStateAction<number>>;
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
-    gameIsLive: boolean;
-    setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
-    setDodgeStatus: React.Dispatch<React.SetStateAction<boolean>>;
     playCounter: Function;
     playRoll: Function;
     playDeath: Function;
@@ -45,12 +27,12 @@ interface Props {
     timeLeft: number;
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
     gainExperience: any;
-    combatEngaged: boolean;
-    setCombatEngaged: React.Dispatch<React.SetStateAction<boolean>>;
     setLootRoll: React.Dispatch<React.SetStateAction<boolean>>;
+    dispatch: any;
+    state: any;
 }
 
-const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gainExperience, combatEngaged, setCombatEngaged, setLootRoll, setDodgeStatus, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, gameIsLive, setGameIsLive, playCounter, playRoll, playDeath, setEmergencyText, setPlayerWin, setComputerWin, setWinStreak, setLoseStreak, setCurrentPlayerHealth, setCurrentComputerHealth, playerWin, computerWin, winStreak, loseStreak, highScore, setHighScore, getOpponent, resetAscean }: Props) => {
+const GameConditions = ({ state, dispatch, timeLeft, setTimeLeft, gainExperience, setLootRoll, playReligion, playWin, playBlunt, playSlash, playWild, playPierce, playDaethic, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playCounter, playRoll, playDeath, setEmergencyText }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
@@ -63,26 +45,27 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
     }, [timeLeft]);
 
     useEffect(() => {
-        if (!gameIsLive) return;
+        if (!state.gameIsLive) return;
         const interval = setInterval(async () => {
-            autoAttack(combatData);
+            autoAttack(state);
         }, 10000);
         return () => clearInterval(interval);
-      }, [combatData, gameIsLive]);
+      }, [state, state.gameIsLive]);
 
       
 
     const autoEngage = () => {
-        setGameIsLive((liveGameplay) => !liveGameplay);
+        // setGameIsLive((liveGameplay) => !liveGameplay);
+        dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: !state.gameIsLive });
     }
     useEffect(() => {
-        if (gameIsLive) {
+        if (state.gameIsLive) {
             setEmergencyText(['Auto Action Commencing']);
         }
-        if (!gameIsLive) {
+        if (!state.gameIsLive) {
             setEmergencyText(['Auto Action Disengaging']);
         }
-      }, [gameIsLive])
+      }, [state.gameIsLive])
 
     const autoAttack = async (combatData: any) => {
         setLoading(true);
@@ -91,11 +74,12 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, 'Response Auto Engaging');
-            setCombatData({...response.data, 'action': ''}); // Turns into Dispatch via useReducer
-            setCurrentPlayerHealth(response.data.new_player_health);
-            setCurrentComputerHealth(response.data.new_computer_health);
-            setPlayerWin(response.data.player_win);
-            setComputerWin(response.data.computer_win);
+            // setCombatData({...response.data, 'action': ''}); // Turns into Dispatch via useReducer
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
+            // setCurrentPlayerHealth(response.data.new_player_health);
+            // setCurrentComputerHealth(response.data.new_computer_health);
+            // setPlayerWin(response.data.player_win);
+            // setComputerWin(response.data.computer_win);
             if (response.data.critical_success === true) {
                 if (response.data.player_damage_type === 'Spooky' || response.data.player_damage_type === 'Righteous') {
                     playDaethic();
@@ -146,24 +130,32 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
             if (response.data.player_win === true) {
                 playWin();
                 gainExperience();
-                setWinStreak((winStreak) => winStreak + 1);
-                if (winStreak + 1 > highScore) {
-                    setHighScore((score) => score + 1);
-                }
-                setLoseStreak(0);
-                setGameIsLive(false);
-                setCombatEngaged(false);
-                setDodgeStatus(false);
+                // setWinStreak((winStreak) => winStreak + 1);
+                // if (winStreak + 1 > highScore) {
+                //     setHighScore((score) => score + 1);
+                // }
+                // setLoseStreak(0);
+                // setGameIsLive(false);
+                // setCombatEngaged(false);
+                // setDodgeStatus(false);
                 setLootRoll(true);
                 setTimeLeft(0);
+                dispatch({
+                    type: ACTIONS.PLAYER_WIN,
+                    payload: response.data
+                });
             }
             if (response.data.computer_win === true) {
                 playDeath();
-                setLoseStreak((loseStreak) => loseStreak + 1);
-                setWinStreak(0);
-                setGameIsLive(false);
-                setCombatEngaged(false);
-                setDodgeStatus(false);
+                // setLoseStreak((loseStreak) => loseStreak + 1);
+                // setWinStreak(0);
+                // setGameIsLive(false);
+                // setCombatEngaged(false);
+                // setDodgeStatus(false);
+                dispatch({
+                    type: ACTIONS.COMPUTER_WIN,
+                    payload: response.data
+                });
             }
             setLoading(false);
         } catch (err: any) {
@@ -187,10 +179,10 @@ const GameConditions = ({ combatData, setCombatData, timeLeft, setTimeLeft, gain
     {computerWin ? <div className="win-condition" id='win-condition'>
     You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
     <button className='btn text-info' onClick={resetAscean}>Fresh Duel?</button></div> : ''} */}
-    { playerWin || computerWin || !combatEngaged ? '' : 
+    { state.player_win || state.computer_win || !state.combatEngaged ? '' : 
     
     <button className="btn" id='auto-engage' onClick={autoEngage}>
-        {!gameIsLive ? `Auto Engage` : `Disengage`}
+        {!state.gameIsLive ? `Auto Engage` : `Disengage`}
     </button>
     
     }

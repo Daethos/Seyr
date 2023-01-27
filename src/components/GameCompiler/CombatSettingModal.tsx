@@ -4,16 +4,16 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 interface Props {
-    combatData: any;
     setPrayerBlessing: any;
     setDamageType: any;
     damageType: any;
     setWeaponOrder: any;
     prayers: any;
     weapons: any;
+    state: any;
 }
 
-const CombatSettingModal = ({ combatData, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons }: Props) => {
+const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons }: Props) => {
 
     const [combatModalShow, setCombatModalShow] = useState<boolean>(false);
 
@@ -22,17 +22,17 @@ const CombatSettingModal = ({ combatData, damageType, setDamageType, setPrayerBl
         <Modal show={combatModalShow} onHide={() => setCombatModalShow(false)} centered id='modal-weapon'>
         <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center' }}> Weapon, Damage, and Prayer Combat Settings</Modal.Header>
         <Modal.Body id='weapon-modal'>
-            <Form.Select name="Attacks" className='combat-settings' value={combatData.weapons[0].name} onChange={setWeaponOrder}>
+            <Form.Select name="Attacks" className='combat-settings' value={state.weapons[0].name} onChange={setWeaponOrder}>
             { weapons ?
                 weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )
             : ''}
             </Form.Select><br />
-            <Form.Select name="Damage" className='combat-settings' value={combatData.player_damage_type} onChange={setDamageType}>
+            <Form.Select name="Damage" className='combat-settings' value={state.player_damage_type} onChange={setDamageType}>
             { damageType ?
                 damageType.map((damage: string, index: number) => { return ( <option value={damage} key={index} >{damage}</option> ) } )
             : '' }
             </Form.Select><br />
-            <Form.Select name="Prayer" className='combat-settings' value={combatData.playerBlessing} onChange={setPrayerBlessing}>
+            <Form.Select name="Prayer" className='combat-settings' value={state.playerBlessing} onChange={setPrayerBlessing}>
             {prayers.map((prayer: string, index: number) => {
                 return ( <option key={index} value={prayer}>{prayer}</option> )
             })}

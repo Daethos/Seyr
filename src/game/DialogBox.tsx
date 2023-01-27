@@ -6,6 +6,7 @@ import MerchantLoot from '../components/GameCompiler/MerchantLoot';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
+import { ACTIONS } from '../components/GameCompiler/CombatStore';
 // const MerchantLoot = lazy(() => import('../components/GameCompiler/MerchantLoot'));
 
 
@@ -34,9 +35,7 @@ interface Props {
     enemy: any;
     npc: any;
     dialog: [];
-    setCombatEngaged: React.Dispatch<React.SetStateAction<boolean>>;
     getOpponent: () => Promise<void>;
-    setGameIsLive: React.Dispatch<React.SetStateAction<boolean>>;
     playerWin: boolean;
     computerWin: boolean;
     resetAscean: () => Promise<void>;
@@ -49,10 +48,12 @@ interface Props {
     setLootDropTwo: React.Dispatch<React.SetStateAction<any>>;
     itemSaved: boolean;
     setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
+    dispatch: any;
+    state: any;
 }
 
 
-const DialogBox = ({ ascean, enemy, npc, dialog, setCombatEngaged, getOpponent, setGameIsLive, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
+const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
@@ -65,8 +66,12 @@ const DialogBox = ({ ascean, enemy, npc, dialog, setCombatEngaged, getOpponent, 
         setCurrentIntent(intent);
     };
     const engageCombat = () => {
-        setCombatEngaged(true);
-        setGameIsLive(true);
+        // setCombatEngaged(true);
+        // setGameIsLive(true);
+        dispatch({
+            type: ACTIONS.SET_DUEL,
+            payload: ''
+        });
     }
     const getLoot = async () => {
         try {

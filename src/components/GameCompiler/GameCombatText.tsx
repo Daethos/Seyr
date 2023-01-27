@@ -1,13 +1,8 @@
 interface Props {
-    user: any;
-    ascean: any;
     playerCombatText: string;
     computerCombatText: string;
     playerActionText: string;
     computerActionText: string;
-    playerAction: any;
-    computerAction: any;
-    combatData: any;
     playerSpecialText: string;
     computerSpecialText: string;
     playerReligiousText: string;
@@ -19,7 +14,7 @@ interface Props {
     emergencyText: any[] | (() => any[]);
 }
 
-const GameCombatText = ({ user, ascean, emergencyText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerAction, computerAction, playerCombatText, computerCombatText, combatData }: Props) => {
+const GameCombatText = ({ emergencyText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
     
     return (
         <div id="textarea">

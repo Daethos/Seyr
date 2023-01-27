@@ -280,18 +280,18 @@ class StatusEffect {
     }
     static updateBuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
 
-        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier) : 0;
-        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier) : 0;
-        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture) : 0;
-        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture) : 0;
-        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll) : 0;
-        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge) : 0;
-        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance) : 0;
-        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage) : 0;
-        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration) : 0;
-        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration) : 0;
-        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage) : 0;
-        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage) : 0;
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
         
         let cleanSlate = {};
         for (let key in realizedModifiers) {
@@ -335,7 +335,6 @@ class StatusEffect {
     }
     static updateHeal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
         realizedModifiers.healing = potentialModifiers.healing * 10;
-    
         return realizedModifiers;
     }
     getEffect() {
@@ -780,8 +779,9 @@ class StatusEffect {
         let intensity = {};
         intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
         let duration = this.setDuration(player);
+        let effect = this.setEffect(combatData, player, weapon, attributes, prayer);
         const article = ['a','e','i','o','u'].includes(weapon.name[0].toLowerCase()) ? "an" : "a";
-        let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing ${player.name} with a factor of ${intensity.value * intensity.magnitude * 10}` : prayer === 'Damage' ? `damaging ${enemy.name} to a factor of ${intensity.value * intensity.magnitude * 10}` : `blessing ${player.name}`} for ${duration} combat rounds.`;
+        let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing ${player.name} for ${Math.round(effect.healing)}` : prayer === 'Damage' ? `damaging ${enemy.name} for ${Math.round(effect.damage)}` : `blessing ${player.name}`} for ${duration} combat rounds.`;
         
         return this.description = description;
     }

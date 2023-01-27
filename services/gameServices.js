@@ -569,9 +569,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
-            existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+            existingEffect.tick.end += existingEffect.duration + 1;
             existingEffect.activeRefreshes += 1;
-            combatData.player_influence_description = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s).`;
+            combatData.player_influence_description = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         }    
     }
     if (combatData.dual_wielding === true) {
@@ -612,9 +612,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
-                existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+                existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.activeRefreshes += 1;
-                combatData.player_influence_description_two = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s).`;
+                combatData.player_influence_description_two = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             }    
         }
     }
@@ -655,9 +655,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             }
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
-            existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+            existingEffect.tick.end += existingEffect.duration + 1;
             existingEffect.activeRefreshes += 1;
-            combatData.computer_influence_description = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s).`;
+            combatData.computer_influence_description = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         }    
     }
     if (combatData.computer_dual_wielding === true) {
@@ -698,9 +698,9 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 }
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
-                existingEffect.tick.end = combatData.combatRound + existingEffect.duration;
+                existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.activeRefreshes += 1;
-                combatData.computer_influence_description_two = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s).`;
+                combatData.computer_influence_description_two = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             }    
         }
     }
@@ -1317,80 +1317,80 @@ const computerDamageTypeCompiter = async (combatData, weapon, computer_physical_
     if (combatData.computer_damage_type === 'Slash' || combatData.computer_damage_type === 'Wind' || combatData.computer_damage_type === 'Righteous' || combatData.computer_damage_type === 'Wild') {
         if (weapon.attack_type === 'Physical') {
             if (combatData.player.helmet.type === 'Plate-Mail') {
-                computer_physical_damage *= 0.92;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.helmet.type === 'Chain-Mail') {
-                computer_physical_damage *= 0.92;
+                computer_physical_damage *= 1;
             }   
             if (combatData.player.helmet.type === 'Leather-Mail') {
-                computer_physical_damage *= 1.08;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.helmet.type === 'Leather-Cloth') {
-                computer_physical_damage *= 1.08;
+                computer_physical_damage *= 1;
             }
     
             if (combatData.player.chest.type === 'Plate-Mail') {
-                computer_physical_damage *= 0.95;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Chain-Mail') {
-                computer_physical_damage *= 0.95;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Leather-Mail') {
-                computer_physical_damage *= 1.05;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Leather-Cloth') {
-                computer_physical_damage *= 1.05;
+                computer_physical_damage *= 1;
             }
     
             if (combatData.player.legs.type === 'Plate-Mail') {
-                computer_physical_damage *= 0.97;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Chain-Mail') {
-                computer_physical_damage *= 0.97;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Leather-Mail') {
-                computer_physical_damage *= 1.03;
+                computer_physical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Leather-Cloth') {
-                computer_physical_damage *= 1.03;
+                computer_physical_damage *= 1;
             }
         }
         if (weapon.attack_type === 'Magic') {
             if (combatData.player.helmet.type === 'Plate-Mail') {
-                computer_magical_damage *= 0.92;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.helmet.type === 'Chain-Mail') {
-                computer_magical_damage *= 0.92;
+                computer_magical_damage *= 1;
             }   
             if (combatData.player.helmet.type === 'Leather-Mail') {
-                computer_magical_damage *= 1.08;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.helmet.type === 'Leather-Cloth') {
-                computer_magical_damage *= 1.08;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Plate-Mail') {
-                computer_magical_damage *= 0.95;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Chain-Mail') {
-                computer_magical_damage *= 0.95;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Leather-Mail') {
-                computer_magical_damage *= 1.05;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.chest.type === 'Leather-Cloth') {
-                computer_magical_damage *= 1.05;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Plate-Mail') {
-                computer_magical_damage *= 0.97;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Chain-Mail') {
-                computer_magical_damage *= 0.97;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Leather-Mail') {
-                computer_magical_damage *= 1.03;
+                computer_magical_damage *= 1;
             }
             if (combatData.player.legs.type === 'Leather-Cloth') {
-                computer_magical_damage *= 1.03;
+                computer_magical_damage *= 1;
             }
         }
     }
@@ -1408,31 +1408,55 @@ const computerCriticalCompiler = async (combatData, critChance, critClearance, w
         computer_magical_damage *= weapon.critical_damage;
         combatData.computer_critical_success = true;
     }
-    if (critClearance > critChance + 90) {
+    if (critClearance > critChance + combatData.computer.level + 80) {
         computer_physical_damage *= 0.1;
         computer_magical_damage *= 0.1;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance + 80) {
+    } else if (critClearance > critChance + combatData.computer.level + 75) {
+        computer_physical_damage *= 0.15;
+        computer_magical_damage *= 0.15;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.computer.level + 70) {
         computer_physical_damage *= 0.2;
         computer_magical_damage *= 0.2;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance + 70) {
+    } else if (critClearance > critChance + combatData.computer.level + 65) {
+        computer_physical_damage *= 0.25;
+        computer_magical_damage *= 0.25;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.computer.level + 60) {
         computer_physical_damage *= 0.3;
         computer_magical_damage *= 0.3;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance + 60) {
+    } else if (critClearance > critChance + combatData.computer.level + 55) {
+        computer_physical_damage *= 0.35;
+        computer_magical_damage *= 0.35;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.computer.level + 50) {
         computer_physical_damage *= 0.4;
         computer_magical_damage *= 0.4;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance + 50) {
+    } else if (critClearance > critChance + combatData.computer.level + 45) {
+        computer_physical_damage *= 0.45;
+        computer_magical_damage *= 0.45;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.computer.level + 40) {
         computer_physical_damage *= 0.5;
         computer_magical_damage *= 0.5;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance + 40) {
+    } else if (critClearance > critChance + combatData.computer.level + 35) {
+        computer_physical_damage *= 0.55;
+        computer_magical_damage *= 0.55;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.computer.level + 30) {
         computer_physical_damage *= 0.6;
         computer_magical_damage *= 0.6;
         combatData.computer_glancing_blow = true;
-    } else if (critClearance > critChance + 30) {
+    } else if (critClearance > critChance + combatData.computer.level + 25) {
+        computer_physical_damage *= 0.65;
+        computer_magical_damage *= 0.65;
+        combatData.computer_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.computer.level + 20) {
         computer_physical_damage *= 0.7;
         computer_magical_damage *= 0.7;
         combatData.computer_glancing_blow = true;
@@ -1968,80 +1992,80 @@ const damageTypeCompiler = async (combatData, weapon, player_physical_damage, pl
 
         if (weapon.attack_type === 'Physical') {
             if (combatData.computer.helmet.type === 'Plate-Mail') {
-                player_physical_damage *= 0.92;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.helmet.type === 'Chain-Mail') {
-                player_physical_damage *= 0.92;
+                player_physical_damage *= 1;
             }   
             if (combatData.computer.helmet.type === 'Leather-Mail') {
-                player_physical_damage *= 1.08;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.helmet.type === 'Leather-Cloth') {
-                player_physical_damage *= 1.08;
+                player_physical_damage *= 1;
             }
     
             if (combatData.computer.chest.type === 'Plate-Mail') {
-                player_physical_damage *= 0.95;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Chain-Mail') {
-                player_physical_damage *= 0.95;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Leather-Mail') {
-                player_physical_damage *= 1.05;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Leather-Cloth') {
-                player_physical_damage *= 1.05;
+                player_physical_damage *= 1;
             }
     
             if (combatData.computer.legs.type === 'Plate-Mail') {
-                player_physical_damage *= 0.97;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Chain-Mail') {
-                player_physical_damage *= 0.97;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Leather-Mail') {
-                player_physical_damage *= 1.03;
+                player_physical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Leather-Cloth') {
-                player_physical_damage *= 1.03;
+                player_physical_damage *= 1;
             }
         }
         if (weapon.attack_type === 'Magic') {
             if (combatData.computer.helmet.type === 'Plate-Mail') {
-                player_magical_damage *= 0.92;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.helmet.type === 'Chain-Mail') {
-                player_magical_damage *= 0.92;
+                player_magical_damage *= 1;
             }   
             if (combatData.computer.helmet.type === 'Leather-Mail') {
-                player_magical_damage *= 1.08;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.helmet.type === 'Leather-Cloth') {
-                player_magical_damage *= 1.08;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Plate-Mail') {
-                player_magical_damage *= 0.95;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Chain-Mail') {
-                player_magical_damage *= 0.95;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Leather-Mail') {
-                player_magical_damage *= 1.05;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.chest.type === 'Leather-Cloth') {
-                player_magical_damage *= 1.05;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Plate-Mail') {
-                player_magical_damage *= 0.97;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Chain-Mail') {
-                player_magical_damage *= 0.97;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Leather-Mail') {
-                player_magical_damage *= 1.03;
+                player_magical_damage *= 1;
             }
             if (combatData.computer.legs.type === 'Leather-Cloth') {
-                player_magical_damage *= 1.03;
+                player_magical_damage *= 1;
             }
         }
 
@@ -2063,31 +2087,55 @@ const criticalCompiler = async (combatData, critChance, critClearance, weapon, p
         combatData.critical_success = true;
     }
 
-    if (critClearance > critChance + 90) {
+    if (critClearance > critChance + combatData.player.level + 80) {
         player_physical_damage *= 0.1;
         player_magical_damage *= 0.1;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance + 80) {
+    } else if (critClearance > critChance + combatData.player.level + 75) {
+        player_physical_damage *= 0.15;
+        player_magical_damage *= 0.15;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 70) {
         player_physical_damage *= 0.2;
         player_magical_damage *= 0.2;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance + 70) {
+    } else if (critClearance > critChance + combatData.player.level + 65) {
+        player_physical_damage *= 0.25;
+        player_magical_damage *= 0.25;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 60) {
         player_physical_damage *= 0.3;
         player_magical_damage *= 0.3;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance + 60) {
+    } else if (critClearance > critChance + combatData.player.level + 55) {
+        player_physical_damage *= 0.35;
+        player_magical_damage *= 0.35;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 50) {
         player_physical_damage *= 0.4;
         player_magical_damage *= 0.4;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance + 50) {
+    } else if (critClearance > critChance + combatData.player.level + 45) {
+        player_physical_damage *= 0.45;
+        player_magical_damage *= 0.45;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 40) {
         player_physical_damage *= 0.5;
         player_magical_damage *= 0.5;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance + 40) {
+    } else if (critClearance > critChance + combatData.player.level + 35) {
+        player_physical_damage *= 0.55;
+        player_magical_damage *= 0.55;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 30) {
         player_physical_damage *= 0.6;
         player_magical_damage *= 0.6;
         combatData.glancing_blow = true;
-    } else if (critClearance > critChance + 30) {
+    } else if (critClearance > critChance + combatData.player.level + 25) {
+        player_physical_damage *= 0.65;
+        player_magical_damage *= 0.65;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 20) {
         player_physical_damage *= 0.7;
         player_magical_damage *= 0.7;
         combatData.glancing_blow = true;
@@ -2213,10 +2261,12 @@ const actionSplitter = async (combatData) => {
         player_damage_type: combatData.player_damage_type,
         player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
         player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
+        player_defense_default: combatData.player_defense_default, // Possesses Base Defenses
         computer: combatData.computer, // Computer Enemy
         computer_health: combatData.computer_health,
         computer_attributes: combatData.computer_attributes, // Possesses compiled Attributes, Initiative
         computer_defense: combatData.computer_defense, // Posseses Base + Postured Defenses
+        computer_defense_default: combatData.computer_defense_default, // Possesses Base Defenses
         computer_action: '', // Action Chosen By Computer
         computer_counter_guess: '', // Comp's Counter Guess if Action === 'Counter'
         computer_weapons: combatData.computer_weapons,  // All 3 Weapons
@@ -2271,7 +2321,15 @@ const actionSplitter = async (combatData) => {
         computerEffects: combatData.computerEffects,
         playerBlessing: combatData.playerBlessing,
         computerBlessing: combatData.computerBlessing,
-    }
+        combatInitiated: combatData.combatInitiated,
+        actionStatus: combatData.actionStatus,
+        gameIsLive: combatData.gameIsLive,
+        combatEngaged: combatData.combatEngaged,
+        dodgeStatus: combatData.dodgeStatus,
+        highScore: combatData.highScore,
+        winStreak: combatData.winStreak,
+        loseStreak: combatData.loseStreak,
+    };
     // console.log(newData, 'Combat Data in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;
     const computer_initiative = newData.computer_attributes.initiative;

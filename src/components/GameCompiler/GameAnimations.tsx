@@ -6,9 +6,6 @@ interface Props {
     computerAction: string;
     playerDamageTotal: number;
     computerDamageTotal: number;
-    combatInitiated: boolean;
-    setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
-    sleep: (ms: number) => Promise<unknown>;
     playerCritical: boolean;
     computerCritical: boolean;
     roll_success: boolean;
@@ -17,7 +14,7 @@ interface Props {
     computerCounterSuccess: boolean;
 }
 
-const GameAnimations = ({ sleep, roll_success, computer_roll_success, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, combatInitiated, setCombatInitiated }: Props) => {
+const GameAnimations = ({ roll_success, computer_roll_success, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical }: Props) => {
 
     const critStyle = {
         backgroundColor: 'red',

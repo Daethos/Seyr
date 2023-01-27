@@ -8,16 +8,16 @@ import StatusEffects from './StatusEffects';
 interface Props {
   ascean: any;
   currentPlayerHealth: number;
-  combatData: any;
   player: boolean;
   loading: boolean;
   totalPlayerHealth: number;
+  state: any;
 }
 
-const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, totalPlayerHealth, loading }: Props) => {
+const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading }: Props) => {
 
   const getBlockStyle = {
-    marginTop: combatData.playerEffects.length > 0 ? '10%' : '36%',
+    marginTop: state.playerEffects.length > 0 ? '10%' : '36%',
   }
 
   if (loading) {
@@ -29,18 +29,18 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, totalPlay
     <>
     { player ?
       <div id='game-block' className="game-block" style={getBlockStyle}>
-        {combatData.playerEffects.length > 0 ?
-          (combatData.playerEffects.map((effect: any, index: number) => {
+        {state.playerEffects.length > 0 ?
+          (state.playerEffects.map((effect: any, index: number) => {
             return ( <StatusEffects effect={effect} player={true} key={index} /> )
         })) : '' }
       <div className="">
-      <GamePlayerStats attributes={combatData.player_attributes} player={combatData.player} magicalDefense={combatData.player_defense.magicalDefenseModifier} magicalPosture={combatData.player_defense.magicalPosture} physicalDefense={combatData.player_defense.physicalDefenseModifier} physicalPosture={combatData.player_defense.physicalPosture} />
+      <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
         <AsceanImageCard
-            weapon_one={combatData.weapons[0]}
-            weapon_two={combatData.weapons[1]}
-            weapon_three={combatData.weapons[2]}
+            weapon_one={state.weapons[0]}
+            weapon_two={state.weapons[1]}
+            weapon_three={state.weapons[2]}
             shield={ascean.shield}
             helmet={ascean.helmet}
             chest={ascean.chest}
@@ -60,13 +60,13 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, totalPlay
     : 
     <div className="game-block" id='opponent-block'>
     <div className="">
-    <GamePlayerStats attributes={combatData.computer_attributes} player={combatData.computer} magicalDefense={combatData.computer_defense.magicalDefenseModifier} magicalPosture={combatData.computer_defense.magicalPosture} physicalDefense={combatData.computer_defense.physicalDefenseModifier} physicalPosture={combatData.computer_defense.physicalPosture} />
+    <GamePlayerStats attributes={state.computer_attributes} player={state.computer} magicalDefense={state.computer_defense.magicalDefenseModifier} magicalPosture={state.computer_defense.magicalPosture} physicalDefense={state.computer_defense.physicalDefenseModifier} physicalPosture={state.computer_defense.physicalPosture} />
     <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
     </div>
       <AsceanImageCard
-          weapon_one={combatData.computer_weapons[0]}
-          weapon_two={combatData.computer_weapons[1]}
-          weapon_three={combatData.computer_weapons[2]}
+          weapon_one={state.computer_weapons[0]}
+          weapon_two={state.computer_weapons[1]}
+          weapon_three={state.computer_weapons[2]}
           shield={ascean.shield}
           helmet={ascean.helmet}
           chest={ascean.chest}
@@ -81,8 +81,8 @@ const GameAscean = ({ ascean, player, currentPlayerHealth, combatData, totalPlay
       />
     <div className="actions">
     </div>
-    {combatData.computerEffects.length > 0 ?
-          (combatData.computerEffects.map((effect: any, index: number) => {
+    {state.computerEffects.length > 0 ?
+          (state.computerEffects.map((effect: any, index: number) => {
             return ( <StatusEffects effect={effect} key={index} /> )
         })) : '' }
     </div>

@@ -33,8 +33,8 @@ const StatusEffects = ({ effect, player }: Props) => {
                     {effect?.effect?.magicalDefenseModifier ? <>Magical Defense: {effect?.effect?.magicalDefenseModifier} <br /> </> : ''}
                     {effect?.effect?.roll ? <>Roll: {effect?.effect?.roll} <br /> </> : ''}
                     {effect?.effect?.dodge ? <>Dodge: {effect?.effect?.dodge} <br /> </> : ''}
-                    {effect?.effect?.healing ? <>Healing (over Time): {effect?.effect?.healing} <br /> </> : ''}
-                    {effect?.effect?.damage ? <>Damage (over Time): {effect?.effect?.damage} <br /> </> : ''}
+                    {effect?.effect?.healing ? <>Healing (over Time): {Math.round(effect?.effect?.healing)} <br /> </> : ''}
+                    {effect?.effect?.damage ? <>Damage (over Time): {Math.round(effect?.effect?.damage)} <br /> </> : ''}
                 </p>
             </Popover.Body>
         </Popover>

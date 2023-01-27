@@ -219,7 +219,7 @@ async function saveExperience(req, res) {
         if (currencyValue === 1) { // Opponent Level 1, 1-2 Silver
             silver = Math.floor(Math.random() * 2) + 1;
             gold = 0;
-        } else if (currencyValue > 2 && currencyValue < 11) {  // Opponent Level 2-10, 2-99 Silver
+        } else if (currencyValue >= 2 && currencyValue < 11) {  // Opponent Level 2-10, 2-99 Silver
             silver = Math.floor(Math.random() * 10) + 1;
             silver *= currencyValue;
             gold = 0;

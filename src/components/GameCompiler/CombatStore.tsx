@@ -1,7 +1,5 @@
-import { useReducer } from 'react'
-
 interface CombatData {
-    player: object;
+    player: any;
     action: string;
     player_action: string;
     counter_guess: string;
@@ -17,12 +15,13 @@ interface CombatData {
     player_damage_type: string;
     player_defense: object;
     player_attributes: object;
+    player_defense_default: object;
 
     player_start_description: string;
     player_special_description: string;
     player_action_description: string;
-    palyer_influence_decsription: string;
-    player_influence_decsription_two: string;
+    player_influence_description: string;
+    player_influence_description_two: string;
     player_death_description: string;
 
     critical_success: boolean;
@@ -33,7 +32,7 @@ interface CombatData {
     roll_success: boolean;
     player_win: boolean;
 
-    computer: object;
+    computer: any;
     computer_action: string;
     computer_counter_guess: string;
     computerBlessing: string;
@@ -48,6 +47,7 @@ interface CombatData {
     computer_damage_type: string;
     computer_defense: object;
     computer_attributes: object;
+    computer_defense_default: object;
 
     attack_weight: number;
     counter_weight: number;
@@ -63,8 +63,8 @@ interface CombatData {
     computer_start_description: string;
     computer_special_description: string;
     computer_action_description: string;
-    computer_influence_decsription: string;
-    computer_influence_decsription_two: string;
+    computer_influence_description: string;
+    computer_influence_description_two: string;
     computer_death_description: string;
 
     computer_critical_success: boolean;
@@ -75,8 +75,16 @@ interface CombatData {
     computer_roll_success: boolean;
     computer_win: boolean;
 
+    combatInitiated: boolean;
+    actionStatus: boolean;
+    gameIsLive: boolean;
+    combatEngaged: boolean;
+    dodgeStatus: boolean;
     combatRound: number;
     sessionRound: number;
+    highScore: number;
+    winStreak: number;
+    loseStreak: number;
 }
 
 interface Action {
@@ -92,18 +100,25 @@ export const ACTIONS = {
     RESET_COMPUTER: 'RESET_COMPUTER',
     RESET_DUEL: 'RESET_DUEL',
     SET_NEW_COMPUTER: 'SET_NEW_COMPUTER',
+    SET_ACTION_STATUS: 'SET_ACTION_STATUS',
     SET_COMBAT_ACTION: 'SET_COMBAT_ACTION',
     SET_COMBAT_COUNTER: 'SET_COMBAT_COUNTER',
+    SET_COMBAT_INITIATED: 'SET_COMBAT_INITIATED',
     SET_DAMAGE_TYPE: 'SET_DAMAGE_TYPE',
+    SET_DODGE_STATUS: 'SET_DODGE_STATUS',
     SET_PRAYER_BLESSING: 'SET_PRAYER_BLESSING',
     SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
     INITIATE_COMBAT: 'INITIATE_COMBAT',
     SET_PLAYER_QUICK: 'SET_PLAYER_QUICK',
     SET_PLAYER_SLICK: 'SET_PLAYER_SLICK',
     SAVE_EXPERIENCE: 'SAVE_EXPERIENCE',
+    CLEAR_COUNTER: 'CLEAR_COUNTER',
+    AUTO_ENGAGE: 'AUTO_ENGAGE',
+    PLAYER_WIN: 'PLAYER_WIN',
+    COMPUTER_WIN: 'COMPUTER_WIN',
 }
 
-const initialCombatData: CombatData = {
+export const initialCombatData: CombatData = {
     player: {},
     action: '',
     player_action: '',
@@ -120,11 +135,12 @@ const initialCombatData: CombatData = {
     player_damage_type: '',
     player_defense: {},
     player_attributes: {},
+    player_defense_default: {},
     player_start_description: '',
     player_special_description: '',
     player_action_description: '',
-    palyer_influence_decsription: '',
-    player_influence_decsription_two: '',
+    player_influence_description: '',
+    player_influence_description_two: '',
     player_death_description: '',
     critical_success: false,
     counter_success: false,
@@ -148,6 +164,7 @@ const initialCombatData: CombatData = {
     computer_damage_type: '',
     computer_defense: {},
     computer_attributes: {},
+    computer_defense_default: {},
     attack_weight: 0,
     counter_weight: 0,
     dodge_weight: 0,
@@ -161,8 +178,8 @@ const initialCombatData: CombatData = {
     computer_start_description: '',
     computer_special_description: '',
     computer_action_description: '',
-    computer_influence_decsription: '',
-    computer_influence_decsription_two: '',
+    computer_influence_description: '',
+    computer_influence_description_two: '',
     computer_death_description: '',
     computer_critical_success: false,
     computer_counter_success: false,
@@ -171,11 +188,19 @@ const initialCombatData: CombatData = {
     computer_religious_success: false,
     computer_roll_success: false,
     computer_win: false,
+    combatInitiated: false,
+    actionStatus: false,
+    gameIsLive: false,
+    combatEngaged: false,
+    dodgeStatus: false,
     combatRound: 0,
     sessionRound: 0,
+    highScore: 0,
+    winStreak: 0,
+    loseStreak: 0,
 }
 
-const CombatStore = (state: CombatData, action: Action) => {
+export const CombatStore = (state: CombatData, action: Action) => {
 
     switch (action.type) {
         case 'SET_PLAYER':
@@ -191,7 +216,8 @@ const CombatStore = (state: CombatData, action: Action) => {
                 weapon_three: action.payload.combat_weapon_three,
                 player_defense: action.payload.defense,
                 player_attributes: action.payload.attributes,
-                player_damage_type: action.payload.combat_weapon_one.damage_type[0]
+                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                highScore: action.payload.ascean.highScore,
             };
         case 'SET_COMPUTER':
             return {
@@ -211,6 +237,8 @@ const CombatStore = (state: CombatData, action: Action) => {
         case 'SET_DUEL':
             return {
                 ...state,
+                gameIsLive: true,
+                combatEngaged: true,
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
             };
@@ -228,9 +256,13 @@ const CombatStore = (state: CombatData, action: Action) => {
                 player_damage_type: state.current_player_health === 0 ? action.payload.weaponOne.damage_type[0] : state.player_damage_type,
                 current_computer_health: action.payload.computerHealth,
                 new_computer_health: action.payload.computerHealth,
+                combatEngaged: true,
+                gameIsLive: true,
                 player_win: false,
                 computer_win: false,
                 combatRound: 1,
+                sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
+                winStreak: 0,
             };
         case 'RESET_COMPUTER': // Computer Is Dead
             return {
@@ -239,9 +271,13 @@ const CombatStore = (state: CombatData, action: Action) => {
                 new_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
                 current_computer_health: state.computer_health,
                 new_computer_health: state.computer_health,
+                combatEngaged: true,
+                gameIsLive: true,
                 player_win: false,
                 computer_win: false,
                 combatRound: 1,
+                sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
+                winStreak: state.player.level > state.computer.level ? 0: state.winStreak,
             };
         case 'SET_NEW_COMPUTER': // Fetching New Opponent
             return {
@@ -260,12 +296,32 @@ const CombatStore = (state: CombatData, action: Action) => {
                 computer_attributes: action.payload.attributes,
                 combatRound: 1,
             };
+        case 'AUTO_ENGAGE':
+            return {
+                ...state,
+                gameIsLive: action.payload,
+            };
+        case 'CLEAR_COUNTER':
+            return {
+                ...state,
+                counter_guess: ''
+            };
+        case 'SET_ACTION_STATUS':
+            return {
+                ...state,
+                actionStatus: action.payload,
+            }
         case 'SET_COMBAT_ACTION':
             return {
                 ...state,
                 action: action.payload,
                 counter_guess: '',
             };
+        case 'SET_COMBAT_INITIATED':
+            return {
+                ...state,
+                combatInitiated: action.payload,
+            }
         case 'SET_COMBAT_COUNTER':
             return {
                 ...state,
@@ -278,11 +334,16 @@ const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player_damage_type: action.payload,
             };
+        case 'SET_DODGE_STATUS':
+            return {
+                ...state,
+                dodgeStatus: action.payload,
+            };
         case 'SET_PRAYER_BLESSING':
             return {
                 ...state,
                 playerBlessing: action.payload,
-            }
+            };
         case 'SET_WEAPON_ORDER':
             return {
                 ...state,
@@ -291,9 +352,31 @@ const CombatStore = (state: CombatData, action: Action) => {
             };
         case 'INITIATE_COMBAT':
             return {
-                ...state,
+                ...action.payload,
                 action: '',
+                actionStatus: true,
+                dodgeStatus: action.payload.action === 'dodge' ? true : action.payload.dodgeStatus === true ? true : false,
+                combatInitiated: true,
             };
+        case 'PLAYER_WIN':
+            return {
+                ...state,
+                winStreak: state.winStreak + 1,
+                highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
+                loseStreak: 0,
+                gameIsLive: false,
+                combatEngaged: false,
+                dodgeStatus: false,
+            };
+        case 'COMPUTER_WIN':
+            return {
+                ...state,
+                loseStreak: state.loseStreak + 1,
+                winStreak: 0,
+                gameIsLive: false,
+                combatEngaged: false,
+                dodgeStatus: false,
+            }
         case 'SET_PLAYER_QUICK':
             return {
                 ...state,
@@ -311,16 +394,13 @@ const CombatStore = (state: CombatData, action: Action) => {
                 player_defense: action.payload.defense,
                 player_attributes: action.payload.attributes,
                 player_damage_type: action.payload.combat_weapon_one.damage_type[0],
-            }
+            };
         case 'SAVE_EXPERIENCE':
             return {
                 ...state,
                 player: action.payload,
-                player_win: false,
-            }
+            };
         default: 
             return state;
     }
 }
-
-export const [state, dispatch] = useReducer(CombatStore, initialCombatData);
