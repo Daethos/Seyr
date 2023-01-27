@@ -38,7 +38,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1));
     } else {
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1));
-      // setCombatData({ ...combatData, 'counter_guess': '' }); // Turns into Dispatch via useReducer
       dispatch({ type: ACTIONS.CLEAR_COUNTER, payload: '' });
     }
   }, [currentAction, currentCounter])
@@ -61,7 +60,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
         if (dropdownRef.current) {
             dropdownRef!.current.selectedIndex = 0;
         }
-        // setCombatInitiated(false);
         dispatch({
           type: ACTIONS.SET_COMBAT_INITIATED,
           payload: false
@@ -72,7 +70,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {
-      // setDodgeStatus(false);
       dispatch({
         type: ACTIONS.SET_DODGE_STATUS,
         payload: false,
@@ -83,7 +80,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
 
   useEffect(() => {
     const initiateTimer = setTimeout(() => {
-      // setActionStatus(false);
       dispatch({
         type: ACTIONS.SET_ACTION_STATUS,
         payload: false

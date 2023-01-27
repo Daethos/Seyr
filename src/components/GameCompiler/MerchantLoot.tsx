@@ -170,10 +170,8 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) 
                 {item?.rarity}
                 <br />
                 
-                {
-                    thisItemPurchased ?
-                    ""
-                    :
+                { thisItemPurchased ? ""
+                :
                     <>
                     Price:{' '} 
                     {purchaseSetting?.cost?.gold}g{' '}
@@ -209,7 +207,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) 
     
     return (
         <>
-            <OverlayTrigger trigger="click" placement="auto-start" overlay={merchantItemPopover}>
+            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={merchantItemPopover}>
                 <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + item.imgURL} alt={item?.name} /></Button>
             </OverlayTrigger>
         </>

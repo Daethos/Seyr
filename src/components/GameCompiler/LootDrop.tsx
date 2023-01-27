@@ -117,7 +117,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
     return (
         <div>
         You have found a {lootDrop?.name}. <br />
-        <OverlayTrigger trigger="click" placement="auto-start" overlay={lootDropPopover}>
+        <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={lootDropPopover}>
             <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></Button>
         </OverlayTrigger>
         </div>

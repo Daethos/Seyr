@@ -1,5 +1,5 @@
 import { right } from '@popperjs/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -56,6 +56,11 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     useEffect(() => {
       checkInventory();
     }, [ascean, inventory]);
+    const [popoverOpen, setPopoverOpen] = useState(false);
+    const target = useRef(null);
+  
+    
+    
 
     function canUpgrade(inventory: any[], id: string): boolean {
         const matches = inventory.filter(item => item._id === id);
@@ -324,7 +329,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>
             </Modal.Body>
         </Modal>
-        <OverlayTrigger trigger="click" placement="auto-start" overlay={inventoryPopover}>
+        <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
             <Button variant="" className="inventory-icon" style={getItemStyle}><img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} /></Button>
         </OverlayTrigger>
         </>

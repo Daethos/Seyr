@@ -44,7 +44,7 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
       );
     return (
         <div style={{ textAlign: 'center' }}>
-        <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
+        <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={playerPopover}>
         <Button variant="">
             <div className="">
             <h3 style={{ fontSize: 13 + 'px', color: '#fdf6d8', textDecoration: 'none' }} className='gameplayername'>

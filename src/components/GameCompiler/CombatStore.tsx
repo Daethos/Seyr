@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 interface CombatData {
     player: any;
     action: string;
@@ -396,4 +398,24 @@ export const CombatStore = (state: CombatData, action: Action) => {
         default: 
             return state;
     }
+}
+
+export const useInterval = (callback: () => void, delay: number) => {
+    const savedCallback = useRef<() => void>();
+
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+        function tick() {
+            if (savedCallback.current) {
+                savedCallback.current();
+            }
+        }
+        if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }   
+    }, [delay]);
 }
