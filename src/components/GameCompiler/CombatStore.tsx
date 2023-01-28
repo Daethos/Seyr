@@ -239,7 +239,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'SET_DUEL':
             return {
                 ...state,
-                gameIsLive: true,
+                gameIsLive: false,
                 combatEngaged: true,
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
@@ -252,7 +252,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 current_computer_health: state.computer_health,
                 new_computer_health: state.computer_health,
                 combatEngaged: true,
-                gameIsLive: true,
+                gameIsLive: false,
                 player_win: false,
                 computer_win: false,
                 combatRound: 1,
@@ -267,7 +267,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 current_computer_health: state.computer_health,
                 new_computer_health: state.computer_health,
                 combatEngaged: true,
-                gameIsLive: true,
+                gameIsLive: false,
                 player_win: false,
                 computer_win: false,
                 combatRound: 1,
