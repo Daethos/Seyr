@@ -21,15 +21,11 @@ const FaithCard = ({ faith }: FaithProps) => {
         </Popover>
     )
 
-  return (
+    return (
         <OverlayTrigger trigger="click" placement="auto-start" overlay={faithPopover}>
-            <Button 
-                variant="" 
-                className="m-2 p-2 faith-button btn btn-outline"
-                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-                >{faith.name}</Button>
+            <Button variant="" className="m-2 p-2 faith-button btn btn-outline" style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>{faith.name}</Button>
         </OverlayTrigger>
-  )
+    )
 }
 
 export default FaithCard

@@ -1,4 +1,3 @@
-
 interface Props {
     spaceCount: number;
 }
@@ -6,11 +5,9 @@ interface Props {
 const NewLine = ({ spaceCount }: Props) => {
   return (
     <>
-    {
-        Array.from({ length: spaceCount }, (item, index) => {
-            return <br key={index} />
-        })
-    }
+    { Array.from({ length: spaceCount }, (item, index) => {
+      return <br key={index} />
+    })}
     </>
   )
 }

@@ -10,50 +10,46 @@ interface Props {
 const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     
-    const [weaponOne, setWeaponOne] = useState<any>({})
-    const [weaponTwo, setWeaponTwo] = useState<any>({})
-    const [weaponThree, setWeaponThree] = useState<any>({})
+    const [weaponOne, setWeaponOne] = useState<any>({});
+    const [weaponTwo, setWeaponTwo] = useState<any>({});
+    const [weaponThree, setWeaponThree] = useState<any>({});
 
-    const [physicalDefense, setPhysicalDefense] = useState<number>(0)
-    const [magicalDefense, setMagicalDefense] = useState<number>(0)
-    const [physicalPosture, setPhysicalPosture] = useState<number>(0)
-    const [magicalPosture, setMagicalPosture] = useState<number>(0)
+    const [physicalDefense, setPhysicalDefense] = useState<number>(0);
+    const [magicalDefense, setMagicalDefense] = useState<number>(0);
+    const [physicalPosture, setPhysicalPosture] = useState<number>(0);
+    const [magicalPosture, setMagicalPosture] = useState<number>(0);
 
-    const [attributes, setAttributes] = useState<any>([])
-    // const [defense, setDefense] = useState<any>([])
+    const [attributes, setAttributes] = useState<any>([]);
 
     useEffect(() => {
-      asceanStatCompiler()
-      console.log(typeof (weaponOne.critical_chance), typeof (weaponOne.critical_damage))
+      asceanStatCompiler();
     }, [])
     
 
     async function asceanStatCompiler() {
-        setLoading(true)
+        setLoading(true);
         try {
-            const response = await asceanAPI.getAsceanStats(ascean._id)
-            //console.log(response.data.data.attributes, 'Response Compiling Stats')
-            setWeaponOne(response.data.data.combat_weapon_one)
-            setWeaponTwo(response.data.data.combat_weapon_two)
-            setWeaponThree(response.data.data.combat_weapon_three)
-            // setDefense(response.data.data.defense)
-            setAttributes(response.data.data.attributes)
-            setPhysicalDefense(response.data.data.defense.physicalDefenseModifier)
-            setMagicalDefense(response.data.data.defense.magicalDefenseModifier)
-            setPhysicalPosture(response.data.data.defense.physicalPosture)
-            setMagicalPosture(response.data.data.defense.magicalPosture)
-            setLoading(false)
+            const response = await asceanAPI.getAsceanStats(ascean._id);
+            setWeaponOne(response.data.data.combat_weapon_one);
+            setWeaponTwo(response.data.data.combat_weapon_two);
+            setWeaponThree(response.data.data.combat_weapon_three);
+            setAttributes(response.data.data.attributes);
+            setPhysicalDefense(response.data.data.defense.physicalDefenseModifier);
+            setMagicalDefense(response.data.data.defense.magicalDefenseModifier);
+            setPhysicalPosture(response.data.data.defense.physicalPosture);
+            setMagicalPosture(response.data.data.defense.magicalPosture);
+            setLoading(false);
         } catch (err: any) {
-            setLoading(false)
-            console.log(err.message, 'Error Compiling Ascean Stats')
+            setLoading(false);
+            console.log(err.message, 'Error Compiling Ascean Stats');
         }
     }
 
     if (loading) {
         return (
             <Loading NavBar={true} />
-        )
-    }
+        );
+    };
 
     return (
     <>

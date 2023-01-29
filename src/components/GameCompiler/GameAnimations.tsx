@@ -7,13 +7,13 @@ interface Props {
     computerDamageTotal: number;
     playerCritical: boolean;
     computerCritical: boolean;
-    roll_success: boolean;
-    computer_roll_success: boolean;
+    rollSuccess: boolean;
+    computerRollSuccess: boolean;
     counterSuccess: boolean;
     computerCounterSuccess: boolean;
 }
 
-const GameAnimations = ({ roll_success, computer_roll_success, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical }: Props) => {
+const GameAnimations = ({ rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical }: Props) => {
 
     const critStyle = {
         backgroundColor: 'red',
@@ -33,7 +33,7 @@ const GameAnimations = ({ roll_success, computer_roll_success, counterSuccess, c
                 <br />
                 {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) : ''}
             </div>
-        : computer_roll_success || computerCounterSuccess ?
+        : computerRollSuccess || computerCounterSuccess ?
             <div className="computer hidden" style={rollStyle} id='computer-animation'>
                 {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
@@ -53,7 +53,7 @@ const GameAnimations = ({ roll_success, computer_roll_success, counterSuccess, c
                 <br />
                 {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) : ''}
             </div>
-        : roll_success || counterSuccess ?
+        : rollSuccess || counterSuccess ?
             <div className="player pulse" style={rollStyle} id='player-animation'>
                 {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                 <br />

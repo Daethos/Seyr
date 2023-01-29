@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import * as friendAPI from '../../utils/friendApi';
 import Loading from '../Loading/Loading';
 import { Nav } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import FriendsList from '../FriendsList/FriendsList';
 import NavBarSearch from './NavBarSearch';

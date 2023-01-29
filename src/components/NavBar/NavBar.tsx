@@ -31,8 +31,6 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [relayStatus, setRelayStatus] = useState<boolean>(false);
-
   const [allAscean, setAllAscean] = useState<any>([]);
   const [highScores, setHighScores] = useState<any>([]);
 
@@ -49,13 +47,11 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
   const handleStoryShow = () => setStoryOffCanvas(true);
 
   function compareScores(a: any, b: any) {
-    // console.log(a[0].ascean, ': ', a[0].score, ' vs ', b[0].ascean, ': ', b[0].score)
     return a[0].score - b[0].score;
    
   }
 
   useEffect(() => {
-    // console.log(highScores, 'It has updated')
   }, [highScores])
 
   useEffect(() => {
@@ -67,7 +63,6 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
     setLoading(true);
     try {
       const response = await asceanAPI.getAllAscean();
-      // console.log(response.data, '<- the response in Get All Ascean');
       setAsceanVaEsai([...response.data.reverse()])
       setLoading(false)
     } catch (err) {
@@ -245,16 +240,6 @@ async function getAllAscean() {
         {' '}I have the mechanism built to populate it, so now it's simply the grind to get it done. By extension, this will open up concepts of making the game more interactive beyond combat.
         {' '}Various services, quests, and such will pass through this model I imagine. I guess we'll find out ^_^
       </p>
-        {/* <h6 style={{ textAlign: 'center' }} >
-        <Accordion >
-        <Accordion.Item eventKey="0">
-        <Accordion.Header>High Scores [Public] :</Accordion.Header>
-        <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
-        
-        </Accordion.Body>
-        </Accordion.Item>
-        </Accordion>
-        </h6> */}
       { asceanVaEsai.map((ascean: any, index: number) => 
           (<Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id} key={index} 
             style={{ color: '#fdf6d8' }} onClick={handleSoloClose}

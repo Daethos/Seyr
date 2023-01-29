@@ -8,22 +8,13 @@ interface Props {
 const UserMessageCard = ({ user, message }: Props) => {
   return (
     <>
-    {
-        message.username === user.username
-        ? 
-        // <>
-                    
-            <span className="user-message" style={{color: 'blue'}}>
-                {/* <div> */}
-                [{formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}]
-                {' '} 
-                {message.message}
-                {/* {'\n'} */}
-                {/* </div> */}
-            </span>
-        // </>
-        : ''
-    }
+    { message.username === user.username ? 
+      <span className="user-message" style={{color: 'blue'}}>
+        [{formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}]
+        {' '} 
+        {message.message}
+      </span>
+    : '' }
     </>
   )
 }

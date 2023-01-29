@@ -2,16 +2,9 @@ import Phaser from 'phaser';
 import PlayerHelm from "../game/PlayerHelm";
 import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
-import VirtualJoystick from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
-import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import NewText from './NewText.js'
-import { addBorderToText } from './TextBorder';
-import { Graphics } from 'phaser';
-import joystickPng from './images/generic-joystick.png';
-import joystickJson from './images/generic-joystick.json';
 import stick from './images/stick.png';
 import base from './images/base.png';
-import VirtualJoyStick from 'phaser3-rex-plugins/plugins/virtualjoystick';
 
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -22,7 +15,6 @@ export default class Play extends Phaser.Scene {
     }
     
     init(data) {
-        // console.log(data, 'Data from Play');
         this.data = data;
         this.gameData = this.data.gameData.ascean.gameData.ascean;
         this.CONFIG = this.sys.game.config;
@@ -41,11 +33,6 @@ export default class Play extends Phaser.Scene {
     }
     
     create() {
-        // console.log(this, 'What is this?')
-
-        // window.addEventListener('full-screen', this.fullScreenEventListener(this));
-        // window.addEventListener('exit-full-screen', this.exitFullScreenEventListener(this));
-
         let player_armor = this.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
         let player_helm = this.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
         let player_legs = this.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
@@ -78,7 +65,6 @@ export default class Play extends Phaser.Scene {
         let helm_texture = player_helm.replace('_helm', '');
         let legs_texture = player_legs.replace('_legs', '');
 
-        // console.log(player_armor, player_helm, player_legs, ' <- Player Frames', armor_texture, helm_texture, legs_texture, ' <- Player Textures');
         const map = this.make.tilemap({ key: 'map' });
         const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
         const atlasTerrain = map.addTilesetImage('Atlas Terrain', 'terrain', 32, 32, 0, 0);
@@ -95,10 +81,6 @@ export default class Play extends Phaser.Scene {
         this.playerArmor = new PlayerArmor({scene: this, x: 100, y: 110, texture: armor_texture, frame: `${player_armor}_idle`});
         this.playerLegs = new PlayerLegs({scene: this, x: 100, y: 120, texture: legs_texture, frame: `${player_legs}_idle`});
 
-        // this.playerHelm.setScale(1);
-        // this.playerArmor.setScale(1);
-        // this.playerLegs.setScale(1);
-
         // Get the top and bottom coordinates of each object
         let objectATop = this.playerHelm.getTopLeft().y;
         let objectABottom = this.playerHelm.getBottomRight().y;
@@ -114,8 +96,6 @@ export default class Play extends Phaser.Scene {
         let objectB = this.playerArmor;
         let objectC = this.playerLegs;
 
-        let totalWidth = (objectA.width * objectA.scale) + (objectB.width * objectB.scale) + (objectC.width * objectC.scale);
-
         console.log(objectA.displayHeight, objectB.displayHeight, objectC.displayHeight, ' <- Widths');
 
         objectB.setOrigin(0.5, 0.5);
@@ -128,10 +108,6 @@ export default class Play extends Phaser.Scene {
         this.playerHelm = objectA;
         this.playerArmor = objectB;
         this.playerLegs = objectC;
-
-
-
-  
 
         let camera = this.cameras.main;
         camera.zoom = 1;
@@ -164,9 +140,7 @@ export default class Play extends Phaser.Scene {
 
     createTextBorder(text) {
         const border = this.add.graphics();
-        
         border.lineStyle(4, 0x000000, 1);
-        
         border.strokeRect(
             text.x - text.width * text.originX - 2.5, // Subtract half of the border width and the x origin from the x position
             text.y - text.height * text.originY - 2.5, // Subtract half of the border width and the y origin from the y position
@@ -175,15 +149,11 @@ export default class Play extends Phaser.Scene {
           );
           
         this.add.existing(border);
-        // console.log(border, 'Border')
         return border;
       }
       
-      
-      
 
     createWelcome() {
-        // console.log(this.gameData, 'Game Data')
         this.time.addEvent({
             delay: 500,
             callback: () => {  
@@ -219,13 +189,11 @@ export default class Play extends Phaser.Scene {
             return tile.properties.collides;
           }, this, 0, 0, this.map.width, this.map.height);
           
-
         this.playerHelm.update(this);
         this.playerArmor.update(this);
         this.playerLegs.update(this);
 
         if (this.alignmentCheck( this.playerHelm, this.playerArmor, this.playerLegs)) {
-            // console.log('Out of Alignment')
             this.snapIntoAlignment();
         }
     }
@@ -251,7 +219,6 @@ export default class Play extends Phaser.Scene {
     }
 
     snapIntoAlignment() {
-        // console.log('Is this being called?')
         let objectA = this.playerHelm;
         let objectB = this.playerArmor;
         let objectC = this.playerLegs;

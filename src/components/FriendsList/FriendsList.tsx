@@ -9,8 +9,6 @@ interface Props {
 
 const FriendsList = ({ user, friend, handleClose }: Props) => {
 
-
-
     return (
 
         <div className="friend-block mb-3">

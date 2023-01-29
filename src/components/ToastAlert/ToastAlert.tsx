@@ -17,7 +17,7 @@ const ToastAlert = ({ error, setError }: Props) => {
     {
       error?.title ?
       <Toast 
-      onClose={() => setShow(false)} show={show} delay={3000} autohide bg='black' style={{ background: 'red' }}
+      onClose={() => setShow(false)} show={show} delay={3000} autohide bg='black' style={{ background: 'red', zIndex: 1000 }}
       >
         <Toast.Header className='text-danger bg-black'>
           <img

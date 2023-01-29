@@ -28,7 +28,6 @@ const FriendFeed = ({ loggedUser }: FriendProps) => {
         const response = await friendAPI.getAllFriends(loggedUser._id)
         
         setFriendState(response.data.user.friends)
-        //console.log(response.data, '<- Data in Friend Feed!')
         setAsceans(response.data.asceans)
         setCompleteFriend(response.data)
         setLoading(false)

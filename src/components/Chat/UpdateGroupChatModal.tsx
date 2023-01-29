@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import Modal from 'react-bootstrap/Modal';
+import { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Loading from '../Loading/Loading';
 import Form from 'react-bootstrap/Form'
@@ -19,35 +18,35 @@ interface Props {
     fetchMessages: any;
 }
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelectedChat, fetchMessages }: Props) => {
-    const [groupChatName, setGroupChatName] = useState('')
-    const [selectedUsers, setSelectedUsers] = useState<any>([])
-    const [searchResult, setSearchResult] = useState<any>([])
-    const [loading, setLoading] = useState<boolean>(false)
-    const [renameLoading, setRenameLoading] = useState<boolean>(false)
-    const [error, setError] = useState<any>({})
+    const [groupChatName, setGroupChatName] = useState('');
+    const [selectedUsers, setSelectedUsers] = useState<any>([]);
+    const [searchResult, setSearchResult] = useState<any>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [renameLoading, setRenameLoading] = useState<boolean>(false);
+    const [error, setError] = useState<any>({});
 
     const handleSearch = async (query: string) => {
-        console.log(query, 'The search is on!')
+        console.log(query, 'The search is on!');
         if (!query) {
-            return
+            return;
         }
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await userService.searchUser(query);
-            console.log(response)
+            console.log(response);
 
-            setLoading(false)
-            setSearchResult(response)
+            setLoading(false);
+            setSearchResult(response);
         } catch (err: any) {
-            console.log(err.message, 'Error Searching for Users')
+            console.log(err.message, 'Error Searching for Users');
         }
     }
 
     const handleDelete = async (userToDelete: any) => {
-        console.log(userToDelete, 'Buh-Bye!')
+        console.log(userToDelete, 'Buh-Bye!');
         setSelectedUsers(
             selectedUsers.filter((sel: any) => sel._id !== userToDelete._id)
-        )
+        );
     }
 
     const handleAddUser = async (userToAdd: any) => {
@@ -55,31 +54,31 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
             setError({
                 title: 'Group Chat Add Error',
                 content: 'They Already Exist In The Group'
-            })
-            return
+            });
+            return;
         }
 
         if (selectedChat.groupAdmin._id !== user._id) {
             setError({
                 title: 'Group Chat Add Error',
                 content: 'You Are Not The Admin!'
-            })
-            return
+            });
+            return;
         }
         try {
-            setLoading(true)
+            setLoading(true);
 
             const response = await chatAPI.addToGroup({
                 chatId: selectedChat._id,
                 userId: userToAdd._id
             });
 
-            setSelectedChat(response.data)
-            setFetchAgain(!fetchAgain)
+            setSelectedChat(response.data);
+            setFetchAgain(!fetchAgain);
 
             setLoading(false)
         } catch (err: any) {
-            console.log(err.message, 'Error Adding User to Group')
+            console.log(err.message, 'Error Adding User to Group');
         }
     }
 
@@ -89,53 +88,50 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, user, selectedChat, s
             setError({
                 title: 'Group Chat Remove Error',
                 content: 'You are not the Admin!'
-            })
-            return
+            });
+            return;
         }
         try {
-            setLoading(true)
-
+            setLoading(true);
             const response = await chatAPI.removeFromGroup({
                 chatId: selectedChat._id,
                 userId: userToRemove._id
             });
-
             userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(response.data)
-            // setSelectedChat(response.data)
-            setFetchAgain(!fetchAgain)
+            setFetchAgain(!fetchAgain);
             fetchMessages();
-            setLoading(false)
+            setLoading(false);
         } catch (err: any) {
-            console.log(err.message, 'Error Adding User to Group')
+            console.log(err.message, 'Error Adding User to Group');
         }
     }
 
     const handleRename = async (newGroupName: any) => {
-        console.log(newGroupName, 'Buh-Bye!')
+        console.log(newGroupName, 'Buh-Bye!');
         if (!newGroupName) {
             setError({
                 title: 'Group Chat Rename Error',
                 content: 'You do not have a Group Name Written!'
-            })
-            return
+            });
+            return;
         }
         try {
-            setRenameLoading(true)
+            setRenameLoading(true);
 
             const response = await chatAPI.renameGroup({
                 chatId: selectedChat._id,
                 chatName: groupChatName
-            })
-            console.log(response.data.chatName, 'New Name Response in Handle Rename')
-            setFetchAgain(!fetchAgain)
-            setSelectedChat(response.data)
-            setRenameLoading(false)
+            });
+            console.log(response.data.chatName, 'New Name Response in Handle Rename');
+            setFetchAgain(!fetchAgain);
+            setSelectedChat(response.data);
+            setRenameLoading(false);
         } catch (err: any) {
-            console.log(err.message, 'Error Renaming Group')
+            console.log(err.message, 'Error Renaming Group');
         }
         setSelectedUsers(
             selectedUsers.filter((sel: any) => sel._id !== newGroupName._id)
-        )
+        );
     }
   return (
     <>

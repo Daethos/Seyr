@@ -33,7 +33,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
     const [profileRequests, setProfileRequests] = useState<any>(0)
 
     const getProfile = useCallback(async () => {
-        // setLoading(true);
         try {
         const response = await userService.getProfile(username);
         setProfileUser(response.data.user);
@@ -56,7 +55,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
             const response = await friendAPI.friendRequest(profileUser._id, user._id)
             console.log(response, '<- Response in Friend Request')
             setFriendRequest(true)
-            // await friends()
             setLoading(false)
         } catch (err: any) {
             setFriendRequest(true)

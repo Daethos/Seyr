@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import InputGroup from 'react-bootstrap/InputGroup';
-import Form from 'react-bootstrap/Form';
 
 interface Props {
     editState: any;
@@ -24,12 +23,12 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     let poolOutput = document.getElementById('pool-output') as HTMLOutputElement | null;
     const [poolTotal, setPoolTotal] = useState<number>(0);
 
-    const [constitutionOutput, setConstitutionOutput] = useState<number>(0)
-    const [strengthOutput, setStrengthOutput] = useState<number>(0)
-    const [agilityOutput, setAgilityOutput] = useState<number>(0)
-    const [achreOutput, setAchreOutput] = useState<number>(0)
-    const [caerenOutput, setCaerenOutput] = useState<number>(0)
-    const [kyosirOutput, setKyosirOutput] = useState<number>(8)
+    const [constitutionOutput, setConstitutionOutput] = useState<number>(0);
+    const [strengthOutput, setStrengthOutput] = useState<number>(0);
+    const [agilityOutput, setAgilityOutput] = useState<number>(0);
+    const [achreOutput, setAchreOutput] = useState<number>(0);
+    const [caerenOutput, setCaerenOutput] = useState<number>(0);
+    const [kyosirOutput, setKyosirOutput] = useState<number>(8);
 
     const conOut = document?.getElementById('con-box') as HTMLOutputElement | null;
     useEffect(() => { 
@@ -88,11 +87,7 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         setCaerenOutput(editState?.caeren)
         setKyosirOutput(editState?.kyosir)
     }, [])
-    // useEffect(() => {
-    //     setStrengthOutput(editState?.strength)
-    // }, [])
 
-    // Pool Total Use Effect
     useEffect(() => {
         checkPoolTotal()
     }, [poolTotal])
@@ -121,7 +116,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             if (kyoPlusButton != null) {
                 kyoPlusButton!.style.display = 'none';
             }
-
             if (conMinusButton != null) {
                 conMinusButton!.style.display = 'inline-block';
             }
@@ -403,40 +397,38 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         setPoolTotal(poolTotal + 1)
     }
 
-  return (
-    <>
-
-
-    <div className="actions">
-        <h3>Attributes</h3>
-        <h3 id="pool-output"></h3>
-    </div>
-    <div className="property-line first">
-        <h4>Constitution</h4>
-        <p> Defense, Magic, Health, Posture</p>
-        <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
-        <button id="con-minus" onClick={handleConMinus} name="constitution" value={editState.constitution}>−</button>
+    return (
+        <>
+        <div className="actions">
+            <h3>Attributes</h3>
+            <h3 id="pool-output"></h3>
+        </div>
+        <div className="property-line first">
+            <h4>Constitution</h4>
+            <p> Defense, Magic, Health, Posture</p>
+            <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
+            <button id="con-minus" onClick={handleConMinus} name="constitution" value={editState.constitution}>−</button>
+                <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="constitution" 
+                    value={editState.constitution} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+                <button id="con-plus" onClick={handleConPlus} name="constitution" value={editState.constitution}>+</button>
+                <h4 className="" style={{ marginLeft: 15 + '%' }} id="con-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line">
+            <h4>Strength</h4>
+            <p> Crit Damage, Physical, Posture</p>
+            <InputGroup className="mb-1">
+            <button id="str-minus" onClick={handleStrMinus} name="strength" value={editState.strength}>−</button>
             <input 
-                id="con-slider" 
-                className="form-control-number" 
-                type="number" 
-                name="constitution" 
-                value={editState.constitution} 
-                min="8" max="18"
-                step="1"
-                readOnly 
-            ></input>
-            <button id="con-plus" onClick={handleConPlus} name="constitution" value={editState.constitution}>+</button>
-            <h4 className="" style={{ marginLeft: 15 + '%' }} id="con-box">
-            </h4>
-        </InputGroup>
-    </div>
-    <div className="property-line">
-        <h4>Strength</h4>
-        <p> Crit Damage, Physical, Posture</p>
-        <InputGroup className="mb-1">
-        <button id="str-minus" onClick={handleStrMinus} name="strength" value={editState.strength}>−</button>
-        <input 
                 id="con-slider" 
                 className="form-control-number" 
                 type="number" 
@@ -446,17 +438,17 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
                 step="1"
                 readOnly 
             ></input>
-        <button id="str-plus" onClick={handleStrPlus} name="strength" value={editState.strength}>+</button>
-        <h4 className="" style={{ marginLeft: 15 + '%' }} id="str-box">
-            </h4>
-        </InputGroup>
-    </div>
-    <div className="property-line">
-        <h4>Agility</h4>
-        <p> Crit Chance, Dodge, Physical, Roll</p>
-        <InputGroup className="mb-1">
-        <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={editState.agility}>−</button>
-        <input 
+            <button id="str-plus" onClick={handleStrPlus} name="strength" value={editState.strength}>+</button>
+            <h4 className="" style={{ marginLeft: 15 + '%' }} id="str-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line">
+            <h4>Agility</h4>
+            <p> Crit Chance, Dodge, Physical, Roll</p>
+            <InputGroup className="mb-1">
+            <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={editState.agility}>−</button>
+            <input 
                 id="con-slider" 
                 className="form-control-number" 
                 type="number" 
@@ -466,17 +458,17 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
                 step="1"
                 readOnly 
             ></input>
-        <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={editState.agility}>+</button>
-        <h4 className="" style={{ marginLeft: 15 + '%' }} id="agi-box">
-            </h4>
-        </InputGroup>
-    </div>
-    <div className="property-line">
-        <h4>Achre</h4>
-        <p> Spell Damage, Crit, Dodge, Magic, Roll</p>
-        <InputGroup className="mb-1">
-        <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={editState.achre}>−</button>
-        <input 
+            <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={editState.agility}>+</button>
+            <h4 className="" style={{ marginLeft: 15 + '%' }} id="agi-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line">
+            <h4>Achre</h4>
+            <p> Spell Damage, Crit, Dodge, Magic, Roll</p>
+            <InputGroup className="mb-1">
+            <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={editState.achre}>−</button>
+            <input 
                 id="con-slider" 
                 className="form-control-number" 
                 type="number" 
@@ -486,17 +478,17 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
                 step="1"
                 readOnly 
             ></input>
-        <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={editState.achre}>+</button>
-        <h4 className="" style={{ marginLeft: 15 + '%' }} id="ach-box">
-            </h4>
-        </InputGroup>
-    </div>
-    <div className="property-line last">
-        <h4>Caeren</h4>
-        <p> Spell Damage, Defense, Health, Magic, Posture</p>
-        <InputGroup className="mb-1">
-        <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={editState.caeren}>−</button>
-        <input 
+            <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={editState.achre}>+</button>
+            <h4 className="" style={{ marginLeft: 15 + '%' }} id="ach-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line last">
+            <h4>Caeren</h4>
+            <p> Spell Damage, Defense, Health, Magic, Posture</p>
+            <InputGroup className="mb-1">
+            <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={editState.caeren}>−</button>
+            <input 
                 id="con-slider" 
                 className="form-control-number" 
                 type="number" 
@@ -509,14 +501,14 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={editState.caeren}>+</button>
             <h4 className="" style={{ marginLeft: 15 + '%' }} id="caer-box">
             </h4>
-        </InputGroup>
-    </div>
-    <div className="property-line last">
-        <h4>Kyosir</h4>
-        <p> Increases Defense, Penetration</p>
-        <InputGroup className="mb-1">
-        <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={editState.kyosir}>−</button>
-        <input 
+            </InputGroup>
+        </div>
+        <div className="property-line last">
+            <h4>Kyosir</h4>
+            <p> Increases Defense, Penetration</p>
+            <InputGroup className="mb-1">
+            <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={editState.kyosir}>−</button>
+            <input 
                 id="con-slider" 
                 className="form-control-number" 
                 type="number" 
@@ -529,10 +521,10 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={editState.kyosir}>+</button>
             <h4 className="" style={{ marginLeft: 15 + '%' }} id="kyo-box">
             </h4>
-        </InputGroup>
-    </div>
-    </>
-  )
+            </InputGroup>
+        </div>
+        </>
+    )
 }
 
 export default AttributesEdit

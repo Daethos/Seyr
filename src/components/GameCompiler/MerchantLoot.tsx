@@ -3,16 +3,17 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
-import Loading from '../Loading/Loading';
 
 interface Props {
     item: any;
     ascean: any;
     itemPurchased: boolean;
     setItemPurchased: React.Dispatch<React.SetStateAction<boolean>>;
+    error: object;
+    setError: React.Dispatch<React.SetStateAction<object>>;
 }
 
-const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) => {
+const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, setError }: Props) => {
     console.log(item, 'Did We Make it Here Even?')
     const [thisItemPurchased, setThisItemPurchased] = useState(false);
     const [purchaseSetting, setPurchaseSetting] = useState({
@@ -21,13 +22,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) 
         cost: { silver: 0, gold: 0 }
     });
     useEffect(() => {
-    //   setPurchaseSetting({
-    //     ascean: ascean,
-    //     item: item,
-    //     // cost: { silver: 0, gold: 0 } 
-    //     cost: 
-    // })
-    determineCost(ascean, item.rarity, item.type)
+        determineCost(ascean, item.rarity, item.type);
     }, [item])
 
     const determineCost = async ( ascean: any, rarity: string, type: string ) => {
@@ -109,8 +104,11 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) 
         costTotal = purchaseSetting.cost.silver + (purchaseSetting.cost.gold * 100);
         if (asceanTotal < costTotal) {
             console.log('Not Enough Money!');
-            //TODO:FIXME: Add Toast Message Here
-            return
+            setError({
+                title: 'Transaction User Error',
+                content: `You do not have enough money (${asceanTotal} total wealth), to purchase this: ${item.name}, at ${costTotal}.`
+            });
+            return;
         }
         try {
             const res = await asceanAPI.purchaseToInventory(purchaseSetting);
@@ -119,6 +117,10 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased }: Props) 
             setThisItemPurchased(true);
         } catch (err: any) {
             console.log(err.message, 'Error Purchasing Item!');
+            setError({
+                title: 'Transaction Error',
+                content: err.message
+            });
         }
     }
     

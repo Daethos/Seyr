@@ -6,7 +6,6 @@ export default class Menu extends Phaser.Scene {
         super({ key: 'Menu', active: false });
         this.centerX = 180;
         this.centerY = 320;
-        
     }
 
     get sizeConfig() {
@@ -16,13 +15,10 @@ export default class Menu extends Phaser.Scene {
     }
 
     init(data) {
-        // console.log(data, 'Any Data?')
         this.gameData = data;
     }
 
     create() {
-        // console.log(this.gameData, 'This Menu')
-
         this.createBackground();
         // Game Title
         this.title = new NewText(

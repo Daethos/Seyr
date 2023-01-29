@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Loading from '../Loading/Loading';
 import './Messages.css'
 import MessagesCard from './MessagesCard';

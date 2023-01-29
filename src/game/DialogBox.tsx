@@ -1,13 +1,11 @@
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
-import Inventory from '../components/GameCompiler/Inventory';
 import LootDrop from '../components/GameCompiler/LootDrop';
-import MerchantLoot from '../components/GameCompiler/MerchantLoot';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
 import { ACTIONS } from '../components/GameCompiler/CombatStore';
-// const MerchantLoot = lazy(() => import('../components/GameCompiler/MerchantLoot'));
+import ToastAlert from '../components/ToastAlert/ToastAlert';
 
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
@@ -21,7 +19,6 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
 };
   
 const CombatDialogButtons = ({ options, handleCombatAction }: { options: any, handleCombatAction: any }) => {
-    console.log(options, 'o');
     const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
             <Button variant='' key={i} onClick={() => handleCombatAction('actions', o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
@@ -58,6 +55,8 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<any>({ title: '', content: '' });
+
     const handleCombatAction = (options: any, action: string) => {
         console.log(options, action, 'Action')
         setCombatAction(action);
@@ -66,13 +65,11 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
         setCurrentIntent(intent);
     };
     const engageCombat = () => {
-        // setCombatEngaged(true);
-        // setGameIsLive(true);
         dispatch({
             type: ACTIONS.SET_DUEL,
             payload: ''
         });
-    }
+    };
     const getLoot = async () => {
         try {
             setLoading(true);
@@ -84,12 +81,12 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
         } catch (err) {
             console.log(err, 'Error!')
         }
-    }
+    };
 
     useEffect(() => {
         if (merchantEquipment.length === 0) return;
         console.log(merchantEquipment, 'merchantEquipment variable in DialogBox.tsx');
-    }, [merchantEquipment])
+    }, [merchantEquipment]);
     
 
     useEffect(() => {
@@ -102,10 +99,12 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
         return (
             <Loading Combat={true} />
         )
-    }
+    };
     return (
         <div className='dialog-box'>
             <div className='dialog-text'>
+            <ToastAlert error={error} setError={setError} />
+
                 {
                     currentIntent === 'combat' ?
                     <>
@@ -124,8 +123,6 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                         You Win. Hot Streak: {winStreak} Hi-Score ({highScore})<br /> 
                         </p>
                         "Well check you out, {ascean.name}, you've won the duel. Congratulations" <br /> <br /> 
-                        {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button> */}
-
                         {
                             lootDrop?._id && lootDropTwo?._id ?
                             <>
@@ -152,24 +149,6 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                         <>
                         "Oh is that why you're here, goodness. Very well, {ascean.name}. Shall we?"<br />
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={engageCombat}>Commence Duel with {npc}?</Button>
-                        {/* <Button variant ='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={getLoot}>Get Loot</Button>
-
-                        {
-                            lootDrop?._id && lootDropTwo?._id ?
-                            <>
-                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                            </>
-                            : lootDrop?._id ?
-                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                            : lootDropTwo?._id ?
-                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                            : ''
-                        } */}
-                        {/* {
-                        lootDrop?.name !== '' ?  
-                        <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved}  />
-                        : ''} */}
                         </> 
                     : currentIntent === 'conditions' ?
                     <>
@@ -179,31 +158,30 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                         <br />
                         {
                             merchantEquipment?.length > 0 ?
-                            <MerchantTable table={merchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} />
+                            <MerchantTable table={merchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
                             
                             : ''
                         }
                     </>
                     : currentIntent === 'farewell' ?
                     <>
-                        <br />
-                        {
-                            playerWin ?
-                            <>
-                            "Perhaps it's for the best. May you seek a worthy opponent, {ascean.name}."<br />
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Potential Duelist For More Experience</Button>
-                            </>
-                            : computerWin ?
-                            <>
-                            "Take care {ascean.name}, and seek aid. You do not look well."<br />
-                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps' }} onClick={getOpponent}>Meh, Another Day, New Duelist.</Button>
-                            </>
-                            : 
-                            <>
-                            "Perhaps we'll meet again, {ascean.name}."<br />
+                    <br />
+                    { playerWin ?
+                        <>
+                        "Perhaps it's for the best. May you seek a worthy opponent, {ascean.name}."<br />
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Potential Duelist For More Experience</Button>
+                        </>
+                    : computerWin ?
+                        <>
+                        "Take care {ascean.name}, and seek aid. You do not look well."<br />
+                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps' }} onClick={getOpponent}>Meh, Another Day, New Duelist.</Button>
+                        </>
+                    : 
+                        <>
+                        "Perhaps we'll meet again, {ascean.name}."<br />
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Duelist Instead</Button>
-                            </>
-                        }
+                        </>
+                    }
                     </>
                     : currentIntent === 'localLore' ?
 
@@ -238,10 +216,6 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
             </div>
         </div>
     );
-}
+};
 
 export default DialogBox;
-
-// function lazy(arg0: () => Promise<typeof import("../components/GameCompiler/MerchantLoot")>) {
-//     throw new Error('Function not implemented.');
-// }

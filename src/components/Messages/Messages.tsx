@@ -29,7 +29,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
 
     const bottomRef = useRef<null | HTMLDivElement>(null);
     useEffect(() => {
-        // 👇️ scroll to bottom every time messages change
         bottomRef.current?.scrollIntoView({behavior: 'smooth'});
       }, [sortedDMs]);
 
@@ -38,7 +37,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
     const cleanUserMessages = async () => friendMessages.filter((message: any, index: number) => message.username === user.username)
 
     async function getDMs() {
-        //setLoading(true)
         try {
             const response = await cleanFriendMessages()
             const data = await cleanUserMessages()
@@ -48,7 +46,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
             setUsersMessages(data)
             setDMstate([...response,
                 ...data])
-            //setLoading(false)
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error getting DMs')
@@ -62,7 +59,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
       }, [getDMs])
 
       async function updateDMs() {
-        //setLoading(true);
         try {
           const response = await messageAPI.getPersonalMessages(user._id, friendID)
           console.log(response, '<- Response Updating Messages')
@@ -70,7 +66,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
           setFriendsMessages(response.data.friend.messages)
           setDMstate([...response.data.user.messages,
             ...response.data.friend.messages])
-          //setLoading(false)
         } catch (err: any) {
           setLoading(false)
           console.log(err.message, '<- Error Retrieving Messages')
@@ -93,7 +88,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
       }, [updateDMs])
 
     async function sortUpdatedDMs() {
-        //setLoading(true)
         try {
             const response = await sortingFunction()
             console.log(response, '<- Response sorting DMs in Starter')
@@ -105,7 +99,6 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
     }
 
     async function sortDMs() {
-        //setLoading(true)
         try {
             const response = await sortingFunction()
             console.log(response, '<- Response sorting DMs in Starter')
@@ -169,19 +162,11 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                         sortedDMs.map((message: any, index: number) => {
                             return (
                                 <>
-                                    {/* <div className="section-left">  */}
-
                                     <FriendMessageCard friend={friend} message={message} key={message._id} />
                                     <NewLine spaceCount={1} />
-
-                                    {/* </div> */}
-
-                                    {/* <div className="section-right"> */}
-
                                     <UserMessageCard user={user} message={message} key={index} />
                                     <NewLine spaceCount={1} />
 
-                                    {/* </div> */}
                                 </>
                             )
                         })
@@ -192,7 +177,7 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
         </div>
         <div ref={bottomRef} />
     </Col>
-        <FormMessage user={user} friendProfile={friend} messageDraft={messageDraft} friendID={friendID} handleChange={handleChange} handleSubmit={handleSubmit} />
+        <FormMessage friendProfile={friend} messageDraft={messageDraft} handleChange={handleChange} handleSubmit={handleSubmit} />
     </>
   )
 }

@@ -1,6 +1,5 @@
 import SingleChat from './SingleChat';
 
-
 interface Props {
     selectedChat: any;
     user: any;

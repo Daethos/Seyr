@@ -59,10 +59,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
     for (let key in state) {
       formData.append(key, (state as any)[key]);
     }
-    // console.log(
-    //   formData.forEach((item) => console.log(item)),
-    //   " < This lets you see the key values in formData"
-    // );
 
     try {
       await userService.signup(formData); 
@@ -104,10 +100,8 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <div className="property-line first">
                     <h3>Username</h3>
                   </div>
-                {/* <Form.Group className="my-2" controlId="formBasicUsername"> */}
                 <FloatingLabel controlId="floatingPassword" label="Username" className=''>
                     <Form.Control 
-                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="text"
                     name="username"
                     placeholder="username"
@@ -116,7 +110,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                     required
                     />
                 </FloatingLabel>
-                {/* </Form.Group> */}
                 <div className="property-line last">
                     <h3>Email</h3>
                 </div> 
@@ -127,7 +120,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                   className=""
                 >
                 <Form.Control 
-                // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="email"
                     name="email"
                     placeholder="Email Address"
@@ -146,7 +138,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <Form.Group className="my-2" controlId="formBasicPassword" style={{ width: 87.5 + '%' }}>
                 <FloatingLabel controlId="floatingPassword" label="Password" >
                   <Form.Control 
-                  // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                   name="password"
                   type={show ? "text" : "password"}
                   placeholder="password"
@@ -174,7 +165,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <Form.Group className="my-2" controlId="formBasicPasswordConfirm" style={{ width: 87.5 + '%' }}>
                 <FloatingLabel controlId="" label="Confirm Password">
                     <Form.Control 
-                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     name="passwordConf"
                     type={showTwo ? "text" : "password"}
                     placeholder="Confirm Password"
@@ -205,7 +195,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 <Form.Group className="my-2" controlId="formBasicUser">
                 <FloatingLabel controlId="" label="A Little About Yourself">
                 <Form.Control 
-                // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="textarea"
                     name="bio"
                     placeholder="Anything you'd like to say?"
@@ -219,7 +208,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 </div> 
                 <Form.Group className="my-2" controlId="formBasicPhoto">
                     <Form.Control 
-                    // style={{ marginLeft: -5 + '%', width: 105 + '%' }}
                     type="file"
                     name="photoUrl"
                     placeholder="upload image"
@@ -236,7 +224,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 </div> 
             <ToastAlert error={error} setError={setError}  />
 
-                {/* <img src={BUCKET_START + 'vampire-vampire.png'} alt="Vampire" id="" style={{ maxWidth: 50 + '%', maxHeight: 50 + '%'}} /> */}
             <hr className="orange-border bottom" />
         </Form>
     </Col>

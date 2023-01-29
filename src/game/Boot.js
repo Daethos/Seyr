@@ -1,16 +1,8 @@
 import Phaser from "phaser";
-import { equipment } from '../game/utility';
-import PlayerHelm from "../game/PlayerHelm";
-import PlayerArmor from "../game/PlayerArmor";
-import PlayerLegs from "../game/PlayerLegs";
-import Tileset from '../game/images/Tileset.png';
-import TileJson from '../game/images/map.json';
-
 
 export default class Boot extends Phaser.Scene {
     constructor() {
         super({ key: 'Boot', active: true });
-        // console.log(this, 'What is this?')
         this.ascean = {};
     }
     
@@ -30,7 +22,6 @@ export default class Boot extends Phaser.Scene {
 
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
-        console.log(e.detail, 'Booting Ascean')
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
     };
 }

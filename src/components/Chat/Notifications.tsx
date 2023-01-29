@@ -21,23 +21,20 @@ const Notifications = ({ user, notification, setSelectedChat, setNotification }:
             <Popover.Body id='popover-body'>
                 { !notification.length 
                 ? <p style={{ color: 'purple' }}>No New Messages</p> 
-                : 
-                notification?.map((note: any, index: number) => { return ( 
+                : notification?.map((note: any, index: number) => { return ( 
                     <Dropdown.Item key={index} style={{ color: 'purple' }} onClick={() => {
                         setSelectedChat(note.chat);
                         setNotification(notification.filter((n: any) => n !== note))
                     }}>
-                        { note.chat.isGroupChat 
+                    { note.chat.isGroupChat 
                         ? `New Message in ${note.chat.chatName}` 
                         : `New Message from ${chatLogic.getSender(user, note.chat.users)}`}
                     </Dropdown.Item>
-                 )})
-                
-                
+                  )})
                 }
             </Popover.Body>
         </Popover>
-    )
+    );
   return (
     <OverlayTrigger trigger="click" placement="auto-start" overlay={notificationPopover}>
         <Button variant='' style={{ fontSize: 10 + 'px' }}>

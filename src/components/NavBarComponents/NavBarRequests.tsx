@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Nav } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Offcanvas from 'react-bootstrap/Offcanvas';
 import Loading from '../../components/Loading/Loading';
 import * as friendAPI from '../../utils/friendApi';
 import RequestsCarousel from '../../components/RequestsCarousel/RequestsCarousel'
 import Carousel from 'react-bootstrap/Carousel';
-import FriendsList from '../FriendsList/FriendsList';
-import NavBarFriends from './NavBarFriends';
 
 interface Props {
     user: any;
     requestState: any;
     acceptFriendRequest: any;
     declineFriendRequest: any;
-    // handleSubmit: any;
     friendAccept: boolean;
     friendDecline: boolean;
 }
@@ -43,7 +36,6 @@ const NavBarRequests = ({ user, requestState, acceptFriendRequest, declineFriend
 
     useEffect(() => {
       const interval = setInterval(() => {
-          // friends();
           friendStatus();
       }, 60000);
       return () => clearInterval(interval);

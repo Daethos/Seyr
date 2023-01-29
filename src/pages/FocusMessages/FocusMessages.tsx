@@ -15,13 +15,10 @@ interface Props {
 
 const FocusMessages = ({ user }: Props) => {
   const [loading, setLoading] = useState(true);
-  const [messaging, setMessaging] = useState<boolean>(false)
-  const [friendProfile, setFriendProfile] = useState<any>([])
-  const [userMessages, setUserMessages] = useState<any>([])
-  const [friendMessages, setFriendMessages] = useState<any>([])
-  const [messageDraft, setMessageDraft] = useState({
-    message: ''
-  })
+  const [messaging, setMessaging] = useState<boolean>(false);
+  const [friendProfile, setFriendProfile] = useState<any>([]);
+  const [userMessages, setUserMessages] = useState<any>([]);
+  const [friendMessages, setFriendMessages] = useState<any>([]);
   const { friendID } = useParams();
   const button = document.getElementById('chat-input');
   button?.addEventListener('click', function handleClick(e) {
@@ -33,11 +30,10 @@ const FocusMessages = ({ user }: Props) => {
     setLoading(true);
         try {
             const response = await friendAPI.getOneFriend(friendID);
-            console.log(response, ' <- the response in getting one friend')
-            setFriendProfile(response.data.user)
-            setLoading(false)
+            setFriendProfile(response.data.user);
+            setLoading(false);
         } catch (err: any) {
-            setLoading(false)
+            setLoading(false);
             console.log(err.message);
         }
    }, [friendID])
@@ -49,29 +45,26 @@ const FocusMessages = ({ user }: Props) => {
   const getMessages = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await messageAPI.getPersonalMessages(user._id, friendID)
-      console.log(response, '<- Response Retrieving Messages')
-      setUserMessages(response.data.user.messages)
-      setFriendMessages(response.data.friend.messages)
+      const response = await messageAPI.getPersonalMessages(user._id, friendID);
+      setUserMessages(response.data.user.messages);
+      setFriendMessages(response.data.friend.messages);
     } catch (err: any) {
-      setLoading(false)
-      console.log(err.message, '<- Error Retrieving Messages')
+      setLoading(false);
+      console.log(err.message, '<- Error Retrieving Messages');
     }
-  }, [friendID])
+  }, [friendID]);
 
-  useEffect(() => {getMessages()}, [friendID, getMessages])
+  useEffect(() => {getMessages()}, [friendID, getMessages]);
 
   async function updateMessages() {
     setLoading(true);
     try {
-      const response = await messageAPI.getPersonalMessages(user._id, friendID)
-      console.log(response, '<- Response Updating Messages')
-      setUserMessages(response.data.user.messages)
-      setFriendMessages(response.data.friend.messages)
-      //setLoading(false)
+      const response = await messageAPI.getPersonalMessages(user._id, friendID);
+      setUserMessages(response.data.user.messages);
+      setFriendMessages(response.data.friend.messages);
     } catch (err: any) {
-      setLoading(false)
-      console.log(err.message, '<- Error Retrieving Messages')
+      setLoading(false);
+      console.log(err.message, '<- Error Retrieving Messages');
     }
   }
 
@@ -84,8 +77,8 @@ const FocusMessages = ({ user }: Props) => {
   }
 
   if (messaging) {
-    updateMessages()
-    setMessaging(false)
+    updateMessages();
+    setMessaging(false);
   }
   return (
     <Container fluid>

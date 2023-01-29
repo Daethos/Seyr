@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Loading from '../Loading/Loading';
@@ -20,7 +20,6 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
     const [modalShow, setModalShow] = useState(false)
     const [groupChatName, setGroupChatName] = useState('')
     const [selectedUsers, setSelectedUsers] = useState<any>([])
-    const [search, setSearch] = useState('')
     const [searchResult, setSearchResult] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<any>({})

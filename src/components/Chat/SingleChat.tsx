@@ -10,9 +10,7 @@ import Form from 'react-bootstrap/Form'
 import * as messageAPI from '../../utils/chatMessageApi'
 import ScrollableChat from './ScrollableChat';
 
-
 let socket: any;
-// const socket: any = io.connect("http://localhost:3001")
 let selectedChatCompare: { _id: any };
 
 interface Props {
@@ -98,10 +96,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
 
     const typingHandler = async (e: any) => {
         setNewMessage(e.target.value)
-
-        //Typing Indicator Logic
         if (!socketConnected) return;
-
         if (!typing) {
             setTyping(true)
             socket.emit('typing', selectedChat._id);
@@ -159,22 +154,19 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                     </Modal.Body>
                 </Modal>
                 </h3>
-                
-                    <div className='Chat-Window'>
+                <div className='Chat-Window'>
                     <div className='Chat-Header my-2'>Live Chat</div>
                     <ScrollableChat user={user} messages={messages} isTyping={isTyping} />
-                    
                 <div className="chat-footer mt-3">
-                <Form.Control 
-                    as="textarea" style={{ maxHeight: 42 + 'px', width: 76 + '%', background: 'black', color: '#fdf6d8', border: 2 + 'px' + ' solid ' + 'purple' }} 
-                    type="text" placeholder='Warning, no profanity filter ^_^ !!!' 
-                    value={newMessage} onChange={typingHandler} required
-                    onKeyPress={(e) => { e.key === "Enter" && sendMessage() }}
+                    <Form.Control 
+                        as="textarea" style={{ maxHeight: 42 + 'px', width: 76 + '%', background: 'black', color: '#fdf6d8', border: 2 + 'px' + ' solid ' + 'purple' }} 
+                        type="text" placeholder='Warning, no profanity filter ^_^ !!!' 
+                        value={newMessage} onChange={typingHandler} required
+                        onKeyPress={(e) => { e.key === "Enter" && sendMessage() }}
                     />
-                { loading ?
-                    <Loading Modal={true} />
-                    : 
-                <Button variant="" style={{ float: 'right', background: 'black', fontSize: 18 + 'px', marginLeft: 5 + 'px', marginTop: -10.5 + '%', color: 'red', border: 2 + 'px' + ' solid ' + 'red' }} onClick={sendMessage}>Submit</Button>
+                { loading 
+                    ? <Loading Modal={true} />
+                    : <Button variant="" style={{ float: 'right', background: 'black', fontSize: 18 + 'px', marginLeft: 5 + 'px', marginTop: -10.5 + '%', color: 'red', border: 2 + 'px' + ' solid ' + 'red' }} onClick={sendMessage}>Submit</Button>
                 }
                 </div>
                 </div>

@@ -1,5 +1,3 @@
-import tokenService from "../utils/tokenService";
-
 const config = {
     width: 1024,
     height: 1024,

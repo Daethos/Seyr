@@ -16,18 +16,13 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const { focusID } = useParams();
-    // const [communityFocus, setCommunityFocus] = useState<boolean>(true)
 
-    
-
-   const getAscean = useCallback(async () => {
-    setLoading(true);
+    const getAscean = useCallback(async () => {
+        setLoading(true);
         try {
             const response = await communityAPI.getOneAscean(focusID);
-            console.log(response, ' <- the response in getAscean')
             setAscean(response.data)
             setLoading(false)
-            console.log(ascean, '<- Ascean focused upon.')
         } catch (err: any) {
             setLoading(false)
             console.log(err.message);

@@ -22,15 +22,9 @@ const Delete = ({ ascean, deleteAscean }: Props) => {
         show={deleteModalShow}
         onHide={() => setDeleteModalShow(false)}
         centered
-        
         aria-labelledby="contained-modal-title-vcenter"
         id="modal-delete"
-        >
-            {/* <Modal.Header closeButton>
-                <Modal.Title >
-                Weapons & Spells
-                </Modal.Title>
-            </Modal.Header> */}
+    >
     <Modal.Body id="modal-delete" className="equipment-modal">
         Do you wish to Delete {ascean.name} ?
         <button 

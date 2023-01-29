@@ -41,7 +41,6 @@ const GameSolo = ({ user }: GameProps) => {
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const [eqpSwap, setEqpSwap] = useState<boolean>(false);
     const [removeItem, setRemoveItem] = useState<boolean>(false);
-
     const [background, setBackground] = useState<any>(null);
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
@@ -733,14 +732,15 @@ const GameSolo = ({ user }: GameProps) => {
 
     return (
         <Container fluid id="game-container" style={ background }>
+
             <GameAnimations 
                 playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                 playerAction={state.player_action} computerAction={state.computer_action} 
                 playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
-                roll_success={state.roll_success} computer_roll_success={state.computer_roll_success}
+                rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success}
                 counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
             />
-                <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
+            <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
             <GameConditions 
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} gainExperience={gainExperience} soundEffects={soundEffects}
                 playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
@@ -783,6 +783,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
             />
+
         </Container>
     )
 }

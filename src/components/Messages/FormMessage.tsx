@@ -1,23 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import Loading from '../../components/Loading/Loading'; 
-import * as messageAPI from '../../utils/messageApi'
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 interface Props {
-    user: any;
     friendProfile: any;
-    friendID: string | undefined;
     handleChange: any;
     handleSubmit: any
     messageDraft: any;
 }
 
-const FormMessage = ({ user, friendProfile, friendID, handleChange, handleSubmit, messageDraft }: Props) => {
+const FormMessage = ({ friendProfile, handleChange, handleSubmit, messageDraft }: Props) => {
       
     return (
         <>

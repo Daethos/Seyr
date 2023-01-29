@@ -34,14 +34,11 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
 
     try {
       await userService.login(state);
-      // Route to wherever you want!
       console.log('Did we log in?')
       handleSignUpOrLogin();
       navigate("/");
     } catch (err: any) {
       console.log('Did we fail log in?')
-      // Invalid user data (probably duplicate email)
-      // this is from the throw block in the userService.login first then function
       setError({
         title: 'Login User Error',
         content: err.message
@@ -125,7 +122,6 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
                     Login
                 </Button>
             </div> 
-            {/* <img src={BUCKET_START + 'ancient-red-dragon.png'} alt="Vampire" id="" style={{ maxWidth: 50 + '%', maxHeight: 50 + '%'}} /> */}
             <hr className="orange-border bottom" />
         </Form>
         {/* <p className="error-message">&nbsp;{error}</p> */}

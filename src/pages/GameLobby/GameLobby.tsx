@@ -14,19 +14,16 @@ interface Props {
 }
 
 const GameLobby = ({ user }: Props) => {
-    const [loading, setLoading] = useState<boolean>(true)
-    const [asceanVaEsai, setAsceanVaEsai] = useState<any>([])
-    const [username, setUsername] = useState<any>({})
-    const [ascean, setAscean] = useState<any>({})
-    const [room, setRoom] = useState<any>("")
-    const [showChat, setShowChat] = useState<boolean>(false)
-    const [fetchAgain, setFetchAgain] = useState<boolean>(false)
-    const [notification, setNotification] = useState<any>([])
-    const [searchResult, setSearchResult] = useState([])
-    const [selectedChat, setSelectedChat] = useState<any>([])
-    const [loadingChat, setLoadingChat] = useState(false)
-    const [chats, setChats] = useState<any>([])
-    const [error, setError] = useState([])
+    const [loading, setLoading] = useState<boolean>(true);
+    const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
+    const [username, setUsername] = useState<any>({});
+    const [ascean, setAscean] = useState<any>({});
+    const [fetchAgain, setFetchAgain] = useState<boolean>(false);
+    const [notification, setNotification] = useState<any>([]);
+    const [searchResult, setSearchResult] = useState([]);
+    const [selectedChat, setSelectedChat] = useState<any>([]);
+    const [chats, setChats] = useState<any>([]);
+    const [error, setError] = useState([]);
 
     useEffect(() => {
         getUserAscean();
@@ -37,8 +34,8 @@ const GameLobby = ({ user }: Props) => {
             (ascean: { _id: any }) => ascean._id === username
         );
         const response = findAscean
-        console.log(response[0], 'Response in Filtering Ascean')
-        setAscean(response[0])
+        console.log(response[0], 'Response in Filtering Ascean');
+        setAscean(response[0]);
     }, [username])
 
     const getUserAscean = async () => {
@@ -67,16 +64,11 @@ const GameLobby = ({ user }: Props) => {
         }
     }
 
-    function handleAscean(e: any) {
-        console.log(e.target.value, 'What do we have here?')
-        setUsername(e.target.value)
-    }
-
     return (
         <Container className="Game-Lobby-Chat">
             <Tabs defaultActiveKey="Chat Groups" id="justify-tab-example" className="mb-3" justify >
             <Tab eventKey="home"
-            title={<SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} notification={notification} setNotification={setNotification} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />}>
+            title={<SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />}>
             </Tab>
             <Tab eventKey="longer-tab" 
             title={<Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />}>
@@ -84,28 +76,8 @@ const GameLobby = ({ user }: Props) => {
             </Tabs>
             { selectedChat?._id 
                 ? <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-                : <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} error={error} setError={setError} />
+                : <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
             }
-                
-
-            {/* { !showChat 
-            ? 
-            <>
-            <select value={username} onChange={handleAscean}>
-                <option>Ascean</option>
-                {asceanVaEsai.map((ascean: any, index: number) => {
-                    return (
-                        <option value={ascean._id} key={index}>{ascean.name}</option>
-                    )
-                })}
-            </select>
-
-            <input className='my-1' type='text' placeholder='Room ID...' onChange={handleRoom} />
-            <button onClick={joinRoom}> Join Room </button>
-            </>
-            : 
-            <GameChat user={user} ascean={ascean} room={room} socket={socket} />
-            } */}
         </Container>
   )
 }

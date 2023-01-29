@@ -71,10 +71,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
     </Tooltip>
   );
 
-  // const [likeColor, setLikeColor] = useState(-1)
-  // const [dislikeColor, setDislikeColor] = useState(-1)
-  // const [doubleDislikeColor, setDoubleDislikeColor] = useState(-1)
-
   const likedIndex = asceanFeelings.likes.findIndex(
     (like: { username: any; }) => like?.username === loggedUser?.username
   );
@@ -92,12 +88,10 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
   const doubleDislikeColor = doubleDislikedIndex > -1 ? "red" : "red";
 
   const getAscean = async () => {
-    // setLoading(true);
         try {
             const response = await asceanAPI.getOneAscean(ascean._id);
             console.log(response, ' <- the response in getAscean')
             setAsceanState(response.data)
-            // setLoading(false)
             console.log(ascean, '<- Ascean focused upon.')
         } catch (err: any) {
             setLoading(false)
@@ -105,10 +99,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
         }
    }
 
-  // useEffect(() => {
-  //     getAscean()
-  // }, [])
-                    
   const likeHandler =
     likedIndex > -1
       ? () => removeFeeling(asceanFeelings?.likes[likedIndex]._id, 'like') // user has liked the ascean 
@@ -124,19 +114,12 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       ? () => removeFeeling(asceanFeelings?.double_dislikes[doubleDislikedIndex]._id, 'doubleDislike') 
       : () => addFeeling(asceanFeelings?._id, 'doubleDislike');  
 
-  // console.log(ascean.likes.map((like: any) => {
-  //   console.log(like, 'How do I extract your usernames?')
-  // }))
-
   useEffect(() => {
     likesArray();
-    // dislikesArray();
-    // doubleDislikesArray();
   }, [asceanState])
 
   useEffect(() => {
     dislikesArray();
-    // doubleDislikesArray();
   }, [asceanState])
 
   useEffect(() => {
@@ -145,7 +128,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   const likesArray = async () => {
     try {
-      // setLoading(true)
       const response = await asceanState.likes.map((like: { username: string }) => {
         console.log(like.username, 'Like?')
         let newArray: any[] = [];
@@ -157,7 +139,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       console.log(response, 'Response Finding Likes')
       setLikeStat(response)
 
-      // setLoading(false)
     } catch (err: any) {
       console.log(err.message, 'Error Retrieving Feelings')
     }
@@ -165,8 +146,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   const dislikesArray = async () => {
     try {
-      // setLoading(true)
-
       const dislikeResponse = await asceanState.dislikes.map((like: { username: string }) => {
         console.log(like.username, 'Dislike?')
         let newArray: any[] = [];
@@ -177,8 +156,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       })
       console.log(dislikeResponse, 'Response Finding Dislikes')
       setDislikeStat(dislikeResponse)
-
-      // setLoading(false)
     } catch (err: any) {
       console.log(err.message, 'Error Retrieving Feelings')
     }
@@ -186,7 +163,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   const doubleDislikesArray = async () => {
     try {
-      // setLoading(true)
       const doubleDislikeResponse = await asceanState.double_dislikes.map((like: { username: string }) => {
         console.log(like.username, 'Double Dislike?')
         let newArray: any[] = [];
@@ -197,8 +173,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       })
       console.log(doubleDislikeResponse, 'Response Finding Double Dislikes')
       setDoubleDislikeStat(doubleDislikeResponse)
-
-      // setLoading(false)
     } catch (err: any) {
       console.log(err.message, 'Error Retrieving Feelings')
     }
@@ -211,7 +185,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
         console.log(response.data, 'Response in Adding a Feeling')
         setAsceanFeelings(response.data)
         getAscean()
-        // getAscean()
     } catch (err: any) {
         console.log(err.message, '<- Error adding a feeling!')
     }
@@ -277,7 +250,6 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
         color={doubleDislikeColor} xmlns="http://www.w3.org/2000/svg" 
         name="double-dislike" width="16" height="16" fill="currentColor" 
         className="bi bi-hand-thumbs-down feeling-icon mb-4" viewBox="0 0 16 16"
-        // style={{  }}
         id={likedIndex > -1 || dislikedIndex > -1 ? 'disable-feeling' : ''}
       >
         { doubleDislikedIndex > -1 

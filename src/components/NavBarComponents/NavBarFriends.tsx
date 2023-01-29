@@ -57,7 +57,6 @@ async function friends() {
       friendCarousel.length > 0
       ? 
       <Carousel activeIndex={index} onSelect={handleSelect} id="friend-carousel" className="nav-carousel carousel-fade hover" 
-      // style={{ maxWidth: 100 + '%' }} 
       indicators={false}>
       {
       friendCarousel.map((fren: any, index: any) => {

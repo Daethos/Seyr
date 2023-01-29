@@ -14,11 +14,9 @@ interface Props {
     setSelectedChat: React.Dispatch<React.SetStateAction<never[]>>;
     chats: any;
     setChats: any;
-    notification: any[];
-    setNotification: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setSelectedChat, notification, setNotification }: Props) => {
+const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setSelectedChat }: Props) => {
     const [search, setSearch] = useState("")
     const [loadingChat, setLoadingChat] = useState(false)
     const [show, setShow] = useState(false);
@@ -82,13 +80,9 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
                         )
                     })
             )}
-            {
-                loadingChat
-                ? 
+            { loadingChat ? 
                 <Loading Combat={true} />
-                :
-                ''
-            }
+            : '' }
         </Offcanvas.Body>
         </Offcanvas>
         </>

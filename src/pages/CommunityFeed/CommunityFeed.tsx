@@ -11,7 +11,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Table from 'react-bootstrap/Table';
 import Accordion from 'react-bootstrap/Accordion';
 import { Nav } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 interface CommunityProps {
     loggedUser: any;
@@ -27,7 +27,6 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
     }, [])
 
     function compareScores(a: any, b: any) {
-        // console.log(a[0].ascean, ': ', a[0].score, ' vs ', b[0].ascean, ': ', b[0].score)
         return a[0].score - b[0].score;
        
     }
@@ -36,9 +35,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         setLoading(true);
         try {
             const response = await communityAPI.getEveryone();
-            console.log(response, ' <- the response in getAscean');
             const scores = await response.data.map((ascean: any, index: number) => {
-                // console.log(ascean, index, 'What is this?')
                 let scoreData = {
                   ascean: ascean.name,
                   score: ascean.high_score,
@@ -54,7 +51,6 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
                 )
               })
               const sortedScores = await scores.sort(compareScores)
-              // console.log(sortedScores, 'Sorted Scores ?!')
               setHighScores(sortedScores.reverse())
             setAscean([...response.data].reverse());
             setLoading(false);
@@ -63,21 +59,18 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
             console.log(err.message);
         }
     }
-    //xs={ 1 } sm={ 1 } md={ 1 } lg={ 2 } xl={ 3 } xxl={ 4 } 
 
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 
     async function filterAscean(results: any) {
-        console.log(results, '<- Results in filtering the Ascean')
-        console.log(results.length, '<- The amount of search results!')
-        let finalResults = [];
-            for (let i = 0; i < results.length; i++){
-                if (finalResults.length < ascean.length) {
-                        finalResults.push(results[i])
-                }        
+      let finalResults = [];
+        for (let i = 0; i < results.length; i++) {
+          if (finalResults.length < ascean.length) {
+            finalResults.push(results[i]);
+          }        
         }
-        setAllAscean(finalResults)
+      setAllAscean(finalResults);
     }
 
     function displayResults() {
@@ -140,7 +133,6 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
                 ? <>{displayResults()}</>
                 : ''
             }
-            {/* <CommunitySearch ascean={ascean} loggedUser={loggedUser} /> */}
         </Row>
         <Row className="justify-content-center my-2">
             <h6 style={{ textAlign: 'center' }}className='mb-5' >

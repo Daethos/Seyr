@@ -29,5 +29,4 @@ export const ChatState = () => {
     useContext(ChatContext);
 }
 
-
 export default ChatProvider

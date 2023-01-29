@@ -1,4 +1,3 @@
-import React from 'react';
 import FriendPopover from '../FriendPopover/FriendPopover';
 
 interface Props {

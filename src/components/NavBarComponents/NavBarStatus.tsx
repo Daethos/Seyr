@@ -22,7 +22,6 @@ const NavBarStatus = ({ user, setRelayStatus }: Props) => {
       }, [])
     
     async function friends() {
-      //setLoading(true);
       try {
           const response = await friendAPI.getAllFriends(user._id)
           setFriendState(response.data.user.friends)
@@ -58,7 +57,6 @@ const NavBarStatus = ({ user, setRelayStatus }: Props) => {
           console.log(response.you, '<- Checking you out to see your removed request')
           setFriendAccept(true)
           setRelayStatus(true)
-        //   setFriendState()
         } catch (err: any) {
             console.log(err.message, '<- Error handling Friend Request')
         }
@@ -71,25 +69,11 @@ const NavBarStatus = ({ user, setRelayStatus }: Props) => {
             const response = await friendAPI.friendDecline(user._id, friend.target.value)
             console.log(response, '<- Response in Friend Decline')
             setFriendDecline(true)
-            //friendStatus();
         } catch (err: any) {
             setFriendDecline(true)
             console.log(err.message, '<- Error handling Friend Decline')
         }
       }
-  
-    //   function handleSubmit(e: { preventDefault: () => void; }) {
-    //     e.preventDefault();
-    //     console.log('')
-    //     async function asceanVaEsai() {
-    //         try {
-    //             acceptFriendRequest(requestState)
-    //         } catch (err: any) {
-    //             console.log(err.message, '<- Error initiating Ascean Edit')
-    //         }
-    //     }
-    //     asceanVaEsai();
-    // }
 
     return (
         <>

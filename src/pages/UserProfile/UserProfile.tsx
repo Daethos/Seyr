@@ -2,7 +2,6 @@ import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
-import Image from 'react-bootstrap/Image'
 import * as asceanAPI from '../../utils/asceanApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
@@ -53,7 +52,6 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
   return (
 
     <Container>
-      {/* <Image src={loggedUser.photoUrl} alt={loggedUser.username} roundedCircle style={{ width: 100 + 'px', height: 100 + 'px' }} /> */}
       <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} key={loggedUser._id} userProfile={true} />
         {
           asceanVaEsai.length > 0
@@ -72,13 +70,12 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
             No Characters? No worries ^_^ <br />
             Here's a Quick Overview of the NavBar to Catch You Up<br />
             
-            Castle: Home Page<br />
-            Knight: New Character<br />
-            {/* Quill: Edit Character<br /> */}
-            Target: Story Mode<br />
-            Scroll: Home<br />
-            Chat Bubbles: Direct Messages<br />
-            Double-Axes: PvP Arena<br />
+            Castle: Home Page, holds your characters and their basic information.<br />
+            Knight: New Character, let's you create a new one to use in their own story.<br />
+            Scarecrow: Story Mode, here you can duel, level, and progress your character.<br />
+            Scroll: Community Feed, shows characters from other players in additon to high score rankings for the story mode.<br />
+            Chat Bubbles: Direct Messages, whether 1-to-1 or group chat, you can create or access conversations and their history.<br />
+            Double-Axes: PvP Arena, choose a character and create or join an existing room, once two players have joined you can duel each other ad nauseum.<br />
           </p>
         }
     </Container>

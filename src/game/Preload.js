@@ -1,13 +1,11 @@
 import Phaser from "phaser";
 import NewText from './NewText.js' 
-import { equipment } from '../game/utility';
 import PlayerHelm from "../game/PlayerHelm";
 import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
 import Tileset from '../game/images/Tileset.png';
 import AtlasTerrain from '../game/images/Atlas Terrain.png';
 import TileJson from '../game/images/map.json';
-import storyAscean from './StoryAscean';
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
 
@@ -26,7 +24,6 @@ export default class Preload extends Phaser.Scene {
     }
 
     preload() {
-        // console.log(this, 'This Preload')
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x8A2BE2', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
@@ -41,8 +38,6 @@ export default class Preload extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', TileJson);
  
         this.createLoadingBar();
-
-        
     }
 
     create() {
@@ -64,7 +59,6 @@ export default class Preload extends Phaser.Scene {
     
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
-        // console.log(e.detail, 'Another stab at an Ascean')
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
     };
 
@@ -85,13 +79,10 @@ export default class Preload extends Phaser.Scene {
             'preload',
             { x: 0.5, y: 1 }
         )
-        // console.log(this.title, this.txt_progress)
         let x = 10;
         let y = this.centerY + 5;
-        // console.log(this.load.progress, 'Progress')
         this.progress = this.add.graphics({ x: x, y: y });
         this.border = this.add.graphics({ x: x, y: y })
-        // console.log(this.load, 'This mean anythning?')
         this.load.on('progress', this.onProgress, this);
     }
     onProgress(val) {

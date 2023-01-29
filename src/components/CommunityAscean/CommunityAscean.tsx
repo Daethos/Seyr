@@ -53,12 +53,7 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             loading={false}
             key={ascean._id + 2}
         />
-        {/* <svg height="5" width="100%" className="tapered-rule">
-            <polyline points="0,0 550,2.5 0,5"></polyline>
-        </svg> */}
         <div className="top-stats">
-        {/* <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id}  /> */}
-        {/* <div className="actions"><h3> </h3></div> */}
         </div>
         <div className="actions" style={{ marginTop: -6 + '%', marginBottom: -1 + '%' }}><h3> </h3></div>
         <FeelingsCard ascean={ascean} loggedUser={loggedUser} />

@@ -34,9 +34,6 @@ const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Prop
                 </Link>
             </div>
                
-            {/* <div className="actions">
-                <h3>Character</h3>
-            </div> */}
             <div className="creature-heading">
                 <h1>{ascean.name}</h1>
                 <h2>{ascean.description}</h2>
@@ -45,9 +42,6 @@ const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Prop
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            {/* <div className="actions">
-                <h3>Player Statistics</h3>
-            </div> */}
             <div className="property-line first">
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
@@ -81,9 +75,6 @@ const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Prop
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            {/* <div className="actions">
-                <h3>Faith</h3>
-            </div> */}
             </div>
         
         </div>

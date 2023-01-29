@@ -7,7 +7,6 @@ import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/As
 import Delete from '../AsceanBuilder/Delete';
 import Update from '../AsceanBuilder/Update';
 
-
 interface Props {
     ascean: any;
     userProfile?: boolean;

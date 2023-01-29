@@ -11,9 +11,6 @@ interface AuthProps {
 }
 
 export default function AuthPage({ setUser, handleSignUpOrLogin }: AuthProps) {
-
-  
-
   const [showSignUp, setShowSignUp]  = useState(false);
   return (
     <Container fluid>
@@ -39,7 +36,6 @@ export default function AuthPage({ setUser, handleSignUpOrLogin }: AuthProps) {
       </h3>
       </Row>
     <Row className="auth mt-3 justify-content-center" 
-    // xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }
     >
       { 
         showSignUp 

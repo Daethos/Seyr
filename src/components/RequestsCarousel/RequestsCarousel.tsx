@@ -41,11 +41,7 @@ const RequestsCard = ({ loggedUser, acceptFriendRequest, declineFriendRequest, r
         <>
         
         <Col className="stat-block wide d-block w-100 my-1" id="request-banner">
-        {/* <span id='banner-request-pic'> */}
             <Link to={`/${request?.userId?.username}`} ><img src={request.userId.photoUrl} alt={request.userId.username} id="request-pic" className=''/></Link>
-        {/* </span> */}
-            {/* <h1 className='text-warning' style={{ fontSize: '', color: '' }} id='ascean-name'>{request.username}</h1>
-            <h2 className="text-white" id="ascean-bio">{request.userId.bio}</h2> */}
         <span id='banner-request-accept'>
         <Form onSubmit={handleSubmit}>
             <Button variant="" className="btn btn-outline req-button" style={{ fontWeight: 600, color: 'green', textDecoration: 'none', fontSize: 20 + 'px' }} value={request} type="submit" onClick={acceptFriendRequest}>Accept</Button>

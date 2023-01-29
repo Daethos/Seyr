@@ -58,9 +58,7 @@ const Story = ({ user }: Props) => {
         
     return (
         <>
-        {
-            gameChange ?
-            ''
+        { gameChange ? ''
             :
             <HostScene 
                 user={user} ascean={ascean} setGameChange={setGameChange} gameChange={gameChange}
