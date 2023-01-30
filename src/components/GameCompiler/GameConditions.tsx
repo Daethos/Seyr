@@ -33,23 +33,34 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
         setTimeLeftDisplay(timeLeft);
     }, [timeLeft])
 
-    useInterval(() => {
-        if (state.gameIsLive) {
-            autoAttack(state);
-        }
-    }, 10000)
+    // useInterval(() => {
+    //     if (state.gameIsLive && timeLeft === 0) {
+    //         autoAttack(state);
+    //     }
+    // }, timeLeft)
+
+    // If The useInterval above ever breaks down, this is a backup
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (state.gameIsLive && timeLeft === 0) {
+                autoAttack(state);
+            }
+        }, timeLeft);
+        return () => clearTimeout(timer);
+    }, [timeLeft, state]);
 
     const autoEngage = () => {
         dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: !state.gameIsLive });
-    }
+    };
+
     useEffect(() => {
         if (state.gameIsLive) {
             setEmergencyText(['Auto Action Commencing']);
-        }
+        } 
         if (!state.gameIsLive) {
             setEmergencyText(['Auto Action Disengaging']);
         }
-      }, [state.gameIsLive])
+    }, [state.gameIsLive])
 
     const autoAttack = async (combatData: any) => {
         setLoading(true);
@@ -58,17 +69,17 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, 'Response Auto Engaging');
-            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
+            dispatch({ type: ACTIONS.AUTO_COMBAT, payload: response.data });
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 playWin();
                 gainExperience();
                 setLootRoll(true);
-                setTimeLeft(0);
                 dispatch({
                     type: ACTIONS.PLAYER_WIN,
                     payload: response.data
                 });
+                setTimeLeft(0);
             }
             if (response.data.computer_win === true) {
                 playDeath();
@@ -76,6 +87,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
                     type: ACTIONS.COMPUTER_WIN,
                     payload: response.data
                 });
+                setTimeLeft(0);
             }
             setLoading(false);
         } catch (err: any) {

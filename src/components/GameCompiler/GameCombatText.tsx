@@ -12,28 +12,37 @@ interface Props {
     playerDeathText: string;
     computerDeathText: string;
     emergencyText: any[] | (() => any[]);
-}
+    combatRoundText: string;
+};
 
-const GameCombatText = ({ emergencyText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
-    
+const GameCombatText = ({ emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
+    const text = () => {
+        let result = "";
+        if (emergencyText) result += emergencyText + "\n";
+        if (playerActionText) result += playerActionText + "\n";
+        if (computerActionText) result += computerActionText + "\n";
+        if (playerSpecialText) result += playerSpecialText + "\n";
+        if (computerSpecialText) result += computerSpecialText + "\n";
+        if (playerCombatText) result += playerCombatText + "\n";
+        if (computerCombatText) result += computerCombatText + "\n";
+        if (playerReligiousText) result += playerReligiousText + "\n";
+        if (playerReligiousTextTwo) result += playerReligiousTextTwo + "\n";
+        if (computerReligiousText) result += computerReligiousText + "\n";
+        if (computerReligiousTextTwo) result += computerReligiousTextTwo + "\n";
+        if (playerDeathText) result += playerDeathText + "\n";
+        if (computerDeathText) result += computerDeathText + "\n";
+        if (combatRoundText) result += `Combat Round: ${combatRoundText} \n`;
+        return result;
+    };
     return (
         <div id="textarea">
             <textarea 
                 className="text-box" id="console" 
-                value={
-                    emergencyText + `\n` +
-                    playerActionText + `\n` + computerActionText + `\n` +
-                    playerSpecialText + `\n` + computerSpecialText + `\n` +
-                    playerCombatText + `\n` +  computerCombatText + `\n` +
-                    playerReligiousText + `\n` + playerReligiousTextTwo + `\n` +
-                    computerReligiousText + `\n` + computerReligiousTextTwo + `\n` +
-                    playerDeathText + `\n` +  computerDeathText + `\n` +
-                    emergencyText
-                } 
+                value={text()}
                 readOnly>
             </textarea>
         </div>
-    )
-}
+    );
+};
 
-export default GameCombatText
+export default GameCombatText;

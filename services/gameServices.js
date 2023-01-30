@@ -542,10 +542,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.player_influence_description = existingEffect.description;
             console.log(existingEffect, 'New Status Effect in Game Services');
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-            existingEffect.tick.end += 1;
+            existingEffect.tick.end += 2;
             existingEffect.activeStacks += 1;
             existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
-            combatData.player_influence_description = `${existingEffect.description}, stacked ${existingEffect.activeStacks} times.`;
+            combatData.player_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
             switch (existingEffect.prayer) {
                 case 'Buff': {
                     for (let key in existingEffect.effect) {
@@ -571,7 +571,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
             existingEffect.activeRefreshes += 1;
-            combatData.player_influence_description = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+            combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         }    
     }
     if (combatData.dual_wielding === true) {
@@ -585,10 +585,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.player_influence_description_two = existingEffect.description;
                 console.log(existingEffect, 'New Status Effect in Game Services');
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-                existingEffect.tick.end += 1;
+                existingEffect.tick.end += 2;
                 existingEffect.activeStacks += 1;
                 existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
-                combatData.player_influence_description_two = `${existingEffect.description}, stacked ${existingEffect.activeStacks} times.`;
+                combatData.player_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
                 switch (existingEffect.prayer) {
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
@@ -614,7 +614,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.activeRefreshes += 1;
-                combatData.player_influence_description_two = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+                combatData.player_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             }    
         }
     }
@@ -628,10 +628,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             combatData.computer_influence_description = existingEffect.description;
             console.log(existingEffect, 'New Status Effect in Game Services');
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-            existingEffect.tick.end += 1;
+            existingEffect.tick.end += 2;
             existingEffect.activeStacks += 1;
             existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
-            combatData.computer_influence_description = `${existingEffect.description}, stacked ${existingEffect.activeStacks} times.`;
+            combatData.computer_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
             switch (existingEffect.prayer) {
                 case 'Buff': {
                     for (let key in existingEffect.effect) {
@@ -657,7 +657,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
             existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
             existingEffect.activeRefreshes += 1;
-            combatData.computer_influence_description = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+            combatData.computer_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         }    
     }
     if (combatData.computer_dual_wielding === true) {
@@ -671,10 +671,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 combatData.computer_influence_description_two = existingEffect.description;
                 console.log(existingEffect, 'New Status Effect in Game Services');
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-                existingEffect.tick.end += 1;
+                existingEffect.tick.end += 2;
                 existingEffect.activeStacks += 1;
                 existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
-                combatData.computer_influence_description_two = `${existingEffect.description}, stacked ${existingEffect.activeStacks} times.`;
+                combatData.computer_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
                 switch (existingEffect.prayer) {
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
@@ -700,7 +700,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.activeRefreshes += 1;
-                combatData.computer_influence_description_two = `${existingEffect.description}, refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+                combatData.computer_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             }    
         }
     }
@@ -2330,7 +2330,7 @@ const actionSplitter = async (combatData) => {
         winStreak: combatData.winStreak,
         loseStreak: combatData.loseStreak,
     };
-    // console.log(newData, 'Combat Data in the Action Splitter')
+    console.log(newData.highScore, 'High Score in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;
     const computer_initiative = newData.computer_attributes.initiative;
     let player_action = newData.action;

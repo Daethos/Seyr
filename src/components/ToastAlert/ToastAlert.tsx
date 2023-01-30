@@ -10,7 +10,7 @@ const ToastAlert = ({ error, setError }: Props) => {
   const [show, setShow] = useState(false);
   useEffect(() => {
     setShow(!show)
-}, [error])
+  }, [error])
 
   return (
     <>

@@ -8,7 +8,6 @@ interface Props {
 }
 
 const StatusEffects = ({ effect, player }: Props) => {
-
     const effectPopover = (
         <Popover className='text-info' id='popover'>
             <Popover.Header id='popover-header' as='h2'>{effect?.name}</Popover.Header>
@@ -19,7 +18,8 @@ const StatusEffects = ({ effect, player }: Props) => {
                 <p>{effect?.description}</p>
                     Duration: {effect?.duration} <br />
                     Intensity: {effect?.intensity?.value}
-                <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}</p>
+                <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
+                Round Start: {effect?.tick?.start} | End: {effect?.tick?.end}</p>
                 <p>Effect(s): <br />
                     {effect?.effect?.physical_damage ? <>Physical Damage: {effect?.effect?.physical_damage} <br /> </> : ''}
                     {effect?.effect?.magical_damage ? <>Magical Damage: {effect?.effect?.magical_damage} <br /> </> : ''}
@@ -41,10 +41,6 @@ const StatusEffects = ({ effect, player }: Props) => {
     );
 
     const getEffectStyle = {
-        // background: 'black',
-        // border: '2px solid gold',
-        // width: '25%',
-        // height: '35%',
         marginTop: player ? '-10%' : 0,  
     }
 
@@ -55,7 +51,7 @@ const StatusEffects = ({ effect, player }: Props) => {
 
     return (
 
-        <OverlayTrigger trigger='click' placement='auto-start' overlay={effectPopover}>
+        <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
             <Button variant='' style={getEffectStyle} className='status-effects'><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/></Button>
         </OverlayTrigger>
     )

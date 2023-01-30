@@ -55,7 +55,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
   }, [state.playerBlessing])
 
   useEffect(() => {
-    console.log('Combat Initiated!', combatInitiated);
     if (state.combatInitiated) {
         if (dropdownRef.current) {
             dropdownRef!.current.selectedIndex = 0;

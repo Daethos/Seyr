@@ -111,6 +111,7 @@ export const ACTIONS = {
     SET_PRAYER_BLESSING: 'SET_PRAYER_BLESSING',
     SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
     INITIATE_COMBAT: 'INITIATE_COMBAT',
+    AUTO_COMBAT: 'AUTO_COMBAT',
     SET_PLAYER_QUICK: 'SET_PLAYER_QUICK',
     SET_PLAYER_SLICK: 'SET_PLAYER_SLICK',
     SAVE_EXPERIENCE: 'SAVE_EXPERIENCE',
@@ -219,7 +220,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_defense: action.payload.defense,
                 player_attributes: action.payload.attributes,
                 player_damage_type: action.payload.combat_weapon_one.damage_type[0],
-                highScore: action.payload.ascean.highScore,
+                highScore: action.payload.ascean.high_score,
             };
         case 'SET_COMPUTER':
             return {
@@ -351,6 +352,12 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 action: '',
                 actionStatus: true,
                 dodgeStatus: action.payload.action === 'dodge' ? true : action.payload.dodgeStatus === true ? true : false,
+                combatInitiated: true,
+            };
+        case 'AUTO_COMBAT':
+            return {
+                ...action.payload,
+                action: '',
                 combatInitiated: true,
             };
         case 'PLAYER_WIN':

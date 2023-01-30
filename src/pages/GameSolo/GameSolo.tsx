@@ -121,12 +121,11 @@ const GameSolo = ({ user }: GameProps) => {
     });
 
     const getAscean = useCallback(async () => {
-        setLoadingAscean(true)
+        setLoadingAscean(true);
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
-            const response = await asceanAPI.getAsceanStats(asceanID)
-            console.log(response.data.data, 'Response Compiling Stats')
+            const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER,
                 payload: response.data.data
@@ -236,7 +235,6 @@ const GameSolo = ({ user }: GameProps) => {
             const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
             setOpponent(profilesInRange[randomOpponent]);
             const response = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
-            console.log(response.data.data, 'Response Compiling Stats For Opponent')
             dispatch({
                 type: ACTIONS.SET_NEW_COMPUTER,
                 payload: response.data.data
@@ -250,9 +248,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const levelUpAscean = async (vaEsai: any) => {
         try {
-            console.log(vaEsai, 'Va Esai');
             let response = await asceanAPI.levelUp(vaEsai);
-            console.log(response, 'Level Up');
             setAsceanState({
                 ...asceanState,
                 ascean: response.data,
@@ -285,12 +281,10 @@ const GameSolo = ({ user }: GameProps) => {
 
     const saveExperience = async () => {
         if (saveExp === false || state.player_win === false) {
-            console.log('Either A Loss or Already At Max Exp');
             return;
         }
         try {
             const response = await asceanAPI.saveExperience(asceanState);
-            console.log(response.data, 'Response Saving Experience');
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
             dispatch({
@@ -332,7 +326,6 @@ const GameSolo = ({ user }: GameProps) => {
     const gainExperience = async () => {
         try {
             let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
-            console.log(opponentExp, 'Experience Gained');
             if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
                     ...asceanState,
@@ -383,7 +376,6 @@ const GameSolo = ({ user }: GameProps) => {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
             const response = await asceanAPI.getAsceanStats(asceanID);
-            console.log(response.data.data, 'Response Compiling Stats');
             dispatch({
                 type: ACTIONS.SET_PLAYER_SLICK,
                 payload: response.data.data
@@ -417,15 +409,11 @@ const GameSolo = ({ user }: GameProps) => {
     
     const getOneLootDrop = async (level: number) => {
         try {
-            console.log(level, 'Level For Loot Drop')
             let response = await eqpAPI.getLootDrop(level);
-            console.log(response.data[0], 'Loot Drop');
             setLootDrop(response.data[0]);
-
             let roll = Math.floor(Math.random() * 100) + 1;
             if (roll <= 25) {
                 let second = await eqpAPI.getLootDrop(level);
-                console.log(second.data[0], 'Second Loot Drop');
                 setLootDropTwo(second.data[0]);
             } else {
                 setLootDropTwo(null);
@@ -464,7 +452,7 @@ const GameSolo = ({ user }: GameProps) => {
             type: ACTIONS.SET_COMBAT_ACTION,
             payload: action.target.value
         })
-        // setTimeLeft(10);
+        setTimeLeft(timeLeft + 3);
     }
 
     function handleCounter(counter: any) {
@@ -472,7 +460,7 @@ const GameSolo = ({ user }: GameProps) => {
             type: ACTIONS.SET_COMBAT_COUNTER,
             payload: counter.target.value
         });
-        // setTimeLeft(10);
+        setTimeLeft(timeLeft + 3);
     }
 
     async function setWeaponOrder(weapon: any) {
@@ -483,12 +471,11 @@ const GameSolo = ({ user }: GameProps) => {
             });
             const response = await newWeaponOrder();
             playWO();
-            console.log(response, '<- Response re-ordering weapons');
             dispatch({
                 type: ACTIONS.SET_WEAPON_ORDER,
                 payload: response
             });
-            // setTimeLeft(10);
+            setTimeLeft(timeLeft + 3);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order')
         }
@@ -501,7 +488,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_DAMAGE_TYPE,
                 payload: damageType.target.value
             });
-            // setTimeLeft(10);
+            setTimeLeft(timeLeft + 3);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type')
         }
@@ -514,7 +501,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_PRAYER_BLESSING,
                 payload: prayer.target.value
             });
-            setTimeLeft(10);
+            setTimeLeft(timeLeft + 3);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer')
         }
@@ -607,7 +594,7 @@ const GameSolo = ({ user }: GameProps) => {
                 return;
             }
             setEmergencyText([``]);
-            // setTimeLeft(10);
+            setTimeLeft(timeLeft + 3);
             const response = await gameAPI.initiateAction(state);
             console.log(response.data, 'Response Initiating Combat');
             dispatch({
@@ -619,19 +606,19 @@ const GameSolo = ({ user }: GameProps) => {
                 playWin();
                 gainExperience();
                 setLootRoll(true);
-                setTimeLeft(0);
                 dispatch({
                     type: ACTIONS.PLAYER_WIN,
                     payload: response.data
                 });
+                setTimeLeft(0);
             }
             if (response.data.computer_win === true) {
                 playDeath();
-                setTimeLeft(0);
                 dispatch({
                     type: ACTIONS.COMPUTER_WIN,
                     payload: response.data
                 });
+                setTimeLeft(0);
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -775,7 +762,7 @@ const GameSolo = ({ user }: GameProps) => {
             /> : <Loading Combat={true} />
             }
             <GameCombatText 
-               emergencyText={emergencyText} 
+               emergencyText={emergencyText} combatRoundText={state.combatRound}
                 playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
                 playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
                 playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
