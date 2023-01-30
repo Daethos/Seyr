@@ -17,12 +17,12 @@ const GameAnimations = ({ rollSuccess, computerRollSuccess, counterSuccess, comp
 
     const critStyle = {
         backgroundColor: 'red',
-        fontSize: 32 + 'px',
+        fontSize: 36 + 'px',
     }
 
     const rollStyle = {
         backgroundColor: 'green',
-        fontSize: 28 + 'px',
+        fontSize: 32 + 'px',
     }
 
     return (

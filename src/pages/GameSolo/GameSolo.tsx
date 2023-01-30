@@ -268,7 +268,7 @@ const GameSolo = ({ user }: GameProps) => {
                 mastery: response.data.mastery,
                 faith: response.data.faith,
             });
-            getAscean();
+            getAsceanSlicker();
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up')
         }
@@ -445,7 +445,7 @@ const GameSolo = ({ user }: GameProps) => {
     }, [state.highScore])
 
     const updateHighScore = async () => {
-        setLoadingAscean(true);
+        // setLoadingAscean(true);
         try {
             const response = await asceanAPI.highScore({
                 'asceanId': ascean._id,
@@ -453,7 +453,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
-            setLoadingAscean(false);
+            // setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error Updating High Score')
         }
