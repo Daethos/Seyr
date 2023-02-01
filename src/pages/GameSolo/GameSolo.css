@@ -46,11 +46,11 @@
 
 .dialog-box {
   position: absolute; /* add this */
-  top: 45%; /* position the dialog box in the center vertically */
+  top: 39%; /* position the dialog box in the center vertically */
   left: 50%; /* position the dialog box in the center horizontally */
   transform: translate(-50%, -50%); /* adjust the position of the dialog box to account for its own width and height */
   /* margin-top: 7.5%; */
-  height: 200px;
+  height: 300px;
   width: 100%;
   border: 2px solid purple;
   border-radius: 6px;
@@ -60,7 +60,7 @@
   justify-content: space-between;
 }
 .dialog-text {
-  height: 200px;
+  height: 300px;
   width: 75%;
   margin-top: 1%;
   color: #fdf6d8;
@@ -68,11 +68,8 @@
   text-align: center;
 }
 .dialog-options {
-  /* position: absolute;
-  grid-column-start: 4; */
-  /* grid-row-start: 4; */
   text-align: center;
-  height: 200px;
+  height: 300px;
   width: 25%;
   border-left: 2px solid purple;
   overflow-y: scroll;
@@ -101,7 +98,16 @@
     top: 7%;
   }
 }
-
+.dialog-button {
+  grid-column-start: 3;
+  grid-row-start: 7;
+  color: purple;
+  background: black;
+  border: 2px solid purple;
+  width: 100%;
+  height: 50%;
+  margin-left: -25%;
+}
 .inventory-bag {
   position: absolute;
   display: grid;
@@ -128,16 +134,16 @@
 .inventory-button {
   grid-column-start: 4;
   grid-row-start: 7;
-  color: #fdf6d8;
+  color: purple;
   background: black;
-  border: 2px solid #fdf6d8;
+  border: 2px solid purple;
   width: 100%;
   height: 50%;
 }
-.inventory-button:focus {
+.inventory-button:focus, .dialog-button:focus {
   /* background-color: purple; */
-  color: purple;
-  border: 2px solid purple;
+  color: #fdf6d8;
+  border: 2px solid #fdf6d8;
 }
 .inventory-icon {
   width: 64px;

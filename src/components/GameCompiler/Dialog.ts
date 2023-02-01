@@ -11607,7 +11607,7 @@ const Opponent: Record<string, Dialog> = {
                     familiar: "",
                     intimate: ""
                 }
-        },
+            },
         },
         taunt: {
             text: {
@@ -11626,7 +11626,7 @@ const Opponent: Record<string, Dialog> = {
                     familiar: "",
                     intimate: ""
                 }
-        },
+            },
         },
         victory: {
             text: {
@@ -11645,7 +11645,7 @@ const Opponent: Record<string, Dialog> = {
                     familiar: "",
                     intimate: ""
                 }
-        },
+            },
         },
         worldLore: {
             text: {
@@ -11665,17 +11665,14 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },},
-
-
+        },
+    },
 } 
 
 export function getNpcDialog(npc: string): Dialog {
-    // Check if the NPC exists in the Opponent object
     if (!(npc in Opponent)) {
       throw new Error(`NPC '${npc}' not found in Opponent object.`);
     }
-  
     return Opponent[npc];
-  }
+}
   

@@ -204,7 +204,6 @@ export const initialCombatData: CombatData = {
 }
 
 export const CombatStore = (state: CombatData, action: Action) => {
-
     switch (action.type) {
         case 'SET_PLAYER':
             return {
@@ -306,7 +305,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 actionStatus: action.payload,
-            }
+            };
         case 'SET_COMBAT_ACTION':
             return {
                 ...state,
@@ -317,7 +316,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 combatInitiated: action.payload,
-            }
+            };
         case 'SET_COMBAT_COUNTER':
             return {
                 ...state,
@@ -404,8 +403,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
             };
         default: 
             return state;
-    }
-}
+    };
+};
 
 export const useInterval = (callback: () => void, delay: number) => {
     const savedCallback = useRef<() => void>();

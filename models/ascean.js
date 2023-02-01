@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// TODO: Inventory Field! Empty Array? Default Null?
-// FIXME: Perhaps capture all the current EQP? Is that possible?
-
 const likeSchema = new Schema({
     username: String,
     userId: { type: mongoose.Schema.Types.Object }
@@ -33,18 +30,6 @@ const questSchema = new Schema({
         default: null
     },
     completed: Boolean,
-});
-
-const statusSchema = new Schema({
-    name: String,
-    description: String,
-    duration: Number,
-    refreshes: Boolean,
-    stacks: Boolean,
-    type: String,
-    active: Boolean,
-    hidden: Boolean,
-    imgURL: String,
 });
 
 const asceanSchema = new Schema(

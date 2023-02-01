@@ -38,6 +38,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [lootDrop, setLootDrop] = useState<any>([]);
     const [lootDropTwo, setLootDropTwo] = useState<any>([]);
     const [itemSaved, setItemSaved] = useState<boolean>(false);
+    const [showDialog, setShowDialog] = useState<boolean>(false);
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const [eqpSwap, setEqpSwap] = useState<boolean>(false);
     const [removeItem, setRemoveItem] = useState<boolean>(false);
@@ -452,7 +453,7 @@ const GameSolo = ({ user }: GameProps) => {
             type: ACTIONS.SET_COMBAT_ACTION,
             payload: action.target.value
         })
-        setTimeLeft(timeLeft + 3);
+        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
     }
 
     function handleCounter(counter: any) {
@@ -460,7 +461,7 @@ const GameSolo = ({ user }: GameProps) => {
             type: ACTIONS.SET_COMBAT_COUNTER,
             payload: counter.target.value
         });
-        setTimeLeft(timeLeft + 3);
+        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
     }
 
     async function setWeaponOrder(weapon: any) {
@@ -475,7 +476,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_WEAPON_ORDER,
                 payload: response
             });
-            setTimeLeft(timeLeft + 3);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order')
         }
@@ -488,7 +489,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_DAMAGE_TYPE,
                 payload: damageType.target.value
             });
-            setTimeLeft(timeLeft + 3);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type')
         }
@@ -501,7 +502,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_PRAYER_BLESSING,
                 payload: prayer.target.value
             });
-            setTimeLeft(timeLeft + 3);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer')
         }
@@ -594,7 +595,7 @@ const GameSolo = ({ user }: GameProps) => {
                 return;
             }
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 3);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
             console.log(response.data, 'Response Initiating Combat');
             dispatch({
@@ -734,12 +735,15 @@ const GameSolo = ({ user }: GameProps) => {
             />
             { !state.combatEngaged ?
                 <>
-                <DialogBox 
-                    npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state}
-                    playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
-                    winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo}
-                    resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
-                />
+                { showDialog ?    
+                    <DialogBox 
+                        npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state}
+                        playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
+                        winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo}
+                        resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
+                    />
+                : '' }
+                <Button variant='' className='dialog-button' onClick={() => setShowDialog(!showDialog)}>Dialog</Button>
                 <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>    
                 </>
             : '' }
