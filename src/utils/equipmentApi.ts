@@ -64,7 +64,7 @@ export async function getMerchantEquipment(level: number) {
     })
 }
 
-export async function deleteEquipoment(data: object) {
+export async function deleteEquipment(data: object) {
     return fetch(BASE_URL + 'delete', {
         method: 'DELETE',
         body: JSON.stringify(data),

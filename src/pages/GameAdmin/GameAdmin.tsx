@@ -129,7 +129,7 @@ const initialGameAdaminData: GameAdminData = {
     equipmentTable: [],
     searchQuery: '',
     asceanSearched: {...asceanTemplate},
-    asceanSearchData: [{...asceanTemplate}],
+    asceanSearchData: [],
     generatedAscean: {...asceanTemplate},
     error: { title: '', content: '' },
     setError: () => {},
@@ -234,13 +234,25 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         try {
             if (state.equipmentTable.length > 0) {
-                dispatch({ type: ACTIONS.DELETE_EQUIPMENT_TABLE, payload: []});
+                const deleteResponse = await eqpAPI.deleteEquipment(state.equipmentTable);
+                console.log(deleteResponse, 'Delete Response');
+                // dispatch({ type: ACTIONS.DELETE_EQUIPMENT_TABLE, payload: []});
             }
             const response = await eqpAPI.getMerchantEquipment(level);
             dispatch({
                 type: ACTIONS.SET_EQUIPMENT_TABLE,
                 payload: response.data,
             });
+        } catch (err: any) {
+            console.log(err.message);
+        };
+    };
+
+    const deleteEquipment = async (eqp: any) => {
+        try {
+            const deleteResponse = await eqpAPI.deleteEquipment(eqp);
+            console.log(deleteResponse, 'Delete Response');
+            dispatch({ type: ACTIONS.DELETE_EQUIPMENT_TABLE, payload: []});
         } catch (err: any) {
             console.log(err.message);
         };
@@ -255,6 +267,10 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     };
     
     const fetchAscean = async (id: string) => {
+        if (id === '') {
+            dispatch({ type: ACTIONS.SET_ASCEAN_DATA, payload: [] });
+            return;
+        };
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         try {
             const response = await asceanAPI.getNamedAscean(id);
@@ -301,13 +317,12 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                                 />
                             </Form.Group>
                         </Form>
-                        {/* <Button variant='' style={{ color: 'orangered', fontVariant: 'small-caps', fontSize: 25 + 'px' }} onClick={() => fetchAscean(state.searchQuery)}>Fetch Ascean</Button> */}
-                        {/* {state.loading ? <Loading Combat={true} /> : */}
-                            {state.asceanSearchData.map((ascean: Ascean, index: number) => {
+                        {state.asceanSearchData.length > 0 ? 
+                            state.asceanSearchData.map((ascean: Ascean, index: number) => {
                                 return (
                                     <AsceanListItem ascean={ascean} state={state} dispatch={dispatch} key={index} fetch={() => generateAscean(ascean._id)} />
-                                    )})}
-                             {/* } */}
+                                    )})
+                             : '' }
                         { state.asceanLoaded ?
                         <AdminAscean ascean={state.generatedAscean} loading={false} />
                         : ''}
@@ -325,6 +340,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                             
                             <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={state.error} setError={state.setError} />
                             : '' }
+                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={() => deleteEquipment(state.equipmentTable)}>Delete Equipment</Button>
                         </Card.Body>
                 </Card>
             </Row>

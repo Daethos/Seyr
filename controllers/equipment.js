@@ -101,8 +101,8 @@ const determineRarityByLevel = (level) => {
 }
 
 const determineEquipmentType = () => {
-    console.log('%c We have made it to the determineEquipmentType in the Equipment Controller!', 'color: blue')
     const roll = Math.floor(Math.random() * 100  + 1);
+    console.log(roll, 'Determining Equpment Type by Roll');
     
     if (roll <= 30) {
         return 'Weapon';
@@ -163,9 +163,10 @@ async function getMerchantEquipment(req, res) {
         let merchantEquipment = [];
         let type;
         let rarity;
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 12; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = determineEquipmentType();
+            console.log(type, 'Type of Item Ping 1')
             let equipment;
             let eqpCheck = Math.floor(Math.random() * 100 + 1);
 
@@ -178,18 +179,23 @@ async function getMerchantEquipment(req, res) {
             if (req.params.level < 4) {
                 if (eqpCheck > 80) {
                     equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Weapon';
                     console.log(equipment, 'Weapon ?')
                 } else if (eqpCheck > 60) {
                     equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Shield';
                     console.log(equipment, 'Shield ?')
                 } else if (eqpCheck > 40) {
                     equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Helmet';
                     console.log(equipment, 'Helmet ?')
                 } else if (eqpCheck > 20) {
                     equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Chest';
                     console.log(equipment, 'Chest ?')
                 } else {
                     equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Legs';
                     console.log(equipment, 'Legs ?')
                 }
             } else if (type === 'Weapon') {
@@ -209,11 +215,12 @@ async function getMerchantEquipment(req, res) {
             } else if (type === 'Trinket') {
                 equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
             }
-            
+            console.log(type, 'Type of Item Ping 2')
+            await seedDB(type, equipment, rarity);
             merchantEquipment.push(equipment[0]);
             // console.log(equipment, 'Equipment in Merchant Function')
         }
-        await seedDB(type, merchantEquipment, rarity);
+        console.log(type, 'Type in Merchant Function')
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
@@ -222,7 +229,7 @@ async function getMerchantEquipment(req, res) {
 }
 
 async function seedDB(type, equipment, rarity) {
-    console.log(equipment, 'Equpment in seedDB')
+    console.log(type, 'type in seedDB')
     try {
         await client.connect();
         const mondoDBCalls = equipment.map(async item => {
@@ -240,23 +247,52 @@ async function seedDB(type, equipment, rarity) {
 const mongoDB = async (model, item) => {
     console.log(model, 'Model in mondoDB function')
     switch (model) {
-        case 'Weapon': await Weapon.insertMany(item); break;
-        case 'Shield': await Shield.insertMany(item); break;
-        case 'Helmet': await Helmet.insertMany(item); break;
-        case 'Chest': await Chest.insertMany(item); break;
-        case 'Legs': await Legs.insertMany(item); break;
-        case 'Ring': await Ring.insertMany(item); break;
-        case 'Amulet': await Amulet.insertMany(item); break;
-        case 'Trinket': await Trinket.insertMany(item); break;
-    }
-}
+        case 'Weapon': {
+            await Weapon.insertMany(item); 
+            break;
+        };
+        case 'Shield': {
+            await Shield.insertMany(item); 
+            break;
+        };
+        case 'Helmet': {
+            await Helmet.insertMany(item); 
+            break;
+        };
+        case 'Chest': {
+            await Chest.insertMany(item); 
+            break;
+        };
+        case 'Legs': {
+            await Legs.insertMany(item); 
+            break;
+        };
+        case 'Ring': {
+            await Ring.insertMany(item); 
+            break;
+        };
+        case 'Amulet': {
+            await Amulet.insertMany(item); 
+            break;
+        };
+        case 'Trinket': {
+            await Trinket.insertMany(item); 
+            break;
+        };
+        default: {
+            console.log('No model found');
+            break;
+        };
+    };
+};
 
 const insertIntoDB = async (item, rarity) => {
     item._id = new mongodb.ObjectID();
     let stats = randomizeStats(item, rarity);
+    console.log(stats, 'Stats in insertIntoDB function');
     item = Object.assign(item, stats);
     return item;
-}
+};
 
 
  async function getOneEquipment (req, res) {
@@ -395,8 +431,26 @@ async function getHigherRarity(id) {
   }  
 
 async function deleteEquipment(req, res) {
+    const models = {
+        Weapon: Weapon,
+        Shield: Shield,
+        Helmet: Helmet,
+        Chest: Chest,
+        Legs: Legs,
+        Ring: Ring,
+        Amulet: Amulet,
+        Trinket: Trinket,
+    }
+    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
+    console.log(req.body, 'Item Ids to be Deleted')
     try {
-
+        let result = null;
+        for (const item of req.body) {
+            for (const itemType of itemTypes) {
+                result = await models[itemType].deleteMany({ _id: { $in: [item._id] } }).exec();
+            }
+        }
+        res.status(200).json({ success: true, result });
     } catch (err) {
         console.log(err, 'err');
         res.status(400).json(err);
