@@ -5,6 +5,7 @@ const protect = require('../../config/auth')
 
 // /*---------- Public Routes ----------*/
 router.get('/', protect, asceanCtrl.index);
+router.get('/search/', protect, asceanCtrl.searchAscean);
 router.get('/:id', protect, asceanCtrl.getOneAscean);
 router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
 router.put('/highscore', protect, asceanCtrl.updateHighScore);

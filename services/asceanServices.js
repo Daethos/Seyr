@@ -194,8 +194,8 @@ async function penetrationCompiler(weapon, attributes, combatStats) {
 }
 
 async function critCompiler(weapon, attributes, combatStats) { 
-    weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 2);
-    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 25);
+    weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 3);
+    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 50);
     // weapon.critical_chance = weapon.critical_chance.toFixed(2);
     // weapon.critical_damage = weapon.critical_damage.toFixed(2);
     // weapon.critical_chance = Number(weapon.critical_chance);
@@ -207,47 +207,48 @@ async function critCompiler(weapon, attributes, combatStats) {
 async function faithCompiler(weapon, ascean) { 
     if (ascean.faith === 'adherent') {
         if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Wild' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
-            weapon.magical_damage *= 1.05;
-            weapon.critical_chance += 2;
+            weapon.magical_damage *= 1.075;
+            weapon.critical_chance += 3;
         }
         if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatmace') {
-            weapon.physical_damage *= 1.05;
+            weapon.physical_damage *= 1.075;
         }
         if (weapon.type === 'Greatsword' || weapon.type === 'Polearm') {
-            weapon.physical_damage *= 1.03;
-            weapon.magical_damage *= 1.03;
+            weapon.physical_damage *= 1.05;
+            weapon.magical_damage *= 1.05;
         }
-        if (weapon.type === 'Axe' || weapon.type === 'Mace' || weapon.type === 'Curved Sword' || weapon.type === 'Dagger') {
-            weapon.physical_damage *= 1.03;
-            weapon.critical_chance += 2;
+        if (weapon.type === 'Axe' || weapon.type === 'Mace' || weapon.type === 'Curved Sword' || weapon.type === 'Dagger' || weapon.type === 'Long Sword') {
+            weapon.physical_damage *= 1.05;
+            weapon.critical_chance += 3;
         }
         if (weapon.grip === 'Two Hand') {
-            weapon.physical_damage *= 1.03;
-            weapon.magical_damage *= 1.03;
-            weapon.critical_chance += 2
+            weapon.physical_damage *= 1.05;
+            weapon.magical_damage *= 1.05;
+            weapon.critical_chance += 3
         }
-        weapon.critical_chance *= 1.05;
+        weapon.critical_chance *= 1.075;
         // weapon.critical_chance = weapon.critical_chance.toFixed(2)
-        weapon.roll += 2;
+        weapon.roll += 3;
     }
     if (ascean.faith === 'devoted') {
         if (weapon.damage_type?.[0] === 'Wild' || weapon.damage_type?.[0] === 'Righteous' || weapon.damage_type?.[0] === 'Spooky' || weapon.damage_type?.[0] === 'Sorcery') {
-            weapon.physical_damage *= 1.05;
-            weapon.magical_damage *= 1.05;
+            weapon.physical_damage *= 1.075;
+            weapon.magical_damage *= 1.075;
+            weapon.critical_damage *= 1.025;
         }
         if (weapon.type === 'Short Sword' || weapon.type === 'Long Sword' || weapon.type === 'Curved Sword' || weapon.type === 'Dagger' || weapon.type === 'Scythe' || weapon.type === 'Polearm') {
-            weapon.physical_damage *= 1.03;
-            weapon.magical_damage *= 1.03;
-            weapon.critical_damage *= 1.03;
+            weapon.physical_damage *= 1.05;
+            weapon.magical_damage *= 1.05;
+            weapon.critical_damage *= 1.05;
         }
         if (weapon.grip === 'One Hand' || weapon.type === 'Bow') {
-            weapon.physical_damage *= 1.03;
-            weapon.magical_damage *= 1.03;
-            weapon.critical_damage *= 1.03;
+            weapon.physical_damage *= 1.05;
+            weapon.magical_damage *= 1.05;
+            weapon.critical_damage *= 1.05;
         }
-        weapon.critical_damage *= 1.05;
+        weapon.critical_damage *= 1.075;
         // weapon.critical_damage = weapon.critical_damage.toFixed(2)
-        weapon.dodge -= 2;
+        weapon.dodge -= 3;
 
     }
     weapon.critical_chance = Math.round(weapon.critical_chance * 100) / 100;
@@ -288,7 +289,7 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats, rarity) =
     penetrationCompiler(weaponOne, attributes, combatStats);
     critCompiler(weaponOne, attributes, combatStats);
     faithCompiler(weaponOne, ascean);
-    weaponOne.dodge += (30 + (combatStats.dodgeCombat * 1.5));
+    weaponOne.dodge += (40 + (combatStats.dodgeCombat * 1.5));
     weaponOne.roll += combatStats.rollCombat;
     // console.log(weaponOne.magical_damage,  weaponOne.physical_damage, 'Damage Before Weapon Multiplier');
     // console.log(combatStats.damageMagical, combatStats.damagePhysical, 'Damage Multiplier After Compiling');
@@ -407,11 +408,11 @@ const asceanCompiler = async (ascean) => {
             (ascean.ring_one.critical_damage * rarities.ring_one) * (ascean.ring_two.critical_damage * rarities.ring_two) * (ascean.amulet.critical_damage * rarities.amulet) * (ascean.trinket.critical_damage * rarities.trinket);
         const dodgeModifier = 
             Math.round((ascean.shield.dodge * rarities.shield) + (ascean.helmet.dodge * rarities.helmet) + (ascean.chest.dodge * rarities.chest) + (ascean.legs.dodge * rarities.legs) + 
-            (ascean.ring_one.dodge * rarities.ring_one) + (ascean.ring_two.dodge * rarities.ring_two) + (ascean.amulet.dodge * rarities.amulet) + (ascean.trinket.dodge * rarities.trinket) - Math.round(((attributes.agilityMod + attributes.achreMod) / 2)));
+            (ascean.ring_one.dodge * rarities.ring_one) + (ascean.ring_two.dodge * rarities.ring_two) + (ascean.amulet.dodge * rarities.amulet) + (ascean.trinket.dodge * rarities.trinket) - Math.round(((attributes.agilityMod + attributes.achreMod) / 3)));
         const rollModifier = 
             Math.round((ascean.shield.roll * rarities.shield) + (ascean.helmet.roll * rarities.helmet) + (ascean.chest.roll * rarities.chest) + (ascean.legs.roll * rarities.legs) + 
             (ascean.ring_one.roll * rarities.ring_one) + (ascean.ring_two.roll * rarities.ring_two) + (ascean.amulet.roll * rarities.amulet) + (ascean.trinket.roll * rarities.trinket) + 
-            Math.round(((attributes.agilityMod + attributes.achreMod) / 2)));
+            Math.round(((attributes.agilityMod + attributes.achreMod) / 3)));
         const originPhysPenMod = (ascean.origin === 'Fyers' || ascean.origin === 'Notheo' ? 3 : 0)
         const originMagPenMod = (ascean.origin === 'Fyers' || ascean.origin === 'Nothos' ? 3 : 0)
         const physicalPenetration = 

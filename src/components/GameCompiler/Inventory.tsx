@@ -62,8 +62,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     
     
 
-    function canUpgrade(inventory: any[], id: string): boolean {
-        const matches = inventory.filter(item => item._id === id);
+    function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
+        const matches = inventory.filter(item => item.name === name && item.rarity === rarity);
         return matches.length >= 3;
     }
 
@@ -162,6 +162,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             const data = {
                 asceanID: ascean._id,
                 upgradeID: inventory._id,
+                upgradeName: inventory.name,
+                currentRarity: inventory.rarity,
             }
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
@@ -323,7 +325,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 : ''
             }
             <br />
-            { canUpgrade(bag, inventory._id) ? <Button variant='outline' className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
+            { canUpgrade(bag, inventory.name, inventory.rarity) ? <Button variant='outline' className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
             <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
             <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>

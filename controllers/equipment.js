@@ -9,6 +9,11 @@ const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Ascean = require('../models/ascean');
+const mongodb = require('mongodb');
+const chance = require('chance').Chance();
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://" + process.env.SNEED + "@cluster0.ivsipz0.mongodb.net/seyr?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
@@ -16,7 +21,8 @@ module.exports = {
     indexEquipment,
     getOneEquipment,
     upgradeEquipment,
-    getMerchantEquipment
+    getMerchantEquipment,
+    deleteEquipment
 }
 
 // Write in a function that will create an elevated rarity item of the same name when the user subm8its 3 of the same item name of a lower rarity
@@ -53,9 +59,9 @@ const determineRarityByLevel = (level) => {
     console.log(level, '%c We have made it to the determineRarityByLevel in the Equipment Controller!', 'color: blue')
     const chance = Math.random();
     let rarity = '';
-    let uScale = level / 12;
-    let rScale = level / 60;
-    let eScale = level / 300;
+    let uScale = level / 25;
+    let rScale = level / 100;
+    let eScale = level / 500;
     let lScale = level / 10000;
     if (level < 4) {
         if (uScale > chance) {
@@ -117,12 +123,49 @@ const determineEquipmentType = () => {
     }
 }
 
+const randomIntFromInterval = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const randomizeStats = (item, rarity) => {
+    console.log(item, 'Item in randomizeStats()')
+    const stats = {};
+    const attributeRanges = {
+        Common: [0, 2],
+        Uncommon: [1, 3],
+        Rare: [2, 4],
+        Epic: [4, 6],
+        Legendary: [8, 12],
+    };
+    const attributeCounts = {
+        Common: [1, 2],
+        Uncommon: [1, 3],
+        Rare: [2, 3],
+        Epic: [3, 4],
+        Legendary: [5, 6],
+    };
+
+    const range = attributeRanges[rarity];
+    const attributes = ['strength', 'constitution', 'agility', 'achre', 'caeren', 'kyosir'];
+    attributes.forEach(attribute => {
+        console.log(attribute, item[attribute], 'Attribute')
+        if (item[attribute] > 0) {
+          item[attribute] = randomIntFromInterval(range[0], range[1]);
+        }
+    });
+
+    console.log(stats, 'Stats in randomizeStats function');
+    return stats;
+}
+
 async function getMerchantEquipment(req, res) {
     try {
         let merchantEquipment = [];
-        for (let i = 0; i < 12; i++) {
-            let rarity = determineRarityByLevel(req.params.level);
-            let type = determineEquipmentType();
+        let type;
+        let rarity;
+        for (let i = 0; i < 1; i++) {
+            rarity = determineRarityByLevel(req.params.level);
+            type = determineEquipmentType();
             let equipment;
             let eqpCheck = Math.floor(Math.random() * 100 + 1);
 
@@ -166,15 +209,55 @@ async function getMerchantEquipment(req, res) {
             } else if (type === 'Trinket') {
                 equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
             }
-            console.log(equipment, 'Equipment in Merchant Function')
+            
             merchantEquipment.push(equipment[0]);
+            // console.log(equipment, 'Equipment in Merchant Function')
         }
+        await seedDB(type, merchantEquipment, rarity);
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
     }
 }
+
+async function seedDB(type, equipment, rarity) {
+    console.log(equipment, 'Equpment in seedDB')
+    try {
+        await client.connect();
+        const mondoDBCalls = equipment.map(async item => {
+            let newItem = await insertIntoDB(item, rarity);
+            return mongoDB(type, newItem);
+          });
+        await Promise.all(mondoDBCalls);
+    } catch (error) {
+        console.error(error);
+    } finally {
+        await client.close();
+    }
+  }
+
+const mongoDB = async (model, item) => {
+    console.log(model, 'Model in mondoDB function')
+    switch (model) {
+        case 'Weapon': await Weapon.insertMany(item); break;
+        case 'Shield': await Shield.insertMany(item); break;
+        case 'Helmet': await Helmet.insertMany(item); break;
+        case 'Chest': await Chest.insertMany(item); break;
+        case 'Legs': await Legs.insertMany(item); break;
+        case 'Ring': await Ring.insertMany(item); break;
+        case 'Amulet': await Amulet.insertMany(item); break;
+        case 'Trinket': await Trinket.insertMany(item); break;
+    }
+}
+
+const insertIntoDB = async (item, rarity) => {
+    item._id = new mongodb.ObjectID();
+    let stats = randomizeStats(item, rarity);
+    item = Object.assign(item, stats);
+    return item;
+}
+
 
  async function getOneEquipment (req, res) {
     console.log('%c We have made it to the getOneEquipment in the Equipment Controller!', 'color: blue')
@@ -310,3 +393,12 @@ async function getHigherRarity(id) {
     }
     return null;
   }  
+
+async function deleteEquipment(req, res) {
+    try {
+
+    } catch (err) {
+        console.log(err, 'err');
+        res.status(400).json(err);
+    }
+}

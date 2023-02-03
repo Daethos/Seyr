@@ -53,6 +53,20 @@ export async function getOneAscean(asceanID: string | undefined) {
     })
 }
 
+export async function getNamedAscean(asceanName: string | undefined) {
+    return fetch('/api/ascean/search?search=' + asceanName, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err)
+        })
+    })
+}
+
 export async function getAsceanStats(ascean: any) {
     return fetch(BASE_URL + 'stats/' + ascean, {
         headers: {

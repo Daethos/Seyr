@@ -63,3 +63,21 @@ export async function getMerchantEquipment(level: number) {
         })
     })
 }
+
+export async function deleteEquipoment(data: object) {
+    return fetch(BASE_URL + 'delete', {
+        method: 'DELETE',
+        body: JSON.stringify(data),
+        headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        },
+    })
+    .then((res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response);
+            throw new Error(response.err);
+        })
+    })
+}

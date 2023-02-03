@@ -21,6 +21,7 @@ import GamePvP from "../GamePvP/GamePvP";
 import GameLobby from "../GameLobby/GameLobby";
 import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
+import GameAdmin from "../GameAdmin/GameAdmin";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -75,6 +76,7 @@ function App() {
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} />} />
+        <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
         <Route path="/Story/:asceanID" element={<Story user={user} />} />

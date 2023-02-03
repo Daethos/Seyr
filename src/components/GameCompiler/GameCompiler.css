@@ -11,7 +11,7 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px black;
+    /* -webkit-text-stroke: 0.5px black; */
     font-variant: small-caps;
     font-size: 28px;
     /* border: 1px solid purple; */
@@ -23,14 +23,14 @@
 }
 @keyframes slide {
     from {
-        opacity: 0.5;
+        opacity: 0.65;
         top: 0px;
         transform: scale(0.5);
     }
     to {
         opacity: 1;
-        top: 300px;
-        transform: scale(1);
+        top: 400px;
+        transform: scale(1.05);
     }
 }
 .player {
@@ -46,7 +46,7 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px black;
+    /* -webkit-text-stroke: 0.5px black; */
     font-variant: small-caps;
     font-size: 28px;
     /* border: 1px solid purple; */
@@ -58,14 +58,14 @@
 }  
 @keyframes mymove {
     from {
-        opacity: 0.5;
-        bottom: 0px;
+        opacity: 0.65;
+        bottom: -100px;
         transform: scale(0.5);
     }
     to {
         opacity: 1;
         bottom: 300px;
-        transform: scale(1);
+        transform: scale(1.05);
     }
 }
 .btn-hide-computer {

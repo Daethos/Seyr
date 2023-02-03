@@ -23,8 +23,8 @@ module.exports = {
     saveToInventory,
     swapItems,
     removeItem,
-    purchaseToInventory
-
+    purchaseToInventory,
+    searchAscean
 }
 
 
@@ -474,4 +474,19 @@ async function getAsceanStats(req, res) {
     } catch (err) {
         res.status(400).json({ err });
     }
+}
+
+async function searchAscean(req, res) {
+    const keyword = req.query.search ? {
+        $or: [
+            { name: { $regex: req.query.search, $options: "i" } },
+            // { level: { $regex: req.query.search, $options: "i" } },
+            { origin: { $regex: req.query.search, $options: "i" } },
+            // { high_score: { $regex: req.query.search, $options: "i" } },
+        ]
+    } : [];
+
+    const ascean = await Ascean.find(keyword);
+    console.log(ascean, 'Ascean in search Ascean controller')
+    res.send(ascean);
 }

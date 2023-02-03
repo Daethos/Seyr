@@ -7,6 +7,7 @@ router.get('/', eqpCtrl.indexEquipment);
 router.get('/lootdrop/:level', eqpCtrl.getOneEquipment);
 router.get('/merchant/:level', eqpCtrl.getMerchantEquipment)
 router.put('/upgrade', eqpCtrl.upgradeEquipment);
+router.delete('/delete', eqpCtrl.deleteEquipment);
 
 /*---------- Protected Routes ----------*/
 

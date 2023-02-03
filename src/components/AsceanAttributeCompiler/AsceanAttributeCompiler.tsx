@@ -115,21 +115,21 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         </div> */}
         <div className="abilities">
         <div className="ability-strength">
-            <OverlayTrigger trigger='click' placement='auto-start' overlay={constitutionPopover}>
+            <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={constitutionPopover}>
             <h4>CON</h4>
             </OverlayTrigger>
                 <p className="mt-2" id="con-box">{attributes.totalConstitution}<br /> ({attributes.rawConstitution} + {attributes.equipConstitution})</p>
                 <p className="" id="">[ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ]</p>
         </div>
         <div className="ability-dexterity">
-            <OverlayTrigger trigger='click' placement='auto-start' overlay={strengthPopover}>
+            <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={strengthPopover}>
             <h4>STR</h4>
             </OverlayTrigger>    
             <p className="mt-2" id="str-box">{attributes.totalStrength}<br /> ({attributes.rawStrength} + {attributes.equipStrength})</p>
             <p className="" id="">[ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</p>
         </div>
         <div className="ability-constitution">
-            <OverlayTrigger trigger='click' placement='auto-start' overlay={agilityPopover}>
+            <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={agilityPopover}>
             <h4>AGI</h4>
             </OverlayTrigger>
             <p className="mt-2" id="">{attributes.totalAgility}<br /> ({attributes.rawAgility} + {attributes.equipAgility})</p>
@@ -137,7 +137,7 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
             
         </div>
         <div className="ability-intelligence">
-            <OverlayTrigger trigger='click' placement='auto-start' overlay={achrePopover}>
+            <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={achrePopover}>
             <h4>ACH</h4>
              </OverlayTrigger>
             <p className="mt-2" id="ach-box">{attributes.totalAchre}<br /> ({attributes.rawAchre} + {attributes.equipAchre})</p>
@@ -145,14 +145,14 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
             
         </div>
         <div className="ability-wisdom">
-            <OverlayTrigger trigger='click' placement='auto-start' overlay={caerenPopover}>
+            <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={caerenPopover}>
             <h4>CAER</h4>
             </OverlayTrigger>
             <p className="mt-2" id="caer-box">{attributes.totalCaeren}<br /> ({attributes.rawCaeren} + {attributes.equipCaeren})</p>
             <p className="" id="">[ {attributes.totalCaeren < 10 ? '- ' + attributes.caerenMod : '+ ' + attributes.caerenMod} ]</p>
         </div>
         <div className="ability-wisdom">
-            <OverlayTrigger trigger='click' placement='auto-start' overlay={kyosirPopover}>
+            <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={kyosirPopover}>
             <h4>KYO</h4>
             </OverlayTrigger>
             <p className="mt-2" id="kyo-box">{attributes.totalKyosir}<br /> ({attributes.rawKyosir} + {attributes.equipKyosir})</p>

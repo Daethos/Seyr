@@ -401,7 +401,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     useEffect(() => {
-        if (lootRoll === false) return;
+        if (lootRoll === false || state.player_win === false) return;
         getOneLootDrop(state.computer.level);
         return () => {
             setLootRoll(false);
