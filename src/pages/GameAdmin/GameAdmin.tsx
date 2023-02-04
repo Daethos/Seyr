@@ -259,6 +259,8 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     };
 
     const setTestLevel = (e: any) => {
+        if (e.target.value > 20) e.target.value = 20;
+        if (e.target.value < 0) e.target.value = 0;
         dispatch({ type: ACTIONS.SET_TEST_LEVEL, payload: e.target.value });
     };
 
@@ -293,6 +295,15 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                 type: ACTIONS.GENERATE_ASCEAN,
                 payload: updatedResponse.data.data,
             });
+        } catch (err: any) {
+            console.log(err.message);
+        };
+    };
+
+    const writeEquipmentFile = async () => {
+        try {
+            const response = await eqpAPI.writeEquipment();
+            console.log(response, 'Response in writeEquipmentFile');
         } catch (err: any) {
             console.log(err.message);
         };
@@ -335,6 +346,19 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     <Card.Body>
                         <Card.Title>Test Equipment</Card.Title>
                         <Card.Text>Placeholder Test for the Equipment</Card.Text>
+                        {/* <Button variant='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={writeEquipmentFile}>Write Equipment</Button> */}
+                        <Form>
+                            <Form.Group>
+                                <Form.Label>Test Level</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    placeholder="Enter Test Level"
+                                    onChange={(e) => setTestLevel(e)}
+                                />
+                            </Form.Group>
+                        </Form>
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testLevel)}>Get Equipment</Button>
                             { state.equipmentTable.length > 0 ?
                             

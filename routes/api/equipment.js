@@ -6,6 +6,7 @@ const eqpCtrl = require('../../controllers/equipment.js');
 router.get('/', eqpCtrl.indexEquipment);
 router.get('/lootdrop/:level', eqpCtrl.getOneEquipment);
 router.get('/merchant/:level', eqpCtrl.getMerchantEquipment)
+router.get('/write', eqpCtrl.getAndWriteEquipmentIds);
 router.put('/upgrade', eqpCtrl.upgradeEquipment);
 router.delete('/delete', eqpCtrl.deleteEquipment);
 

@@ -22,7 +22,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
         cost: { silver: 0, gold: 0 }
     });
     useEffect(() => {
-        determineCost(ascean, item.rarity, item.type);
+        determineCost(ascean, item?.rarity, item?.type);
     }, [item])
 
     const determineCost = async ( ascean: any, rarity: string, type: string ) => {
@@ -126,7 +126,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
     
     const merchantItemPopover = (
         <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item.imgURL} alt={item?.name} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {
                     item?.type && item?.grip ?
@@ -210,7 +210,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
     return (
         <>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={merchantItemPopover}>
-                <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + item.imgURL} alt={item?.name} /></Button>
+                <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></Button>
             </OverlayTrigger>
         </>
     )

@@ -81,3 +81,18 @@ export async function deleteEquipment(data: object) {
         })
     })
 }
+
+export async function writeEquipment() {
+    return fetch(BASE_URL + 'write', {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        },
+    })
+    .then((res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response);
+            throw new Error(response.err);
+        })
+    })
+}

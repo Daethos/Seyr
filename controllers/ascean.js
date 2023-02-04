@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const Ascean = require('../models/ascean');
-const asceanService = require('../services/asceanServices')
+const asceanService = require('../services/asceanServices');
 const Weapon = require('../models/weapon');
 const Shield = require('../models/shield');
 const Helmet = require('../models/helmet');
@@ -9,6 +9,8 @@ const Legs = require('../models/legs');
 const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
+const Equipment = require('../models/equipment');
+const fs = require('fs');
 
 module.exports = {
     create,
@@ -164,12 +166,27 @@ async function swapItems(req, res) {
     }
 }
 
+const deleteEquipmentCheck = async (equipmentID) => {
+    try {
+        const allEquipmentIds = await fs.promises.readFile('data/equipmentIds.json');
+        const parsedIds = JSON.parse(allEquipmentIds);
+        if (parsedIds.includes(equipmentID)) {
+            return console.log('Equipment found in golden template list. Must be preserved at all costs!');
+        };
+        const deleted = await Equipment.findByIdAndDelete(equipmentID).exec();
+        console.log(`Successfully deleted equipment with id: ${deleted._id}`);
+    } catch (err) {
+        console.log(err, 'err');
+    }
+};
+
 async function removeItem(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
         const itemID = req.body.inventory._id;
         const itemIndex = ascean.inventory.indexOf(itemID);
         ascean.inventory.splice(itemIndex, 1);
+        deleteEquipmentCheck(itemID);
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
@@ -286,6 +303,8 @@ async function updateHighScore(req, res) {
 
 async function deleteAscean(req, res) {
     try {
+        const ascean = await Ascean.findById(req.params.id);
+        await asceanEquipmentDeleteCheck(ascean);
         await Ascean.findByIdAndDelete(req.params.id)
         res.status(201).json({});
     } catch (err) {
@@ -293,6 +312,24 @@ async function deleteAscean(req, res) {
         res.status(400).json({ err })
     }
 }
+
+const asceanEquipmentDeleteCheck = async (ascean) => {
+    await deleteEquipmentCheck(ascean.helmet._id);
+    await deleteEquipmentCheck(ascean.chest._id);
+    await deleteEquipmentCheck(ascean.legs._id);
+    await deleteEquipmentCheck(ascean.ring_one._id);
+    await deleteEquipmentCheck(ascean.ring_two._id);
+    await deleteEquipmentCheck(ascean.amulet._id);
+    await deleteEquipmentCheck(ascean.trinket._id);
+    await deleteEquipmentCheck(ascean.weapon_one._id);
+    await deleteEquipmentCheck(ascean.weapon_two._id);
+    await deleteEquipmentCheck(ascean.weapon_three._id);
+    await deleteEquipmentCheck(ascean.shield._id);
+    const inventory = ascean.inventory;
+    for (const item of inventory) {
+        await deleteEquipmentCheck(item._id);
+    }
+};
 
 async function create(req, res) {
     console.log(req.body, '<- Hopefully the Ascean!', req.user)
