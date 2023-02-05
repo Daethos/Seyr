@@ -107,7 +107,34 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
             payload: ''
         });
     };
+
+    useEffect(() => {
+        if (merchantEquipment.length > 0) {
+            deleteEquipment(merchantEquipment);
+        };
+        if (lootDrop !== null) {
+            deleteEquipment(lootDrop);
+        };
+        if (lootDropTwo !== null) {
+            deleteEquipment(lootDropTwo);
+        };
+        return () => { console.log('Unmounting Delete Concerns') }
+    }, [resetAscean, getOpponent]);
+
+    const deleteEquipment = async (eqp: any) => {
+        try {
+            const response = await eqpAPI.deleteEquipment(eqp);
+            console.log(response, 'Delete Response!');
+        } catch (err) {
+            console.log(err, 'Error!')
+        };
+    };
+
     const getLoot = async () => {
+        if (merchantEquipment.length > 0) {
+            const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
+            console.log(deleteResponse, 'Delete Response!');
+        }
         try {
             setLoading(true);
             const response = await eqpAPI.getMerchantEquipment(enemy.level);
@@ -187,7 +214,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getLoot}>Generate Merchant Trader Equipment</Button>
                         <br />
                         { merchantEquipment?.length > 0 ?
-                            <MerchantTable table={merchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
+                            <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
                         : '' }
                     </>
                 : currentIntent === 'farewell' ?

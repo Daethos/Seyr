@@ -11,9 +11,11 @@ interface Props {
     setItemPurchased: React.Dispatch<React.SetStateAction<boolean>>;
     error: object;
     setError: React.Dispatch<React.SetStateAction<object>>;
+    setMerchantEquipment?: any;
+    table?: any;
 }
 
-const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, setError }: Props) => {
+const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, setError, setMerchantEquipment, table }: Props) => {
     console.log(item, 'Did We Make it Here Even?')
     const [thisItemPurchased, setThisItemPurchased] = useState(false);
     const [purchaseSetting, setPurchaseSetting] = useState({
@@ -99,30 +101,30 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
 
     const purchaseItem = async () => {
         let asceanTotal = 0;
-        asceanTotal = ascean.currency.silver + (ascean.currency.gold * 100);
         let costTotal = 0;
+        asceanTotal = ascean.currency.silver + (ascean.currency.gold * 100);
         costTotal = purchaseSetting.cost.silver + (purchaseSetting.cost.gold * 100);
         if (asceanTotal < costTotal) {
-            console.log('Not Enough Money!');
             setError({
                 title: 'Transaction User Error',
                 content: `You do not have enough money (${asceanTotal} total wealth), to purchase this: ${item.name}, at ${costTotal}.`
             });
             return;
-        }
+        };
         try {
             const res = await asceanAPI.purchaseToInventory(purchaseSetting);
             console.log(res, 'Purchased Item!');
             setItemPurchased(!itemPurchased);
             setThisItemPurchased(true);
+            setMerchantEquipment(table.filter((i: any) => i._id !== item._id));
         } catch (err: any) {
             console.log(err.message, 'Error Purchasing Item!');
             setError({
                 title: 'Transaction Error',
                 content: err.message
             });
-        }
-    }
+        };
+    };
     
     const merchantItemPopover = (
         <Popover className="text-info" id="popover">

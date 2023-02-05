@@ -6,6 +6,7 @@ const trinketSchema = new Schema(
         name: String,
         type: String,
         rarity: String,
+        itemType: { type: String, default: 'Trinkets' },
         physical_damage: Number,
         magical_damage: Number,
         critical_chance: Number,

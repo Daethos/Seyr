@@ -320,6 +320,7 @@ const defenseCompiler = async (ascean, attributes, combatStats, rarities) => {
 }
 
 const coefficientCompiler = async (ascean, item) => {
+    // console.log(item.rarity, 'Item Rarity In Coefficient Compiler')
     let coefficient = 0;
     switch (item.rarity) {
         case 'Common':
@@ -353,6 +354,7 @@ const coefficientCompiler = async (ascean, item) => {
 }
 
 const rarityCompiler = async (ascean) => {
+    // console.log(ascean.legs, 'Ascean Legs in Rarity Compiler')
     let rarities = {};
     try {
         const helmetCoefficient = await coefficientCompiler(ascean, ascean.helmet);

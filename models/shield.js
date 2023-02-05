@@ -6,6 +6,7 @@ const shieldSchema = new Schema(
         name: String,
         type: String,
         rarity: String,
+        itemType: { type: String, default: 'Shields' },
         physical_damage: Number,
         magical_damage: Number,
         critical_chance: Number,

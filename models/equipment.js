@@ -5,6 +5,7 @@ const equipmentSchema = new Schema({
     name: String,
     type: String,
     rarity: String,
+    itemType: { type: String, default: 'Equipment'},
     grip: String,
     attack_type: String,
     damage_type: {

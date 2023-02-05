@@ -126,7 +126,10 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
+            console.log(firstResponse, 'First Response')
             const response = await asceanAPI.getAsceanStats(asceanID);
+            console.log(response, 'Response')
+
             dispatch({
                 type: ACTIONS.SET_PLAYER,
                 payload: response.data.data
@@ -162,6 +165,7 @@ const GameSolo = ({ user }: GameProps) => {
             const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
             setOpponent(profilesInRange[randomOpponent]);
             const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
+            console.log(profilesInRange[randomOpponent], 'Opponent Response');
             setAsceanState({
                 ...asceanState,
                 'ascean': response.data.data.ascean,
@@ -202,7 +206,7 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     const getOpponent = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
             let minLevel: number = 0;
             let maxLevel: number = 0;
@@ -241,7 +245,7 @@ const GameSolo = ({ user }: GameProps) => {
                 payload: response.data.data
             });
             playOpponent();
-            setLoading(false)
+            setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         }
@@ -422,8 +426,8 @@ const GameSolo = ({ user }: GameProps) => {
             setItemSaved(false);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop')
-        }
-    }
+        };
+    };
     
     useEffect(() => {
         if (state.highScore > ascean.high_score) {

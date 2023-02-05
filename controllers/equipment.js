@@ -168,7 +168,7 @@ async function getMerchantEquipment(req, res) {
         let merchantEquipment = [];
         let type;
         let rarity;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 6; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = determineEquipmentType();
             console.log(type, 'Type of Item Ping 1')
@@ -236,23 +236,15 @@ async function getMerchantEquipment(req, res) {
 }
 
 async function seedDB(type, equipment, rarity) {
-    console.log(type, 'type in seedDB')
     try {
-        // await client.connect();
-
         const mondoDBCalls = equipment.map(async item => {
             let newItem = await mutateEquipment(item, rarity);
             return await Equipment.insertMany(item);
-            // return await mongoDB(type, newItem);
           });
-        // await Promise.all(mondoDBCalls);
     } catch (error) {
         console.error(error);
-    } finally {
-        // await client.close();
-
-    }
-  }
+    };
+};
 
 const mongoDB = async (model, item) => {
     console.log(model, 'Model in mondoDB function')
@@ -391,24 +383,28 @@ async function upgradeEquipment(req, res) {
         // ascean.inventory.splice(secondItemIndex, 1);
         // const thirdItemIndex = ascean.inventory.indexOf(req.body.upgradeID);
         // ascean.inventory.splice(thirdItemIndex, 1);
-
         let itemsToRemove = [];
-        ascean.inventory.forEach(async inventoryID => {
-            const inventoryItem = await Equipment.findById(inventoryID);
-            if (inventoryItem.name === req.body.upgradeName && inventoryItem.rarity === req.body.currentRarity) {
-                itemsToRemove.push(inventoryID);
-                if (itemsToRemove.length === 3) {
-                    return itemsToRemove;
-                };
-            };
-        });
+        const inventoryToKeep = await inventoryCheck(ascean, req.body.upgradeName, req.body.currentRarity);
 
-        itemsToRemove.forEach(async itemID => {
-            const itemIndex = ascean.inventory.indexOf(itemID);
-            ascean.inventory.splice(itemIndex, 1);
-            await deleteEquipmentCheck(itemID);
-        });
-
+        // ascean.inventory.forEach(async (inventoryID) => {
+        //     const inventoryItem = await determineItemType(inventoryID);
+        //     console.log(inventoryItem.name, inventoryItem.rarity, req.body.upgradeName, req.body.currentRarity, 'inventoryItem.name, inventoryItem.rarity');
+        //     if (inventoryItem.name === req.body.upgradeName && inventoryItem.rarity === req.body.currentRarity) {
+        //         console.log('Does This Match?');
+        //         itemsToRemove.push(inventoryID);
+        //         if (itemsToRemove.length === 3) {
+        //             return itemsToRemove;
+        //         };
+        //     };
+        // });
+        console.log(inventoryToKeep, 'inventory to keep');
+        // const deletedItems = inventoryToRemove.forEach(async itemID => {
+        //     console.log(itemID, 'Do you have an itemID?')
+        //     const itemIndex = ascean.inventory.indexOf(itemID);
+        //     ascean.inventory.splice(itemIndex, 1);
+        //     await deleteEquipmentCheck(itemID);
+        // });
+        ascean.inventory = inventoryToKeep;
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
@@ -416,6 +412,62 @@ async function upgradeEquipment(req, res) {
         res.status(400).json(err);
     }
 }
+
+const inventoryCheck = async (ascean, name, rarity) => {
+    console.log(ascean.inventory, 'ascean inventory')
+    let newInventory = ascean.inventory;
+    let itemsToRemove = [];
+    for (const inventoryID of ascean.inventory) {
+        const inventoryItem = await determineItemType(inventoryID);
+        if (inventoryItem.name === name && inventoryItem.rarity === rarity) {
+            itemsToRemove.push(inventoryID);
+        };
+    };
+    console.log(itemsToRemove, 'This is what has been plucked')
+    if (itemsToRemove.length > 3) {
+        console.log(itemsToRemove, 'itemsToRemove, slicing down to 3 if needed')
+        itemsToRemove = itemsToRemove.slice(0, 3);
+    }
+    newInventory = await removeItems(itemsToRemove, newInventory);
+
+    return newInventory;
+};
+
+const removeItems = async (items, inventory) => {
+    console.log(items, 'items in removeItems')
+    const removedItems = await items.forEach(async itemID => {
+        console.log(itemID, 'Do you have an itemID?');
+        const itemIndex = inventory.indexOf(itemID);
+        inventory.splice(itemIndex, 1);
+        await deleteEquipmentCheck(itemID);
+    });
+    return inventory;
+};
+ 
+async function determineItemType(id) {
+    const models = {
+        Weapon: Weapon,
+        Shield: Shield,
+        Helmet: Helmet,
+        Chest: Chest,
+        Legs: Legs,
+        Ring: Ring,
+        Amulet: Amulet,
+        Trinket: Trinket,
+        Equipment: Equipment,
+    }
+    
+    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
+    // console.log(id, 'And did we make it here? 2')
+    for (const itemType of itemTypes) {
+        const item = await models[itemType].findById(id).exec();
+        // console.log(item, 'And 3?')
+        if (item) {
+            return item;
+        }
+    }
+    return null;
+}  
 
 async function getHigherRarity(id) {
     const models = {
@@ -427,9 +479,10 @@ async function getHigherRarity(id) {
         Ring: Ring,
         Amulet: Amulet,
         Trinket: Trinket,
+        Equipment: Equipment,
     }
       
-    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
+    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
     for (const itemType of itemTypes) {
         let item = await models[itemType].findById(id).exec();
         if (item) {
@@ -445,8 +498,18 @@ async function getHigherRarity(id) {
                 nextRarity = 'Epic';
             }
             const nextItem = await models[itemType].findOne({ name, rarity: nextRarity }).exec();
-            console.log(nextItem, 'nextItem');
-            return nextItem;
+            if (nextItem) {
+                console.log(nextItem, 'nextItem');
+                return nextItem;
+            } else {
+                for (const nextItemType of itemTypes) {
+                    const realItem = await models[nextItemType].findOne({ name, rarity: nextRarity }).exec();
+                    if (realItem) {
+                        console.log(realItem, 'realItem');
+                        return realItem;
+                    }
+                }
+            }
         }
     }
     return null;
@@ -500,6 +563,7 @@ async function getAndWriteEquipmentIds(req, res) {
 };
 
 const deleteEquipmentCheck = async (equipmentID) => {
+    console.log('Did this carry over?')
     try {
         const allEquipmentIds = await fs.promises.readFile('data/equipmentIds.json');
         const parsedIds = JSON.parse(allEquipmentIds);

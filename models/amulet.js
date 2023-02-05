@@ -6,6 +6,7 @@ const amuletSchema = new Schema(
         name: String,
         type: String,
         rarity: String,
+        itemType: { type: String, default: 'Amulets' },
         physical_damage: Number,
         magical_damage: Number,
         critical_chance: Number,

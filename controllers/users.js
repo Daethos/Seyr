@@ -45,6 +45,108 @@ async function profile(req, res) {
                                 .populate("amulet")
                                 .populate("trinket")
                                 .exec();
+
+                                if (ascean) {
+                                  let promises = [];
+                                
+                                  if (ascean.onWeapon) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "weapon_one",
+                                        model: ascean.onWeapon
+                                      })
+                                    );
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "weapon_two",
+                                        model: ascean.onWeapon
+                                      })
+                                    );
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "weapon_three",
+                                        model: ascean.onWeapon
+                                      })
+                                    );
+                                  }
+                                
+                                  if (ascean.onShield) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "shield",
+                                        model: ascean.onShield
+                                      })
+                                    );
+                                  }
+
+                                  if (ascean.onHelmet) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "helmet",
+                                        model: ascean.onHelmet
+                                      })
+                                    );
+                                  }
+
+                                  if (ascean.onChest) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "chest",
+                                        model: ascean.onChest
+                                      })
+                                    );
+                                  }
+
+                                  if (ascean.onLegs) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "legs",
+                                        model: ascean.onLegs
+                                      })
+                                    );
+                                  }
+
+                                  if (ascean.onRing) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "ring_one",
+                                        model: ascean.onRing
+                                      })
+                                    );
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "ring_two",
+                                        model: ascean.onRing
+                                      })
+                                    );
+                                  }
+
+                                  if (ascean.onAmulet) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "amulet",
+                                        model: ascean.onAmulet
+                                      })
+                                    );
+                                  }
+
+                                  if (ascean.onTrinket) {
+                                    promises.push(
+                                      Ascean.populate(ascean, {
+                                        path: "trinket",
+                                        model: ascean.onTrinket
+                                      })
+                                    );
+                                  }
+                                
+                                  // Repeat this pattern for all the other equipment fields
+                                
+                                  promises.push(Ascean.populate(ascean, { path: "user" }));
+                                
+                                  await Promise.all(promises);
+                                
+                                  // ascean is now populated with all the referenced equipment and user
+                                }
     res.status(200).json({
       data: {
         user: user,

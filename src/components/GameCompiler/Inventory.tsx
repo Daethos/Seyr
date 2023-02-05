@@ -56,11 +56,6 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     useEffect(() => {
       checkInventory();
     }, [ascean, inventory]);
-    const [popoverOpen, setPopoverOpen] = useState(false);
-    const target = useRef(null);
-  
-    
-    
 
     function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
         console.log(inventory, name, rarity, 'Can Upgrade?');

@@ -6,6 +6,7 @@ const ringSchema = new Schema(
         name: String,
         type: String,
         rarity: String,
+        itemType: { type: String, default: 'Rings' },
         physical_damage: Number,
         magical_damage: Number,
         critical_chance: Number,

@@ -6,6 +6,7 @@ const weaponSchema = new Schema(
         name: String,
         type: String,
         rarity: String,
+        itemType: { type: String, default: 'Weapons' },
         grip: String,
         attack_type: String,
         damage_type: {
