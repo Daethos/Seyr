@@ -108,18 +108,18 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
         });
     };
 
-    useEffect(() => {
-        if (merchantEquipment.length > 0) {
-            deleteEquipment(merchantEquipment);
-        };
-        if (lootDrop !== null) {
-            deleteEquipment(lootDrop);
-        };
-        if (lootDropTwo !== null) {
-            deleteEquipment(lootDropTwo);
-        };
-        return () => { console.log('Unmounting Delete Concerns') }
-    }, [resetAscean, getOpponent]);
+    // useEffect(() => {
+    //     if (merchantEquipment.length > 0) {
+    //         deleteEquipment(merchantEquipment);
+    //     };
+    //     if (lootDrop !== null) {
+    //         deleteEquipment(lootDrop);
+    //     };
+    //     if (lootDropTwo !== null) {
+    //         deleteEquipment(lootDropTwo);
+    //     };
+    //     return () => { console.log('Unmounting Delete Concerns') }
+    // }, [resetAscean, getOpponent]);
 
     const deleteEquipment = async (eqp: any) => {
         try {

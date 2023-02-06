@@ -39,7 +39,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Crit Damage: {weapon_one?.critical_damage}x <br />
                 Dodge Timer: {weapon_one?.dodge}s <br />
                 Roll Chance: {weapon_one?.roll}% <br />
-                Influence: {weapon_one?.influences[0]}<br /><br />
+                Influence: {weapon_one?.influences?.[0]}<br /><br />
                 {weapon_one?.rarity}
             </Popover.Body>
         </Popover>
@@ -63,7 +63,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Crit Damage: {weapon_two?.critical_damage}x <br />
                 Dodge Timer: {weapon_two?.dodge}s <br />
                 Roll Chance: {weapon_two?.roll}% <br />
-                Influence: {weapon_two?.influences[0]}<br /><br />
+                Influence: {weapon_two?.influences?.[0]}<br /><br />
                 {weapon_two?.rarity}
                 </>}
             </Popover.Body>
@@ -88,7 +88,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 Crit Damage: {weapon_three?.critical_damage}x <br />
                 Dodge Timer: {weapon_three?.dodge}s <br />
                 Roll Chance: {weapon_three?.roll}% <br />
-                Influence: {weapon_three?.influences[0]}<br /><br />
+                Influence: {weapon_three?.influences?.[0]}<br /><br />
                 {weapon_three?.rarity}
                 </>}
             </Popover.Body>

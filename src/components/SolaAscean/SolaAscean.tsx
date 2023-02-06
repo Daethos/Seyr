@@ -12,9 +12,10 @@ interface Props {
     userProfile?: boolean;
     deleteAscean?: (ascean: any) => Promise<void>;
     loggedUser?: any;
+    loading?: boolean;
 }
 
-const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
+const SolaAscean = ({ ascean, userProfile, deleteAscean, loading }: Props) => {
 
   return (
     <React.Fragment>
@@ -70,6 +71,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean }: Props) => {
             ring_one={ascean.ring_one}
             ring_two={ascean.ring_two}
             trinket={ascean.trinket}
+            loading={loading}
             key={ascean._id}
         />
         </div>
