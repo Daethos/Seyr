@@ -163,7 +163,8 @@ const GameSolo = ({ user }: GameProps) => {
             const secondResponse = await userService.getProfile('mirio');
             const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
             const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            setOpponent(profilesInRange[randomOpponent]);
+            const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
+            setOpponent(selectedOpponent.data);
             const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
             console.log(profilesInRange[randomOpponent], 'Opponent Response');
             setAsceanState({
@@ -238,7 +239,8 @@ const GameSolo = ({ user }: GameProps) => {
             const firstResponse = await userService.getProfile('mirio');
             const profilesInRange = firstResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
             const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            setOpponent(profilesInRange[randomOpponent]);
+            const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
+            setOpponent(selectedOpponent.data);
             const response = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
             dispatch({
                 type: ACTIONS.SET_NEW_COMPUTER,

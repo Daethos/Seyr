@@ -1,5 +1,15 @@
 const User = require('../models/user');
-const Ascean = require('../models/ascean')
+const Ascean = require('../models/ascean');
+const Weapon = require('../models/weapon');
+const Shield = require('../models/shield');
+const Helmet = require('../models/helmet');
+const Chest = require('../models/chest');
+const Legs = require('../models/legs');
+const Ring = require('../models/ring');
+const Amulet = require('../models/amulet');
+const Trinket = require('../models/trinket');
+const Equipment = require('../models/equipment');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const S3 = require("aws-sdk/clients/s3");
 const s3 = new S3(); // initate the S3 constructor which can talk to aws/s3 our bucket!
@@ -19,6 +29,30 @@ module.exports = {
   updateUserBio
 };
 
+async function getModelType(id) {
+  const models = {
+      Weapon: Weapon,
+      Shield: Shield,
+      Helmet: Helmet,
+      Chest: Chest,
+      Legs: Legs,
+      Ring: Ring,
+      Amulet: Amulet,
+      Trinket: Trinket,
+      Equipment: Equipment,
+  };
+  const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
+  for (const itemType of itemTypes) {
+      const item = await models[itemType].findById(id).exec();
+      if (item) {
+          // let trueType = await getModel(itemType);
+          // return trueType;
+          return item;
+      };
+  };
+  return null;
+};
+
 async function profile(req, res) {
   try {
     // find the user!
@@ -29,128 +63,166 @@ async function profile(req, res) {
     // Find the Post's by the user
     //.populate('user') <- user comes from the key on the post model 
     //   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'}, // referencing a model < which replaces the id with the userdocument
-    const ascean = await Ascean.find({ user: user._id
+    const asceanCrew = await Ascean.find({ user: user._id
       // , visibility: 'public' 
     })
-                                .populate("user")
-                                .populate("weapon_one")
-                                .populate("weapon_two")
-                                .populate("weapon_three")
-                                .populate("shield")
-                                .populate("helmet")
-                                .populate("chest")
-                                .populate("legs")
-                                .populate("ring_one")
-                                .populate("ring_two")
-                                .populate("amulet")
-                                .populate("trinket")
-                                .exec();
+                                // .populate("user")
+                                // .populate("weapon_one")
+                                // .populate("weapon_two")
+                                // .populate("weapon_three")
+                                // .populate("shield")
+                                // .populate("helmet")
+                                // .populate("chest")
+                                // .populate("legs")
+                                // .populate("ring_one")
+                                // .populate("ring_two")
+                                // .populate("amulet")
+                                // .populate("trinket")
+                                // .exec();
 
-                                if (ascean) {
-                                  let promises = [];
+      // ascean.forEach(async ascean => {
+      //   ascean.weapon_one = await getModelType(ascean.weapon_one._id);
+      //   ascean.weapon_two = await getModelType(ascean.weapon_two._id);
+      //   ascean.weapon_three = await getModelType(ascean.weapon_three._id);
+      //   ascean.shield = await getModelType(ascean.shield._id);
+      //   ascean.helmet = await getModelType(ascean.helmet._id);
+      //   ascean.chest = await getModelType(ascean.chest._id);
+      //   ascean.legs = await getModelType(ascean.legs._id);
+      //   ascean.ring_one = await getModelType(ascean.ring_one._id);
+      //   ascean.ring_two = await getModelType(ascean.ring_two._id);
+      //   ascean.amulet = await getModelType(ascean.amulet._id);
+      //   ascean.trinket = await getModelType(ascean.trinket._id);
+      // });
+    // const equipmentModels = Object.keys(mongoose.models).filter(modelName => modelName.endsWith('Equipment') || modelName.endsWith('Weapons') ||  modelName.endsWith('Shields') || 
+    //                                                                              modelName.endsWith('Helmets') || modelName.endsWith('Chests') || modelName.endsWith('Legs') || 
+    //                                                                              modelName.endsWith('Rings') || modelName.endsWith('Amulets') || modelName.endsWith('Trinkets'));
+
+
+    //     for await (let ascean of asceanCrew) {
+    //       let promises = [];
+    //       console.log(mongoose.models, '<- Equipment Models')
+    //       equipmentModels.forEach(async modelName => {
+    //           let path, model;
+    //           switch (modelName) {
+    //               case 'Weapons':
+    //                   path = 'weapon_one';
+    //                   console.log(ascean[path], 'Ascean')
+    //                       const weapon_one = await Weapon.find(ascean[path]);
+    //                       if (weapon_one) {
+    //                           model = mongoose.models.Weapon;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       console.log(model, 'Model of Weapon One?');
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       path = 'weapon_two';
+    //                       const weapon_two = await Weapon.find(ascean[path]);
+    //                       if (weapon_two) {
+    //                           model = mongoose.models.Weapon;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       path = 'weapon_three';
+    //                       const weapon_three = await Weapon.find(ascean[path]);
+    //                       if (weapon_three) {
+    //                           model = mongoose.models.Weapon;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Shields':
+    //                       path = 'shield';
+    //                       const shield = await Shield.find(ascean[path]);
+    //                       if (shield) {
+    //                           model = mongoose.models.Shield;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Helmets':
+    //                       path = 'helmet';
+    //                       const helmet = await Helmet.find(ascean[path]);
+    //                       if (helmet) {
+    //                           model = mongoose.models.Helmet;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Chests':
+    //                       path = 'chest';
+    //                       const chest = await Chest.find(ascean[path]);
+    //                       if (chest) {
+    //                           model = mongoose.models.Chest;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Legs':
+    //                       path = 'legs';
+    //                       const legs = await Legs.find(ascean[path]);
+    //                       if (legs) {
+    //                           model = mongoose.models.Legs;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Rings':
+    //                       path = 'ring_one';
+    //                       const ring_one = await Ring.find(ascean[path]);
+    //                       if (ring_one) {
+    //                           model = mongoose.models.Ring;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       path = 'ring_two';
+    //                       const ring_two = await Ring.find(ascean[path]);
+    //                       if (ring_two) {
+    //                           model = mongoose.models.Ring;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Amulets':
+    //                       path = 'amulet';
+    //                       const amulet = await Amulet.find(ascean[path]);
+    //                       if (amulet) {
+    //                           model = mongoose.models.Amulet;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   case 'Trinkets':
+    //                       path = 'trinket';
+    //                       const trinket = await Trinket.find(ascean[path]);
+    //                       if (trinket) {
+    //                           model = mongoose.models.Trinket;
+    //                       } else {
+    //                           model = mongoose.models.Equipment;
+    //                       }
+    //                       promises.push(Ascean.populate(ascean, { path, model }));
+    //                       break;
+    //                   default:
+    //                       break;
+    //               }
+    //       });
+    //       promises.push(Ascean.populate(ascean, { path: "user" }));
+    //       await Promise.all(promises);
+    //     }
+
                                 
-                                  if (ascean.onWeapon) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "weapon_one",
-                                        model: ascean.onWeapon
-                                      })
-                                    );
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "weapon_two",
-                                        model: ascean.onWeapon
-                                      })
-                                    );
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "weapon_three",
-                                        model: ascean.onWeapon
-                                      })
-                                    );
-                                  }
-                                
-                                  if (ascean.onShield) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "shield",
-                                        model: ascean.onShield
-                                      })
-                                    );
-                                  }
-
-                                  if (ascean.onHelmet) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "helmet",
-                                        model: ascean.onHelmet
-                                      })
-                                    );
-                                  }
-
-                                  if (ascean.onChest) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "chest",
-                                        model: ascean.onChest
-                                      })
-                                    );
-                                  }
-
-                                  if (ascean.onLegs) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "legs",
-                                        model: ascean.onLegs
-                                      })
-                                    );
-                                  }
-
-                                  if (ascean.onRing) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "ring_one",
-                                        model: ascean.onRing
-                                      })
-                                    );
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "ring_two",
-                                        model: ascean.onRing
-                                      })
-                                    );
-                                  }
-
-                                  if (ascean.onAmulet) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "amulet",
-                                        model: ascean.onAmulet
-                                      })
-                                    );
-                                  }
-
-                                  if (ascean.onTrinket) {
-                                    promises.push(
-                                      Ascean.populate(ascean, {
-                                        path: "trinket",
-                                        model: ascean.onTrinket
-                                      })
-                                    );
-                                  }
-                                
-                                  // Repeat this pattern for all the other equipment fields
-                                
-                                  promises.push(Ascean.populate(ascean, { path: "user" }));
-                                
-                                  await Promise.all(promises);
-                                
-                                  // ascean is now populated with all the referenced equipment and user
-                                }
     res.status(200).json({
       data: {
         user: user,
-        ascean: ascean,
+        ascean: asceanCrew,
       }
     });
   } catch (err) {
