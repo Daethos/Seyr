@@ -155,12 +155,12 @@ const randomizeStats = (item, rarity) => {
         console.log(attribute, item[attribute], 'Attribute')
         if (item[attribute] > 0) {
           item[attribute] = randomIntFromInterval(range[0], range[1]);
-        }
+        };
     });
 
     console.log(stats, 'Stats in randomizeStats function');
     return stats;
-}
+};
 
 async function getMerchantEquipment(req, res) {
     try {
@@ -168,18 +168,17 @@ async function getMerchantEquipment(req, res) {
         let merchantEquipment = [];
         let type;
         let rarity;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 9; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = determineEquipmentType();
-            console.log(type, 'Type of Item Ping 1')
             let equipment;
             let eqpCheck = Math.floor(Math.random() * 100 + 1);
 
             if (type === 'Amulet' || type === 'Ring' || type === 'Trinket') {
                 if (rarity === 'Common') {
                     rarity = 'Uncommon';
-                }
-            }
+                };
+            };
 
             if (req.params.level < 4) {
                 if (eqpCheck > 80) {
@@ -202,7 +201,7 @@ async function getMerchantEquipment(req, res) {
                     equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                     type = 'Legs';
                     console.log(equipment, 'Legs ?')
-                }
+                };
             } else if (type === 'Weapon') {
                 equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
             } else if (type === 'Shield') {
@@ -219,11 +218,9 @@ async function getMerchantEquipment(req, res) {
                 equipment = await Amulet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
             } else if (type === 'Trinket') {
                 equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
-            }
-            console.log(type, 'Type of Item Ping 2')
+            };
             await seedDB(type, equipment, rarity);
             merchantEquipment.push(equipment[0]);
-            // console.log(equipment, 'Equipment in Merchant Function')
         }
         console.log(type, 'Type in Merchant Function')
         res.status(200).json({ data: merchantEquipment });
@@ -232,8 +229,8 @@ async function getMerchantEquipment(req, res) {
         res.status(400).json({ err });
     } finally {
         await client.close();
-    }
-}
+    };
+};
 
 async function seedDB(type, equipment, rarity) {
     try {
@@ -243,48 +240,6 @@ async function seedDB(type, equipment, rarity) {
           });
     } catch (error) {
         console.error(error);
-    };
-};
-
-const mongoDB = async (model, item) => {
-    console.log(model, 'Model in mondoDB function')
-    switch (model) {
-        case 'Weapon': {
-            await Weapon.insertMany(item); 
-            break;
-        };
-        case 'Shield': {
-            await Shield.insertMany(item); 
-            break;
-        };
-        case 'Helmet': {
-            await Helmet.insertMany(item); 
-            break;
-        };
-        case 'Chest': {
-            await Chest.insertMany(item); 
-            break;
-        };
-        case 'Legs': {
-            await Legs.insertMany(item); 
-            break;
-        };
-        case 'Ring': {
-            await Ring.insertMany(item); 
-            break;
-        };
-        case 'Amulet': {
-            await Amulet.insertMany(item); 
-            break;
-        };
-        case 'Trinket': {
-            await Trinket.insertMany(item); 
-            break;
-        };
-        default: {
-            console.log('No model found');
-            break;
-        };
     };
 };
 
@@ -302,13 +257,12 @@ const mutateEquipment = async (item, rarity) => {
     try {
         let rarity = determineRarityByLevel(req.params.level);
         const type = determineEquipmentType();
-        console.log(rarity, type, 'rarity, type')
 
         if (type === 'Amulet' || type === 'Ring' || type === 'Trinket') {
             if (rarity === 'Common') {
                 rarity = 'Uncommon';
-            }
-        }
+            };
+        };
 
         let equipment;
         let eqpCheck = Math.floor(Math.random() * 100  + 1);
@@ -338,10 +292,8 @@ const mutateEquipment = async (item, rarity) => {
                 console.log(equipment, 'equipment ?')
                 res.status(200).json({ data: equipment });
                 return;
-            }
-
-        }
-
+            };
+        };
 
         if (type === 'Weapon') {
             equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
@@ -363,55 +315,26 @@ const mutateEquipment = async (item, rarity) => {
         console.log(equipment, 'equipment ?')
         res.status(200).json({ data: equipment });
     } catch (err) {
+        console.log(err, 'Error Getting One Equipment')
         res.status(400).json(err);
-    }
-}
-
-async function createEquipment(req, res) {
-
-}
+    };
+};
 
 async function upgradeEquipment(req, res) {
     try {
         let ascean = await Ascean.findById(req.body.asceanID);
         let item = await getHigherRarity(req.body.upgradeID);
-        
         ascean.inventory.push(item._id);
-        // const itemIndex = ascean.inventory.indexOf(req.body.upgradeID);
-        // ascean.inventory.splice(itemIndex, 1);
-        // const secondItemIndex = ascean.inventory.indexOf(req.body.upgradeID);
-        // ascean.inventory.splice(secondItemIndex, 1);
-        // const thirdItemIndex = ascean.inventory.indexOf(req.body.upgradeID);
-        // ascean.inventory.splice(thirdItemIndex, 1);
-        let itemsToRemove = [];
         const inventoryToKeep = await inventoryCheck(ascean, req.body.upgradeName, req.body.currentRarity);
-
-        // ascean.inventory.forEach(async (inventoryID) => {
-        //     const inventoryItem = await determineItemType(inventoryID);
-        //     console.log(inventoryItem.name, inventoryItem.rarity, req.body.upgradeName, req.body.currentRarity, 'inventoryItem.name, inventoryItem.rarity');
-        //     if (inventoryItem.name === req.body.upgradeName && inventoryItem.rarity === req.body.currentRarity) {
-        //         console.log('Does This Match?');
-        //         itemsToRemove.push(inventoryID);
-        //         if (itemsToRemove.length === 3) {
-        //             return itemsToRemove;
-        //         };
-        //     };
-        // });
         console.log(inventoryToKeep, 'inventory to keep');
-        // const deletedItems = inventoryToRemove.forEach(async itemID => {
-        //     console.log(itemID, 'Do you have an itemID?')
-        //     const itemIndex = ascean.inventory.indexOf(itemID);
-        //     ascean.inventory.splice(itemIndex, 1);
-        //     await deleteEquipmentCheck(itemID);
-        // });
         ascean.inventory = inventoryToKeep;
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
         console.log(err, 'err')
         res.status(400).json(err);
-    }
-}
+    };
+};
 
 const inventoryCheck = async (ascean, name, rarity) => {
     console.log(ascean.inventory, 'ascean inventory')
@@ -425,18 +348,15 @@ const inventoryCheck = async (ascean, name, rarity) => {
     };
     console.log(itemsToRemove, 'This is what has been plucked')
     if (itemsToRemove.length > 3) {
-        console.log(itemsToRemove, 'itemsToRemove, slicing down to 3 if needed')
         itemsToRemove = itemsToRemove.slice(0, 3);
-    }
+    };
     newInventory = await removeItems(itemsToRemove, newInventory);
-
     return newInventory;
 };
 
 const removeItems = async (items, inventory) => {
     console.log(items, 'items in removeItems')
     const removedItems = await items.forEach(async itemID => {
-        console.log(itemID, 'Do you have an itemID?');
         const itemIndex = inventory.indexOf(itemID);
         inventory.splice(itemIndex, 1);
         await deleteEquipmentCheck(itemID);
@@ -455,13 +375,10 @@ async function determineItemType(id) {
         Amulet: Amulet,
         Trinket: Trinket,
         Equipment: Equipment,
-    }
-    
+    };
     const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
-    // console.log(id, 'And did we make it here? 2')
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();
-        // console.log(item, 'And 3?')
         if (item) {
             return item;
         }
@@ -496,7 +413,7 @@ async function getHigherRarity(id) {
                 nextRarity = 'Rare';
             } else if (rarity === 'Rare') {
                 nextRarity = 'Epic';
-            }
+            };
             const nextItem = await models[itemType].findOne({ name, rarity: nextRarity }).exec();
             if (nextItem) {
                 console.log(nextItem, 'nextItem');
@@ -507,16 +424,16 @@ async function getHigherRarity(id) {
                     if (realItem) {
                         console.log(realItem, 'realItem');
                         return realItem;
-                    }
-                }
-            }
-        }
-    }
+                    };
+                };
+            };
+        };
+    };
     return null;
-  }  
+};  
 
 async function deleteEquipment(req, res) {
-    console.log(req.body, 'Item Ids to be Deleted')
+    console.log(req.body, 'Item Ids to be Deleted');
     try {
         let result = null;
         for (const item of req.body) {
@@ -526,8 +443,8 @@ async function deleteEquipment(req, res) {
     } catch (err) {
         console.log(err, 'err');
         res.status(400).json(err);
-    }
-}
+    };
+};
 
 async function getAndWriteEquipmentIds(req, res) {
     console.log('Pinged and starting function');
@@ -546,7 +463,6 @@ async function getAndWriteEquipmentIds(req, res) {
     try {
         for (const itemType of itemTypes) {
             console.log('Pinged and starting to find equipment', itemType);
-            // let equipment = await models[itemType].find().select('_id').exec();
             let equipment = await models[itemType].find({}).exec();
             console.log(equipment, 'Pinged and found equipment');
             allEquipment.push(equipment);
@@ -574,5 +490,5 @@ const deleteEquipmentCheck = async (equipmentID) => {
         console.log(`Successfully deleted equipment with id: ${deleted._id}`);
     } catch (err) {
         console.log(err, 'err');
-    }
+    };
 };

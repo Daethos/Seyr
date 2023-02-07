@@ -58,6 +58,11 @@ interface Props {
     setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
     dispatch: any;
     state: any;
+    checkLoot: boolean;
+    setCheckLoot: React.Dispatch<React.SetStateAction<boolean>>;
+    deleteEquipment: (eqp: any) => Promise<void>;
+    merchantEquipment: any;
+    setMerchantEquipment: React.Dispatch<React.SetStateAction<any>>;
 }
 
 interface Region { 
@@ -72,7 +77,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
+const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const regionInformation = {
@@ -86,7 +91,6 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
         Isles: "The Alluring Isles is its own world, gigantic and terrifying despite its grandeur isolated by strange tides. The land itself a shade of this world, yet what can allow a man to travel a fortnight here, and a day there? I've heard about the size of the animals that stalk those jungles and swim in the waters, hard to believe anyone can sustain themselves there. Would you wish to see this place?",
     };
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
-    const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
 
@@ -101,34 +105,50 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
     const handleIntent = (intent: string) => {
         setCurrentIntent(intent);
     };
-    const engageCombat = () => {
+    const engageCombat = async () => {
+        await checkingLoot();
         dispatch({
             type: ACTIONS.SET_DUEL,
             payload: ''
         });
     };
 
-    // useEffect(() => {
-    //     if (merchantEquipment.length > 0) {
-    //         deleteEquipment(merchantEquipment);
-    //     };
-    //     if (lootDrop !== null) {
-    //         deleteEquipment(lootDrop);
-    //     };
-    //     if (lootDropTwo !== null) {
-    //         deleteEquipment(lootDropTwo);
-    //     };
-    //     return () => { console.log('Unmounting Delete Concerns') }
-    // }, [resetAscean, getOpponent]);
+    const checkReset = async () => {
+        await checkingLoot();
+        await resetAscean();
+    };
 
-    const deleteEquipment = async (eqp: any) => {
-        try {
-            const response = await eqpAPI.deleteEquipment(eqp);
-            console.log(response, 'Delete Response!');
-        } catch (err) {
-            console.log(err, 'Error!')
+    const checkOpponent = async () => {
+        await checkingLoot();
+        await getOpponent();
+    };
+
+    // useEffect(() => {
+    //     checkingLoot();
+    //     return () => { setCheckLoot(false); }
+    // }, [checkLoot]);
+
+    const checkingLoot = async () => {
+        console.log(merchantEquipment.length, lootDrop, lootDropTwo, 'Merchant Equipment')
+        if (merchantEquipment.length > 0) {
+           await deleteEquipment(merchantEquipment);
+        };
+        if (lootDrop !== null) {
+           await deleteEquipment([lootDrop]);
+        };
+        if (lootDropTwo !== null) {
+           await deleteEquipment([lootDropTwo]);
         };
     };
+
+    // const deleteEquipment = async (eqp: any) => {
+    //     try {
+    //         const response = await eqpAPI.deleteEquipment(eqp);
+    //         console.log(response, 'Delete Response!');
+    //     } catch (err) {
+    //         console.log(err, 'Error!')
+    //     };
+    // };
 
     const getLoot = async () => {
         if (merchantEquipment.length > 0) {
@@ -192,7 +212,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                         : lootDropTwo?._id ?
                             <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
                         : '' }
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={resetAscean}>Refresh Your Duel With {npc}.</Button>
+                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={checkReset}>Refresh Your Duel With {npc}.</Button>
                         </> 
                     : computerWin ? 
                         <>
@@ -200,7 +220,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                             You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
                             </p>
                             "Well now, {ascean.name}, can't say no one expected this, did we? Tell you what, we can keep at this till you bear luck's fortune."
-                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={resetAscean}>Reduel {npc} To Win Back Your Honor?</Button>
+                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={checkReset}>Reduel {npc} To Win Back Your Honor?</Button>
                         </> 
                     :
                         <>
@@ -223,17 +243,17 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, getOpponent, p
                     { playerWin ?
                         <>
                         "Perhaps it's for the best. May you seek a worthy opponent, {ascean.name}."<br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Potential Duelist For More Experience</Button>
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={checkOpponent}>Seek A New Potential Duelist For More Experience</Button>
                         </>
                     : computerWin ?
                         <>
                         "Take care {ascean.name}, and seek aid. You do not look well."<br />
-                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps' }} onClick={getOpponent}>Meh, Another Day, New Duelist.</Button>
+                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps' }} onClick={checkOpponent}>Meh, Another Day, New Duelist.</Button>
                         </>
                     : 
                         <>
                         "Perhaps we'll meet again, {ascean.name}."<br />
-                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={getOpponent}>Seek A New Duelist Instead</Button>
+                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button>
                         </>
                     }
                     </>

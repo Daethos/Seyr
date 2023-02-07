@@ -58,7 +58,6 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     }, [ascean, inventory]);
 
     function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
-        console.log(inventory, name, rarity, 'Can Upgrade?');
         const matches = inventory.filter(item => item.name === name && item.rarity === rarity);
         return matches.length >= 3;
     }

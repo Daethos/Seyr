@@ -16,7 +16,6 @@ interface Props {
 }
 
 const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, setError, setMerchantEquipment, table }: Props) => {
-    console.log(item, 'Did We Make it Here Even?')
     const [thisItemPurchased, setThisItemPurchased] = useState(false);
     const [purchaseSetting, setPurchaseSetting] = useState({
         ascean: ascean,
@@ -174,15 +173,15 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
                 {item?.rarity}
                 <br />
                 
-                { thisItemPurchased ? ""
-                :
+                {/* { thisItemPurchased ? ""
+                : */}
                     <>
                     Price:{' '} 
                     {purchaseSetting?.cost?.gold}g{' '}
                     {purchaseSetting?.cost?.silver}s{' '}
                     <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: -4 + '%', fontSize: 18 + 'px', marginRight: -5 + '%' }} onClick={purchaseItem}>Purchase</Button>
                     </>
-                }
+                {/* } */}
             </Popover.Body>
         </Popover>
     )

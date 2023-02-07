@@ -28,6 +28,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [ascean, setAscean] = useState<any>({});
     const [opponent, setOpponent] = useState<any>({});
+    const [opponents, setOpponents] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
@@ -41,8 +42,10 @@ const GameSolo = ({ user }: GameProps) => {
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const [eqpSwap, setEqpSwap] = useState<boolean>(false);
+    const [checkLoot, setCheckLoot] = useState<boolean>(false);
     const [removeItem, setRemoveItem] = useState<boolean>(false);
     const [background, setBackground] = useState<any>(null);
+    const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
     const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
@@ -162,6 +165,7 @@ const GameSolo = ({ user }: GameProps) => {
             setLoading(true)
             const secondResponse = await userService.getProfile('mirio');
             const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
+            setOpponents(secondResponse.data.ascean);
             const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
             const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
             setOpponent(selectedOpponent.data);
@@ -207,6 +211,8 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     const getOpponent = async () => {
+        setCheckLoot(true);
+
         setLoading(true);
         try {
             let minLevel: number = 0;
@@ -236,8 +242,8 @@ const GameSolo = ({ user }: GameProps) => {
                 minLevel = 16;
                 maxLevel = 20;
             }
-            const firstResponse = await userService.getProfile('mirio');
-            const profilesInRange = firstResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
+            // const firstResponse = await userService.getProfile('mirio');
+            const profilesInRange = opponents.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
             const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
             const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
             setOpponent(selectedOpponent.data);
@@ -375,8 +381,16 @@ const GameSolo = ({ user }: GameProps) => {
       return () => {
         setRemoveItem(false);
       }
-    }, [removeItem])
-    
+    }, [removeItem]);
+
+    const deleteEquipment = async (eqp: any) => {
+        try {
+            const response = await eqpAPI.deleteEquipment(eqp);
+            console.log(response, 'Delete Response!');
+        } catch (err) {
+            console.log(err, 'Error!')
+        };
+    };
 
     const getAsceanSlicker = async () => {
         try {
@@ -634,6 +648,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const resetAscean = async () => {
         try {
+            setCheckLoot(true);
             if (state.current_player_health <= 0 || state.new_player_health <= 0) {
                 dispatch({
                     type: ACTIONS.RESET_PLAYER,
@@ -648,8 +663,8 @@ const GameSolo = ({ user }: GameProps) => {
             playReplay();
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         if (ascean?.origin && background === null) {
@@ -743,10 +758,10 @@ const GameSolo = ({ user }: GameProps) => {
                 <>
                 { showDialog ?    
                     <DialogBox 
-                        npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state}
+                        npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state} checkLoot={checkLoot} setCheckLoot={setCheckLoot} deleteEquipment={deleteEquipment}
                         playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
                         winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo}
-                        resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop}
+                        resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment}
                     />
                 : '' }
                 <Button variant='' className='dialog-button' onClick={() => setShowDialog(!showDialog)}>Dialog</Button>
