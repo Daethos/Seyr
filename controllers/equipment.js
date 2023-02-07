@@ -168,7 +168,7 @@ async function getMerchantEquipment(req, res) {
         let merchantEquipment = [];
         let type;
         let rarity;
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < 12; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = determineEquipmentType();
             let equipment;
@@ -479,15 +479,15 @@ async function getAndWriteEquipmentIds(req, res) {
 };
 
 const deleteEquipmentCheck = async (equipmentID) => {
-    console.log('Did this carry over?')
+    console.log(equipmentID, 'Did this carry over?')
     try {
         const allEquipmentIds = await fs.promises.readFile('data/equipmentIds.json');
-        const parsedIds = JSON.parse(allEquipmentIds);
+        const parsedIds = await JSON.parse(allEquipmentIds);
         if (parsedIds.includes(equipmentID)) {
             return console.log('Equipment found in golden template list. Must be preserved at all costs!');
         };
         const deleted = await Equipment.findByIdAndDelete(equipmentID).exec();
-        console.log(`Successfully deleted equipment with id: ${deleted._id}`);
+        console.log(`Successfully deleted equipment: ${deleted}`);
     } catch (err) {
         console.log(err, 'err');
     };

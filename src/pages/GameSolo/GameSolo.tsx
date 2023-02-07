@@ -163,14 +163,26 @@ const GameSolo = ({ user }: GameProps) => {
                 maxLevel = 20;
             }
             // setLoading(true);
-            const secondResponse = await userService.getProfile('mirio');
-            const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
-            setOpponents(secondResponse.data.ascean);
-            const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
+            const enemyData = {
+                username: 'mirio',
+                minLevel: minLevel,
+                maxLevel: maxLevel
+            };
+            const secondResponse = await userService.getRandomEnemy(enemyData);
+            console.log(secondResponse, 'Enemy Response');
+            const selectedOpponent = await asceanAPI.getOneAscean(secondResponse.data.ascean._id);
+            console.log(selectedOpponent, 'Selected Opponent');
+            const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
+            console.log(opponentResponse.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
-            const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
-            console.log(profilesInRange[randomOpponent], 'Opponent Response');
+            // const secondResponse = await userService.getProfile('mirio');
+            // const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
+            // setOpponents(secondResponse.data.ascean);
+            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
+            // const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
+            // setOpponent(selectedOpponent.data);
+            // const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
+            // console.log(profilesInRange[randomOpponent], 'Opponent Response');
             setAsceanState({
                 ...asceanState,
                 'ascean': response.data.data.ascean,
@@ -242,12 +254,24 @@ const GameSolo = ({ user }: GameProps) => {
                 minLevel = 16;
                 maxLevel = 20;
             }
-            // const firstResponse = await userService.getProfile('mirio');
-            const profilesInRange = opponents.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
-            const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
+            const enemyData = {
+                username: 'mirio',
+                minLevel: minLevel,
+                maxLevel: maxLevel
+            };
+            const secondResponse = await userService.getRandomEnemy(enemyData);
+            console.log(secondResponse, 'Enemy Response');
+            const selectedOpponent = await asceanAPI.getOneAscean(secondResponse.data.ascean._id);
+            console.log(selectedOpponent, 'Selected Opponent');
+            const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
+            console.log(response.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
-            const response = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
+            // const firstResponse = await userService.getProfile('mirio');
+            // const profilesInRange = opponents.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
+            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
+            // const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
+            // setOpponent(selectedOpponent.data);
+            // const response = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
             dispatch({
                 type: ACTIONS.SET_NEW_COMPUTER,
                 payload: response.data.data

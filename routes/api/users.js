@@ -10,6 +10,7 @@ router.post('/signup', upload.single('photo'), usersCtrl.signup);
 router.post('/login', usersCtrl.login);
 router.get('/', protect, usersCtrl.allUsers);
 router.get('/:username', usersCtrl.profile);
+router.post('/enemy', usersCtrl.profileCharacter);
 router.put('/update', protect, usersCtrl.updateUser)
 router.put('/updateBio', protect, usersCtrl.updateUserBio)
 

@@ -24,6 +24,7 @@ module.exports = {
   signup,
   login,
   profile,
+  profileCharacter,
   allUsers,
   updateUser,
   updateUserBio
@@ -98,7 +99,25 @@ async function profile(req, res) {
   }
 }
 
+async function profileCharacter(req, res) {
+  console.log(req.body, 'Getting Profile Character')
+  try {
+    const user = await User.findOne({ username: req.body.username });
+    const ascean = await Ascean.find({ user: user._id });
+    const asceanInRange = ascean.filter((a) => a.level >= req.body.minLevel && a.level <= req.body.maxLevel);
+    const randomAscean = asceanInRange[Math.floor(Math.random() * asceanInRange.length)];
 
+    res.status(200).json({
+      data: {
+        user: user,
+        ascean: randomAscean,
+      }
+    });
+  } catch (err) {
+    console.log(err.message, " <- Error fetching Character from Profile");
+    res.status(400).json({ err });
+  }
+}
 
 async function signup(req, res) {
   console.log(req.body, " req.body in signup", req.file);

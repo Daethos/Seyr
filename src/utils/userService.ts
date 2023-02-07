@@ -15,6 +15,20 @@ function getProfile(username: any){
   })
 }
 
+function getRandomEnemy(data: object) {
+  return fetch(BASE_URL + 'enemy', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " + tokenService.getToken(),
+    }
+  }).then(res => {
+    if(res.ok) return res.json();
+    throw new Error('Error from getRandomEnemy Request, check the server terminal!');
+  })
+}
+
 function signup(user: any) {
   return fetch(BASE_URL + 'signup', {
     method: 'POST',
@@ -105,5 +119,6 @@ export default {
   getProfile,
   searchUser,
   updateUser,
-  updateBio
+  updateBio,
+  getRandomEnemy
 };

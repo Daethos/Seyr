@@ -123,32 +123,21 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
         await getOpponent();
     };
 
-    // useEffect(() => {
-    //     checkingLoot();
-    //     return () => { setCheckLoot(false); }
-    // }, [checkLoot]);
-
     const checkingLoot = async () => {
         console.log(merchantEquipment.length, lootDrop, lootDropTwo, 'Merchant Equipment')
         if (merchantEquipment.length > 0) {
-           await deleteEquipment(merchantEquipment);
+            await deleteEquipment(merchantEquipment);
+            setMerchantEquipment([]);
         };
         if (lootDrop !== null) {
-           await deleteEquipment([lootDrop]);
+            await deleteEquipment([lootDrop]);
+            setLootDrop(null);
         };
         if (lootDropTwo !== null) {
-           await deleteEquipment([lootDropTwo]);
+            await deleteEquipment([lootDropTwo]);
+            setLootDropTwo(null);
         };
     };
-
-    // const deleteEquipment = async (eqp: any) => {
-    //     try {
-    //         const response = await eqpAPI.deleteEquipment(eqp);
-    //         console.log(response, 'Delete Response!');
-    //     } catch (err) {
-    //         console.log(err, 'Error!')
-    //     };
-    // };
 
     const getLoot = async () => {
         if (merchantEquipment.length > 0) {
@@ -163,15 +152,14 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
             setItemSaved(false);
             setLoading(false);
         } catch (err) {
-            console.log(err, 'Error!')
-        }
+            console.log(err, 'Error Getting Loot!');
+        };
     };
 
     useEffect(() => {
         if (merchantEquipment.length === 0) return;
         console.log(merchantEquipment, 'merchantEquipment variable in DialogBox.tsx');
     }, [merchantEquipment]);
-    
 
     useEffect(() => {
         console.log(currentIntent);
