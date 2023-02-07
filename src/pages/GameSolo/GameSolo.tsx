@@ -162,7 +162,7 @@ const GameSolo = ({ user }: GameProps) => {
                 minLevel = 15;
                 maxLevel = 20;
             }
-            setLoading(true)
+            // setLoading(true);
             const secondResponse = await userService.getProfile('mirio');
             const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
             setOpponents(secondResponse.data.ascean);
@@ -277,7 +277,7 @@ const GameSolo = ({ user }: GameProps) => {
                 mastery: response.data.mastery,
                 faith: response.data.faith,
             });
-            getAsceanSlicker();
+            await getAsceanLeveled();
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up')
         }
@@ -390,6 +390,20 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err) {
             console.log(err, 'Error!')
         };
+    };
+
+    const getAsceanLeveled = async () => {
+        try {
+            const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            setAscean(firstResponse.data);
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_LEVEL_UP,
+                payload: response.data.data
+             });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Leveled');
+        }
     };
 
     const getAsceanSlicker = async () => {
