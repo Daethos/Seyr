@@ -18,8 +18,6 @@ import Button from 'react-bootstrap/Button';
 import Attributes from '../LevelUp/Attributes';
 import Mastery from '../../components/AsceanBuilder/Mastery';
 import Faith from '../../components/AsceanBuilder/Faith';
-// import { resizeGame } from '../Resize';
-
 
 interface Props {
     user: any;
@@ -151,22 +149,6 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             console.log(err.message, 'Error Starting Game')
         }
     }, [ascean])
-
-    // const startGame = async () => {
-    //     try {
-    //         setLoading(true);
-    //         if (canvasElement) {
-    //             canvasElement.remove();
-    //         }
-    //         const game = new Phaser.Game(config);
-    //         setGameState(game);
-    //         gameRef.current = game;
-    //         canvasElement = document.querySelector('.phaser-game');
-    //         setLoading(false);
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Starting Game')
-    //     }
-    // }
     
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -239,25 +221,18 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     }, [ascean])
 
     const resizeGame = () => {
-        // Width-Height Ration of Game Resolution
         let game_ratio = 360 / 480;
     
-        // Check if Device DPI messes up the Width-Height Ratio
         let canvas = document.getElementsByTagName('canvas')[0];
 
-        // Calculate the new width and height of the canvas
-        // based on the current window size and the game ratio
         let newWidth = window.innerWidth;
         let newHeight = newWidth / game_ratio;
 
-         // If the new height is too tall for the window,
-        // use the window height instead and calculate the new width
         if (newHeight > window.innerHeight) {
             newHeight = window.innerHeight;
             newWidth = newHeight * game_ratio;
         }
 
-        // Set the canvas width and height
         canvas.style.width = newWidth + 'px';
         canvas.style.height = newHeight + 'px';
     }
@@ -360,7 +335,6 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                     />
                 ) : ( '' ) }
             </div>
-            
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
         </div>
         </>

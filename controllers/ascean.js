@@ -1,4 +1,3 @@
-const User = require('../models/user');
 const Ascean = require('../models/ascean');
 const asceanService = require('../services/asceanServices');
 const Weapon = require('../models/weapon');
@@ -11,11 +10,11 @@ const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
 const fs = require('fs');
-const mongoose = require('mongoose');
 
 module.exports = {
     create,
     index,
+    quickIndex,
     editAscean,
     getOneAscean,
     delete: deleteAscean,
@@ -94,7 +93,6 @@ async function determineItemType(id) {
 
 async function saveToInventory(req, res) {
     try {
-        // console.log(req.body, 'Req Body in Saving to Inventory')
         const ascean = await Ascean.findById(req.body.ascean._id);
         ascean.inventory.push(req.body.lootDrop._id);
         await ascean.save();
@@ -451,6 +449,16 @@ async function index(req, res) {
         res.status(400).json({ err });
     };
 };
+
+async function quickIndex(req, res) {
+    try {
+        const asceanCrew = await Ascean.find({ user: req.user._id });
+        res.status(200).json({ data: asceanCrew });
+    } catch (err) { 
+        console.log(err, 'Error in Lean Profile Controller') 
+        res.status(400).json({ err });
+    }
+  }
 
 async function getOneAscean(req, res) {
     try {

@@ -5,6 +5,7 @@ const protect = require('../../config/auth')
 
 // /*---------- Public Routes ----------*/
 router.get('/', protect, asceanCtrl.index);
+router.get('/lean', protect, asceanCtrl.quickIndex);
 router.get('/search/', protect, asceanCtrl.searchAscean);
 router.get('/:id', protect, asceanCtrl.getOneAscean);
 router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
@@ -19,6 +20,5 @@ router.put('/:id', protect, asceanCtrl.editAscean);
 router.post('/', protect, asceanCtrl.create);
 router.delete('/:id', protect, asceanCtrl.delete);
 /*---------- Protected Routes ----------*/
-
 
 module.exports = router;

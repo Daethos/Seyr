@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
 const Weapon = require('../models/weapon');
 const Shield = require('../models/shield');
 const Helmet = require('../models/helmet');
@@ -12,13 +10,10 @@ const Ascean = require('../models/ascean');
 const Equipment = require('../models/equipment');
 const eqpIDS = require('../data/equipmentIds.json');
 const mongodb = require('mongodb');
-const chance = require('chance').Chance();
 const MongoClient = require('mongodb').MongoClient;
 const uri = "mongodb+srv://" + process.env.SNEED + "@cluster0.ivsipz0.mongodb.net/seyr?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const fs = require('fs');
-
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports = {
     indexEquipment,
@@ -28,9 +23,6 @@ module.exports = {
     deleteEquipment,
     getAndWriteEquipmentIds
 }
-
-// Write in a function that will create an elevated rarity item of the same name when the user subm8its 3 of the same item name of a lower rarity
-// This would happen in a services tab of the dialog box
 
 async function indexEquipment(req, res) {
     console.log('%c We have made it to the Index in the Equipment Controller!', 'color: blue')

@@ -27,8 +27,6 @@ interface GameProps {
 }
 
 const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, setCombatData, setModalShow, enemyPlayer, yourData, enemyData, handleRoomReset }: GameProps) => {
-    // const [ascean, setAscean] = useState<any>({})
-    // const [opponent, setOpponent] = useState<any>({})
     const [loading, setLoading] = useState(false);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
     const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
@@ -167,7 +165,6 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
         })
         const response = await newWeaponOrder();
         playWO();
-        // console.log(response, '<- Response re-ordering weapons')
         if (yourData.player === 1) {
             setCombatData({...combatData, 'player_one_weapons': response})
             setTimeLeft(10);
@@ -352,9 +349,6 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 if (response.player_one_win === true) {
                     playWin();
                     setWinStreak((winStreak) => winStreak + 1)
-                    // if (winStreak + 1 > highScore) {
-                    //     setHighScore((score) => score + 1)
-                    // }
                     setLoseStreak(0)
                     setGameIsLive(false)
                     setDodgeStatus(false)
@@ -411,12 +405,8 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                     playReligion()
                 }
                 if (response.player_two_win === true) {
-                    // console.log(winStreak, highScore, 'Win Streak and High Score')
                     playWin()
                     setWinStreak((winStreak) => winStreak + 1)
-                    // if (winStreak + 1 > highScore) {
-                    //     setHighScore((score) => score + 1)
-                    // }
                     setLoseStreak(0)
 
                     setGameIsLive(false)
@@ -439,7 +429,6 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 playCounter()
             }
             setLoading(false)
-            // setTimeout(() => setLoading(false), 500)
         } catch (err: any) {
             console.log(err.message, 'Error Updating Status')
         }
@@ -451,13 +440,7 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
         );
     }
 
-    if (loading) {
-        return (
-            <Loading Combat={true} />
-        )
-    }
-
-    if (loadingAscean) {
+    if (loadingAscean || loading) {
         return (
             <Loading Combat={true} />
         )
@@ -483,14 +466,11 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
 
                 computerCounterSuccess={enemyData.player === 2 ? combatData.player_two_counter_success : combatData.player_one_counter_success}
             />
-            {/* { combatData?.player_two_attributes?.healthTotal && currentPlayerTwoHealth >= 0 ? */}
                 <PvPAscean ascean={enemyData.ascean} PvP={true} 
                     loading={loadingAscean} yourData={yourData} enemyData={enemyData}
                     undefined={undefinedStats} setUndefined={setUndefinedStats} 
                     undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} 
                     player={false} combatData={combatData} currentPlayerHealth={enemyData.player === 2 ? currentPlayerTwoHealth : currentPlayerOneHealth} />
-            {/*     : <>{() => setUndefinedStats(false)}</>
-            } */}
             <PvPConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText} reduelRequest={reduelRequest}
                 setCurrentPlayerHealth={yourData.player === 1 ? setCurrentPlayerOneHealth : setCurrentPlayerTwoHealth} 
@@ -506,14 +486,10 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} socket={socket} freshCombatData={freshCombatData} setFreshCombatData={setFreshCombatData}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
-
-            {/* { combatData?.player_one_attributes?.healthTotal && currentPlayerOneHealth >= 0 ? */}
                 <PvPAscean ascean={ascean} PvP={true} player={true} yourData={yourData} enemyData={enemyData}
                     combatData={combatData} undefined={undefinedStats} 
                     setUndefined={setUndefinedStats} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} 
                     currentPlayerHealth={yourData.player === 1 ? currentPlayerOneHealth : currentPlayerTwoHealth} loading={loadingAscean} />
-                {/* : <>{() => setUndefinedStats(false)}</>
-            } */}
             <span style={{ float: 'right' }} id='chat-button'>
                 <Button variant='outline-danger'
                     style={{ color: '#fdf6d8', borderRadius: 50 + '%',

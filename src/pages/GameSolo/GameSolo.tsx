@@ -162,7 +162,6 @@ const GameSolo = ({ user }: GameProps) => {
                 minLevel = 15;
                 maxLevel = 20;
             }
-            // setLoading(true);
             const enemyData = {
                 username: 'mirio',
                 minLevel: minLevel,
@@ -175,14 +174,6 @@ const GameSolo = ({ user }: GameProps) => {
             const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
             console.log(opponentResponse.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
-            // const secondResponse = await userService.getProfile('mirio');
-            // const profilesInRange = secondResponse.data.ascean.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
-            // setOpponents(secondResponse.data.ascean);
-            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            // const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
-            // setOpponent(selectedOpponent.data);
-            // const opponentResponse = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
-            // console.log(profilesInRange[randomOpponent], 'Opponent Response');
             setAsceanState({
                 ...asceanState,
                 'ascean': response.data.data.ascean,
@@ -224,7 +215,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getOpponent = async () => {
         setCheckLoot(true);
-
         setLoading(true);
         try {
             let minLevel: number = 0;
@@ -266,12 +256,6 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
             console.log(response.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
-            // const firstResponse = await userService.getProfile('mirio');
-            // const profilesInRange = opponents.filter((a: any) => a.level >= minLevel && a.level <= maxLevel);
-            // const randomOpponent = Math.floor(Math.random() * profilesInRange.length);
-            // const selectedOpponent = await asceanAPI.getOneAscean(profilesInRange[randomOpponent]._id);
-            // setOpponent(selectedOpponent.data);
-            // const response = await asceanAPI.getAsceanStats(profilesInRange[randomOpponent]._id);
             dispatch({
                 type: ACTIONS.SET_NEW_COMPUTER,
                 payload: response.data.data
@@ -492,7 +476,6 @@ const GameSolo = ({ user }: GameProps) => {
     }, [state.highScore])
 
     const updateHighScore = async () => {
-        // setLoadingAscean(true);
         try {
             const response = await asceanAPI.highScore({
                 'asceanId': ascean._id,
@@ -500,7 +483,6 @@ const GameSolo = ({ user }: GameProps) => {
             });
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
-            // setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error Updating High Score')
         }
@@ -833,7 +815,6 @@ const GameSolo = ({ user }: GameProps) => {
                 playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
             />
-
         </Container>
     )
 }

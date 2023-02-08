@@ -1,5 +1,4 @@
 const Ascean = require('../models/ascean');
-const mongoose = require('mongoose');
 const Weapon = require('../models/weapon');
 const Shield = require('../models/shield');
 const Helmet = require('../models/helmet');
@@ -31,13 +30,11 @@ async function getModelType(id) {
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();
         if (item) {
-            // console.log(itemType, item.itemType, 'This is the itemType and item.itemType, does this do anything correct?')
             return item.itemType;
         };
     };
     return null;
-  };
-
+};
 
 async function focus(req, res) {
     try {

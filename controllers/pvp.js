@@ -2,18 +2,7 @@ const cors = require('cors')
 const gameService = require('../services/gameServices')
 
 module.exports = {
-    init,
-    render,
     initiate,
-    playerWin,
-    playerLoss
-}
-
-async function init(req, res) {
-    // Initializes the Game State
-}
-async function render(req, res) {
-    // Renders the Game State   
 }
 
 async function initiate(req, res) {
@@ -24,11 +13,4 @@ async function initiate(req, res) {
     } catch (err) {
         res.status(400).json({ err })
     }
-}
-
-async function playerWin(req, res) {
-    // Renders Game State if the Player Wins
-}
-async function playerLoss(req, res) {
-    // Renders Game State if the Player Loses
 }

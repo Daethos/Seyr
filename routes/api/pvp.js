@@ -18,12 +18,7 @@ const returnRouter = function(io) {
 
 
 /*---------- Public Routes ----------*/
-router.get('/:id', pvpCtrl.init);
-router.get('/render/:id', pvpCtrl.render)
-router.put('/initiate', pvpCtrl.initiate)
-router.get('/win/:id', pvpCtrl.playerWin);
-router.get('/loss/:id', pvpCtrl.playerLoss);
-
+router.put('/initiate', pvpCtrl.initiate);
 
 /*---------- Protected Routes ----------*/
 

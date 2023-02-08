@@ -9,14 +9,10 @@ const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
-const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const S3 = require("aws-sdk/clients/s3");
 const s3 = new S3(); // initate the S3 constructor which can talk to aws/s3 our bucket!
-// import uuid to help generate random names
 const { v4: uuidv4 } = require("uuid");
-// since we are sharing code, when you pull you don't want to have to edit the
-// the bucket name, thats why we're using an environment variable
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 const SECRET = process.env.SECRET;
 
@@ -54,14 +50,9 @@ async function getModelType(id) {
 
 async function profile(req, res) {
   try {
-    // find the user!
     const user = await User.findOne({ username: req.params.username });
-    // if the user is undefined, that means the database couldn't find this user lets send an error back
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    // Find the Post's by the user
-    //.populate('user') <- user comes from the key on the post model 
-    //   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'}, // referencing a model < which replaces the id with the userdocument
     const asceanCrew = await Ascean.find({ user: user._id
       // , visibility: 'public' 
     })
@@ -97,7 +88,7 @@ async function profile(req, res) {
     console.log(err.message, " <- profile controller");
     res.status(400).json({ error: "Something went wrong" });
   }
-}
+};
 
 async function profileCharacter(req, res) {
   console.log(req.body, 'Getting Profile Character')
@@ -184,7 +175,6 @@ async function login(req, res) {
   }
 }
 
-// /api/users
 async function allUsers(req, res) {
   const keyword = req.query.search ? {
     $or: [
@@ -199,9 +189,7 @@ async function allUsers(req, res) {
 }
 
 async function updateUser(req, res) {
-  // const { username, email } = req.body;
   const { username } = req.body;
-
   try {
     const user = await User.findByIdAndUpdate(req.user._id, {
       username}, { new: true })

@@ -1,7 +1,6 @@
 import { RefAttributes, useEffect, useState, useCallback } from 'react'
 import * as asceanAPI from '../../utils/asceanApi';
 import * as io from 'socket.io-client'
-import userService from "../../utils/userService";
 import Container from 'react-bootstrap/Container'
 import Loading from '../../components/Loading/Loading'
 import GameChat from '../../components/GameCompiler/GameChat';
@@ -27,19 +26,15 @@ const GamePvPLobby = ({ user }: Props) => {
     const [showChat, setShowChat] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(true)
     const [socketConnected, setSocketConnected] = useState<boolean>(false)
-    const [typing, setTyping] = useState<boolean>(false)
     const [isTyping, setIsTyping] = useState<boolean>(false)
 
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
-    const [undefinedStats, setUndefinedStats] = useState<boolean>(false)
-    const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
 
     const [playerOneWeaponOne, setPlayerOneWeaponOne] = useState<any>({})
     const [playerOneWeaponTwo, setPlayerOneWeaponTwo] = useState<any>({})
     const [playerOneWeaponThree, setPlayerOneWeaponThree] = useState<any>({})
     const [playerOneWeapons, setPlayerOneWeapons] = useState<any>([])
 
-    const [totalPlayerOneHealth, setTotalPlayerOneHealth] = useState<number>(0)
     const [currentPlayerOneHealth, setCurrentPlayerOneHealth] = useState<number>(-5)
 
     const [playerOneAttributes, setPlayerOneAttributes] = useState<any>([])
@@ -52,7 +47,6 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const [playerTwoAttributes, setPlayerTwoAttributes] = useState<any>([])
     const [playerTwoDefense, setPlayerTwoDefense] = useState<any>([])
-    const [totalPlayerTwoHealth, setTotalPlayerTwoHealth] = useState<number>(-5)
     const [currentPlayerTwoHealth, setCurrentPlayerTwoHealth] = useState<number>(0)
 
     const [preCombatData, setPreCombatData] = useState<any>({
@@ -421,27 +415,6 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(err.message, 'Error Setting Enemy To Player Two') 
         }
     }
-    
-    // const sortPlayers = async (userData: any) => {
-    //     setLoading(true)
-    //     try {
-    //         if (userData.user.username === user.username && userData.player === 1) {
-    //             playerOneStatCompiler(userData.ascean)
-    //         }
-    //         if (userData.user.username !== user.username && userData.player === 2) {
-    //             playerTwoStatCompiler(userData.ascean)
-    //         }
-    //         if (userData.user.username === user.username && userData.player === 2) {
-    //             playerTwoStatCompiler(userData.ascean)
-    //             // if (opponent.name !== '') {
-    //             //     playerOneStatCompiler(opponent)
-    //             // }
-    //         }
-    //     setTimeout(() => setLoading(false), 1000)
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Sorting Players')
-    //     }
-    // }
 
     const setPlayerOrder = async (you: any, enemy: any) => {
         setLoading(true)

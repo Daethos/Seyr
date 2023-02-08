@@ -9,8 +9,14 @@ interface Props {
 const ToastAlert = ({ error, setError }: Props) => {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    setShow(!show)
-  }, [error])
+    setShow(!show);
+    if (show) {
+      setTimeout(() => {
+        setShow(false);
+        setError({ title: '', content: '' });
+      }, 3000);
+    }
+  }, [error]);
 
   return (
     <>
@@ -32,7 +38,7 @@ const ToastAlert = ({ error, setError }: Props) => {
       </Toast>
       : ''
     }
-      </>
+    </>
   )
 }
 
