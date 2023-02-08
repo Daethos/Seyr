@@ -11,7 +11,7 @@ const Equipment = require('../models/equipment');
 const eqpIDS = require('../data/equipmentIds.json');
 const mongodb = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://" + process.env.SNEED + "@cluster0.ivsipz0.mongodb.net/seyr?retryWrites=true&w=majority";
+const uri = process.env.DATABASE_URL;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const fs = require('fs');
 
@@ -160,7 +160,7 @@ async function getMerchantEquipment(req, res) {
         let merchantEquipment = [];
         let type;
         let rarity;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 12; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = determineEquipmentType();
             let equipment;

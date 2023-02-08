@@ -217,7 +217,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        This will spontaneously create (6) hot, fresh piecs of equipment right out the oven for your amusement and purchase.
+                        This will spontaneously create hot, fresh piecs of equipment right out the oven for your amusement and purchase.
                         <br />
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getLoot}>Generate Merchant Trader Equipment</Button>
                         <br />
