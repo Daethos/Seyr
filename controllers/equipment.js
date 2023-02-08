@@ -8,7 +8,6 @@ const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Ascean = require('../models/ascean');
 const Equipment = require('../models/equipment');
-const eqpIDS = require('../data/equipmentIds.json');
 const mongodb = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
 const uri = process.env.DATABASE_URL;
@@ -25,7 +24,6 @@ module.exports = {
 }
 
 async function indexEquipment(req, res) {
-    console.log('%c We have made it to the Index in the Equipment Controller!', 'color: blue')
     try {
         const weapons = await Weapon.find({ rarity: { $in: ['Default', 'Common', 'Uncommon'] } }).populate().exec();
         const shields = await Shield.find({ rarity: { $in: ['Default', 'Common', 'Uncommon'] } }).populate().exec();
@@ -48,11 +46,11 @@ async function indexEquipment(req, res) {
     });
     } catch (err) {
         res.status(400).json({ err }); 
-    }
-}
+    };
+};
 
 const determineRarityByLevel = (level) => {
-    console.log(level, '%c We have made it to the determineRarityByLevel in the Equipment Controller!', 'color: blue')
+    console.log(level, 'We have made it to the determineRarityByLevel in the Equipment Controller!')
     const chance = Math.random();
     let rarity = '';
     let uScale = level / 25;
@@ -60,11 +58,11 @@ const determineRarityByLevel = (level) => {
     let eScale = level / 500;
     let lScale = level / 10000;
     if (level < 4) {
-        if (uScale > chance) {
-            rarity = 'Uncommon';
-        } else { 
+        // if (uScale > chance) {
+            // rarity = 'Uncommon';
+        // } else { 
             rarity = 'Common';
-        }
+        // }
     } else if (level >= 4 && level < 12) {
         if (rScale > chance) {
             rarity = 'Rare';
@@ -72,7 +70,7 @@ const determineRarityByLevel = (level) => {
             rarity = 'Uncommon';
         } else {
             rarity = 'Common';
-        }
+        };
     } else if (level >= 12 && level < 20) {
         if (eScale > chance) {
             rarity = 'Epic';
@@ -90,17 +88,17 @@ const determineRarityByLevel = (level) => {
             rarity = 'Rare';
         } else if (uScale > chance) {
             rarity = 'Uncommon';
-        }
-    }
-    console.log(rarity, 'Rarity ?')
+        };
+    };
+    console.log(rarity, 'Rarity ?');
     return rarity;
-}
+};
 
 const determineEquipmentType = () => {
     const roll = Math.floor(Math.random() * 100  + 1);
-    console.log(roll, 'Determining Equpment Type by Roll');
+    console.log(roll, 'Determining Equipment Type by Roll');
     
-    if (roll <= 30) {
+    if (roll <= 32) {
         return 'Weapon';
     } else if (roll < 40) {
         return 'Shield';
@@ -116,18 +114,18 @@ const determineEquipmentType = () => {
         return 'Amulet';
     } else {
         return 'Trinket';
-    }
-}
+    };
+};
 
 const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
+};
 
 const randomizeStats = (item, rarity) => {
     console.log(item, 'Item in randomizeStats()')
     const stats = {};
     const attributeRanges = {
-        Common: [0, 1],
+        Common: [1, 1],
         Uncommon: [1, 2],
         Rare: [2, 4],
         Epic: [4, 6],
@@ -150,7 +148,7 @@ const randomizeStats = (item, rarity) => {
         };
     });
 
-    console.log(stats, 'Stats in randomizeStats function');
+    console.log(item, stats, 'Stats in randomizeStats function');
     return stats;
 };
 
@@ -165,34 +163,28 @@ async function getMerchantEquipment(req, res) {
             type = determineEquipmentType();
             let equipment;
             let eqpCheck = Math.floor(Math.random() * 100 + 1);
-
             if (type === 'Amulet' || type === 'Ring' || type === 'Trinket') {
                 if (rarity === 'Common') {
                     rarity = 'Uncommon';
                 };
             };
-
             if (req.params.level < 4) {
-                if (eqpCheck > 80) {
+                rarity = 'Common';
+                if (eqpCheck > 75) {
                     equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                     type = 'Weapon';
-                    console.log(equipment, 'Weapon ?')
                 } else if (eqpCheck > 60) {
                     equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                     type = 'Shield';
-                    console.log(equipment, 'Shield ?')
                 } else if (eqpCheck > 40) {
                     equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                     type = 'Helmet';
-                    console.log(equipment, 'Helmet ?')
                 } else if (eqpCheck > 20) {
                     equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                     type = 'Chest';
-                    console.log(equipment, 'Chest ?')
                 } else {
                     equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                     type = 'Legs';
-                    console.log(equipment, 'Legs ?')
                 };
             } else if (type === 'Weapon') {
                 equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
@@ -213,7 +205,7 @@ async function getMerchantEquipment(req, res) {
             };
             await seedDB(type, equipment, rarity);
             merchantEquipment.push(equipment[0]);
-        }
+        };
         console.log(type, 'Type in Merchant Function')
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
@@ -228,6 +220,7 @@ async function seedDB(type, equipment, rarity) {
     try {
         const mondoDBCalls = equipment.map(async item => {
             let newItem = await mutateEquipment(item, rarity);
+            console.log(newItem, 'New Item in seedDB function')
             return await Equipment.insertMany(item);
           });
     } catch (error) {
@@ -238,15 +231,14 @@ async function seedDB(type, equipment, rarity) {
 const mutateEquipment = async (item, rarity) => {
     item._id = new mongodb.ObjectID();
     let stats = randomizeStats(item, rarity);
-    console.log(stats, 'Stats in mutateEquipment function');
     item = Object.assign(item, stats);
     return item;
 };
 
 
  async function getOneEquipment (req, res) {
-    console.log('%c We have made it to the getOneEquipment in the Equipment Controller!', 'color: blue')
     try {
+        await client.connect();
         let rarity = determineRarityByLevel(req.params.level);
         const type = determineEquipmentType();
 
@@ -259,7 +251,8 @@ const mutateEquipment = async (item, rarity) => {
         let equipment;
         let eqpCheck = Math.floor(Math.random() * 100  + 1);
         if (req.params.level < 4) {
-            if (eqpCheck > 80) {
+            rarity = 'Common';
+            if (eqpCheck > 75) {
                 equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
                 res.status(200).json({ data: equipment });
@@ -305,10 +298,13 @@ const mutateEquipment = async (item, rarity) => {
             equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
         }
         console.log(equipment, 'equipment ?')
+        await seedDB(type, equipment, rarity);
         res.status(200).json({ data: equipment });
     } catch (err) {
         console.log(err, 'Error Getting One Equipment')
         res.status(400).json(err);
+    } finally {
+        await client.close();
     };
 };
 

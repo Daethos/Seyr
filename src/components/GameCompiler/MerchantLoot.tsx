@@ -32,33 +32,33 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
             switch (rarity) {
                 case 'Common': {
                     cost = {
-                        silver: Math.floor(Math.random() * 25) + 1,
+                        silver: Math.floor(Math.random() * 30) + 1,
                         gold: 0
-                    }
+                    };
                     break;
-                }
+                };
                 case 'Uncommon': {
                     cost = {
-                        silver: Math.floor(Math.random() * 25) + 25,
-                        gold: Math.floor(Math.random() * 2)
-                    }
+                        silver: Math.floor(Math.random() * 35) + 15,
+                        gold: Math.floor(Math.random() * 2) + 1
+                    };
                     break;
-                }
+                };
                 case 'Rare': {
                     cost = {
-                        silver: Math.floor(Math.random() * 25) + 50,
-                        gold: Math.floor(Math.random() * 5) + 1
-                    }
+                        silver: Math.floor(Math.random() * 50) + 25,
+                        gold: Math.floor(Math.random() * 6) + 2
+                    };
                     break;
-                }
+                };
                 case 'Epic': {
                     cost = {
                         silver: Math.floor(Math.random() * 50) + 50,
-                        gold: Math.floor(Math.random() * 10) + 10
-                    }
+                        gold: Math.floor(Math.random() * 12) + 12
+                    };
                     break;
-                }
-            }
+                };
+            };
 
             if (type === 'Weapon') {
                 cost.silver = cost.silver * 1.25;
@@ -84,10 +84,10 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
             } else if (type === 'Trinket') {
                 cost.silver = cost.silver * 1.1;
                 cost.gold = cost.gold * 1.1;
-            }
+            };
             cost.silver = Math.floor(cost.silver);
             cost.gold = Math.floor(cost.gold);
-            console.log(cost, 'How Much Does This Cost?')
+            console.log(cost, 'How Much Does This Cost?');
             setPurchaseSetting({
                 ascean: ascean,
                 item: item,
@@ -184,7 +184,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
                 {/* } */}
             </Popover.Body>
         </Popover>
-    )
+    );
 
     function getBorderStyle(rarity: string) {
         switch (rarity) {
@@ -200,13 +200,13 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
                 return '2px solid orange';
             default:
                 return '2px solid grey';
-        }
-    }
+        };
+    };
 
     const getItemStyle = {
         background: 'black',
         border: getBorderStyle(item?.rarity)
-    }
+    };
     
     return (
         <>
