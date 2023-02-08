@@ -160,7 +160,7 @@ async function getMerchantEquipment(req, res) {
         let merchantEquipment = [];
         let type;
         let rarity;
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 6; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = determineEquipmentType();
             let equipment;
