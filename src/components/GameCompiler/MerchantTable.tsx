@@ -14,13 +14,13 @@ interface Props {
 const MerchantTable = ({ table, ascean, itemPurchased, setItemPurchased, error, setError, setMerchantEquipment }: Props) => {
     return (
         <>
-            { table.map((item: any, index: number) => {
-                return (
-                    <MerchantLoot item={item} table={table} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={error} setError={setError} key={index} />
-                )
-            }) }
+        { table.map((item: any, index: number) => {
+            return (
+                <MerchantLoot item={item} table={table} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={error} setError={setError} key={index} />
+            )
+        }) }
         </>
-    )
-}
+    );
+};
 
-export default MerchantTable
+export default MerchantTable;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -22,6 +22,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
         item: item,
         cost: { silver: 0, gold: 0 }
     });
+    
     useEffect(() => {
         determineCost(ascean, item?.rarity, item?.type);
     }, [item])
@@ -97,6 +98,9 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
             console.log(err.message, 'Error Determining Cost!');
         }
     }
+
+    // const cost = useMemo(() => determineCost(ascean, item?.rarity, item?.type), [ascean, item?.rarity, item?.type]);
+
 
     const purchaseItem = async () => {
         let asceanTotal = 0;

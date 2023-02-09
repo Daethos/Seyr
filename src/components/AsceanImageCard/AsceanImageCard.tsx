@@ -326,47 +326,58 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     }
     const getWeaponOneStyle = {
         border: getBorderStyle(weapon_one?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getWeaponTwoStyle = {
         border: getBorderStyle(weapon_two?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getWeaponThreeStyle = {
         border: getBorderStyle(weapon_three?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getShieldStyle = {
         border: getBorderStyle(shield?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getHelmStyle = {
         border: getBorderStyle(helmet?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getChestStyle = {
         border: getBorderStyle(chest?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getLegsStyle = {
         border: getBorderStyle(legs?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getAmuletStyle = {
         border: getBorderStyle(amulet?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getRingOneStyle = {
         border: getBorderStyle(ring_one?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getRingTwoStyle = {
         border: getBorderStyle(ring_two?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
     const getTrinketStyle = {
         border: getBorderStyle(trinket?.rarity),
-        background: 'black'
+        background: 'black',
+        boxShadow: '1px 1px 1px black',
     }
 
     if (loading) {
