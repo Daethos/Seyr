@@ -43,7 +43,7 @@
     display: inline-block;
     
 }
-
+.text-box { box-shadow: 2px 2px 2px black; }
 .dialog-box {
   position: absolute; /* add this */
   top: 39%; /* position the dialog box in the center vertically */
@@ -58,6 +58,7 @@
   overflow: scroll;
   display: flex;
   justify-content: space-between;
+  box-shadow: 2px 2px 2px black;
 }
 .dialog-text {
   height: 300px;
@@ -190,6 +191,7 @@
     padding: 1%;
     border: 2px solid purple;
     background: black;
+    box-shadow: 2px 2px 2px black;
 }
 #action-button {
     font-size: 8px;
@@ -239,6 +241,7 @@
     margin-top: -5%;
     margin-left: -12.5%;
     width: 112.5%;
+    box-shadow: 2px 2px 2px black;
   }
   #auto-engage {
     grid-column-start: 3;
@@ -251,6 +254,7 @@
     margin-top: -5%;
     margin-left: -25%;
     color: #fdf6d8;
+    box-shadow: 2px 2px 2px black;
   }
 #player-health {
     background-color: red;
@@ -329,6 +333,7 @@
   margin-left: -25%;
   grid-column-start: 3;
   grid-row-start: 6;
+  box-shadow: 2px 2px 2px black;
 }
 #attack-options {
     background-color: rgb(0, 0, 0);
@@ -343,6 +348,7 @@
     margin-left: -12.5%;
     grid-column-start: 4;
     grid-row-start: 6;
+    box-shadow: 2px 2px 2px black;
 }
 #prayer-options {
     background-color: rgb(0, 0, 0);
@@ -359,6 +365,7 @@
     /* margin-top: 35%; */
     grid-column-start: 1;
     grid-row-start: 6;
+    box-shadow: 2px 2px 2px black;
 }
 
 .combat-settings {
@@ -373,6 +380,7 @@
   height: 50%;
   padding: 2.5%;
   margin-right: 2.5%;
+  box-shadow: 2px 2px 2px black;
 }
 
 #computer-animation {

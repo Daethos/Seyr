@@ -1,6 +1,5 @@
 class StatusEffect {
     constructor(combatData, player, enemy, weapon, attributes, prayer) {
-        // May have to juggle the order of these args and the order of the properties and how they are derived. Not sure
         this.name = this.setName(weapon.influences[0]);
         this.deity = weapon.influences[0];
         this.weapon = weapon.name;
@@ -28,6 +27,13 @@ class StatusEffect {
             magnitude: statusEffect.intensity.magnitude,
         };
         let playerIntensity = intensity.value * intensity.magnitude;
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
+        if (weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') {
+            playerIntensity *= 1.15;
+        };
+        if (weapon.influences[0] !== 'Daethos' && playerFaith === 'adherent') {
+            playerIntensity *= 1.15;
+        };
         let effectModifiers = {
             physical_damage: playerIntensity,
             magical_damage: playerIntensity,
@@ -47,8 +53,8 @@ class StatusEffect {
             achre: playerIntensity,
             caeren: playerIntensity,
             kyosir: playerIntensity,
-            healing: playerIntensity * 10,
-            damage: playerIntensity * 10,
+            healing: playerIntensity * 15,
+            damage: playerIntensity * 15,
             buff: playerIntensity,
             debuff: playerIntensity,
         };
@@ -58,10 +64,7 @@ class StatusEffect {
         let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
         if (playerDamage === 0) {
             playerDamage = effectModifiers.damage * 2;
-        }
-        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
-        let playerMastery = combatData.player.name === player.name ? combatData.player.mastery : combatData.computer.mastery;
-        let weaponInfluence = weapon.influences[0];
+        };
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {
@@ -385,7 +388,6 @@ class StatusEffect {
     setIntensity(weapon, deity, attributes, player) {
         let attribute = 0;
         let type = '';
-
         if (deity === 'Achreo' || deity === 'Astra' || deity === "Quor'ei" || deity === "Senari") {
             if (weapon.grip === 'One Hand') {
                 type = 'Achre';
@@ -427,22 +429,19 @@ class StatusEffect {
         } else if (deity === "Daethos") {
             if (weapon.grip === 'One Hand' || weapon.type === 'Bow') {
                 type = 'daethic';
-                attribute = (attributes.totalAchre + weapon.achre + attributes.totalAgility + weapon.agility) / (player.mastery === 'Achre' || player.mastery === 'Agility' ? 1.25 : 1.75);
+                attribute = (attributes.totalAchre + weapon.achre + attributes.totalAgility + weapon.agility) / (player.mastery === 'Achre' || player.mastery === 'Agility' ? 1 : 1.5);
             } else {
                 type = 'daethic';
-                attribute = (attributes.totalStrength + weapon.strength + attributes.totalCaeren + weapon.caeren) / (player.mastery === 'Caeren' || player.mastery === 'Strength' ? 1.25 : 1.75);
+                attribute = (attributes.totalStrength + weapon.strength + attributes.totalCaeren + weapon.caeren) / (player.mastery === 'Caeren' || player.mastery === 'Strength' ? 1 : 1.5);
             };
         };
-
         attribute = Math.round(attribute * 100) / 100;
-
         return this.intensity = {
             initial: attribute,
             value: attribute,
             magnitude: player.level / 100,
             governance: type,
         };
-        
     };
     setActiveStacks(intensity) {
         return this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
@@ -451,6 +450,15 @@ class StatusEffect {
         let intensity = {};
         intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player)
         let playerIntensity = intensity.value * intensity.magnitude;
+
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
+        if (weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') {
+            playerIntensity *= 1.15;
+        };
+        if (weapon.influences[0] !== 'Daethos' && playerFaith === 'adherent') {
+            playerIntensity *= 1.15;
+        };
+
         let effectModifiers = {
             physical_damage: playerIntensity,
             magical_damage: playerIntensity,
@@ -482,9 +490,6 @@ class StatusEffect {
         if (playerDamage === 0) {
             playerDamage = effectModifiers.damage * 2;
         }
-        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
-        let playerMastery = combatData.player.name === player.name ? combatData.player.mastery : combatData.computer.mastery;
-        let weaponInfluence = weapon.influences[0];
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {
@@ -677,6 +682,7 @@ class StatusEffect {
                 break;
             };
         };
+
         // Make the functions for the various status effects
         switch (prayer) {
             case "Buff": {
