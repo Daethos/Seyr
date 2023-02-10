@@ -217,7 +217,9 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        This will spontaneously create hot, fresh piecs of equipment right out the oven for your amusement and purchase.
+                        Spontaneously create fresh equipment for your amusement and purchase.
+                        <br />
+                        <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                         <br />
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={getLoot}>Generate Merchant Trader Equipment</Button>
                         <br />

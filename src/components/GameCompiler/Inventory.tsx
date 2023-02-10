@@ -116,41 +116,41 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 setInventoryType('weapon_one');
                 setInventoryTypeTwo('weapon_two');
                 setInventoryTypeThree('weapon_three');
-            }
+            };
             if (inventory?.name.includes('Hood') || inventory?.name.includes('Helm') || inventory?.name.includes('Mask')) {
                 type = 'helmet';
                 setInventoryType('helmet');
-            }
+            };
             if (inventory?.name.includes('Cuirass') || inventory?.name.includes('Robes') || inventory?.name.includes('Armor')) {
                 setInventoryType('chest');
                 type = 'chest';
-            }
+            };
             if (inventory?.name.includes('Greaves') || inventory?.name.includes('Pants') || inventory?.name.includes('Legs')) {
                 setInventoryType('legs');
                 type = 'legs';
-            }
-            if (inventory?.name.includes('Amulet')) {
+            };
+            if (inventory?.name.includes('Amulet') || inventory?.name.includes('Necklace')) {
                 setInventoryType('amulet');
                 type = 'amulet';
-            }
+            };
             if (inventory?.name.includes('Ring')) {
                 setInventoryType('ring_one');
                 setInventoryRingType('ring_two');
                 type = 'ring_one';
                 ringType = 'ring_two';
-            }
+            };
             if (inventory?.name.includes('Trinket')) {
                 setInventoryType('trinket');
                 type = 'trinket';
-            }
+            };
             if (inventory?.type.includes('Shield')) {
                 setInventoryType('shield');
                 type = 'shield';
-            }
+            };
         } catch (err: any) {
             console.log(err.message, '<- This is the error in checkInventory');
-        }
-    }
+        };
+    };
 
     async function handleUpgradeItem() {
         try {
@@ -165,8 +165,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             setRemoveItem(true);
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
-        }
-    }
+        };
+    };
 
     async function handleRemoveItem() {
         try {
@@ -179,8 +179,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             setRemoveItem(true);
         } catch (err: any) {
             console.log(err.message, '<- This is the error in handleRemoveItem');
-        }
-    }
+        };
+    };
 
     async function handleEquipmentSwap(newAscean: Object) {
         try {
@@ -190,13 +190,13 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             setEqpSwap(!eqpSwap);
         } catch (err) {
             console.log(err, '<- This is the error in Swapping Equipment');
-        }
-      }
+        };
+    };
 
     const inventoryPopover = (
-        <Popover className="text-info" id="popover" style={{ zIndex: 1 }}>
-            <Popover.Header id="popover-header" className="" as="h2">{inventory?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></span></Popover.Header>
-            <Popover.Body id="popover-body" className="">
+        <Popover className="text-info" id="popover-inv">
+            <Popover.Header id="popover-header-inv" className="" as="h2">{inventory?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></span></Popover.Header>
+            <Popover.Body id="popover-body-inv" className="">
                 {
                     inventory?.grip && inventory?.type ?
                     <>
@@ -239,7 +239,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 }
                 <br />
                 {inventory?.rarity}
-                <Button variant='outline' className='' style={{ float: 'right', color: 'blue', marginTop: -3 + '%', marginRight: -4 + '%', fontWeight: 600 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
+                <Button variant='outline' style={{ float: 'right', color: 'blue', marginTop: -3 + '%', marginRight: -4 + '%', fontWeight: 600 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
             </Popover.Body>
         </Popover>
     )

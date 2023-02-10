@@ -506,7 +506,6 @@ html, body {
 .story-ascean {
   background-color: rgba(0, 0, 0, 0.7);
   margin-top: -5%;
-
 }
 #level-up {
   /* float: right; */
@@ -519,7 +518,13 @@ html, body {
   color: #fdf6d8;
   font-size: 25px;
 }
-
+.settings-button {
+  position: absolute;
+  grid-column-start: 1;
+  grid-row-start: 1;
+  margin-left: -5%;
+  margin-top: -1%;
+}
 #story-health {
   background-color: red;
   font-size: 10px;

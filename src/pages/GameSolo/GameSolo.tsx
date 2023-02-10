@@ -19,6 +19,7 @@ import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import Settings from '../../components/GameCompiler/Settings';
 
 interface GameProps {
     user: any;
@@ -791,6 +792,7 @@ const GameSolo = ({ user }: GameProps) => {
             { showInventory ?
                 <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} />
             : ""}
+            <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }

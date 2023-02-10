@@ -4,6 +4,7 @@
     color: purple;
     box-shadow: 10px 5px 20px 0 rgba(80, 0, 0, 0.55), 10px 6px 20px 0 rgba(80, 0, 0, 0.55);
     font-weight: 900;
+    z-index: 1000;
 }
 #nav-pic {
     max-width: 6.5vw;

@@ -9,12 +9,13 @@ interface Props {
     removeItem: boolean;
     setEqpSwap: React.Dispatch<React.SetStateAction<boolean>>;
     setRemoveItem: React.Dispatch<React.SetStateAction<boolean>>;
+    settings?: boolean;
 }
 
-const InventoryBag = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem }: Props) => {
+const InventoryBag = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, settings }: Props) => {
 
   return (
-    <div className='inventory-bag'>
+    <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
         {
             inventory?.length > 0 ?
             inventory.map((item: any, index: number) => {
