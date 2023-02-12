@@ -47,7 +47,7 @@ const seedWeapons = [
     {
         name: "Sevashyr",
         type: 'Mace',
-        rarity: 'Unommon',
+        rarity: 'Uncommon',
         grip: 'One Hand',
         attack_type: 'Physical',
         damage_type: ['Blunt', 'Pierce'],
@@ -143,7 +143,7 @@ const seedWeapons = [
     {
         name: "Sevaxe",
         type: 'Axe',
-        rarity: 'Unommon',
+        rarity: 'Uncommon',
         grip: 'One Hand',
         attack_type: 'Physical',
         damage_type: ['Slash', 'Blunt'],
@@ -239,7 +239,7 @@ const seedWeapons = [
     // {
     //     name: 'Blessed Dagger',
     //     type: 'Dagger',
-    //     rarity: 'Unommon',
+    //     rarity: 'Uncommon',
     //     grip: 'One Hand',
     //     attack_type: 'Physical',
     //     damage_type: ['Pierce', 'Slash'],
@@ -335,7 +335,7 @@ const seedWeapons = [
     // {
     //     name: 'Sunshatter',
     //     type: 'Axe',
-    //     rarity: 'Unommon',
+    //     rarity: 'Uncommon',
     //     grip: 'Two Hand',
     //     attack_type: 'Physical',
     //     damage_type: ['Slash', 'Blunt'],
@@ -431,7 +431,7 @@ const seedWeapons = [
     // {
     //     name: 'Sunspear',
     //     type: 'Polearm',
-    //     rarity: 'Unommon',
+    //     rarity: 'Uncommon',
     //     grip: 'One Hand',
     //     attack_type: 'Physical',
     //     damage_type: ['Pierce', 'Slash'],
@@ -623,7 +623,7 @@ const seedWeapons = [
     // {
     //     name: 'Nightmare',
     //     type: 'Spell',
-    //     rarity: 'Unommon',
+    //     rarity: 'Uncommon',
     //     grip: 'One Hand',
     //     attack_type: 'Magic',
     //     damage_type: ['Sorcery'],
@@ -719,7 +719,7 @@ const seedWeapons = [
     // {
     //     name: 'Rahvric Dreams',
     //     type: 'Spell',
-    //     rarity: 'Unommon',
+    //     rarity: 'Uncommon',
     //     grip: 'Two Hand',
     //     attack_type: 'Magic',
     //     damage_type: ['Sorcery'],

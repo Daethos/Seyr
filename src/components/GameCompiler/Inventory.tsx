@@ -26,6 +26,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     const [inventoryTypeTwo, setInventoryTypeTwo] = useState<any>(null);
     const [inventoryTypeThree, setInventoryTypeThree] = useState<any>(null);
     const [inventoryRingType, setInventoryRingType] = useState<any>(null);
+    const [upgradeIds, setUpgradeIds] = useState<any>(null);
     
     const [editState, setEditState] = useState({
         weapon_one: ascean.weapon_one,
@@ -59,6 +60,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
 
     function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
         const matches = inventory.filter(item => item.name === name && item.rarity === rarity);
+
         return matches.length >= 3;
     }
 
@@ -154,11 +156,16 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
 
     async function handleUpgradeItem() {
         try {
+            const matches = bag.filter((item: { name: string; rarity: string; }) => item.name === inventory.name && item.rarity === inventory.rarity);
+            console.log(matches, '<- What are the matches?');
             const data = {
                 asceanID: ascean._id,
                 upgradeID: inventory._id,
                 upgradeName: inventory.name,
+                upgradeType: inventory.itemType,
                 currentRarity: inventory.rarity,
+                inventoryType: inventoryType,
+                upgradeMatches: matches,
             }
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
