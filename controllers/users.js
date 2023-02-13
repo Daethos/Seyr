@@ -23,8 +23,16 @@ module.exports = {
   profileCharacter,
   allUsers,
   updateUser,
-  updateUserBio
+  updateUserBio,
+  createGuestToken,
 };
+
+async function createGuestToken(req, res) {
+  const guestUser = { id: "guest", isGuest: true };
+  const guestToken = createJWT(guestUser);
+  res.json({ token: guestToken });
+}
+
 
 async function getModelType(id) {
   const models = {

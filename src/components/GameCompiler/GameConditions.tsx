@@ -9,7 +9,7 @@ interface Props {
     playWin: Function;
     timeLeft: number;
     setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
-    gainExperience: any;
+    gainExperience?: any;
     setLootRoll: React.Dispatch<React.SetStateAction<boolean>>;
     dispatch: any;
     state: any;

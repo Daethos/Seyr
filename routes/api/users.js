@@ -9,6 +9,7 @@ const protect = require('../../config/auth')
 router.post('/signup', upload.single('photo'), usersCtrl.signup);
 router.post('/login', usersCtrl.login);
 router.get('/', protect, usersCtrl.allUsers);
+router.get('/guest-token', usersCtrl.createGuestToken);
 router.get('/:username', usersCtrl.profile);
 router.post('/enemy', usersCtrl.profileCharacter);
 router.put('/update', protect, usersCtrl.updateUser)

@@ -22,9 +22,11 @@ import GameLobby from "../GameLobby/GameLobby";
 import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
 import GameAdmin from "../GameAdmin/GameAdmin";
+import GuestGame from "../GuestGame/GuestGame";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
+  const [guest, setGuest] = useState(userService.getUser());
   const [loading, setLoading] = useState<boolean>(false);
   const [ascean, setAscean] = useState<object[]>([])
   const [createSuccess, setCreateSuccess] = useState<boolean>(false)
@@ -34,9 +36,14 @@ function App() {
     setUser(userService.getUser());
   }
 
+  function handleGuest() {
+    setGuest(userService.getUser());
+  }
+
   function handleLogout() {
     userService.logout();
     setUser(null);
+    setGuest(null);
   }
 
   async function handleAsceanCreate(newAscean: Object) {
@@ -85,21 +92,29 @@ function App() {
         {/* <Route path="/Game/PvP/:asceanID" element={<GamePvP user={user} />} /> */}
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
-        <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user}  handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Friends" element={<FriendFeed loggedUser={user} />} />
         <Route path="/Messages" element={<FriendMessages user={user} />} />
         <Route path="/Messages/:friendID" element={<FocusMessages user={user} />} />
         <Route path="/:username" element={<ProfilePage user={user} />} />
-        <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />
+        <Route path="/Authorization" element={<AuthPage setUser={setUser} handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>
       </div>
       
     );
   }
 
+  if (guest) {
+    return (
+      <Routes>
+        <Route path="/guestMatch" element={<GuestGame guest={guest} handleLogout={handleLogout} />} />
+      </Routes>
+    )
+  }
+
   return (
     <Routes>
-      <Route path="/Authorization" element={<AuthPage setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />} />
+      <Route path="/Authorization" element={<AuthPage setUser={setUser} handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       <Route path="/*" element={<Navigate to="/Authorization" />} />
     </Routes>
   );

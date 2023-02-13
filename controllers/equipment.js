@@ -130,8 +130,8 @@ const randomizeStats = (item, rarity) => {
         Common: [1, 1, 2],
         Uncommon: [1, 2, 3],
         Rare: [2, 3, 4],
-        Epic: [4, 5, 7],
-        Legendary: [6, 8, 10],
+        Epic: [4, 5, 8],
+        Legendary: [6, 8, 12],
     };
 
     const range = attributeRanges[rarity];

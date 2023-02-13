@@ -111,6 +111,18 @@ function searchUser(search: string) {
   })
 }
 
+function createGuestToken() {
+  return fetch(BASE_URL + 'guest-token')
+    .then(res => {
+      if (res.ok) return res.json();
+      return res.json().then(response => {
+        throw new Error(response.err);
+      });
+    })
+    .then(({ token }) => tokenService.setToken(token));
+}
+
+
 export default {
   signup, 
   logout,
@@ -120,5 +132,6 @@ export default {
   searchUser,
   updateUser,
   updateBio,
-  getRandomEnemy
+  getRandomEnemy,
+  createGuestToken
 };

@@ -4,14 +4,28 @@ import LoginForm from '../../components/LoginForm/LoginForm';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import userService from '../../utils/userService';
+import { useNavigate } from "react-router-dom";
+
 
 interface AuthProps {
     setUser: React.Dispatch<any>;
     handleSignUpOrLogin: () => any;
+    handleGuest: () => any;
 }
 
-export default function AuthPage({ setUser, handleSignUpOrLogin }: AuthProps) {
+export default function AuthPage({ setUser, handleSignUpOrLogin, handleGuest }: AuthProps) {
   const [showSignUp, setShowSignUp]  = useState(false);
+  const navigate = useNavigate();
+  const trialVersion = async () => {
+    try {
+      await userService.createGuestToken();
+      handleGuest();
+      navigate("/guestMatch");
+    } catch (err: any) {
+      console.log(err.message, 'Error in Trial Version');
+    };
+  };
   return (
     <Container fluid>
       <Row>
@@ -37,6 +51,7 @@ export default function AuthPage({ setUser, handleSignUpOrLogin }: AuthProps) {
       </Row>
     <Row className="auth mt-3 justify-content-center" 
     >
+      <Button variant='' style={{ color: 'gold', fontSize: 25 + 'px' }} onClick={trialVersion} className='btn-lg'>Trial [Demo]</Button>
       { 
         showSignUp 
         ?
