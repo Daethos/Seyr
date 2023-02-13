@@ -246,6 +246,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 }
                 <br />
                 {inventory?.rarity}
+                <br />
+                {inventory?.itemType}
                 <Button variant='outline' style={{ float: 'right', color: 'blue', marginTop: -3 + '%', marginRight: -4 + '%', fontWeight: 600 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
             </Popover.Body>
         </Popover>

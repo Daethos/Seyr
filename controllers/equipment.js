@@ -50,13 +50,13 @@ async function indexEquipment(req, res) {
 };
 
 const determineRarityByLevel = (level) => {
-    console.log(level, 'We have made it to the determineRarityByLevel in the Equipment Controller!')
     const chance = Math.random();
     let rarity = '';
     let uScale = level / 25;
     let rScale = level / 100;
     let eScale = level / 500;
     let lScale = level / 10000;
+    console.log(level, chance, uScale, rScale, eScale, lScale, 'We have made it to the determineRarityByLevel in the Equipment Controller!');
     if (level < 4) {
         // if (uScale > chance) {
             // rarity = 'Uncommon';
@@ -78,15 +78,17 @@ const determineRarityByLevel = (level) => {
             rarity = 'Rare';
         } else if (uScale > chance) {
             rarity = 'Uncommon';
+        } else {
+            rarity = 'Common';
         }
-    } else { // === 20
+    } else if (level >= 20 && level < 30) {
         if (lScale > chance) {
             rarity = 'Legendary';
         } else if (eScale > chance) {
             rarity = 'Epic';
         } else if (rScale > chance) {
             rarity = 'Rare';
-        } else if (uScale > chance) {
+        } else {
             rarity = 'Uncommon';
         };
     };
@@ -122,13 +124,13 @@ const randomIntFromInterval = (min, max) => {
 };
 
 const randomizeStats = (item, rarity) => {
-    console.log(item, 'Item in randomizeStats()')
+    // console.log(item, 'Item in randomizeStats()')
     const stats = {};
     const attributeRanges = {
         Common: [1, 1, 2],
         Uncommon: [1, 2, 3],
         Rare: [2, 3, 4],
-        Epic: [4, 5, 6],
+        Epic: [4, 5, 7],
         Legendary: [6, 8, 10],
     };
 
@@ -147,7 +149,7 @@ const randomizeStats = (item, rarity) => {
         };
     });
 
-    console.log(item, stats, 'Stats in randomizeStats function');
+    // console.log(item, stats, 'Stats in randomizeStats function');
     return stats;
 };
 
@@ -205,7 +207,7 @@ async function getMerchantEquipment(req, res) {
             await seedDB(equipment, rarity);
             merchantEquipment.push(equipment[0]);
         };
-        console.log(type, 'Type in Merchant Function')
+        // console.log(type, 'Type in Merchant Function')
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
@@ -219,7 +221,7 @@ async function seedDB(equipment, rarity) {
     try {
         const mondoDBCalls = equipment.map(async item => {
             let newItem = await mutateEquipment(item, rarity);
-            console.log(newItem, 'New Item in seedDB function')
+            // console.log(newItem, 'New Item in seedDB function')
             return await Equipment.insertMany(item);
           });
     } catch (error) {
@@ -229,6 +231,7 @@ async function seedDB(equipment, rarity) {
 
 const mutateEquipment = async (item, rarity) => {
     item._id = new mongodb.ObjectID();
+    item.itemType = 'Equipment';
     let stats = randomizeStats(item, rarity);
     item = Object.assign(item, stats);
     return item;
@@ -325,7 +328,7 @@ async function upgradeEquipment(req, res) {
         }
         console.log(realType, 'The Real Type of Equipment');
         let ascean = await Ascean.findById(req.body.asceanID);
-        let item = await getHigherRarity(req.body.upgradeID, req.body.upgradeName, realType, req.body.currentRarity);
+        let item = await getHigherRarity(req.body.upgradeName, realType, req.body.currentRarity);
         await seedDB([item], item.rarity);
         ascean.inventory.push(item._id);
         let itemsToRemove = req.body.upgradeMatches;
@@ -334,8 +337,17 @@ async function upgradeEquipment(req, res) {
             itemsToRemove = itemsToRemove.slice(0, 3);
         };
         const itemsIdsToRemove = itemsToRemove.map(item => item._id);
-        const inventoryToKeep = await removeItems(itemsIdsToRemove, ascean.inventory);
-        ascean.inventory = inventoryToKeep;
+
+        let inventory = ascean.inventory;
+
+        itemsIdsToRemove.forEach(async itemID => {
+            const itemIndex = inventory.indexOf(itemID);
+            inventory.splice(itemIndex, 1);
+            await deleteEquipmentCheck(itemID);
+        });
+
+        ascean.inventory = inventory;
+
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
@@ -352,7 +364,7 @@ const removeItems = async (items, inventory) => {
     return inventory.filter(id => !items.includes(id));
 };
 
-async function getHigherRarity(id, name, type, rarity) {
+async function getHigherRarity(name, type, rarity) {
     let nextRarity;
     if (rarity === 'Common') {
         nextRarity = 'Uncommon';
