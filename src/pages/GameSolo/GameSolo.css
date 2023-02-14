@@ -165,11 +165,10 @@
   height: 50%;
   box-shadow: 2px 2px 2px black;
 }
-.inventory-button:focus, .dialog-button:focus {
-  /* background-color: purple; */
+/* .inventory-button:focus, .dialog-button:focus {
   color: #fdf6d8;
   border: 2px solid #fdf6d8;
-}
+} */
 .inventory-icon {
   width: 64px;
   height: 64px;

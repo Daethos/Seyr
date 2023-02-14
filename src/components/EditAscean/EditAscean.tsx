@@ -133,7 +133,7 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
         <div className="section-left">
             <Character asceanState={editState} setAsceanState={setEditState} key={ascean._id} />
             <Sex asceanState={editState} setAsceanState={setEditState} />
-            <svg height="5" width="100%" className="tapered-rule">
+            {/* <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <div className="actions">
@@ -146,15 +146,15 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
             <div className="property-line">
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
-            </div>
+            </div> */}
 
             <div className="top-stats">
-            <AttributesEdit editState={editState} setEditState={setEditState} key={ascean._id} />
+            {/* <AttributesEdit editState={editState} setEditState={setEditState} key={ascean._id} /> */}
             <svg height="5" width="100%" className="tapered-rule mt-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
-            <Mastery asceanState={editState} setAsceanState={setEditState} />
-            <Faith asceanState={editState} setAsceanState={setEditState} faithModalShow={faithModalShow} setFaithModalShow={setFaithModalShow} />
+            {/* <Mastery asceanState={editState} setAsceanState={setEditState} /> */}
+            {/* <Faith asceanState={editState} setAsceanState={setEditState} faithModalShow={faithModalShow} setFaithModalShow={setFaithModalShow} /> */}
             <Origin asceanState={editState} setAsceanState={setEditState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <img src={process.env.PUBLIC_URL + '/images/' + editState.origin + '-' + editState.sex + '.jpg'} id="ascean-pic" />
             
@@ -188,11 +188,11 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
             </div>
             {/* <AsceanStatCompiler communityFeed={false} communityFocus={false} ascean={ascean} key={ascean._id} /> */}
         </div>
-        <WeaponsEdit editState={editState} setEditState={setEditState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
+        {/* <WeaponsEdit editState={editState} setEditState={setEditState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} /> */}
             <div className="actions">
-            <h3>Armor & Eccentricities</h3>
+            {/* <h3>Armor & Eccentricities</h3> */}
             <div className='property-block'>
-            <Shields asceanState={editState} setAsceanState={setEditState} shields={shields} shieldModalShow={shieldModalShow} setShieldModalShow={setShieldModalShow} />
+            {/* <Shields asceanState={editState} setAsceanState={setEditState} shields={shields} shieldModalShow={shieldModalShow} setShieldModalShow={setShieldModalShow} />
             <svg height="5" width="100%" className="tapered-rule my-2">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
@@ -217,7 +217,7 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
                 setRingsModalShow={setRingsModalShow}
                 trinketModalShow={trinketModalShow}
                 setTrinketModalShow={setTrinketModalShow}
-            />
+            /> */}
             <Communal editState={editState} setEditState={setEditState} />
 
 {/* ================= Submit to Update Ascean ================== */}

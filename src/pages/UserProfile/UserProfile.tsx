@@ -2,9 +2,12 @@ import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 import * as asceanAPI from '../../utils/asceanApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import SearchCard from '../../components/SearchCard/SearchCard'
+import AccordionForm from '../../components/HomeSettings/AccordionForm';
+import HomeSettings from '../../components/HomeSettings/HomeSettings';
 
 interface UserProps {
     loggedUser: any;
@@ -12,9 +15,16 @@ interface UserProps {
 }
 
 const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
-
+  const [accordionState, setAccordionState] = useState<string>('Tight');
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const accordions = {
+    'Tight': 'Tight',
+    'Lean': 'Lean',
+    'Half': 'Half',
+    'Full': 'Full'
+  }
 
   useEffect(() => {
     getAscean();
@@ -35,11 +45,20 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
 
   async function deleteAscean(ascean: any) {
     ascean.preventDefault();
-    console.log(ascean.target.value, '<- What are you in here?');
-    asceanAPI.deleteAscean(ascean.target.value);
-    setCreateSuccess(true);
-    getAscean();
-  }
+
+    try {
+      console.log(ascean.target.value, '<- What are you in here?');
+      await asceanAPI.deleteAscean(ascean.target.value);
+      setCreateSuccess(true);
+      await getAscean();
+    } catch (err: any) {
+      console.log(err.message, 'Error Deleting Ascean');
+    };
+  };
+
+  function accordionChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setAccordionState(e.target.value);
+  };
 
   if (loading) {
     return (
@@ -52,7 +71,9 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
   return (
 
     <Container>
-      <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} key={loggedUser._id} userProfile={true} />
+      <HomeSettings ascean={asceanVaEsai} loggedUser={loggedUser} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
+      {/* <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} userProfile={true} />
+      <AccordionForm accordionState={accordionState} accordionChange={accordionChange} /> */}
         {
           asceanVaEsai.length > 0
           ? asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {
@@ -62,6 +83,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
                 key={ascean._id}
                 userProfile={true}
                 deleteAscean={deleteAscean}
+                accordion={accordionState}
               />
             )
           })

@@ -250,18 +250,26 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                 : currentIntent === 'localLore' ?
                     <>
                         Local Lore
+                        
+                        This Shows All Rows of Information
                     </>
                 : currentIntent === 'localWhispers' ?
                     <>
                         Local Whispers
+                        
+                        This Shows The First Three Rows of Information
                     </>
                 : currentIntent === 'persuasion' ?
                     <>
                         Persuasion
+                        
+                        This Shows The First Two Rows of Information
                     </>
                 : currentIntent === 'services' ?
                     <>
                         Services
+                        
+                        This Shows Only The First Row of Information
                     </>
                 : currentIntent === 'provincialWhispers' ?
                     <>

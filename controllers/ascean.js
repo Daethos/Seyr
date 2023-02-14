@@ -155,13 +155,14 @@ async function swapItems(req, res) {
 
 const deleteEquipmentCheck = async (equipmentID) => {
     try {
+        console.log(equipmentID, 'Did We Make It Here?')
         const allEquipmentIds = await fs.promises.readFile('data/equipmentIds.json');
         const parsedIds = JSON.parse(allEquipmentIds);
         if (parsedIds.includes(equipmentID)) {
             return console.log('Equipment found in golden template list. Must be preserved at all costs!');
         };
         const deleted = await Equipment.findByIdAndDelete(equipmentID).exec();
-        console.log(`Successfully deleted equipment with id: ${deleted._id}`);
+        console.log(`Successfully deleted equipment with id: ${deleted}`);
     } catch (err) {
         console.log(err, 'err');
         res.status(400).json({ err });
@@ -291,8 +292,8 @@ async function updateHighScore(req, res) {
 
 async function deleteAscean(req, res) {
     try {
-        const ascean = await Ascean.findById(req.params.id);
-        await asceanEquipmentDeleteCheck(ascean);
+        // const ascean = await Ascean.findById(req.params.id);
+        // await asceanEquipmentDeleteCheck(ascean);
         await Ascean.findByIdAndDelete(req.params.id)
         res.status(201).json({});
     } catch (err) {
@@ -302,20 +303,23 @@ async function deleteAscean(req, res) {
 }
 
 const asceanEquipmentDeleteCheck = async (ascean) => {
-    await deleteEquipmentCheck(ascean.helmet._id);
-    await deleteEquipmentCheck(ascean.chest._id);
-    await deleteEquipmentCheck(ascean.legs._id);
-    await deleteEquipmentCheck(ascean.ring_one._id);
-    await deleteEquipmentCheck(ascean.ring_two._id);
-    await deleteEquipmentCheck(ascean.amulet._id);
-    await deleteEquipmentCheck(ascean.trinket._id);
-    await deleteEquipmentCheck(ascean.weapon_one._id);
-    await deleteEquipmentCheck(ascean.weapon_two._id);
-    await deleteEquipmentCheck(ascean.weapon_three._id);
-    await deleteEquipmentCheck(ascean.shield._id);
+    console.log(ascean, 'Ascean Checking For Deletion')
+    await deleteEquipmentCheck(ascean.helmet);
+    await deleteEquipmentCheck(ascean.chest);
+    await deleteEquipmentCheck(ascean.legs);
+    await deleteEquipmentCheck(ascean.ring_one);
+    await deleteEquipmentCheck(ascean.ring_two);
+    await deleteEquipmentCheck(ascean.amulet);
+    await deleteEquipmentCheck(ascean.trinket);
+    await deleteEquipmentCheck(ascean.weapon_one);
+    await deleteEquipmentCheck(ascean.weapon_two);
+    await deleteEquipmentCheck(ascean.weapon_three);
+    await deleteEquipmentCheck(ascean.shield);
     const inventory = ascean.inventory;
-    for (const item of inventory) {
-        await deleteEquipmentCheck(item._id);
+    if (inventory.length > 0) {
+        for (const item of inventory) {
+            await deleteEquipmentCheck(item);
+        }
     }
 };
 

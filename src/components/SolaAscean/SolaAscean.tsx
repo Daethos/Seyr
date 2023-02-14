@@ -6,6 +6,7 @@ import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCo
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
 import Delete from '../AsceanBuilder/Delete';
 import Update from '../AsceanBuilder/Update';
+import Play from '../AsceanBuilder/Play';
 
 interface Props {
     ascean: any;
@@ -13,22 +14,78 @@ interface Props {
     deleteAscean?: (ascean: any) => Promise<void>;
     loggedUser?: any;
     loading?: boolean;
+    accordion?: string;
 }
 
-const SolaAscean = ({ ascean, userProfile, deleteAscean, loading }: Props) => {
+const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion }: Props) => {
 
   return (
     <React.Fragment>
-    <Row className="justify-content-center my-5">
+    <Row className="justify-content-center my-3">
     <Col className="stat-block wide">
     <hr className="orange-border" />
-        <div className="section-left">
-        <div className="creature-heading">
+    <div className="section-left">
+    { userProfile ? 
+        <>
+            <Play ascean={ascean} />
+            <Update ascean={ascean} NavBar={false} />
+            <Delete ascean={ascean} deleteAscean={deleteAscean} />
+            <svg height="5" width="100%" className="tapered-rule mt-1">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+        </>
+        : '' }
+{ accordion === 'Tight' ? 
+    <>
+    <div className="creature-heading">
+        <h1>{ascean.name}</h1>
+        <h2 className='ascean-description'>{ascean.description}</h2>
+    </div>
+    <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
+    </>
+
+: accordion === 'Lean' ? 
+
+            <>
+            <div className="creature-heading">
+        <h1>{ascean.name}</h1>
+        <h2 className='ascean-description'>{ascean.description}</h2>
+    </div>
+    <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" /> 
+            <svg height="5" width="100%" className="tapered-rule mt-2">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+            <div className="property-line first">
+                <h4>Experience</h4>
+                <p> {ascean.experience} / {ascean.level * 1000}</p>
+            </div>
+            <div className="property-line">
+                <h4>Level</h4>
+                <p> {ascean.level}</p>
+            </div>
+            <div className="property-line">
+                <h4>High Score</h4>
+                <p> {ascean.high_score}</p>
+            </div>
+            <div className="property-line">
+                <h4>Faith</h4>
+                <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
+            </div>
+            <div className="property-line last">
+                <h4>Mastery</h4>
+                <p> {ascean.mastery}</p>
+            </div>
+            </>
+
+: accordion === 'Half' ? 
+
+            <>
+            <div className="creature-heading">
                 <h1>{ascean.name}</h1>
-                <h2>{ascean.description}</h2>
-        </div>
-        <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-pic" />
-        <svg height="5" width="100%" className="tapered-rule mt-3">
+                <h2 className='ascean-description'>{ascean.description}</h2>
+            </div>
+            <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
+            <svg height="5" width="100%" className="tapered-rule mt-2">
             <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         <div className="property-line first">
@@ -75,14 +132,68 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading }: Props) => {
             key={ascean._id}
         />
         </div>
+            </>
+
+:   <>
+<div className="creature-heading">
+        <h1>{ascean.name}</h1>
+        <h2 className='ascean-description'>{ascean.description}</h2>
+    </div>
+    <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
+        <svg height="5" width="100%" className="tapered-rule mt-2">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
+        <div className="property-line first">
+            <h4>Experience</h4>
+            <p> {ascean.experience} / {ascean.level * 1000}</p>
+        </div>
+        <div className="property-line">
+            <h4>Level</h4>
+            <p> {ascean.level}</p>
+        </div>
+        <div className="property-line">
+            <h4>High Score</h4>
+            <p> {ascean.high_score}</p>
+        </div>
+        <div className="property-line">
+            <h4>Faith</h4>
+            <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
+        </div>
+        <div className="property-line last">
+            <h4>Mastery</h4>
+            <p> {ascean.mastery}</p>
+        </div>
+        <svg height="5" width="100%" className="tapered-rule mt-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
+        <div className="actions mt-1">
+        <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
+        <svg height="5" width="100%" className="tapered-rule mt-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+        </svg>
+        <AsceanImageCard
+            weapon_one={ascean.weapon_one}
+            weapon_two={ascean.weapon_two}
+            weapon_three={ascean.weapon_three}
+            shield={ascean.shield}
+            helmet={ascean.helmet}
+            chest={ascean.chest}
+            legs={ascean.legs}
+            amulet={ascean.amulet}
+            ring_one={ascean.ring_one}
+            ring_two={ascean.ring_two}
+            trinket={ascean.trinket}
+            loading={loading}
+            key={ascean._id}
+            />
+        </div>
+        
         <div className="top-stats">
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
         </div>
-        </div>
-        <div className="section-right">
-            <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
+        <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
             { userProfile ? 
             <>
                 <div className="actions">
@@ -98,16 +209,30 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading }: Props) => {
                 </div>
             </>
             : '' }
-            </div>
-            <div className="actions">
-        
+    </>
+}
         </div>
-        { userProfile ? 
         <>
-            {/* <Update ascean={ascean} NavBar={false} /> */}
-            <Delete ascean={ascean} deleteAscean={deleteAscean} />
+        <div className="section-right">
+        {/* <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
+            { userProfile ? 
+            <>
+                <div className="actions">
+                <h3>Communal</h3>
+                </div>
+                <div className="property-line first">
+                <h4>Visible to the Community ? </h4>
+                <p>{ascean.visibility.charAt(0).toUpperCase() + ascean.visibility.slice(1)}</p>
+                </div>
+                <div className="property-line first">
+                <h4>Shareable to the Community ? </h4>
+                <p>{ascean.shareable.charAt(0).toUpperCase() + ascean.shareable.slice(1)}</p>
+                </div>
+            </>
+            : '' } */}
+        </div>
         </>
-        : '' }
+
          <hr className='orange-border bottom' />
     </Col>
     </Row>

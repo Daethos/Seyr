@@ -17,6 +17,7 @@ import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 
 interface Props {
     guest: any;
@@ -530,16 +531,17 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
             </svg> Signup</Button>
+            <FirstCombatModal />
             { !state.combatEngaged ?
                 state.player_win ?
                 <>
-                <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Reset</Button>
+                <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
                 <Button  variant='' className='inventory-button' onClick={() => getAscean()}>Re-Roll</Button>
                 <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button>
                 </>
                 : state.computer_win ?
                 <>
-                <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Reset</Button>
+                <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
                 <Button variant='' className='inventory-button' onClick={() => getAscean()}>Re-Roll</Button>
                 <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button>
                 </>

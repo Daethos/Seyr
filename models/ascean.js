@@ -233,120 +233,17 @@ const asceanSchema = new Schema(
             enum: ['Trinkets', 'Equipment'],
             required: false
         },
-
-        
-        // weapon_one: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.weapon_one));
-        // },
-        //     validate: [async function (value) {
-        //             return (await eitherOrType(value.weapon_one));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // weapon_two: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.weapon_two));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.weapon_two));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // weapon_three: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.weapon_three));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.weapon_three));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // shield: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.shield));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.shield));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // helmet: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.helmet));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.helmet));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // chest: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.chest));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.chest));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // legs: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.legs));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.legs));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // ring_one: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.ring_one));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.ring_one));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // ring_two: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.ring_two));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.ring_two));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // amulet: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.amulet));
-        // },
-        //     validate: [async function (value) {
-
-        //             return (await eitherOrType(value.amulet));
-        //         }, 'Invalid Equipment Type']
-        // },
-        // trinket: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: async function (value) {
-        //     return (await eitherOrType(value.trinket));
-        // },
-        //     validate: [async function (value) {
-        //         return (await eitherOrType(value.trinket));
-        //     }, 'Invalid Equipment Type']
-        // },
         faith: {
             type: String,
             enum : ["adherent", "devoted", "none"],
             default: "none"
+        },
+        tutorial: {
+            firstCombat: { type: Boolean, default: true },
+            firstQuest: { type: Boolean, default: true },
+            firstShop: { type: Boolean, default: true },
+            firstInventory: { type: Boolean, default: true },
+            firstLoot: { type: Boolean, default: true },
         },
         likes: [likeSchema],
         dislikes: [dislikeSchema],

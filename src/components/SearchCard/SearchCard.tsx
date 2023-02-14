@@ -54,7 +54,10 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
 
   return (
     <React.Fragment>
-        <Col md={{span: 8, offset: 2}} className="my-5">
+        <Col md={{span: 8, offset: 2}} className="my-4">
+        <p style={{ color: '#fdf6d8', textAlign: 'center' }}>
+      Character Search
+      </p>
     <InputGroup className="bg-black">
     <InputGroup.Text className="bg-black">
     <img 

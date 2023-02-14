@@ -20,6 +20,7 @@ import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import Settings from '../../components/GameCompiler/Settings';
+import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 
 interface GameProps {
     user: any;
@@ -47,64 +48,65 @@ const GameSolo = ({ user }: GameProps) => {
     const [removeItem, setRemoveItem] = useState<boolean>(false);
     const [background, setBackground] = useState<any>(null);
     const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
+    const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
-    const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
+    const [playOpponent] = useSound(opponentSfx, { volume: soundEffectVolume });
 
     const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`;
-    const [playWO] = useSound(weaponOrderSfx, { volume: 0.3 });
+    const [playWO] = useSound(weaponOrderSfx, { volume: soundEffectVolume });
     const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`;
-    const [playCounter] = useSound(counterSfx, { volume: 0.3 });
+    const [playCounter] = useSound(counterSfx, { volume: soundEffectVolume });
     const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`;
-    const [playRoll] = useSound(rollSfx, { volume: 0.3 });
+    const [playRoll] = useSound(rollSfx, { volume: soundEffectVolume });
 
     const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
-    const [playPierce] = useSound(pierceSfx, { volume: 0.3 });
+    const [playPierce] = useSound(pierceSfx, { volume: soundEffectVolume });
 
     const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
-    const [playSlash] = useSound(slashSfx, { volume: 0.3 });
+    const [playSlash] = useSound(slashSfx, { volume: soundEffectVolume });
 
     const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
-    const [playBlunt] = useSound(bluntSfx, { volume: 0.3 });
+    const [playBlunt] = useSound(bluntSfx, { volume: soundEffectVolume });
 
     const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`;
-    const [playDeath] = useSound(deathSfx, { volume: 0.3 });
+    const [playDeath] = useSound(deathSfx, { volume: soundEffectVolume });
 
     const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`;
-    const [playWin] = useSound(winSfx, { volume: 0.3 });
+    const [playWin] = useSound(winSfx, { volume: soundEffectVolume });
 
     const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`;
-    const [playReplay] = useSound(replaySfx, { volume: 0.3 });
+    const [playReplay] = useSound(replaySfx, { volume: soundEffectVolume });
 
     const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`;
-    const [playReligion] = useSound(religiousSfx, { volume: 0.3 });
+    const [playReligion] = useSound(religiousSfx, { volume: soundEffectVolume });
 
     const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`;
-    const [playDaethic] = useSound(daethicSfx, { volume: 0.3 });
+    const [playDaethic] = useSound(daethicSfx, { volume: soundEffectVolume });
 
     const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`;
-    const [playWild] = useSound(wildSfx, { volume: 0.3 });
+    const [playWild] = useSound(wildSfx, { volume: soundEffectVolume });
 
     const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`;
-    const [playEarth] = useSound(earthSfx, { volume: 0.3 });
+    const [playEarth] = useSound(earthSfx, { volume: soundEffectVolume });
 
     const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`;
-    const [playFire] = useSound(fireSfx, { volume: 0.3 });
+    const [playFire] = useSound(fireSfx, { volume: soundEffectVolume });
 
     const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`;
-    const [playBow] = useSound(bowSfx, { volume: 0.3 });
+    const [playBow] = useSound(bowSfx, { volume: soundEffectVolume });
 
     const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`;
-    const [playFrost] = useSound(frostSfx, { volume: 0.3 });
+    const [playFrost] = useSound(frostSfx, { volume: soundEffectVolume });
 
     const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`;
-    const [playLightning] = useSound(lightningSfx, { volume: 0.3 });
+    const [playLightning] = useSound(lightningSfx, { volume: soundEffectVolume });
 
     const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`;
-    const [playSorcery] = useSound(sorcerySfx, { volume: 0.3 });
+    const [playSorcery] = useSound(sorcerySfx, { volume: soundEffectVolume });
 
     const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`;
-    const [playWind] = useSound(windSfx, { volume: 0.3 });
+    const [playWind] = useSound(windSfx, { volume: soundEffectVolume });
 
     const { asceanID } = useParams();
 
@@ -162,7 +164,7 @@ const GameSolo = ({ user }: GameProps) => {
             } else if (firstResponse.data.level <= 20) {
                 minLevel = 15;
                 maxLevel = 20;
-            }
+            };
             const enemyData = {
                 username: 'mirio',
                 minLevel: minLevel,
@@ -194,16 +196,16 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
             setLoading(false)
-        }
-    }, [asceanID])
+        };
+    }, [asceanID]);
 
     useEffect(() => {
         getAscean();
-    }, [asceanID, getAscean])
+    }, [asceanID, getAscean]);
 
     useEffect(() => {
         getOpponentDialog();
-    }, [opponent])
+    }, [opponent]);
 
     const getOpponentDialog = async () => {
         try {
@@ -211,8 +213,8 @@ const GameSolo = ({ user }: GameProps) => {
             setDialog(response);
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        }
-    }
+        };
+    };
 
     const getOpponent = async () => {
         setCheckLoot(true);
@@ -265,8 +267,8 @@ const GameSolo = ({ user }: GameProps) => {
             setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
-        }
-    }
+        };
+    };
 
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -289,22 +291,22 @@ const GameSolo = ({ user }: GameProps) => {
             await getAsceanLeveled();
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up')
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         if (saveExp === false) return;
-        console.log(asceanState, 'Ascean State')
+        console.log(asceanState, 'Ascean State');
         saveExperience();
         return () => {
             setSaveExp(false);
-        }
+        };
     }, [asceanState, saveExp]);
 
     const saveExperience = async () => {
         if (saveExp === false || state.player_win === false) {
             return;
-        }
+        };
         try {
             const response = await asceanAPI.saveExperience(asceanState);
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
@@ -337,13 +339,13 @@ const GameSolo = ({ user }: GameProps) => {
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`]);
             } else {
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points.`]);
-            }
+            };
             setSaveExp(false);
             setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error Saving Experience');
-        }
-    }
+        };
+    };
 
     const gainExperience = async () => {
         try {
@@ -355,7 +357,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'experience': asceanState.experienceNeeded,
                 });
                 setSaveExp(true);
-            } 
+            };
             if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
                 setAsceanState({
                     ...asceanState,
@@ -363,33 +365,33 @@ const GameSolo = ({ user }: GameProps) => {
                     'experience': Math.round(asceanState.experience + opponentExp),
                 });
                 setSaveExp(true);
-            }
+            };
         } catch (err: any) {
             console.log(err.message, 'Error Gaining Experience')
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         if (itemSaved === false) return;
         getAsceanQuickly();
         return () => {
             setItemSaved(false);
-        }
-    }, [itemSaved, state])
+        };
+    }, [itemSaved, state]);
 
     useEffect(() => {
         getAsceanSlicker();
       return () => {
         setEqpSwap(false);
-      }
-    }, [eqpSwap])
+      };
+    }, [eqpSwap]);
 
     useEffect(() => {
       getAsceanSlicker();
     
       return () => {
         setRemoveItem(false);
-      }
+      };
     }, [removeItem]);
 
     const deleteEquipment = async (eqp: any) => {
@@ -412,7 +414,7 @@ const GameSolo = ({ user }: GameProps) => {
              });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Leveled');
-        }
+        };
     };
 
     const getAsceanSlicker = async () => {
@@ -426,8 +428,8 @@ const GameSolo = ({ user }: GameProps) => {
             });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
-        }
-    }
+        };
+    };
     
 
     const getAsceanQuickly = async () => {
@@ -440,8 +442,8 @@ const GameSolo = ({ user }: GameProps) => {
             });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         if (lootRoll === false || state.player_win === false) return;
@@ -449,7 +451,7 @@ const GameSolo = ({ user }: GameProps) => {
         return () => {
             setLootRoll(false);
         }
-    }, [lootRoll, state.player_win])
+    }, [lootRoll, state.player_win]);
     
     const getOneLootDrop = async (level: number) => {
         try {
@@ -474,7 +476,7 @@ const GameSolo = ({ user }: GameProps) => {
         } else {
             return;
         }
-    }, [state.highScore])
+    }, [state.highScore]);
 
     const updateHighScore = async () => {
         try {
@@ -487,7 +489,7 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, 'Error Updating High Score')
         }
-    }
+    };
 
     function handleAction(action: any) {
         dispatch({
@@ -495,7 +497,7 @@ const GameSolo = ({ user }: GameProps) => {
             payload: action.target.value
         })
         setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-    }
+    };
 
     function handleCounter(counter: any) {
         dispatch({
@@ -503,7 +505,7 @@ const GameSolo = ({ user }: GameProps) => {
             payload: counter.target.value
         });
         setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-    }
+    };
 
     async function setWeaponOrder(weapon: any) {
         try {
@@ -520,8 +522,8 @@ const GameSolo = ({ user }: GameProps) => {
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order')
-        }
-    }
+        };
+    };
 
     async function setDamageType(damageType: any) {
         try {    
@@ -534,7 +536,7 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type')
         }
-    }
+    };
 
     async function setPrayerBlessing(prayer: any) {
         try {
@@ -547,7 +549,7 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer')
         }
-    }
+    };
 
     async function soundEffects(effects: any) {
         try {
@@ -626,7 +628,7 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         }
-    }
+    };
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
@@ -664,8 +666,8 @@ const GameSolo = ({ user }: GameProps) => {
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
-        }
-    }
+        };
+    };
 
     const resetAscean = async () => {
         try {
@@ -696,7 +698,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
             setBackground(getPlayerBackground);
         }
-    }, [ascean])
+    }, [ascean]);
     
 
     const num = Math.floor(Math.random() * 3) + 1;
@@ -708,57 +710,57 @@ const GameSolo = ({ user }: GameProps) => {
                     return process.env.PUBLIC_URL + `/images/astralands_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
-                }
+                };
             case 'Fyers':
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/firelands_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
-                }
+                };
             case "Li'ivi":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
-                }
+                };
             case "Notheo":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
-                }
+                };
             case "Nothos":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
-                }
+                };
             case "Quor'eite":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
-                }
+                };
             case 'Sedyreal':
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/firelands_${num}.jpg`;
-                }
-        }
-    }
+                };
+        };
+    };
       
     function sleep(ms: number) {
         return new Promise(
             resolve => setTimeout(resolve, ms)
         );
-    }
+    };
 
     if (loading || loadingAscean) {
         return (
             <Loading Combat={true} />
-        )
-    }
+        );
+    };
 
     return (
         <Container fluid id="game-container" style={ background }>
@@ -775,6 +777,11 @@ const GameSolo = ({ user }: GameProps) => {
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} gainExperience={gainExperience} soundEffects={soundEffects}
                 playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
+            {/* {
+                ascean?.tutorial?.firstCombat === true ?
+                <FirstCombatModal />
+                : ''
+            } */}
             { !state.combatEngaged ?
                 <>
                 { showDialog ?    
@@ -792,7 +799,7 @@ const GameSolo = ({ user }: GameProps) => {
             { showInventory ?
                 <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} />
             : ""}
-            {/* <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} /> */}
+            <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
@@ -818,7 +825,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
             />
         </Container>
-    )
-}
+    );
+};
 
-export default GameSolo
+export default GameSolo;
