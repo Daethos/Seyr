@@ -5,7 +5,7 @@ import Popover from 'react-bootstrap/Popover';
 interface Props {
     effect: any;
     player?: boolean;
-}
+};
 
 const StatusEffects = ({ effect, player }: Props) => {
     const effectPopover = (
@@ -17,7 +17,6 @@ const StatusEffects = ({ effect, player }: Props) => {
                 </p>
                 <p>{effect?.description}</p>
                     Duration: {effect?.duration} <br />
-                    Intensity: {effect?.intensity?.value}
                 <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
                 Round Start: {effect?.tick?.start} | End: {effect?.tick?.end}</p>
                 <p>Effect(s): <br />
@@ -33,8 +32,8 @@ const StatusEffects = ({ effect, player }: Props) => {
                     {effect?.effect?.magicalDefenseModifier ? <>Magical Defense: {effect?.effect?.magicalDefenseModifier} <br /> </> : ''}
                     {effect?.effect?.roll ? <>Roll: {effect?.effect?.roll} <br /> </> : ''}
                     {effect?.effect?.dodge ? <>Dodge: {effect?.effect?.dodge} <br /> </> : ''}
-                    {effect?.effect?.healing ? <>Healing (over Time): {Math.round(effect?.effect?.healing)} <br /> </> : ''}
-                    {effect?.effect?.damage ? <>Damage (over Time): {Math.round(effect?.effect?.damage)} <br /> </> : ''}
+                    {effect?.effect?.healing ? <>Heal (per Round): {Math.round(effect?.effect?.healing * 0.33)} <br /> </> : ''}
+                    {effect?.effect?.damage ? <>Damage (per Round): {Math.round(effect?.effect?.damage * 0.33)} <br /> </> : ''}
                 </p>
             </Popover.Body>
         </Popover>
@@ -47,26 +46,26 @@ const StatusEffects = ({ effect, player }: Props) => {
             case 'Heal': return 'green';
             case 'Damage': return 'red';
             default: return 'black';
-        }
-    }
+        };
+    };
 
     const getEffectStyle = {
         marginTop: player ? '-10%' : 0,
         border: 2 + 'px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
-    }
+    };
 
     const getIconStyle = {
         width: 100 + '%',
         marginTop: -17.5 + 'px',
-    }
+    };
 
     return (
 
         <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
             <Button variant='' style={getEffectStyle} className='status-effects'><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/></Button>
         </OverlayTrigger>
-    )
-}
+    );
+};
 
-export default StatusEffects
+export default StatusEffects;

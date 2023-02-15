@@ -21,6 +21,7 @@ import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import Settings from '../../components/GameCompiler/Settings';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
+import Alert from 'react-bootstrap/Alert';
 
 interface GameProps {
     user: any;
