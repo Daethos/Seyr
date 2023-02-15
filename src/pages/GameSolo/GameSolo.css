@@ -26,8 +26,8 @@
     grid-row-start: 6;
     grid-column-start: 1;
     background: black;
-    border: 2px solid gold;
-    box-shadow: 0 0 1em gold; 
+    /* border: 2px solid gold; */
+    /* box-shadow: 0 0 1em gold;  */
     width: 25%;
     height: 35%;
   }
@@ -460,6 +460,13 @@
       transform: scale(.9);
       margin-left: -20%;
     }
+    .actionButtons {
+      font-size: 6px;
+      padding: 0%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   @media screen and (max-width: 330px) {
     
@@ -583,39 +590,31 @@
   @media screen and (max-height: 700px) {
     #game-container {
       transform: scaleY(1);
-      /* max-height: 90vh; */
     }
     #opponent-block {
-      /* transform: scaleY(1.1); */
       margin-top: -10%;
     }
     #game-block {
-      /* transform: scaleY(1.1); */
       top: -30%;
     }
     #computer-animation {
       transform: scaleY(1);
-      /* margin-left: -40%; */
     }
     #player-animation {
       transform: scaleY(1);
-      /* margin-left: -40%; */
     }
     #win-condition {
       transform: scale(.85);
       margin-top: -1%;
     }
     #console {
-      /* transform: scale(.975); */
       margin-top: 20%;
       margin-left: 2%;
       font-size: 6px;
     }
     #action-buttons {
-      transform: scale(.95);
       margin-left: -10.25%;
       margin-top: 5%;
-      
     }
     #action-reader {
       transform: scale(.95);
@@ -624,14 +623,15 @@
       font-size: 6px;  
     }
     #attack-options {
-      transform: scale(.95);
+      /* transform: scale(.95); */
       margin-right: -2%;
+      margin-top: -30%;
       font-size: 6px;
     }
     #auto-engage {
-      transform: scale(.95);
+      /* transform: scale(.95); */
       margin-top: -30%;
-      margin-left: -12%;
+      margin-left: -20%;
       font-size: 6px;
     }
     .dialog-box, .dialog-text, .dialog-options {
@@ -641,34 +641,35 @@
       margin-top: -1%;
       font-size: 10px;
     }
+    .dialog-button, .inventory-button {
+      font-size: 10px;
+    }
+    .actionButtons {
+      top: -2.5%;
+    }
   }
   @media screen and (max-height: 650px) {
     #game-container {
       transform: scaleY(1);
-      /* max-height: 90vh; */
     }
     #opponent-block {
-      /* transform: scaleY(1); */
       margin-top: -20%;
     }
     #game-block {
-      /* transform: scaleY(1); */
       top: -70%;
     }
     #computer-animation {
       transform: scaleY(1);
-      /* margin-left: -40%; */
     }
     #player-animation {
       transform: scaleY(1);
-      /* margin-left: -40%; */
     }
     #win-condition {
       transform: scale(.7);
       margin-top: -1%;
     }
     #console {
-      margin-top: 10%;
+      margin-top: 20%;
     }
   }
   @media screen and (max-height: 600px) {
