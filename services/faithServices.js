@@ -62,8 +62,8 @@ class StatusEffect {
         let realizedModifiers = {};
 
         let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
-        if (playerDamage === 0) {
-            playerDamage = effectModifiers.damage * 2;
+        if (playerDamage < effectModifiers.damage) {
+            playerDamage = effectModifiers.damage;
         };
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
@@ -487,9 +487,9 @@ class StatusEffect {
         let realizedModifiers = {};
 
         let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
-        if (playerDamage === 0) {
-            playerDamage = effectModifiers.damage * 2;
-        }
+        if (playerDamage < effectModifiers.damage) {
+            playerDamage = effectModifiers.damage;
+        };
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {

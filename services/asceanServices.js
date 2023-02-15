@@ -338,11 +338,13 @@ const coefficientCompiler = async (ascean, item) => {
             // coefficient = ascean.level / 20;
             break;
         case 'Legendary':
-            coefficient = ascean.level / 20;
+            coefficient = 1;
             break;
     }
     if (coefficient > 1) {
-        if (coefficient > 2) {
+        if (coefficient > 3) {
+            coefficient = 2;
+        } else if (coefficient > 2) {
             coefficient = 1.5;
         } else {
             coefficient = 1;
