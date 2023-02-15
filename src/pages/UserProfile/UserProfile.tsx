@@ -2,11 +2,8 @@ import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 import * as asceanAPI from '../../utils/asceanApi';
 import SolaAscean from '../../components/SolaAscean/SolaAscean'
-import SearchCard from '../../components/SearchCard/SearchCard'
-import AccordionForm from '../../components/HomeSettings/AccordionForm';
 import HomeSettings from '../../components/HomeSettings/HomeSettings';
 
 interface UserProps {
@@ -19,36 +16,28 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const accordions = {
-    'Tight': 'Tight',
-    'Lean': 'Lean',
-    'Half': 'Half',
-    'Full': 'Full'
-  }
-
   useEffect(() => {
     getAscean();
-  }, [])
+  }, []);
 
   async function getAscean() {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await asceanAPI.getAllAscean();
       console.log(response.data, '<- the response in Get All Ascean');
-      setAsceanVaEsai([...response.data.reverse()])
-      setLoading(false)
+      setAsceanVaEsai([...response.data.reverse()]);
+      setLoading(false);
     } catch (err) {
-      setLoading(false)
+      setLoading(false);
       console.log(err);
-    }
-  }
+    };
+  };
 
-  async function deleteAscean(ascean: any) {
-    ascean.preventDefault();
-
+  async function deleteAscean(e: React.ChangeEvent<HTMLButtonElement>) {
+    e.preventDefault();
     try {
-      console.log(ascean.target.value, '<- What are you in here?');
-      await asceanAPI.deleteAscean(ascean.target.value);
+      console.log(e.target.value, '<- What are you in here?');
+      await asceanAPI.deleteAscean(e.target.value);
       setCreateSuccess(true);
       await getAscean();
     } catch (err: any) {
@@ -62,21 +51,15 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
 
   if (loading) {
     return (
-    <>
-        <Loading />
-    </>
+      <Loading />
     );
-  }
+  };
 
   return (
-
     <Container>
       <HomeSettings ascean={asceanVaEsai} loggedUser={loggedUser} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
-      {/* <SearchCard ascean={asceanVaEsai} loggedUser={loggedUser} userProfile={true} />
-      <AccordionForm accordionState={accordionState} accordionChange={accordionChange} /> */}
-        {
-          asceanVaEsai.length > 0
-          ? asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {
+        { asceanVaEsai.length > 0 ? 
+          asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {
             return (
               <SolaAscean
                 ascean={ascean}
@@ -87,11 +70,10 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
               />
             )
           })
-          : 
+        : 
           <p className='' style={{ textAlign: 'center', color: '#fdf6d8' }}>
             No Characters? No worries ^_^ <br />
             Here's a Quick Overview of the NavBar to Catch You Up<br />
-            
             Castle: Home Page, holds your characters and their basic information.<br />
             Knight: New Character, let's you create a new one to use in their own story.<br />
             Scarecrow: Story Mode, here you can duel, level, and progress your character.<br />
@@ -101,7 +83,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
           </p>
         }
     </Container>
-  )
-}
+  );
+};
 
-export default UserProfile
+export default UserProfile;

@@ -17,7 +17,7 @@ interface Props {
 const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading }: Props) => {
 
   const getBlockStyle = {
-    marginTop: state.playerEffects.length > 0 ? '10%' : '36%',
+    marginTop: state.playerEffects.length > 0 ? '-15%' : '6%',
   }
 
   if (loading) {

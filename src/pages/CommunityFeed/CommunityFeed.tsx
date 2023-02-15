@@ -151,9 +151,9 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
           </thead>
         { highScores.map((ascean: any, index: number) => {
           return (
-            <tbody>
+            <tbody key={index}>
             { index < 10 ? 
-              <tr key={index}>
+              <tr>
                 <td>
                 <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
                   style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />

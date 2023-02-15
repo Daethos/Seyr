@@ -89,7 +89,6 @@ function App() {
         <Route path="/Story/:asceanID" element={<Story user={user} />} />
         <Route path="/Game/Lobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />
-        {/* <Route path="/Game/PvP/:asceanID" element={<GamePvP user={user} />} /> */}
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user} handleAsceanCreate={handleAsceanCreate} />} />
@@ -100,7 +99,6 @@ function App() {
         <Route path="/Authorization" element={<AuthPage setUser={setUser} handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>
       </div>
-      
     );
   }
 

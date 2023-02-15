@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './NavBar.css'
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import * as asceanAPI from '../../utils/asceanApi';
 import { Nav } from 'react-bootstrap';
-import NavBarStatus from '../NavBarComponents/NavBarStatus';
-import NavBarMessages from '../NavBarComponents/NavBarMessages';
 import UserModal from '../UserModal/UserModal';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import * as communityAPI from '../../utils/communityApi'
-import Table from 'react-bootstrap/Table';
-import Accordion from 'react-bootstrap/Accordion';
-
 
 interface NavProps {
     user: any;
@@ -25,12 +17,16 @@ interface NavProps {
     handleLogout: () => void;
     createSuccess: boolean;
     setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }: NavProps) => {
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(true);
+  const location = useLocation();
+
+  useEffect(() => { console.log(location, 'Location ?') }, [location])
 
   const [editOffCanvas, setEditOffCanvas] = useState<boolean>(false);
   const handleEditClose = () => setEditOffCanvas(false);
@@ -47,7 +43,7 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
   useEffect(() => {
     getAscean();
     setCreateSuccess(false);
-  }, [createSuccess])
+  }, [createSuccess]);
 
   async function getAscean() {
     setLoading(true);
@@ -57,19 +53,17 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
       setLoading(false)
     } catch (err) {
       console.log(err);
-    }
-  }
+    };
+  };
 
   if (loading) {
     return (
-    <>
         <Loading NavBar={true} />
-    </>
     );
-  }
+  };
 
   return (
-    <Navbar className="" expand="xxl" id="navbar">
+    <Navbar className="" expand="xxl" expanded={expanded} id="navbar" style={location.pathname.startsWith('/Game/Solo') ? { display: 'none' } : {}}>
       <Container fluid>
       <Button className="nav-item" variant='' onClick={() => setModalShow(true)}>
           <img src={user?.photoUrl} alt={user?.photoUrl} id="nav-pic" />
@@ -149,7 +143,6 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
             <img 
               src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
               alt={ascean.origin + ascean.sex} 
-              // id="update-pic" 
               style={{ width: 100 + 'px', height: 100 + 'px', borderRadius: 50 + '%', border: 2 + 'px solid purple'  }}
               /> 
             <> {ascean.name}</>
@@ -186,7 +179,6 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
             <img 
               src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
               alt={ascean.origin + ascean.sex} 
-              // id="update-pic" 
               style={{ width: 100 + 'px', height: 100 + 'px', borderRadius: 50 + '%', border: 2 + 'px solid purple'  }}
               /> 
             <> {ascean.name}</>
@@ -226,7 +218,6 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
       <Nav.Link as={NavLink} to='/Game/Lobby'
       style={{ marginLeft: -20 + 'px', marginTop: -0 + 'px' }}
         className="text-info btn btn-lg btn-outline-black link-header">
-          {/* Community  */}
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 512 512">
             <path d="M76.8,409.6c-4.71,0-8.533,3.823-8.533,8.533s3.823,8.533,8.533,8.533h34.133c4.71,0,8.533-3.823,8.533-8.533     s-3.823-8.533-8.533-8.533H76.8z"></path>
             <path d="M332.8,273.067H39.526C17.732,273.067,0,292.207,0,315.733v153.6C0,492.86,17.732,512,39.526,512h207.488     c22.972,0,43.119-19.934,43.119-42.709v-93.858c-0.026-4.702-3.84-8.499-8.533-8.499h-0.043c-4.71,0.026-8.516,3.866-8.491,8.576     v93.824c0,14.421-14.003,25.6-26.052,25.6H39.526c-12.382,0-22.46-11.486-22.46-25.6v-153.6c0-14.114,10.078-25.6,22.46-25.6     h272.768l-53.367,53.717c-3.319,3.345-3.302,8.747,0.043,12.066c3.345,3.328,8.747,3.311,12.066-0.034l67.814-68.267     c2.432-2.449,3.149-6.11,1.826-9.293C339.362,275.14,336.247,273.067,332.8,273.067z"></path>
@@ -290,10 +281,10 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
         </svg>
       </Link>
       </span>
-    <Navbar.Toggle type="button" aria-controls="basic-navbar-nav" className="" style={{ color: 'purple' }} />
+    <Navbar.Toggle type="button" aria-controls="basic-navbar-nav" className="" style={{ color: 'purple' }} onClick={() => setExpanded(!expanded)} />
       </Container>
     </Navbar>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;
