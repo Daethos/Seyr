@@ -123,6 +123,10 @@ const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+const randomFloatFromInterval = (min, max) => {
+    return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+}
+
 const randomizeStats = (item, rarity) => {
     // console.log(item, 'Item in randomizeStats()')
     const stats = {};
@@ -137,6 +141,10 @@ const randomizeStats = (item, rarity) => {
     const range = attributeRanges[rarity];
     const attributes = ['strength', 'constitution', 'agility', 'achre', 'caeren', 'kyosir'];
     const attributeCount = attributes.filter(attribute => item[attribute] > 0).length;
+    const chance = ['critical_chance', 'physical_penetration', 'magical_penetration', 'roll', 'dodge'];
+    // const chanceCount = chance.filter(attribute => item[attribute] > 0).length;
+    const damage = ['physical_damage', 'magical_damage'];
+    const critDamage = ['critical_damage'];
 
     attributes.forEach(attribute => {
         console.log(attribute, item[attribute], 'Attribute')
@@ -153,7 +161,52 @@ const randomizeStats = (item, rarity) => {
         };
     });
 
-    // console.log(item, stats, 'Stats in randomizeStats function');
+    chance.forEach(att => {
+        if (item[att] > 10) {
+            item[att] = randomIntFromInterval(item[att] -3, item[att] + 5);
+        } else if (item[att] > 5) { // 6-10
+            item[att] = randomIntFromInterval(item[att] - 2, item[att] + 3);
+        } else if (item[att] >= 3) { // 3-5
+            item[att] = randomIntFromInterval(item[att] - 1, item[att] + 2);
+        } else if (item[att] > 0) { // 1-2
+            item[att] = randomIntFromInterval(item[att], item[att] + 1);
+        };
+    });
+
+    damage.forEach(dam => {
+        if (item[dam] > 20) { // 21 +/- 5/3
+            item[dam] = randomIntFromInterval(item[dam] - 3, item[dam] + 5);
+        } else if (item[dam] > 10) { // 11-20 +/- 3/2
+            item[dam] = randomIntFromInterval(item[dam] - 2, item[dam] + 3);
+        } else if (item[dam] > 5) { // 6-10 +/- 2/1
+            item[dam] = randomIntFromInterval(item[dam] - 1, item[dam] + 2);
+        } else if (item[dam] > 1) { // 2-5 +/- 1/0
+            item[dam] = randomIntFromInterval(item[dam], item[dam] + 1);
+        };
+    });
+
+    critDamage.forEach(dam => {
+        if (item[dam] > 1.99) { // 2.0 +/- 0.3/0.25 (0.55 Range)
+            item[dam] = randomFloatFromInterval(item[dam] - 0.25, item[dam] + 0.3);
+        } else if (item[dam] > 1.74) { // 1.75 +/- 0.25/0.2 (0.45 Range)
+            item[dam] = randomFloatFromInterval(item[dam] - 0.2, item[dam] + 0.25);
+        } else if (item[dam] > 1.49) { // 1.5 +/- 0.2/0.15 (0.35 Range)
+            item[dam] = randomFloatFromInterval(item[dam] - 0.15, item[dam] + 0.2);
+        } else if (item[dam] > 1.24) { // 1.25 +/- 0.15/0.1 (0.25 Range)
+            item[dam] = randomFloatFromInterval(item[dam] - 0.1, item[dam] + 0.15);
+        } else if (item[dam] > 1.09) { // 1.1 +/- 0.05/0.02 (0.07 Range)
+            item[dam] = randomFloatFromInterval(item[dam] - 0.02, item[dam] + 0.05);
+        } else if (item[dam] > 1.05) { // 1.05 +/- 0.04/0.01 (0.05 Range)
+            item[dam] = randomFloatFromInterval(item[dam] - 0.01, item[dam] + 0.04);
+        } else if (item[dam] === 1.03) { // 1.00 +/- 0.03/0 (0.03 Range)
+            item[dam] = randomFloatFromInterval(item[dam], item[dam] + 0.03);
+        } else if (item[dam] === 1.02) { // 1.00 +/- 0.02/0 (0.02 Range)
+            item[dam] = randomFloatFromInterval(item[dam], item[dam] + 0.02);
+        } else if (item[dam] === 1.01) { // 1.00 +/- 0.01/0 (0.01 Range)
+            item[dam] = randomFloatFromInterval(item[dam], item[dam] + 0.01);
+        };
+    })
+
     return stats;
 };
 
