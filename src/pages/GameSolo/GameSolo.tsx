@@ -34,6 +34,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [opponents, setOpponents] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
+    const [loadedAscean, setLoadedAscean] = useState<boolean>(false);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [saveExp, setSaveExp] = useState<boolean>(false);
@@ -427,6 +428,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_PLAYER_SLICK,
                 payload: response.data.data
             });
+            setLoadedAscean(true);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
         };
@@ -441,6 +443,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_PLAYER_QUICK,
                 payload: firstResponse.data
             });
+            setLoadedAscean(true);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
         };
@@ -798,9 +801,9 @@ const GameSolo = ({ user }: GameProps) => {
                 </>
             : '' }
             { showInventory ?
-                <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} />
+                <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
             : ""}
-            <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
+            <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }

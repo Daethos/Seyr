@@ -48,24 +48,24 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                     </>
                     : lootDrop?.type ? <>{lootDrop?.type} <br /></> : ''
                 }
-                {lootDrop?.constitution > 0 ? 'CON: +' + lootDrop?.constitution + ' ' : ''}
-                {lootDrop?.strength > 0 ? 'STR: +' + lootDrop?.strength + ' ' : ''}
-                {lootDrop?.agility > 0 ? 'AGI: +' + lootDrop?.agility + ' ' : ''}
-                {lootDrop?.achre > 0 ? 'ACH: +' + lootDrop?.achre + ' ' : ''}
-                {lootDrop?.caeren > 0 ? 'CAER: +' + lootDrop?.caeren + ' ' : ''}
-                {lootDrop?.kyosir > 0 ? 'KYO: +' + lootDrop?.kyosir + ' ' : ''}<br />
-                Damage: {lootDrop?.physical_damage} Physical | {lootDrop?.magical_damage} Magical <br />
+                {lootDrop?.constitution > 0 ? 'Con: +' + lootDrop?.constitution + ' ' : ''}
+                {lootDrop?.strength > 0 ? 'Str: +' + lootDrop?.strength + ' ' : ''}
+                {lootDrop?.agility > 0 ? 'Agi: +' + lootDrop?.agility + ' ' : ''}
+                {lootDrop?.achre > 0 ? 'Ach: +' + lootDrop?.achre + ' ' : ''}
+                {lootDrop?.caeren > 0 ? 'Caer: +' + lootDrop?.caeren + ' ' : ''}
+                {lootDrop?.kyosir > 0 ? 'Kyo: +' + lootDrop?.kyosir + ' ' : ''}<br />
+                Damage: {lootDrop?.physical_damage} Phys | {lootDrop?.magical_damage} Magi <br />
                 {
                     lootDrop?.physical_resistance ?
                     <>
-                    Defense: {lootDrop?.physical_resistance} Physical | {lootDrop?.magical_resistance} Magical <br />
+                    Defense: {lootDrop?.physical_resistance} Phys | {lootDrop?.magical_resistance} Magi <br />
                     </>
                     : ''
                 }
                 {
                     lootDrop?.physical_penetration ?
                     <>
-                    Penetration: {lootDrop?.physical_penetration} Physical | {lootDrop?.magical_penetration} Magical <br />
+                    Penetration: {lootDrop?.physical_penetration} Phys | {lootDrop?.magical_penetration} Magi <br />
                     </>
                     : ''
                 }
@@ -74,7 +74,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                 Dodge Timer: {lootDrop?.dodge}s <br />
                 Roll Chance: {lootDrop?.roll}% <br />
                 {
-                    lootDrop?.influences ?
+                    lootDrop?.influences?.length > 0 ?
                     <>
                 Influence: {lootDrop?.influences} <br />
                     </>

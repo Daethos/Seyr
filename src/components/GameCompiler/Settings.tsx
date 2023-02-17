@@ -15,9 +15,11 @@ interface Props {
     setRemoveItem: React.Dispatch<React.SetStateAction<boolean>>;
     soundEffectsVolume: number;
     setSoundEffectsVolume: React.Dispatch<React.SetStateAction<number>>;
+    loadedAscean: boolean;
+    setLoadedAscean: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume }: Props) => {
+const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume, loadedAscean, setLoadedAscean }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -47,7 +49,7 @@ const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemov
         <h3 style={{ fontSize: 20 + 'px', textAlign: 'center' }}>Gameplay Settings</h3>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
-            <InventoryBag settings={true} inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} />
+            <InventoryBag settings={true} inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
         : ""}
         <br />
         <Accordion flush>
@@ -207,7 +209,7 @@ const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemov
         <br /><br /><br />
         <Button variant='' style={{ color: 'gold' }} onClick={returnHome}>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
+        <path fillRule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
         </svg> Return Home</Button>
 
         </Modal.Body>

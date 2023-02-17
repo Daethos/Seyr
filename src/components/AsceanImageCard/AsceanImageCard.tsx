@@ -311,73 +311,84 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     function getBorderStyle(rarity: string) {
         switch (rarity) {
             case 'Common':
-                return '2px solid white';
+                return '0.15em solid white';
             case 'Uncommon':
-                return '2px solid green';
+                return '0.15em solid green';
             case 'Rare':
-                return '2px solid blue';
+                return '0.15em solid blue';
             case 'Epic':
-                return '2px solid purple';
+                return '0.15em solid purple';
             case 'Legendary':
-                return '2px solid orange';
+                return '0.15em solid darkorange';
             default:
-                return '2px solid grey';
+                return '0.15em solid grey';
         }
     }
     const getWeaponOneStyle = {
         border: getBorderStyle(weapon_one?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getWeaponTwoStyle = {
         border: getBorderStyle(weapon_two?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getWeaponThreeStyle = {
         border: getBorderStyle(weapon_three?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getShieldStyle = {
         border: getBorderStyle(shield?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getHelmStyle = {
         border: getBorderStyle(helmet?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getChestStyle = {
         border: getBorderStyle(chest?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getLegsStyle = {
         border: getBorderStyle(legs?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getAmuletStyle = {
         border: getBorderStyle(amulet?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getRingOneStyle = {
         border: getBorderStyle(ring_one?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getRingTwoStyle = {
         border: getBorderStyle(ring_two?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
     const getTrinketStyle = {
         border: getBorderStyle(trinket?.rarity),
         background: 'black',
-        boxShadow: '1px 1px 1px black',
+        boxShadow: '2px 2px 2px black',
+        borderRadius: 1 + 'px',
     }
 
     if (loading) {
@@ -397,7 +408,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             >
                 <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
-            style={{marginLeft: -60 + 'px', marginRight: 10 + 'px'}}
+            style={{marginLeft: -67.5 + 'px', marginRight: 4 + 'px'}}
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
             className="my-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={weaponOnePopover}>
@@ -414,7 +425,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </OverlayTrigger>
             </Col>
 
-            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-2">
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-3">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={helmetPopover}>
             <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} />
             </OverlayTrigger>
@@ -428,7 +439,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </OverlayTrigger>
             </Col>
 
-            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-2">
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-1">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={amuletPopover}>
             <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getAmuletStyle} />
             </OverlayTrigger>

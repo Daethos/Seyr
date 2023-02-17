@@ -16,12 +16,12 @@ interface Props {
 const GameAnimations = ({ rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical }: Props) => {
 
     const critStyle = {
-        backgroundColor: 'red',
+        color: 'red',
         fontSize: 32 + 'px',
     }
 
     const rollStyle = {
-        backgroundColor: 'green',
+        color: 'green',
         fontSize: 32 + 'px',
     }
 
