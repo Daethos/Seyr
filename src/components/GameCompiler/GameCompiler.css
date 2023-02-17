@@ -2,7 +2,7 @@
     text-align: center;
     position: relative;
     margin-top: -25px;
-    margin-left: 0%;
+    margin-left: -5%;
     width: 125px;
     height: 100px;
     color: #ddd902;
@@ -24,14 +24,14 @@
     }
     to {
         opacity: 1;
-        top: 400px;
+        top: 425px;
         transform: scale(1.05);
     }
 }
 .player {
     text-align: center;
     margin-top: 300px;
-    margin-left: -25%;
+    margin-left: 25%;
     position: relative;
     width: 125px;
     height: 100px;
@@ -48,7 +48,7 @@
 @keyframes mymove {
     from {
         opacity: 0.65;
-        bottom: -100px;
+        bottom: -125px;
         transform: scale(0.5);
     }
     to {
