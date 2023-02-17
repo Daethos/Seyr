@@ -127,11 +127,11 @@ const randomizeStats = (item, rarity) => {
     // console.log(item, 'Item in randomizeStats()')
     const stats = {};
     const attributeRanges = {
-        Common: [1, 1, 2],
-        Uncommon: [1, 2, 3],
-        Rare: [2, 3, 4],
-        Epic: [4, 5, 8],
-        Legendary: [6, 8, 12],
+        Common: [1, 1, 2, 2],
+        Uncommon: [1, 2, 3, 4],
+        Rare: [2, 3, 4, 7],
+        Epic: [4, 5, 6, 9],
+        Legendary: [10, 13, 16, 20],
     };
 
     const range = attributeRanges[rarity];
@@ -141,11 +141,15 @@ const randomizeStats = (item, rarity) => {
     attributes.forEach(attribute => {
         console.log(attribute, item[attribute], 'Attribute')
         if (item[attribute] > 0) {
-            if (attributeCount <= 2) {
-                item[attribute] = randomIntFromInterval(range[1], range[2]);
-            } else {
+            if (attributeCount === 1) {
+                item[attribute] = randomIntFromInterval(range[3], (range[3] + 2));
+            } else if (attributeCount === 2) {
+                item[attribute] = randomIntFromInterval(range[1], (range[3] - 1));
+            } else if (attributeCount === 3) {
+                item[attribute] = randomIntFromInterval(range[0], range[2]);
+            } else { // 4-6
                 item[attribute] = randomIntFromInterval(range[0], range[1]);
-            }
+            };
         };
     });
 

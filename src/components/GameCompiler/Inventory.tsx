@@ -193,7 +193,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 currentRarity: inventory.rarity,
                 inventoryType: inventoryType,
                 upgradeMatches: matches,
-            }
+            };
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
             setRemoveItem(true);
@@ -209,7 +209,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             const data = {
                 id: ascean._id,
                 inventory: inventory,
-            }
+            };
             const response = await asceanAPI.removeItem(data);
             console.log(response, '<- Response in handleRemoveItem');
             setRemoveItem(true);
@@ -225,7 +225,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             console.log(newAscean, '<- newAscean in Swapping Equipment start');
             const response = await asceanAPI.equipmentSwap(newAscean);
             console.log(response, '<- Response in Swapping Equipment');
-            setEqpSwap(!eqpSwap);
+            setEqpSwap(true);
         } catch (err) {
             console.log(err, '<- This is the error in Swapping Equipment');
         };
