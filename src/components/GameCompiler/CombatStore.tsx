@@ -290,6 +290,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_weapon_three: action.payload.combat_weapon_three,
                 computer_defense: action.payload.defense,
                 computer_attributes: action.payload.attributes,
+                player_win: false,
+                computer_win: false,
                 combatRound: 1,
             };
         case 'AUTO_ENGAGE':

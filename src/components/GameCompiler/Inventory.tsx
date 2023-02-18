@@ -63,14 +63,15 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
 
     useEffect(() => {
       checkInventory();
+      asceanLoaded();
     }, [ascean, inventory]);
 
-    useEffect(() => {
-        asceanLoaded();
-        return () => {
-            setLoadedAscean(false);
-        };
-    }, [loadedAscean]);
+    // useEffect(() => {
+    //     asceanLoaded();
+    //     return () => {
+    //         setLoadedAscean(false);
+    //     };
+    // }, [loadedAscean]);
 
     async function asceanLoaded() {
         try {

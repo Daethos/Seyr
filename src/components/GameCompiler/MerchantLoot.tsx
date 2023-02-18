@@ -3,6 +3,8 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
+import Col  from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 interface Props {
     item: any;
@@ -213,11 +215,15 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
     };
     
     return (
-        <>
+        <Col>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={merchantItemPopover}>
                 <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></Button>
             </OverlayTrigger>
-        </>
+            <p style={{ fontSize: "11px", marginTop: "-14px" }}>
+            {purchaseSetting?.cost?.gold ? `${purchaseSetting.cost.gold}g${' '}` : ''}
+            {purchaseSetting?.cost?.silver ? `${purchaseSetting.cost.silver}s${' '}` : ''}
+            </p>
+        </Col>
     )
 }
 

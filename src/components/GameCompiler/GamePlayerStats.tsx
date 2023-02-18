@@ -9,7 +9,7 @@ interface Props {
     physicalDefense: number;
     physicalPosture: number;
     player: any;
-}
+};
 
 const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
 
@@ -47,13 +47,13 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={playerPopover}>
         <Button variant="">
             <div className="">
-            <h3 style={{ fontSize: 13 + 'px', color: '#fdf6d8', textDecoration: 'none' }} className='gameplayername'>
+            <h3 style={{ fontSize: 13.5 + 'px', color: '#fdf6d8', textDecoration: 'none', textShadow: "2px 2px 2px black" }} className='gameplayername'>
             {player.name}</h3>
             </div>
         </Button>
         </OverlayTrigger>
-    </div>
-    )
-}
+        </div>
+    );
+};
 
-export default GamePlayerStats
+export default GamePlayerStats;

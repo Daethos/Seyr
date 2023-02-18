@@ -773,7 +773,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                 playerAction={state.player_action} computerAction={state.computer_action} 
                 playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
-                rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success}
+                rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} combatRound={state.combatRound}
                 counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combatEngaged}
             />
             <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />

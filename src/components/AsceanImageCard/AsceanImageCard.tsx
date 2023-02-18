@@ -408,7 +408,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             >
                 <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
-            style={{marginLeft: -67.5 + 'px', marginRight: 4 + 'px'}}
+            style={{marginLeft: -62 + 'px', marginRight: 10 + 'px'}}
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
             className="my-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={weaponOnePopover}>
@@ -425,7 +425,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </OverlayTrigger>
             </Col>
 
-            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-3">
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-3" >
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={helmetPopover}>
             <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} />
             </OverlayTrigger>
@@ -439,7 +439,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </OverlayTrigger>
             </Col>
 
-            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-1">
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-2">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={amuletPopover}>
             <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getAmuletStyle} />
             </OverlayTrigger>

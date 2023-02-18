@@ -2575,11 +2575,11 @@ const actionSplitter = async (combatData) => {
     
     if (newData.player_win === true) {
         newData.computer_death_description = 
-        `${newData.computer.name} has been defeated. Hail ${newData.player.name}, you are the new va'Esai!`;
+        `${newData.computer.name} has been defeated. Hail ${newData.player.name}, you have won the duel!`;
     }
     if (newData.computer_win === true) {
         newData.player_death_description = 
-        `You have been defeated. Hail ${newData.computer.name}, the new va'Esai!`;
+        `You have been defeated. Hail ${newData.computer.name}, they have won the duel!`;
     }
 
     if (newData.player_win === true || newData.computer_win === true) {
