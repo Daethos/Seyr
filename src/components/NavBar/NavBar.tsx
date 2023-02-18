@@ -26,8 +26,6 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
   const [expanded, setExpanded] = useState<boolean>(true);
   const location = useLocation();
 
-  useEffect(() => { console.log(location, 'Location ?') }, [location])
-
   const [editOffCanvas, setEditOffCanvas] = useState<boolean>(false);
   const handleEditClose = () => setEditOffCanvas(false);
   const handleEditShow = () => setEditOffCanvas(true);

@@ -89,7 +89,7 @@ async function determineItemType(id) {
         };
     };
     return null;
-}  ;
+};
 
 async function saveToInventory(req, res) {
     try {
