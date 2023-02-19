@@ -425,7 +425,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                             </td>
                         </tr>
                         : ''}
-                        {inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 ? 
+                        {inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 || inventory?.magical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ? 
                         <tr>
                             <td style={{ color: textColor((inventory?.physical_resistance + inventory?.magical_resistance), (ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance)) }}>
                             { inventory?.physical_resistance || inventory?.magical_resistance ?
