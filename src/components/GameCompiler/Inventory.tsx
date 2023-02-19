@@ -262,7 +262,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                     inventory?.grip && inventory?.type ?
                     <>
                 {inventory?.type} [{inventory?.grip}] <br />
-                {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }]  <br />
+                {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : '' }]  <br />
                     </>
                     : inventory?.type ? <>{inventory?.type} <br /></> : ''
                 }
@@ -274,14 +274,14 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                 {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}<br />
                 Damage: {inventory?.physical_damage} Phys | {inventory?.magical_damage} Magi <br />
                 {
-                    inventory?.physical_resistance ?
+                    inventory?.physical_resistance || inventory?.magical_resistance ?
                     <>
-                    Defense: {inventory?.physical_resistance}% Phys | {inventory?.magical_resistance}% Magi <br />
+                    Defense: {inventory?.physical_resistance} Phys | {inventory?.magical_resistance} Magi <br />
                     </>
                     : ''
                 }
                 {
-                    inventory?.physical_penetration ?
+                    inventory?.physical_penetration || inventory?.magical_penetration ?
                     <>
                     Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi <br />
                     </>
@@ -298,13 +298,14 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                     </>
                     : ''
                 }
-                <p style={{ color: getRarityColor(inventory?.rarity) }}>
-                {inventory?.rarity}
-
-                </p>
                 <br />
-                {inventory?.itemType}
-                <Button variant='outline' style={{ float: 'right', color: 'blue', marginTop: -3 + '%', marginRight: -4 + '%', fontWeight: 600 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
+                <p style={{ color: getRarityColor(inventory?.rarity), fontSize: "16px", float: 'left', textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }}>
+                {inventory?.rarity}
+                </p>
+                <Button variant='outline' style={{ float: 'right', color: 'blue', 
+                marginTop: '-3%', marginRight: -8 + '%', 
+                textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
+                <br />
             </Popover.Body>
         </Popover>
     )
@@ -427,16 +428,16 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                         {inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 ? 
                         <tr>
                             <td style={{ color: textColor((inventory?.physical_resistance + inventory?.magical_resistance), (ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance)) }}>
-                            { inventory?.physical_resistance ?
+                            { inventory?.physical_resistance || inventory?.magical_resistance ?
                                 <>
-                                Defense: {inventory?.physical_resistance}% Phys | {inventory?.magical_resistance}% Magi
+                                Defense: {inventory?.physical_resistance} Phys | {inventory?.magical_resistance} Magi
                                 </>
                             : 'Defense: 0 Phys | 0 Magi' }
                             </td>
                             <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance), (inventory?.physical_resistance + inventory?.magical_resistance)) }}>
-                            { ascean[inventoryType as keyof typeof ascean]?.physical_resistance ?
+                            { ascean[inventoryType as keyof typeof ascean]?.physical_resistance || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ?
                                 <>
-                                Defense: {ascean[inventoryType as keyof typeof ascean]?.physical_resistance}% Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_resistance}% Magi 
+                                Defense: {ascean[inventoryType as keyof typeof ascean]?.physical_resistance} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_resistance} Magi 
                                 </>
                             : 'Defense: 0 Phys | 0 Magi' }
                             </td>
@@ -450,7 +451,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                                 <>
                                 Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi 
                                 </>
-                                : 'No Magi/Phys Pen'
+                                : 'Penetration: 0 Phys | 0 Magi'
                             }
                             </td>
                             <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration), (inventory?.physical_penetration + inventory?.magical_penetration)) }}>
@@ -459,7 +460,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
                                 <>
                                 Penetration: {ascean[inventoryType as keyof typeof ascean]?.physical_penetration} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_penetration} Magi
                                 </>
-                                : 'No Magi/Phys Pen'
+                                : 'Penetration: 0 Phys | 0 Magi'
                             }
                             </td>
                         </tr>
@@ -467,19 +468,19 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
 
                         <tr>
                             <td style={{ color: textColor(inventory?.critical_chance, ascean[inventoryType as keyof typeof ascean]?.critical_chance) }}>
-                            Critical Chance: {inventory?.critical_chance}%
+                            Crit Chance: {inventory?.critical_chance}%
                             </td>
                             <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.critical_chance, inventory?.critical_chance) }}>
-                            Critical Chance: {ascean[inventoryType as keyof typeof ascean]?.critical_chance}%
+                            Crit Chance: {ascean[inventoryType as keyof typeof ascean]?.critical_chance}%
                             </td>
                         </tr>
 
                         <tr>
                             <td style={{ color: textColor(inventory?.critical_damage, ascean[inventoryType as keyof typeof ascean]?.critical_damage) }}>
-                            Critical Damage: {inventory?.critical_damage}x
+                            Crit Damage: {inventory?.critical_damage}x
                             </td>
                             <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.critical_damage, inventory?.critical_damage) }}>
-                            Critical Damage: {ascean[inventoryType as keyof typeof ascean]?.critical_damage}x
+                            Crit Damage: {ascean[inventoryType as keyof typeof ascean]?.critical_damage}x
                             </td>
                         </tr>
 

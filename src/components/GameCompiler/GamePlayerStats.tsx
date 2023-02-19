@@ -12,7 +12,6 @@ interface Props {
 };
 
 const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
-
     const playerPopover = (
         <Popover id="popover">
             <Popover.Header id="popover-header" as="h2">{player.name}'s Statistics

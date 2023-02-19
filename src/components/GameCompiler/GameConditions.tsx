@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import * as gameAPI from '../../utils/gameApi'
 import Loading from '../Loading/Loading';
-import { ACTIONS, useInterval } from './CombatStore';
+import { ACTIONS } from './CombatStore';
 
 interface Props {
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
@@ -14,7 +14,7 @@ interface Props {
     dispatch: any;
     state: any;
     soundEffects: (effects: any) => Promise<void>;
-}
+};
 
 const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, gainExperience, setLootRoll, playWin, playDeath, setEmergencyText }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -31,15 +31,8 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
 
     useEffect(() => {
         setTimeLeftDisplay(timeLeft);
-    }, [timeLeft])
+    }, [timeLeft]);
 
-    // useInterval(() => {
-    //     if (state.gameIsLive && timeLeft === 0) {
-    //         autoAttack(state);
-    //     }
-    // }, timeLeft)
-
-    // If The useInterval above ever breaks down, this is a backup
     useEffect(() => {
         const timer = setTimeout(() => {
             if (state.gameIsLive && timeLeft === 0) {
@@ -56,11 +49,11 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
     useEffect(() => {
         if (state.gameIsLive) {
             setEmergencyText(['Auto Action Commencing']);
-        } 
+        } ;
         if (!state.gameIsLive) {
             setEmergencyText(['Auto Action Disengaging']);
-        }
-    }, [state.gameIsLive])
+        };
+    }, [state.gameIsLive]);
 
     const autoAttack = async (combatData: any) => {
         setLoading(true);
@@ -80,7 +73,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
                     payload: response.data
                 });
                 setTimeLeft(0);
-            }
+            };
             if (response.data.computer_win === true) {
                 playDeath();
                 dispatch({
@@ -88,29 +81,29 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
                     payload: response.data
                 });
                 setTimeLeft(0);
-            }
+            };
             setLoading(false);
         } catch (err: any) {
             setLoading(false);
             console.log(err.message, 'Error Initiating Action');
-        }
-    }
+        };
+    };
 
     if (loading) {
         return (
             <Loading Combat={true} />
-        )
-    }
+        );
+    };
 
   return (
-    <>            
-    { state.player_win || state.computer_win || !state.combatEngaged ? '' : 
-    <button className="btn" id='auto-engage' onClick={autoEngage}>
-        {!state.gameIsLive ? `Auto Engage` : `Disengage`}
-    </button>
-    }
-    </>
-  )
-}
+        <>            
+        { state.player_win || state.computer_win || !state.combatEngaged ? '' : 
+        <button className="btn" id='auto-engage' onClick={autoEngage}>
+            {!state.gameIsLive ? `Auto Engage` : `Disengage`}
+        </button>
+        }
+        </>
+    );
+};
 
-export default GameConditions
+export default GameConditions;

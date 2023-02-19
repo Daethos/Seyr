@@ -142,7 +142,6 @@ const randomizeStats = (item, rarity) => {
     const attributes = ['strength', 'constitution', 'agility', 'achre', 'caeren', 'kyosir'];
     const attributeCount = attributes.filter(attribute => item[attribute] > 0).length;
     const chance = ['critical_chance', 'physical_penetration', 'magical_penetration', 'roll', 'dodge'];
-    // const chanceCount = chance.filter(attribute => item[attribute] > 0).length;
     const damage = ['physical_damage', 'magical_damage'];
     const critDamage = ['critical_damage'];
 

@@ -1,45 +1,45 @@
 #game-container {
-    display: grid;
-    grid-template-columns: repeat(4, 25%);
-    grid-template-rows: repeat(9, 10%); 
-    position: fixed;
-    height: 100vh;
-    width: 100%;
-    margin: 0px;
-  }
-  #game-block {
-    margin-left: 7.5%;
-    transform: scale(1.1);
-    grid-row-start: 7;
-    position: relative;
-  }
-  #opponent-block {
-    grid-row-start: 1;
-    grid-column-start: 2;
-    margin-left: 25%;
-    transform: scale(1.1);
-    margin-top: -10%;
-  }
-  .status-effects {
-    grid-row-start: 6;
-    grid-column-start: 1;
-    background: black;
-    width: 25%;
-    height: 35%;
-  }
+  display: grid;
+  grid-template-columns: repeat(4, 25%);
+  grid-template-rows: repeat(9, 10%); 
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  margin: 0px;
+}
+#game-block {
+  margin-left: 7.5%;
+  transform: scale(1.1);
+  grid-row-start: 7;
+  position: relative;
+}
+#opponent-block {
+  grid-row-start: 1;
+  grid-column-start: 2;
+  margin-left: 25%;
+  transform: scale(1.1);
+  margin-top: -10%;
+}
+.status-effects {
+  grid-row-start: 6;
+  grid-column-start: 1;
+  background: black;
+  width: 25%;
+  height: 35%;
+}
 #console {
   margin-top: 30%;
   border-radius: 6px;
 }
 #textarea {
-    grid-column-start: 3;
-    grid-column-end: 5;
-    grid-row-start: 8;
-    margin-left: -12.5%;
-    height: 100vh;
-    display: inline-block;
-    
-    z-index: -1;
+  grid-column-start: 3;
+  grid-column-end: 5;
+  grid-row-start: 8;
+  margin-left: -12.5%;
+  height: 100vh;
+  display: inline-block;
+  
+  z-index: -1;
 }
 .dialog-box {
   position: absolute; /* add this */
@@ -166,107 +166,107 @@
   font-weight: 600;
   display: inline-block;
   vertical-align: top;
-  }
+}
 .text-box {
-    font-family: monospace;
-    border: 2px solid purple;
-    box-shadow: 2px 2px 2px black; 
-    background-color: black;
-    color: #fdf6d8;
-    font-size: 10px;
-    text-align: center;
-  }
+  font-family: monospace;
+  border: 2px solid purple;
+  box-shadow: 2px 2px 2px black; 
+  background-color: black;
+  color: #fdf6d8;
+  font-size: 10px;
+  text-align: center;
+}
 .game-block {
-    grid-column-start: 1;
-    grid-row-start: 6;
-    display: inline-block;
-    position: relative;
-    text-align: left;
-    min-width: 150px;
-    height: 65%;
-    bottom: -25%;
-    left: 0%;
+  grid-column-start: 1;
+  grid-row-start: 6;
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  min-width: 150px;
+  height: 65%;
+  bottom: -25%;
+  left: 0%;
 }
 .actionButtons {
-    display: block;
-    position: absolute;
-    display: inline-block;
-    margin-top: 15%;
-    grid-column-start: 3;
-    grid-column-end: 5;
-    width: 112.5%;
-    margin-left: -12.5%;
-    grid-row-start: 8;
-    padding: 1%;
-    border: 2px solid purple;
-    border-radius: 6px;
-    background: black;
-    box-shadow: 2px 2px 2px black;
+  display: block;
+  position: absolute;
+  display: inline-block;
+  margin-top: 15%;
+  grid-column-start: 3;
+  grid-column-end: 5;
+  width: 112.5%;
+  margin-left: -12.5%;
+  grid-row-start: 8;
+  padding: 1%;
+  border: 2px solid purple;
+  border-radius: 6px;
+  background: black;
+  box-shadow: 2px 2px 2px black;
 }
 #action-button {
-    font-size: 8px;
-    color: rgb(226, 130, 255);
-    background-color: black;
-    padding: 1.5px;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
-  #dodge-button {
-    font-size: 8px;
-    color: rgb(226, 130, 255);
-    background-color: black;
-    padding: 1.5px;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
-  #dodge-button:disabled {
-    display: none;
-  }
-  #initiate-button {
-    font-size: 8px;
-    background-color: black;
-    color:blueviolet;
-    padding: 1.5px;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
-  #initiate-button:disabled {
-    display: none;
-  }
+  font-size: 8px;
+  color: rgb(226, 130, 255);
+  background-color: black;
+  padding: 1.5px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+#dodge-button {
+  font-size: 8px;
+  color: rgb(226, 130, 255);
+  background-color: black;
+  padding: 1.5px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+#dodge-button:disabled {
+  display: none;
+}
+#initiate-button {
+  font-size: 8px;
+  background-color: black;
+  color:blueviolet;
+  padding: 1.5px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+#initiate-button:disabled {
+  display: none;
+}
 
-  .action-reader {
-    display: block;
-    position: absolute;
-    display: inline-block;
-    text-align: center;
-    border: 2px solid purple;
-    padding: 10px;
-    background: black;
-    grid-column-start: 4;
-    grid-column-end: 5;
-    grid-row-start: 7;
-    font-size: 10px;
-    color: #fdf6d8;
-    height: 12.5%;
-    margin-top: 10%;
-    margin-left: -12.5%;
-    width: 112.5%;
-    box-shadow: 2px 2px 2px black;
-    border-radius: 6px;
-  }
-  #auto-engage {
-    grid-column-start: 3;
-    grid-row-start: 8;
-    border: 2px solid purple;
-    background: black;
-    font-size: 10px;
-    height: 50%;
-    width: 100%;
-    margin-top: -17.5%;
-    margin-left: -25%;
-    color: blueviolet;
-    box-shadow: 2px 2px 2px black;
-  }
+.action-reader {
+  display: block;
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+  border: 2px solid purple;
+  padding: 10px;
+  background: black;
+  grid-column-start: 4;
+  grid-column-end: 5;
+  grid-row-start: 7;
+  font-size: 10px;
+  color: #fdf6d8;
+  height: 12.5%;
+  margin-top: 10%;
+  margin-left: -12.5%;
+  width: 112.5%;
+  box-shadow: 2px 2px 2px black;
+  border-radius: 6px;
+}
+#auto-engage {
+  grid-column-start: 3;
+  grid-row-start: 8;
+  border: 2px solid purple;
+  background: black;
+  font-size: 10px;
+  height: 50%;
+  width: 100%;
+  margin-top: -17.5%;
+  margin-left: -25%;
+  color: blueviolet;
+  box-shadow: 2px 2px 2px black;
+}
 #player-health {
   background-color: red;
   box-shadow: 1px 1px 2px black;
@@ -274,26 +274,27 @@
 #player-xp {
   background-color: transparent;
   border: 2px solid black;
-  color: purple;
-  font-size: 8px;
+  /* color: purple; */
+  /* font-size: 8px; */
   margin-top: -6.5%;
   height: 15%;
+  left: -0.75%;
 }
 #story {
   max-width: 34%;
 }
 .progress {
-    position: absolute;
-    overflow: hidden;
-    width: 110%;
-    margin-left: -5%;
-    font-size: 16px;
-    color: #fdf6d8;
-    font-weight: 900;
-    background: transparent;
-    -webkit-text-stroke-width: 0.75px;
-    -webkit-text-stroke-color: purple;
-  }
+  position: absolute;
+  overflow: hidden;
+  width: 110%;
+  margin-left: -5%;
+  font-size: 16px;
+  color: #fdf6d8;
+  font-weight: 900;
+  background: transparent;
+  -webkit-text-stroke-width: 0.75px;
+  -webkit-text-stroke-color: purple;
+}
 .progress-text {
   margin-left: auto;
   margin-right: auto;
@@ -314,7 +315,8 @@
   margin-top: -9%;
   -webkit-text-stroke-width: 0.7px;
     -webkit-text-stroke-color: black;
-}
+
+  }
 #damage-options {
   background-color: rgb(0, 0, 0);
   font-size: 10px;
@@ -693,39 +695,39 @@
       font-weight: 700;
 }
 .game-stat{
-      text-indent: -1em;
-      padding-left: 1.1em;
-      line-height: 1.4em;
+  text-indent: -1em;
+  padding-left: 1.1em;
+  line-height: 1.4em;
 }
 .game-stat.first{
-    margin: 8px 0 0
+  margin: 8px 0 0;
 }
 .game-stat.last{
-      margin: 0 0 10px;
+  margin: 0 0 10px;
 }
 .game-attributes{
-      text-align: center;
-      color: rgb(171, 168, 2);
+  text-align: center;
+  color: rgb(171, 168, 2);
 }
 .game-attributes > div{
-      display: inline-block;
-      vertical-align: middle;
-      width: 15.5%;
-      min-width: 40px; 
-      font-size: 8px;
-      line-height: 1em;
+  display: inline-block;
+  vertical-align: middle;
+  width: 15.5%;
+  min-width: 40px; 
+  font-size: 8px;
+  line-height: 1em;
 }
 .game-attributes h4{
-      margin: 10px 0 2px;
-      font-size: 10px;
-      line-height: 1.2em;
-      text-transform: uppercase;
-      color: rgb(167, 172, 0);
-      font-weight: 700;
+  margin: 10px 0 2px;
+  font-size: 10px;
+  line-height: 1.2em;
+  text-transform: uppercase;
+  color: rgb(167, 172, 0);
+  font-weight: 700;
 }
 .game-attributes p{
-      margin: 0 0 10px;
-      line-height: 1.2em;
+  margin: 0 0 10px;
+  line-height: 1.2em;
 }
 .win-condition {
   grid-column-start: 1;

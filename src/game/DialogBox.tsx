@@ -255,11 +255,11 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                     </>
                 : currentIntent === 'localWhispers' ?
                     <>
-                         "This has not been written yet."
+                        "This has not been written yet."
                     </>
                 : currentIntent === 'persuasion' ?
                     <>
-                         "This has not been written yet."
+                        "This has not been written yet."
                     </>
                 : currentIntent === 'services' ?
                     <>
@@ -275,7 +275,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                     </>
                 : currentIntent === 'worldLore' ?
                     <>
-                         "This has not been written yet."
+                        "This has not been written yet."
                     </>
                 : '' }
             </div>

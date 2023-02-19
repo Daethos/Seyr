@@ -139,7 +139,7 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
                     item?.type && item?.grip ?
                     <>
                 {item?.type} [{item?.grip}] <br />
-                {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item?.damage_type[1] : '' }]  <br />
+                {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item?.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type[2] : '' }]  <br />
                     </>
                     : item?.type ? <>{item?.type} <br /></> : ''
                 }
@@ -151,14 +151,14 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
                 {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ''}<br />
                 Damage: {item?.physical_damage} Physical | {item?.magical_damage} Magical <br />
                 {
-                    item?.physical_resistance ?
+                    item?.physical_resistance || item?.magical_resistance ?
                     <>
                     Defense: {item?.physical_resistance} Physical | {item?.magical_resistance} Magical <br />
                     </>
                     : ''
                 }
                 {
-                    item?.physical_penetration ?
+                    item?.physical_penetration || item?.magical_penetration ?
                     <>
                     Penetration: {item?.physical_penetration} Physical | {item?.magical_penetration} Magical <br />
                     </>

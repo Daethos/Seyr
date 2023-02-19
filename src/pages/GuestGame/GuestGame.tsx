@@ -1,6 +1,5 @@
-import { useEffect, useState, useCallback, useReducer } from 'react'
+import { useEffect, useState, useReducer } from 'react'
 import * as asceanAPI from '../../utils/asceanApi';  
-import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -11,11 +10,8 @@ import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
-import LevelUpModal from '../../game/LevelUpModal';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
-import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
-import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 
@@ -28,24 +24,13 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [ascean, setAscean] = useState<any>({});
     const [opponent, setOpponent] = useState<any>({});
-    const [opponents, setOpponents] = useState<any>([]);
     const [loading, setLoading] = useState(true);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [saveExp, setSaveExp] = useState<boolean>(false);
     const [dialog, setDialog] = useState<any>({});
     const [lootRoll, setLootRoll] = useState<boolean>(false);
-    const [lootDrop, setLootDrop] = useState<any>([]);
-    const [lootDropTwo, setLootDropTwo] = useState<any>([]);
-    const [itemSaved, setItemSaved] = useState<boolean>(false);
-    const [showDialog, setShowDialog] = useState<boolean>(false);
-    const [showInventory, setShowInventory] = useState<boolean>(false);
-    const [eqpSwap, setEqpSwap] = useState<boolean>(false);
-    const [checkLoot, setCheckLoot] = useState<boolean>(false);
-    const [removeItem, setRemoveItem] = useState<boolean>(false);
     const [background, setBackground] = useState<any>(null);
-    const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
     const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
@@ -115,9 +100,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 maxLevel: 6,
             };
             const firstResponse = await userService.getRandomEnemy(guestData);
-            console.log(firstResponse, 'First Response')
+            console.log(firstResponse, 'First Response');
             const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean._id);
-            console.log(response.data.data, 'Response')
+            console.log(response.data.data, 'Response');
             setAscean(response.data.data.ascean);
 
             dispatch({
@@ -147,7 +132,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             } else if (firstResponse.data.ascean.level <= 20) {
                 minLevel = 15;
                 maxLevel = 20;
-            }
+            };
             const enemyData = {
                 username: 'mirio',
                 minLevel: minLevel,
@@ -168,27 +153,27 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setLoading(false);
             setLoadingAscean(false);
         } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-            setLoading(false)
-        }
-    }
+            console.log(err.message, '<- Error in Getting an Ascean to Edit');
+            setLoading(false);
+        };
+    };
 
     useEffect(() => {
         getAscean();
-    }, [])
+    }, []);
 
     useEffect(() => {
         getOpponentDialog();
-    }, [opponent])
+    }, [opponent]);
 
     const getOpponentDialog = async () => {
         try {
             const response = getNpcDialog(opponent.name);
             setDialog(response);
         } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        }
-    }
+            console.log(err.message, '<- Error in Getting an Ascean to Edit');
+        };
+    };
 
     const getOpponent = async () => {
         setLoading(true);
@@ -239,17 +224,17 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             playOpponent();
             setLoading(false);
         } catch (err: any) {
-            console.log(err.message, 'Error retrieving Enemies')
-        }
-    }
+            console.log(err.message, 'Error retrieving Enemies');
+        };
+    };
 
     function handleAction(action: any) {
         dispatch({
             type: ACTIONS.SET_COMBAT_ACTION,
             payload: action.target.value
-        })
+        });
         setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-    }
+    };
 
     function handleCounter(counter: any) {
         dispatch({
@@ -257,7 +242,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             payload: counter.target.value
         });
         setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-    }
+    };
 
     async function setWeaponOrder(weapon: any) {
         try {
@@ -273,9 +258,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             });
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
-            console.log(err.message, 'Error Setting Weapon Order')
-        }
-    }
+            console.log(err.message, 'Error Setting Weapon Order');
+        };
+    };
 
     async function setDamageType(damageType: any) {
         try {    
@@ -286,9 +271,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             });
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
-            console.log(err.message, 'Error Setting Damage Type')
-        }
-    }
+            console.log(err.message, 'Error Setting Damage Type');
+        };
+    };
 
     async function setPrayerBlessing(prayer: any) {
         try {
@@ -299,9 +284,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             });
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
-            console.log(err.message, 'Error Setting Prayer')
-        }
-    }
+            console.log(err.message, 'Error Setting Prayer');
+        };
+    };
 
     async function soundEffects(effects: any) {
         try {
@@ -363,20 +348,17 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                     default: {
                         break;
                     };
-                }
+                };
             };
             if (effects.religious_success === true) {
                 playReligion();
             };
-            
             if (effects.roll_success === true || effects.computer_roll_success === true) {
                 playRoll();
             };
-            
             if (effects.counter_success === true || effects.computer_counter_success === true) {
                 playCounter();
             };
-            
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         };
@@ -400,7 +382,6 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 playWin();
-                setLootRoll(true);
                 dispatch({
                     type: ACTIONS.PLAYER_WIN,
                     payload: response.data
@@ -414,7 +395,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                     payload: response.data
                 });
                 setTimeLeft(0);
-            }
+            };
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
@@ -447,9 +428,8 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 backgroundRepeat: "no-repeat",
             };
             setBackground(getPlayerBackground);
-        }
-    }, [ascean])
-    
+        };
+    }, [ascean]);
 
     const num = Math.floor(Math.random() * 3) + 1;
     const chance = Math.floor(Math.random() * 3) + 1;
@@ -460,57 +440,57 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                     return process.env.PUBLIC_URL + `/images/astralands_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
-                }
+                };
             case 'Fyers':
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/firelands_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
-                }
+                };
             case "Li'ivi":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
-                }
+                };
             case "Notheo":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/west_fangs_${num}.jpg`;
-                }
+                };
             case "Nothos":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/soverains_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/kingdom_${num}.jpg`;
-                }
+                };
             case "Quor'eite":
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/licivitas_${num}.jpg`;
-                }
+                };
             case 'Sedyreal':
                 if (chance >= 2) {
                     return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
                 } else {
                     return process.env.PUBLIC_URL + `/images/firelands_${num}.jpg`;
-                }
-        }
-    }
+                };
+        };
+    };
       
     function sleep(ms: number) {
         return new Promise(
             resolve => setTimeout(resolve, ms)
         );
-    }
+    };
 
     if (loading || loadingAscean) {
         return (
             <Loading Combat={true} />
-        )
-    }
+        );
+    };
 
     return (
         <Container fluid id="game-container" style={ background }>
@@ -573,7 +553,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
             />
         </Container>
-    )
-}
+    );
+};
 
-export default GuestGame
+export default GuestGame;

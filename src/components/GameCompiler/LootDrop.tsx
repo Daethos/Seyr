@@ -10,20 +10,20 @@ interface Props {
     ascean: any;
     itemSaved: boolean;
     setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Props) => {
     const [saveSetting, setSaveSetting] = useState({
         ascean: ascean,
         lootDrop: lootDrop
-    })
+    });
 
     useEffect(() => {
         setSaveSetting({
             ascean: ascean,
             lootDrop: lootDrop
         });
-    }, [lootDrop])
+    }, [lootDrop]);
     
     const saveItem = async () => {
         try {
@@ -33,8 +33,8 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
             setItemSaved(true);
         } catch (err: any) {
             console.log(err.message, 'Error Saving Item to Inventory!');
-        }
-    }
+        };
+    };
 
     const lootDropPopover = (
         <Popover className="text-info" id="popover">
@@ -44,7 +44,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                     lootDrop?.type && lootDrop?.grip ?
                     <>
                 {lootDrop?.type} [{lootDrop?.grip}] <br />
-                {lootDrop?.attack_type} [{lootDrop?.damage_type?.[0]}{lootDrop?.damage_type?.[1] ? ' / ' + lootDrop?.damage_type[1] : '' }]  <br />
+                {lootDrop?.attack_type} [{lootDrop?.damage_type?.[0]}{lootDrop?.damage_type?.[1] ? ' / ' + lootDrop?.damage_type[1] : '' }{lootDrop?.damage_type?.[2] ? ' / ' + lootDrop?.damage_type[2] : '' }]  <br />
                     </>
                     : lootDrop?.type ? <>{lootDrop?.type} <br /></> : ''
                 }
@@ -56,14 +56,14 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                 {lootDrop?.kyosir > 0 ? 'Kyo: +' + lootDrop?.kyosir + ' ' : ''}<br />
                 Damage: {lootDrop?.physical_damage} Phys | {lootDrop?.magical_damage} Magi <br />
                 {
-                    lootDrop?.physical_resistance ?
+                    lootDrop?.physical_resistance || lootDrop?.magical_resistance ?
                     <>
                     Defense: {lootDrop?.physical_resistance} Phys | {lootDrop?.magical_resistance} Magi <br />
                     </>
                     : ''
                 }
                 {
-                    lootDrop?.physical_penetration ?
+                    lootDrop?.physical_penetration || lootDrop?.magical_resistance ?
                     <>
                     Penetration: {lootDrop?.physical_penetration} Phys | {lootDrop?.magical_penetration} Magi <br />
                     </>
@@ -90,7 +90,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                 }
             </Popover.Body>
         </Popover>
-    )
+    );
 
     function getBorderStyle(rarity: string) {
         switch (rarity) {
@@ -106,22 +106,22 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
                 return '2px solid orange';
             default:
                 return '2px solid grey';
-        }
-    }
+        };
+    };
 
     const getItemStyle = {
         background: 'black',
         border: getBorderStyle(lootDrop?.rarity)
-    }
+    };
 
     return (
         <div>
-        You have found a {lootDrop?.name}. <br />
+        You have found a(n) {lootDrop?.name}. <br />
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={lootDropPopover}>
             <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></Button>
         </OverlayTrigger>
         </div>
-    )
-}
+    );
+};
 
-export default LootDrop
+export default LootDrop;

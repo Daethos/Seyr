@@ -18,7 +18,7 @@ interface Props {
     trinket: any;
     gameDisplay?: boolean;
     loading?: boolean;
-}
+};
 
 const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay, loading }: Props) => {
     const weaponOnePopover = (
@@ -26,7 +26,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             <Popover.Header id="popover-header" className="" as="h2">{weapon_one?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_one?.imgURL} alt={weapon_one?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {weapon_one?.type} [{weapon_one?.grip}] <br />
-                {weapon_one?.attack_type} [{weapon_one?.damage_type?.[0]}{weapon_one?.damage_type?.[1] ? ' / ' + weapon_one.damage_type[1] : '' }] <br />
+                {weapon_one?.attack_type} [{weapon_one?.damage_type?.[0]}{weapon_one?.damage_type?.[1] ? ' / ' + weapon_one.damage_type[1] : '' }{weapon_one?.damage_type?.[2] ? ' / ' + weapon_one?.damage_type[2] : '' }] <br />
                 {weapon_one?.constitution > 0 ? 'CON: +' + weapon_one?.constitution + ' ' : ''}
                 {weapon_one?.strength > 0 ? 'STR: +' + weapon_one?.strength + ' ' : ''}
                 {weapon_one?.agility > 0 ? 'AGI: +' + weapon_one?.agility + ' ' : ''}
@@ -43,14 +43,14 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {weapon_one?.rarity}
             </Popover.Body>
         </Popover>
-    )
+    );
     const weaponTwoPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_two?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_two?.imgURL} alt={weapon_two?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {weapon_two?.name === 'Empty Weapon Slot' ? '' : <>
             {weapon_two?.type} [{weapon_two?.grip}] <br />
-                {weapon_two?.attack_type} [{weapon_two?.damage_type?.[0]}{weapon_two?.damage_type?.[1] ? ' / ' + weapon_two.damage_type[1] : '' }] <br />
+                {weapon_two?.attack_type} [{weapon_two?.damage_type?.[0]}{weapon_two?.damage_type?.[1] ? ' / ' + weapon_two.damage_type[1] : '' }{weapon_two?.damage_type?.[2] ? ' / ' + weapon_two?.damage_type[2] : '' }] <br />
                 {weapon_two?.constitution > 0 ? 'CON: +' + weapon_two?.constitution + ' ' : ''}
                 {weapon_two?.strength > 0 ? 'STR: +' + weapon_two?.strength + ' ' : ''}
                 {weapon_two?.agility > 0 ? 'AGI: +' + weapon_two?.agility + ' ' : ''}
@@ -68,14 +68,14 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 </>}
             </Popover.Body>
         </Popover>
-    )
+    );
     const weaponThreePopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_three?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_three?.imgURL} alt={weapon_three?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {weapon_three?.name === 'Empty Weapon Slot' ? '' : <>
                 {weapon_three?.type} [{weapon_three?.grip}] <br />
-                {weapon_three?.attack_type} [{weapon_three?.damage_type?.[0]}{weapon_three?.damage_type?.[1] ? ' / ' + weapon_three.damage_type[1] : '' }] <br />
+                {weapon_three?.attack_type} [{weapon_three?.damage_type?.[0]}{weapon_three?.damage_type?.[1] ? ' / ' + weapon_three.damage_type[1] : '' }{weapon_three?.damage_type?.[2] ? ' / ' + weapon_three?.damage_type[2] : '' }] <br />
                 {weapon_three?.constitution > 0 ? 'CON: +' + weapon_three?.constitution + ' ' : ''}
                 {weapon_three?.strength > 0 ? 'STR: +' + weapon_three?.strength + ' ' : ''}
                 {weapon_three?.agility > 0 ? 'AGI: +' + weapon_three?.agility + ' ' : ''}
@@ -93,7 +93,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 </>}
             </Popover.Body>
         </Popover>
-    )
+    );
     const shieldPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{shield?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + shield?.imgURL}  alt={shield?.name} /></span></Popover.Header>
@@ -107,10 +107,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {shield?.kyosir > 0 ? 'KYO: +' + shield?.kyosir + ' ' : ''}
                 <br />
                 {shield?.type}<br />
-                Physical Defense: +{shield?.physical_resistance}% <br />
-                Magical Defense: +{shield?.magical_resistance}% <br />
-                Physical Damage: {shield?.physical_damage}x <br />
-                Magical Damage: {shield?.magical_damage}x <br />
+                Defense: {shield?.physical_resistance} Phys | {shield?.magical_resistance} Magi <br />
                 Crit Chance: +{shield?.critical_chance}% <br />
                 Crit Damage: {shield?.critical_damage}x <br />
                 Dodge Timer: +{shield?.dodge}s <br />
@@ -119,7 +116,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 </>}
             </Popover.Body>
         </Popover>
-    )
+    );
     const helmetPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{helmet?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + helmet?.imgURL} alt={helmet?.name} /></span></Popover.Header>
@@ -132,10 +129,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {helmet?.kyosir > 0 ? 'KYO: +' + helmet?.kyosir + ' ' : ''}
                 <br />
                 {helmet?.type}<br />
-                Physical Defense: +{helmet?.physical_resistance}% <br />
-                Magical Defense: +{helmet?.magical_resistance}% <br />
-                Physical Damage: {helmet?.physical_damage}x <br />
-                Magical Damage: {helmet?.magical_damage}x <br />
+                Defense: {helmet?.physical_resistance} Phys | {helmet?.magical_resistance} Magi <br />
+                Damage: {helmet?.physical_damage} Phys | {helmet?.magical_damage} Magi <br />
                 Crit Chance: +{helmet?.critical_chance}% <br />
                 Crit Damage: {helmet?.critical_damage}x <br />
                 Dodge Timer: +{helmet?.dodge}s <br />
@@ -143,7 +138,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {helmet?.rarity}
             </Popover.Body>
         </Popover>
-    )
+    );
     const chestPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{chest?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + chest?.imgURL} alt={chest?.name} /></span></Popover.Header>
@@ -157,10 +152,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 <br />
                 {chest?.type}
                 <br />
-                Physical Defense: +{chest?.physical_resistance}% <br />
-                Magical Defense: +{chest?.magical_resistance}% <br />
-                Physical Damage: {chest?.physical_damage}x <br />
-                Magical Damage: {chest?.magical_damage}x <br />
+                Defense: {chest?.physical_resistance} Phys | {chest?.magical_resistance} Magi <br />
+                Damage: {chest?.physical_damage} Phys | {chest?.magical_damage} Magi <br />
                 Crit Chance: +{chest?.critical_chance}% <br />
                 Crit Damage: {chest?.critical_damage}x <br />
                 Dodge Timer: +{chest?.dodge}s <br />
@@ -168,7 +161,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {chest?.rarity}
             </Popover.Body>
         </Popover>
-    )
+    );
     const legsPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{legs?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + legs?.imgURL} alt={legs?.name} /></span></Popover.Header>
@@ -181,10 +174,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {legs?.kyosir > 0 ? 'KYO: +' + legs?.kyosir + ' ' : ''}
                 <br />
                 {legs?.type}<br />
-                Physical Defense: +{legs?.physical_resistance}% <br />
-                Magical Defense: +{legs?.magical_resistance}% <br />
-                Physical Damage: {legs?.physical_damage}x <br />
-                Magical Damage: {legs?.magical_damage}x <br />
+                Defense: {legs?.physical_resistance} Phys | {legs?.magical_resistance} Magi <br />
+                Damage: {legs?.physical_damage} Phys | {legs?.magical_damage} Magi <br />
                 Crit Chance: +{legs?.critical_chance}% <br />
                 Crit Damage: {legs?.critical_damage}x <br />
                 Dodge Timer: +{legs?.dodge}s <br />
@@ -192,7 +183,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {legs?.rarity}
             </Popover.Body>
         </Popover>
-    )
+    );
     const amuletPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{amulet?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + amulet?.imgURL} alt={amulet?.name} /></span></Popover.Header>
@@ -205,12 +196,9 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {amulet?.caeren > 0 ? 'CAER: +' + amulet?.caeren + ' ' : ''}
                 {amulet?.kyosir > 0 ? 'KYO: +' + amulet?.kyosir + ' ' : ''}
                 <br />
-                Physical Penetration: +{amulet?.physical_penetration}% <br />
-                Magical Penetration: +{amulet?.magical_penetration}% <br />
-                Physical Defense: +{amulet?.physical_resistance}% <br />
-                Magical Defense: +{amulet?.magical_resistance}% <br />
-                Physical Damage: {amulet?.physical_damage}x <br />
-                Magical Damage: {amulet?.magical_damage}x <br />
+                Penetration: {amulet?.physical_penetration} Phys | {amulet?.magical_penetration} Magi <br />
+                Defense: {amulet?.physical_resistance} Phys | {amulet?.magical_resistance} Magi <br />
+                Damage: {amulet?.physical_damage} Phys | {amulet?.magical_damage} Magi <br />
                 Crit Chance: +{amulet?.critical_chance}% <br />
                 Crit Damage: {amulet?.critical_damage}x <br />
                 Dodge Timer: +{amulet?.dodge}s <br />
@@ -220,7 +208,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 </>}
             </Popover.Body>
         </Popover>
-    )
+    );
     const ringOnePopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{ring_one?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_one?.imgURL} alt={ring_one?.name} /></span></Popover.Header>
@@ -234,12 +222,9 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {ring_one?.caeren > 0 ? 'CAER: +' + ring_one?.caeren + ' ' : ''}
                 {ring_one?.kyosir > 0 ? 'KYO: +' + ring_one?.kyosir + ' ' : ''}
                 <br />
-                Physical Penetration: +{ring_one?.physical_penetration}% <br />
-                Magical Penetration: +{ring_one?.magical_penetration}% <br />
-                Physical Defense: +{ring_one?.physical_resistance}% <br />
-                Magical Defense: +{ring_one?.magical_resistance}% <br />
-                Physical Damage: {ring_one?.physical_damage}x <br />
-                Magical Damage: {ring_one?.magical_damage}x <br />
+                Penetration: {ring_one?.physical_penetration} Phys | {ring_one?.magical_penetration} Magi <br />
+                Defense: {ring_one?.physical_resistance} Phys | {ring_one?.magical_resistance} Magi <br />
+                Damage: {ring_one?.physical_damage} Phys | {ring_one?.magical_damage} Magi <br />
                 Crit Chance: +{ring_one?.critical_chance}% <br />
                 Crit Damage: {ring_one?.critical_damage}x <br />
                 Dodge Timer: +{ring_one?.dodge}s <br />
@@ -249,7 +234,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 }
             </Popover.Body>
         </Popover>
-    )
+    );
     const ringTwoPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{ring_two?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + ring_two?.imgURL} alt={ring_two?.name} /></span></Popover.Header>
@@ -263,12 +248,9 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {ring_two?.caeren > 0 ? 'CAER: +' + ring_two?.caeren + ' ' : ''}
                 {ring_two?.kyosir > 0 ? 'KYO: +' + ring_two?.kyosir + ' ' : ''}
                 <br />
-                Physical Penetration: +{ring_two?.physical_penetration}% <br />
-                Magical Penetration: +{ring_two?.magical_penetration}% <br />
-                Physical Defense: +{ring_two?.physical_resistance}% <br />
-                Magical Defense: +{ring_two?.magical_resistance}% <br />
-                Physical Damage: {ring_two?.physical_damage}x <br />
-                Magical Damage: {ring_two?.magical_damage}x <br />
+                Penetration: {ring_two?.physical_penetration} Phys | {ring_two?.magical_penetration} Magi <br />
+                Defense: {ring_two?.physical_resistance} Phys | {ring_two?.magical_resistance} Magi <br />
+                Damage: {ring_two?.physical_damage} Phys | {ring_two?.magical_damage} Magi <br />
                 Crit Chance: +{ring_two?.critical_chance}% <br />
                 Crit Damage: {ring_two?.critical_damage}x <br />
                 Dodge Timer: +{ring_two?.dodge}s <br />
@@ -278,7 +260,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 }
             </Popover.Body>
         </Popover>
-    )
+    );
     const trinketPopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h3">{trinket?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + trinket?.imgURL} alt={trinket?.name} /></span></Popover.Header>
@@ -291,12 +273,9 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {trinket?.caeren > 0 ? 'CAER: +' + trinket?.caeren + ' ' : ''}
                 {trinket?.kyosir > 0 ? 'KYO: +' + trinket?.kyosir + ' ' : ''}
                 <br />
-                Physical Penetration: +{trinket?.physical_penetration}% <br />
-                Magical Penetration: +{trinket?.magical_penetration}% <br />
-                Physical Defense: +{trinket?.physical_resistance}% <br />
-                Magical Defense: +{trinket?.magical_resistance}% <br />
-                Physical Damage: {trinket?.physical_damage}x <br />
-                Magical Damage: {trinket?.magical_damage}x <br />
+                Penetration: {trinket?.physical_penetration} Phys | {trinket?.magical_penetration} Magi <br />
+                Defense: {trinket?.physical_resistance} Phys | {trinket?.magical_resistance} Magi <br />
+                Damage: {trinket?.physical_damage} Phys | {trinket?.magical_damage} Magi <br />
                 Crit Chance: +{trinket?.critical_chance}% <br />
                 Crit Damage: {trinket?.critical_damage}x <br />
                 Dodge Timer: +{trinket?.dodge}s <br />
@@ -306,7 +285,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 </>}
             </Popover.Body>
         </Popover>
-    )
+    );
 
     function getBorderStyle(rarity: string) {
         switch (rarity) {
@@ -322,80 +301,80 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 return '0.15em solid darkorange';
             default:
                 return '0.15em solid grey';
-        }
-    }
+        };
+    };
     const getWeaponOneStyle = {
         border: getBorderStyle(weapon_one?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getWeaponTwoStyle = {
         border: getBorderStyle(weapon_two?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getWeaponThreeStyle = {
         border: getBorderStyle(weapon_three?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getShieldStyle = {
         border: getBorderStyle(shield?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getHelmStyle = {
         border: getBorderStyle(helmet?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getChestStyle = {
         border: getBorderStyle(chest?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getLegsStyle = {
         border: getBorderStyle(legs?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getAmuletStyle = {
         border: getBorderStyle(amulet?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getRingOneStyle = {
         border: getBorderStyle(ring_one?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getRingTwoStyle = {
         border: getBorderStyle(ring_two?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
     const getTrinketStyle = {
         border: getBorderStyle(trinket?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-    }
+    };
 
     if (loading) {
         return (
             <Loading Combat={true} />
-        )
-    }
+        );
+    };
     return (
         <>
             {
@@ -515,7 +494,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             </Row>
             }
         </>
-  )
-}
+    );
+};
 
-export default AsceanImageCard
+export default AsceanImageCard;

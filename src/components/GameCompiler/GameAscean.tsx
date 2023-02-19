@@ -12,19 +12,20 @@ interface Props {
   loading: boolean;
   totalPlayerHealth: number;
   state: any;
-}
+};
 
 const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading }: Props) => {
 
   const getBlockStyle = {
     marginTop: state.playerEffects.length > 0 ? '-15%' : '6%',
-  }
+  };
 
   if (loading) {
     return (
       <Loading Combat={true} />
-    )
-  }
+    );
+  };
+
   return (
     <>
     { player ?
@@ -88,7 +89,7 @@ const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHea
     </div>
     }
     </>
-  )
-}
+  );
+};
 
-export default GameAscean
+export default GameAscean;

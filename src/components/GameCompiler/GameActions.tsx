@@ -23,7 +23,7 @@ interface Props {
     setPrayerBlessing: any;
     state: any;
     dispatch: any;
-}
+};
 
 const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageType, currentDamageType, setPrayerBlessing, timeLeft, setTimeLeft, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
@@ -39,33 +39,32 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
     } else {
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1));
       dispatch({ type: ACTIONS.CLEAR_COUNTER, payload: '' });
-    }
-  }, [currentAction, currentCounter])
+    };
+  }, [currentAction, currentCounter]);
 
   useEffect(() => {
     setDisplayedAction(`Weapon: ${currentWeapon?.name}`);
-  }, [currentWeapon])
+  }, [currentWeapon]);
 
   useEffect(() => {
     setDisplayedAction(`Damage: ${currentDamageType}`);
-  }, [currentDamageType])
+  }, [currentDamageType]);
 
   useEffect(() => {
     setDisplayedAction(`Prayer: ${state.playerBlessing}`);
-  }, [state.playerBlessing])
+  }, [state.playerBlessing]);
 
   useEffect(() => {
     if (state.combatInitiated) {
         if (dropdownRef.current) {
             dropdownRef!.current.selectedIndex = 0;
-        }
+        };
         dispatch({
           type: ACTIONS.SET_COMBAT_INITIATED,
           payload: false
         });
-      }
-  }, [combatInitiated])
-
+      };
+  }, [combatInitiated]);
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {
@@ -73,9 +72,9 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
         type: ACTIONS.SET_DODGE_STATUS,
         payload: false,
       });
-    }, (state?.weapons?.[0]?.dodge * 1000))
-    return () => clearTimeout(dodgeTimer)
-  }, [dodgeStatus])
+    }, (state?.weapons?.[0]?.dodge * 1000));
+    return () => clearTimeout(dodgeTimer);
+  }, [dodgeStatus]);
 
   useEffect(() => {
     const initiateTimer = setTimeout(() => {
@@ -83,12 +82,10 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
         type: ACTIONS.SET_ACTION_STATUS,
         payload: false
       })
-    }, 3000)
+    }, 3000);
     return () => clearTimeout(initiateTimer);
-  }, [actionStatus])
+  }, [actionStatus]);
   
-
-
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
@@ -109,7 +106,7 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
       <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
     </div>
     </>
-  )
-}
+  );
+};
 
-export default GameActions
+export default GameActions;
