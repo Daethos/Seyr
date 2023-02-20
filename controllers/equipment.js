@@ -162,11 +162,11 @@ const randomizeStats = (item, rarity) => {
 
     chance.forEach(att => {
         if (item[att] > 10) {
-            item[att] = randomIntFromInterval(item[att] -3, item[att] + 5);
+            item[att] = randomIntFromInterval(item[att] -2, item[att] + 5);
         } else if (item[att] > 5) { // 6-10
-            item[att] = randomIntFromInterval(item[att] - 2, item[att] + 3);
+            item[att] = randomIntFromInterval(item[att] - 1, item[att] + 3);
         } else if (item[att] >= 3) { // 3-5
-            item[att] = randomIntFromInterval(item[att] - 1, item[att] + 2);
+            item[att] = randomIntFromInterval(item[att], item[att] + 2);
         } else if (item[att] > 0) { // 1-2
             item[att] = randomIntFromInterval(item[att], item[att] + 1);
         };
@@ -174,11 +174,11 @@ const randomizeStats = (item, rarity) => {
 
     damage.forEach(dam => {
         if (item[dam] > 20) { // 21 +/- 5/3
-            item[dam] = randomIntFromInterval(item[dam] - 3, item[dam] + 5);
+            item[dam] = randomIntFromInterval(item[dam] - 2, item[dam] + 5);
         } else if (item[dam] > 10) { // 11-20 +/- 3/2
-            item[dam] = randomIntFromInterval(item[dam] - 2, item[dam] + 3);
+            item[dam] = randomIntFromInterval(item[dam] - 1, item[dam] + 3);
         } else if (item[dam] > 5) { // 6-10 +/- 2/1
-            item[dam] = randomIntFromInterval(item[dam] - 1, item[dam] + 2);
+            item[dam] = randomIntFromInterval(item[dam], item[dam] + 2);
         } else if (item[dam] > 1) { // 2-5 +/- 1/0
             item[dam] = randomIntFromInterval(item[dam], item[dam] + 1);
         };

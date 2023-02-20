@@ -76,7 +76,6 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     async function asceanLoaded() {
         try {
             setLoadingContent('');
-            setInventoryModalShow(false);
             setRemoveModalShow(false);
             setIsLoading(false);
         } catch (err: any) {
@@ -196,6 +195,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             };
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
+            setInventoryModalShow(false);
+
             setRemoveItem(true);
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
@@ -212,6 +213,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             };
             const response = await asceanAPI.removeItem(data);
             console.log(response, '<- Response in handleRemoveItem');
+            setInventoryModalShow(false);
+
             setRemoveItem(true);
         } catch (err: any) {
             console.log(err.message, '<- This is the error in handleRemoveItem');
@@ -225,6 +228,8 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             console.log(newAscean, '<- newAscean in Swapping Equipment start');
             const response = await asceanAPI.equipmentSwap(newAscean);
             console.log(response, '<- Response in Swapping Equipment');
+            setInventoryModalShow(false);
+
             setEqpSwap(true);
         } catch (err) {
             console.log(err, '<- This is the error in Swapping Equipment');
@@ -319,23 +324,23 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             return 'red';
         } else {
             return '#fdf6d8';
-        }
+        };
     };
 
     function getBorderStyle(rarity: string) {
         switch (rarity) {
             case 'Common':
-                return '2px solid white';
+                return '3px solid white';
             case 'Uncommon':
-                return '2px solid green';
+                return '3px solid green';
             case 'Rare':
-                return '2px solid blue';
+                return '3px solid blue';
             case 'Epic':
-                return '2px solid purple';
+                return '3px solid purple';
             case 'Legendary':
-                return '2px solid orange';
+                return '3px solid orange';
             default:
-                return '2px solid grey';
+                return '3px solid grey';
         };
     };
 

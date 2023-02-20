@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback, useReducer } from 'react'
+import { useEffect, useState, useCallback, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
-import './GameSolo.css'
+import './GameSolo.css';
 import * as asceanAPI from '../../utils/asceanApi';  
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
@@ -25,7 +25,7 @@ import Alert from 'react-bootstrap/Alert';
 
 interface GameProps {
     user: any;
-}
+};
 
 const GameSolo = ({ user }: GameProps) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
@@ -136,7 +136,7 @@ const GameSolo = ({ user }: GameProps) => {
             setAscean(firstResponse.data);
             console.log(firstResponse, 'First Response')
             const response = await asceanAPI.getAsceanStats(asceanID);
-            console.log(response, 'Response')
+            console.log(response, 'Response');
 
             dispatch({
                 type: ACTIONS.SET_PLAYER,
@@ -310,6 +310,8 @@ const GameSolo = ({ user }: GameProps) => {
             return;
         };
         try {
+            setEmergencyText([`You reflect on the moments of your duel with ${opponent.name} as you count your pouch of winnings.`]);
+
             const response = await asceanAPI.saveExperience(asceanState);
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
@@ -343,7 +345,6 @@ const GameSolo = ({ user }: GameProps) => {
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points.`]);
             };
             setSaveExp(false);
-            setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, 'Error Saving Experience');
         };

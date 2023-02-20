@@ -97,11 +97,11 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
     const handleCombatAction = (options: any, action: string) => {
         console.log(options, action, 'Action')
         setCombatAction(action);
-    }
+    };
     const handleRegion = (region: keyof Region) => {
         console.log(region, 'What are you ?')
         setProvince(region);
-    }
+    };
     const handleIntent = (intent: string) => {
         setCurrentIntent(intent);
     };
@@ -202,7 +202,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                         : '' }
                             <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Refresh Your Duel With {npc}.</Button>
                             <p style={{ color: 'orangered' }}>
-                            You Win. Hot Streak: {winStreak} Hi-Score ({highScore})
+                            You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
                             </p>
                         </> 
                     : computerWin ? 
@@ -220,7 +220,7 @@ const DialogBox = ({ state, dispatch, ascean, enemy, npc, dialog, checkLoot, set
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        "Spontaneously create fresh equipment for your amusement and purchase.""
+                        "Spontaneously create fresh equipment for your amusement and purchase."
                         <br />
                         <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                         <br />
