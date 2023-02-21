@@ -11,7 +11,7 @@ import Play from '../AsceanBuilder/Play';
 interface Props {
     ascean: any;
     userProfile?: boolean;
-    deleteAscean?: (ascean: any) => Promise<void>;
+    deleteAscean?: any;
     loggedUser?: any;
     loading?: boolean;
     accordion?: string;

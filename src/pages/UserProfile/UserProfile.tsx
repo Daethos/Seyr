@@ -33,11 +33,11 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
     };
   };
 
-  async function deleteAscean(e: React.ChangeEvent<HTMLButtonElement>) {
+  async function deleteAscean(e: any) {
     e.preventDefault();
     try {
-      console.log(e.target.value, '<- What are you in here?');
-      await asceanAPI.deleteAscean(e.target.value);
+      console.log(e.currentTarget.value, '<- What are you in here?');
+      await asceanAPI.deleteAscean(e.currentTarget.value);
       setCreateSuccess(true);
       await getAscean();
     } catch (err: any) {

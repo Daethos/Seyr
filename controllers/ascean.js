@@ -294,7 +294,8 @@ async function deleteAscean(req, res) {
     try {
         // const ascean = await Ascean.findById(req.params.id);
         // await asceanEquipmentDeleteCheck(ascean);
-        await Ascean.findByIdAndDelete(req.params.id)
+        console.log(req.params.id, '<- Ascean ID in Delete Ascean Function')
+        await Ascean.findByIdAndDelete(req.params.id);
         res.status(201).json({});
     } catch (err) {
         console.log(err.message, '<- Error in delete Ascean function')
@@ -326,60 +327,72 @@ const asceanEquipmentDeleteCheck = async (ascean) => {
 async function create(req, res) {
     console.log(req.body, '<- Hopefully the Ascean!', req.user)
         if (req.body.preference === 'Plate-Mail') {
-            req.body.helmet = '63b322831c4ece0f04812082';
-            req.body.chest = '63b322841c4ece0f04812088';
-            req.body.legs = '63b322841c4ece0f0481208d';
+            req.body.helmet = '63f413a4acef90a6e298a3c4';
+            req.body.chest = '63f413a5acef90a6e298a3cf';
+            req.body.legs = '63f413a5acef90a6e298a429';
         }
         if (req.body.preference === 'Chain-Mail') {
-            req.body.helmet = '63b322831c4ece0f04812083';
-            req.body.chest = '63b322841c4ece0f04812089';
-            req.body.legs = '63b322841c4ece0f0481208e';
+            req.body.helmet = '63f413a4acef90a6e298a3c5';
+            req.body.chest = '63f413a5acef90a6e298a3d0';
+            req.body.legs = '63f413a5acef90a6e298a42a';
         }
         if (req.body.preference === 'Leather-Mail') {
-            req.body.helmet = '63b322831c4ece0f04812084';
-            req.body.chest = '63b322841c4ece0f0481208a';
-            req.body.legs = '63b322841c4ece0f0481208f';
+            req.body.helmet = '63f413a4acef90a6e298a3c6';
+            req.body.chest = '63f413a5acef90a6e298a3d1';
+            req.body.legs = '63f413a5acef90a6e298a42b';
         }
         if (req.body.preference === 'Leather-Cloth') {
-            req.body.helmet = '63b322831c4ece0f04812085'
-            req.body.chest = '63b322841c4ece0f0481208b';
-            req.body.legs = '63b322841c4ece0f04812090';
+            req.body.helmet = '63f413a4acef90a6e298a3c7'
+            req.body.chest = '63f413a5acef90a6e298a3d2';
+            req.body.legs = '63f413a5acef90a6e298a42c';
         }
 
         if (req.body.faith === 'devoted') { // Devoted to Daethos
-            if ((req.body.strength + req.body.agility) >= (req.body.achre + req.body.caeren)) {
-                if (req.body.strength > req.body.agility) { // Halberd
+            if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
+                if (parseInt(req.body.strength) > parseInt(req.body.agility)) { // Daethic Halberd && Hush of Daethos
                     req.body.weapon_one = '63d059865df7503ef9cd71f4';
-                } else if (req.body.strength < req.body.agility) { // Gladius
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e58e';
+                } else if (parseInt(req.body.strength) < parseInt(req.body.agility)) { // Gladius && Daethic Bow
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e56c';
-                } else { // Same Value Daethic Bow
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e586';
+                } else { // Same Value Daethic Bow && Daethic Halberd
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e586';
+                    req.body.weapon_two = '63d059865df7503ef9cd71f4';
                 }
             } else {
-                if (req.body.achre > req.body.caeren) { // Tendril
+                if (parseInt(req.body.achre) > parseInt(req.body.caeren)) { // Tendril && Daethic Bow
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e583';
-                } else if (req.body.achre < req.body.caeren) { // Hush of Daethos
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e586';
+                } else if (parseInt(req.body.achre) < parseInt(req.body.caeren)) { // Hush of Daethos && Tendril of Daethos
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e58e';
-                } else { // Same Value Caeren Barrage
-                    req.body.weapon_one = '63b3460cd5c6cfea02a5e57c';
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e58f';
+                } else { // Same Value Blessed Dagger && Cursed Dagger
+                    req.body.weapon_one = '63e47c140de4781b96411d67';
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e572';
                 }
             }
         } else { // Adherent to the Ancients or Irreligious
-            if ((req.body.strength + req.body.agility) >= (req.body.achre + req.body.caeren)) {
-                if (req.body.strength > req.body.agility) { // War Hammer
+            if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
+                if (parseInt(req.body.strength) > parseInt(req.body.agility)) { // War Hammer && Sunshatter
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e578';
-                } else if (req.body.strength < req.body.agility) { // Longsword
+                    req.body.weapon_two = '63e47c140de4781b96411d6b';
+                } else if (parseInt(req.body.strength) < parseInt(req.body.agility)) { // Longsword && Sevashyr
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
-                } else { // Same Value Longbow
-                    req.body.weapon_one = '63b3460cd5c6cfea02a5e585';
+                    req.body.weapon_two = '63e54b27d110dc7ef8fd630b';
+                } else { // Same Value Claymore && Longbow
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e576';
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e585';
                 }
             } else {
-                if (req.body.achre > req.body.caeren) { // Astral Spear
+                if (parseInt(req.body.achre) > parseInt(req.body.caeren)) { // Astral Spear && Quor'eite Crush
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e57f';
-                } else if (req.body.achre < req.body.caeren) { // Ashfyre
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e581';
+                } else if (parseInt(req.body.achre) < parseInt(req.body.caeren)) { // Ashfyre && Nyrolean Wave
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e588';
-                } else { // Same Value Arctic Bolt
-                    req.body.weapon_one = '63b3460cd5c6cfea02a5e580';
+                    req.body.weapon_two = '63b3460cd5c6cfea02a5e58b';
+                } else { // Same Value Wildstrike && Nightmare
+                    req.body.weapon_one = '63b3460cd5c6cfea02a5e582';
+                    req.body.weapon_two = '63e47c140de4781b96411d77';
                 }
             }
         }
@@ -401,7 +414,7 @@ async function create(req, res) {
                 kyosir: req.body.kyosir,
                 mastery: req.body.mastery,
                 weapon_one: req.body.weapon_one,
-                weapon_two: '63b34b5ed5326753b191846b',
+                weapon_two: req.body.weapon_two,
                 weapon_three: '63b34b5ed5326753b191846c',
                 shield: '63b34b5fd5326753b191846f',
                 helmet: req.body.helmet,
@@ -413,7 +426,7 @@ async function create(req, res) {
                 trinket: '63b3491109fa8aa7e449599b',
                 faith: req.body.faith,
                 currency: {
-                    silver: 0,
+                    silver: req.body.kyosir,
                     gold: 0,
                 },
             })

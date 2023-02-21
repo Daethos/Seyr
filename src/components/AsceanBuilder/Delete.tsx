@@ -9,6 +9,11 @@ interface Props {
 
 const Delete = ({ ascean, deleteAscean }: Props) => {
     const [deleteModalShow, setDeleteModalShow] = useState<boolean>(false);
+    const checkDeleteAscean = (e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log(e.currentTarget.value, "Ascean ID to Delete ?");
+    }
     return (
         <>
         <Button variant="outline" 
