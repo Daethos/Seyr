@@ -206,11 +206,11 @@ async function critCompiler(weapon, attributes, combatStats) {
 
 async function faithCompiler(weapon, ascean) { 
     if (ascean.faith === 'adherent') {
-        if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Wild' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind') {
+        if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Wild' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind' || weapon.damage_type?.[0] === 'Sorcery') {
             weapon.magical_damage *= 1.075;
             weapon.critical_chance += 3;
         }
-        if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatmace') {
+        if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatmace' || weapon.type === 'Greatbow') {
             weapon.physical_damage *= 1.075;
         }
         if (weapon.type === 'Greatsword' || weapon.type === 'Polearm') {
@@ -241,7 +241,7 @@ async function faithCompiler(weapon, ascean) {
             weapon.magical_damage *= 1.05;
             weapon.critical_damage *= 1.05;
         }
-        if (weapon.grip === 'One Hand' || weapon.type === 'Bow') {
+        if (weapon.grip === 'One Hand' || weapon.type === 'Bow' || weapon.type === 'Greatbow') {
             weapon.physical_damage *= 1.05;
             weapon.magical_damage *= 1.05;
             weapon.critical_damage *= 1.05;
@@ -335,7 +335,7 @@ const coefficientCompiler = async (ascean, item) => {
             break;
         case 'Epic':
             coefficient = 1;
-            // coefficient = ascean.level / 20;
+            // coefficient = ascean.level / 16;
             break;
         case 'Legendary':
             coefficient = 1;

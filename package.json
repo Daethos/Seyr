@@ -37,6 +37,7 @@
     "mongoose": "^6.6.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "noisejs": "^2.1.0",
     "phaser": "^3.55.2",
     "phaser-matter-collision-plugin": "^1.0.0",
     "phaser3-rex-plugins": "^1.1.77",

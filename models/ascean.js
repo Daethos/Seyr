@@ -137,17 +137,6 @@ const asceanSchema = new Schema(
         achre: Number,
         caeren: Number,
         kyosir: Number,
-        // weapon_one: {type: Schema.Types.ObjectId, ref: 'Weapons'},
-        // weapon_two: {type: Schema.Types.ObjectId, ref: 'Weapons'},
-        // weapon_three: {type: Schema.Types.ObjectId, ref: 'Weapons'},
-        // shield: {type: Schema.Types.ObjectId, ref: 'Shields'},
-        // helmet: {type: Schema.Types.ObjectId, ref: 'Helmets'},
-        // chest: {type: Schema.Types.ObjectId, ref: 'Chests'},
-        // legs: {type: Schema.Types.ObjectId, ref: 'Legs'},
-        // ring_one: {type: Schema.Types.ObjectId, ref: 'Rings'},
-        // ring_two: {type: Schema.Types.ObjectId, ref: 'Rings'},
-        // amulet: {type: Schema.Types.ObjectId, ref: 'Amulets'},
-        // trinket: {type: Schema.Types.ObjectId, ref: 'Trinkets'},
         
         weapon_one: {
             type: Schema.Types.ObjectId,
@@ -238,7 +227,9 @@ const asceanSchema = new Schema(
             enum : ["adherent", "devoted", "none"],
             default: "none"
         },
+        quests: [questSchema],
         tutorial: {
+            firstBoot: { type: Boolean, default: true },
             firstCombat: { type: Boolean, default: true },
             firstQuest: { type: Boolean, default: true },
             firstShop: { type: Boolean, default: true },
