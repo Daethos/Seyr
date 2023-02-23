@@ -289,7 +289,7 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats, rarity) =
     penetrationCompiler(weaponOne, attributes, combatStats);
     critCompiler(weaponOne, attributes, combatStats);
     faithCompiler(weaponOne, ascean);
-    weaponOne.dodge += (40 + (combatStats.dodgeCombat * 1.5));
+    weaponOne.dodge += (60 + (combatStats.dodgeCombat));
     weaponOne.roll += combatStats.rollCombat;
     // console.log(weaponOne.magical_damage,  weaponOne.physical_damage, 'Damage Before Weapon Multiplier');
     // console.log(combatStats.damageMagical, combatStats.damagePhysical, 'Damage Multiplier After Compiling');
@@ -303,13 +303,13 @@ const defenseCompiler = async (ascean, attributes, combatStats, rarities) => {
         physicalDefenseModifier: 
             Math.round((ascean.helmet.physical_resistance * rarities.helmet) + (ascean.chest.physical_resistance * rarities.chest) + (ascean.legs.physical_resistance * rarities.legs) + 
             (ascean.ring_one.physical_resistance * rarities.ring_one) + (ascean.ring_two.physical_resistance * rarities.ring_two) + (ascean.amulet.physical_resistance * rarities.amulet) + (ascean.trinket.physical_resistance * rarities.trinket) 
-            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 8)) 
+            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 12)) 
             + combatStats.originPhysDef), // Need to create these in the backend as well
         
         magicalDefenseModifier: 
             Math.round((ascean.helmet.magical_resistance * rarities.helmet) + (ascean.chest.magical_resistance * rarities.chest) + (ascean.legs.magical_resistance * rarities.legs) + 
            (ascean.ring_one.magical_resistance * rarities.ring_one) + (ascean.ring_two.magical_resistance * rarities.ring_two) + (ascean.amulet.magical_resistance * rarities.amulet) + (ascean.trinket.magical_resistance * rarities.trinket) 
-            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 8)) 
+            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 12)) 
             + combatStats.originMagDef),
 
         physicalPosture: combatStats.defensePhysical + Math.round(ascean.shield.physical_resistance * rarities.shield),

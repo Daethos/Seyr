@@ -125,6 +125,20 @@ const asceanSchema = new Schema(
                 default: 0,
             },
         },
+        maps: {
+            type: [],
+            default: null
+        },
+        coordinates: {
+            x: {
+                type: Number,
+                default: 0,
+            },
+            y: {
+                type: Number,
+                default: 0,
+            },
+        },
         inventory: {
             type: [],
             default: null

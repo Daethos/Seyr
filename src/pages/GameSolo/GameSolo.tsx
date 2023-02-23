@@ -3,10 +3,11 @@ import { useParams } from 'react-router-dom';
 import './GameSolo.css';
 import * as asceanAPI from '../../utils/asceanApi';  
 import * as eqpAPI from '../../utils/equipmentApi';
+import * as gameAPI from '../../utils/gameApi'
+import * as mapAPI from '../../utils/mapApi';
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
-import * as gameAPI from '../../utils/gameApi'
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
@@ -19,9 +20,11 @@ import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 import Alert from 'react-bootstrap/Alert';
+import Joystick from '../../components/GameCompiler/Joystick';
 
 interface GameProps {
     user: any;
@@ -29,6 +32,7 @@ interface GameProps {
 
 const GameSolo = ({ user }: GameProps) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
+    const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [ascean, setAscean] = useState<any>({});
     const [opponent, setOpponent] = useState<any>({});
     const [opponents, setOpponents] = useState<any>([]);
@@ -450,6 +454,84 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const generateWorld = async (mapName: string) => {
+        try {
+            const data = {
+                name: mapName,
+                ascean: ascean,
+            };
+            const response = await mapAPI.createMap(data);
+            console.log(response, 'Response Generating World Environment.');
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_DATA,
+                payload: response
+            });
+            const coords = await getAsceanCoords(ascean?.coordinates?.x, ascean?.coordinates?.y, response.map);
+            console.log(coords, "Coordinates?")
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_COORDS,
+                payload: coords,
+            })
+        } catch (err: any) {
+            console.log(err.message, 'Error Generating World Environment.');
+        };
+    };
+
+    const moveAscean = async (direction: string) => {
+
+    }
+
+    type Direction = keyof typeof DIRECTIONS;
+
+    const handleDirectionChange = async (direction: Direction) => {
+        console.log(direction, "Is There A Direction?")
+        const offset = DIRECTIONS[direction];
+        if (offset) {
+          const newX = mapState.currentTile.x + offset.x;
+          const newY = mapState.currentTile.y + offset.y;
+          if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
+            // Update the character's position in the state
+            // setAscean((ascean) => ({
+            //   ...ascean,
+            //   coordinates: {
+            //     x: newX,
+            //     y: newY,
+            //   },
+            // }));
+      
+            // Update the tile information in the map state
+            const newTile = await getAsceanCoords(newX, newY, mapState.map);
+            mapDispatch({
+              type: MAP_ACTIONS.SET_MAP_COORDS,
+              payload: newTile,
+            });
+          }
+        }
+      };
+      
+      function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
+        let timer: ReturnType<typeof setTimeout>;
+        return function (this: T, ...args: any[]) {
+          clearTimeout(timer);
+          timer = setTimeout(() => func.apply(this, args), delay);
+        };
+      }
+      
+    
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, 100);
+
+    async function getAsceanCoords(x: number, y: number, map: any) {
+        // Access the tile object at the specified coordinates in the map
+        const tile = map?.[x + 100]?.[y + 100];
+        
+        // Return the tile object or null if the coordinates are out of bounds
+        return tile ?? null;
+    }
+      
+    useEffect(() => {
+        console.log(mapState.currentTile, 'Current Tile?')
+    }, [mapState.currentTile])
+
     useEffect(() => {
         if (lootRoll === false || state.player_win === false) return;
         getOneLootDrop(state.computer.level);
@@ -791,19 +873,20 @@ const GameSolo = ({ user }: GameProps) => {
                 <>
                 { showDialog ?    
                     <DialogBox 
-                        npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state} checkLoot={checkLoot} setCheckLoot={setCheckLoot} deleteEquipment={deleteEquipment}
-                        playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
-                        winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo}
-                        resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment}
+                    npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state} checkLoot={checkLoot} setCheckLoot={setCheckLoot} deleteEquipment={deleteEquipment}
+                    playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
+                    winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo} generateWorld={generateWorld} mapState={mapState} mapDispatch={mapDispatch}
+                    resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment}
                     />
-                : '' }
+                    : '' }
                 <Button variant='' className='dialog-button' onClick={() => setShowDialog(!showDialog)}>Dialog</Button>
                 <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>    
                 </>
             : '' }
             { showInventory ?
                 <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
-            : ""}
+                : ""}
+            {/* <Joystick onDirectionChange={debouncedHandleDirectionChange} /> */}
             <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
