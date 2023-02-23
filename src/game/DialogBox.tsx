@@ -299,7 +299,8 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc,
                             Province: {mapState.province} <br />
                             Current Position: x: {mapState.currentTile.x}, y: {mapState.currentTile.y} <br />
                             <br />
-                            Current Content: {mapState.currentTile.content}
+                            Current Content: {mapState.currentTile.content}<br /><br />
+                            "More content soon, with navigation and coordinate tracking, auto-journal entries"
                             </p>
                             </>
                             : ('')    

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
 interface Props {
     onDirectionChange: (...args: any[]) => void;
-}
+    debouncedHandleDirectionChange: (...args: any[]) => void;
+};
 
-const Joystick = ({ onDirectionChange }: Props) => {
+const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) => {
     const [touchStart, setTouchStart] = useState<{ x: number; y: number }>({
         x: 0,
         y: 0,
@@ -13,8 +14,7 @@ const Joystick = ({ onDirectionChange }: Props) => {
         x: 0,
         y: 0,
     });
-
-
+    const lastDirectionRef = useRef<string>("");
 
     const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -33,36 +33,43 @@ const Joystick = ({ onDirectionChange }: Props) => {
         const y = distance * Math.sin(angle);
         setPosition({ x, y });
         console.log(dx, dy, "x, y")
+        let direction: string = "";
 
-  
-
-        if (dx > 5 && dy < -5) {
-            onDirectionChange("upRight");
-        }
-        if (dx < 5 && dy > 5) {
-            onDirectionChange("downLeft");
-        };
-        if (dx > 5 && dy > 5) {
-            onDirectionChange("downRight");
-        };
-        if (dx < 5 && dy < -5) {
-            onDirectionChange("upLeft");
-        };
-        if (dx > 5) {
+        const angleDegrees = angle * 180 / Math.PI;
+        if (angleDegrees >= -22.5 && angleDegrees < 22.5) {
             onDirectionChange("right");
-        } 
-        if (dx < -5) {
-            onDirectionChange("left");
-        }
-        if (dy > 5) {
+            direction = "right";
+        } else if (angleDegrees >= 22.5 && angleDegrees < 67.5) {
+            onDirectionChange("downRight");
+            direction = "downRight";
+        } else if (angleDegrees >= 67.5 && angleDegrees < 112.5) {
             onDirectionChange("down");
-        } 
-        if (dy < -5) {
+            direction = "down";
+        } else if (angleDegrees >= 112.5 && angleDegrees < 157.5) {
+            onDirectionChange("downLeft");
+            direction = "downLeft";
+        } else if (angleDegrees >= 157.5 || angleDegrees < -157.5) {
+            onDirectionChange("left");
+            direction = "left";
+        } else if (angleDegrees >= -157.5 && angleDegrees < -112.5) {
+            onDirectionChange("upLeft");
+            direction = "upLeft";
+        } else if (angleDegrees >= -112.5 && angleDegrees < -67.5) {
             onDirectionChange("up");
+            direction = "up";
+        } else {
+            onDirectionChange("upRight");
+            direction = "upRight";  
         }
-      };
+
+        if (lastDirectionRef.current !== direction) {
+            lastDirectionRef.current = direction;
+        };
+
+        // setInterval(() => debouncedHandleDirectionChange(lastDirectionRef.current), 1000);
+    };
     
-      const handleTouchEnd = () => {
+    const handleTouchEnd = () => {
         setPosition({ x: 0, y: 0 });
     };
 
@@ -94,7 +101,7 @@ return (
             border: "2px solid black",
             backgroundColor: "#fdf6d8",
             transform: `translate(${position.x}px, ${position.y}px)`,
-            transition: 'transform 0.2s',
+            transition: 'transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
         }}
       ></div>
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useReducer } from 'react';
+import { useEffect, useState, useCallback, useReducer, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import './GameSolo.css';
 import * as asceanAPI from '../../utils/asceanApi';  
@@ -25,6 +25,7 @@ import Settings from '../../components/GameCompiler/Settings';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 import Alert from 'react-bootstrap/Alert';
 import Joystick from '../../components/GameCompiler/Joystick';
+import Coordinates from '../../components/GameCompiler/Coordinates';
 
 interface GameProps {
     user: any;
@@ -484,22 +485,13 @@ const GameSolo = ({ user }: GameProps) => {
     type Direction = keyof typeof DIRECTIONS;
 
     const handleDirectionChange = async (direction: Direction) => {
-        console.log(direction, "Is There A Direction?")
+        console.log(direction, "Is There A Direction?");
         const offset = DIRECTIONS[direction];
+        console.log(offset, "Is There An Offset?");
         if (offset) {
           const newX = mapState.currentTile.x + offset.x;
           const newY = mapState.currentTile.y + offset.y;
           if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
-            // Update the character's position in the state
-            // setAscean((ascean) => ({
-            //   ...ascean,
-            //   coordinates: {
-            //     x: newX,
-            //     y: newY,
-            //   },
-            // }));
-      
-            // Update the tile information in the map state
             const newTile = await getAsceanCoords(newX, newY, mapState.map);
             mapDispatch({
               type: MAP_ACTIONS.SET_MAP_COORDS,
@@ -886,7 +878,7 @@ const GameSolo = ({ user }: GameProps) => {
             { showInventory ?
                 <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
                 : ""}
-            {/* <Joystick onDirectionChange={debouncedHandleDirectionChange} /> */}
+            {/* <Joystick onDirectionChange={debouncedHandleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} /> */}
             <Settings inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
@@ -912,6 +904,11 @@ const GameSolo = ({ user }: GameProps) => {
                 playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
             />
+            {/* {
+                mapState?.currentTile ?
+                <Coordinates mapState={mapState} />
+                : ''
+            } */}
         </Container>
     );
 };
