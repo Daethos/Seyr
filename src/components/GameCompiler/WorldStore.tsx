@@ -8,6 +8,7 @@ interface MapData {
     map: object;
     currentTile: object;
     initialPosition: object;
+    context: string;
 };
 
 interface Action {
@@ -25,6 +26,7 @@ export const MAP_ACTIONS = {
     SET_MAP_SIZE: 'SET_MAP_SIZE',
     SET_MAP_CONTENT_CLUSTERS: 'SET_MAP_CONTENT_CLUSTERS',
     SET_MAP: 'SET_MAP',
+    SET_MAP_CONTEXT: 'SET_MAP_CONTEXT',
 };
 
 export const initialMapData: MapData = {
@@ -37,6 +39,7 @@ export const initialMapData: MapData = {
     map: {},
     currentTile: {},
     initialPosition: { x: 0, y: 0, content: '' },
+    context: '',
 };
 
 export const MapStore = (map: MapData, action: Action) => {
@@ -55,6 +58,11 @@ export const MapStore = (map: MapData, action: Action) => {
             return {
                 ...map,
                 name: action.payload,
+            };
+        case MAP_ACTIONS.SET_MAP_CONTEXT:
+            return {
+                ...map,
+                context: action.payload,
             };
         default: return map;
     }

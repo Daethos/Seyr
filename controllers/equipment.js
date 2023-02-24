@@ -20,7 +20,8 @@ module.exports = {
     upgradeEquipment,
     getMerchantEquipment,
     deleteEquipment,
-    getAndWriteEquipmentIds
+    getAndWriteEquipmentIds,
+    seedDB
 }
 
 async function indexEquipment(req, res) {

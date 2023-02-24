@@ -125,10 +125,9 @@ const asceanSchema = new Schema(
                 default: 0,
             },
         },
-        maps: {
-            type: [],
-            default: null
-        },
+        maps: [{
+            type: Schema.Types.ObjectId, ref: 'Map'
+        }],
         coordinates: {
             x: {
                 type: Number,
@@ -249,6 +248,7 @@ const asceanSchema = new Schema(
             firstShop: { type: Boolean, default: true },
             firstInventory: { type: Boolean, default: true },
             firstLoot: { type: Boolean, default: true },
+            firstMovement: { type: Boolean, default: true },
         },
         likes: [likeSchema],
         dislikes: [dislikeSchema],

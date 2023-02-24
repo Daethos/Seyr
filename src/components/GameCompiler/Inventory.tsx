@@ -29,7 +29,6 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
     const [inventoryTypeTwo, setInventoryTypeTwo] = useState<any>(null);
     const [inventoryTypeThree, setInventoryTypeThree] = useState<any>(null);
     const [inventoryRingType, setInventoryRingType] = useState<any>(null);
-    const [upgradeIds, setUpgradeIds] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingContent, setLoadingContent] = useState<string>('');
     const targetRef = useRef(null);
@@ -65,13 +64,6 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
       checkInventory();
       asceanLoaded();
     }, [ascean, inventory]);
-
-    // useEffect(() => {
-    //     asceanLoaded();
-    //     return () => {
-    //         setLoadedAscean(false);
-    //     };
-    // }, [loadedAscean]);
 
     async function asceanLoaded() {
         try {

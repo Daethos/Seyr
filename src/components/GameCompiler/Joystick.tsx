@@ -66,7 +66,6 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
             lastDirectionRef.current = direction;
         };
 
-        // setInterval(() => debouncedHandleDirectionChange(lastDirectionRef.current), 1000);
     };
     
     const handleTouchEnd = () => {
@@ -85,8 +84,8 @@ return (
         backgroundColor: "purple",
         border: "3px solid black",
         position: "fixed",
-        bottom: "250px",
-        right: "150px",
+        bottom: "75px",
+        right: "75px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

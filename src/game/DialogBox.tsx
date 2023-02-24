@@ -66,6 +66,8 @@ interface Props {
     generateWorld: (mapName: string) => Promise<void>;
     mapState: any;
     mapDispatch: any;
+    currentIntent: any;
+    setCurrentIntent: React.Dispatch<React.SetStateAction<any>>;
 }
 
 interface Region { 
@@ -80,8 +82,8 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
-    const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
+const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setCurrentIntent, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
+    // const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const regionInformation = {
         Astralands: "Good one, those Ashtre have quite the mouth on them I hear yet never heard. Perhaps you'll be able to catch their whispers.", 
@@ -194,7 +196,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc,
                 : currentIntent === 'challenge' ?
                     playerWin ? 
                         <>
-                        "Well check you out, {ascean.name}, you've won the duel. Congratulations" <br /><br /> 
+                        "Powerful {ascean.name}, you were fated this win. Fair play." <br /><br /> 
 
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
@@ -213,7 +215,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc,
                         </> 
                     : computerWin ? 
                         <>
-                            "Well now, {ascean.name}, can't say no one expected this, did we? Tell you what, we can keep at this till you bear luck's fortune."
+                            "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play."
                             <p style = {{ color: 'dodgerblue' }}>
                             You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
                             </p>
@@ -221,16 +223,16 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc,
                         </> 
                     :
                         <>
-                            "Oh is that why you're here, goodness. Very well, {ascean.name}. Shall we?"<br />
+                            "You would try me, {ascean.name}. Shall we?"<br />
                             <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Commence Duel with {npc}?</Button>
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        "Spontaneously create fresh equipment for your amusement and purchase."
+                        "Feast your eyes for your belly and pursestrings."
                         <br />
                         <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                         <br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={getLoot}>Generate Merchant Trader Equipment</Button>
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={getLoot}>See the merchant's wares.</Button>
                         <br />
                         { merchantEquipment?.length > 0 ?
                             <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
@@ -240,18 +242,19 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc,
                     <>
                     { playerWin ?
                         <>
-                        "Perhaps it's for the best. May you seek a worthy opponent, {ascean.name}."<br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Potential Duelist For More Experience</Button>
+                        "Go on now, {ascean.name}, and find better pastures. I'll be here licking my wounds."<br />
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek those pastures and leave your lesser to their pity.</Button>
                         </>
                     : computerWin ?
                         <>
-                        "Take care {ascean.name}, and seek aid. You do not look well."<br />
-                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Meh, Another Day, New Duelist.</Button>
+                        "Find shelter{ascean.name}, your frailty concerns me."<br />
+                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Feign scamperping away to hide shame and wounds.</Button>
                         </>
                     : 
                         <>
-                        "Perhaps we'll meet again, {ascean.name}."<br />
-                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button>
+                        "Where do you think you're going, {ascean?.name}? You think this is a game?"
+                        {/* "Perhaps we'll meet again, {ascean.name}."<br />
+                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button> */}
                         </>
                     }
                     </>
@@ -281,30 +284,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, ascean, enemy, npc,
                     </>
                 : currentIntent === 'worldLore' ?
                     <>
-                        "Have you generated a world, yet? You simply need to write a name to reference it by."
-                        <br />
-                        <input type='text' value={mapName} onChange={(e: any) => setMapName(e.target.value)} />
-                        <br />
-                        <Button variant='' style={{ color: '#fdf6d8', fontVariant: 'small-caps', outline: 'none' }} onClick={() => generateWorld(mapName)}>Generate World Environment: <br /> 
-                        <p style={{ color: 'gold' }}>
-                        {mapName}
-                        </p>
-                        </Button>
-                        <br />
-                        {
-                            mapState.name !== '' ?
-                            <>
-                            <p style={{ color: 'gold' }}>
-                            Map Name: {mapState.name} <br />
-                            Province: {mapState.province} <br />
-                            Current Position: x: {mapState.currentTile.x}, y: {mapState.currentTile.y} <br />
-                            <br />
-                            Current Content: {mapState.currentTile.content}<br /><br />
-                            "More content soon, with navigation and coordinate tracking, auto-journal entries"
-                            </p>
-                            </>
-                            : ('')    
-                    }
+                        "This has not been written yet."
                     </>
                 : '' }
             </div>

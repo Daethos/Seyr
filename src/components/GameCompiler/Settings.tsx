@@ -17,9 +17,11 @@ interface Props {
     setSoundEffectsVolume: React.Dispatch<React.SetStateAction<number>>;
     loadedAscean: boolean;
     setLoadedAscean: React.Dispatch<React.SetStateAction<boolean>>;
+    currentTile: any;
+    saveAsceanCoords: (x: number, y: number) => Promise<void>;
 };
 
-const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume, loadedAscean, setLoadedAscean }: Props) => {
+const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume, loadedAscean, setLoadedAscean, currentTile, saveAsceanCoords }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -47,6 +49,7 @@ const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemov
         <Modal show={settingsModalShow} onHide={() => setSettingsModalShow(false)} centered>
         <Modal.Body style={settingsStyle}>
         <h3 style={{ fontSize: 20 + 'px', textAlign: 'center' }}>Gameplay Settings</h3>
+        <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}></Button>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
             <InventoryBag settings={true} inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />

@@ -21,7 +21,7 @@ export async function createMap(data: object) {
 
 export async function saveNewMap(map: any) {
     console.log(map, '<- map in mapAPI')
-    return fetch(BASE_URL + map.reference, {
+    return fetch(BASE_URL + map.ascean._id, {
         method: "PUT",
         body: JSON.stringify(map),
         headers: {

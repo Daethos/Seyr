@@ -9,6 +9,9 @@ const mapSchema = new Schema({
     size: { type: Number, default: 100 },
     contentClusters: { type: Object, default: {} },
     map: { type: Object, default: {} },
+    currentTile: { type: Object, default: {} },
+    initialPosition: { type: Object, default: {} },
+    context: { type: String, default: '' },
     }, {
     timestamps: true
 });

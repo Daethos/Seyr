@@ -98,6 +98,17 @@
     margin-top: -1%;
   }
 }
+.city-button {
+  grid-column-start: 3;
+  grid-row-start: 7;
+  color: purple;
+  background: black;
+  border: 2px solid purple;
+  width: 100%;
+  height: 50%;
+  margin-left: -25%;
+  box-shadow: 2px 2px 2px black;
+}
 .dialog-button {
   grid-column-start: 3;
   grid-row-start: 8;

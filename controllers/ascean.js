@@ -10,6 +10,7 @@ const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
 const fs = require('fs');
+const seedDB = require('./equipment').seedDB;
 
 module.exports = {
     create,
@@ -26,7 +27,8 @@ module.exports = {
     swapItems,
     removeItem,
     purchaseToInventory,
-    searchAscean
+    searchAscean,
+    saveCoordinates,
 }
 
 async function editAscean(req, res) {
@@ -91,6 +93,16 @@ async function determineItemType(id) {
     return null;
 };
 
+async function saveCoordinates(req, res) {
+    try {
+        const ascean = await Ascean.findById(req.body.ascean);
+        
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Saving Coordinates!');
+        res.status(400).json(err);
+    }
+}
+
 async function saveToInventory(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
@@ -140,7 +152,7 @@ async function swapItems(req, res) {
         const currentItemId = ascean[itemType];
         ascean[itemType] = req.body[keyToUpdate];
         const currentItem = await determineItemType(currentItemId);
-        if (!currentItem.name.includes('Empty')) {
+        if (!currentItem.name.includes('Empty') || !currentItem.name.includes('Starter')) {
             ascean.inventory.push(currentItemId);
         };
         const currentItemIndex = ascean.inventory.indexOf(req.body[keyToUpdate]);
@@ -397,6 +409,10 @@ async function create(req, res) {
             }
         }
 
+        const firstWeapon = await Weapon.findById(req.body.weapon_one);
+        await seedDB([firstWeapon], firstWeapon.rarity);
+        const secondWeapon = await Weapon.findById(req.body.weapon_two);
+        await seedDB([secondWeapon], secondWeapon.rarity);
 
         try {
             const ascean = await Ascean.create({
@@ -413,8 +429,8 @@ async function create(req, res) {
                 caeren: req.body.caeren,
                 kyosir: req.body.kyosir,
                 mastery: req.body.mastery,
-                weapon_one: req.body.weapon_one,
-                weapon_two: req.body.weapon_two,
+                weapon_one: firstWeapon._id,
+                weapon_two: secondWeapon._id,
                 weapon_three: '63b34b5ed5326753b191846c',
                 shield: '63b34b5fd5326753b191846f',
                 helmet: req.body.helmet,
@@ -496,12 +512,12 @@ async function getOneAscean(req, res) {
             ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
             
         await Ascean.populate(ascean, [
-        { path: 'user' },
+        { path: 'user' },{ path: 'maps' },
         ...populateOptions
         ]);
 
         const inventoryPopulated = ascean.inventory.map(async item => {
-            const itemType = determineItemType(item);
+            const itemType = await Equipment.findById(item);
             if (itemType) {
                 return itemType;
             };

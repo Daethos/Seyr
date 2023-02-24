@@ -21,10 +21,7 @@ async function saveMap(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.asceanID);
         const map = await Map.create(req.body);
-        ascean.maps.push({
-            map: map._id,
-            name: map.name,
-        });
+        ascean.maps.push(map._id);
         await ascean.save();
         res.status(201).json(map);
     } catch (err) {
