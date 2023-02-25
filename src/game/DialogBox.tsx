@@ -68,6 +68,7 @@ interface Props {
     mapDispatch: any;
     currentIntent: any;
     setCurrentIntent: React.Dispatch<React.SetStateAction<any>>;
+    clearOpponent: () => Promise<void>;
 }
 
 interface Region { 
@@ -82,7 +83,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setCurrentIntent, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
+const DialogBox = ({ state, dispatch, mapState, mapDispatch, clearOpponent, currentIntent, setCurrentIntent, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     // const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const regionInformation = {
@@ -117,6 +118,17 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setC
             type: ACTIONS.SET_DUEL,
             payload: ''
         });
+    };
+
+    const clearDuel = async () => {
+        try {
+            console.log("Clearing Duel");
+            await checkingLoot();
+            await clearOpponent();
+
+        } catch (err: any) {
+            console.log(err.message, "Error Clearing Duel");
+        };
     };
 
     const checkReset = async () => {
@@ -196,7 +208,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setC
                 : currentIntent === 'challenge' ?
                     playerWin ? 
                         <>
-                        "Powerful {ascean.name}, you were fated this win. Fair play." <br /><br /> 
+                        "Powerful {ascean.name}, you were fated this win. This is all I have to offer, if it pleases you." <br /><br /> 
 
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
@@ -208,7 +220,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setC
                         : lootDropTwo?._id ?
                             <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
                         : '' }
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Refresh Your Duel With {npc}.</Button>
+                            {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Refresh Your Duel With {npc}.</Button> */}
                             <p style={{ color: 'orangered' }}>
                             You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
                             </p>
@@ -223,36 +235,30 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setC
                         </> 
                     :
                         <>
-                            "You would try me, {ascean.name}. Shall we?"<br />
-                            <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Commence Duel with {npc}?</Button>
+                            "{ascean.name} is it? Very well, you don't seem much for talking either, shall we then?"<br />
+                            <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Commence your duel with {npc}?</Button>
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        "Feast your eyes for your belly and pursestrings."
-                        <br />
-                        <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                        <br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={getLoot}>See the merchant's wares.</Button>
-                        <br />
-                        { merchantEquipment?.length > 0 ?
-                            <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
-                        : '' }
+                        "This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like."
                     </>
                 : currentIntent === 'farewell' ?
                     <>
                     { playerWin ?
                         <>
                         "Go on now, {ascean.name}, and find better pastures. I'll be here licking my wounds."<br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek those pastures and leave your lesser to their pity.</Button>
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
                         </>
                     : computerWin ?
                         <>
                         "Find shelter{ascean.name}, your frailty concerns me."<br />
-                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Feign scamperping away to hide shame and wounds.</Button>
+                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
                         </>
                     : 
                         <>
                         "Where do you think you're going, {ascean?.name}? You think this is a game?"
+                        <br />
+                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Commence your duel with {npc}?</Button>
                         {/* "Perhaps we'll meet again, {ascean.name}."<br />
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button> */}
                         </>
@@ -276,11 +282,19 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, currentIntent, setC
                     </>
                 : currentIntent === 'provincialWhispers' ?
                     <>
+                    {
+                        playerWin ?
+                        <>
                         "There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"<br />
                         <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
                         <div style={{ color: 'gold', fontSize: 12 + 'px' }}>
-                        "{regionInformation[province]}"
+                            "{regionInformation[province]}"
                         </div>
+                        </>
+                        : computerWin ?
+                        <>"I guess those whipspers must wait another day."</>
+                        : <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
+                    }
                     </>
                 : currentIntent === 'worldLore' ?
                     <>

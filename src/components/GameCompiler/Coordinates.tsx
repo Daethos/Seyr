@@ -8,9 +8,9 @@ const Coordinates = ({ mapState }: Props) => {
     const CoordinateStyle = {
         // zIndex: 100,
         height: '100%',
-        marginLeft: "",
+        marginLeft: "-5vw",
         marginRight: "auto",
-        marginTop: "96.825vh",
+        marginTop: "96.75vh",
         display: 'flex',
         justifyContent: 'center',
         gridColumn: '2 / 4',
@@ -18,7 +18,6 @@ const Coordinates = ({ mapState }: Props) => {
     return (
         <div style={CoordinateStyle}>
             <p style={{ color: 'gold', 
-            marginTop: "" 
             }}>
             [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ]
             </p>

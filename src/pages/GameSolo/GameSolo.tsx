@@ -30,6 +30,8 @@ import Overlay from 'react-bootstrap/Overlay';
 import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal';
 import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
 import Content from '../../components/GameCompiler/Content';
+import CityBox from '../../components/GameCompiler/CityBox';
+import StoryBox from '../../components/GameCompiler/StoryBox';
 
 interface GameProps {
     user: any;
@@ -74,6 +76,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [mapName, setMapName] = useState<string>('');
     const [cityButton, setCityButton] = useState<boolean>(false);
     const [showCity, setShowCity] = useState<boolean>(false);
+    const [cityOption, setCityOption] = useState<any | null>('Innkeep');
+    const [storyContent, setStoryContent] = useState<string>("");
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
     const [playOpponent] = useSound(opponentSfx, { volume: soundEffectVolume });
@@ -478,14 +482,24 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const clearOpponent = async () => {
+        try {
+            console.log("Clearing DUel in Game Solo");
+            setOpponent(null);
+            if (showDialog) {
+                setShowDialog(false);
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error Clearing Duel');
+        };
+    };
+
     const saveWorld = async () => {
         try {
             // const response = await mapAPI.saveNewMap(mapState);
             // console.log(response);
-            setOverlayContent(`Good luck, ${ascean.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. The world doesn't need you, the world doesn't want you. The world's heroes are long dead millenia prior when the Ancients fell. Many have sought to join these legends best they could, and in praise erected the honors of the Ascea, a season long festival of competiive athletic, intellectual, and poetic skills to to be judged in the manner of the Ancients before as an Ascean, worthy, vying to be crowned the va'Esai, to achieve the moniker, 'Worthy of the Preservation of Being.' Whatever you seek in this world, if you wish it so, it starts with the Ascea.`);
+            setOverlayContent(`Good luck, ${ascean.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`);
             setLoadingContent(true);
-            // setLoadingOverlay(false);
-            // setting loading overylay to false will trigger the overlay to close but I need to wait a solid 3 seconds before it does so.
             setTimeout(() => {
                 setOverlayContent('');
                 setLoadingOverlay(false);
@@ -539,21 +553,30 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const chance = Math.floor(Math.random() * 100) + 1;
             console.log(chance, 'Chance Encounter');
-            if (chance > 99) {
-                await getDungeon();
-            } else if (chance > 98) {
-                await getCave();
-            } else if (chance > 97) {
-                await getWonder();
-            } else if (chance > 96) {
-                await getRuins();
-            } else if (chance > 95) {
-                await getLandmark();
-            } else if (chance > 92) {
+            // if (chance > 99) {
+            //     setStoryContent(`You've encountered a dungeon by chance! \n Dungeons were thought to house the enemies of the Ancients, constructed by humans to house the creatures of the ley.`);
+            //     await getDungeon();
+            // } else if (chance > 98) {
+            //     setStoryContent(`You've encountered a cave by chance! \n These formations arose from the earth yet man in times of war and strife would hollow them deeper and deeper for survival, some connecting between provinces its been said.`);
+            //     await getCave();
+            // } else if (chance > 97) {
+            //     setStoryContent(`You've encountered a wonder by chance! \n The past found many peoples gathering to worship and celebrate this world, even now they are kept undisturbed. Would you like to stay a moment and ponder?`);
+            //     await getWonder();
+            // } else if (chance > 96) {
+            //     setStoryContent(`You've encountered a ruin by chance! \n The past found many peoples gathering to worship and celebrate in the natural`);
+            //     await getRuins();
+            // } else if (chance > 95) {
+            //     setStoryContent(`You've encountered a landmark by chance! \n Oftentimes folk would leave items of worship in memory of Ancients past, if not unspoiled food and drink for those making their pilgrimage.`);
+            //     await getLandmark();
+            // } else 
+            if (chance > 97) {
+                setStoryContent(`You've happened on treasure, what luck! \n See what you've found?`);
                 await getTreasure();
-            } else if (chance > 81) {
+            } else if (chance > 94) {
+                setStoryContent(`Your encroaching footsteps has alerted someone to your presence!`);
                 await getOpponent();
-            } else if (chance > 70) {
+            } else if (chance > 91) {
+                setStoryContent(`You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.`);
                 await getNPC();
             } else {
                 console.log("No Encounter");
@@ -601,10 +624,12 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     const getPhenomena = async () => {
+        if (cityButton) setCityButton(false);
 
     };
 
     const getWeather = async (province: string) => {
+        if (cityButton) setCityButton(false);
         switch (province) {
             case 'Alluring Isles': {
                 mapDispatch({
@@ -666,14 +691,27 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getNPC = async () => {
-        console.log("You would have gotten an NPC here.")
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten an NPC here.");
+
     };
 
     const getWonder = async () => {
-
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten a Wonder here.");
     };
 
     const getTreasure = async () => {
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
         setGameplayEvent({
             title: "Treasure!",
             description: `${ascean.name} found a treasure chest!`,
@@ -683,25 +721,46 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getLandmark = async () => {
-
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten a Landmark here.");
     };
 
     const getHazard = async () => {
-
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten a Hazard here.");
     };
 
     const getCave = async () => {
-
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten a Cave here.");
     };
     const getRuins = async () => {
-
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten Ruins here.");
     };
     const getDungeon = async () => {
         console.log("You Are In A Dungeon")
+        if (cityButton) {
+            setCityButton(false);
+            setShowCity(false);
+        };
+        console.log("You would have gotten a Dungeon here.");
         // This will be a probabilistic roll of random dungeons that affect gameplay, similar to environmental effects. May last for some time.
     };
     const getCity = async () => {
-        console.log("You Are In The City")
+        console.log("You Are In The City");
         // This will be a probabilistic roll of random cities that affect gameplay, similar to environmental effects. May last for some time.
         setCityButton(true);
     };
@@ -781,7 +840,14 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         console.log(mapState.currentTile, 'Current Tile?')
-        if (mapState?.currentTile?.content === 'nothing') return;
+        if (mapState?.currentTile?.content === 'nothing') {
+            if (cityButton) {
+                setCityButton(false);
+                setShowCity(false);
+            };
+            chanceEncounter();
+            return;
+        };
         handleTileContent(mapState.currentTile.content);
     }, [mapState.currentTile])
 
@@ -989,12 +1055,14 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 playWin();
                 gainExperience();
-                setLootRoll(true);
                 dispatch({
                     type: ACTIONS.PLAYER_WIN,
                     payload: response.data
                 });
                 setTimeLeft(0);
+                if (mapState?.currentTile?.content !== 'city') {
+                    setLootRoll(true);
+                }
             }
             if (response.data.computer_win === true) {
                 playDeath();
@@ -1086,9 +1154,7 @@ const GameSolo = ({ user }: GameProps) => {
                 playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             />
 
-            { showInventory ?
-                <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
-            : ""}
+
             
             <Settings inventory={ascean.inventory} ascean={ascean} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
             
@@ -1135,17 +1201,28 @@ const GameSolo = ({ user }: GameProps) => {
                             npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state} checkLoot={checkLoot} setCheckLoot={setCheckLoot} deleteEquipment={deleteEquipment} currentIntent={currentIntent} setCurrentIntent={setCurrentIntent}
                             playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
                             winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo} generateWorld={generateWorld} mapState={mapState} mapDispatch={mapDispatch}
-                            resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment}
+                            resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment} clearOpponent={clearOpponent}
                         />
                     : '' }
+                    { showInventory ?
+                        <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
+                    : ""}
                     {
-                        opponent ?
+                        opponent && mapState?.currentTile?.content !== 'city' ?
                         <Button variant='' className='dialog-button' onClick={() => setShowDialog(!showDialog)}>Dialog</Button>
-                        : ''
+                        : 
+                        <>
+                        <StoryBox ascean={ascean} mapState={mapState} storyContent={storyContent} />
+                        <Joystick onDirectionChange={debouncedHandleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
+                        <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>   
+                        </>
                     }
-                    {
-                        showCity ?
-                        ''
+                    { showCity ?
+                        <CityBox 
+                            state={state} dispatch={dispatch} ascean={ascean} mapState={mapState} enemy={opponent} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment}
+                            itemSaved={itemSaved} setItemSaved={setItemSaved} inventory={ascean.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
+                            cityOption={cityOption} setCityOption={setCityOption} clearOpponent={clearOpponent}
+                        />
                         : ''
                     }
                     {
@@ -1153,8 +1230,6 @@ const GameSolo = ({ user }: GameProps) => {
                         <Button variant='' className='city-button' onClick={() => setShowCity(!showCity)}>City</Button>
                         : ''
                     }
-                    <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>   
-                    <Joystick onDirectionChange={debouncedHandleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
                 </>
             }
 

@@ -32,7 +32,6 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
         const x = distance * Math.cos(angle);
         const y = distance * Math.sin(angle);
         setPosition({ x, y });
-        console.log(dx, dy, "x, y")
         let direction: string = "";
 
         const angleDegrees = angle * 180 / Math.PI;

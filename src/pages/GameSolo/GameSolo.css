@@ -6,6 +6,7 @@
   height: 100vh;
   width: 100%;
   margin: 0px;
+  border: 0.2em solid purple;
 }
 #game-block {
   margin-left: 7.5%;
@@ -20,6 +21,28 @@
   transform: scale(1.1);
   margin-top: -10%;
 }
+
+.overlay-content {
+  color: gold;
+  text-shadow: 1.5px 1.5px 1.5px darkgoldenrod;
+  text-align: center;
+  font-variant: small-caps;
+  position: absolute;
+  opacity: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+@keyframes fade {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
+
 .status-effects {
   grid-row-start: 6;
   grid-column-start: 1;
@@ -40,6 +63,26 @@
   display: inline-block;
   
   z-index: -1;
+}
+.story-box {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  height: 150px;
+  border: 2px solid purple;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  box-shadow: 2px 2px 2px black;
+}
+.story-box-content {
+  color: #fdf6d8;
+  text-align: center;
+  margin-top: 1%;
+  overflow-y: scroll;
+  height: 150px;
+  width: 100%;
+  white-space: pre-wrap;
 }
 .dialog-box {
   position: absolute; /* add this */
@@ -99,14 +142,15 @@
   }
 }
 .city-button {
-  grid-column-start: 3;
+  grid-column-start: 4;
   grid-row-start: 7;
   color: purple;
   background: black;
   border: 2px solid purple;
   width: 100%;
   height: 50%;
-  margin-left: -25%;
+  margin-top: 25%;
+  /* margin-left: -25%; */
   box-shadow: 2px 2px 2px black;
 }
 .dialog-button {

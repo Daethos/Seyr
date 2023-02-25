@@ -37,7 +37,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
     };
 
     const lootDropPopover = (
-        <Popover className="text-info" id="popover">
+        <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
             <Popover.Header id="popover-header" className="" as="h2">{lootDrop?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 {

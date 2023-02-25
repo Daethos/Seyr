@@ -53,11 +53,12 @@ const GameplayOverlay = ({ ascean, mapState, mapDispatch, loadingOverlay, setLoa
                 display: '',
                 backgroundColor: 'rgba(0, 0, 0, 0.95)',
                 zIndex: 9999,
+                border: "0.2em solid purple"
             }}
             >
-                <h3 style={{ color: 'gold', fontVariant: 'small-caps', textShadow: '2px 2px 2px darkgoldenrod', fontWeight: 600, textAlign: 'center', position: "absolute" }}>
+                <h5 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 3s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
-                </h3>
+                </h5>
             { ascean?.tutorial?.firstBoot && !loadingContent ?
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>

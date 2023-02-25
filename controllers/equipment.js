@@ -21,7 +21,11 @@ module.exports = {
     getMerchantEquipment,
     deleteEquipment,
     getAndWriteEquipmentIds,
-    seedDB
+    seedDB,
+    getWeaponEquipment,
+    getArmorEquipment,
+    getJewelryEquipment,
+    getClothEquipment
 }
 
 async function indexEquipment(req, res) {
@@ -265,6 +269,162 @@ async function getMerchantEquipment(req, res) {
             merchantEquipment.push(equipment[0]);
         };
         // console.log(type, 'Type in Merchant Function')
+        res.status(200).json({ data: merchantEquipment });
+    } catch (err) {
+        console.log(err, 'Error in Merchant Function');
+        res.status(400).json({ err });
+    } finally {
+        await client.close();
+    };
+};
+
+async function getWeaponEquipment(req, res) {
+    try {
+        await client.connect();
+        let merchantEquipment = [];
+        let rarity;
+        for (let i = 0; i < 6; i++) {
+            rarity = determineRarityByLevel(req.params.level);
+            let equipment;
+            if (req.params.level < 4) {
+                rarity = 'Common';
+                equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else {
+                equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } ;
+            await seedDB(equipment, rarity);
+            merchantEquipment.push(equipment[0]);
+        };
+        res.status(200).json({ data: merchantEquipment });
+    } catch (err) {
+        console.log(err, 'Error in Merchant Function');
+        res.status(400).json({ err });
+    } finally {
+        await client.close();
+    };
+};
+
+async function getJewelryEquipment(req, res) {
+    try {
+        await client.connect();
+        let merchantEquipment = [];
+        let type;
+        let rarity;
+        let types = ['Ring', 'Amulet', 'Trinket'];
+        for (let i = 0; i < 6; i++) {
+            rarity = determineRarityByLevel(req.params.level);
+            if (rarity === 'Common') {
+                rarity = 'Uncommon';
+            };
+            type = types[Math.floor(Math.random() * types.length)];
+            let equipment;
+            if (type === 'Ring') {
+                equipment = await Ring.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Amulet') {
+                equipment = await Amulet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Trinket') {
+                equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
+            };
+            await seedDB(equipment, rarity);
+            merchantEquipment.push(equipment[0]);
+        };
+        res.status(200).json({ data: merchantEquipment });
+    } catch (err) {
+        console.log(err, 'Error in Merchant Function');
+        res.status(400).json({ err });
+    } finally {
+        await client.close();
+    };
+};
+
+async function getClothEquipment(req, res) {
+    try {
+        await client.connect();
+        let merchantEquipment = [];
+        let type;
+        let rarity;
+        let types = ['Weapon', 'Helmet', 'Chest', 'Legs'];
+        for (let i = 0; i < 6; i++) {
+            rarity = determineRarityByLevel(req.params.level);
+            type = types[Math.floor(Math.random() * types.length)];
+            let equipment;
+            let eqpCheck = Math.floor(Math.random() * 100 + 1);
+            if (req.params.level < 4) {
+                rarity = 'Common';
+                if (eqpCheck > 75) {
+                    equipment = await Weapon.aggregate([ { $match: { rarity, attack_type: "Magic" } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Weapon';
+                } else if (eqpCheck > 50) {
+                    equipment = await Helmet.aggregate([{ $match: { rarity, type: "Leather-Cloth" } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Helmet';
+                } else if (eqpCheck > 25) {
+                    equipment = await Chest.aggregate([{ $match: { rarity, type: "Leather-Cloth" } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Chest';
+                } else {
+                    equipment = await Legs.aggregate([{ $match: { rarity, type: "Leather-Cloth" } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Legs';
+                };
+            } else if (type === 'Weapon') {
+                equipment = await Weapon.aggregate([{ $match: { rarity, attack_type: "Magic" } }, { $sample: { size: 1 } } ]).exec();
+            } else if (type === 'Helmet') {
+                equipment = await Helmet.aggregate([{ $match: { rarity, type: "Leather-Cloth" } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Chest') {
+                equipment = await Chest.aggregate([{ $match: { rarity, type: "Leather-Cloth" } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Legs') {
+                equipment = await Legs.aggregate([{ $match: { rarity, type: "Leather-Cloth" } }, { $sample: { size: 1 } }]).exec();
+            };
+            await seedDB(equipment, rarity);
+            merchantEquipment.push(equipment[0]);
+        };
+        // console.log(type, 'Type in Merchant Function')
+        res.status(200).json({ data: merchantEquipment });
+    } catch (err) {
+        console.log(err, 'Error in Merchant Function');
+        res.status(400).json({ err });
+    } finally {
+        await client.close();
+    };
+};
+
+async function getArmorEquipment(req, res) {
+    try {
+        await client.connect();
+        let merchantEquipment = [];
+        let type;
+        let rarity;
+        let types = ['Shield', 'Helmet', 'Chest', 'Legs', 'Helmet', 'Chest', 'Legs', 'Helmet', 'Chest', 'Legs'];
+        for (let i = 0; i < 6; i++) {
+            rarity = determineRarityByLevel(req.params.level);
+            type = types[Math.floor(Math.random() * types.length)];
+            let equipment;
+            let eqpCheck = Math.floor(Math.random() * 100 + 1);
+            if (req.params.level < 4) {
+                rarity = 'Common';
+                 if (eqpCheck > 90) {
+                    equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Shield';
+                } else if (eqpCheck > 60) {
+                    equipment = await Helmet.aggregate([ { $match: { rarity, type: { $ne: 'Leather-Cloth' } } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Helmet';
+                } else if (eqpCheck > 30) {
+                    equipment = await Chest.aggregate([{ $match: { rarity, type: { $ne: 'Leather-Cloth' } } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Chest';
+                } else {
+                    equipment = await Legs.aggregate([{ $match: { rarity, type: { $ne: 'Leather-Cloth' } } }, { $sample: { size: 1 } }]).exec();
+                    type = 'Legs';
+                };
+            } else if (type === 'Shield') {
+                equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Helmet') {
+                equipment = await Helmet.aggregate([{ $match: { rarity, type: { $ne: 'Leather-Cloth' } } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Chest') {
+                equipment = await Chest.aggregate([{ $match: { rarity, type: { $ne: 'Leather-Cloth' } } }, { $sample: { size: 1 } }]).exec();
+            } else if (type === 'Legs') {
+                equipment = await Legs.aggregate([{ $match: { rarity, type: { $ne: 'Leather-Cloth' } } }, { $sample: { size: 1 } }]).exec();
+            } 
+            await seedDB(equipment, rarity);
+            merchantEquipment.push(equipment[0]);
+        };
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
