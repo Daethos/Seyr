@@ -87,6 +87,8 @@ interface CombatData {
     highScore: number;
     winStreak: number;
     loseStreak: number;
+
+    weather: string;
 }
 
 interface Action {
@@ -120,6 +122,9 @@ export const ACTIONS = {
     AUTO_ENGAGE: 'AUTO_ENGAGE',
     PLAYER_WIN: 'PLAYER_WIN',
     COMPUTER_WIN: 'COMPUTER_WIN',
+    CLEAR_DUEL: 'CLEAR_DUEL',
+    SET_WEATHER: 'SET_WEATHER',
+    PLAYER_REST: 'PLAYER_REST',
 }
 
 export const initialCombatData: CombatData = {
@@ -202,6 +207,7 @@ export const initialCombatData: CombatData = {
     highScore: 0,
     winStreak: 0,
     loseStreak: 0,
+    weather: '',
 }
 
 export const CombatStore = (state: CombatData, action: Action) => {
@@ -381,6 +387,14 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 combatEngaged: false,
                 dodgeStatus: false,
             }
+        case 'CLEAR_DUEL':
+            return {
+                ...state,
+                player_win: false,
+                computer_win: false,
+                combatRound: 0,
+                sessionRound: 0,
+            };
         case 'SET_PLAYER_QUICK':
             return {
                 ...state,
@@ -418,6 +432,21 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 player: action.payload,
+            };
+        case 'SET_WEATHER': 
+            return {
+                ...state,
+                weather: action.payload,
+            };
+        case 'PLAYER_REST':
+            const percentage = action.payload;
+            const playerHealthHealed = Math.floor(state.current_player_health + (state.player_health * (percentage / 100)));
+            const playerHealth = playerHealthHealed > state.player_health ? state.player_health : playerHealthHealed;
+            console.log(percentage, playerHealthHealed, playerHealth, "The %, the Health Healed, and the new Player Health")
+            return {
+                ...state,
+                current_player_health: playerHealth,
+                new_player_health: playerHealth,
             };
         default: 
             return state;

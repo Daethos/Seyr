@@ -33,20 +33,21 @@ const GameplayEventModal = ({ ascean, gameplayEvent, show, setShow, lootDrop, se
     };
 
     const modalStyle = {
-        color: 'orangered',
+        color: 'gold',
         fontWeight: 400,
         fontVariant: 'small-caps',
-        fontSize: 25 + 'px',
-        height: 65 + 'vh',
+        fontSize: 20 + 'px',
+        height: 50 + 'vh',
         overflow: 'auto',
     };
     return (
-        <Modal show={show} onHide={() => checkingLoot()}>
-            <Modal.Header closeButton closeVariant='white'>
+        <Modal show={show} onHide={() => checkingLoot()} centered backdrop="static">
+            <Modal.Header closeButton closeVariant='white' style={{ fontSize: "20px", color: "orangered" }}>
                 {gameplayEvent.title}   
             </Modal.Header>
             <Modal.Body style={modalStyle}>
                 {gameplayEvent.description}
+                <br /><br />
                 { lootDrop?._id && lootDropTwo?._id ?
                     <>
                         <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
@@ -57,6 +58,8 @@ const GameplayEventModal = ({ ascean, gameplayEvent, show, setShow, lootDrop, se
                 : lootDropTwo?._id ?
                     <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
                 : '' }
+                <br /><br />
+                [Note: Treasure must be Saved]
             </Modal.Body>
         </Modal>
     )

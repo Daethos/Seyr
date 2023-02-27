@@ -70,8 +70,10 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
         return matches.length >= 3;
     };
 
-    const handleCityOption = (option: string) => {
+    const handleCityOption = async (option: string) => {
         console.log(option, 'Option Clicked');
+        await checkingLoot();
+        if (enemy) await clearOpponent();
         setCityOption(option);
     };
 
@@ -100,10 +102,11 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
 
     const handleRest = async () => {
         // This will handle recovering your health back to 100%
-        // dispatch ({ action: ACTIONS.REST, payload: 100 });
+        console.log("Healing Back to 100%!");
+        dispatch ({ type: ACTIONS.PLAYER_REST, payload: 100 });
         // payload for ACTIONS.REST is going to be a % of health to recover.
         // Potions will be a either a set amount of have ranged values depending.
-    }
+    };
 
     const checkingLoot = async () => {
         console.log(merchantEquipment.length, 'Merchant Equipment')
@@ -284,7 +287,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                 </>
                 : cityOption === 'Innkeep' ?
                 <>
-                    "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night."
+                    "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night (Free at the moment)."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
                     <br /><br />

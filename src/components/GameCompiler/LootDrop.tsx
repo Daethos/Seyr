@@ -17,7 +17,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
         ascean: ascean,
         lootDrop: lootDrop
     });
-
+    const article = ['a','e','i','o','u'].includes(lootDrop?.name?.[0]) ? "an" : "a";
     useEffect(() => {
         setSaveSetting({
             ascean: ascean,
@@ -116,7 +116,7 @@ const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Pr
 
     return (
         <div>
-        You have found a(n) {lootDrop?.name}. <br />
+        You have found {article} {lootDrop?.name}. <br />
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={lootDropPopover}>
             <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></Button>
         </OverlayTrigger>

@@ -69,6 +69,7 @@ interface Props {
     currentIntent: any;
     setCurrentIntent: React.Dispatch<React.SetStateAction<any>>;
     clearOpponent: () => Promise<void>;
+    setLoadingCombatOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Region { 
@@ -83,7 +84,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, mapState, mapDispatch, clearOpponent, currentIntent, setCurrentIntent, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
+const DialogBox = ({ state, dispatch, mapState, mapDispatch, setLoadingCombatOverlay, clearOpponent, currentIntent, setCurrentIntent, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
     // const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const regionInformation = {
@@ -114,6 +115,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, clearOpponent, curr
     };
     const engageCombat = async () => {
         await checkingLoot();
+        setLoadingCombatOverlay(true);
         dispatch({
             type: ACTIONS.SET_DUEL,
             payload: ''
@@ -236,7 +238,7 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, clearOpponent, curr
                     :
                         <>
                             "{ascean.name} is it? Very well, you don't seem much for talking either, shall we then?"<br />
-                            <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Commence your duel with {npc}?</Button>
+                            <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
@@ -251,14 +253,14 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, clearOpponent, curr
                         </>
                     : computerWin ?
                         <>
-                        "Find shelter{ascean.name}, your frailty concerns me."<br />
+                        "Find shelter {ascean.name}, your frailty concerns me."<br />
                         <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
                         </>
                     : 
                         <>
                         "Where do you think you're going, {ascean?.name}? You think this is a game?"
                         <br />
-                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Commence your duel with {npc}?</Button>
+                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
                         {/* "Perhaps we'll meet again, {ascean.name}."<br />
                         <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button> */}
                         </>

@@ -32,6 +32,8 @@ import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
 import Content from '../../components/GameCompiler/Content';
 import CityBox from '../../components/GameCompiler/CityBox';
 import StoryBox from '../../components/GameCompiler/StoryBox';
+import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
+import GameMap from '../../components/GameCompiler/GameMap';
 
 interface GameProps {
     user: any;
@@ -70,6 +72,9 @@ const GameSolo = ({ user }: GameProps) => {
     const [overlayContent, setOverlayContent] = useState<string>("");
     const [loadingOverlay, setLoadingOverlay] = useState<boolean>(false);
     const [loadingContent, setLoadingContent] = useState<boolean>(false);
+    const [loadingCombatOverlay, setLoadingCombatOverlay] = useState<boolean>(false);
+    const [combatOverlayText, setCombatOverlayText] = useState<any>('')
+    const [combatResolved, setCombatResolved] = useState<boolean>(false);
     const overlayRef = useRef(null);
     const [gameplayModal, setGameplayModal] = useState<boolean>(false);
     const [gameplayEvent, setGameplayEvent] = useState({ title: "", description: "" });
@@ -300,6 +305,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
             playOpponent();
             setLoadingOpponent(false);
+            if (!showDialog && mapState?.currentTile?.content !== 'city') setShowDialog(true);
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         };
@@ -344,7 +350,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
         try {
             setEmergencyText([`You reflect on the moments of your duel with ${opponent.name} as you count your pouch of winnings.`]);
-
+            setCombatOverlayText(`You reflect on the moments of your duel with ${opponent.name} as you count your pouch of winnings.`);
             const response = await asceanAPI.saveExperience(asceanState);
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             setAscean(firstResponse.data);
@@ -370,12 +376,16 @@ const GameSolo = ({ user }: GameProps) => {
             });
             if (response.data.gold > 0 && response.data.silver > 0) {
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`]);
+                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`])
             } else if (response.data.gold > 0 && response.data.silver === 0) { 
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`]);
+                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`]);
             } else if (response.data.gold === 0 && response.data.silver > 0) {
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`]);
+                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`]);
             } else {
                 setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points.`]);
+                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points.`]);
             };
             setSaveExp(false);
         } catch (err: any) {
@@ -486,6 +496,10 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             console.log("Clearing DUel in Game Solo");
             setOpponent(null);
+            dispatch({
+                type: ACTIONS.CLEAR_DUEL,
+                payload: null
+            })
             if (showDialog) {
                 setShowDialog(false);
             };
@@ -580,6 +594,13 @@ const GameSolo = ({ user }: GameProps) => {
                 await getNPC();
             } else {
                 console.log("No Encounter");
+                if (storyContent !== '') {
+                    setStoryContent('');
+                }
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
+                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+                });
             }
 
         } catch (err: any) {
@@ -596,9 +617,14 @@ const GameSolo = ({ user }: GameProps) => {
           const newY = mapState.currentTile.y + offset.y;
           if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
             const newTile = await getAsceanCoords(newX, newY, mapState.map);
+            const data = {
+                newTile: newTile,
+                oldTile: mapState.currentTile,
+            }
+            console.log(data, "The Current and Next Tiles")
             mapDispatch({
-              type: MAP_ACTIONS.SET_MAP_COORDS,
-              payload: newTile,
+              type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
+              payload: data,
             });
           }
         }
@@ -634,60 +660,93 @@ const GameSolo = ({ user }: GameProps) => {
             case 'Alluring Isles': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Increment jungle weighs your steps, succumbing to the dense and undisturbed natural wonder. -10% to rolls, critical strikes."
+                    payload: "Increment jungle weighs your steps, succumbing to the dense and undisturbed natural wonder. -10% Roll, Critical Strike. +10% Elemental, Ranged Damage."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Alluring Isles"
+                })
                 break;
             };
             case 'Astralands': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Lightning strikes surround a swirl of heavy, bleeding clouds. A good day for Astra."
+                    payload: "Lightning strikes surround a swirl of heavy, bleeding clouds. +10% Critical Strikes, +10% Magic Damage."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Astralands"
+                })
                 break;
             };
             case 'Fangs': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Soft, frothing fog surrounds the area. -10% damage from ranged attacks"
+                    payload: "Soft, frothing fog surrounds the area. -10% Elemental, Ranged Damage. +5% Roll. +10% Melee Damage."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Fangs"
+                })
                 break;
             };
             case 'Firelands': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "It's bright and sunny, just absolute beautiful weather. +10% damage to all attacks"
+                    payload: "It's bright and sunny, just absolute beautiful weather. Couldn't ask for a better day for a stroll into the wilderness. +10% Damage, +25% Critical Damage. You cannot dodge."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Firelands"
+                })
                 break;
             };
             case 'Kingdom': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Snowfall gathers and the winds greet you with shrill smiles. +10% damage to all magic attacks. -10% damage to all physical attacks."
+                    payload: "Snowfall gathers and the winds greet you with shrill smiles. +10% Ancient, Physical Damage. -5% Roll."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Kingdom"
+                })
                 break;
             };
             case 'Licivitas': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Slick weather draws palpable breaths as you embark across the plains. +5% to rolls, critical strikes."
+                    payload: "Slick weather draws palpable breaths as you embark across the plains. A calm gives glimpses of the land of hush and tendril. +10% Ancient, Daethic Damage."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Licivitas"
+                })
                 break;
             };
             case 'Sedyrus': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Harsh desert. +10% damage to all attacks"
+                    payload: "Despite your settings, monsoons quench the root of these lands for months wtih a single flash of its reverence. +10% Ancient, Elemental Damage. +10% Critical Damage. -5% Roll. You cannot dodge."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Sedyrus"
+                })
                 break;
             };
             case 'Soverains': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "It's bright and sunny, just absolute beautiful weather. +10% damage to all attacks"
+                    payload: "Strange airs pervade and grant a sense of shifting winds, its swirl caressing. +10% Magic Damage. +5% Roll."
                 });
+                dispatch({
+                    type: ACTIONS.SET_WEATHER,
+                    payload: "Soverains"
+                })
                 break;
             };
         };
+        await chanceEncounter();
     };
 
     const getNPC = async () => {
@@ -714,7 +773,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
         setGameplayEvent({
             title: "Treasure!",
-            description: `${ascean.name} found a treasure chest!`,
+            description: `${ascean.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
         });
         await getOneLootDrop(ascean.level);
         setGameplayModal(true);
@@ -761,10 +820,16 @@ const GameSolo = ({ user }: GameProps) => {
     };
     const getCity = async () => {
         console.log("You Are In The City");
+        setStoryContent(`You're now in a local city of the province. Using the City button, you can access the city's services and shops.`);
         // This will be a probabilistic roll of random cities that affect gameplay, similar to environmental effects. May last for some time.
+        setBackground(getCityBackground);
         setCityButton(true);
     };
-    const handleTileContent = async (content: string) => {
+    const handleTileContent = async (content: string, lastContent: string) => {
+        console.log(content, lastContent, "Current and Last COntent")
+        if (lastContent === 'city' && content !== 'city') {
+            setBackground(getPlayerBackground);
+        };
         try {
             switch (content) {
                 case 'enemy': {
@@ -842,13 +907,14 @@ const GameSolo = ({ user }: GameProps) => {
         console.log(mapState.currentTile, 'Current Tile?')
         if (mapState?.currentTile?.content === 'nothing') {
             if (cityButton) {
+                setBackground(getPlayerBackground);
                 setCityButton(false);
                 setShowCity(false);
             };
             chanceEncounter();
             return;
         };
-        handleTileContent(mapState.currentTile.content);
+        handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
     }, [mapState.currentTile])
 
     useEffect(() => {
@@ -1036,8 +1102,50 @@ const GameSolo = ({ user }: GameProps) => {
         }
     };
 
+    async function handlePlayerWin(combatData: any) {
+        console.log('handlePlayerWin called at', Date.now());
+
+        try {
+            playWin();
+            gainExperience();
+            setLoadingCombatOverlay(true);
+            setTimeout(() => {
+                setTimeLeft(0);
+                dispatch({
+                    type: ACTIONS.PLAYER_WIN,
+                    payload: combatData
+                });
+                if (mapState?.currentTile?.content !== 'city') {
+                    setLootRoll(true);
+                };
+                setLoadingCombatOverlay(false);
+            }, 6000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
+    async function handleComputerWin(combatData: any) {
+        try {
+            playDeath();
+            setCombatOverlayText([`You have lost the battle to ${opponent?.name}, yet still there is always Achre for you to gain.`])
+            setLoadingCombatOverlay(true);
+            setTimeout(() => {
+                setTimeLeft(0);
+                dispatch({
+                    type: ACTIONS.COMPUTER_WIN,
+                    payload: combatData
+                });
+                setLoadingCombatOverlay(false);
+            }, 6000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
+        console.log('handleInitiate called at', Date.now());
         try {
             if (state.action === '') {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`]);
@@ -1053,24 +1161,28 @@ const GameSolo = ({ user }: GameProps) => {
             });
             await soundEffects(response.data);
             if (response.data.player_win === true) {
-                playWin();
-                gainExperience();
-                dispatch({
-                    type: ACTIONS.PLAYER_WIN,
-                    payload: response.data
-                });
-                setTimeLeft(0);
-                if (mapState?.currentTile?.content !== 'city') {
-                    setLootRoll(true);
-                }
+                await handlePlayerWin(response.data);
+                // playWin();
+                // gainExperience();
+                // dispatch({
+                //     type: ACTIONS.PLAYER_WIN,
+                //     payload: response.data
+                // });
+                // setTimeLeft(0);
+                // if (mapState?.currentTile?.content !== 'city') {
+                //     setLootRoll(true);
+                // };
+                // setCombatResolved(true);
             }
             if (response.data.computer_win === true) {
-                playDeath();
-                dispatch({
-                    type: ACTIONS.COMPUTER_WIN,
-                    payload: response.data
-                });
-                setTimeLeft(0);
+                await handleComputerWin(response.data);
+                // playDeath();
+                // dispatch({
+                //     type: ACTIONS.COMPUTER_WIN,
+                //     payload: response.data
+                // });
+                // setTimeLeft(0);
+                // setCombatResolved(true);
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -1099,15 +1211,22 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (ascean?.origin && background === null) {
-            const getPlayerBackground = {
-                background: "url(" + getBackgroundStyle(ascean.origin) + ")",
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-            };
+
             setBackground(getPlayerBackground);
         }
     }, [ascean]);
     
+    const getPlayerBackground = {
+        background: "url(" + getBackgroundStyle(ascean.origin) + ")",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+    };
+
+    const getCityBackground = {
+        background: "url(" + process.env.PUBLIC_URL + `/images/city_2.jpg` + ")",
+        backgroundSize: "100% 100%",
+        backgroundRepeat: "no-repeat",
+    };	
 
     function getBackgroundStyle(origin: string) {
         const num = Math.floor(Math.random() * 3) + 1;
@@ -1145,18 +1264,28 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container" style={ background }>
             {
                 opponent ?
+                <>
                 <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+                <CombatOverlay 
+                    ascean={ascean} enemy={opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
+                    playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
+                    rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
+                    loadingCombatOverlay={loadingCombatOverlay} setLoadingCombatOverlay={setLoadingCombatOverlay} combatResolved={combatResolved} setCombatResolved={setCombatResolved}
+                    combatOverlayText={combatOverlayText} setCombatOverlayText={setCombatOverlayText}
+                />
+                </>
                 : ''
             }
 
             <GameConditions 
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} gainExperience={gainExperience} soundEffects={soundEffects}
-                playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
+                playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft} setCombatResolved={setCombatResolved}
+                handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
             />
 
 
             
-            <Settings inventory={ascean.inventory} ascean={ascean} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
+            <Settings inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
@@ -1195,17 +1324,18 @@ const GameSolo = ({ user }: GameProps) => {
                 </>
             : 
                 <>
+                    <GameMap mapData={mapState} />
                     {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
                     { showDialog ?    
                         <DialogBox 
                             npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state} checkLoot={checkLoot} setCheckLoot={setCheckLoot} deleteEquipment={deleteEquipment} currentIntent={currentIntent} setCurrentIntent={setCurrentIntent}
-                            playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved}
+                            playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved} setLoadingCombatOverlay={setLoadingCombatOverlay}
                             winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo} generateWorld={generateWorld} mapState={mapState} mapDispatch={mapDispatch}
                             resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment} clearOpponent={clearOpponent}
                         />
                     : '' }
                     { showInventory ?
-                        <InventoryBag inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
+                        <InventoryBag inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
                     : ""}
                     {
                         opponent && mapState?.currentTile?.content !== 'city' ?

@@ -6,9 +6,53 @@ class Tile {
         this.x = x;
         this.y = y;
         this.content = content;
+        this.color = this.setColor(content);
     }
     displayContent() {
         console.log(`(${this.x}, ${this.y}): ${this.content}`);
+    }
+    setColor(content) {
+        switch (content) {
+            case 'enemy': {
+                return 'red';
+            };
+            case 'npc': {
+                return 'blue';
+            };
+            case 'treasure': {
+                return 'gold';
+            };
+            case 'landmark': {
+                return 'blueviolet';
+            };
+            case 'hazard': {
+                return 'darkorange';
+            };
+            case 'dungeon': {
+                return 'brown';
+            };
+            case 'city': {
+                return 'purple';
+            };
+            case 'nothing': {
+                return 'green';
+            };
+            case 'weather': {
+                return 'teal';
+            };
+            case 'ruins': {
+                return 'grey';
+            };
+            case 'cave': {
+                return 'sienna';
+            };
+            case 'phenomena': {
+                return 'pink';
+            };
+            case 'wonder': {
+                return 'white';
+            };
+        }
     }
 }
 

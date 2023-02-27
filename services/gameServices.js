@@ -1084,7 +1084,8 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     }
 
     const criticalClearance = Math.floor(Math.random() * 101);
-    const criticalChance = combatData.computer_weapons[0].critical_chance;
+    let criticalChance = combatData.computer_weapons[0].critical_chance;
+    if (combatData.weather === 'Astralands') criticalChance += 10;
     const criticalResult = await computerCriticalCompiler(combatData, criticalChance, criticalClearance, combatData.computer_weapons[0], computer_physical_damage, computer_magical_damage)
     combatData = criticalResult.combatData;
     computer_physical_damage = criticalResult.computer_physical_damage;
@@ -1768,7 +1769,9 @@ const attackCompiler = async (combatData, player_action) => {
 
     // This is for Critical Strikes
     const criticalClearance = Math.floor(Math.random() * 101);
-    const criticalChance = combatData.weapons[0].critical_chance;
+    let criticalChance = combatData.weapons[0].critical_chance;
+    if (combatData.weather === 'Astralands') criticalChance += 10;
+    if (combatData.weather === 'Astralands' && combatData.weapons[0].influences[0] === 'Astra') criticalChance += 10;
     // console.log('Critical Chance', criticalChance, 'Critical Clearance', criticalClearance)
     const criticalResult = await criticalCompiler(combatData, criticalChance, criticalClearance, combatData.weapons[0], player_physical_damage, player_magical_damage);
     // console.log('Results for [Crit] [Glancing] [Phys Dam] [Mag Dam]', criticalResult.combatData.critical_success, criticalResult.combatData.glancing_blow, criticalResult.player_physical_damage, criticalResult.player_magical_damage)
@@ -1785,6 +1788,17 @@ const attackCompiler = async (combatData, player_action) => {
     const damageType = await damageTypeCompiler(combatData, combatData.weapons[0], player_physical_damage, player_magical_damage);
     player_physical_damage = damageType.player_physical_damage;
     player_magical_damage = damageType.player_magical_damage;
+
+    // if (combatData.weather === 'Firelands') {
+    //     player_physical_damage *= 1.1;
+    // }
+    // if (combatData.weather === 'Astralands' || combatData.weather === 'Firelands' || combatData.weather === 'Soverains') {
+    //     player_magical_damage *= 1.1;
+    // }
+    // if (combatData.weather === 'Soverains') {
+    //     player_physical_damage *= 0.9;
+    // }
+
     // console.log('Attack Compiler Post-Damage Type Multiplier', player_physical_damage, player_magical_damage)
 
     console.log(1 - ((1 - computer_physical_defense_multiplier) * (1 - (combatData.weapons[0].physical_penetration / 100))), 
@@ -2338,6 +2352,7 @@ const actionSplitter = async (combatData) => {
         highScore: combatData.highScore,
         winStreak: combatData.winStreak,
         loseStreak: combatData.loseStreak,
+        weather: combatData.weather,
     };
     console.log(newData.highScore, 'High Score in the Action Splitter')
     const player_initiative = newData.player_attributes.initiative;

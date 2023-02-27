@@ -9,6 +9,7 @@ import Form from 'react-bootstrap/Form';
 interface Props {
     inventory: any;
     ascean: any;
+    dispatch: any;
     eqpSwap: boolean;
     removeItem: boolean;
     setEqpSwap: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,7 +22,7 @@ interface Props {
     saveAsceanCoords: (x: number, y: number) => Promise<void>;
 };
 
-const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume, loadedAscean, setLoadedAscean, currentTile, saveAsceanCoords }: Props) => {
+const Settings = ({ ascean, dispatch, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume, loadedAscean, setLoadedAscean, currentTile, saveAsceanCoords }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemov
         <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}></Button>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
-            <InventoryBag settings={true} inventory={ascean.inventory} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
+            <InventoryBag settings={true} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
         : ""}
         <br />
         <Accordion flush>
@@ -62,6 +63,52 @@ const Settings = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemov
             <Form.Range value={soundEffectsVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />
         </Accordion.Body>
         </Accordion.Item>
+
+        <Accordion.Item eventKey="4">
+        <Accordion.Header>
+            <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
+            Map Legend
+            </h5>
+        </Accordion.Header>
+        <Accordion.Body style={{ fontSize: 16 + 'px' }}>
+        <p style={{ color: 'sienna', display: "inline-block" }}>
+            Cave 
+        </p>{' | '}
+        <p style={{ color: 'purple', display: "inline-block" }}>
+            City 
+        </p>{' | '}
+        <p style={{ color: 'brown', display: "inline-block" }}>
+            Dungeon
+        </p>{' | '}
+        <p style={{ color: 'red', display: "inline-block" }}>
+            Enemy
+        </p>{' | '}
+        <p style={{ color: 'green', display: "inline-block" }}>
+            Envrionment 
+        </p>{' | '}
+        <p style={{ color: 'darkorange', display: "inline-block" }}>
+            Hazard 
+        </p>{' | '}
+        <p style={{ color: 'blue', display: "inline-block" }}>
+            NPC 
+        </p>{' | '}
+        <p style={{ color: 'pink', display: "inline-block" }}>
+            Phenomena 
+        </p>{' | '}
+        <p style={{ color: 'grey', display: "inline-block" }}>
+            Ruins 
+        </p>{' | '}
+        <p style={{ color: 'gold', display: "inline-block" }}>
+            Treasure
+        </p>{' | '}
+        <p style={{ color: 'white', display: "inline-block" }}>
+            Wonder 
+        </p>
+
+
+        </Accordion.Body>
+        </Accordion.Item>
+
         <Accordion.Item eventKey="1">
         <Accordion.Header>
             <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>

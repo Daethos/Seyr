@@ -138,6 +138,13 @@ const asceanSchema = new Schema(
                 default: 0,
             },
         },
+        firewater: {
+            type: Object,
+            default: {
+                charges: 5,
+                maxCharges: 5,
+            },
+        },
         inventory: {
             type: [],
             default: null

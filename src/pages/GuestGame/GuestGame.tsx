@@ -31,6 +31,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     const [dialog, setDialog] = useState<any>({});
     const [lootRoll, setLootRoll] = useState<boolean>(false);
     const [background, setBackground] = useState<any>(null);
+    const [combatResolved, setCombatResolved] = useState<boolean>(false);
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
     const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
@@ -364,6 +365,36 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
+    async function handlePlayerWin(combatData: any) {
+        try {
+            playWin();
+            setTimeLeft(0);
+            setTimeout(() => {
+                dispatch({
+                    type: ACTIONS.PLAYER_WIN,
+                    payload: combatData
+                });
+            }, 3000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
+    async function handleComputerWin(combatData: any) {
+        try {
+            playDeath();
+            setTimeLeft(0);
+            setTimeout(() => {
+                dispatch({
+                    type: ACTIONS.COMPUTER_WIN,
+                    payload: combatData
+                });
+            }, 3000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault();
         try {
@@ -381,20 +412,22 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             });
             await soundEffects(response.data);
             if (response.data.player_win === true) {
-                playWin();
-                dispatch({
-                    type: ACTIONS.PLAYER_WIN,
-                    payload: response.data
-                });
-                setTimeLeft(0);
+                await handlePlayerWin(response.data);
+                // playWin();
+                // dispatch({
+                //     type: ACTIONS.PLAYER_WIN,
+                //     payload: response.data
+                // });
+                // setTimeLeft(0);
             };
             if (response.data.computer_win === true) {
-                playDeath();
-                dispatch({
-                    type: ACTIONS.COMPUTER_WIN,
-                    payload: response.data
-                });
-                setTimeLeft(0);
+                await handleComputerWin(response.data);
+                // playDeath();
+                // dispatch({
+                //     type: ACTIONS.COMPUTER_WIN,
+                //     payload: response.data
+                // });
+                // setTimeLeft(0);
             };
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -504,8 +537,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             />
             <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects}
-                playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} setCombatResolved={setCombatResolved}
+                playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft} 
+                handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
             />
             <Button variant='' className='settings-button' style={{ color: 'gold' }} onClick={() => handleLogout()}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">

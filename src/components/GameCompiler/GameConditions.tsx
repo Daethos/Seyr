@@ -14,9 +14,12 @@ interface Props {
     dispatch: any;
     state: any;
     soundEffects: (effects: any) => Promise<void>;
+    setCombatResolved: React.Dispatch<React.SetStateAction<boolean>>;
+    handlePlayerWin: (combatData: any) => Promise<void>;
+    handleComputerWin: (combatData: any) => Promise<void>;
 };
 
-const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, gainExperience, setLootRoll, playWin, playDeath, setEmergencyText }: Props) => {
+const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, gainExperience, setLootRoll, playWin, playDeath, setEmergencyText, setCombatResolved, handlePlayerWin, handleComputerWin }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [timeLeftDisplay, setTimeLeftDisplay] = useState<number>(timeLeft);
 
@@ -65,22 +68,26 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             dispatch({ type: ACTIONS.AUTO_COMBAT, payload: response.data });
             await soundEffects(response.data);
             if (response.data.player_win === true) {
-                playWin();
-                gainExperience();
-                setLootRoll(true);
-                dispatch({
-                    type: ACTIONS.PLAYER_WIN,
-                    payload: response.data
-                });
-                setTimeLeft(0);
+                // playWin();
+                // gainExperience();
+                // setLootRoll(true);
+                // dispatch({
+                //     type: ACTIONS.PLAYER_WIN,
+                //     payload: response.data
+                // });
+                // setTimeLeft(0);
+                // setCombatResolved(true);
+                await handlePlayerWin(response.data);
             };
             if (response.data.computer_win === true) {
-                playDeath();
-                dispatch({
-                    type: ACTIONS.COMPUTER_WIN,
-                    payload: response.data
-                });
-                setTimeLeft(0);
+                // playDeath();
+                // dispatch({
+                //     type: ACTIONS.COMPUTER_WIN,
+                //     payload: response.data
+                // });
+                // setTimeLeft(0);
+                // setCombatResolved(true);
+                await handleComputerWin(response.data);
             };
             setLoading(false);
         } catch (err: any) {

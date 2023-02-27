@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
-import Overlay from 'react-bootstrap/Overlay'
-import Button from 'react-bootstrap/Button'
+import { useState, useRef, useEffect } from 'react';
+import Overlay from 'react-bootstrap/Overlay';
+import Button from 'react-bootstrap/Button';
 
 interface Props {
     ascean: any;
@@ -28,6 +28,9 @@ const GameplayOverlay = ({ ascean, mapState, mapDispatch, loadingOverlay, setLoa
     const loadMap = async () => {
         try {
             setOverlayContent(`Loading ${mapState?.name}. Enjoy your journey, ${ascean?.name}.`);
+            setTimeout(() => {
+                closeEverything();
+            }, 3000);
             console.log(mapState, "Loading Map");
         } catch (err: any) {
             console.log(err.message, "Error loading Map");
@@ -51,7 +54,7 @@ const GameplayOverlay = ({ ascean, mapState, mapDispatch, loadingOverlay, setLoa
                 width: '100%',
                 height: '100%',
                 display: '',
-                backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                backgroundColor: 'rgba(0, 0, 0, 1)',
                 zIndex: 9999,
                 border: "0.2em solid purple"
             }}
