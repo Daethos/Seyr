@@ -238,4 +238,30 @@ export async function removeItem(vaEsai: any) {
             console.log(response, '<- Response in Remove Item Utility Return');
         });
     });
+};
+
+export async function drinkFirewater(ascean: string) {
+    return fetch(BASE_URL + 'firewater/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, "<- Response in Drink Firewater Utility Return")
+        })
+    })
+}
+
+export async function restoreFirewater(ascean: string) {
+    return fetch(BASE_URL + 'restoreFirewater/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, "<- Response in Drink Firewater Utility Return")
+        })
+    })
 }

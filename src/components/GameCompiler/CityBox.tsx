@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import Loading from '../Loading/Loading';
 import ToastAlert from '../ToastAlert/ToastAlert'
@@ -103,6 +104,16 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
     const checkOpponent = async () => {
         await checkingLoot();
         await getOpponent();
+    };
+
+    const refillFlask = async () => {
+        try {
+            const response = await asceanAPI.restoreFirewater(ascean._id);
+            console.log(response, 'Response Refilling Flask');
+            gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
+        } catch (err: any) {
+            console.log(err, "Error Refilling Flask");
+        };
     };
 
     const handleRest = async () => {
@@ -254,7 +265,10 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
             {
                 cityOption === 'Alchemist' ?
                 <>
-                    "Hello there, at the moment this shop isn't available as I'm setting up. I'll be selling potions to heal and augment the quality of your journey."
+                    "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.{' '}
+                    "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
+                    <br /><br />
+                    <Button variant='' style={{ color: 'blueviolet', fontVariant: 'small-caps', outline: 'none' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
                 </>
                 : cityOption === 'Armorer' ?
                 <>

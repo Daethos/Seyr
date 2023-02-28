@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Inventory from './Inventory';
 import Button from 'react-bootstrap/Button';
 import { ACTIONS } from './CombatStore';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-
-type TabSelectHandler = (eventKey: string | null) => void;
+import * as asceanAPI from '../../utils/asceanApi';
+import { GAME_ACTIONS } from './GameStore';
 
 interface Firewater {
   charges: number;
@@ -18,6 +18,7 @@ interface Props {
     dispatch: any;
     settings?: boolean;
     gameDispatch: React.Dispatch<any>;
+    gameState: any;
 }
 
 interface IOProps {
@@ -67,17 +68,24 @@ const InventoryOptions = ({ drinkFirewater, firewater }: IOProps) => {
   )
 }
 
-const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch }: Props) => {
+const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gameState }: Props) => {
   const [activeTab, setActiveTab] = useState('gear');
-  const [firewater, setFirewater] = useState(ascean?.firewater);
+  const [drinking, setDrinking] = useState(false);
 
-  const drinkFirewater = () => {
-    if (firewater?.charges === 0) return;
+  useEffect(() => {
+    if (gameState.loadedAscean) {
+      setDrinking(false);
+      gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
+    }
+  }, [gameState.loadedAscean, drinking]);
+
+  const drinkFirewater = async () => {
+    // if (ascean?.firewater?.charges === 0) return;
+    setDrinking(true);
     dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
-    setFirewater({
-      ...firewater,
-      charges: firewater?.charges - 1
-    });
+    const response = await asceanAPI.drinkFirewater(ascean?._id);
+    console.log(response, "Response Drinking Firewater");
+    gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
   };
   
   return (
@@ -91,7 +99,10 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch }: P
         })
       : '' }
     </div>
-    <InventoryOptions firewater={firewater} drinkFirewater={drinkFirewater} />
+    { !drinking ?
+      <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} />
+      :
+    '' }
     </>
   )
 }

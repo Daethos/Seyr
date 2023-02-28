@@ -29,6 +29,8 @@ module.exports = {
     purchaseToInventory,
     searchAscean,
     saveCoordinates,
+    drinkFirewater,
+    restoreFirewater,
 }
 
 async function editAscean(req, res) {
@@ -92,6 +94,34 @@ async function determineItemType(id) {
     };
     return null;
 };
+
+async function drinkFirewater(req, res) {
+    try {
+        let ascean = await Ascean.findByIdAndUpdate(req.params.id, {
+            $inc: {
+                "firewater.charges": -1,
+            },
+        }, { new: true });
+        console.log(ascean.firewater, "Firewater After Saving Drink")
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        res.status(400).json(err);
+    }
+}
+
+async function restoreFirewater(req, res) {
+    try {
+        let ascean = await Ascean.findByIdAndUpdate(req.params.id, {
+            "firewater.charges": 5,
+        }, { new: true });
+        console.log(ascean.firewater, "Firewater After Saving Restore")
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        res.status(400).json(err);
+    }
+}
 
 async function saveCoordinates(req, res) {
     try {

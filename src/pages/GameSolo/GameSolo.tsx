@@ -1162,7 +1162,7 @@ const GameSolo = ({ user }: GameProps) => {
             
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} 
-                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} 
+                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState}
             />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
@@ -1214,7 +1214,7 @@ const GameSolo = ({ user }: GameProps) => {
                         />
                     : '' }
                     { gameState.showInventory ?
-                        <InventoryBag inventory={gameState.player.inventory} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch}  />
+                        <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch}  />
                     : ""}
                     { gameState.opponent && mapState?.currentTile?.content !== 'city' ?
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>

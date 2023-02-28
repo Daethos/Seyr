@@ -8,6 +8,8 @@ router.get('/', protect, asceanCtrl.index);
 router.get('/lean', protect, asceanCtrl.quickIndex);
 router.get('/search/', protect, asceanCtrl.searchAscean);
 router.get('/:id', protect, asceanCtrl.getOneAscean);
+router.get('/firewater/:id', protect, asceanCtrl.drinkFirewater);
+router.get('/restoreFirewater/:id', protect, asceanCtrl.restoreFirewater);
 router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
 router.put('/highscore', protect, asceanCtrl.updateHighScore);
 router.put('/exp', protect, asceanCtrl.saveExperience);
