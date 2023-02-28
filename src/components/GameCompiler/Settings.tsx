@@ -10,19 +10,14 @@ interface Props {
     inventory: any;
     ascean: any;
     dispatch: any;
-    eqpSwap: boolean;
-    removeItem: boolean;
-    setEqpSwap: React.Dispatch<React.SetStateAction<boolean>>;
-    setRemoveItem: React.Dispatch<React.SetStateAction<boolean>>;
     soundEffectsVolume: number;
     setSoundEffectsVolume: React.Dispatch<React.SetStateAction<number>>;
-    loadedAscean: boolean;
-    setLoadedAscean: React.Dispatch<React.SetStateAction<boolean>>;
     currentTile: any;
     saveAsceanCoords: (x: number, y: number) => Promise<void>;
+    gameDispatch: React.Dispatch<any>;
 };
 
-const Settings = ({ ascean, dispatch, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, soundEffectsVolume, setSoundEffectsVolume, loadedAscean, setLoadedAscean, currentTile, saveAsceanCoords }: Props) => {
+const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -53,7 +48,7 @@ const Settings = ({ ascean, dispatch, inventory, eqpSwap, removeItem, setEqpSwap
         <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}></Button>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
-            <InventoryBag settings={true} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
+            <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} />
         : ""}
         <br />
         <Accordion flush>

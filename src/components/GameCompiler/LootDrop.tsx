@@ -3,34 +3,40 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
+import { GAME_ACTIONS } from './GameStore';
 
 interface Props {
     lootDrop: any;
-    setLootDrop: React.Dispatch<React.SetStateAction<any>>;
     ascean: any;
     itemSaved: boolean;
-    setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
+    gameDispatch: React.Dispatch<any>;
 };
 
-const LootDrop = ({ lootDrop, setLootDrop, ascean, itemSaved, setItemSaved }: Props) => {
-    const [saveSetting, setSaveSetting] = useState({
-        ascean: ascean,
-        lootDrop: lootDrop
-    });
+const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
+    // const [saveSetting, setSaveSetting] = useState({
+    //     ascean: ascean,
+    //     lootDrop: lootDrop
+    // });
     const article = ['a','e','i','o','u'].includes(lootDrop?.name?.[0]) ? "an" : "a";
-    useEffect(() => {
-        setSaveSetting({
-            ascean: ascean,
-            lootDrop: lootDrop
-        });
-    }, [lootDrop]);
+    // useEffect(() => {
+    //     setSaveSetting({
+    //         ascean: ascean,
+    //         lootDrop: lootDrop
+    //     });
+    // }, [lootDrop, ascean]);
     
     const saveItem = async () => {
         try {
-            const res = await asceanAPI.saveToInventory(saveSetting);
+            const data = {
+                ascean: ascean,
+                lootDrop: lootDrop
+            }
+            const res = await asceanAPI.saveToInventory(data);
             console.log(res, 'Saved Item to Inventory!');
-            setLootDrop(null);
-            setItemSaved(true);
+            gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
+            // setLootDrop(null);
+            // setItemSaved(true);
         } catch (err: any) {
             console.log(err.message, 'Error Saving Item to Inventory!');
         };

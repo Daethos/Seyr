@@ -6,19 +6,17 @@ import Row from 'react-bootstrap/Row';
 interface Props {
     table: any;
     ascean: any;
-    itemPurchased: boolean;
-    setItemPurchased: React.Dispatch<React.SetStateAction<boolean>>;
     error: any;
     setError: any;
-    setMerchantEquipment?: any;
+    gameDispatch: React.Dispatch<any>;
 }
 
-const MerchantTable = ({ table, ascean, itemPurchased, setItemPurchased, error, setError, setMerchantEquipment }: Props) => {
+const MerchantTable = ({ table, ascean, error, setError, gameDispatch }: Props) => {
     return (
         <Row>
         { table.map((item: any, index: number) => {
             return (
-                <MerchantLoot item={item} table={table} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={error} setError={setError} key={index} />
+                <MerchantLoot item={item} table={table} ascean={ascean} error={error} setError={setError} key={index} gameDispatch={gameDispatch} />
             )
         }) }
         </Row>

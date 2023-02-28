@@ -1,24 +1,22 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
+import { GAME_ACTIONS } from './GameStore';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
 import Col  from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 
 interface Props {
     item: any;
     ascean: any;
-    itemPurchased: boolean;
-    setItemPurchased: React.Dispatch<React.SetStateAction<boolean>>;
     error: object;
     setError: React.Dispatch<React.SetStateAction<object>>;
-    setMerchantEquipment?: any;
     table?: any;
+    gameDispatch: React.Dispatch<any>;
 }
 
-const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, setError, setMerchantEquipment, table }: Props) => {
-    const [thisItemPurchased, setThisItemPurchased] = useState(false);
+const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch }: Props) => {
+    // const [thisItemPurchased, setThisItemPurchased] = useState(false);
     const [purchaseSetting, setPurchaseSetting] = useState({
         ascean: ascean,
         item: item,
@@ -101,9 +99,6 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
         }
     }
 
-    // const cost = useMemo(() => determineCost(ascean, item?.rarity, item?.type), [ascean, item?.rarity, item?.type]);
-
-
     const purchaseItem = async () => {
         let asceanTotal = 0;
         let costTotal = 0;
@@ -119,9 +114,13 @@ const MerchantLoot = ({ item, ascean, itemPurchased, setItemPurchased, error, se
         try {
             const res = await asceanAPI.purchaseToInventory(purchaseSetting);
             console.log(res, 'Purchased Item!');
-            setItemPurchased(!itemPurchased);
-            setThisItemPurchased(true);
-            setMerchantEquipment(table.filter((i: any) => i._id !== item._id));
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
+
+            gameDispatch({
+                type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT,
+                payload: table.filter((i: any) => i._id !== item._id)
+            });
+
         } catch (err: any) {
             console.log(err.message, 'Error Purchasing Item!');
             setError({

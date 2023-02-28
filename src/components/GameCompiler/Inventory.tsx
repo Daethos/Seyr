@@ -9,20 +9,16 @@ import Form from 'react-bootstrap/Form';
 import * as eqpAPI from '../../utils/equipmentApi';
 import Overlay from 'react-bootstrap/Overlay';
 import Table from 'react-bootstrap/Table';
+import { GAME_ACTIONS } from './GameStore';
 
 interface Props {
     inventory: any;
     ascean: any;
-    eqpSwap: boolean;
-    removeItem: boolean;
-    setEqpSwap: React.Dispatch<React.SetStateAction<boolean>>;
-    setRemoveItem: React.Dispatch<React.SetStateAction<boolean>>;
     bag: any;
-    loadedAscean: boolean;
-    setLoadedAscean: React.Dispatch<React.SetStateAction<boolean>>;
+    gameDispatch: React.Dispatch<any>;
 }
 
-const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, bag, loadedAscean, setLoadedAscean }: Props) => {
+const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [inventoryType, setInventoryType] = useState({});
@@ -188,8 +184,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
             setInventoryModalShow(false);
-
-            setRemoveItem(true);
+            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
         };
@@ -206,8 +201,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             const response = await asceanAPI.removeItem(data);
             console.log(response, '<- Response in handleRemoveItem');
             setInventoryModalShow(false);
-
-            setRemoveItem(true);
+            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
         } catch (err: any) {
             console.log(err.message, '<- This is the error in handleRemoveItem');
         };
@@ -221,8 +215,7 @@ const Inventory = ({ ascean, inventory, eqpSwap, removeItem, setEqpSwap, setRemo
             const response = await asceanAPI.equipmentSwap(newAscean);
             console.log(response, '<- Response in Swapping Equipment');
             setInventoryModalShow(false);
-
-            setEqpSwap(true);
+            gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
         } catch (err) {
             console.log(err, '<- This is the error in Swapping Equipment');
         };

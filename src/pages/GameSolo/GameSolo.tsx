@@ -19,14 +19,12 @@ import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
+import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
-import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
-import Alert from 'react-bootstrap/Alert';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
-import Overlay from 'react-bootstrap/Overlay';
 import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal';
 import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
 import Content from '../../components/GameCompiler/Content';
@@ -42,47 +40,13 @@ interface GameProps {
 const GameSolo = ({ user }: GameProps) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
-    const [ascean, setAscean] = useState<any>({});
-    const [opponent, setOpponent] = useState<any | null>(null);
-    const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
-    const [loadingOpponent, setLoadingOpponent] = useState<boolean>(false);
-    const [opponents, setOpponents] = useState<any>([]);
-    const [loading, setLoading] = useState(true);
-    const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
-    const [loadedAscean, setLoadedAscean] = useState<boolean>(false);
+    const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [saveExp, setSaveExp] = useState<boolean>(false);
-    const [dialog, setDialog] = useState<any>({});
-    const [lootRoll, setLootRoll] = useState<boolean>(false);
-    const [lootDrop, setLootDrop] = useState<any>([]);
-    const [lootDropTwo, setLootDropTwo] = useState<any>([]);
-    const [itemSaved, setItemSaved] = useState<boolean>(false);
-    const [showDialog, setShowDialog] = useState<boolean>(false);
-    const [showInventory, setShowInventory] = useState<boolean>(false);
-    const [eqpSwap, setEqpSwap] = useState<boolean>(false);
-    const [checkLoot, setCheckLoot] = useState<boolean>(false);
-    const [removeItem, setRemoveItem] = useState<boolean>(false);
-    const [background, setBackground] = useState<any>(null);
-    const [merchantEquipment, setMerchantEquipment] = useState<any>([]);
+    const [background, setBackground] = useState<any>(null); // ------
     const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
 
-
     type Direction = keyof typeof DIRECTIONS;
-    const [overlayContent, setOverlayContent] = useState<string>("");
-    const [loadingOverlay, setLoadingOverlay] = useState<boolean>(false);
-    const [loadingContent, setLoadingContent] = useState<boolean>(false);
-    const [loadingCombatOverlay, setLoadingCombatOverlay] = useState<boolean>(false);
-    const [combatOverlayText, setCombatOverlayText] = useState<any>('')
-    const [combatResolved, setCombatResolved] = useState<boolean>(false);
-    const overlayRef = useRef(null);
-    const [gameplayModal, setGameplayModal] = useState<boolean>(false);
-    const [gameplayEvent, setGameplayEvent] = useState({ title: "", description: "" });
-    const [mapName, setMapName] = useState<string>('');
-    const [cityButton, setCityButton] = useState<boolean>(false);
-    const [showCity, setShowCity] = useState<boolean>(false);
-    const [cityOption, setCityOption] = useState<any | null>('Innkeep');
-    const [storyContent, setStoryContent] = useState<string>("");
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
     const [playOpponent] = useSound(opponentSfx, { volume: soundEffectVolume });
@@ -145,93 +109,52 @@ const GameSolo = ({ user }: GameProps) => {
     const { asceanID } = useParams();
 
     const [asceanState, setAsceanState] = useState({
-        ascean: ascean,
+        ascean: gameState.player,
         constitution: 0,
         strength: 0,
         agility: 0,
         achre: 0,
         caeren: 0,
         kyosir: 0,
-        level: ascean.level,
+        level: gameState.player.level,
         opponent: 0,
         opponentExp: 0,
-        experience: ascean.experience,
-        experienceNeeded: ascean.level * 1000,
-        mastery: ascean.mastery,
-        faith: ascean.faith,
+        experience: gameState.player.experience,
+        experienceNeeded: gameState.player.level * 1000,
+        mastery: gameState.player.mastery,
+        faith: gameState.player.faith,
     });
 
+    useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
+
     const getAscean = useCallback(async () => {
-        setLoadingAscean(true);
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            setAscean(firstResponse.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             console.log(firstResponse, 'First Response')
             const response = await asceanAPI.getAsceanStats(asceanID);
             console.log(response, 'Response');
-
+            
             dispatch({
                 type: ACTIONS.SET_PLAYER,
                 payload: response.data.data
             });
-            setLoadingAscean(false);
-            // let minLevel: number = 0;
-            // let maxLevel: number = 0;
-            // if (firstResponse.data.level < 3) {
-            //     minLevel = 1;
-            //     maxLevel = 3;
-            // } else if (firstResponse.data.level < 5) {
-            //     minLevel = 2;
-            //     maxLevel = 5;
-            // } else if (firstResponse.data.level < 8) {
-            //     minLevel = 4;
-            //     maxLevel = 10;
-            // } else if (firstResponse.data.level < 11) {
-            //     minLevel = 6;
-            //     maxLevel = 13;
-            // } else if (firstResponse.data.level < 14) {
-            //     minLevel = 9;
-            //     maxLevel = 16;
-            // } else if (firstResponse.data.level < 17) {
-            //     minLevel = 12;
-            //     maxLevel = 18;
-            // } else if (firstResponse.data.level <= 20) {
-            //     minLevel = 15;
-            //     maxLevel = 20;
-            // };
-            // const enemyData = {
-            //     username: 'mirio',
-            //     minLevel: minLevel,
-            //     maxLevel: maxLevel
-            // };
-            // const secondResponse = await userService.getRandomEnemy(enemyData);
-            // console.log(secondResponse, 'Enemy Response');
-            // const selectedOpponent = await asceanAPI.getOneAscean(secondResponse.data.ascean._id);
-            // console.log(selectedOpponent, 'Selected Opponent');
-            // const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
-            // console.log(opponentResponse.data.data, 'Opponent Response');
-            // setOpponent(selectedOpponent.data);
             setAsceanState({
                 ...asceanState,
                 'ascean': response.data.data.ascean,
                 'level': response.data.data.ascean.level,
-                // 'opponent': opponentResponse.data.data.ascean.level,
                 'opponent': 0,
                 'experience': 0,
                 'experienceNeeded': response.data.data.ascean.level * 1000,
                 'mastery': response.data.data.ascean.mastery,
                 'faith': response.data.data.ascean.faith,
             });
-            // dispatch({
-            //     type: ACTIONS.SET_COMPUTER,
-            //     payload: opponentResponse.data.data
-            // });
-            // playOpponent();
-            setLoading(false);
-            if (response.data.data.ascean.tutorial.firstBoot === true) setLoadingOverlay(true);
+            gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
+            if (response.data.data.ascean.tutorial.firstBoot === true) {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            }; 
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
-            setLoading(false)
         };
     }, [asceanID]);
 
@@ -239,47 +162,43 @@ const GameSolo = ({ user }: GameProps) => {
         getAscean();
     }, [asceanID, getAscean]);
 
-    useEffect(() => {
-        getOpponentDialog();
-    }, [opponent]);
-
-    const getOpponentDialog = async () => {
+    const getOpponentDialog = async (enemy: string) => {
         try {
-            const response = getNpcDialog(opponent.name);
-            setDialog(response);
+            console.log(enemy, "Enemy");
+            const response = getNpcDialog(enemy);
+            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
         };
     };
 
     const getOpponent = async () => {
-        setCheckLoot(true);
-        setLoadingOpponent(true);
+        gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try {
             let minLevel: number = 0;
             let maxLevel: number = 0;
-            if (ascean.level < 3) { // 1-2
+            if (gameState.player.level < 3) { // 1-2
                 minLevel = 1;
                 maxLevel = 3;
-            } else if (ascean.level <= 4) { // 3-4
+            } else if (gameState.player.level <= 4) { // 3-4
                 minLevel = 2;
                 maxLevel = 4;
-            } else if (ascean.level <= 6) { // 5-6
+            } else if (gameState.player.level <= 6) { // 5-6
                 minLevel = 4;
                 maxLevel = 8;
-            } else if (ascean.level <= 8) { // 7-8
+            } else if (gameState.player.level <= 8) { // 7-8
                 minLevel = 4;
                 maxLevel = 10;
-            } else if (ascean.level <= 10) { // 9-10
+            } else if (gameState.player.level <= 10) { // 9-10
                 minLevel = 6;
                 maxLevel = 12;
-            } else if (ascean.level <= 14) { // 11-14
+            } else if (gameState.player.level <= 14) { // 11-14
                 minLevel = 8;
                 maxLevel = 16;
-            } else if (ascean.level <= 18) { // 15-18
+            } else if (gameState.player.level <= 18) { // 15-18
                 minLevel = 12;
                 maxLevel = 18;
-            } else if (ascean.level <= 20) {
+            } else if (gameState.player.level <= 20) {
                 minLevel = 16;
                 maxLevel = 20;
             }
@@ -294,7 +213,7 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(selectedOpponent, 'Selected Opponent');
             const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
             console.log(response.data.data, 'Opponent Response');
-            setOpponent(selectedOpponent.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data })
             setAsceanState({
                 ...asceanState,
                 'opponent': selectedOpponent.data.level,
@@ -304,8 +223,11 @@ const GameSolo = ({ user }: GameProps) => {
                 payload: response.data.data
             });
             playOpponent();
-            setLoadingOpponent(false);
-            if (!showDialog && mapState?.currentTile?.content !== 'city') setShowDialog(true);
+            await getOpponentDialog(selectedOpponent.data.name);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+            if (!gameState?.showDialog && mapState?.currentTile?.content !== 'city') {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            };
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         };
@@ -336,24 +258,23 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (saveExp === false) return;
+        if (gameState.saveExp === false) return;
         console.log(asceanState, 'Ascean State');
         saveExperience();
         return () => {
-            setSaveExp(false);
+            gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         };
-    }, [asceanState, saveExp]);
+    }, [asceanState, gameState.saveExp]);
 
     const saveExperience = async () => {
-        if (saveExp === false || state.player_win === false) {
+        if (gameState.saveExp === false || state.player_win === false) {
             return;
         };
         try {
-            setEmergencyText([`You reflect on the moments of your duel with ${opponent.name} as you count your pouch of winnings.`]);
-            setCombatOverlayText(`You reflect on the moments of your duel with ${opponent.name} as you count your pouch of winnings.`);
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
             const response = await asceanAPI.saveExperience(asceanState);
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            setAscean(firstResponse.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             dispatch({
                 type: ACTIONS.SAVE_EXPERIENCE,
                 payload: firstResponse.data
@@ -368,26 +289,22 @@ const GameSolo = ({ user }: GameProps) => {
                 'caeren': 0,
                 'kyosir': 0,
                 'level': firstResponse.data.level,
-                'opponent': opponent.level,
+                'opponent': gameState.opponent.level,
                 'experience': 0,
                 'experienceNeeded': firstResponse.data.level * 1000,
                 'mastery': firstResponse.data.mastery,
                 'faith': firstResponse.data.faith,
             });
             if (response.data.gold > 0 && response.data.silver > 0) {
-                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`]);
-                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`])
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`] });
             } else if (response.data.gold > 0 && response.data.silver === 0) { 
-                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`]);
-                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`]);
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`] });
             } else if (response.data.gold === 0 && response.data.silver > 0) {
-                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`]);
-                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`]);
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`] });
             } else {
-                setEmergencyText([`You gained up to ${asceanState.opponentExp} experience points.`]);
-                setCombatOverlayText([`You gained up to ${asceanState.opponentExp} experience points.`]);
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points.`] });
             };
-            setSaveExp(false);
+            gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         } catch (err: any) {
             console.log(err.message, 'Error Saving Experience');
         };
@@ -402,7 +319,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'opponentExp': opponentExp,
                     'experience': asceanState.experienceNeeded,
                 });
-                setSaveExp(true);
+                gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
             };
             if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
                 setAsceanState({
@@ -410,7 +327,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'opponentExp': opponentExp,
                     'experience': Math.round(asceanState.experience + opponentExp),
                 });
-                setSaveExp(true);
+                gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
             };
         } catch (err: any) {
             console.log(err.message, 'Error Gaining Experience')
@@ -418,27 +335,26 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (itemSaved === false) return;
+        if (gameState.itemSaved === false) return;
         getAsceanQuickly();
         return () => {
-            setItemSaved(false);
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         };
-    }, [itemSaved, state]);
+    }, [gameState.itemSaved, state]);
 
     useEffect(() => {
         getAsceanSlicker();
       return () => {
-        setEqpSwap(false);
+        gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
       };
-    }, [eqpSwap]);
+    }, [gameState.eqpSwap]);
 
     useEffect(() => {
       getAsceanSlicker();
-    
       return () => {
-        setRemoveItem(false);
+        gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
       };
-    }, [removeItem]);
+    }, [gameState.removeItem]);
 
     const deleteEquipment = async (eqp: any) => {
         try {
@@ -452,7 +368,7 @@ const GameSolo = ({ user }: GameProps) => {
     const getAsceanLeveled = async () => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            setAscean(firstResponse.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_LEVEL_UP,
@@ -466,13 +382,13 @@ const GameSolo = ({ user }: GameProps) => {
     const getAsceanSlicker = async () => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            setAscean(firstResponse.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_SLICK,
                 payload: response.data.data
             });
-            setLoadedAscean(true);
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
         };
@@ -481,12 +397,12 @@ const GameSolo = ({ user }: GameProps) => {
     const getAsceanQuickly = async () => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            setAscean(firstResponse.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             dispatch({
                 type: ACTIONS.SET_PLAYER_QUICK,
                 payload: firstResponse.data
             });
-            setLoadedAscean(true);
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
         };
@@ -494,14 +410,13 @@ const GameSolo = ({ user }: GameProps) => {
 
     const clearOpponent = async () => {
         try {
-            console.log("Clearing DUel in Game Solo");
-            setOpponent(null);
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
             dispatch({
                 type: ACTIONS.CLEAR_DUEL,
                 payload: null
             })
-            if (showDialog) {
-                setShowDialog(false);
+            if (gameState.showDialog) {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             };
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
@@ -512,12 +427,9 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             // const response = await mapAPI.saveNewMap(mapState);
             // console.log(response);
-            setOverlayContent(`Good luck, ${ascean.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`);
-            setLoadingContent(true);
+            gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${gameState.player.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
             setTimeout(() => {
-                setOverlayContent('');
-                setLoadingOverlay(false);
-                setLoadingContent(false);
+                gameDispatch({ type: GAME_ACTIONS.WORLD_SAVED, payload: true });
             }, 60000);
         } catch (err: any) {
             console.log(err.message, 'Error Saving World');
@@ -527,7 +439,7 @@ const GameSolo = ({ user }: GameProps) => {
     const saveAsceanCoords = async (x: number, y: number) => {
         try {
             const data = {
-                ascean: ascean._id, 
+                ascean: gameState.player._id, 
                 coordinates: {
                     x: mapState.currentTile.x,
                    y: mapState.currentTile.y,
@@ -544,7 +456,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const data = {
                 name: mapName,
-                ascean: ascean,
+                ascean: gameState.player,
             };
             const response = await mapAPI.createMap(data);
             console.log(response, 'Response Generating World Environment.');
@@ -552,7 +464,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
             });
-            const coords = await getAsceanCoords(ascean?.coordinates?.x, ascean?.coordinates?.y, response.map);
+            const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
             console.log(coords, "Coordinates?")
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_COORDS,
@@ -584,18 +496,18 @@ const GameSolo = ({ user }: GameProps) => {
             //     await getLandmark();
             // } else 
             if (chance > 97) {
-                setStoryContent(`You've happened on treasure, what luck! \n See what you've found?`);
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, what luck! \n See what you've found?` })
                 await getTreasure();
             } else if (chance > 94) {
-                setStoryContent(`Your encroaching footsteps has alerted someone to your presence!`);
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` })
                 await getOpponent();
             } else if (chance > 91) {
-                setStoryContent(`You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.`);
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                 await getNPC();
             } else {
                 console.log("No Encounter");
-                if (storyContent !== '') {
-                    setStoryContent('');
+                if (gameState.storyContent !== '') {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' })
                 }
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
@@ -650,12 +562,16 @@ const GameSolo = ({ user }: GameProps) => {
     }
 
     const getPhenomena = async () => {
-        if (cityButton) setCityButton(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
+        };
 
     };
 
     const getWeather = async (province: string) => {
-        if (cityButton) setCityButton(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
+        }
         switch (province) {
             case 'Alluring Isles': {
                 mapDispatch({
@@ -750,80 +666,68 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getNPC = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
         console.log("You would have gotten an NPC here.");
 
     };
 
     const getWonder = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
         console.log("You would have gotten a Wonder here.");
     };
 
     const getTreasure = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        setGameplayEvent({
+        gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_EVENT, payload: {
             title: "Treasure!",
-            description: `${ascean.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
-        });
-        await getOneLootDrop(ascean.level);
-        setGameplayModal(true);
+            description: `${gameState.player.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
+        } })
+        await getOneLootDrop(gameState.player.level);
+        gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: true });
     };
 
     const getLandmark = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
         console.log("You would have gotten a Landmark here.");
     };
 
     const getHazard = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
         console.log("You would have gotten a Hazard here.");
     };
 
     const getCave = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
         console.log("You would have gotten a Cave here.");
     };
     const getRuins = async () => {
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
         console.log("You would have gotten Ruins here.");
     };
     const getDungeon = async () => {
         console.log("You Are In A Dungeon")
-        if (cityButton) {
-            setCityButton(false);
-            setShowCity(false);
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten a Dungeon here.");
         // This will be a probabilistic roll of random dungeons that affect gameplay, similar to environmental effects. May last for some time.
     };
     const getCity = async () => {
-        console.log("You Are In The City");
-        setStoryContent(`You're now in a local city of the province. Using the City button, you can access the city's services and shops.`);
-        // This will be a probabilistic roll of random cities that affect gameplay, similar to environmental effects. May last for some time.
         setBackground(getCityBackground);
-        setCityButton(true);
+        gameDispatch({ type: GAME_ACTIONS.SET_ENTER_CITY, payload: `You're now in a local city of the province. Using the City button, you can access the city's services and shops.`})
     };
     const handleTileContent = async (content: string, lastContent: string) => {
         console.log(content, lastContent, "Current and Last COntent")
@@ -906,10 +810,9 @@ const GameSolo = ({ user }: GameProps) => {
     useEffect(() => {
         console.log(mapState.currentTile, 'Current Tile?')
         if (mapState?.currentTile?.content === 'nothing') {
-            if (cityButton) {
+            if (gameState.cityButton) {
+                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
                 setBackground(getPlayerBackground);
-                setCityButton(false);
-                setShowCity(false);
             };
             chanceEncounter();
             return;
@@ -918,32 +821,32 @@ const GameSolo = ({ user }: GameProps) => {
     }, [mapState.currentTile])
 
     useEffect(() => {
-        if (lootRoll === false || state.player_win === false) return;
+        if (gameState.lootRoll === false || state.player_win === false) return;
         getOneLootDrop(state.computer.level);
         return () => {
-            setLootRoll(false);
+            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: false });
         }
-    }, [lootRoll, state.player_win]);
+    }, [gameState.lootRoll, state.player_win]);
     
     const getOneLootDrop = async (level: number) => {
         try {
             let response = await eqpAPI.getLootDrop(level);
-            setLootDrop(response.data[0]);
+            gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: response.data[0] });
             let roll = Math.floor(Math.random() * 100) + 1;
             if (roll <= 25) {
                 let second = await eqpAPI.getLootDrop(level);
-                setLootDropTwo(second.data[0]);
+                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: second.data[0] });
             } else {
-                setLootDropTwo(null);
+                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
             }
-            setItemSaved(false);
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop')
         };
     };
     
     useEffect(() => {
-        if (state.highScore > ascean.high_score) {
+        if (state.highScore > gameState.player.high_score) {
             updateHighScore();
         } else {
             return;
@@ -953,11 +856,11 @@ const GameSolo = ({ user }: GameProps) => {
     const updateHighScore = async () => {
         try {
             const response = await asceanAPI.highScore({
-                'asceanId': ascean._id,
+                'asceanId': gameState.player._id,
                 'highScore': state.highScore
             });
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            setAscean(firstResponse.data);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
         } catch (err: any) {
             console.log(err.message, 'Error Updating High Score')
         }
@@ -1103,12 +1006,10 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     async function handlePlayerWin(combatData: any) {
-        console.log('handlePlayerWin called at', Date.now());
-
         try {
             playWin();
             gainExperience();
-            setLoadingCombatOverlay(true);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
                 setTimeLeft(0);
                 dispatch({
@@ -1116,9 +1017,9 @@ const GameSolo = ({ user }: GameProps) => {
                     payload: combatData
                 });
                 if (mapState?.currentTile?.content !== 'city') {
-                    setLootRoll(true);
+                    gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 };
-                setLoadingCombatOverlay(false);
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -1128,15 +1029,15 @@ const GameSolo = ({ user }: GameProps) => {
     async function handleComputerWin(combatData: any) {
         try {
             playDeath();
-            setCombatOverlayText([`You have lost the battle to ${opponent?.name}, yet still there is always Achre for you to gain.`])
-            setLoadingCombatOverlay(true);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
             setTimeout(() => {
                 setTimeLeft(0);
                 dispatch({
                     type: ACTIONS.COMPUTER_WIN,
                     payload: combatData
                 });
-                setLoadingCombatOverlay(false);
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -1145,7 +1046,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
-        console.log('handleInitiate called at', Date.now());
         try {
             if (state.action === '') {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`]);
@@ -1162,27 +1062,9 @@ const GameSolo = ({ user }: GameProps) => {
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
-                // playWin();
-                // gainExperience();
-                // dispatch({
-                //     type: ACTIONS.PLAYER_WIN,
-                //     payload: response.data
-                // });
-                // setTimeLeft(0);
-                // if (mapState?.currentTile?.content !== 'city') {
-                //     setLootRoll(true);
-                // };
-                // setCombatResolved(true);
             }
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
-                // playDeath();
-                // dispatch({
-                //     type: ACTIONS.COMPUTER_WIN,
-                //     payload: response.data
-                // });
-                // setTimeLeft(0);
-                // setCombatResolved(true);
             }
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -1191,7 +1073,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const resetAscean = async () => {
         try {
-            setCheckLoot(true);
+            gameDispatch({ type: GAME_ACTIONS.CHECK_LOOT, payload: true });
             if (state.current_player_health <= 0 || state.new_player_health <= 0) {
                 dispatch({
                     type: ACTIONS.RESET_PLAYER,
@@ -1210,14 +1092,13 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (ascean?.origin && background === null) {
-
+        if (gameState?.player?.origin && background === null) {
             setBackground(getPlayerBackground);
         }
-    }, [ascean]);
+    }, [gameState?.player]);
     
     const getPlayerBackground = {
-        background: "url(" + getBackgroundStyle(ascean.origin) + ")",
+        background: "url(" + getBackgroundStyle(gameState?.player.origin) + ")",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
     };
@@ -1254,7 +1135,7 @@ const GameSolo = ({ user }: GameProps) => {
         );
     };
 
-    if (loading || loadingAscean) {
+    if (gameState.loading || gameState.loadingAscean) {
         return (
             <Loading Combat={true} />
         );
@@ -1262,35 +1143,32 @@ const GameSolo = ({ user }: GameProps) => {
 
     return (
         <Container fluid id="game-container" style={ background }>
-            {
-                opponent ?
+            { gameState.opponent ?
                 <>
-                <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+                <GameAscean state={state} ascean={gameState.opponent} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
                 <CombatOverlay 
-                    ascean={ascean} enemy={opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
+                    ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                     playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
                     rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
-                    loadingCombatOverlay={loadingCombatOverlay} setLoadingCombatOverlay={setLoadingCombatOverlay} combatResolved={combatResolved} setCombatResolved={setCombatResolved}
-                    combatOverlayText={combatOverlayText} setCombatOverlayText={setCombatOverlayText}
+                    loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText}  gameDispatch={gameDispatch}
                 />
                 </>
-                : ''
-            }
+            : '' }
 
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} gainExperience={gainExperience} soundEffects={soundEffects}
-                playDeath={playDeath} setLootRoll={setLootRoll} playWin={playWin} timeLeft={timeLeft} setTimeLeft={setTimeLeft} setCombatResolved={setCombatResolved}
-                handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects}
+                timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
             />
-
-
             
-            <Settings inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} />
+            <Settings 
+                inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} 
+                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} 
+            />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
-            <GameAscean state={state} ascean={ascean} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />
+            <GameAscean state={state} ascean={gameState.player} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
             
             {/* TODO:FIXME: EVERYTHING THAT OCCURS SPECIFICALLY INSIDE OR OUTSIDE OF COMBAT NEEDS TO BE REFACTORED INTO THE BELOW */}
             {/* Enemies will probably automatically trigger combatEngaged, certain NPCs can be coaxed, certain enemies with higher disposition 
@@ -1326,38 +1204,37 @@ const GameSolo = ({ user }: GameProps) => {
                 <>
                     <GameMap mapData={mapState} />
                     {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
-                    { showDialog ?    
+                    { gameState.showDialog ?    
                         <DialogBox 
-                            npc={opponent.name} dialog={dialog} dispatch={dispatch} state={state} checkLoot={checkLoot} setCheckLoot={setCheckLoot} deleteEquipment={deleteEquipment} currentIntent={currentIntent} setCurrentIntent={setCurrentIntent}
-                            playerWin={state.player_win} computerWin={state.computer_win} ascean={ascean} enemy={opponent} itemSaved={itemSaved} setItemSaved={setItemSaved} setLoadingCombatOverlay={setLoadingCombatOverlay}
-                            winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo} generateWorld={generateWorld} mapState={mapState} mapDispatch={mapDispatch}
-                            resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={lootDrop} setLootDrop={setLootDrop} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment} clearOpponent={clearOpponent}
+                            npc={gameState.opponent.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
+                            playerWin={state.player_win} computerWin={state.computer_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
+                            winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo}  generateWorld={generateWorld} mapState={mapState} mapDispatch={mapDispatch}
+                            resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
+                            gameDispatch={gameDispatch}
                         />
                     : '' }
-                    { showInventory ?
-                        <InventoryBag inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} />
+                    { gameState.showInventory ?
+                        <InventoryBag inventory={gameState.player.inventory} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch}  />
                     : ""}
-                    {
-                        opponent && mapState?.currentTile?.content !== 'city' ?
-                        <Button variant='' className='dialog-button' onClick={() => setShowDialog(!showDialog)}>Dialog</Button>
+                    { gameState.opponent && mapState?.currentTile?.content !== 'city' ?
+                        <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
                         : 
                         <>
-                        <StoryBox ascean={ascean} mapState={mapState} storyContent={storyContent} />
+                        <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} />
                         <Joystick onDirectionChange={debouncedHandleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
-                        <Button variant='' className='inventory-button' onClick={() => setShowInventory(!showInventory)}>Inventory</Button>   
+                        <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>
                     }
-                    { showCity ?
+                    { gameState.showCity ?
                         <CityBox 
-                            state={state} dispatch={dispatch} ascean={ascean} mapState={mapState} enemy={opponent} merchantEquipment={merchantEquipment} setMerchantEquipment={setMerchantEquipment}
-                            itemSaved={itemSaved} setItemSaved={setItemSaved} inventory={ascean.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
-                            cityOption={cityOption} setCityOption={setCityOption} clearOpponent={clearOpponent}
+                            state={state} dispatch={dispatch} ascean={gameState.player} mapState={mapState} enemy={gameState.opponent} merchantEquipment={gameState.merchantEquipment}
+                            inventory={gameState.player.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
+                            cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch}
                         />
                         : ''
                     }
-                    {
-                        cityButton ?
-                        <Button variant='' className='city-button' onClick={() => setShowCity(!showCity)}>City</Button>
+                    { gameState.cityButton ?
+                        <Button variant='' className='city-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_CITY, payload: !gameState.showCity })}>City</Button>
                         : ''
                     }
                 </>
@@ -1372,13 +1249,13 @@ const GameSolo = ({ user }: GameProps) => {
                 : ''
             }
             <GameplayOverlay 
-                ascean={ascean} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={loadingOverlay} setLoadingOverlay={setLoadingOverlay} 
-                generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={overlayContent} setOverlayContent={setOverlayContent}
-                loadingContent={loadingContent} setLoadingContent={setLoadingContent}    
+                ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
+                generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}
+                loadingContent={gameState.loadingContent} gameDispatch={gameDispatch}
             />
             <GameplayEventModal 
-                ascean={ascean} show={gameplayModal} setShow={setGameplayModal} gameplayEvent={gameplayEvent} deleteEquipment={deleteEquipment}
-                lootDrop={lootDrop} setLootDrop={setLootDrop} lootDropTwo={lootDropTwo} setLootDropTwo={setLootDropTwo} itemSaved={itemSaved} setItemSaved={setItemSaved}
+                ascean={gameState.player} show={gameState.gameplayModal} gameplayEvent={gameState.gameplayEvent} deleteEquipment={deleteEquipment} gameDispatch={gameDispatch}
+                lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved}
              />
         </Container>
     );

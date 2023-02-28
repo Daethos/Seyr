@@ -6,6 +6,7 @@ import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
 import { ACTIONS } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
+import { GAME_ACTIONS } from '../components/GameCompiler/GameStore';
 
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
@@ -51,25 +52,18 @@ interface Props {
     loseStreak: number;
     highScore: number;
     lootDrop: any;
-    setLootDrop: React.Dispatch<React.SetStateAction<any>>;
     lootDropTwo: any;
-    setLootDropTwo: React.Dispatch<React.SetStateAction<any>>;
     itemSaved: boolean;
-    setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
     dispatch: any;
     state: any;
-    checkLoot: boolean;
-    setCheckLoot: React.Dispatch<React.SetStateAction<boolean>>;
     deleteEquipment: (eqp: any) => Promise<void>;
     merchantEquipment: any;
-    setMerchantEquipment: React.Dispatch<React.SetStateAction<any>>;
     generateWorld: (mapName: string) => Promise<void>;
     mapState: any;
     mapDispatch: any;
     currentIntent: any;
-    setCurrentIntent: React.Dispatch<React.SetStateAction<any>>;
     clearOpponent: () => Promise<void>;
-    setLoadingCombatOverlay: React.Dispatch<React.SetStateAction<boolean>>;
+    gameDispatch: React.Dispatch<any>;
 }
 
 interface Region { 
@@ -84,8 +78,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, mapState, mapDispatch, setLoadingCombatOverlay, clearOpponent, currentIntent, setCurrentIntent, ascean, enemy, npc, dialog, generateWorld, checkLoot, setCheckLoot, merchantEquipment, setMerchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved }: Props) => {
-    // const [currentIntent, setCurrentIntent] = useState<any | null>('challenge');
+const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, generateWorld, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const regionInformation = {
         Astralands: "Good one, those Ashtre have quite the mouth on them I hear yet never heard. Perhaps you'll be able to catch their whispers.", 
@@ -111,11 +104,10 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, setLoadingCombatOve
         setProvince(region);
     };
     const handleIntent = (intent: string) => {
-        setCurrentIntent(intent);
+        gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: intent });
     };
     const engageCombat = async () => {
         await checkingLoot();
-        setLoadingCombatOverlay(true);
         dispatch({
             type: ACTIONS.SET_DUEL,
             payload: ''
@@ -147,47 +139,17 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, setLoadingCombatOve
         console.log(merchantEquipment.length, lootDrop, lootDropTwo, 'Merchant Equipment')
         if (merchantEquipment.length > 0) {
             await deleteEquipment(merchantEquipment);
-            setMerchantEquipment([]);
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
         };
         if (lootDrop !== null) {
             await deleteEquipment([lootDrop]);
-            setLootDrop(null);
+            gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
         };
         if (lootDropTwo !== null) {
             await deleteEquipment([lootDropTwo]);
-            setLootDropTwo(null);
+            gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDropTwo });
         };
     };
-
-    const getLoot = async () => {
-        if (merchantEquipment.length > 0) {
-            const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
-            console.log(deleteResponse, 'Delete Response!');
-        }
-        try {
-            setLoading(true);
-            const response = await eqpAPI.getMerchantEquipment(enemy.level);
-            console.log(response.data, 'Response!');
-            setMerchantEquipment(response.data);
-            setItemSaved(false);
-            setLoading(false);
-        } catch (err) {
-            console.log(err, 'Error Getting Loot!');
-        };
-    };
-    
- 
-
-    useEffect(() => {
-        if (merchantEquipment.length === 0) return;
-        console.log(merchantEquipment, 'merchantEquipment variable in DialogBox.tsx');
-    }, [merchantEquipment]);
-
-    useEffect(() => {
-        console.log(currentIntent);
-    }, [currentIntent]);
-
-    //TODO:FIXME: Note to self, make a Trader or Services type player, and create new dialog type, not Opponent, but the aforementioned name. With different options, some quests, with services, can trade or create items for the player.
 
     if (loading) {
         return (
@@ -214,13 +176,13 @@ const DialogBox = ({ state, dispatch, mapState, mapDispatch, setLoadingCombatOve
 
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
-                                <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                                <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                                <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                                <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                             </>
                         : lootDrop?._id ?
-                            <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : lootDropTwo?._id ?
-                            <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                            <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : '' }
                             {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Refresh Your Duel With {npc}.</Button> */}
                             <p style={{ color: 'orangered' }}>

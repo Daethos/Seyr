@@ -16,13 +16,8 @@ interface Props {
     inventory: any;
     ascean: any;
     dispatch: any;
-    eqpSwap: boolean;
-    removeItem: boolean;
-    setEqpSwap: React.Dispatch<React.SetStateAction<boolean>>;
-    setRemoveItem: React.Dispatch<React.SetStateAction<boolean>>;
     settings?: boolean;
-    loadedAscean: boolean;
-    setLoadedAscean: React.Dispatch<React.SetStateAction<boolean>>;
+    gameDispatch: React.Dispatch<any>;
 }
 
 interface IOProps {
@@ -72,7 +67,7 @@ const InventoryOptions = ({ drinkFirewater, firewater }: IOProps) => {
   )
 }
 
-const InventoryBag = ({ ascean, dispatch, inventory, eqpSwap, removeItem, setEqpSwap, setRemoveItem, settings, loadedAscean, setLoadedAscean }: Props) => {
+const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch }: Props) => {
   const [activeTab, setActiveTab] = useState('gear');
   const [firewater, setFirewater] = useState(ascean?.firewater);
 
@@ -91,7 +86,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, eqpSwap, removeItem, setEqp
       { activeTab === 'gear' && inventory?.length > 0 ?
         inventory.map((item: any, index: number) => {
           return (
-            <Inventory bag={inventory} inventory={item} ascean={ascean} eqpSwap={eqpSwap} removeItem={removeItem} setEqpSwap={setEqpSwap} setRemoveItem={setRemoveItem} loadedAscean={loadedAscean} setLoadedAscean={setLoadedAscean} key={index} />
+            <Inventory gameDispatch={gameDispatch} bag={inventory} inventory={item} ascean={ascean} key={index} />
           )
         })
       : '' }

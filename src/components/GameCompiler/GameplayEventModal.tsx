@@ -1,35 +1,32 @@
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import LootDrop from './LootDrop';
+import { GAME_ACTIONS } from './GameStore';
 
 interface Props {
     ascean: any;
     gameplayEvent: any;
     show: boolean;
-    setShow: React.Dispatch<React.SetStateAction<boolean>>;
     lootDrop: any;
-    setLootDrop: React.Dispatch<React.SetStateAction<any>>;
     lootDropTwo: any;
-    setLootDropTwo: React.Dispatch<React.SetStateAction<any>>;
     deleteEquipment: (eqp: any) => Promise<void>;
     itemSaved: boolean;
-    setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
+    gameDispatch: React.Dispatch<any>;
 }
 
-const GameplayEventModal = ({ ascean, gameplayEvent, show, setShow, lootDrop, setLootDrop, lootDropTwo, setLootDropTwo, itemSaved, setItemSaved, deleteEquipment }: Props) => {
+const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDrop, lootDropTwo, itemSaved, deleteEquipment }: Props) => {
 
     const checkingLoot = async () => {
         console.log( lootDrop, lootDropTwo, 'Merchant Equipment')
         if (lootDrop !== null) {
             await deleteEquipment([lootDrop]);
-            setLootDrop(null);
+            gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: null });
         };
         if (lootDropTwo !== null) {
             await deleteEquipment([lootDropTwo]);
-            setLootDropTwo(null);
+            gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
         };
-        setShow(false);
+        gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: false });
     };
 
     const modalStyle = {
@@ -50,13 +47,13 @@ const GameplayEventModal = ({ ascean, gameplayEvent, show, setShow, lootDrop, se
                 <br /><br />
                 { lootDrop?._id && lootDropTwo?._id ?
                     <>
-                        <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
-                        <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                        <LootDrop lootDrop={lootDrop} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                     </>
                 : lootDrop?._id ?
-                    <LootDrop lootDrop={lootDrop} setLootDrop={setLootDrop} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                    <LootDrop lootDrop={lootDrop} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                 : lootDropTwo?._id ?
-                    <LootDrop lootDrop={lootDropTwo} setLootDrop={setLootDropTwo} ascean={ascean} itemSaved={itemSaved} setItemSaved={setItemSaved} />
+                    <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                 : '' }
                 <br /><br />
                 [Note: Treasure must be Saved]

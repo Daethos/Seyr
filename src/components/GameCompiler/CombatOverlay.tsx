@@ -1,15 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
+import { GAME_ACTIONS } from './GameStore';
 
 
 interface CombatProps {
     ascean: any;
     enemy: any;
     loadingCombatOverlay: boolean;
-    setLoadingCombatOverlay: React.Dispatch<React.SetStateAction<boolean>>;
     combatResolved: boolean;
-    setCombatResolved: React.Dispatch<React.SetStateAction<boolean>>;
     playerAction: string;
     computerAction: string;
     playerDamageTotal: number;
@@ -23,20 +22,17 @@ interface CombatProps {
     playerWin: boolean;
     computerWin: boolean;
     combatOverlayText: string;
-    setCombatOverlayText: React.Dispatch<React.SetStateAction<string>>;
+    gameDispatch: React.Dispatch<any>;
 };
 
-const CombatOverlay = ({ ascean, enemy, playerWin, computerWin, loadingCombatOverlay, setLoadingCombatOverlay, combatOverlayText, setCombatOverlayText, combatResolved, setCombatResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
+const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, loadingCombatOverlay, combatOverlayText, combatResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
     const overlayRef = useRef(null);
     const pArticle = ['a', 'e', 'i', 'o', 'u'].includes(playerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
     const cArticle = ['a', 'e', 'i', 'o', 'u'].includes(computerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
     useEffect(() => {
         if (combatResolved) {
-            console.log("Combat Resolved, closing Overlay")
             setTimeout(() => {
-                setLoadingCombatOverlay(false);
-                setCombatResolved(false);
-                setCombatOverlayText('');
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_RESOLVED, payload: false });
             }, 3000);
         };
     }, [combatResolved]);
@@ -84,7 +80,6 @@ const CombatOverlay = ({ ascean, enemy, playerWin, computerWin, loadingCombatOve
                 display: '',
                 backgroundColor: 'rgba(0, 0, 0, 0)',
                 zIndex: 9999,
-                // border: "0.2em solid purple"
             }}
             >
             <h5 className='overlay-content-combat' style={ loadingCombatOverlay ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>

@@ -6,6 +6,7 @@ import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import MerchantTable from './MerchantTable';
 import { ACTIONS } from './CombatStore';
+import { GAME_ACTIONS } from './GameStore';
 
 const CityButtons = ({ options, setOptions }: { options: any, setOptions: any }) => {
     // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -42,39 +43,43 @@ interface CityProps {
     ascean: any;
     enemy: any;
     cityOption: any;
-    setCityOption: any;
     merchantEquipment: any;
-    setMerchantEquipment: React.Dispatch<React.SetStateAction<any>>;
-    itemSaved: boolean;
-    setItemSaved: React.Dispatch<React.SetStateAction<boolean>>;
     inventory: any;
     getOpponent: () => Promise<void>;
     resetAscean: () => Promise<void>;
     deleteEquipment: (eqp: any) => Promise<void>;
     clearOpponent: () => Promise<void>;
+    gameDispatch: React.Dispatch<any>;
 }
 
-const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, cityOption, setCityOption, merchantEquipment, setMerchantEquipment, itemSaved, setItemSaved, inventory, getOpponent, resetAscean, deleteEquipment }: CityProps) => {
+const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clearOpponent, cityOption, merchantEquipment, inventory, getOpponent, resetAscean, deleteEquipment }: CityProps) => {
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [loading, setLoading] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingContent, setLoadingContent] = useState<string>('');
     const targetRef = useRef(null);
-    const [upgradeItem, setUpgradeItem] = useState<any>({});
+    const [upgradeItem, setUpgradeItem] = useState<any | null>({});
 
-    function canUpgrade(inventory: any[]): boolean {
-        const matches = inventory.filter((item, index, arr) =>
-            arr.findIndex(i => i.name === item.name && i.rarity === item.rarity) !== index
-        );
-        if (matches.length > 3) setUpgradeItem(matches[0]);
-        return matches.length >= 3;
-    };
+    // function canUpgrade(inventory: any[]): any | undefined {
+    //     const matches = inventory.filter((item, index, arr) =>
+    //       arr.findIndex(i => i.name === item.name && i.rarity === item.rarity) !== index
+    //     );
+    //     if (matches.length > 3) {
+    //       return matches[0];
+    //     };
+    // };
+      
+    // const matchedItem = canUpgrade(inventory);
+    // if (matchedItem) {
+    //     setUpgradeItem(matchedItem);
+    // };
+      
 
     const handleCityOption = async (option: string) => {
         console.log(option, 'Option Clicked');
         await checkingLoot();
         if (enemy) await clearOpponent();
-        setCityOption(option);
+        gameDispatch({ type: GAME_ACTIONS.SET_CITY_OPTION, payload: option });
     };
 
     const engageCombat = async () => {
@@ -101,18 +106,14 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
     };
 
     const handleRest = async () => {
-        // This will handle recovering your health back to 100%
-        console.log("Healing Back to 100%!");
         dispatch ({ type: ACTIONS.PLAYER_REST, payload: 100 });
-        // payload for ACTIONS.REST is going to be a % of health to recover.
-        // Potions will be a either a set amount of have ranged values depending.
     };
 
     const checkingLoot = async () => {
         console.log(merchantEquipment.length, 'Merchant Equipment')
         if (merchantEquipment.length > 0) {
             await deleteEquipment(merchantEquipment);
-            setMerchantEquipment([]);
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
         };
     };
 
@@ -136,8 +137,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                 response = await eqpAPI.getClothEquipment(ascean?.level);
             }
             console.log(response.data, 'Response!');
-            setMerchantEquipment(response.data);
-            setItemSaved(false);
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data })
             setLoading(false);
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
@@ -161,7 +161,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
             };
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
-            // setRemoveItem(true);
+            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
         };
@@ -265,7 +265,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('armor')}>See the various armor available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch}  ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
                 : cityOption === 'Bank' ?
@@ -279,9 +279,16 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} */}
                     {/* Drag and Drop Feature to select (3) of the same item name / rarity in order to forge them. It'll light up and be the new inventory forge mechanic instead as the new option */}
                     <br />
-                    { canUpgrade(inventory) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>
+                    {/* {
+                        upgradeItem ?
+                        <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>
+                            Forge: (3) <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getRarity} /> =&gt; <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getHigherRarity} />
+                        </Button>
+                        : ''    
+                    } */}
+                    {/* { canUpgrade(inventory) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>
                         Forge: (3) <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getRarity} /> =&gt; <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getHigherRarity} />
-                    </Button> : '' }
+                    </Button> : '' } */}
                     {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleUpgradeItem()}>Forge Upgrade.</Button> */}
                     <br />
                 </>
@@ -307,7 +314,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                     }
                     <br />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
                 : cityOption === 'Merchant' ?
@@ -319,7 +326,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
                 : cityOption === 'Tailor' ?
@@ -331,7 +338,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('cloth')}>See the cloth wares and weapons.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
                 : cityOption === 'Dueling Grounds' ?
@@ -387,7 +394,7 @@ const CityBox = ({ state, dispatch, mapState, ascean, enemy, clearOpponent, city
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('weapon')}>See the various weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} setMerchantEquipment={setMerchantEquipment} ascean={ascean} itemPurchased={itemSaved} setItemPurchased={setItemSaved} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
                 : cityOption === 'Guild Hall' ?

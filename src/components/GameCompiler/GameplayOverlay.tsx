@@ -1,22 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
+import { GAME_ACTIONS } from './GameStore';
 
 interface Props {
     ascean: any;
     mapState: any;
     mapDispatch: React.Dispatch<any>;
     loadingOverlay: boolean;
-    setLoadingOverlay: React.Dispatch<React.SetStateAction<boolean>>;
     generateWorld: (mapName: string) => Promise<void>;
     overlayContent: string;
-    setOverlayContent: React.Dispatch<React.SetStateAction<string>>;
     saveWorld: () => Promise<void>;
     loadingContent: boolean;
-    setLoadingContent: React.Dispatch<React.SetStateAction<boolean>>;
+    gameDispatch: React.Dispatch<any>;
 };
 
-const GameplayOverlay = ({ ascean, mapState, mapDispatch, loadingOverlay, setLoadingOverlay, generateWorld, overlayContent, setOverlayContent, saveWorld, loadingContent, setLoadingContent }: Props) => {
+const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingOverlay, generateWorld, overlayContent, saveWorld, loadingContent }: Props) => {
     const [mapName, setMapName] = useState<string>(`${ascean?.name}_${ascean?.maps?.length + 1 < 10 ? '0' + (ascean?.maps?.length + 1) : ascean?.maps?.length + 1}`);
     const overlayRef = useRef(null);
 
@@ -27,7 +26,8 @@ const GameplayOverlay = ({ ascean, mapState, mapDispatch, loadingOverlay, setLoa
 
     const loadMap = async () => {
         try {
-            setOverlayContent(`Loading ${mapState?.name}. Enjoy your journey, ${ascean?.name}.`);
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Loading ${mapState?.name}. Enjoy your journey, ${ascean?.name}.` }); 
+            // setOverlayContent(`Loading ${mapState?.name}. Enjoy your journey, ${ascean?.name}.`);
             setTimeout(() => {
                 closeEverything();
             }, 3000);
@@ -38,9 +38,10 @@ const GameplayOverlay = ({ ascean, mapState, mapDispatch, loadingOverlay, setLoa
     };
 
     const closeEverything = () => {
-        setOverlayContent('');
-        setLoadingOverlay(false);
-        setLoadingContent(false);
+        gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false })
+        // setOverlayContent('');
+        // setLoadingOverlay(false);
+        // setLoadingContent(false);
     };
 
     return (
