@@ -19,7 +19,7 @@ const GameMap = ({ mapData }: MapProps) => {
     const [mapVisible, setMapVisible] = useState(false);
 
     useEffect(() => {
-        console.log(mapData, "Map Data")
+        // console.log(mapData, "Map Data")
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -29,7 +29,6 @@ const GameMap = ({ mapData }: MapProps) => {
         }
     }, [mapData]);
     
-    useEffect(() => { if (canvasRef) console.log(canvasRef.current) }, [canvasRef])
 
     function drawMap(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}): void {
         const tileSize = 2; // set the tile size to 16 pixels

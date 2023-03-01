@@ -18,7 +18,7 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
 
     const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
         event.preventDefault();
-        console.log(event.touches[0].clientX, event.touches[0].clientY, "start")
+        // console.log(event.touches[0].clientX, event.touches[0].clientY, "start")
         setTouchStart({ x: event.touches[0].clientX, y: event.touches[0].clientY });
     };
 

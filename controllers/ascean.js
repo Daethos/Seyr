@@ -31,6 +31,8 @@ module.exports = {
     saveCoordinates,
     drinkFirewater,
     restoreFirewater,
+    replenishFirewater,
+    animalStats,
 }
 
 async function editAscean(req, res) {
@@ -103,6 +105,21 @@ async function drinkFirewater(req, res) {
             },
         }, { new: true });
         console.log(ascean.firewater, "Firewater After Saving Drink")
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        res.status(400).json(err);
+    };
+};
+
+async function replenishFirewater(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.params.id);
+        let cost = ascean.level * 100;
+        ascean.firewater.charges = 5;
+        ascean.experience -= cost < 0 ? ascean.experience : cost;
+        await ascean.save();
+        console.log(ascean.firewater, "Firewater After Saving Replenish")
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Drinking Firewater!')
@@ -182,7 +199,7 @@ async function swapItems(req, res) {
         const currentItemId = ascean[itemType];
         ascean[itemType] = req.body[keyToUpdate];
         const currentItem = await determineItemType(currentItemId);
-        if (!currentItem.name.includes('Empty') || !currentItem.name.includes('Starter')) {
+        if (!(currentItem.rarity === 'Default')) {
             ascean.inventory.push(currentItemId);
         };
         const currentItemIndex = ascean.inventory.indexOf(req.body[keyToUpdate]);
@@ -259,7 +276,7 @@ async function updateLevel(req, res) {
 async function saveExperience(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
-        console.log(req.body.opponent, 'Opponent Level in Save Experience')
+        console.log(req.body.opponent, 'Opponent Level in Save Experience');
         let silver = 0;
         let gold = 0;
         let currencyValue = req.body.opponent;
@@ -273,7 +290,7 @@ async function saveExperience(req, res) {
             gold = 0;
             if (silver > 99) {
                 silver = 99;
-            }
+            };
         } else if (currencyValue > 10 && currencyValue <= 20) { // Opponent Level 11-20, 5-30 Silver, 1-2 Gold
             if (currencyValue > 15) { // Opponent Level 16-20, 5-30 Silver, 1-2 Gold
                 silver = Math.round(Math.floor(Math.random() * 25) + 5);
@@ -287,38 +304,38 @@ async function saveExperience(req, res) {
                     if (silver > 99) {
                         silver = 99;
                         gold = 0;
-                    }
-                }
-            }
-
-        }
+                    };
+                };
+            };
+        };
        
-            // ascean.currency = { silver: 0, gold: 0 };
         ascean.currency.silver += silver;
         ascean.currency.gold += gold;
 
 
-        console.log(silver, gold, ascean.currency, '<- Currency in the Controller Saving Experience!')
+        console.log(silver, gold, ascean.currency, '<- Currency in the Controller Saving Experience!');
 
         if (ascean.currency.silver > 99) {
-            // ascean.currency.gold += Math.floor(ascean.currency.silver / 100);
-            // ascean.currency.silver = ascean.currency.silver % 100;
             ascean.currency.gold += 1;
             ascean.currency.silver -= 100;
-        }
-
+        };
+        
+        if (ascean.firewater.charges < 5) {
+            ascean.firewater.charges += 1;
+        };
+        
         if (ascean.experience + req.body.experience > ascean.level * 1000) {
             ascean.experience = ascean.level * 1000;
         } else {
             ascean.experience += req.body.experience;
-        }
+        };
         await ascean.save();
         res.status(200).json({ data: {ascean, silver, gold} });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving Experience!')
         res.status(400).json({ err });
-    }
-}
+    };
+};
 
 async function updateHighScore(req, res) {
     const { asceanId, highScore } = req.body
@@ -547,7 +564,7 @@ async function getOneAscean(req, res) {
         ]);
 
         const inventoryPopulated = ascean.inventory.map(async item => {
-            const itemType = await Equipment.findById(item);
+            const itemType = await determineItemType(item);
             if (itemType) {
                 return itemType;
             };
@@ -584,6 +601,17 @@ async function getAsceanStats(req, res) {
     } catch (err) {
         console.log(err, `Error retrieving statistics for ascean`);
         res.status(400).json({ err });
+    };
+};
+
+async function animalStats(req, res) {
+    try {
+        const animal = req.body;
+        const data = await asceanService.asceanCompiler(animal);
+        res.status(200).json({ data });
+    } catch (err) {
+        console.log(err, 'Error in Animal Stats Controller');
+        res.status(400).json(err);
     };
 };
 

@@ -65,7 +65,7 @@ class WorldMap {
         this.size = 100;
         this.contentClusters = this.generateContentClusters(this.generateProvince(player.origin));
         this.map = this.generateMap();
-        this.reference = this.player._id;
+        this.reference = player._id;
     };
 
     generateProvince(origin) {

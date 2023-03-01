@@ -220,11 +220,24 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         </>
                     : 
                         <>
-                        "Where do you think you're going, {ascean?.name}? You think this is a game?"
-                        <br />
-                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
-                        {/* "Perhaps we'll meet again, {ascean.name}."<br />
-                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button> */}
+                        { enemy?.level > ascean?.level ?
+                            <>
+                            "You're not ready for this, {ascean?.name}. Come back when you've grown stronger."
+                            <br />
+                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
+                            </>
+                        :
+                            <>
+                            "Where do you think you're going, {ascean?.name}? You think this is a game?"
+                            <br />
+                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
+                            </>
+                        }
+
+                        {/* 
+                        "Perhaps we'll meet again, {ascean.name}."<br />
+                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button> 
+                        */}
                         </>
                     }
                     </>

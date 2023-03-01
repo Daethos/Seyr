@@ -31,6 +31,7 @@
   max-height: 70vh;
   overflow-y: auto;
   white-space: pre-wrap;
+  font-size: 18px;
 }
 .overlay-content-combat {
   color: black;
@@ -359,8 +360,9 @@
   color: #fdf6d8;
   font-weight: 900;
   background: transparent;
-  -webkit-text-stroke-width: 0.75px;
-  -webkit-text-stroke-color: purple;
+  /* -webkit-text-stroke-width: 0.75px;
+  -webkit-text-stroke-color: purple; */
+  text-shadow: 1.5px 1.5px 1.5px black;
 }
 .progress-text {
   margin-left: auto;

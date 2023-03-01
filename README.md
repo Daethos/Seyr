@@ -102,6 +102,11 @@
 
 # Iceboxing
 ### * Implement more intricate concepts with reference to the combat mechanics and the development of the story itself with leveling throughout the gameplay. 
+<br /><br />
+
+# Attributions
+### Corwin ZX for the majority of the icons used for gear and visualization of the characters.
+### An attribution to Lorc for the imagery of the wolf's attacks.
 
 [A First Place]: https://ascea.herokuapp.com/
 [don't look]: https://www.youtube.com/watch?v=2nXGPZaTKik

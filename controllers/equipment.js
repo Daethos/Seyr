@@ -474,26 +474,31 @@ const mutateEquipment = async (item, rarity) => {
             if (eqpCheck > 75) {
                 equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
+                await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else if (eqpCheck > 60) {
                 equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
+                await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else if (eqpCheck > 40) {
                 equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
+                await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else if (eqpCheck > 20) {
                 equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
+                await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else {
                 equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
                 console.log(equipment, 'equipment ?')
+                await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             };

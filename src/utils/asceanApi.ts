@@ -94,6 +94,23 @@ export async function getAsceanStats(ascean: any) {
         })
     })
 }
+
+export async function getAnimalStats(animal: any) {
+    return fetch(BASE_URL + 'animal/', {
+        method: 'POST',
+        body: JSON.stringify(animal),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err)
+        })
+    })
+}
    
 
 export async function deleteAscean(ascean: string) {
@@ -255,6 +272,19 @@ export async function drinkFirewater(ascean: string) {
 
 export async function restoreFirewater(ascean: string) {
     return fetch(BASE_URL + 'restoreFirewater/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response, "<- Response in Drink Firewater Utility Return")
+        })
+    })
+}
+
+export async function replenishFirewater(ascean: string) {
+    return fetch(BASE_URL + 'replenishFirewater/' + ascean, {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }

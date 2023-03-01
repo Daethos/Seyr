@@ -32,6 +32,7 @@ import CityBox from '../../components/GameCompiler/CityBox';
 import StoryBox from '../../components/GameCompiler/StoryBox';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 import GameMap from '../../components/GameCompiler/GameMap';
+import { Wolf } from '../../components/GameCompiler/Animals';
 
 interface GameProps {
     user: any;
@@ -125,7 +126,7 @@ const GameSolo = ({ user }: GameProps) => {
         faith: gameState.player.faith,
     });
 
-    useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
+    // useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
 
     const getAscean = useCallback(async () => {
         try {
@@ -177,6 +178,32 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             let minLevel: number = 0;
             let maxLevel: number = 0;
+            if (gameState.player.level === 1) {
+                const chance = Math.floor(Math.random() * 2);
+                if (chance === 0) {
+                    const wolf: Enemy = Object.assign({}, Wolf);
+                    gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
+                    const response = await asceanAPI.getAnimalStats(wolf);
+                    console.log(response.data.data, "Response with Wolf?");
+                    setAsceanState({
+                        ...asceanState,
+                        'opponent': wolf.level,
+                    });
+                    dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+                    setTimeout(() => {
+                        dispatch({
+                            type: ACTIONS.SET_DUEL,
+                            payload: ''
+                        });
+                        playOpponent();
+                        gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+                    }, 2000);
+                    return;
+                } else {
+                   minLevel = 1;
+                   maxLevel = 2;
+                };
+            }
             if (gameState.player.level < 3) { // 1-2
                 minLevel = 1;
                 maxLevel = 3;
@@ -427,6 +454,10 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             // const response = await mapAPI.saveNewMap(mapState);
             // console.log(response);
+            // mapDispatch({
+            //     type: MAP_ACTIONS.SET_MAP_DATA,
+            //     payload: response
+            // });
             gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${gameState.player.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.WORLD_SAVED, payload: true });
@@ -441,8 +472,8 @@ const GameSolo = ({ user }: GameProps) => {
             const data = {
                 ascean: gameState.player._id, 
                 coordinates: {
-                    x: mapState.currentTile.x,
-                   y: mapState.currentTile.y,
+                    x: x,
+                   y: y,
                 }
             };
             // const response = await asceanAPI.saveAsceanCoords(data);
@@ -498,13 +529,15 @@ const GameSolo = ({ user }: GameProps) => {
             if (chance > 97) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, what luck! \n See what you've found?` })
                 await getTreasure();
-            } else if (chance > 94) {
+            } else if (chance > 92) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` })
                 await getOpponent();
-            } else if (chance > 91) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
-                await getNPC();
-            } else {
+            } 
+            // else if (chance > 91) {
+            //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
+            //     await getNPC();
+            // } 
+            else {
                 console.log("No Encounter");
                 if (gameState.storyContent !== '') {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' })
@@ -523,7 +556,7 @@ const GameSolo = ({ user }: GameProps) => {
     const handleDirectionChange = async (direction: Direction) => {
         console.log(direction, "Is There A Direction?");
         const offset = DIRECTIONS[direction];
-        console.log(offset, "Is There An Offset?");
+        // console.log(offset, "Is There An Offset?");
         if (offset) {
           const newX = mapState.currentTile.x + offset.x;
           const newY = mapState.currentTile.y + offset.y;
@@ -533,7 +566,7 @@ const GameSolo = ({ user }: GameProps) => {
                 newTile: newTile,
                 oldTile: mapState.currentTile,
             }
-            console.log(data, "The Current and Next Tiles")
+            // console.log(data, "The Current and Next Tiles")
             mapDispatch({
               type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
               payload: data,
@@ -551,7 +584,7 @@ const GameSolo = ({ user }: GameProps) => {
       }
       
     
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, 100);
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, 250);
 
     async function getAsceanCoords(x: number, y: number, map: any) {
         // Access the tile object at the specified coordinates in the map
@@ -1019,6 +1052,9 @@ const GameSolo = ({ user }: GameProps) => {
                 if (mapState?.currentTile?.content !== 'city') {
                     gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 };
+                if (gameState.opponent.name === "Wolf") {
+                    clearOpponent();
+                }
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1037,6 +1073,9 @@ const GameSolo = ({ user }: GameProps) => {
                     type: ACTIONS.COMPUTER_WIN,
                     payload: combatData
                 });
+                if (gameState.opponent.name === "Wolf") {
+                    clearOpponent();
+                }
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1076,7 +1115,7 @@ const GameSolo = ({ user }: GameProps) => {
             gameDispatch({ type: GAME_ACTIONS.CHECK_LOOT, payload: true });
             if (state.current_player_health <= 0 || state.new_player_health <= 0) {
                 dispatch({
-                    type: ACTIONS.RESET_PLAYER,
+                    type: ACTIONS.RESET_COMPUTER,
                     payload: state
                 });
             } else {
@@ -1099,7 +1138,7 @@ const GameSolo = ({ user }: GameProps) => {
     
     const getPlayerBackground = {
         background: "url(" + getBackgroundStyle(gameState?.player.origin) + ")",
-        backgroundSize: "cover",
+        backgroundSize: "100% 100%",
         backgroundRepeat: "no-repeat",
     };
 
@@ -1162,7 +1201,7 @@ const GameSolo = ({ user }: GameProps) => {
             
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} 
-                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState}
+                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState} mapState={mapState}
             />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
@@ -1214,7 +1253,7 @@ const GameSolo = ({ user }: GameProps) => {
                         />
                     : '' }
                     { gameState.showInventory ?
-                        <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch}  />
+                        <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />
                     : ""}
                     { gameState.opponent && mapState?.currentTile?.content !== 'city' ?
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>

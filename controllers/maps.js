@@ -22,6 +22,9 @@ async function saveMap(req, res) {
         const ascean = await Ascean.findById(req.params.asceanID);
         const map = await Map.create(req.body);
         ascean.maps.push(map._id);
+        if (ascean.tutorial.firstBoot === true) {
+            ascean.tutorial.firstBoot = false;
+        };
         await ascean.save();
         res.status(201).json(map);
     } catch (err) {

@@ -6,27 +6,31 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
 import { GAME_ACTIONS } from './GameStore';
+import Modal from 'react-bootstrap/Modal';
 
 interface Firewater {
   charges: number;
   maxCharges: number;
 }
 
-interface Props {
+interface IBProps {
     inventory: any;
     ascean: any;
     dispatch: any;
     settings?: boolean;
     gameDispatch: React.Dispatch<any>;
     gameState: any;
+    mapState: any;
 }
 
 interface IOProps {
     drinkFirewater: () => void;
+    setShowFirewaterModal: (show: boolean) => void;
     firewater: Firewater;
+    mapState: any;
 };
 
-const InventoryOptions = ({ drinkFirewater, firewater }: IOProps) => {
+const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, mapState }: IOProps) => {
   const getBorder = (firewater: number) => {
     console.log(firewater, "How many charges do you have left?");
     switch (firewater) {
@@ -51,9 +55,17 @@ const InventoryOptions = ({ drinkFirewater, firewater }: IOProps) => {
         This is a bottle of Fyervas Firewater, associated with Fyer of Fire and Se'vas of War. This elixir strengthens the body and imbues you with a fiery spirit, making you{' '}
         more resilient and able to withstand combat and other challenges. This bottle has {firewater?.charges} charges left.
         <br /><br />
-        <Button variant='' onClick={drinkFirewater} style={{ color: "gold", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
-          Take a Drink?
-      </Button> 
+        
+      {
+        firewater?.charges === 0 && mapState?.currentTile?.content !== 'city' ?
+          <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
+            Inspect
+          </Button>
+          : 
+          <Button variant='' onClick={drinkFirewater} style={{ color: "gold", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
+            Take a Drink?
+        </Button> 
+      }
       </Popover.Body>
     </Popover>
   );
@@ -68,28 +80,70 @@ const InventoryOptions = ({ drinkFirewater, firewater }: IOProps) => {
   )
 }
 
-const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gameState }: Props) => {
+const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gameState, mapState }: IBProps) => {
   const [activeTab, setActiveTab] = useState('gear');
   const [drinking, setDrinking] = useState(false);
+  const [showFirwawterModal, setShowFirewaterModal] = useState<boolean>(false);
+  const [showBleed, setShowBleed] = useState<boolean>(true);
 
   useEffect(() => {
     if (gameState.loadedAscean) {
       setDrinking(false);
+      setShowBleed(true);
       gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
     }
   }, [gameState.loadedAscean, drinking]);
 
   const drinkFirewater = async () => {
-    // if (ascean?.firewater?.charges === 0) return;
+    if (ascean?.firewater?.charges === 0) return;
     setDrinking(true);
     dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
     const response = await asceanAPI.drinkFirewater(ascean?._id);
     console.log(response, "Response Drinking Firewater");
     gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
   };
+
+  const replenishFirewater = async () => {
+    setShowBleed(false);
+    try {
+      console.log("Replenishing Firewater");
+      const response = await asceanAPI.replenishFirewater(ascean?._id);
+      console.log(response, "Response Replenishing Firewater");
+      gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
+    } catch (err: any) {
+      console.log(err, "Error Replenishing Firewater");
+    }
+  };
+
+  const modalStyle = {
+    color: 'gold',
+    fontWeight: 400,
+    fontVariant: 'small-caps',
+    fontSize: 18 + 'px',
+    height: 47.5 + 'vh',
+    overflow: 'auto',
+};
   
   return (
     <>
+    <Modal show={showFirwawterModal} onHide={() => setShowFirewaterModal(false)} centered backdrop="static">
+    <Modal.Header style={{ fontSize: "20px", color: "orangered" }}>
+        <Modal.Title>Replenish Firewater</Modal.Title>
+    </Modal.Header>
+    <Modal.Body style={modalStyle}>
+        There is an Ancient method of replenishing Fyervas Firewater. Se'vas wants your blood spilled to receive his Grace. Fyer asks this over fire, and to ensure the prayer is heard, you must brew this overnight.
+        Or, you can wait until you find a city and purchase a more recent solution.
+        <br /><br /><br />
+        <p style={{ color: '#fdf6d8', fontSize: "16px" }}>
+        Do you wish to set camp and let it bleed?
+        </p>
+        <br />
+        { showBleed ?
+          <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }} onClick={replenishFirewater}>Bleed</Button>
+        : '' }
+        <Button onClick={() => setShowFirewaterModal(false)} variant='' style={{ float: "right", color: "gold", fontSize: "24px" }}>Resist</Button>
+    </Modal.Body>
+    </Modal>
     <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
       { activeTab === 'gear' && inventory?.length > 0 ?
         inventory.map((item: any, index: number) => {
@@ -100,7 +154,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       : '' }
     </div>
     { !drinking ?
-      <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} />
+      <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} setShowFirewaterModal={setShowFirewaterModal} mapState={mapState} />
       :
     '' }
     </>

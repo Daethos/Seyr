@@ -16,9 +16,10 @@ interface Props {
     saveAsceanCoords: (x: number, y: number) => Promise<void>;
     gameDispatch: React.Dispatch<any>;
     gameState: any;
+    mapState: any;
 };
 
-const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState }: Props) => {
+const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState, mapState }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -49,11 +50,11 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}></Button>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
-            <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} gameState={gameState} />
+            <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} gameState={gameState} mapState={mapState} />
         : ""}
         <br />
-        <Accordion flush>
-        <Accordion.Item eventKey="0">
+        <Accordion flush >
+        <Accordion.Item eventKey="0" >
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Volume ({soundEffectsVolume})</h5></Accordion.Header>
         <Accordion.Body style={{ fontSize: 14 + 'px' }}>
             <Form.Range value={soundEffectsVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />

@@ -284,7 +284,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'SET_NEW_COMPUTER':
             return {
                 ...state,
-                current_player_health: state.current_player_health === 0 || state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
+                current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
                 new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
                 computer: action.payload.ascean,
                 computer_health: action.payload.attributes.healthTotal,

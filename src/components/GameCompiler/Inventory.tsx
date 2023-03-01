@@ -72,7 +72,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
     }
 
     function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
-        const matches = inventory.filter(item => item.name === name && item.rarity === rarity);
+        const matches = inventory.filter(item => item?.name === name && item?.rarity === rarity);
         return matches.length >= 3;
     };
 

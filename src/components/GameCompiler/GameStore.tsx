@@ -3,7 +3,7 @@ export interface Ascean {
     description: string;
     user: object;
     
-    consitution: number;
+    constitution: number;
     strength: number;
     agility: number;
     achre: number;
@@ -55,22 +55,24 @@ export interface Player extends Ascean {
 export interface Enemy extends Ascean {
     named: boolean;
     type: string;
+    humanoid: boolean;
+    animal: boolean;
 };
 
-interface Equipment {
+export interface Equipment {
     name: string;
     type: string;
     rarity: string;
     itemType: string;
-    grip: string;
-    attack_type: string;
-    damage_type: [];
-    physical_damage: number;
-    magical_damage: number;
-    physical_penetration: number;
-    magical_penetration: number;
-    physical_resistance: number;
-    magical_resistance: number;
+    grip: string | null;
+    attack_type: string | null;
+    damage_type: [string] | [] | null;
+    physical_damage: number | null;
+    magical_damage: number | null;
+    physical_penetration: number | null;
+    magical_penetration: number | null;
+    physical_resistance: number | null;
+    magical_resistance: number | null;
     critical_chance: number;
     critical_damage: number;
     dodge: number;
@@ -81,7 +83,7 @@ interface Equipment {
     achre: number;
     caeren: number;
     kyosir: number;
-    influences: [];
+    influences: [string] | null;
     imgURL: string;
     _id: string;
 }
@@ -311,6 +313,7 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 loadingOpponent: action.payload,
+                showInventory: false,
             };
         case GAME_ACTIONS.LOADING_OVERLAY:
             return {
