@@ -14616,3 +14616,99 @@ export function getNpcDialog(npc: string): Dialog {
     return Opponent[npc];
 }
   
+
+type MerchantDialog = {
+    farewell: {
+        text: {
+            lesser: {
+                unfamiliar: string,
+                familiar: string,
+                intimate: string,
+            },
+            neutral: {
+                unfamiliar: string,
+                familiar: string,
+                intimate: string
+            },
+            greater: {
+                unfamiliar: string,
+                familiar: string,
+                intimate: string
+            }
+        };
+    };
+    services: {
+        respect: string[];
+        familiarity: string[];
+        text: {
+            lesser: {
+                unfamiliar: string;
+                familiar: string;
+                intimate: string;
+            };
+            neutral: {
+                unfamiliar: string;
+                familiar: string;
+                intimate: string;
+            };
+            greater: {
+                unfamiliar: string;
+                familiar: string;
+                intimate: string;
+            };
+        }
+    };
+};
+
+const NPC: Record<string, MerchantDialog> = {
+    // World Opponents
+    "Traveling General Merchant" : {
+        farewell: {
+            text: {
+                lesser: {
+                    unfamiliar: "I don't know you, but I'll sell you some goods.",
+                    familiar: "Oh, yes, it's you again. How have you been? Would you care to see my wares?",
+                    intimate: "Hey, friend, welcome back!",
+                },
+                neutral: {
+                    unfamiliar: "I don't know you, but I'll sell you some goods.",
+                    familiar: "Oh, yes, it's you again. How have you been? Would you care to see my wares?",
+                    intimate: "Hey, friend, welcome back!",
+                },
+                greater: {
+                    unfamiliar: "I don't know you, but I'll sell you some goods.",
+                    familiar: "Oh, yes, it's you again. How have you been? Would you care to see my wares?",
+                    intimate: "Hey, friend, welcome back!",
+                },
+            },
+        },
+        services: {
+            respect: ["lesser", "neutral", "greater"],
+            familiarity: ["unfamiliar", "familiar", "intimate"],
+            text: {
+                lesser: {
+                    unfamiliar: "I don't know you, but I'll sell you some goods.",
+                    familiar: "Oh, yes, it's you again. How have you been? Would you care to see my wares?",
+                    intimate: "Hey, friend, welcome back!",
+                },
+                neutral: {
+                    unfamiliar: "I don't know you, but I'll sell you some goods.",
+                    familiar: "Oh, yes, it's you again. How have you been? Would you care to see my wares?",
+                    intimate: "Hey, friend, welcome back!",
+                },
+                greater: {
+                    unfamiliar: "I don't know you, but I'll sell you some goods.",
+                    familiar: "Oh, yes, it's you again. How have you been? Would you care to see my wares?",
+                    intimate: "Hey, friend, welcome back!",
+                },
+            },
+        },
+    },
+}
+
+export function getMerchantDialog(merchant: string): MerchantDialog {
+    if (!(merchant in NPC)) {
+        throw new Error(`Merchant '${merchant}' not found in NPC object.`);
+    }
+    return NPC[merchant];
+};

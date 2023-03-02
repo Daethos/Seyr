@@ -6,6 +6,9 @@
   height: 100vh;
   width: 100%;
   margin: 0px;
+  background-size: auto;
+  background-position: center;
+  /* background-repeat: no-repeat; */
 }
 #game-block {
   margin-left: 7.5%;

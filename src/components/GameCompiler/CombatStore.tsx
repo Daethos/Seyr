@@ -440,7 +440,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
             };
         case 'PLAYER_REST':
             const percentage = action.payload;
-            const playerHealthHealed = Math.floor(state.current_player_health + (state.player_health * (percentage / 100)));
+            let currentHealth = state.new_player_health < 0 ? 0 : state.new_player_health;
+            const playerHealthHealed = Math.floor(currentHealth + (state.player_health * (percentage / 100)));
             const playerHealth = playerHealthHealed > state.player_health ? state.player_health : playerHealthHealed;
             console.log(percentage, playerHealthHealed, playerHealth, "The %, the Health Healed, and the new Player Health")
             return {

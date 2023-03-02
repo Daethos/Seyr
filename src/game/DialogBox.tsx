@@ -135,6 +135,33 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         await getOpponent();
     };
 
+    const getLoot = async (type: string) => {
+        if (merchantEquipment.length > 0) {
+            const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
+            console.log(deleteResponse, 'Delete Response!');
+        }
+        try {
+            let response: any;
+            setLoading(true);
+            if (type === 'weapon') {
+                response = await eqpAPI.getWeaponEquipment(ascean?.level);
+            } else if (type === 'armor') {
+                response = await eqpAPI.getArmorEquipment(ascean?.level);
+            } else if (type === 'jewelry') {
+                response = await eqpAPI.getJewelryEquipment(ascean?.level);
+            } else if (type === 'general') {
+                response = await eqpAPI.getMerchantEquipment(ascean?.level);
+            } else if (type === 'cloth') {
+                response = await eqpAPI.getClothEquipment(ascean?.level);
+            }
+            console.log(response.data, 'Response!');
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data })
+            setLoading(false);
+        } catch (err) {
+            console.log(err, 'Error Getting Loot!');
+        };
+    };
+
     const checkingLoot = async () => {
         console.log(merchantEquipment.length, lootDrop, lootDropTwo, 'Merchant Equipment')
         if (merchantEquipment.length > 0) {
@@ -220,17 +247,23 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         </>
                     : 
                         <>
-                        { enemy?.level > ascean?.level ?
+                        { enemy?.level > ascean?.level && enemy?.name !== 'Traveling General Merchant' ?
                             <>
                             "You're not ready for this, {ascean?.name}. Come back when you've grown stronger."
                             <br />
                             <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
                             </>
-                        :
+                        : enemy?.name !== 'Traveling General Merchant' ?
                             <>
                             "Where do you think you're going, {ascean?.name}? You think this is a game?"
                             <br />
                             <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
+                            </>
+                        : 
+                            <> 
+                            "Well, {ascean?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
+                            <br />
+                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
                             </>
                         }
 
@@ -255,7 +288,15 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 : currentIntent === 'services' ?
                     <>
-                        Services
+                        "Greetings, chance meeting you here. I've been traveling these lands for some time now, and it's good to see those with a mind for wander. I have some items you have find of you here on your adventures, if it interests you."
+                        <br /><br />
+                        <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
+                        <br /><br />
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
+                        <br />
+                        { merchantEquipment?.length > 0 ?
+                            <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                        : '' }
                     </>
                 : currentIntent === 'provincialWhispers' ?
                     <>

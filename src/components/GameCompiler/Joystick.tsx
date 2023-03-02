@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface Props {
     onDirectionChange: (...args: any[]) => void;
@@ -14,7 +14,12 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
         x: 0,
         y: 0,
     });
+    const timerRef = useRef<any>(null);
     const lastDirectionRef = useRef<string>("");
+
+    useEffect(() => {
+        console.log(timerRef, "Timer Ref")
+    }, [timerRef])
 
     const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -65,10 +70,17 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
             lastDirectionRef.current = direction;
         };
 
+        // clearTimeout(timerRef.current);
+        // timerRef.current = setTimeout(() => {
+        //     handleTouchEnd();
+        // }, 1000);
     };
     
     const handleTouchEnd = () => {
-        setPosition({ x: 0, y: 0 });
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+            setPosition({ x: 0, y: 0 });
+        }, 500);
     };
 
 return (

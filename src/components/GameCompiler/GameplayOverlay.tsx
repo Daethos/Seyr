@@ -56,13 +56,13 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                 display: '',
                 backgroundColor: 'rgba(0, 0, 0, 1)',
                 zIndex: 9999,
-                border: "0.2em solid purple"
+                border: "0.2em solid purple",
             }}
             >
-                <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 3s ease-in 0.5s forwards" } : { animation: "" } }>
+                <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1.5s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
                 </h6>
-            { ascean?.tutorial?.firstBoot && !loadingContent ?
+            { !loadingContent && overlayContent === '' ?
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
                     Welcome to the Ascea, {ascean?.name}!

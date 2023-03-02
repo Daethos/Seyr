@@ -106,7 +106,8 @@
 
 # Attributions
 ### Corwin ZX for the majority of the icons used for gear and visualization of the characters.
-### An attribution to Lorc for the imagery of the wolf's attacks.
+### Lorc for the imagery of the wolf's attacks.
+### The Wolf's imagery is created by Stephen Challener (Redshrike), William Thompson (William.Thompsonj), & Jordan Irwin (AntumDeluge)
 
 [A First Place]: https://ascea.herokuapp.com/
 [don't look]: https://www.youtube.com/watch?v=2nXGPZaTKik

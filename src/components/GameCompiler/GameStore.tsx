@@ -59,6 +59,41 @@ export interface Enemy extends Ascean {
     animal: boolean;
 };
 
+export interface NPC {
+    name: string;
+    named: boolean;
+    type: string;
+    description: string;
+    
+    constitution: number;
+    strength: number;
+    agility: number;
+    achre: number;
+    caeren: number;
+    kyosir: number;
+    
+    weapon_one: object;
+    weapon_two: object;
+    weapon_three: object;
+    shield: object;
+    helmet: object;
+    chest: object; 
+    legs: object;
+    amulet: object;
+    ring_one: object;
+    ring_two: object;
+    trinket: object;
+    
+    faith: string;
+    mastery: string;
+    origin: string;
+    sex: string;
+    
+    currency: object;
+    level: number;
+    experience: number;
+};
+
 export interface Equipment {
     name: string;
     type: string;

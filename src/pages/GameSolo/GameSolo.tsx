@@ -15,11 +15,11 @@ import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
 import LevelUpModal from '../../game/LevelUpModal';
-import { getNpcDialog } from '../../components/GameCompiler/Dialog';
+import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/Dialog';
 import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
-import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
@@ -33,6 +33,8 @@ import StoryBox from '../../components/GameCompiler/StoryBox';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 import GameMap from '../../components/GameCompiler/GameMap';
 import { Wolf } from '../../components/GameCompiler/Animals';
+import { Merchant } from '../../components/GameCompiler/NPCs';
+import useJoystick from '../../components/GameCompiler/useJoystick';
 
 interface GameProps {
     user: any;
@@ -44,8 +46,11 @@ const GameSolo = ({ user }: GameProps) => {
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [background, setBackground] = useState<any>(null); // ------
+    const [background, setBackground] = useState<any | null>({
+        background: ''
+    }); // ------
     const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
+    // const { direction, handleDirectionChange } = useJoystick();
 
     type Direction = keyof typeof DIRECTIONS;
 
@@ -126,6 +131,10 @@ const GameSolo = ({ user }: GameProps) => {
         faith: gameState.player.faith,
     });
 
+    useEffect(() => {
+        console.log(background, "Background")
+    }, [background])
+
     // useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
 
     const getAscean = useCallback(async () => {
@@ -173,14 +182,24 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const getNPCDialog = async (enemy: string) => {
+        try {
+            console.log(enemy, "Enemy");
+            const response = getMerchantDialog(enemy);
+            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+        };
+    };
+
     const getOpponent = async () => {
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try {
             let minLevel: number = 0;
             let maxLevel: number = 0;
+            const chance = Math.random();
             if (gameState.player.level === 1) {
-                const chance = Math.floor(Math.random() * 2);
-                if (chance === 0) {
+                if (chance > 0.5) {
                     const wolf: Enemy = Object.assign({}, Wolf);
                     gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
                     const response = await asceanAPI.getAnimalStats(wolf);
@@ -199,15 +218,34 @@ const GameSolo = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
                     }, 2000);
                     return;
-                } else {
-                   minLevel = 1;
-                   maxLevel = 2;
-                };
+                }
             }
-            if (gameState.player.level < 3) { // 1-2
+            if (gameState.player.level === 2) {
+                if (chance > 0.67) {
+                    const wolf: Enemy = Object.assign({}, Wolf);
+                    gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
+                    const response = await asceanAPI.getAnimalStats(wolf);
+                    console.log(response.data.data, "Response with Wolf?");
+                    setAsceanState({
+                        ...asceanState,
+                        'opponent': wolf.level,
+                    });
+                    dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+                    setTimeout(() => {
+                        dispatch({
+                            type: ACTIONS.SET_DUEL,
+                            payload: ''
+                        });
+                        playOpponent();
+                        gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+                    }, 2000);
+                    return;
+                }
+            }
+            if (gameState.player.level < 3) {
                 minLevel = 1;
-                maxLevel = 3;
-            } else if (gameState.player.level <= 4) { // 3-4
+                maxLevel = 2;
+            } else  if (gameState.player.level <= 4) { // 3-4
                 minLevel = 2;
                 maxLevel = 4;
             } else if (gameState.player.level <= 6) { // 5-6
@@ -527,18 +565,31 @@ const GameSolo = ({ user }: GameProps) => {
             //     await getLandmark();
             // } else 
             if (chance > 97) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, what luck! \n See what you've found?` })
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
                 await getTreasure();
+                setTimeout(() => {
+                    gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                }, 4000)
             } else if (chance > 92) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` })
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}. Turn swiftly` });
+
                 await getOpponent();
-            } 
-            // else if (chance > 91) {
-            //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
-            //     await getNPC();
-            // } 
-            else {
-                console.log("No Encounter");
+                setTimeout(() => {
+                    gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                }, 4000)
+            } else if (chance > 89) {
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
+                await getNPC();
+                setTimeout(() => {
+                    gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                }, 4000)
+            } else {
                 if (gameState.storyContent !== '') {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' })
                 }
@@ -554,9 +605,7 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const handleDirectionChange = async (direction: Direction) => {
-        console.log(direction, "Is There A Direction?");
         const offset = DIRECTIONS[direction];
-        // console.log(offset, "Is There An Offset?");
         if (offset) {
           const newX = mapState.currentTile.x + offset.x;
           const newY = mapState.currentTile.y + offset.y;
@@ -566,7 +615,6 @@ const GameSolo = ({ user }: GameProps) => {
                 newTile: newTile,
                 oldTile: mapState.currentTile,
             }
-            // console.log(data, "The Current and Next Tiles")
             mapDispatch({
               type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
               payload: data,
@@ -584,7 +632,7 @@ const GameSolo = ({ user }: GameProps) => {
       }
       
     
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, 250);
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, 150);
 
     async function getAsceanCoords(x: number, y: number, map: any) {
         // Access the tile object at the specified coordinates in the map
@@ -702,8 +750,21 @@ const GameSolo = ({ user }: GameProps) => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten an NPC here.");
-
+        gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
+        try {
+            const npc: NPC = Object.assign({}, Merchant);
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: npc });
+            const response = await asceanAPI.getAnimalStats(npc);
+            dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+            await getNPCDialog(npc.name);
+            gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: 'services' });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+            if (!gameState.showDialog && mapState?.currentTile?.content !== 'city') {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            }
+        } catch (err: any) {
+            console.log("Error Getting an NPC");
+        }
     };
 
     const getWonder = async () => {
@@ -759,13 +820,30 @@ const GameSolo = ({ user }: GameProps) => {
         // This will be a probabilistic roll of random dungeons that affect gameplay, similar to environmental effects. May last for some time.
     };
     const getCity = async () => {
-        setBackground(getCityBackground);
-        gameDispatch({ type: GAME_ACTIONS.SET_ENTER_CITY, payload: `You're now in a local city of the province. Using the City button, you can access the city's services and shops.`})
+        // setBackground(getCityBackground);
+        gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You walk up to the edges of an open city, some structure of wall exists but overall porous. Here, you may find myriad services to aid and replenish your quest.` });
+                
+        setBackground({
+            ...background,
+            'background': getCityBackground.background
+        });
+        gameDispatch({ type: GAME_ACTIONS.SET_ENTER_CITY, payload: `You're now in a local city of the province. Using the City button, you can access the city's services and shops.`});
+        setTimeout(() => {
+            gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+        }, 4000)
     };
     const handleTileContent = async (content: string, lastContent: string) => {
         console.log(content, lastContent, "Current and Last COntent")
         if (lastContent === 'city' && content !== 'city') {
-            setBackground(getPlayerBackground);
+            // setBackground(getPlayerBackground);
+            setBackground({
+                ...background,
+                'background': getPlayerBackground.background
+            });
+        };
+        if (content === 'city' && lastContent === 'city') {
+            return;
         };
         try {
             switch (content) {
@@ -845,7 +923,11 @@ const GameSolo = ({ user }: GameProps) => {
         if (mapState?.currentTile?.content === 'nothing') {
             if (gameState.cityButton) {
                 gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                setBackground(getPlayerBackground);
+                // setBackground(getPlayerBackground);
+                setBackground({
+                    ...background,
+                    'background': getPlayerBackground.background
+                });
             };
             chanceEncounter();
             return;
@@ -878,13 +960,13 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
     
-    useEffect(() => {
-        if (state.highScore > gameState.player.high_score) {
-            updateHighScore();
-        } else {
-            return;
-        }
-    }, [state.highScore]);
+    // useEffect(() => {
+    //     if (state.highScore > gameState.player.high_score) {
+    //         updateHighScore();
+    //     } else {
+    //         return;
+    //     }
+    // }, [state.highScore]);
 
     const updateHighScore = async () => {
         try {
@@ -1131,21 +1213,24 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (gameState?.player?.origin && background === null) {
-            setBackground(getPlayerBackground);
+        if (gameState?.player?.origin && background.background === '') {
+            setBackground({
+                ...background,
+                'background': getPlayerBackground.background
+            });
         }
     }, [gameState?.player]);
     
     const getPlayerBackground = {
         background: "url(" + getBackgroundStyle(gameState?.player.origin) + ")",
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
+        // backgroundSize: "100% 100%",
+        // backgroundRepeat: "no-repeat",
     };
 
     const getCityBackground = {
         background: "url(" + process.env.PUBLIC_URL + `/images/city_2.jpg` + ")",
-        backgroundSize: "100% 100%",
-        backgroundRepeat: "no-repeat",
+        // backgroundSize: "100% 100%",
+        // backgroundRepeat: "no-repeat",
     };	
 
     function getBackgroundStyle(origin: string) {
