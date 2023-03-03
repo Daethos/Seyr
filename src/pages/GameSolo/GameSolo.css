@@ -114,6 +114,7 @@
   display: flex;
   justify-content: space-between;
   box-shadow: 2px 2px 2px black;
+  font-size: 14px;
 }
 .dialog-text {
   height: 325px;

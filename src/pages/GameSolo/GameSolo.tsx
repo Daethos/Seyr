@@ -564,31 +564,31 @@ const GameSolo = ({ user }: GameProps) => {
             //     setStoryContent(`You've encountered a landmark by chance! \n Oftentimes folk would leave items of worship in memory of Ancients past, if not unspoiled food and drink for those making their pilgrimage.`);
             //     await getLandmark();
             // } else 
-            if (chance > 97) {
+            if (chance > 100) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
                 await getTreasure();
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                }, 4000)
-            } else if (chance > 92) {
+                }, 3000)
+            } else if (chance > 100) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}. Turn swiftly` });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
 
                 await getOpponent();
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                }, 4000)
-            } else if (chance > 89) {
+                }, 3000)
+            } else if (chance > 100) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
                 await getNPC();
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                }, 4000)
+                }, 3000)
             } else {
                 if (gameState.storyContent !== '') {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' })
@@ -607,29 +607,32 @@ const GameSolo = ({ user }: GameProps) => {
     const handleDirectionChange = async (direction: Direction) => {
         const offset = DIRECTIONS[direction];
         if (offset) {
-          const newX = mapState.currentTile.x + offset.x;
-          const newY = mapState.currentTile.y + offset.y;
-          if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
-            const newTile = await getAsceanCoords(newX, newY, mapState.map);
-            const data = {
-                newTile: newTile,
-                oldTile: mapState.currentTile,
-            }
-            mapDispatch({
-              type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
-              payload: data,
-            });
-          }
-        }
-      };
+            const newX = mapState.currentTile.x + offset.x;
+            const newY = mapState.currentTile.y + offset.y;
+            if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
+                const newTile = await getAsceanCoords(newX, newY, mapState.map);
+                const newTiles = await getAsceanGroupCoords(newX, newY, mapState.map);
+                console.log(newTiles, "DId this work?")
+                const data = {
+                    newTile: newTile,
+                    oldTile: mapState.currentTile,
+                    newTiles: newTiles,
+                }
+                mapDispatch({
+                type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
+                payload: data,
+                });
+            };
+        };
+    };
       
-      function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
+    function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
         let timer: ReturnType<typeof setTimeout>;
         return function (this: T, ...args: any[]) {
-          clearTimeout(timer);
-          timer = setTimeout(() => func.apply(this, args), delay);
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
         };
-      }
+    };
       
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, 150);
@@ -640,6 +643,21 @@ const GameSolo = ({ user }: GameProps) => {
         
         // Return the tile object or null if the coordinates are out of bounds
         return tile ?? null;
+    }
+
+    async function getAsceanGroupCoords(x: number, y: number, map: any) {
+        // Access the tile object at the specified coordinates in the map
+
+        let tiles = [];
+        for (let i = -2; i < 3; i++) {
+            for (let j = -2; j < 3; j++) {
+                const tile = map?.[x + 100 + i]?.[y + 100 + j];
+                tiles.push(tile);
+            }
+        };
+        // Return the tile object or null if the coordinates are out of bounds
+        return tiles ?? null;
+
     }
 
     const getPhenomena = async () => {
@@ -822,7 +840,7 @@ const GameSolo = ({ user }: GameProps) => {
     const getCity = async () => {
         // setBackground(getCityBackground);
         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You walk up to the edges of an open city, some structure of wall exists but overall porous. Here, you may find myriad services to aid and replenish your quest.` });
+        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You walk up to the edges of an open city, some structure of wall exists but is overall porous. Here, you may find services to aid and replenish your journey.` });
                 
         setBackground({
             ...background,
@@ -1223,14 +1241,10 @@ const GameSolo = ({ user }: GameProps) => {
     
     const getPlayerBackground = {
         background: "url(" + getBackgroundStyle(gameState?.player.origin) + ")",
-        // backgroundSize: "100% 100%",
-        // backgroundRepeat: "no-repeat",
     };
 
     const getCityBackground = {
         background: "url(" + process.env.PUBLIC_URL + `/images/city_2.jpg` + ")",
-        // backgroundSize: "100% 100%",
-        // backgroundRepeat: "no-repeat",
     };	
 
     function getBackgroundStyle(origin: string) {
@@ -1345,7 +1359,7 @@ const GameSolo = ({ user }: GameProps) => {
                         : 
                         <>
                         <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} />
-                        <Joystick onDirectionChange={debouncedHandleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
+                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
                         <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>
                     }

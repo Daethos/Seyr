@@ -6,9 +6,9 @@ export interface MapData {
     size: number;
     contentClusters: object;
     map: {[key: string]: any};
-    currentTile: object;
-    initialPosition: object;
-    lastTile: object;
+    currentTile: { x: number; y: number; content: string };
+    initialPosition: { x: number; y: number; content: string };
+    lastTile: { x: number; y: number; content: string };
     visitedTiles: {[key: string]: { color: string }}; 
     context: string;
 };
@@ -40,9 +40,9 @@ export const initialMapData: MapData = {
     size: 0,
     contentClusters: {},
     map: {},
-    currentTile: {},
+    currentTile: { x: 0, y: 0, content: '' },
     initialPosition: { x: 0, y: 0, content: '' },
-    lastTile: {},
+    lastTile: { x: 0, y: 0, content: '' },
     visitedTiles: {},
     context: '',
 };
@@ -64,6 +64,9 @@ export const MapStore = (map: MapData, action: Action) => {
             const newCoords = action.payload.newTile;
             const visitedTiles = {...map.visitedTiles};
             visitedTiles[`${newCoords.x},${newCoords.y}`] = { color: newCoords.color };
+            for (const tile of action.payload.newTiles) {
+                visitedTiles[`${tile.x},${tile.y}`] = { color: tile.color };
+            }
             return {
                 ...map,
                 currentTile: action.payload.newTile,

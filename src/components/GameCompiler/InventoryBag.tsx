@@ -90,6 +90,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     if (gameState.loadedAscean) {
       setDrinking(false);
       setShowBleed(true);
+      setShowFirewaterModal(false);
       gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
     }
   }, [gameState.loadedAscean, drinking]);

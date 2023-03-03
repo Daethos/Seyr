@@ -70,17 +70,13 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
             lastDirectionRef.current = direction;
         };
 
-        // clearTimeout(timerRef.current);
-        // timerRef.current = setTimeout(() => {
-        //     handleTouchEnd();
-        // }, 1000);
     };
     
     const handleTouchEnd = () => {
         clearTimeout(timerRef.current);
         timerRef.current = setTimeout(() => {
             setPosition({ x: 0, y: 0 });
-        }, 500);
+        }, 250);
     };
 
 return (

@@ -1,4 +1,4 @@
-import { right } from '@popperjs/core';
+import { left, right } from '@popperjs/core';
 import { useEffect, useState, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -16,11 +16,13 @@ interface Props {
     ascean: any;
     bag: any;
     gameDispatch: React.Dispatch<any>;
+    blacksmith?: boolean;
 }
 
-const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
+const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
+    const [forgeModalShow, setForgeModalShow] = useState<boolean>(false);
     const [inventoryType, setInventoryType] = useState({});
     const [inventoryTypeTwo, setInventoryTypeTwo] = useState<any>(null);
     const [inventoryTypeThree, setInventoryTypeThree] = useState<any>(null);
@@ -167,9 +169,28 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
     };
 
     async function handleUpgradeItem() {
+        if (inventory?.rarity === 'Common' && ascean?.currency?.gold < 1) {
+            return;
+        } else if (inventory?.rarity === 'Uncommon' && ascean?.currency?.gold < 3) {
+            return;
+        } else if (inventory?.rarity === 'Rare' && ascean?.currency?.gold < 12) {
+            return;
+        } else if (inventory?.rarity === 'Epic' && ascean?.currency?.gold < 60) {
+            return;
+        } else if (inventory?.rarity === 'Legendary' && ascean?.currency?.gold < 300) {
+            return;
+        } else if (inventory?.rarity === 'Mythic' && ascean?.currency?.gold < 1500) {
+            return;
+        } else if (inventory?.rarity === 'Divine' && ascean?.currency?.gold < 7500) {
+            return;
+        } else if (inventory?.rarity === 'Ascended' && ascean?.currency?.gold < 37500) {
+            return;
+        } else if (inventory?.rarity === 'Godly' && ascean?.currency?.gold < 225000) {
+            return;
+        };
         try {
             setIsLoading(true);
-            setLoadingContent(`Forging 3 ${inventory?.name}'s Into One Of Greater Quality`);
+            setLoadingContent(`Forging A Greater ${inventory?.name}`);
             const matches = bag.filter((item: { name: string; rarity: string; }) => item.name === inventory.name && item.rarity === inventory.rarity);
             console.log(matches, '<- What are the matches?');
             const data = {
@@ -184,6 +205,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
             const response = await eqpAPI.upgradeEquipment(data);
             console.log(response, '<- This is the response from handleUpgradeItem');
             setInventoryModalShow(false);
+            setForgeModalShow(false);
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
@@ -244,6 +266,21 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
         textShadow: "1px 1px 1px black"
     };
 
+    const getHigherRarityColor = (rarity: string) => {
+        switch (rarity) {
+            case 'Common':
+                return '3px solid green';
+            case 'Uncommon':
+                return '3px solid blue';
+            case 'Rare':
+                return '3px solid purple';
+            case 'Epic':
+                return '3px solid darkorange';
+            default:
+                return '3px solid white';
+        };
+    };
+
     const inventoryPopover = (
         <Popover className="text-info" id="popover-inv">
             <Popover.Header id="popover-header-inv" className="" as="h2">{inventory?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></span></Popover.Header>
@@ -292,9 +329,14 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
                 <p style={{ color: getRarityColor(inventory?.rarity), fontSize: "16px", float: 'left', textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }}>
                 {inventory?.rarity}
                 </p>
-                <Button variant='outline' style={{ float: 'right', color: 'blue', 
-                marginTop: '-3%', marginRight: -8 + '%', 
-                textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
+                {
+                    blacksmith ? 
+                    ''
+                    :
+                    <Button variant='outline' style={{ float: 'right', color: 'blue', 
+                    marginTop: '-3%', marginRight: -8 + '%', 
+                    textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
+                }
                 <br />
             </Popover.Body>
         </Popover>
@@ -329,15 +371,57 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
         };
     };
 
+    const getForgeCost = {
+        Common: 1,
+        Uncommon: 3,
+        Rare: 12,
+        Epic: 60,
+    };
+
+    const getNextRarity = {
+        Common: "Uncommon",
+        Uncommon: 'Rare',
+        Rare: "Epic",
+        Epic: "Legendary",
+    };
+
     const getItemStyle = {
-        float: right,
+        margin: blacksmith ? '0 2% 10% 2%' : '0 0 0 0',
         background: 'black',
-        border: getBorderStyle(inventory?.rarity)
+        border: getBorderStyle(inventory?.rarity),
+        display: "inline-block"
+    };
+
+    const getCurrentItemStyle = {
+        margin: blacksmith ? '0 2% 0 2%' : '0 0 0 0',
+        background: 'black',
+        border: getBorderStyle(inventory?.rarity),
+        display: "inline-block"
+    };
+
+    const getNewItemStyle ={
+        margin: blacksmith ? '0 2% 0 2%' : '0 0 0 0',
+        background: "black",
+        border: getHigherRarityColor(inventory?.rarity),
+        display: "inline-block"
     };
 
     return (
         <>
-        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ marginTop: 50 + '%' }}>
+        <Modal show={forgeModalShow} onHide={() => setForgeModalShow(false)} centered id='modal-weapon'>
+            <Modal.Header style={{ color: "red", fontSize: "18px" }}>
+                Do You Wish To Collapse Three {inventory?.name} into one of {getNextRarity[inventory?.rarity as keyof typeof getNextRarity]} Quality for {getForgeCost[inventory?.rarity as keyof typeof getForgeCost]} Gold?
+            </Modal.Header>
+            <Modal.Body id='weapon-modal'>
+                <Button variant='outline' className='' 
+                style={{ color: 'gold', fontWeight: 600, fontSize: "24px" }} onClick={() => handleUpgradeItem()}>{getForgeCost[inventory?.rarity as keyof typeof getForgeCost]} Gold Forge 
+                </Button>    
+                <p style={{ color: "gold", fontSize: "24px", fontWeight: 600 }}>
+                (3) <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} style={getCurrentItemStyle} /> {'=>'} <img src={inventory?.imgURL} alt={inventory?.name} style={getNewItemStyle} />
+                </p>
+            </Modal.Body>
+        </Modal>
+        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon'>
             <Modal.Header>
                 Do You Wish To Remove and Destroy Your {inventory?.name}?
             </Modal.Header>
@@ -559,15 +643,17 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
                 : ''
             }
             <br />
-            
-            { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
+            {/* { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' } */}
             <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
             <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>
             </Modal.Body>
         </Modal>
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
-            <Button variant="" className="inventory-icon" style={getItemStyle}><img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} /></Button>
+            <Button variant="" className="inventory-icon" style={getItemStyle}>
+                <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} />
+                {blacksmith ? <><Button variant='outline' className='' style={{ color: 'gold', fontWeight: 600, marginLeft: "-45%", marginTop: "45%" }} onClick={() => setForgeModalShow(true)}>Forge</Button></>:''}
+                </Button>
         </OverlayTrigger>
         <Overlay target={targetRef} show={isLoading}>
         <div
@@ -576,8 +662,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch }: Props) => {
             position: 'fixed',
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
+            width: '100vw',
+            height: '100vh',
             backgroundColor: 'rgba(0, 0, 0, 0.65)',
             zIndex: 9999,
           }}

@@ -32,27 +32,32 @@ const GameMap = ({ mapData }: MapProps) => {
 
     function drawMap(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}): void {
         const tileSize = 2; // set the tile size to 16 pixels
-      
         // calculate the canvas dimensions based on the map size and tile size
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
+
+        const playerX = mapData?.currentTile?.x;
+        const playerY = mapData?.currentTile?.y;
       
         // loop through the visited tiles and draw them onto the canvas
         for (const coords in visitedTiles) {
           const [x, y] = coords.split(',').map(Number);
           const tile = visitedTiles[coords];
-          console.log(tile, "This is the new Tile")
-          const color = tile.color || 'gray'; // set the tile color to gray if no color is specified
+          let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
+          if (x === playerX && y === playerY) {
+            color = 'gold'; // set the current tile color to gold
+          }
           const offsetX = canvasWidth / 2 + x * tileSize; // calculate the tile position on the canvas
           const offsetY = canvasHeight / 2 - y * tileSize;
           ctx.fillStyle = color;
           ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
-        }
-    }
+        };
+          
+    };
       
-    function handleMap() {
+    const handleMap = () => {
         setMapVisible(!mapVisible);
     }
     
@@ -109,7 +114,7 @@ const GameMap = ({ mapData }: MapProps) => {
                         // marginTop: "30vh",
                         position: 'absolute',
                         left: '50%',
-                        top: '40%',
+                        top: '45%',
                         transform: 'translate(-50%, -50%)',
                     }}
                 />

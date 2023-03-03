@@ -57,8 +57,8 @@ async function indexEquipment(req, res) {
 const determineRarityByLevel = (level) => {
     const chance = Math.random();
     let rarity = '';
-    let uScale = level / 25;
-    let rScale = level / 100;
+    let uScale = level / 40;
+    let rScale = level / 200;
     let eScale = level / 500;
     let lScale = level / 10000;
     console.log(level, chance, uScale, rScale, eScale, lScale, 'We have made it to the determineRarityByLevel in the Equipment Controller!');
@@ -283,7 +283,7 @@ async function getWeaponEquipment(req, res) {
         await client.connect();
         let merchantEquipment = [];
         let rarity;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 9; i++) {
             rarity = determineRarityByLevel(req.params.level);
             let equipment;
             if (req.params.level < 4) {
@@ -311,7 +311,7 @@ async function getJewelryEquipment(req, res) {
         let type;
         let rarity;
         let types = ['Ring', 'Amulet', 'Trinket'];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 9; i++) {
             rarity = determineRarityByLevel(req.params.level);
             if (rarity === 'Common') {
                 rarity = 'Uncommon';
@@ -344,7 +344,7 @@ async function getClothEquipment(req, res) {
         let type;
         let rarity;
         let types = ['Weapon', 'Helmet', 'Chest', 'Legs'];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 9; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = types[Math.floor(Math.random() * types.length)];
             let equipment;
@@ -393,7 +393,7 @@ async function getArmorEquipment(req, res) {
         let type;
         let rarity;
         let types = ['Shield', 'Helmet', 'Chest', 'Legs', 'Helmet', 'Chest', 'Legs', 'Helmet', 'Chest', 'Legs'];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 9; i++) {
             rarity = determineRarityByLevel(req.params.level);
             type = types[Math.floor(Math.random() * types.length)];
             let equipment;
@@ -569,6 +569,17 @@ async function upgradeEquipment(req, res) {
         });
 
         ascean.inventory = inventory;
+        let gold = 0;
+        if (item.rarity === 'Uncommon') {
+            gold = 1;
+        } else if (item.rarity === 'Rare') {
+            gold = 3;
+        } else if (item.rarity === 'Epic') {
+            gold = 12;
+        } else if (item.rarity === 'Legendary') {
+            gold = 60;
+        };
+        ascean.currency.gold -= gold;
 
         await ascean.save();
         res.status(201).json({ ascean });

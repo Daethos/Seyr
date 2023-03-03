@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import MerchantTable from './MerchantTable';
 import { ACTIONS } from './CombatStore';
 import { GAME_ACTIONS } from './GameStore';
+import Inventory from './Inventory';
 
 const CityButtons = ({ options, setOptions }: { options: any, setOptions: any }) => {
     // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -59,23 +60,48 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingContent, setLoadingContent] = useState<string>('');
     const targetRef = useRef(null);
-    const [upgradeItem, setUpgradeItem] = useState<any | null>({});
+    const [upgradeItems, setUpgradeItems] = useState<any | null>(null);
 
-    // function canUpgrade(inventory: any[]): any | undefined {
-    //     const matches = inventory.filter((item, index, arr) =>
-    //       arr.findIndex(i => i.name === item.name && i.rarity === item.rarity) !== index
-    //     );
-    //     if (matches.length > 3) {
-    //       return matches[0];
-    //     };
-    // };
-      
-    // const matchedItem = canUpgrade(inventory);
-    // if (matchedItem) {
-    //     setUpgradeItem(matchedItem);
-    // };
-      
+    useEffect(() => {
+        console.log(inventory, "Inventory");
+        if (inventory.length > 2) {
+            const matchedItem = canUpgrade(inventory);
+            if (matchedItem) {
+                console.log(matchedItem[0], 'Matched Item')
+                setUpgradeItems(matchedItem);
+            } else {
+                setUpgradeItems(null);
+            }
+        }
+    }, [inventory]);
 
+    useEffect(() => {
+        console.log(upgradeItems, 'Upgrade Items');
+    }, [upgradeItems]);
+
+    const canUpgrade = (inventory: any[]) => {
+        const itemGroups: Record<string, any[]> = {};
+      
+        inventory.forEach(item => {
+            const key = `${item.name}-${item.rarity}`;
+            itemGroups[key] = itemGroups[key] || [];
+            itemGroups[key].push(item);
+        });
+      
+        const matches = [];
+      
+        for (const key in itemGroups) {
+            if (itemGroups.hasOwnProperty(key)) {
+                const items = itemGroups[key];
+                if (items.length >= 3) { 
+                    matches.push(items[0]);
+                }
+            }
+        }
+      
+        return matches.length > 0 ? matches : null;
+    };
+      
     const handleCityOption = async (option: string) => {
         console.log(option, 'Option Clicked');
         await checkingLoot();
@@ -265,13 +291,20 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
             {
                 cityOption === 'Alchemist' ?
                 <>
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt={Fyersman} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
                     "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.{' '}
+                    <br /><br />
                     "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
                     <br /><br />
                     <Button variant='' style={{ color: 'blueviolet', fontVariant: 'small-caps', outline: 'none' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
                 </>
                 : cityOption === 'Armorer' ?
                 <>
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt={Notheon} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
                     "Hello there, see what the local blacksmith has been supplying for the city."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
@@ -284,30 +317,44 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Bank' ?
                 <>
-                    "This is the bank, where you can deposit and withdraw your gold, silver, and inventory items. This feature is not yet available."
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Li'ivi' + '-' + 'Man' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
+                    "This is the bank, where you can deposit and withdraw your gold, silver, and inventory items. This feature is not yet available, though when it is I imagine you'll be in need, as loss of life and limb and may lead toward a levitivity most unwanted."
                 </>
                 : cityOption === 'Blacksmith' ?
                 <>
-                    "You've come for forging? Elsewise I trade with the Armorer if you want to find what I've made already."
-                    {/* <br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} */}
-                    {/* Drag and Drop Feature to select (3) of the same item name / rarity in order to forge them. It'll light up and be the new inventory forge mechanic instead as the new option */}
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Ashtre' + '-' + 'Man' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
+                    "You've come for forging? I only handle chiomic quality and above. Check my rates and hand me anything you think worth's it. Elsewise I trade with the Armorer if you want to find what I've made already."
+                    <br /><br />
+                    Hanging on the wall is a list of prices for the various items you can forge. The prices are based on the quality. <br />
+                    <p style={{ color: "green", fontSize: "20px", marginBottom: "-1px" }}>Kyn'gian: 1g</p> 
+                    <p style={{ color: "blue", fontSize: "20px", marginBottom: "-1px" }}>Senic: 3g</p>
+                    <p style={{ color: "purple", fontSize: "20px", marginBottom: "-1px" }}>Kyris: 12g</p>
+                    <p style={{ color: "darkorange", fontSize: "20px", marginBottom: "-1px" }}>Sedyrus: 60g</p>
                     <br />
-                    {/* {
-                        upgradeItem ?
-                        <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>
-                            Forge: (3) <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getRarity} /> =&gt; <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getHigherRarity} />
-                        </Button>
-                        : ''    
-                    } */}
-                    {/* { canUpgrade(inventory) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>
-                        Forge: (3) <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getRarity} /> =&gt; <img src={process.env.PUBLIC_URL + upgradeItem?.imgURL} alt={upgradeItem?.name} style={getHigherRarity} />
-                    </Button> : '' } */}
-                    {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleUpgradeItem()}>Forge Upgrade.</Button> */}
+                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
+                    <br /><br />
+                    {
+                        upgradeItems ?
+                        <>
+                        {upgradeItems.map((item: any, index: number) => {
+                            return (
+                                <Inventory key={index} inventory={item} bag={inventory} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} />
+                            )
+                        })}
+                        </>
+                        : ''
+                    }
                     <br />
                 </>
                 : cityOption === 'Innkeep' ?
                 <>
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
                     "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night (Free at the moment)."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
@@ -316,6 +363,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Jeweler' ?
                 <>
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
                     "Greetings there, have a gander at the glint."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -333,6 +383,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Merchant' ?
                 <>
+{/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
                     "Feast your eyes for your belly and pursestrings."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -345,6 +398,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Tailor' ?
                 <>
+                {/* 
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                */}
                     "Have an eye for softer garb? You've come proper, then."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -401,10 +457,13 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Weapons Gallery' ?
                 <>
+                
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+               <br />
                     "The finest armaments fresh off the forge from our talented smith."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
+                    <br /><br /><br /><br />
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('weapon')}>See the various weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
@@ -413,15 +472,31 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Guild Hall' ?
                 <>
-                "This is the Guild Hall. At the moment it is not a feature available."
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                Adecian (Stonemason) - 
+               <br />
+                "This is the Guild Hall. At the moment it is not a feature available. Over time, the reach of Daethos and its most fierce preacher Lorian changed the minds of many across the land, showing the Ancient's hand in bloodshed of endless humans in their sacrificial war.
+                In many places, outspoken adherence is met with disdain and even violence, as it is seen as absurd and shameful to uphold reverence for those beings who used much of this world and its people in their struggle against each other.
+                Currently, much worship appears clandestine, and many are used as avatars and symbols of craftsmen and merchants. Here, you can find those who suit your needs whether achreon or caerenic."
                 </>
                 : cityOption === 'Museum' ?
+                
                 <>
-                "This is a small post of the Sages. At the moment it is not a feature available."
+                
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+               Nyren (Observational Sage) - 
+               <br />
+                "This is a small post of the Sages. At the moment it is not a feature available. The Sages are a group of scholars who've been trained since children to study this world and its fascinations, in observation, notation, and machination. 
+                Much can be learned from simple conversations, if you so happen to catch them in the wild. Many belong to the Museum in Licivitas, though some are negotiated to aid in the provinces."
                 </>
                 : cityOption === 'Daeth' ?
                 <>
-                "This is the place of reverence and worship for Daethos. At the moment it is not a feature available."
+                
+                <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                Daestra (Lowest Priest Class) -   
+               <br />
+                "This is the place of reverence and worship for Daethos. At the moment it is not a feature available. Daeth's are smaller, local temples that are often built in most cities of Licivitas, though some newer ones have been seen in the outer reaches of this world. 
+                These sources of faith for the devoted find themselves burgeoning during prayer and service, spreading their influence to many who have lost guidance from their Ancient's teachings."
                 </>
                 : ''
             }
@@ -437,8 +512,8 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 position: 'fixed',
                 top: 0,
                 left: 0,
-                width: '100%',
-                height: '100%',
+                width: '100vw',
+                height: '100vh',
                 backgroundColor: 'rgba(0, 0, 0, 0.65)',
                 zIndex: 9999,
             }}
