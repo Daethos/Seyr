@@ -41,28 +41,28 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
 
         const angleDegrees = angle * 180 / Math.PI;
         if (angleDegrees >= -22.5 && angleDegrees < 22.5) {
-            onDirectionChange("right");
+            debouncedHandleDirectionChange("right");
             direction = "right";
         } else if (angleDegrees >= 22.5 && angleDegrees < 67.5) {
-            onDirectionChange("downRight");
+            debouncedHandleDirectionChange("downRight");
             direction = "downRight";
         } else if (angleDegrees >= 67.5 && angleDegrees < 112.5) {
-            onDirectionChange("down");
+            debouncedHandleDirectionChange("down");
             direction = "down";
         } else if (angleDegrees >= 112.5 && angleDegrees < 157.5) {
-            onDirectionChange("downLeft");
+            debouncedHandleDirectionChange("downLeft");
             direction = "downLeft";
         } else if (angleDegrees >= 157.5 || angleDegrees < -157.5) {
-            onDirectionChange("left");
+            debouncedHandleDirectionChange("left");
             direction = "left";
         } else if (angleDegrees >= -157.5 && angleDegrees < -112.5) {
-            onDirectionChange("upLeft");
+            debouncedHandleDirectionChange("upLeft");
             direction = "upLeft";
         } else if (angleDegrees >= -112.5 && angleDegrees < -67.5) {
-            onDirectionChange("up");
+            debouncedHandleDirectionChange("up");
             direction = "up";
         } else {
-            onDirectionChange("upRight");
+            debouncedHandleDirectionChange("upRight");
             direction = "upRight";  
         }
 

@@ -291,9 +291,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
             {
                 cityOption === 'Alchemist' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt={Fyersman} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt='Fyersman' style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Alchemist
+               <br />
                     "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.{' '}
                     <br /><br />
                     "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
@@ -302,9 +302,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Armorer' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt={Notheon} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt='Notheon' style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Armorer
+               <br />
                     "Hello there, see what the local blacksmith has been supplying for the city."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
@@ -317,16 +317,16 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Bank' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + 'Li'ivi' + '-' + 'Man' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Banker
+               <br />
                     "This is the bank, where you can deposit and withdraw your gold, silver, and inventory items. This feature is not yet available, though when it is I imagine you'll be in need, as loss of life and limb and may lead toward a levitivity most unwanted."
                 </>
                 : cityOption === 'Blacksmith' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + 'Ashtre' + '-' + 'Man' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Ashtre' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Blacksmith
+               <br />
                     "You've come for forging? I only handle chiomic quality and above. Check my rates and hand me anything you think worth's it. Elsewise I trade with the Armorer if you want to find what I've made already."
                     <br /><br />
                     Hanging on the wall is a list of prices for the various items you can forge. The prices are based on the quality. <br />
@@ -352,9 +352,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Innkeep' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Innkeeper
+               <br />
                     "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night (Free at the moment)."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
@@ -363,9 +363,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Jeweler' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Jeweler
+               <br />
                     "Greetings there, have a gander at the glint."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -383,9 +383,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Merchant' ?
                 <>
-{/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}General Merchant
+               <br />
                     "Feast your eyes for your belly and pursestrings."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -398,9 +398,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
                 : cityOption === 'Tailor' ?
                 <>
-                {/* 
-                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                */}
+                <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Tailor
+               <br />
                     "Have an eye for softer garb? You've come proper, then."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -459,6 +459,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 <>
                 
                 <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                {' '}Weaponsmith
                <br />
                     "The finest armaments fresh off the forge from our talented smith."
                     <br /><br />
@@ -473,7 +474,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 : cityOption === 'Guild Hall' ?
                 <>
                 <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                Adecian (Stonemason) - 
+                {' '}Adecian (Stonemason)
                <br />
                 "This is the Guild Hall. At the moment it is not a feature available. Over time, the reach of Daethos and its most fierce preacher Lorian changed the minds of many across the land, showing the Ancient's hand in bloodshed of endless humans in their sacrificial war.
                 In many places, outspoken adherence is met with disdain and even violence, as it is seen as absurd and shameful to uphold reverence for those beings who used much of this world and its people in their struggle against each other.
@@ -484,7 +485,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 <>
                 
                 <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-               Nyren (Observational Sage) - 
+                {' '}Nyren (Observational Sage)
                <br />
                 "This is a small post of the Sages. At the moment it is not a feature available. The Sages are a group of scholars who've been trained since children to study this world and its fascinations, in observation, notation, and machination. 
                 Much can be learned from simple conversations, if you so happen to catch them in the wild. Many belong to the Museum in Licivitas, though some are negotiated to aid in the provinces."
@@ -493,7 +494,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 <>
                 
                 <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                Daestra (Lowest Priest Class) -   
+                {' '}Daestra (Lowest Priest Class)
                <br />
                 "This is the place of reverence and worship for Daethos. At the moment it is not a feature available. Daeth's are smaller, local temples that are often built in most cities of Licivitas, though some newer ones have been seen in the outer reaches of this world. 
                 These sources of faith for the devoted find themselves burgeoning during prayer and service, spreading their influence to many who have lost guidance from their Ancient's teachings."

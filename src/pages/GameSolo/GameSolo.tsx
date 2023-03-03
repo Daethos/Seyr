@@ -564,7 +564,7 @@ const GameSolo = ({ user }: GameProps) => {
             //     setStoryContent(`You've encountered a landmark by chance! \n Oftentimes folk would leave items of worship in memory of Ancients past, if not unspoiled food and drink for those making their pilgrimage.`);
             //     await getLandmark();
             // } else 
-            if (chance > 100) {
+            if (chance > 99) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
@@ -572,7 +572,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                 }, 3000)
-            } else if (chance > 100) {
+            } else if (chance > 97) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
@@ -581,7 +581,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                 }, 3000)
-            } else if (chance > 100) {
+            } else if (chance > 96) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
