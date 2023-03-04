@@ -112,6 +112,17 @@ const GameSolo = ({ user }: GameProps) => {
     const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`;
     const [playWind] = useSound(windSfx, { volume: soundEffectVolume });
 
+    const walk2Sfx = process.env.PUBLIC_URL + `/sounds/walk-2.mp3`;
+    const walk3Sfx = process.env.PUBLIC_URL + `/sounds/walk-3.mp3`;
+    const walk4Sfx = process.env.PUBLIC_URL + `/sounds/walk-4.mp3`;
+    const walk8Sfx = process.env.PUBLIC_URL + `/sounds/walk-8.mp3`;
+    const walk9Sfx = process.env.PUBLIC_URL + `/sounds/walk-9.mp3`;
+    const [playWalk2] = useSound(walk2Sfx, { volume: soundEffectVolume });
+    const [playWalk3] = useSound(walk3Sfx, { volume: soundEffectVolume });
+    const [playWalk4] = useSound(walk4Sfx, { volume: soundEffectVolume });
+    const [playWalk8] = useSound(walk8Sfx, { volume: soundEffectVolume });
+    const [playWalk9] = useSound(walk9Sfx, { volume: soundEffectVolume });
+
     const { asceanID } = useParams();
 
     const [asceanState, setAsceanState] = useState({
@@ -601,7 +612,7 @@ const GameSolo = ({ user }: GameProps) => {
 
         } catch (err: any) {
             console.log(err.message, 'Error Encountering Chance Encounter');
-        }
+        };
     };
 
     const handleDirectionChange = async (direction: Direction) => {
@@ -617,11 +628,14 @@ const GameSolo = ({ user }: GameProps) => {
                     newTile: newTile,
                     oldTile: mapState.currentTile,
                     newTiles: newTiles,
-                }
+                };
                 mapDispatch({
                 type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
                 payload: data,
                 });
+                const options = [playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
+                const random = Math.floor(Math.random() * options.length);
+                options[random]();
             };
         };
     };
@@ -638,27 +652,25 @@ const GameSolo = ({ user }: GameProps) => {
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, 150);
 
     async function getAsceanCoords(x: number, y: number, map: any) {
-        // Access the tile object at the specified coordinates in the map
         const tile = map?.[x + 100]?.[y + 100];
-        
-        // Return the tile object or null if the coordinates are out of bounds
         return tile ?? null;
-    }
+    };
 
     async function getAsceanGroupCoords(x: number, y: number, map: any) {
-        // Access the tile object at the specified coordinates in the map
-
         let tiles = [];
         for (let i = -2; i < 3; i++) {
             for (let j = -2; j < 3; j++) {
-                const tile = map?.[x + 100 + i]?.[y + 100 + j];
-                tiles.push(tile);
-            }
-        };
-        // Return the tile object or null if the coordinates are out of bounds
-        return tiles ?? null;
-
-    }
+                const tileX = x + 100 + i;
+                const tileY = y + 100 + j;
+                const tile = map?.[tileX]?.[tileY];
+                if (tile) {
+                    tiles.push(tile);
+                };
+            };
+        };      
+        return tiles;
+    };
+      
 
     const getPhenomena = async () => {
         if (gameState.cityButton) {

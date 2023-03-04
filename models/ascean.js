@@ -16,72 +16,7 @@ const doubleDislikeSchema = new Schema({
     userId: { type: mongoose.Schema.Types.Object }
 })
 
-const questSchema = new Schema({
-    title: String,
-    description: String,
-    requires: {
-        type: [],
-        default: null
-    },
-    level: Number,
-    repeatable: Boolean,
-    rewards: {
-        type: [],
-        default: null
-    },
-    completed: Boolean,
-});
 
-const eitherOrType = async function(value) {
-    // console.log(value, 'Does this fire off?')
-    const itemTypes = ['Equipment', 'Weapons', 'Amulets', 'Trinkets', 'Shields', 'Rings', 'Helmets', 'Chests', 'Legs'];
-    for (const type of itemTypes) {
-        const item = await mongoose.model(type).findOne({_id: value});
-        if (item) {
-            console.log(item.itemType, type, 'This is the item type and type.')
-            return type;
-        }
-    }
-    return false;
-};
-
-const refType = async function(item) {
-    let ref = 'Equipment';
-    switch (item.itemType) {
-        case 'Weapons' : {
-            ref = 'Weapons';
-            break;
-        };
-        case 'Shields' : {
-            ref = 'Shields';
-            break;
-        };
-        case 'Helmets': {
-            ref = 'Helmets';
-            break;
-        };
-        case 'Chests': {
-            ref = 'Chests';
-            break;
-        };
-        case 'Legs': {
-            ref = 'Legs';
-            break;
-        };
-        case 'Rings': {
-            ref = 'Rings';
-            break;
-        };
-        case 'Amulets': {
-            ref = 'Amulets';
-            break;
-        };
-        case 'Trinkets': {
-            ref = 'Trinkets';
-            break;
-        };
-    };
-};
 
 const asceanSchema = new Schema(
     {
@@ -250,7 +185,12 @@ const asceanSchema = new Schema(
             enum : ["adherent", "devoted", "none"],
             default: "none"
         },
-        quests: [questSchema],
+        quests: [{
+            type: Schema.Types.ObjectId, ref: 'Quest'
+        }],
+        completedQuests: [{
+            type: Schema.Types.ObjectId, ref: 'Quest'
+        }],
         tutorial: {
             firstBoot: { type: Boolean, default: true },
             firstCombat: { type: Boolean, default: true },

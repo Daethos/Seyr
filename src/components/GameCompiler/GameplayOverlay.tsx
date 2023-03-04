@@ -59,7 +59,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                 border: "0.2em solid purple",
             }}
             >
-                <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1.5s ease-in 0.5s forwards" } : { animation: "" } }>
+                <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
                 </h6>
             { !loadingContent && overlayContent === '' ?

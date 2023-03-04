@@ -17,7 +17,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
     //     ascean: ascean,
     //     lootDrop: lootDrop
     // });
-    const article = ['a','e','i','o','u'].includes(lootDrop?.name?.[0]) ? "an" : "a";
+    const article = ['a','e','i','o','u'].includes(lootDrop?.name?.[0].toLowerCase()) ? "an" : "a";
     // useEffect(() => {
     //     setSaveSetting({
     //         ascean: ascean,
