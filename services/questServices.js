@@ -73,36 +73,22 @@ class Quest {
 
 module.exports = Quest;
 
-const ascean = {
-    name: "Leaf",
-    level: 9,
-    experience: 0,
-};
+const nonNamedEnemy = 
+    ['Achreon Druid', "Ahn'are Apostle", "Anashtre", 
+    "Astral Apostle", "Cambiren Druid", "Chiomic Jester", 
+    "Daethic Inquisitor", "Daethic Knight", "Fang Duelist", 
+    "Fang Mercenary", 'Firesworn', 'Fyers Occultist', 
+    'Ilire Occultist', 'Kingsman', "Kyn'gian Shaman", 
+    "Licivitan Soldier", "Ma'ier Occultist", "Marauder", 
+    "Northren Wanderer", "Nyren", "Old Li'ivi Occultist", 
+    "Quor'eite Occultist", "Quor'eite Stalker", "Rahvrecur", 
+    "Se'dyrist", "Sedyreal Guard", "Se'va Shrieker", 
+    "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
 
-const shaman = {
-    name: "Ky'Mehkai",
-    level: 13,
-    experience: 0,
-};
-
-const details = {
-    bounty: { name: "Achreon Druid", bounty: 3 },
-    timer: ascean.level + 2,
-    isGiver: "Tshaeral Shaman",
-    isTimed: [true, false][Math.floor(Math.random() * 2)],
-};
-
-const questData = {
-    player: ascean,
-    giver: shaman,
-    title: "Replenish Firewater",
-    description: "To walk in the land of hush and tendril and refill your flask, you must let it bleed--not of yourself but of our enemy",
-    details: details,
-};
-
-const quest = new Quest(questData);
-
-console.log(quest, "New Quest");
-
-const nonNamedEnemy = ['Achreon Druid', "Ahn'are Apostle", "Anashtre", "Astral Apostle", "Cambiren Druid", "Chiomic Jester", "Daethic Inquisitor", "Daethic Knight", "Fang Duelist", "Fang Mercenary", 'Firesworn', 'Fyers Occultist', 'Ilire Occultist', 'Kingsman', "Kyn'gian Shaman", "Licivitan Soldier", "Ma'ier Occultist", "Marauder", "Northren Wanderer", "Nyren", "Old Li'ivi Occultist", "Quor'eite Occultist", "Quor'eite Stalker", "Rahvrecur", "Se'dyrist", "Sedyreal Guard", "Se'va Shrieker", "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
-const namedEnemy = ["Cyrian Shyne", "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", "Fierous Ashfyre", "Garris Ashenus", "King Mathyus Caderyn", "Kreceus", "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", "Sera Lorian", "Synaethis Spiras", "Torreous Ashfyre", "Vincere"];
+const namedEnemy = 
+    ["Cyrian Shyne", "Dorien Caderyn", "Eugenes", 
+    "Evrio Lorian Peroumes", "Fierous Ashfyre", "Garris Ashenus", 
+    "King Mathyus Caderyn", "Kreceus", "Laetrois Ath'Shaorah", 
+    "Leaf", "Lorian", "Mavrios Ilios", 
+    "Mirio", "Sera Lorian", "Synaethis Spiras",
+    "Torreous Ashfyre", "Vincere"];

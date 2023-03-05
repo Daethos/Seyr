@@ -123,6 +123,169 @@ export interface Equipment {
     _id: string;
 }
 
+const nonNamedEnemy = 
+    ['Achreon Druid', "Ahn'are Apostle", "Anashtre", 
+    "Astral Apostle", "Cambiren Druid", "Chiomic Jester", 
+    "Daethic Inquisitor", "Daethic Knight", "Fang Duelist", 
+    "Fang Mercenary", 'Firesworn', 'Fyers Occultist', 
+    'Ilire Occultist', 'Kingsman', "Kyn'gian Shaman", 
+    "Licivitan Soldier", "Ma'ier Occultist", "Marauder", 
+    "Northren Wanderer", "Nyren", "Old Li'ivi Occultist", 
+    "Quor'eite Occultist", "Quor'eite Stalker", "Rahvrecur", 
+    "Se'dyrist", "Sedyreal Guard", "Se'va Shrieker", 
+    "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
+
+const namedEnemy = 
+    ["Cyrian Shyne", "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", 
+    "Fierous Ashfyre", "Garris Ashenus", "King Mathyus Caderyn", "Kreceus", 
+    "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", 
+    "Sera Lorian", "Synaethis Spiras", "Torreous Ashfyre", "Vincere"];
+
+export const ENEMY_ENEMIES = {
+    "Achreon Druid": ["Kyn'gian Shaman", "Tshaeral Shaman", "Kingsman", "Northren Wanderer"],
+    "Ahn'are Apostle": ["Astral Apostle", "Licivitan Soldier", "Daethic Inquisitor", "Daethic Knight"],
+    "Anashtre": ["Daethic Knight", "Soverain Blood Cloak", "Licivitan Soldier", "Daethic Inquisitor"],
+    "Astral Apostle": ["Ahn'are Apostle", "Licivitan Soldier", "Daethic Inquisitor", "Daethic Knight"],
+    "Cambiren Druid": ["Kyn'gian Shaman", "Tshaeral Shaman", "Kingsman", "Northren Wanderer"],
+    "Chiomic Jester": ["Fang Duelist", "Fang Mercenary", "Marauder", "Shrygeian Bard"],
+    "Daethic Inquisitor": ["Ilire Occultist", "Fyers Occultist", "Ma'ier Occultist", "Quor'eite Occultist", "Old Li'ivi Occultist"],
+    "Daethic Knight": ["Anashtre", "Soverain Blood Cloak", "Firesworn", "Se'va Shrieker", "Quor'eite Stalker"],
+    "Fang Duelist": ["Chiomic Jester", "Fang Mercenary", "Marauder", "Shrygeian Bard"],
+    "Fang Mercenary": ["Chiomic Jester", "Fang Duelist", "Marauder", "Shrygeian Bard"],
+    "Firesworn": ["Daethic Knight", "Fang Mercenary", "Se'va Shrieker", "Quor'eite Stalker", "Southron Wanderer"],
+    "Fyers Occultist": ["Daethic Inquisitor", "Ilire Occultist", "Ma'ier Occultist", "Quor'eite Occultist", "Old Li'ivi Occultist"],
+    "Ilire Occultist": ["Daethic Inquisitor", "Fyers Occultist", "Ma'ier Occultist", "Quor'eite Occultist", "Old Li'ivi Occultist"],
+    "Kingsman": ["Achreon Druid", "Cambiren Druid", "Northren Wanderer", "Soverain Blood Cloak"],
+    "Kyn'gian Shaman": ["Achreon Druid", "Cambiren Druid", "Southron Wanderer", "Sedyreal Guard", "Quor'eite Stalker"],
+    "Licivitan Soldier": ["Old Li'ivi Occultist", "Firesworn", "Soverain Blood Cloak", "Kingsman", "Se'va Shrieker"],
+    "Ma'ier Occultist": ["Daethic Inquisitor", "Fyers Occultist", "Ilire Occultist", "Quor'eite Occultist", "Old Li'ivi Occultist"],
+    "Marauder": ["Fang Duelist", "Fang Mercenary", "Chiomic Jester", "Shrygeian Bard"],
+    "Northren Wanderer": ["Achreon Druid", "Cambiren Druid", "Kingsman", "Soverain Blood Cloak"],
+    "Nyren": ["Rahvrecur", "Se'va Shrieker", "Marauder", "Fang Mercenary"],
+    "Old Li'ivi Occultist": ["Daethic Inquisitor", "Fyers Occultist", "Ilire Occultist", "Ma'ier Occultist", "Quor'eite Occultist"],
+    "Quor'eite Occultist": ["Daethic Inquisitor", "Fyers Occultist", "Ilire Occultist", "Ma'ier Occultist", "Old Li'ivi Occultist"],
+    "Quor'eite Stalker": ["Daethic Knight", "Firesworn", "Se'va Shrieker", "Sedyreal Guard", "Southron Wanderer"],
+    "Rahvrecur": ["Nyren", "Se'va Shrieker", "Marauder", "Fang Mercenary"],
+    "Se'dyrist": ["Se'va Shrieker", "Fang Mercenary", "Sedyreal Guard", "Firesworn"],
+    "Sedyreal Guard": ["Se'dyrist", "Se'va Shrieker", "Firesworn", "Quor'eite Stalker", "Southron Wanderer"],
+    "Se'va Shrieker": ["Se'dyrist", "Sedyreal Guard", "Firesworn", "Quor'eite Stalker", "Southron Wanderer"],
+    "Shrygeian Bard": ["Chiomic Jester", "Fang Duelist", "Fang Mercenary", "Marauder"],
+    "Southron Wanderer": ["Firesworn", "Quor'eite Stalker", "Sedyreal Guard", "Se'va Shrieker"],
+    "Soverain Blood Cloak": ["Anashtre", "Licivitan Soldier", "Kingsman", "Northren Wanderer"],
+    "Tshaeral Shaman": ["Achreon Druid", "Cambiren Druid", "Daethic Knight", "Daethic Inquisitor"],
+
+    "Cyrian Shyne": ["King Mathyus Caderyn"],
+    "Dorien Caderyn": ["Garris Ashenus"],
+    "Eugenes": [""],
+    "Evrio Lorian Peroumes": ["Mirio"],
+    "Fierous Ashfyre": ["Synaethi Spiras"],
+    "Garris Ashenus": ["Dorien Caderyn"],
+    "King Mathyus Caderyn": ["Cyrian Shyne"],
+    "Kreceus": ["Ahn'are Apostle", "Licivitan Soldier", "Evrio Lorian Peroumes", "Mirio"],
+    "Laetrois Ath'Shaorah": ["Mavrios Ilios"],
+    "Leaf": ["Kingsman", "Northren Wanderer"],
+    "Lorian": ["Mavrios Ilios"],
+    "Mavrios Ilios": ["Laetrois Ath'Shaorah", "Lorian"],
+    "Mirio": ["Evrio Lorian Peroumes"],
+    "Sera Lorian": ["Evrio Lorian Peroumes", "Dorien Caderyn"],
+    "Synaethi Spiras": ["Fierous Ashfyre", "Torreous Ashfyre"],
+    "Torreous Ashfyre": ["Synaethi Spiras"],
+    "Vincere": ["King Mathyus Caderyn", "Dorien Caderyn", "Sera Lorian", "Evrio Lorian Peroumes"]
+};
+
+export const QUESTS = [
+    {
+        name: ["Marauder", "Southron Wanderer", "Fang Mercenary", "Quor'eite Occultist"],
+        title: "Lost Temple",
+        description: "Travel deep into the jungle to find a hidden temple and explore its secrets", 
+        isBounty: false,
+    },
+    {
+        name: ["Tshaeral Shaman", "Kyn'gian Shaman", "Achreon Druid", "Cambiren Druid"],
+        title: "Replenish Firewater",
+        description: "To walk in the land of hush and tendril and refill your flask, you must let it bleed--not of yourself but of our enemy",
+        isBounty: true,
+    },
+    {
+        name: ["Northren Wanderer", "Southron Wanderer", "Nyren", "Rahvrecur", "Se'dyrist"],
+        title: "Sunken Cities",
+        description: "Explore the ruins of an ancient city and discover its treasures",
+        isBounty: false,
+    },
+    {
+        name: ["Fang Duelist", "Shrygeian Bard", "Chiomic Jester"],
+        title: "The Murder of a Merchant",
+        description: "Aid in the investigation of a murder that occured recently",
+        isBounty: true,
+    },
+    {
+        name: ["Ma'ier Occultist", "Old Li'ivi Occultist", "Eugenes", "Garris Ashenus"],
+        title: "Mist of the Moon",
+        description: "Ingratiate yourself with the Ma'ier and gain their trust to understand the Blood Moon Prophecy",
+        isBounty: false,
+    },
+    {
+        name: ["Ilire Occultist", "Old Li'ivi Occultist"],
+        title: "Sheath of the Sun",
+        description: "Ingratiate yourself with the Ilire and gain their trust to understand the Black Sun Prophecy",
+        isBounty: false,
+    },
+    {
+        name: ["Achreon Druid", "Cambiren Druid"],
+        title: "The Draochre",
+        description: "Ingratiate yourself with the Druids and gain their trust to understand the Wild",
+        isBounty: false,
+    },
+    {
+        name: ["Tshaeral Shaman", "Kyn'gian Shaman", "Dorien Caderyn", "Mirio"],
+        title: "The Land of Hush and Tendril",
+        description: "Peer into this. Spoken as though not of this world, yet all the same it wraps. Do you wish this?",
+        isBounty: false,
+    },
+    {
+        name: ["Fyers Occultist", "Firesworn", "Torreous Ashfyre", "Fierous Ashfyre"],
+        title: "The Phoenix",
+        description: "Learn more about the Phoenix and its origin of rebirth",
+        isBounty: false,
+    },
+    {
+        name: ["Ahn'are Apostle", "Synaethis Spiras", "Kreceus"],
+        title: "The Ahn'are",
+        description: "Learn more about the Ahn'are and their origin of flight",
+        isBounty: false,
+    },
+    {
+        name: ["Sera Lorian", "Daethic Inquisitor", "Daethic Knight"],
+        title: "Seek Devotion",
+        description: "Become initiated into the faith of Daethos",
+        isBounty: false,
+    },
+    {
+        name: ["Anashtre", "Ahn'are Apostle", "Astral Apostle", "Kreceus"],
+        title: "Anashtre Ascension",
+        description: "Seek information about the Anashtre and the ritual of the past to form the lightning wing of Astra",
+        isBounty: false,
+    },
+    {
+        name: ["Old Li'ivi Occultist", "Chiomic Jester", "Shrygeian Bard"],
+        title: "Curse of the Ky'myr",
+        description: "Track down the mystery behind the Ky'myr and its curse of ceaselessness.",
+        isBounty: false,
+
+    },
+    {
+        name: ["Daethic Inquisitor", "Daethic Knight", "Lorian", "Mavros Ilios"],
+        title: "Providence",
+        description: "Aid in the proliferation of Daethos across the land",
+        isBounty: false,
+
+    }
+]
+
+export const getQuests = (name: string) => {
+    return QUESTS.filter(quest => quest.name.includes(name));
+};
+
 export interface GameData {
     player: Ascean;
     opponent: Enemy;
@@ -162,6 +325,8 @@ export interface GameData {
 
     cityOption: string;
     currentIntent: string;
+    currentQuest: string;
+    questData: object;
     overlayContent: string;
     storyContent: string;
     combatOverlayText: string;
@@ -218,6 +383,7 @@ export const GAME_ACTIONS = {
 
     SET_CITY_OPTION: 'SET_CITY_OPTION',
     SET_CURRENT_INTENT: 'SET_CURRENT_INTENT',
+    SET_CURRENT_QUEST: 'SET_CURRENT_QUEST',
     SET_OVERLAY_CONTENT: 'SET_OVERLAY_CONTENT',
     SET_STORY_CONTENT: 'SET_STORY_CONTENT',
     SET_COMBAT_OVERLAY_TEXT: 'SET_COMBAT_OVERLAY_TEXT',
@@ -254,6 +420,8 @@ export const initialGameData: GameData = {
     merchantEquipment: [] as unknown as Equipment,
     cityOption: 'Innkeep',
     currentIntent: 'challenge',
+    currentQuest: '',
+    questData: {},
     overlayContent: '',
     storyContent: '', 
     combatOverlayText: '',
@@ -432,41 +600,47 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 currentIntent: action.payload,
             };
-        case GAME_ACTIONS.SET_OVERLAY_CONTENT:
+        case 'SET_OVERLAY_CONTENT':
             return {
                 ...game,
                 overlayContent: action.payload,
             };
-        case GAME_ACTIONS.SET_STORY_CONTENT:
+        case 'SET_STORY_CONTENT':
             return {
                 ...game,
                 storyContent: action.payload,
             };
-        case GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT:
+        case 'SET_COMBAT_OVERLAY_TEXT':
             return {
                 ...game,
                 combatOverlayText: action.payload,
             };
-        case GAME_ACTIONS.SET_LEAVE_CITY:
+        case 'SET_LEAVE_CITY':
             return {
                 ...game,
                 cityButton: action.payload,
                 showCity: action.payload,
             };
-        case GAME_ACTIONS.SET_ENTER_CITY:
+        case 'SET_ENTER_CITY':
             return {
                 ...game,
                 storyContent: action.payload,
                 cityButton: true,
             };
-        case GAME_ACTIONS.CLOSE_OVERLAY:
+        case 'CLOSE_OVERLAY':
             return {
                 ...game,
                 overlayContent: '',
                 loadingOverlay: action.payload,
                 loadingContent: action.payload,
             };
-        case GAME_ACTIONS.CLEAR_LOOTDROP:
+        case 'SET_CURRENT_QUEST': 
+            return {
+                ...game,
+                currentQuest: action.payload.intent,
+                questData: action.payload.questData,
+            };
+        case 'CLEAR_LOOTDROP':
             let lootDrop = action.payload;
             if (lootDrop?._id === game.lootDrop?._id) {
                 return {

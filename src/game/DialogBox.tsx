@@ -4,9 +4,10 @@ import LootDrop from '../components/GameCompiler/LootDrop';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
+import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests } from '../components/GameCompiler/GameStore';
 
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
@@ -37,7 +38,7 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
         )
     });
     return <>{buttons}</>;
-}
+};
 
 interface Props {
     ascean: any;
@@ -178,10 +179,43 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         };
     };
 
+    const getQuest = async () => {
+        // setLoading(true);
+        try {
+            console.log("Getting Quest")
+            let thisQuest = getQuests(enemy?.name);
+            console.log(thisQuest, "This Quest")
+            let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
+            console.log(newQuest, "New Quest");
+            // let quest = {
+            //     player: ascean,
+            //     giver: enemy,
+            //     title: newQuest.title,
+            //     description: newQuest.description,
+            //     details: {
+            //         isBounty: newQuest.isBounty,
+            //         bounty: {
+            //             name: ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES][Math.floor(Math.random() * ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES].length)],
+            //             bounty: Math.floor(Math.random() * 3) + 2, // 2-4
+            //         },
+            //         timer: ascean?.level + Math.floor(Math.random() * 3) + 1, // 1-3
+            //         isGiver: enemy?.name,
+            //         isTimed: [true, false][Math.floor(Math.random() * 2)],
+            //     },
+            // };
+            // const response = await questAPI.createQuest(quest);
+            // console.log(response, "Quest Response");
+            
+            // setLoading(false);
+        } catch (err: any) {
+            console.log(err, "Error Getting Quest");
+        };
+    };
+
     if (loading) {
         return (
             <Loading Combat={true} />
-        )
+        );
     };
     return (
         <div className='dialog-box'>
@@ -280,7 +314,9 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 : currentIntent === 'localWhispers' ?
                     <>
-                        "This has not been written yet."
+                        "Well if you want to know, you'll have to click the button."
+                        <br />
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getQuest()}>What are the local whispers?</Button>
                     </>
                 : currentIntent === 'persuasion' ?
                     <>

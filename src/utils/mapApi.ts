@@ -10,12 +10,11 @@ export async function createMap(data: object) {
             'Content-Type': 'application/json',
             Authorization: "Bearer " + tokenService.getToken(),
         },
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json(); 
-        return res.json().then(response => {
-        console.log(response, '<- This is an error coming back from creating the map in the mapAPI utility')
-        throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response, '<- This is an error coming back from creating the map in the mapAPI utility');
+        throw new Error(response.err);
     });
 };
 
@@ -28,11 +27,10 @@ export async function saveNewMap(map: any) {
             'Content-Type': 'application/json',
             Authorization: "Bearer " + tokenService.getToken(),
         },
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json(); 
-        return res.json().then(response => {
+        const response = await res.json();
         console.log(response, '<- This is an error coming back from saving the map in the mapAPI utility');
-        throw new Error(response.err)
-        })
+        throw new Error(response.err);
     });
 };

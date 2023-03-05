@@ -14,7 +14,7 @@ async function createQuest(req, res) {
         // ascean.quests.push(newQuest._id);
         // await ascean.save();
 
-
+        // console.log(quest, "Quest Created");
 
         res.status(201).json(quest);
     } catch (err) {
