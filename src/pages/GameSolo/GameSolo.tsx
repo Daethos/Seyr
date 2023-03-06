@@ -533,6 +533,7 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const generateWorld = async (mapName: string) => {
+        mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: true });
         try {
             const data = {
                 name: mapName,
@@ -550,6 +551,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: MAP_ACTIONS.SET_MAP_COORDS,
                 payload: coords,
             })
+            mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
         } catch (err: any) {
             console.log(err.message, 'Error Generating World Environment.');
         };

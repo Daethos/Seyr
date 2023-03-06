@@ -3,6 +3,7 @@ import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS } from './GameStore';
 import { MAP_ACTIONS } from './WorldStore';
+import Loading from '../Loading/Loading';
 
 interface Props {
     ascean: any;
@@ -17,10 +18,10 @@ interface Props {
 };
 
 const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingOverlay, generateWorld, overlayContent, saveWorld, loadingContent }: Props) => {
-    const [mapName, setMapName] = useState<string>(`${ascean?.name}_${ascean?.maps?.length + 1 < 10 ? '0' + (ascean?.maps?.length + 1) : ascean?.maps?.length + 1}`);
+    const [mapName, setMapName] = useState<string>(`${(ascean?.name || '').trim().replace(/\s+/g, '_')}_${ascean?.maps?.length + 1 < 10 ? '0' + (ascean?.maps?.length + 1) : ascean?.maps?.length + 1}`);
     const overlayRef = useRef(null);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(ascean?.maps?.[0]?.currentTile?.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-
+    const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
         if (ascean?.maps?.length === 0) return;
         loadMap();
@@ -76,14 +77,27 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                     </p>
                     </Button>
                     <br />
-                    {
+                    {   mapState?.generatingWorld ?
+                        <Loading NavBar={true} />
+                        :
                         mapState.name !== '' ?
                         <>
-                        <p style={{ color: '#fdf6d8' }}>
-                        Map Name: {mapState.name} <br />
-                        Province: {mapState.province} <br />
-                        Current Position: x: {mapState.currentTile.x}, y: {mapState.currentTile.y} <br />
-                        Content: {mapState.currentTile.content.charAt(0).toUpperCase() + mapState.currentTile.content.slice(1)}<br /><br />
+                        <p style={{ color: '#fdf6d8', fontSize: "13.5px" }}>
+                        Map Name: {mapState.name} | Province: {mapState.province} <br />
+                        Current Position: x: {mapState.currentTile.x}, y: {mapState.currentTile.y} | Content: {mapState.currentTile.content.charAt(0).toUpperCase() + mapState.currentTile.content.slice(1)}<br /><br />
+                        Cave: {mapState.contentCounts.cave} | City: {mapState.contentCounts.city} | 
+                        Dungeon: {mapState.contentCounts.dungeon}<br /> 
+                        Enemy: {mapState.contentCounts.enemy} | 
+                        Hazard: {mapState.contentCounts.hazard} |
+                        Landmark: {mapState.contentCounts.landmark}<br /> 
+                        Nothing: {mapState.contentCounts.nothing} | 
+                        NPC: {mapState.contentCounts.npc} |
+                        Phenomena: {mapState.contentCounts.phenomena}<br /> 
+                        Ruins {mapState.contentCounts.ruins} |
+                        Treasure: {mapState.contentCounts.treasure} <br /> 
+                        Weather: {mapState.contentCounts.weather} |
+                        Wonder: {mapState.contentCounts.wonder}<br />
+                        <br />
                         This is where you're starting, and as expected, nothing is happening, but that's okay because you can move around and explore this world. 
                         {' '}Let's imagine a chunk of this province is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering adventure in any direction.<br /><br /> 
                         {' '}You may find the world you're in to be lacking, but over time more will occur than last experienced, as this lightweight design is to simulate a Phaser canvas for coherence of gameplay.

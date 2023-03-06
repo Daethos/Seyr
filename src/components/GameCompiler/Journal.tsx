@@ -95,12 +95,14 @@ const Journal = ({ questData, dispatch, gameDispatch, mapState, mapDispatch, cur
                 {
                     questData?.details?.isBounty ? (
                         <>
+                        Bounty: ({questData?.details?.bounty?.bounty}) {questData?.details?.bounty?.name} <br />
+                        Timer: {questData?.details?.bounty?.timer} {questData?.details?.bounty?.timer === 1 ? 'month' : 'months'}<br />
                         </>
                     ) : (
-                        <>
-                        </>
+                        ""
                     )
                 }
+                Rewards: {questData?.rewards?.currency?.gold}g {questData?.rewards?.currency?.silver}s | {questData?.rewards?.items?.map((item: any) => item + ' ')} | {questData?.rewards?.experience}xp
             </div>
             <div className='dialog-options'>
                 <QuestButtons options={quests} setQuest={handleQuest} />

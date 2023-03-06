@@ -18,6 +18,7 @@ class Quest {
 
     getDetails(det) {
         const details = {
+            isBounty: det.isBounty,
             isGiver: det.isGiver,
             isTimed: det.isTimed,
             bounty: det.bounty,

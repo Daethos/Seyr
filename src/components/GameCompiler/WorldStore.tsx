@@ -11,6 +11,7 @@ export interface MapData {
     lastTile: { x: number; y: number; content: string };
     visitedTiles: {[key: string]: { color: string }}; 
     context: string;
+    generatingWorld: boolean;
 };
 
 interface Action {
@@ -30,6 +31,7 @@ export const MAP_ACTIONS = {
     SET_MAP: 'SET_MAP',
     SET_MAP_CONTEXT: 'SET_MAP_CONTEXT',
     SET_NEW_MAP_COORDS: 'SET_NEW_MAP_COORDS',
+    SET_GENERATING_WORLD: 'SET_GENERATING_WORLD',
 };
 
 export const initialMapData: MapData = {
@@ -45,6 +47,7 @@ export const initialMapData: MapData = {
     lastTile: { x: 0, y: 0, content: '' },
     visitedTiles: {},
     context: '',
+    generatingWorld: false,
 };
 
 export const MapStore = (map: MapData, action: Action) => {
@@ -82,6 +85,11 @@ export const MapStore = (map: MapData, action: Action) => {
             return {
                 ...map,
                 context: action.payload,
+            };
+        case 'SET_GENERATING_WORLD':
+            return {
+                ...map,
+                generatingWorld: action.payload,
             };
         default: return map;
     }

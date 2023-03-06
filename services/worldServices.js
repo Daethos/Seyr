@@ -1,6 +1,9 @@
 const noise = require('noisejs').Noise;
 const perlin = new noise(Math.random());
 
+// TODO:FIXME: Create a net of contents that can be looped through and displayed so you know how many tiles are in each content type/option.000000000000000000000000000000000000000000000000
+// Essentially I need it to tell me the occurrence of each content type
+
 class Tile {
     constructor(x, y, content) {
         this.x = x;
@@ -63,10 +66,28 @@ class WorldMap {
         this.province = this.generateProvince(player.origin);
         this.contentOptions = ['enemy', 'npc', 'treasure', 'landmark', 'hazard', 'dungeon', 'city', 'nothing', 'weather', 'ruins', 'cave', 'phenomena', 'wonder'];
         this.size = 100;
-        this.contentClusters = this.generateContentClusters(this.generateProvince(player.origin));
+        this.contentClusters = this.generateContentClusters(this.provinceWeights(this.generateProvince(player.origin)));
         this.map = this.generateMap();
         this.reference = player._id;
+        this.contentCounts = {};
+        this.countContent();
     };
+
+    countContent() {
+        this.contentCounts = {};
+        for (let i = 0; i < this.contentOptions.length; i++) {
+            let count = 0;
+            for (let j = 0; j < 201; j++) {
+                for (let k = 0; k < 201; k++) {
+                    if (this.map[j][k].content == this.contentOptions[i]) {
+                        count++;
+                    };
+                };
+            };
+            this.contentCounts[this.contentOptions[i]] = count;
+        };
+    };
+    
 
     generateProvince(origin) {
         switch (origin) {
@@ -100,115 +121,116 @@ class WorldMap {
     provinceWeights(province) {
         const provinceWeights = {
             'Astralands': {
-              'enemy': 10,
-              'npc': 2,
-              'phenomena': 2,
-              'wonder': 2,
-              'ruins': 2,
-              'cave': 2,
-              'weather': 4,
-              'treasure': 2,
-              'landmark': 4,
-              'hazard': 6,
-              'dungeon': 2,
-              'city': 2,
-              'nothing': 60,
+              'enemy': 100,
+              'npc': 100,
+              'phenomena': 20,
+              'wonder': 5,
+              'ruins': 10,
+              'cave': 6,
+              'weather': 6,
+              'treasure': 20,
+              'landmark': 10,
+              'hazard': 30,
+              'dungeon': 4,
+              'city': 6,
+              'nothing': 20,
             },
             'Fangs': {
-              'enemy': 10,
-              'npc': 4,
-              'phenomena': 2,
-              'wonder': 2,
-              'ruins': 2,
-              'cave': 2,
+              'enemy': 100,
+              'npc': 100,
+              'phenomena': 4,
+              'wonder': 4,
+              'ruins': 4,
+              'cave': 4,
               'weather': 4,
-              'treasure': 2,
+              'treasure': 10,
               'landmark': 2,
               'hazard': 8,
               'dungeon': 2,
-              'city': 2,
-              'nothing': 58,
+              'city': 4,
+              'nothing': 30,
             },
             'Firelands': {
-              'enemy': 12,
-              'npc': 10,
-              'phenomena': 2,
-              'wonder': 2,
+              'enemy': 100,
+              'npc': 100,
+              'phenomena': 4,
+              'wonder': 4,
               'ruins': 2,
-              'cave': 2,
-              'weather': 4,
-              'treasure': 4,
-              'landmark': 4,
-              'hazard': 2,
-              'dungeon': 2,
-              'city': 4,
-              'nothing': 50,
+              'cave': 10,
+              'weather': 8,
+              'treasure': 10,
+              'landmark': 8,
+              'hazard': 4,
+              'dungeon': 4,
+              'city': 8,
+              'nothing': 5,
             },
             'Kingdom': {
-              'enemy': 10,
-              'npc': 6,
-              'phenomena': 2,
-              'wonder': 2,
-              'ruins': 2,
-              'cave': 2,
-              'weather': 4,
-              'treasure': 2,
+              'enemy': 100,
+              'npc': 100,
+              'phenomena': 4,
+              'wonder': 4,
+              'ruins': 4,
+              'cave': 4,
+              'weather': 6,
+              'treasure': 10,
               'landmark': 2,
               'hazard': 6,
               'dungeon': 2,
-              'city': 2,
-              'nothing': 58,
+              'city': 6,
+              'nothing': 30,
             },
             'Licivitas': {
-              'enemy': 12,
-              'npc': 8,
+              'enemy': 100,
+              'npc': 100,
               'phenomena': 2,
               'wonder': 2,
               'ruins': 2,
               'cave': 2,
               'weather': 4,
-              'treasure': 4,
-              'landmark': 4,
+              'treasure': 10,
+              'landmark': 8,
               'hazard': 4,
               'dungeon': 2,
-              'city': 4,
-              'nothing': 50,
+              'city': 10,
+              'nothing': 30,
             },
             'Sedyrus': {
-              'enemy': 10,
-              'npc': 4,
+              'enemy': 100,
+              'npc': 100,
               'phenomena': 2,
               'wonder': 2,
-              'ruins': 2,
-              'cave': 2,
-              'weather': 4,
-              'treasure': 2,
+              'ruins': 6,
+              'cave': 4,
+              'weather': 6,
+              'treasure': 10,
               'landmark': 2,
               'hazard': 8,
               'dungeon': 2,
-              'city': 2,
-              'nothing': 58,
+              'city': 6,
+              'nothing': 30,
             },
             'Soverains': {
-              'enemy': 10,
-              'npc': 6,
+              'enemy': 100,
+              'npc': 100,
               'phenomena': 2,
               'wonder': 2,
-              'ruins': 2,
+              'ruins': 6,
               'cave': 2,
               'weather': 4,
-              'treasure': 2,
+              'treasure': 10,
               'landmark': 2,
               'hazard': 6,
-              'dungeon': 2,
-              'city': 2,
-              'nothing': 58,
+              'dungeon': 4,
+              'city': 6,
+              'nothing': 30,
             },
         };
         return provinceWeights[province];
     };
 
     generateContentClusters(provinceWeights) {
+        console.log(provinceWeights, "Provincial Weights");
         let clusters;
         let minDistance;
         
@@ -216,7 +238,7 @@ class WorldMap {
             clusters = {};
             for (const option of this.contentOptions) {
                 const weight = provinceWeights[option];
-                const numClusters = Math.round(weight / 2); // Arbitrary number of clusters based on weight
+                const numClusters = weight; // Arbitrary number of clusters based on weight
                 let clusterSize;
                 if (option === 'city' || option === 'weather') {
                     clusterSize = this.getRandomInt(24, 33); // Adjust cluster size for cities and weather Cities and Weather are difference as they are habitable by npcs, enemies, and each other. How do I write this function?
@@ -230,7 +252,8 @@ class WorldMap {
                     clusterSize = 1;
                     // clusterSize = Math.ceil(Math.sqrt(this.size / (numClusters * 10))); // Adjust cluster size for content
                 } else {
-                    clusterSize = Math.ceil(this.size / weight);
+                    // clusterSize = Math.ceil(this.size / weight) / Math.ceil(this.size / weight);
+                    clusterSize = 1;
                 };
                 clusters[option] = [];
                 for (let i = 0; i < numClusters; i++) {
@@ -249,7 +272,7 @@ class WorldMap {
             minDistance = this.size / 50; // Change this number to adjust minimum distance
             
         } while (!this.checkConsistency(clusters, minDistance));
-        
+        console.log(clusters, "Clusters")
         return clusters;
     };
       
@@ -265,8 +288,7 @@ class WorldMap {
     
 
     generateMap() {
-        const provinceWeights = this.provinceWeights(this.province);
-        const clusters = this.generateContentClusters(provinceWeights);
+        const clusters = this.contentClusters;
         const map = [];
         for (let i = -100; i < 101; i++) {
           const row = [];
@@ -292,12 +314,12 @@ class WorldMap {
                     const cluster2 = clusters[option][j];
                     if (this.getDistance(cluster1, cluster2) < minDistance) {
                         return false;
-                    }
-                }
-            }
-        }
+                    };
+                };
+            };
+        };
         return true;
-    }
+    };
     
     getDistance(cluster1, cluster2) {
         const [x1, y1] = this.getCenter(cluster1);

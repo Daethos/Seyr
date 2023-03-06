@@ -198,9 +198,9 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
             //             name: ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES][Math.floor(Math.random() * ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES].length)],
             //             bounty: Math.floor(Math.random() * 3) + 2, // 2-4
             //         },
+            //         isTimed: newQuest.isBounty,
             //         timer: ascean?.level + Math.floor(Math.random() * 3) + 1, // 1-3
             //         isGiver: enemy?.name,
-            //         isTimed: [true, false][Math.floor(Math.random() * 2)],
             //     },
             // };
             // const response = await questAPI.createQuest(quest);

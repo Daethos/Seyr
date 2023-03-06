@@ -7,15 +7,23 @@ const questSchema = new Schema({
     title: String,
     level: Number,
     details: {
+        isBounty: Boolean,
         isGiver: String,
         isTimed: Boolean,
-        bounty: Number,
+        bounty: {
+            name: String,
+            bounty: Number,
+        },
         timer: Number,
     },
     description: String,
     rewards: {
-        type: [],
-        default: null
+        currency: {
+            silver: Number,
+            gold: Number,
+        },
+        items: Array,
+        experience: Number,
     },
     completed: Boolean,
     repeatable: Boolean,

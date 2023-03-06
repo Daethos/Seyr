@@ -95,7 +95,14 @@ const asceanSchema = new Schema(
         achre: Number,
         caeren: Number,
         kyosir: Number,
-        
+        hardcore: {
+            type: Boolean,
+            default: false,
+        },
+        alive: {
+            type: Boolean,
+            default: true,
+        },
         weapon_one: {
             type: Schema.Types.ObjectId,
             refPath: 'onWeapon'
