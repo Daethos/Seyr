@@ -55,6 +55,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
     }, [state.gameIsLive]);
 
     const autoAttack = async (combatData: any) => {
+        if (combatData.player_win || combatData.computer_win || combatData.new_player_health === 0 || combatData.new_computer_health === 0) return;
         setLoading(true);
         setTimeLeft(10);
         try {

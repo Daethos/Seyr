@@ -71,6 +71,7 @@ class WorldMap {
         this.reference = player._id;
         this.contentCounts = {};
         this.countContent();
+        this.steps = 0;
     };
 
     countContent() {
@@ -121,8 +122,8 @@ class WorldMap {
     provinceWeights(province) {
         const provinceWeights = {
             'Astralands': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 200,
+              'npc': 50,
               'phenomena': 20,
               'wonder': 5,
               'ruins': 10,
@@ -136,8 +137,8 @@ class WorldMap {
               'nothing': 20,
             },
             'Fangs': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 200,
+              'npc': 50,
               'phenomena': 4,
               'wonder': 4,
               'ruins': 4,
@@ -151,8 +152,8 @@ class WorldMap {
               'nothing': 30,
             },
             'Firelands': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 150,
+              'npc': 50,
               'phenomena': 4,
               'wonder': 4,
               'ruins': 2,
@@ -166,8 +167,8 @@ class WorldMap {
               'nothing': 5,
             },
             'Kingdom': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 200,
+              'npc': 50,
               'phenomena': 4,
               'wonder': 4,
               'ruins': 4,
@@ -181,8 +182,8 @@ class WorldMap {
               'nothing': 30,
             },
             'Licivitas': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 150,
+              'npc': 50,
               'phenomena': 2,
               'wonder': 2,
               'ruins': 2,
@@ -196,8 +197,8 @@ class WorldMap {
               'nothing': 30,
             },
             'Sedyrus': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 200,
+              'npc': 50,
               'phenomena': 2,
               'wonder': 2,
               'ruins': 6,
@@ -211,8 +212,8 @@ class WorldMap {
               'nothing': 30,
             },
             'Soverains': {
-              'enemy': 100,
-              'npc': 100,
+              'enemy': 150,
+              'npc': 50,
               'phenomena': 2,
               'wonder': 2,
               'ruins': 6,
@@ -230,7 +231,7 @@ class WorldMap {
     };
 
     generateContentClusters(provinceWeights) {
-        console.log(provinceWeights, "Provincial Weights");
+        // console.log(provinceWeights, "Provincial Weights");
         let clusters;
         let minDistance;
         
@@ -243,7 +244,7 @@ class WorldMap {
                 if (option === 'city' || option === 'weather') {
                     clusterSize = this.getRandomInt(24, 33); // Adjust cluster size for cities and weather Cities and Weather are difference as they are habitable by npcs, enemies, and each other. How do I write this function?
                 } else if (option === 'enemy' || option === 'npc') {
-                    clusterSize = this.getRandomInt(1, 3);
+                    clusterSize = this.getRandomInt(1, 1);
                 } else if (option === 'landmark' || option === 'hazard' || option === 'ruins' || option === 'wonder') {
                     clusterSize = this.getRandomInt(3, 5);
                 } else if (option === 'dungeon' || option === 'cave') {
@@ -272,7 +273,7 @@ class WorldMap {
             minDistance = this.size / 50; // Change this number to adjust minimum distance
             
         } while (!this.checkConsistency(clusters, minDistance));
-        console.log(clusters, "Clusters")
+        // console.log(clusters, "Clusters")
         return clusters;
     };
       

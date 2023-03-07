@@ -21,7 +21,7 @@ import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS } from '../../components/GameCompiler/WorldStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, moveContent } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
@@ -112,16 +112,27 @@ const GameSolo = ({ user }: GameProps) => {
     const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`;
     const [playWind] = useSound(windSfx, { volume: soundEffectVolume });
 
+    const walk1Sfx = process.env.PUBLIC_URL + `/sounds/walk-1.mp3`;
     const walk2Sfx = process.env.PUBLIC_URL + `/sounds/walk-2.mp3`;
     const walk3Sfx = process.env.PUBLIC_URL + `/sounds/walk-3.mp3`;
     const walk4Sfx = process.env.PUBLIC_URL + `/sounds/walk-4.mp3`;
     const walk8Sfx = process.env.PUBLIC_URL + `/sounds/walk-8.mp3`;
     const walk9Sfx = process.env.PUBLIC_URL + `/sounds/walk-9.mp3`;
+    const [playWalk1] = useSound(walk1Sfx, { volume: soundEffectVolume });
     const [playWalk2] = useSound(walk2Sfx, { volume: soundEffectVolume });
     const [playWalk3] = useSound(walk3Sfx, { volume: soundEffectVolume });
     const [playWalk4] = useSound(walk4Sfx, { volume: soundEffectVolume });
     const [playWalk8] = useSound(walk8Sfx, { volume: soundEffectVolume });
     const [playWalk9] = useSound(walk9Sfx, { volume: soundEffectVolume });
+
+    const merchantSfx = process.env.PUBLIC_URL + `/sounds/merchant.mp3`;
+    const [playMerchant] = useSound(merchantSfx, { volume: soundEffectVolume });
+    const dungeonSfx = process.env.PUBLIC_URL + `/sounds/dungeon.mp3`;
+    const [playDungeon] = useSound(dungeonSfx, { volume: soundEffectVolume });
+    const phenomenaSfx = process.env.PUBLIC_URL + `/sounds/phenomena.mp3`;
+    const [playPhenomena] = useSound(phenomenaSfx, { volume: soundEffectVolume });
+    const treasureSfx = process.env.PUBLIC_URL + `/sounds/treasure.mp3`;
+    const [playTreasure] = useSound(treasureSfx, { volume: soundEffectVolume });
 
     const { asceanID } = useParams();
 
@@ -147,6 +158,10 @@ const GameSolo = ({ user }: GameProps) => {
     }, [background])
 
     // useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
+
+    useEffect(() => {
+        console.log(mapState.steps, "Player Step Count");
+    }, [mapState.steps]);
 
     const getAscean = useCallback(async () => {
         try {
@@ -490,9 +505,12 @@ const GameSolo = ({ user }: GameProps) => {
             dispatch({
                 type: ACTIONS.CLEAR_DUEL,
                 payload: null
-            })
+            });
             if (gameState.showDialog) {
                 gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            };
+            if (mapState.content !== 'city') {
+                mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
@@ -523,7 +541,7 @@ const GameSolo = ({ user }: GameProps) => {
                 coordinates: {
                     x: x,
                    y: y,
-                }
+                },
             };
             // const response = await asceanAPI.saveAsceanCoords(data);
             // console.log(response, 'Response Saving Ascean Coordinates');
@@ -593,7 +611,7 @@ const GameSolo = ({ user }: GameProps) => {
                 await getOpponent();
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                }, 3000)
+                }, 3000);
             } else if (chance > 96) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -601,7 +619,7 @@ const GameSolo = ({ user }: GameProps) => {
                 await getNPC();
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                }, 3000)
+                }, 3000);
             } else {
                 if (gameState.storyContent !== '') {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' })
@@ -630,12 +648,13 @@ const GameSolo = ({ user }: GameProps) => {
                     newTile: newTile,
                     oldTile: mapState.currentTile,
                     newTiles: newTiles,
+                    map: mapState,
                 };
                 mapDispatch({
                 type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
                 payload: data,
                 });
-                const options = [playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
+                const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
                 options[random]();
             };
@@ -648,8 +667,7 @@ const GameSolo = ({ user }: GameProps) => {
             clearTimeout(timer);
             timer = setTimeout(() => func.apply(this, args), delay);
         };
-    };
-      
+    }; 
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, 150);
 
@@ -660,8 +678,8 @@ const GameSolo = ({ user }: GameProps) => {
 
     async function getAsceanGroupCoords(x: number, y: number, map: any) {
         let tiles = [];
-        for (let i = -2; i < 3; i++) {
-            for (let j = -2; j < 3; j++) {
+        for (let i = -4; i < 5; i++) {
+            for (let j = -4; j < 5; j++) {
                 const tileX = x + 100 + i;
                 const tileY = y + 100 + j;
                 const tile = map?.[tileX]?.[tileY];
@@ -671,14 +689,13 @@ const GameSolo = ({ user }: GameProps) => {
             };
         };      
         return tiles;
-    };
-      
+    }; 
 
     const getPhenomena = async () => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-
+        playPhenomena();
     };
 
     const getWeather = async (province: string) => {
@@ -784,6 +801,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try {
+            playMerchant();
             const npc: NPC = Object.assign({}, Merchant);
             gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: npc });
             const response = await asceanAPI.getAnimalStats(npc);
@@ -807,6 +825,7 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getTreasure = async () => {
+        playTreasure();
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
@@ -845,6 +864,7 @@ const GameSolo = ({ user }: GameProps) => {
         console.log("You would have gotten Ruins here.");
     };
     const getDungeon = async () => {
+        playDungeon();
         console.log("You Are In A Dungeon")
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
@@ -880,29 +900,46 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             switch (content) {
                 case 'enemy': {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
                     await getOpponent();
+                    setTimeout(() => {
+                        gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                    }, 3000);
                     break;
                 };
                 case 'npc': {
-                    await getNPC(); // Will end up being getNPC() so it knows it's not for combat with different dialog and such as well. Enemies =/= NPCs
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
+                    await getNPC();
+                    setTimeout(() => {
+                        gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                    }, 3000);
                     break;
                 };
                 case 'phenomena': {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter?` });
                     // This will be a probabilistic roll of random supernatural occurrences that affect gameplay, similar to environmental effects. May last for some time.
                     await getPhenomena();
                     break;
                 };
                 case 'wonder': {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Natural wonders of the world environment, may grant boons or blessings when encountered, or perhaps be where enemies or npc's congregate` });
                     // Natural wonders of the world environment, may grant boons or blessings when encountered, or perhaps be where enemies or npc's congregate
                     await getWonder(); 
                     break;
                 };
                 case 'ruins': {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Decay of civilizations from the past, may have scavengers or treasure probabilistically determined` });
+                   
                     // Decay of civilizations from the past, may have scavengers or treasure probabilistically determined
                     await getRuins();
                     break;
                 };
                 case 'cave': {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Caves appear abundant, with many adventurers seeking untold stories that lay waiting to be discovered. Curious why there aren't more folk interested` });
                     // When prompted to enter, will create a new object map that extends the WorldMap as a 'Cave' object, with a new set of tiles and content
                     await getCave();
                     break;
@@ -916,21 +953,30 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 case 'treasure': {
                     // This will be the getLoot() function that will be called to get the loot from the tile, probably a modal that pops up with the loot and a button to get it. 1-3 items per tile
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
                     await getTreasure();
+                    setTimeout(() => {
+                        gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                    }, 3000);
                     break;
                 };
                 case 'landmark': {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Man-made landmarks, may have treasure, enemies, or npc's congregating` });
                     // Man-made landmarks, may have treasure, enemies, or npc's congregating.
                     await getLandmark();
                     break;
                 };
                 case 'hazard': {
                     // Natural hazards of the environment that when encountered, cause harmful effects akin to curses
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Natural hazards of the environment that when encountered, cause harmful effects akin to curses` });
                     await getHazard();
                     break;
                 };
                 case 'dungeon': {
                     // When prompted to enter, will create a new object map that extends the WorldMap as a 'Dungeon' object, with a new set of tiles and content
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Dungeons may refer to old, abandoned settlements sunked into this world. There may also be another reason` });
                     await getDungeon();
                     break;
                 };
@@ -947,7 +993,14 @@ const GameSolo = ({ user }: GameProps) => {
             };
         } catch (err: any) {
             console.log(err.message, 'Error Handling Tile Content');
-        }
+        } finally {
+            if (mapState.steps % 10 === 0 && mapState.steps !== 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} steps. You're feeling tired and weary. You should rest soon` });
+                const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+                console.log(response, "Response Moving Content ?");
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
+            }
+        };
     };
 
     useEffect(() => {
@@ -961,11 +1014,22 @@ const GameSolo = ({ user }: GameProps) => {
                     'background': getPlayerBackground.background
                 });
             };
-            chanceEncounter();
+            if (mapState.steps % 10 === 0 && mapState.steps !== 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} steps. You're feeling tired and weary. You should rest soon` });
+                const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+                console.log(response, "Response Moving Content ?");
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
+            } else {
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
+                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+                });
+            }
             return;
         };
         handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
-    }, [mapState.currentTile])
+    }, [mapState.currentTile]);
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
@@ -988,7 +1052,7 @@ const GameSolo = ({ user }: GameProps) => {
             }
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         } catch (err: any) {
-            console.log(err.message, 'Error Getting Loot Drop')
+            console.log(err.message, 'Error Getting Loot Drop');
         };
     };
     

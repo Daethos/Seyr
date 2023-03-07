@@ -8,7 +8,7 @@ interface StoryProps {
 
 const StoryBox = ({ ascean, mapState, storyContent }: StoryProps) => {
     const article = ['a','e','i','o','u'].includes(mapState?.currentTile?.content?.[0]) ? "an" : "a";
-    console.log(mapState.context, "Current Tile Context?")
+    // console.log(mapState.context, "Current Tile Context?")
     return (
         <div className='story-box'>
             <p className='story-box-content'>
