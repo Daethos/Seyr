@@ -652,9 +652,9 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
             <Button variant="" className="inventory-icon" style={getItemStyle}>
                 <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} />
-                {blacksmith ? <><Button variant='outline' className='' style={{ color: 'gold', fontWeight: 600, marginLeft: "-45%", marginTop: "45%" }} onClick={() => setForgeModalShow(true)}>Forge</Button></>:''}
-                </Button>
+            </Button>
         </OverlayTrigger>
+            {blacksmith ? <><Button variant='outline' className='' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button></>:''}
         <Overlay target={targetRef} show={isLoading}>
         <div
           className='d-flex align-items-center justify-content-center'

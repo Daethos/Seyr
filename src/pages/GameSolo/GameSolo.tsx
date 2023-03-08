@@ -509,7 +509,7 @@ const GameSolo = ({ user }: GameProps) => {
             if (gameState.showDialog) {
                 gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             };
-            if (mapState.content !== 'city') {
+            if (mapState.content !== 'city' && state.new_computer_health <= 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
         } catch (err: any) {
@@ -575,7 +575,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    const chanceEncounter = async () => {
+    const chanceEncounter = async (content: string) => {
         try {
             const chance = Math.floor(Math.random() * 100) + 1;
             console.log(chance, 'Chance Encounter');
@@ -595,6 +595,31 @@ const GameSolo = ({ user }: GameProps) => {
             //     setStoryContent(`You've encountered a landmark by chance! \n Oftentimes folk would leave items of worship in memory of Ancients past, if not unspoiled food and drink for those making their pilgrimage.`);
             //     await getLandmark();
             // } else 
+            // switch (content) {
+            //     case 'dungeon': {
+                    
+            //         break;
+            //     };
+            //     case 'cave': {
+                    
+            //         break;
+            //     };
+            //     case 'wonder': {
+                    
+            //         break;
+            //     };
+            //     case 'ruins': {
+                    
+            //         break;
+            //     };
+            //     case 'landmark': {
+
+            //         break;
+            //     };
+            //     default: {
+            //         break;
+            //     };
+            // };
             if (chance > 99) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -603,7 +628,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                 }, 3000)
-            } else if (chance > 97) {
+            } else if (chance > 98) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
@@ -612,15 +637,17 @@ const GameSolo = ({ user }: GameProps) => {
                 setTimeout(() => {
                     gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                 }, 3000);
-            } else if (chance > 96) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
-                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
-                await getNPC();
-                setTimeout(() => {
-                    gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                }, 3000);
-            } else {
+            } 
+            // else if (chance > 96) {
+            //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
+            //     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            //     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
+            //     await getNPC();
+            //     setTimeout(() => {
+            //         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+            //     }, 3000);
+            // } 
+            else {
                 if (gameState.storyContent !== '') {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' })
                 }
@@ -792,7 +819,7 @@ const GameSolo = ({ user }: GameProps) => {
                 break;
             };
         };
-        await chanceEncounter();
+        await chanceEncounter('weather');
     };
 
     const getNPC = async () => {
@@ -821,7 +848,7 @@ const GameSolo = ({ user }: GameProps) => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten a Wonder here.");
+        chanceEncounter('wonder');
     };
 
     const getTreasure = async () => {
@@ -841,27 +868,25 @@ const GameSolo = ({ user }: GameProps) => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten a Landmark here.");
     };
 
     const getHazard = async () => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten a Hazard here.");
+        chanceEncounter('hazard');
     };
 
     const getCave = async () => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten a Cave here.");
     };
     const getRuins = async () => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         };
-        console.log("You would have gotten Ruins here.");
+        chanceEncounter('ruins');
     };
     const getDungeon = async () => {
         playDungeon();
@@ -900,9 +925,9 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             switch (content) {
                 case 'enemy': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger whose reaction appears defensive.` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger to your presence. They appear to be approaching you now. \n\n May you be sure, ${gameState?.player?.name}.` });
                     await getOpponent();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -910,9 +935,9 @@ const GameSolo = ({ user }: GameProps) => {
                     break;
                 };
                 case 'npc': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You approach a traveling merchant peddling wares.` })
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You spy a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful, hailing you down.` })
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You approach a traveling merchant roaming about the land, possibly peddling some wares wares. \n\n He approaches cautious yet peaceful as you him down.` })
                     await getNPC();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -994,7 +1019,7 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Handling Tile Content');
         } finally {
             if (mapState.steps % 10 === 0 && mapState.steps !== 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} steps. You're feeling tired and weary. You should rest soon` });
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
                 // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
                 // console.log(response, "Response Moving Content ?");
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
@@ -1014,7 +1039,7 @@ const GameSolo = ({ user }: GameProps) => {
                 });
             };
             if (mapState.steps % 10 === 0 && mapState.steps !== 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} steps. You're feeling tired and weary. You should rest soon` });
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
                 // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
                 // console.log(response, "Response Moving Content ?");
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
@@ -1470,7 +1495,7 @@ const GameSolo = ({ user }: GameProps) => {
             />
             <GameplayEventModal 
                 ascean={gameState.player} show={gameState.gameplayModal} gameplayEvent={gameState.gameplayEvent} deleteEquipment={deleteEquipment} gameDispatch={gameDispatch}
-                lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved}
+                lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved} mapDispatch={mapDispatch} mapState={mapState}
              />
         </Container>
     );

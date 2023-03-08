@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import LootDrop from './LootDrop';
 import { GAME_ACTIONS } from './GameStore';
+import { MAP_ACTIONS, MapData } from './WorldStore';
 
 interface Props {
     ascean: any;
@@ -12,9 +13,11 @@ interface Props {
     deleteEquipment: (eqp: any) => Promise<void>;
     itemSaved: boolean;
     gameDispatch: React.Dispatch<any>;
+    mapDispatch: React.Dispatch<any>;
+    mapState: MapData;
 }
 
-const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDrop, lootDropTwo, itemSaved, deleteEquipment }: Props) => {
+const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDrop, lootDropTwo, itemSaved, deleteEquipment, mapDispatch, mapState }: Props) => {
 
     const checkingLoot = async () => {
         console.log( lootDrop, lootDropTwo, 'Merchant Equipment')
@@ -26,6 +29,7 @@ const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDro
             await deleteEquipment([lootDropTwo]);
             gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
         };
+        mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: false });
     };
 
