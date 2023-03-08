@@ -159,17 +159,17 @@ const GameSolo = ({ user }: GameProps) => {
 
     // useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
 
-    useEffect(() => {
-        console.log(mapState.steps, "Player Step Count");
-    }, [mapState.steps]);
+    // useEffect(() => {
+    //     console.log(mapState.steps, "Player Step Count");
+    // }, [mapState.steps]);
 
     const getAscean = useCallback(async () => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
-            console.log(firstResponse, 'First Response')
+            // console.log(firstResponse, 'First Response')
             const response = await asceanAPI.getAsceanStats(asceanID);
-            console.log(response, 'Response');
+            // console.log(response, 'Response');
             
             dispatch({
                 type: ACTIONS.SET_PLAYER,
@@ -200,7 +200,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getOpponentDialog = async (enemy: string) => {
         try {
-            console.log(enemy, "Enemy");
+            // console.log(enemy, "Enemy");
             const response = getNpcDialog(enemy);
             gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
         } catch (err: any) {
@@ -210,7 +210,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getNPCDialog = async (enemy: string) => {
         try {
-            console.log(enemy, "Enemy");
+            // console.log(enemy, "Enemy");
             const response = getMerchantDialog(enemy);
             gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
         } catch (err: any) {
@@ -229,7 +229,7 @@ const GameSolo = ({ user }: GameProps) => {
                     const wolf: Enemy = Object.assign({}, Wolf);
                     gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
                     const response = await asceanAPI.getAnimalStats(wolf);
-                    console.log(response.data.data, "Response with Wolf?");
+                    // console.log(response.data.data, "Response with Wolf?");
                     setAsceanState({
                         ...asceanState,
                         'opponent': wolf.level,
@@ -251,7 +251,7 @@ const GameSolo = ({ user }: GameProps) => {
                     const wolf: Enemy = Object.assign({}, Wolf);
                     gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
                     const response = await asceanAPI.getAnimalStats(wolf);
-                    console.log(response.data.data, "Response with Wolf?");
+                    // console.log(response.data.data, "Response with Wolf?");
                     setAsceanState({
                         ...asceanState,
                         'opponent': wolf.level,
@@ -558,13 +558,13 @@ const GameSolo = ({ user }: GameProps) => {
                 ascean: gameState.player,
             };
             const response = await mapAPI.createMap(data);
-            console.log(response, 'Response Generating World Environment.');
+            // console.log(response, 'Response Generating World Environment.');
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
             });
             const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
-            console.log(coords, "Coordinates?")
+            // console.log(coords, "Coordinates?")
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_COORDS,
                 payload: coords,
@@ -643,7 +643,7 @@ const GameSolo = ({ user }: GameProps) => {
             if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
                 const newTile = await getAsceanCoords(newX, newY, mapState.map);
                 const newTiles = await getAsceanGroupCoords(newX, newY, mapState.map);
-                console.log(newTiles, "DId this work?")
+                // console.log(newTiles, "DId this work?")
                 const data = {
                     newTile: newTile,
                     oldTile: mapState.currentTile,
@@ -886,7 +886,7 @@ const GameSolo = ({ user }: GameProps) => {
         }, 4000)
     };
     const handleTileContent = async (content: string, lastContent: string) => {
-        console.log(content, lastContent, "Current and Last COntent")
+        // console.log(content, lastContent, "Current and Last COntent")
         if (lastContent === 'city' && content !== 'city') {
             // setBackground(getPlayerBackground);
             setBackground({
@@ -948,7 +948,6 @@ const GameSolo = ({ user }: GameProps) => {
                     // Weather is simply an occurrence in nature and can still precipiate other events such as enemies, treasure, landmarks, hazards, dungeons, cities, etc.
                     console.log("It's the Weather!");
                     await getWeather(mapState.province);
-                    await chanceEncounter();
                     break;
                 };
                 case 'treasure': {
@@ -996,15 +995,15 @@ const GameSolo = ({ user }: GameProps) => {
         } finally {
             if (mapState.steps % 10 === 0 && mapState.steps !== 0) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} steps. You're feeling tired and weary. You should rest soon` });
-                const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
-                console.log(response, "Response Moving Content ?");
+                // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+                // console.log(response, "Response Moving Content ?");
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
             }
         };
     };
 
     useEffect(() => {
-        console.log(mapState.currentTile, 'Current Tile?')
+        // console.log(mapState.currentTile, 'Current Tile?')
         if (mapState?.currentTile?.content === 'nothing') {
             if (gameState.cityButton) {
                 gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
@@ -1016,8 +1015,8 @@ const GameSolo = ({ user }: GameProps) => {
             };
             if (mapState.steps % 10 === 0 && mapState.steps !== 0) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} steps. You're feeling tired and weary. You should rest soon` });
-                const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
-                console.log(response, "Response Moving Content ?");
+                // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+                // console.log(response, "Response Moving Content ?");
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
             } else {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
@@ -1271,7 +1270,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
-            console.log(response.data, 'Response Initiating Combat');
+            // console.log(response.data, 'Response Initiating Combat');
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data

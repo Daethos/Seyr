@@ -71,23 +71,39 @@ class WorldMap {
         this.reference = player._id;
         this.contentCounts = {};
         this.countContent();
+        this.updateContentClusters();
         this.steps = 0;
     };
 
     countContent() {
-        this.contentCounts = {};
-        for (let i = 0; i < this.contentOptions.length; i++) {
-            let count = 0;
-            for (let j = 0; j < 201; j++) {
-                for (let k = 0; k < 201; k++) {
-                    if (this.map[j][k].content == this.contentOptions[i]) {
-                        count++;
-                    };
-                };
-            };
-            this.contentCounts[this.contentOptions[i]] = count;
+        this.contentCounts = {
+          'nothing': 0,
+          'enemy': 0,
+          'npc': 0,
+          'treasure': 0,
+          'landmark': 0,
+          'hazard': 0,
+          'dungeon': 0,
+          'city': 0,
+          'weather': 0,
+          'ruins': 0,
+          'cave': 0,
+          'phenomena': 0,
+          'wonder': 0
         };
-    };
+      
+        for (let j = 0; j < 201; j++) {
+          for (let k = 0; k < 201; k++) {
+            let content = this.map[j][k].content;
+            if (content in this.contentCounts) {
+              this.contentCounts[content]++;
+            } else {
+              this.contentCounts['nothing']++;
+            }
+          };
+        };
+      };
+      
     
 
     generateProvince(origin) {
@@ -122,7 +138,7 @@ class WorldMap {
     provinceWeights(province) {
         const provinceWeights = {
             'Astralands': {
-              'enemy': 200,
+              'enemy': 400,
               'npc': 50,
               'phenomena': 20,
               'wonder': 5,
@@ -137,7 +153,7 @@ class WorldMap {
               'nothing': 20,
             },
             'Fangs': {
-              'enemy': 200,
+              'enemy': 400,
               'npc': 50,
               'phenomena': 4,
               'wonder': 4,
@@ -152,7 +168,7 @@ class WorldMap {
               'nothing': 30,
             },
             'Firelands': {
-              'enemy': 150,
+              'enemy': 300,
               'npc': 50,
               'phenomena': 4,
               'wonder': 4,
@@ -167,7 +183,7 @@ class WorldMap {
               'nothing': 5,
             },
             'Kingdom': {
-              'enemy': 200,
+              'enemy': 400,
               'npc': 50,
               'phenomena': 4,
               'wonder': 4,
@@ -182,7 +198,7 @@ class WorldMap {
               'nothing': 30,
             },
             'Licivitas': {
-              'enemy': 150,
+              'enemy': 300,
               'npc': 50,
               'phenomena': 2,
               'wonder': 2,
@@ -197,7 +213,7 @@ class WorldMap {
               'nothing': 30,
             },
             'Sedyrus': {
-              'enemy': 200,
+              'enemy': 400,
               'npc': 50,
               'phenomena': 2,
               'wonder': 2,
@@ -212,7 +228,7 @@ class WorldMap {
               'nothing': 30,
             },
             'Soverains': {
-              'enemy': 150,
+              'enemy': 300,
               'npc': 50,
               'phenomena': 2,
               'wonder': 2,
@@ -306,6 +322,40 @@ class WorldMap {
         };
         return map;
     };
+
+    updateContentClusters() {
+        const updatedClusters = {};
+        const options = ['enemy', 'npc', 'phenomena'];
+        // Iterate through all content options
+        for (const option of options) {
+            if (!this.contentClusters[option]) {
+                continue;
+            };
+            const clusters = this.contentClusters[option];
+            let updatedCluster = [];
+        
+            // Iterate through all clusters in the option
+            for (const cluster of clusters) {
+                // console.log(cluster, "Are these coordinates?")
+
+                // Iterate through all coordinates in the cluster
+                const x = cluster[0] + 100;
+                const y = cluster[1] + 100;
+                // console.log(x, y, typeof x, typeof y, "Are these coordinates and numbers?")
+                if (this.map[x][y].content === option) {
+                    updatedCluster.push(cluster);
+                }
+      
+            }
+            // updatedClusters[option] = updatedCluster;
+            this.contentClusters[option] = updatedCluster;
+        }
+      
+        // this.contentClusters = {...this.contentClusters, enemy: updatedClusters.enemy, npc: updatedClusters.npc, phenomena: updatedClusters.phenomena};
+      }
+      
+      
+      
 
     checkConsistency(clusters, minDistance) {
         for (const option of this.contentOptions) {
