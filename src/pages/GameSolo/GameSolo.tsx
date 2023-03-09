@@ -514,7 +514,7 @@ const GameSolo = ({ user }: GameProps) => {
             if (gameState.showDialog) {
                 gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             };
-            if (mapState.content !== 'city' && state.new_computer_health <= 0) {
+            if (mapState.currentTile.content !== 'city' && state.new_computer_health <= 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
         } catch (err: any) {
@@ -1266,23 +1266,25 @@ const GameSolo = ({ user }: GameProps) => {
             if (effects.religious_success === true) {
                 playReligion();
             };
-            
             if (effects.roll_success === true || effects.computer_roll_success === true) {
                 playRoll();
             };
-            
             if (effects.counter_success === true || effects.computer_counter_success === true) {
                 playCounter();
             };
             playCombatRound();
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
-        }
+        };
     };
 
     async function handlePlayerWin(combatData: any) {
         try {
-            playWin();
+            if (mapState?.currentTile?.content === 'city') {
+                playWin();
+            } else {
+                playReligion();
+            };
             gainExperience();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
@@ -1347,7 +1349,6 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
-            
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
