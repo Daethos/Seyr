@@ -10,26 +10,55 @@ interface Tile {
     visited: boolean;
 }
 
+enum MapMode {
+    FULL_MAP,
+    QUADRANT,
+    SURROUNDING_TILES,
+}
+
 interface MapProps {
   mapData: any;
 };
 
 const GameMap = ({ mapData }: MapProps) => {
+    const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
+    const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [mapVisible, setMapVisible] = useState(false);
 
     useEffect(() => {
-        if (mapVisible) {
-            const canvas = canvasRef.current;
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    drawMap(ctx, mapData, canvas, mapData?.visitedTiles);
-                }
-            }
-        }
-    }, [mapData, mapVisible]);
+        setPlayerPosition({ x: mapData?.currentTile?.x, y: mapData?.currentTile?.y });
+        handleMapMode(mapMode);
+        // switch (mapMode) {
+        //     case MapMode.FULL_MAP:
+        //         renderFullMap();
+        //         break;
+        //     case MapMode.QUADRANT:
+        //         renderQuadrant();
+        //         break;
+        //     case MapMode.SURROUNDING_TILES:
+        //         renderSurroundingTiles();
+        //         break;
+        //     default:
+        //         break;
+        // }
+    }, [mapData, mapVisible, mapMode]);
     
+    function handleMapMode(mode: MapMode) {
+        switch (mode) {
+            case MapMode.FULL_MAP:
+                renderFullMap();
+                break;
+            case MapMode.QUADRANT:
+                renderQuadrant();
+                break;
+            case MapMode.SURROUNDING_TILES:
+                renderSurroundingTiles();
+                break;
+            default:
+                break;
+        }
+    }
 
     function drawMap(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}): void {
         const tileSize = 2; // set the tile size to 16 pixels
@@ -55,20 +84,194 @@ const GameMap = ({ mapData }: MapProps) => {
           ctx.fillStyle = color;
           ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
         };
-          
     };
       
-    const handleMap = () => {
-        setMapVisible(!mapVisible);
+
+    const  handleMap = () => {
+        setMapMode((mode) => {
+            switch (mode) {
+            case MapMode.FULL_MAP:
+                return MapMode.QUADRANT;
+            case MapMode.QUADRANT:
+                return MapMode.SURROUNDING_TILES;
+            case MapMode.SURROUNDING_TILES:
+                return MapMode.FULL_MAP;
+            default:
+                return mode;
+            };
+        });
+    };
+
+    function renderFullMap() {
+        // set the canvas dimensions to the full map size
+        const canvasWidth = 402;
+        const canvasHeight = 402;
+        const canvas = canvasRef.current;
+        if (canvas) {
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                drawMap(ctx, mapData, canvas, mapData?.visitedTiles);
+            };
+        };
+    };
+
+    function renderQuadrant() {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            const canvasWidth = 201;
+            const canvasHeight = 201;
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            const playerX = mapData?.currentTile?.x;
+            const playerY = mapData?.currentTile?.y;
+            let quadX = '';
+            let quadOffsetX = 0;
+            if (playerX < 0) {
+              quadX = 'left';
+              quadOffsetX = -50;
+            } else {
+              quadX = 'right';
+              quadOffsetX = 50;
+            }
+            let quadY = '';
+            let quadOffsetY = 0;
+            if (playerY < 0) {
+              quadY = 'bottom';
+              quadOffsetY = -50;
+            } else {
+              quadY = 'top';
+              quadOffsetY = 50;
+            }
+            const quadrantTiles = getQuadrantTiles(
+              mapData?.visitedTiles,
+              quadX,
+              quadY
+            );
+            drawMapQuadrant(ctx, mapData, canvas, quadrantTiles, [quadOffsetX, quadOffsetY]);
+          }
+        }
+      }
+
+      function drawMapQuadrant(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}, quadOffset: [number, number]): void {
+        const tileSize = 2; // set the tile size to 16 pixels
+        // calculate the canvas dimensions based on the map size and tile size
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+      
+        const playerX = mapData?.currentTile?.x;
+        const playerY = mapData?.currentTile?.y;
+      
+        // loop through the visited tiles and draw them onto the canvas
+        for (const coords in visitedTiles) {
+          const [x, y] = coords.split(',').map(Number);
+          const tile = visitedTiles[coords];
+          let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
+          if (x === playerX && y === playerY) {
+            color = 'gold'; // set the current tile color to gold
+          }
+          const offsetX = canvasWidth / 2 + (x - quadOffset[0]) * tileSize; // calculate the tile position on the canvas
+          const offsetY = canvasHeight / 2 - (y - quadOffset[1]) * tileSize;
+          ctx.fillStyle = color;
+          ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
+        };
+      };
+      
+      
+
+      function getQuadrantTiles(visitedTiles: {[key: string]: Tile}, quadX: string, quadY: string): {[key: string]: Tile} {
+        const quadrantTiles: {[key: string]: Tile} = {};
+        const xMin = quadX === 'left' ? -100 : 0;
+        const xMax = quadX === 'left' ? 0 : 100;
+        const yMin = quadY === 'top' ? 0 : -100;
+        const yMax = quadY === 'top' ? 100 : 0;
         
-    }
+        for (const coords in visitedTiles) {
+          const [x, y] = coords.split(',').map(Number);
+          quadrantTiles[coords] = visitedTiles[coords];
+          if (x >= xMin && x < xMax && y >= yMin && y < yMax) {
+            // Do nothing, this tile is within the desired quadrant
+          } else {
+            delete quadrantTiles[coords]; // Remove this tile from the quadrantTiles object
+          }
+        }
+        
+        return quadrantTiles;
+      }
+      
+      function drawSurroundingTiles(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, surroundingTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): void {
+        const tileSize = 2; // set the tile size to 16 pixels
+      
+        // calculate the canvas dimensions based on the map size and tile size
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+      
+        // loop through the surrounding tiles and draw them onto the canvas
+        for (const coords in surroundingTiles) {
+          const [x, y] = coords.split(',').map(Number);
+          const tile = surroundingTiles[coords];
+          let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
+          if (x === playerPosition.x && y === playerPosition.y) {
+            color = 'gold'; // set the current tile color to gold
+          }
+          const offsetX = canvasWidth / 2 + (x - playerPosition.x) * tileSize; // calculate the tile position on the canvas
+          const offsetY = canvasHeight / 2 - (y - playerPosition.y) * tileSize;
+          ctx.fillStyle = color;
+          ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
+        };
+      };
+      
+      
+      function renderSurroundingTiles() {
+        // set the canvas dimensions to the surrounding tiles size
+        const canvasWidth = 100;
+        const canvasHeight = 100;
+        const canvas = canvasRef.current;
+        if (canvas) {
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            const playerX = mapData?.currentTile?.x;
+            const playerY = mapData?.currentTile?.y;
+            const surroundingTiles = getSurroundingTiles(mapData?.visitedTiles, { x: playerX, y: playerY });
+            ctx.translate(canvasWidth / 2, canvasHeight / 2); // translate the canvas to center on the player
+            drawSurroundingTiles(ctx, mapData, canvas, surroundingTiles, { x: playerX, y: playerY });
+          };
+        };
+      };
+      
+      
+    function getSurroundingTiles(visitedTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): {[key: string]: Tile} {
+        const surroundingTiles: {[key: string]: Tile} = {};
+        for (let x = playerPosition.x - 24; x <= playerPosition.x + 24; x++) {
+            for (let y = playerPosition.y - 24; y <= playerPosition.y + 24; y++) {
+                const coords = `${x},${y}`;
+                if (visitedTiles[coords]) {
+                    surroundingTiles[coords] = visitedTiles[coords];
+                };
+            };
+        };
+        return surroundingTiles;
+    };
+
+    const setMapVisibility = () => {
+        setMapVisible(!mapVisible);
+    };
     
     const canvasWidth = 402;
     const canvasHeight = canvasWidth;
 
     return (
         <>
-        <Button variant='' onClick={handleMap} style={{ 
+        <Button variant='' onClick={setMapVisibility} style={{ 
             color: "purple", 
             gridColumnStart: 1, 
             gridRowStart: 1,
@@ -106,6 +309,7 @@ const GameMap = ({ mapData }: MapProps) => {
                     ref={canvasRef}
                     width={canvasWidth}
                     height={canvasHeight}
+                    onClick={handleMap}
                     style={{ 
                         border: '2px solid purple', 
                         zIndex: 9999, 

@@ -366,6 +366,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...action.payload,
                 action: '',
+                dodgeStatus: action.payload.action === 'dodge' ? true : action.payload.dodgeStatus === true ? true : false,
                 combatInitiated: true,
             };
         case 'PLAYER_WIN':

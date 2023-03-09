@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface StoryProps {
     ascean: any;
     mapState: any;
