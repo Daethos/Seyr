@@ -543,9 +543,10 @@ html, body {
   margin-left: 65%;
   margin-top: -0.5%;
   font-variant: small-caps;
-  font-weight: 400;
-  color: #fdf6d8;
+  font-weight: 700;
+  color: goldenrod;
   font-size: 25px;
+  z-index: 101;
 }
 .settings-button {
   position: absolute;
@@ -553,6 +554,9 @@ html, body {
   grid-row-start: 1;
   margin-left: -5%;
   margin-top: -1%;
+  z-index: 101;
+  clip-path: circle(50% at 30% 30%);
+  
 }
 #story-health {
   background-color: red;

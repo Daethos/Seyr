@@ -1272,7 +1272,9 @@ const GameSolo = ({ user }: GameProps) => {
             if (effects.counter_success === true || effects.computer_counter_success === true) {
                 playCounter();
             };
-            playCombatRound();
+            setTimeout(() => {
+                playCombatRound();
+            }, 500)
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         };

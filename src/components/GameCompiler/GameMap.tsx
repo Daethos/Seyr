@@ -22,12 +22,10 @@ interface MapProps {
 
 const GameMap = ({ mapData }: MapProps) => {
     const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
-    const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [mapVisible, setMapVisible] = useState(false);
 
     useEffect(() => {
-        setPlayerPosition({ x: mapData?.currentTile?.x, y: mapData?.currentTile?.y });
         handleMapMode(mapMode);
     }, [mapData, mapVisible, mapMode]);
     
@@ -44,12 +42,11 @@ const GameMap = ({ mapData }: MapProps) => {
                 break;
             default:
                 break;
-        }
-    }
+        };
+    };
 
     function drawMap(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}): void {
         const tileSize = 2; // set the tile size to 16 pixels
-        // calculate the canvas dimensions based on the map size and tile size
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         canvas.width = canvasWidth;
@@ -60,19 +57,18 @@ const GameMap = ({ mapData }: MapProps) => {
       
         // loop through the visited tiles and draw them onto the canvas
         for (const coords in visitedTiles) {
-          const [x, y] = coords.split(',').map(Number);
-          const tile = visitedTiles[coords];
-          let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
-          if (x === playerX && y === playerY) {
-            color = 'gold'; // set the current tile color to gold
-          }
-          const offsetX = canvasWidth / 2 + x * tileSize; // calculate the tile position on the canvas
-          const offsetY = canvasHeight / 2 - y * tileSize;
-          ctx.fillStyle = color;
-          ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
+            const [x, y] = coords.split(',').map(Number);
+            const tile = visitedTiles[coords];
+            let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
+            if (x === playerX && y === playerY) {
+                color = 'gold'; // set the current tile color to gold
+            }
+            const offsetX = canvasWidth / 2 + x * tileSize; // calculate the tile position on the canvas
+            const offsetY = canvasHeight / 2 - y * tileSize;
+            ctx.fillStyle = color;
+            ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
         };
     };
-      
 
     const  handleMap = () => {
         setMapMode((mode) => {
@@ -90,7 +86,6 @@ const GameMap = ({ mapData }: MapProps) => {
     };
 
     function renderFullMap() {
-        // set the canvas dimensions to the full map size
         const canvasWidth = 402;
         const canvasHeight = 402;
         const canvas = canvasRef.current;
@@ -107,45 +102,40 @@ const GameMap = ({ mapData }: MapProps) => {
     function renderQuadrant() {
         const canvas = canvasRef.current;
         if (canvas) {
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            const canvasWidth = 200;
-            const canvasHeight = 200;
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-            const playerX = mapData?.currentTile?.x;
-            const playerY = mapData?.currentTile?.y;
-            let quadX = '';
-            let quadOffsetX = 0;
-            if (playerX < 0) {
-              quadX = 'left';
-              quadOffsetX = -50;
-            } else {
-              quadX = 'right';
-              quadOffsetX = 50;
-            }
-            let quadY = '';
-            let quadOffsetY = 0;
-            if (playerY < 0) {
-              quadY = 'bottom';
-              quadOffsetY = -50;
-            } else {
-              quadY = 'top';
-              quadOffsetY = 50;
-            }
-            const quadrantTiles = getQuadrantTiles(
-              mapData?.visitedTiles,
-              quadX,
-              quadY
-            );
-            drawMapQuadrant(ctx, mapData, canvas, quadrantTiles, [quadOffsetX, quadOffsetY]);
-          }
-        }
-      }
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                const canvasWidth = 200;
+                const canvasHeight = 200;
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+                const playerX = mapData?.currentTile?.x;
+                const playerY = mapData?.currentTile?.y;
+                let quadX = '';
+                let quadOffsetX = 0;
+                if (playerX < 0) {
+                    quadX = 'left';
+                    quadOffsetX = -50;
+                } else {
+                    quadX = 'right';
+                    quadOffsetX = 50;
+                }
+                let quadY = '';
+                let quadOffsetY = 0;
+                if (playerY < 0) {
+                    quadY = 'bottom';
+                    quadOffsetY = -50;
+                } else {
+                    quadY = 'top';
+                    quadOffsetY = 50;
+                };
+                const quadrantTiles = getQuadrantTiles(mapData?.visitedTiles, quadX, quadY);
+                drawMapQuadrant(ctx, mapData, canvas, quadrantTiles, [quadOffsetX, quadOffsetY]);
+            };
+        };
+    };
 
-      function drawMapQuadrant(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}, quadOffset: [number, number]): void {
-        const tileSize = 2; // set the tile size to 16 pixels
-        // calculate the canvas dimensions based on the map size and tile size
+    function drawMapQuadrant(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, visitedTiles: {[key: string]: Tile}, quadOffset: [number, number]): void {
+        const tileSize = 2;
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         canvas.width = canvasWidth;
@@ -154,24 +144,23 @@ const GameMap = ({ mapData }: MapProps) => {
         const playerX = mapData?.currentTile?.x;
         const playerY = mapData?.currentTile?.y;
       
-        // loop through the visited tiles and draw them onto the canvas
         for (const coords in visitedTiles) {
-          const [x, y] = coords.split(',').map(Number);
-          const tile = visitedTiles[coords];
-          let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
-          if (x === playerX && y === playerY) {
-            color = 'gold'; // set the current tile color to gold
-          }
-          const offsetX = canvasWidth / 2 + (x - quadOffset[0]) * tileSize; // calculate the tile position on the canvas
-          const offsetY = canvasHeight / 2 - (y - quadOffset[1]) * tileSize;
-          ctx.fillStyle = color;
-          ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
+            const [x, y] = coords.split(',').map(Number);
+            const tile = visitedTiles[coords];
+            let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
+            if (x === playerX && y === playerY) {
+                color = 'gold'; // set the current tile color to gold
+            }
+            const offsetX = canvasWidth / 2 + (x - quadOffset[0]) * tileSize; // calculate the tile position on the canvas
+            const offsetY = canvasHeight / 2 - (y - quadOffset[1]) * tileSize;
+            ctx.fillStyle = color;
+            ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
         };
-      };
+    };
       
       
 
-      function getQuadrantTiles(visitedTiles: {[key: string]: Tile}, quadX: string, quadY: string): {[key: string]: Tile} {
+    function getQuadrantTiles(visitedTiles: {[key: string]: Tile}, quadX: string, quadY: string): {[key: string]: Tile} {
         const quadrantTiles: {[key: string]: Tile} = {};
         const xMin = quadX === 'left' ? -100 : 0;
         const xMax = quadX === 'left' ? 0 : 100;
@@ -179,45 +168,41 @@ const GameMap = ({ mapData }: MapProps) => {
         const yMax = quadY === 'top' ? 100 : 0;
         
         for (const coords in visitedTiles) {
-          const [x, y] = coords.split(',').map(Number);
-          quadrantTiles[coords] = visitedTiles[coords];
-          if (x >= xMin && x < xMax && y >= yMin && y < yMax) {
-            // Do nothing, this tile is within the desired quadrant
-          } else {
-            delete quadrantTiles[coords]; // Remove this tile from the quadrantTiles object
-          }
-        }
-        
+            const [x, y] = coords.split(',').map(Number);
+            quadrantTiles[coords] = visitedTiles[coords];
+            if (x >= xMin && x < xMax && y >= yMin && y < yMax) {
+                // Do nothing, this tile is within the desired quadrant
+            } else {
+                delete quadrantTiles[coords]; // Remove this tile from the quadrantTiles object
+            };
+        };
         return quadrantTiles;
-      }
+    };
       
-      function drawSurroundingTiles(ctx: CanvasRenderingContext2D, mapData: MapData, canvas: HTMLCanvasElement, surroundingTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): void {
-        const tileSize = 2; // set the tile size to 16 pixels
+    function drawSurroundingTiles(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, surroundingTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): void {
+        const tileSize = 2; 
       
-        // calculate the canvas dimensions based on the map size and tile size
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
       
-        // loop through the surrounding tiles and draw them onto the canvas
         for (const coords in surroundingTiles) {
             const [x, y] = coords.split(',').map(Number);
             const tile = surroundingTiles[coords];
             let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
             if (x === playerPosition.x && y === playerPosition.y) {
                 color = 'gold'; // set the current tile color to gold
-            }
+            };
             const offsetX = canvasWidth / 2 + (x - playerPosition.x) * tileSize; // calculate the tile position on the canvas
             const offsetY = canvasHeight / 2 - (y - playerPosition.y) * tileSize;
             ctx.fillStyle = color;
-            ctx.fillRect(offsetX, offsetY, tileSize, tileSize); // draw the tile
+            ctx.fillRect(offsetX, offsetY, tileSize, tileSize); 
         };
     };
       
       
     function renderSurroundingTiles() {
-        // set the canvas dimensions to the surrounding tiles size
         const canvasWidth = 100;
         const canvasHeight = 100;
         const canvas = canvasRef.current;
@@ -230,7 +215,7 @@ const GameMap = ({ mapData }: MapProps) => {
                 const playerY = mapData?.currentTile?.y;
                 const surroundingTiles = getSurroundingTiles(mapData?.visitedTiles, { x: playerX, y: playerY });
                 ctx.translate(canvasWidth / 2, canvasHeight / 2); // translate the canvas to center on the player
-                drawSurroundingTiles(ctx, mapData, canvas, surroundingTiles, { x: playerX, y: playerY });
+                drawSurroundingTiles(ctx, canvas, surroundingTiles, { x: playerX, y: playerY });
             };
         };
     };
@@ -259,11 +244,12 @@ const GameMap = ({ mapData }: MapProps) => {
     return (
         <>
         <Button variant='' onClick={setMapVisibility} style={{ 
-            color: "purple", 
+            color: "goldenrod", 
             gridColumnStart: 1, 
             gridRowStart: 1,
             position: "absolute", 
-            marginTop: "-2.25%", 
+            marginTop: "-2.25%",
+            zIndex: 99, 
             }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 464.06 464.06">
             <path d="M401.824,133.379c3.038,0,5.5-2.462,5.5-5.5v-8.87h21.826c3.038,0,5.5-2.462,5.5-5.5v-10.72h23.91   c3.038,0,5.5-2.462,5.5-5.5v-21.32c0-3.038-2.462-5.5-5.5-5.5h-23.91v-10.72c0-3.038-2.462-5.5-5.5-5.5h-21.826v-8.866   c0-3.038-2.462-5.5-5.5-5.5H62.243c-3.038,0-5.5,2.462-5.5,5.5v8.866H34.92c-3.038,0-5.5,2.462-5.5,5.5v10.72H5.5   c-3.038,0-5.5,2.462-5.5,5.5v21.32c0,3.038,2.462,5.5,5.5,5.5h23.92v10.72c0,3.038,2.462,5.5,5.5,5.5h21.823v8.87   c0,3.038,2.462,5.5,5.5,5.5h3.212v197.302h-3.212c-3.038,0-5.5,2.462-5.5,5.5v8.866H34.92c-3.038,0-5.5,2.462-5.5,5.5v10.72H5.5   c-3.038,0-5.5,2.462-5.5,5.5v21.32c0,3.038,2.462,5.5,5.5,5.5h23.92v10.72c0,3.038,2.462,5.5,5.5,5.5h21.823v8.87   c0,3.038,2.462,5.5,5.5,5.5h339.581c3.038,0,5.5-2.462,5.5-5.5v-8.87h21.826c3.038,0,5.5-2.462,5.5-5.5v-10.72h23.91   c3.038,0,5.5-2.462,5.5-5.5v-21.32c0-3.038-2.462-5.5-5.5-5.5h-23.91v-10.72c0-3.038-2.462-5.5-5.5-5.5h-21.826v-8.866   c0-3.038-2.462-5.5-5.5-5.5h-3.213V133.379H401.824z M453.06,81.469v10.32h-18.41v-10.32H453.06z M11,91.789v-10.32h18.42v10.32H11   z M40.42,108.009v-42.76h16.323v42.76H40.42z M11,382.587v-10.32h18.42v10.32H11z M40.42,398.807v-42.76h16.323v42.76H40.42z    M453.06,372.267v10.32h-18.41v-10.32H453.06z M423.65,65.249v42.76h-16.326v-42.76H423.65z M67.743,50.883h328.581v71.496H67.743   V50.883z M396.324,413.177H67.743v-71.496h328.581V413.177z M423.65,356.047v42.76h-16.326v-42.76H423.65z M387.611,330.681H76.456   V133.379h311.156V330.681z"></path>
@@ -302,12 +288,10 @@ const GameMap = ({ mapData }: MapProps) => {
                         zIndex: 9999, 
                         width: canvasWidth,
                         backgroundColor: "black", 
-                        height: canvasWidth, 
-                        // marginLeft: "-104%", 
-                        // marginTop: "30vh",
+                        height: canvasWidth,
                         position: 'absolute',
                         left: '50%',
-                        top: '45%',
+                        top: '42.5%',
                         transform: 'translate(-50%, -50%)',
                     }}
                 />
