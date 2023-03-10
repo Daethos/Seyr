@@ -34,6 +34,7 @@ module.exports = {
     restoreFirewater,
     replenishFirewater,
     animalStats,
+    getOneAsceanClean,
 }
 
 async function editAscean(req, res) {
@@ -547,6 +548,45 @@ async function quickIndex(req, res) {
 async function getOneAscean(req, res) {
     try {
         const ascean = await Ascean.findById({ _id: req.params.id });
+        const populateOptions = await Promise.all([
+            'weapon_one',
+            'weapon_two',
+            'weapon_three',
+            'shield',
+            'helmet',
+            'chest',
+            'legs',
+            'ring_one',
+            'ring_two',
+            'amulet',
+            'trinket'
+        ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+        
+        await Ascean.populate(ascean, [
+            { path: 'user' },{ path: 'maps' },{ path: 'quests' },
+            ...populateOptions
+        ]);
+        
+        const inventoryPopulated = ascean.inventory.map(async item => {
+            const itemType = await determineItemType(item);
+            if (itemType) {
+                return itemType;
+            };
+            return null;
+        });
+        const inventory = await Promise.all(inventoryPopulated);
+        ascean.inventory = inventory;
+    
+        res.status(200).json({ data: ascean });
+    } catch (err) {
+        console.log(err, 'Error Getting An Ascean');
+        res.status(400).json({ err });
+    };
+};
+
+async function getOneAsceanClean(req, res) {
+    try {
+        const ascean = await Ascean.findById({ _id: req.params.id });
 
         const populateOptions = await Promise.all([
             'weapon_one',
@@ -563,19 +603,9 @@ async function getOneAscean(req, res) {
             ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
             
         await Ascean.populate(ascean, [
-        { path: 'user' },{ path: 'maps' },{ path: 'quests' },
-        ...populateOptions
+            { path: 'user' }, ...populateOptions
         ]);
 
-        const inventoryPopulated = ascean.inventory.map(async item => {
-            const itemType = await determineItemType(item);
-            if (itemType) {
-                return itemType;
-            };
-            return null;
-        });
-        const inventory = await Promise.all(inventoryPopulated);
-        ascean.inventory = inventory;
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');

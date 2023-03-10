@@ -402,11 +402,21 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
             const response = await asceanAPI.saveExperience(asceanState);
+            if (response.data.gold > 0 && response.data.silver > 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`] });
+            } else if (response.data.gold > 0 && response.data.silver === 0) { 
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`] });
+            } else if (response.data.gold === 0 && response.data.silver > 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`] });
+            } else {
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points.`] });
+            };
+            const cleanRes = await asceanAPI.getCleanAscean(asceanID);
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             dispatch({
                 type: ACTIONS.SAVE_EXPERIENCE,
-                payload: firstResponse.data
+                payload: cleanRes.data
             });
             setAsceanState({
                 ...asceanState,
@@ -424,15 +434,6 @@ const GameSolo = ({ user }: GameProps) => {
                 'mastery': firstResponse.data.mastery,
                 'faith': firstResponse.data.faith,
             });
-            if (response.data.gold > 0 && response.data.silver > 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`] });
-            } else if (response.data.gold > 0 && response.data.silver === 0) { 
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`] });
-            } else if (response.data.gold === 0 && response.data.silver > 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`] });
-            } else {
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points.`] });
-            };
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         } catch (err: any) {
             console.log(err.message, 'Error Saving Experience');
@@ -526,10 +527,11 @@ const GameSolo = ({ user }: GameProps) => {
     const getAsceanQuickly = async () => {
         try {
             const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            const cleanRes = await asceanAPI.getCleanAscean(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
             dispatch({
                 type: ACTIONS.SET_PLAYER_QUICK,
-                payload: firstResponse.data
+                payload: cleanRes.data
             });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
@@ -547,7 +549,7 @@ const GameSolo = ({ user }: GameProps) => {
             if (gameState.showDialog) {
                 gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             };
-            if (mapState.currentTile.content !== 'city' && state.new_computer_health <= 0) {
+            if (mapState.currentTile.content !== 'city' && mapState.currentTile.content !== 'weather' && state.new_computer_health <= 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
         } catch (err: any) {
@@ -1323,7 +1325,9 @@ const GameSolo = ({ user }: GameProps) => {
                 playCounter();
             };
             setTimeout(() => {
-                playCombatRound();
+                if (effects.player_win !== true && effects.computer_win !== true) {
+                    playCombatRound();
+                }
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')

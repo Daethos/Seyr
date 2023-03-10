@@ -8,6 +8,7 @@ router.get('/', protect, asceanCtrl.index);
 router.get('/lean', protect, asceanCtrl.quickIndex);
 router.get('/search/', protect, asceanCtrl.searchAscean);
 router.get('/:id', protect, asceanCtrl.getOneAscean);
+router.get('/clean/:id', protect, asceanCtrl.getOneAsceanClean);
 router.get('/firewater/:id', protect, asceanCtrl.drinkFirewater);
 router.get('/restoreFirewater/:id', protect, asceanCtrl.restoreFirewater);
 router.get('/replenishFirewater/:id', protect, asceanCtrl.replenishFirewater);
