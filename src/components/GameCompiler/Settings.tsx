@@ -47,7 +47,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         <Modal show={settingsModalShow} onHide={() => setSettingsModalShow(false)} centered>
         <Modal.Body style={settingsStyle}>
         <h3 style={{ fontSize: 20 + 'px', textAlign: 'center' }}>Gameplay Settings</h3>
-        <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}></Button>
+        <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Coordinates</Button>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
             <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} gameState={gameState} mapState={mapState} />

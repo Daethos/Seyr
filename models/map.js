@@ -12,7 +12,9 @@ const mapSchema = new Schema({
     map: { type: Object, default: {} },
     currentTile: { type: Object, default: {} },
     initialPosition: { type: Object, default: {} },
+    visitedTiles: { type: Object, default: {} },
     context: { type: String, default: '' },
+    steps: { type: Number, default: 0 },
     }, {
     timestamps: true
 });

@@ -9,6 +9,7 @@ const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
+const Map = require('../models/map');
 const fs = require('fs');
 const seedDB = require('./equipment').seedDB;
 
@@ -143,7 +144,10 @@ async function restoreFirewater(req, res) {
 async function saveCoordinates(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean);
-        
+        ascean.coordinates = req.body.coordinates;
+        await ascean.save();
+        const map = await Map.findByIdAndUpdate(req.body.map._id, req.body.map, { new: true });
+        res.status(201).json({ ascean, map });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving Coordinates!');
         res.status(400).json(err);

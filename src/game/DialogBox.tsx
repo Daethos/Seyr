@@ -81,6 +81,8 @@ interface Region {
 
 const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, generateWorld, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const [combatAction, setCombatAction] = useState<any | null>('actions');
+    const [localWhisper, setLocalWhisper] = useState<any>({});
+    const [showQuest, setShowQuest] = useState(false);
     const regionInformation = {
         Astralands: "Good one, those Ashtre have quite the mouth on them I hear yet never heard. Perhaps you'll be able to catch their whispers.", 
         Kingdom: "The King, Mathyus Caderyn II, has been away from his court as of late, his son Dorien sitting the throne--though constant feathers aid his communication when abroad. Despite its unification, groans have increased with disparate and slow recovery from the century long war only having quelled for 7 years prior, with select places receiving abundance of aid over others, the discernment itself seeming weighed in favor of longstanding allies. As the King reaches further East to establish peaceable connections with the Soverains, it leads one to speculate on the disposition of those houses already under his kingship.", 
@@ -95,6 +97,17 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [quest, setQuest] = useState<any>({});
+
+    useEffect(() => {
+        console.log(ascean.quests, "Ascean")
+        let thisQuest = getQuests(enemy?.name);
+        let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
+        setLocalWhisper(newQuest);
+        setShowQuest(true);
+        return () => {
+        } 
+    }, [enemy]);
+    
 
     const handleCombatAction = (options: any, action: string) => {
         setCombatAction(action);
@@ -177,6 +190,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
     const getQuest = async () => {
         // setLoading(true);
         try {
+            setShowQuest(false);
             let thisQuest = getQuests(enemy?.name);
             let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
             let quest = {
@@ -196,6 +210,12 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                 },
             };
             console.log(quest, "New Quest");
+            let uniqueQuest = ascean?.quests.some((q: any) => q.title === quest.title);
+            console.log(uniqueQuest, "Unique QUest ?")
+            if (uniqueQuest) {
+                setError({ title: `Unique Quest`, content: `You already possess knowledge of ${quest.title}, given to you by ${quest.giver.name}.` });
+                return;
+            };
 
             const response = await questAPI.createQuest(quest);
             console.log(response, "Quest Response");
@@ -311,7 +331,13 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     <>
                         "Well if you want to know, you'll have to click the button."
                         <br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getQuest()}>What are the local whispers?</Button><br />
+                        {
+                            showQuest ?
+                            <>
+                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getQuest()}>What are the local whispers?</Button><br />
+                            </>
+                            : ''
+                        }
                         { quest?.title ?
                             quest?.title
                         : '' }

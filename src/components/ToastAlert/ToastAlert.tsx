@@ -9,7 +9,7 @@ interface Props {
 const ToastAlert = ({ error, setError }: Props) => {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    setShow(!show);
+    setShow(true);
     if (show) {
       setTimeout(() => {
         setShow(false);

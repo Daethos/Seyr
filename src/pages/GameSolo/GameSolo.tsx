@@ -567,11 +567,12 @@ const GameSolo = ({ user }: GameProps) => {
                 ascean: gameState.player._id, 
                 coordinates: {
                     x: x,
-                   y: y,
+                    y: y,
                 },
+                map: mapState
             };
-            // const response = await asceanAPI.saveAsceanCoords(data);
-            // console.log(response, 'Response Saving Ascean Coordinates');
+            const response = await asceanAPI.saveCoords(data);
+            console.log(response, 'Response Saving Ascean Coordinates');
         } catch (err: any) {
             console.log(err.message, 'Error Saving Ascean Coordinates');
         };
@@ -1467,7 +1468,7 @@ const GameSolo = ({ user }: GameProps) => {
             />
             
             <Settings 
-                inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTIle} saveAsceanCoords={saveAsceanCoords} 
+                inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState} mapState={mapState}
             />
             

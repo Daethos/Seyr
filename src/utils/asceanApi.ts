@@ -294,4 +294,20 @@ export async function replenishFirewater(ascean: string) {
             console.log(response, "<- Response in Drink Firewater Utility Return")
         })
     })
+};
+
+export async function saveCoords(data: any) {
+    return fetch(BASE_URL + 'coords/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        return res.json().then((response: any) => {
+            console.log(response, '<- Response in Save Coords Utility Return')
+        })
+    })
 }
