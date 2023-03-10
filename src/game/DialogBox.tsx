@@ -108,6 +108,9 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         } 
     }, [enemy]);
     
+    useEffect(() => {
+        console.log(localWhisper, "Local Whisper")
+    }, [localWhisper]);
 
     const handleCombatAction = (options: any, action: string) => {
         setCombatAction(action);
@@ -186,6 +189,13 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
             gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDropTwo });
         };
     };
+
+    function checkUniqueQuest () {
+        let thisQuest = getQuests(enemy?.name);
+        let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
+        let uniqueQuest = ascean?.quests.some((q: any) => q.title === newQuest.title);
+        return uniqueQuest;
+    }
 
     const getQuest = async () => {
         // setLoading(true);

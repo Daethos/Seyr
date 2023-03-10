@@ -36,6 +36,9 @@ import { Wolf } from '../../components/GameCompiler/Animals';
 import { Merchant } from '../../components/GameCompiler/NPCs';
 import useJoystick from '../../components/GameCompiler/useJoystick';
 import Journal from '../../components/GameCompiler/Journal';
+import * as io from 'socket.io-client'
+
+let socket: any;
 
 interface GameProps {
     user: any;
@@ -159,15 +162,23 @@ const GameSolo = ({ user }: GameProps) => {
         faith: gameState.player.faith,
     });
 
-    useEffect(() => {
-        console.log(background, "Background")
-    }, [background])
-
-    // useEffect(() => { console.log(gameState, "Current Game State") } , [gameState]);
-
     // useEffect(() => {
-    //     console.log(mapState.steps, "Player Step Count");
-    // }, [mapState.steps]);
+    //     socket = io.connect("http://localhost:3001");
+    //     socket.emit("setup", user);
+        // socket.on('map-generated', (data: any) => {
+        //     console.log(data, 'Data Generated');
+        //     mapDispatch({
+        //         type: MAP_ACTIONS.SET_MAP_DATA,
+        //         payload: data
+        //     });
+        //     const coords = getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, data.map);
+        //     mapDispatch({
+        //         type: MAP_ACTIONS.SET_MAP_COORDS,
+        //         payload: coords,
+        //     });
+        //     mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
+        // });
+    // }, [])
 
     const getAscean = useCallback(async () => {
         try {
@@ -585,8 +596,25 @@ const GameSolo = ({ user }: GameProps) => {
                 name: mapName,
                 ascean: gameState.player,
             };
+            // console.log(data, "Data")
+            // await socket.emit('generate-map', data);
+
+            // socket.on('map-generated', (data: any) => {
+            //     console.log(data, 'Data Generated');
+            //     mapDispatch({
+            //         type: MAP_ACTIONS.SET_MAP_DATA,
+            //         payload: data
+            //     });
+            //     const coords = getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, data.map);
+            //     mapDispatch({
+            //         type: MAP_ACTIONS.SET_MAP_COORDS,
+            //         payload: coords,
+            //     });
+            //     mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
+            // });
+
             const response = await mapAPI.createMap(data);
-            // console.log(response, 'Response Generating World Environment.');
+            console.log(response, 'Response Generating World Environment.');
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response

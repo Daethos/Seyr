@@ -250,6 +250,7 @@ const GameMap = ({ mapData }: MapProps) => {
             gridRowStart: 1,
             position: "absolute", 
             marginTop: "-2.25%",
+            marginLeft: "1%",
             zIndex: 99,
             clipPath: "rect(50% at 30% 30%)", 
             }}>

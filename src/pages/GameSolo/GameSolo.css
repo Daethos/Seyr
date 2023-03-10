@@ -62,11 +62,11 @@
   position: absolute;
   grid-column-start: 2;
   grid-row-start: 1;
-  margin-left: -23.5%;
+  margin-left: -21.5%;
   margin-top: -2.75%;
   z-index: 101;
   color: goldenrod;
-  clip-path: rect(50% at 30% 30%);
+  clip-path: rect(40% at 20% 20%);
 }
 
 .status-effects {

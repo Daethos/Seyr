@@ -33,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'build'))); // this allows express t
 // FIXME: When you add the file again
 app.use(require('./config/auth')); 
 
+
 // api routes must be before the "catch all" route
 
 // TODO: Remember to update this
@@ -54,6 +55,8 @@ app.use('/api/quest', require('./routes/api/quest'));
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+
+
 
 // const server = http.createServer(app);
 
@@ -82,6 +85,8 @@ app.get('/*', function(req, res) {
 // });
 const pvpService = require('./services/pvpServices')
 const asceanService = require('./services/asceanServices')
+const questService = require('./services/questServices')
+const WorldMap = require('./services/worldServices')
 const port = process.env.PORT || 3001;
 
 const server = app.listen(port, function() {
@@ -96,8 +101,23 @@ const io = require('socket.io')(server, {
   },
 });
 
+
+
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
+
+  socket.on("generate-map", async (data) => {
+    console.log("Map Generating At: " + Date.now())
+    const map = new WorldMap(data.name, data.ascean);
+    socket.emit("map-generated", map);
+    console.log("Map Generated At: " + Date.now())
+  });
+
+
+
+
+
+
 
   socket.on("setup", (userData) => {
     socket.join(userData._id);

@@ -73,10 +73,10 @@ const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, lo
             className='d-flex align-items-center justify-content-center'
             style={{
                 position: 'fixed',
-                top: "37.5vh",
+                top: "32.5vh",
                 left: 0,
                 width: '100%',
-                height: '20%',
+                height: '35%',
                 display: '',
                 backgroundColor: 'rgba(0, 0, 0, 0.65)',
                 zIndex: 9999,

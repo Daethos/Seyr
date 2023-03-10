@@ -67,7 +67,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         <>
                         <p style={{ color: '#fdf6d8', fontSize: "13.5px" }}>
                         Map Name: {mapState?.name} | Province: {mapState?.province} <br />
-                        Current Position: x: {mapState?.currentTile?.x}, y: {mapState?.currentTile?.y} | Content: {mapState?.currentTile?.content.charAt(0).toUpperCase() + mapState.currentTile.content.slice(1)}<br /><br />
+                        Current Position: x: {mapState?.currentTile?.x}, y: {mapState?.currentTile?.y} | Content: {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)}<br /><br />
                         Cave: {mapState?.contentCounts?.cave} | City: {mapState?.contentCounts?.city} | 
                         Dungeon: {mapState?.contentCounts?.dungeon}<br /> 
                         Enemy: {mapState?.contentCounts?.enemy} | 
