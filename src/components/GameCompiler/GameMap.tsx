@@ -27,6 +27,7 @@ const GameMap = ({ mapData }: MapProps) => {
 
     useEffect(() => {
         handleMapMode(mapMode);
+        console.log(mapData)
     }, [mapData, mapVisible, mapMode]);
     
     function handleMapMode(mode: MapMode) {
@@ -226,7 +227,7 @@ const GameMap = ({ mapData }: MapProps) => {
         for (let x = playerPosition.x - 24; x <= playerPosition.x + 24; x++) {
             for (let y = playerPosition.y - 24; y <= playerPosition.y + 24; y++) {
                 const coords = `${x},${y}`;
-                if (visitedTiles[coords]) {
+                if (visitedTiles && visitedTiles[coords]) {
                     surroundingTiles[coords] = visitedTiles[coords];
                 };
             };

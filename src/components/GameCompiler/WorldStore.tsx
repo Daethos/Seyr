@@ -60,6 +60,7 @@ export const initialMapData: MapData = {
 export const MapStore = (map: MapData, action: Action) => {
     switch (action.type) {
         case 'SET_MAP_DATA':
+            console.log(action.payload, "Setting Map")
             return {
                 ...action.payload,
             };

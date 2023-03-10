@@ -8,6 +8,7 @@ const mapSchema = new Schema({
     contentOptions : { type: [], required: true },
     size: { type: Number, default: 100 },
     contentClusters: { type: Object, default: {} },
+    contentCounts: { type: Object, default: {} },
     map: { type: Object, default: {} },
     currentTile: { type: Object, default: {} },
     initialPosition: { type: Object, default: {} },

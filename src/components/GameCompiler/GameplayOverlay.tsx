@@ -15,30 +15,13 @@ interface Props {
     saveWorld: () => Promise<void>;
     loadingContent: boolean;
     gameDispatch: React.Dispatch<any>;
+    getAsceanCoords: (x: number, y: number, map: any) => Promise<any>;
 };
 
-const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingOverlay, generateWorld, overlayContent, saveWorld, loadingContent }: Props) => {
+const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingOverlay, generateWorld, overlayContent, saveWorld, loadingContent, getAsceanCoords }: Props) => {
     const [mapName, setMapName] = useState<string>(`${(ascean?.name || '').trim().replace(/\s+/g, '_')}_${ascean?.maps?.length + 1 < 10 ? '0' + (ascean?.maps?.length + 1) : ascean?.maps?.length + 1}`);
     const overlayRef = useRef(null);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(ascean?.maps?.[0]?.currentTile?.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-    const [loading, setLoading] = useState<boolean>(false);
-    useEffect(() => {
-        if (ascean?.maps?.length === 0) return;
-        loadMap();
-    }, [ascean, mapState]);
-
-    const loadMap = async () => {
-        try {
-            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Loading ${ascean?.maps?.[0]?.name}. Currently, your coordinates are X: ${ascean?.maps?.[0]?.currentTile?.x}, Y: ${ascean?.maps?.[0]?.currentTile?.y}, experiencing ${ascean?.maps?.[0]?.currentTile?.content === 'nothing' || ascean?.maps?.[0]?.currentTile?.content === 'weather' ? ascean?.maps?.[0]?.currentTile?.content : `${article} ${ascean?.maps?.[0]?.currentTile?.content}`}. Enjoy your journey, ${ascean?.name}.` });
-            mapDispatch({ type: MAP_ACTIONS.SET_MAP, payload: ascean?.maps?.[0] }); 
-            setTimeout(() => {
-                closeEverything();
-            }, 3000);
-            console.log(mapState, "Loading Map");
-        } catch (err: any) {
-            console.log(err.message, "Error loading Map");
-        };
-    };
 
     const closeEverything = () => {
         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false })
@@ -83,20 +66,20 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         mapState.name !== '' ?
                         <>
                         <p style={{ color: '#fdf6d8', fontSize: "13.5px" }}>
-                        Map Name: {mapState.name} | Province: {mapState.province} <br />
-                        Current Position: x: {mapState.currentTile.x}, y: {mapState.currentTile.y} | Content: {mapState.currentTile.content.charAt(0).toUpperCase() + mapState.currentTile.content.slice(1)}<br /><br />
-                        Cave: {mapState.contentCounts.cave} | City: {mapState.contentCounts.city} | 
-                        Dungeon: {mapState.contentCounts.dungeon}<br /> 
-                        Enemy: {mapState.contentCounts.enemy} | 
-                        Hazard: {mapState.contentCounts.hazard} |
-                        Landmark: {mapState.contentCounts.landmark}<br /> 
-                        Nothing: {mapState.contentCounts.nothing} | 
-                        NPC: {mapState.contentCounts.npc} |
-                        Phenomena: {mapState.contentCounts.phenomena}<br /> 
-                        Ruins {mapState.contentCounts.ruins} |
-                        Treasure: {mapState.contentCounts.treasure} <br /> 
-                        Weather: {mapState.contentCounts.weather} |
-                        Wonder: {mapState.contentCounts.wonder}<br />
+                        Map Name: {mapState?.name} | Province: {mapState?.province} <br />
+                        Current Position: x: {mapState?.currentTile?.x}, y: {mapState?.currentTile?.y} | Content: {mapState?.currentTile?.content.charAt(0).toUpperCase() + mapState.currentTile.content.slice(1)}<br /><br />
+                        Cave: {mapState?.contentCounts?.cave} | City: {mapState?.contentCounts?.city} | 
+                        Dungeon: {mapState?.contentCounts?.dungeon}<br /> 
+                        Enemy: {mapState?.contentCounts?.enemy} | 
+                        Hazard: {mapState?.contentCounts?.hazard} |
+                        Landmark: {mapState?.contentCounts?.landmark}<br /> 
+                        Nothing: {mapState?.contentCounts?.nothing} | 
+                        NPC: {mapState?.contentCounts?.npc} |
+                        Phenomena: {mapState?.contentCounts?.phenomena}<br /> 
+                        Ruins {mapState?.contentCounts?.ruins} |
+                        Treasure: {mapState?.contentCounts?.treasure} <br /> 
+                        Weather: {mapState?.contentCounts?.weather} |
+                        Wonder: {mapState?.contentCounts?.wonder}<br />
                         <br />
                         This is where you're starting, and as expected, nothing is happening, but that's okay because you can move around and explore this world. 
                         {' '}Let's imagine a chunk of this province is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering adventure in any direction.<br /><br /> 

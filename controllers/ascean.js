@@ -559,7 +559,7 @@ async function getOneAscean(req, res) {
             ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
             
         await Ascean.populate(ascean, [
-        { path: 'user' },{ path: 'maps' },
+        { path: 'user' },{ path: 'maps' },{ path: 'quests' },
         ...populateOptions
         ]);
 

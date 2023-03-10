@@ -46,10 +46,18 @@ class Quest {
             silver: 0,
             gold: 0,
         };
-        currency.silver = Math.floor(Math.random() * level) * 15;
-        if (level > 10) {
-            currency.gold = Math.floor(Math.random() * (level / 10) + (level / 10));
+        currency.silver = Math.floor(Math.random() * 10) + 1;
+        currency.silver *= level;
+        if (currency.silver > 100) {
+            currency.silver -= 100;
+            currency.gold += 1;
         };
+        if (level > 10) {
+            currency.gold += Math.floor(Math.random() * 2) + 1;
+            currency.gold *= level / 10;
+            Math.round(currency.gold);
+        };
+        console.log(currency, "Currency In Quest Maker")
         return currency;
     };
 
@@ -67,29 +75,15 @@ class Quest {
     };
 
     getDescription(quest, desc) {
-        const description = `${desc}. You have been tasked with ${quest.title} by ${quest.giver.name}.`;
+        const article = ['a', 'e', 'i', 'o', 'u'].includes(quest.giver.name[0].toLowerCase()) ? "an" : "a";
+        const namelessDescriptors = ["druid", "shaman", "apostle", "jester", "occultist", "stalker", "guard", "knight", "daethic", "bard", "kingsman", "firesword", "shrieker", "northren", "southron", "marauder", "fang", "soldier", "soverain", "rahvrecur", "se'dyrist", "nyren"];
+        const nameParts = quest.giver.name.toLowerCase().split(" ");
+        const hasDescriptor = nameParts.some((part) => namelessDescriptors.includes(part));
+        const nameless = hasDescriptor ? true : false;
+        const description = `${desc}. You have been tasked with ${quest.title} by ${nameless ? article + ' ' : ''}${quest.giver.name}.`;
         return description;
     };
+    
 };
 
 module.exports = Quest;
-
-const nonNamedEnemy = 
-    ['Achreon Druid', "Ahn'are Apostle", "Anashtre", 
-    "Astral Apostle", "Cambiren Druid", "Chiomic Jester", 
-    "Daethic Inquisitor", "Daethic Knight", "Fang Duelist", 
-    "Fang Mercenary", 'Firesworn', 'Fyers Occultist', 
-    'Ilire Occultist', 'Kingsman', "Kyn'gian Shaman", 
-    "Licivitan Soldier", "Ma'ier Occultist", "Marauder", 
-    "Northren Wanderer", "Nyren", "Old Li'ivi Occultist", 
-    "Quor'eite Occultist", "Quor'eite Stalker", "Rahvrecur", 
-    "Se'dyrist", "Sedyreal Guard", "Se'va Shrieker", 
-    "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
-
-const namedEnemy = 
-    ["Cyrian Shyne", "Dorien Caderyn", "Eugenes", 
-    "Evrio Lorian Peroumes", "Fierous Ashfyre", "Garris Ashenus", 
-    "King Mathyus Caderyn", "Kreceus", "Laetrois Ath'Shaorah", 
-    "Leaf", "Lorian", "Mavrios Ilios", 
-    "Mirio", "Sera Lorian", "Synaethis Spiras",
-    "Torreous Ashfyre", "Vincere"];

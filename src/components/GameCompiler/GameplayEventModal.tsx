@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import LootDrop from './LootDrop';
 import { GAME_ACTIONS } from './GameStore';
@@ -15,12 +14,11 @@ interface Props {
     gameDispatch: React.Dispatch<any>;
     mapDispatch: React.Dispatch<any>;
     mapState: MapData;
-}
+};
 
 const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDrop, lootDropTwo, itemSaved, deleteEquipment, mapDispatch, mapState }: Props) => {
 
     const checkingLoot = async () => {
-        console.log( lootDrop, lootDropTwo, 'Merchant Equipment')
         if (lootDrop !== null) {
             await deleteEquipment([lootDrop]);
             gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: null });
@@ -63,7 +61,7 @@ const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDro
                 [Note: Treasure must be Saved]
             </Modal.Body>
         </Modal>
-    )
-    }
+    );
+};
 
 export default GameplayEventModal

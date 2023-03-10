@@ -27,7 +27,7 @@ const CombatDialogButtons = ({ options, handleCombatAction }: { options: any, ha
         )
     });
     return <>{buttons}</>;
-}
+};
 
 const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, handleRegion: any }) => {
     console.log(options, 'The Options');
@@ -65,7 +65,7 @@ interface Props {
     currentIntent: any;
     clearOpponent: () => Promise<void>;
     gameDispatch: React.Dispatch<any>;
-}
+};
 
 interface Region { 
     Astralands: string;
@@ -92,16 +92,14 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         Isles: "The Alluring Isles is its own world, gigantic and terrifying despite its grandeur isolated by strange tides. The land itself a shade of this world, yet what can allow a man to travel a fortnight here, and a day there? I've heard about the size of the animals that stalk those jungles and swim in the waters, hard to believe anyone can sustain themselves there. Would you wish to see this place?",
     };
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
-    const [mapName, setMapName] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
+    const [quest, setQuest] = useState<any>({});
 
     const handleCombatAction = (options: any, action: string) => {
-        console.log(options, action, 'Action')
         setCombatAction(action);
     };
     const handleRegion = (region: keyof Region) => {
-        console.log(region, 'What are you ?')
         setProvince(region);
     };
     const handleIntent = (intent: string) => {
@@ -117,7 +115,6 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
 
     const clearDuel = async () => {
         try {
-            console.log("Clearing Duel");
             await checkingLoot();
             await clearOpponent();
 
@@ -155,7 +152,6 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
             } else if (type === 'cloth') {
                 response = await eqpAPI.getClothEquipment(ascean?.level);
             }
-            console.log(response.data, 'Response!');
             gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data })
             setLoading(false);
         } catch (err) {
@@ -164,7 +160,6 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
     };
 
     const checkingLoot = async () => {
-        console.log(merchantEquipment.length, lootDrop, lootDropTwo, 'Merchant Equipment')
         if (merchantEquipment.length > 0) {
             await deleteEquipment(merchantEquipment);
             gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
@@ -182,30 +177,30 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
     const getQuest = async () => {
         // setLoading(true);
         try {
-            console.log("Getting Quest")
             let thisQuest = getQuests(enemy?.name);
-            console.log(thisQuest, "This Quest")
             let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
-            console.log(newQuest, "New Quest");
-            // let quest = {
-            //     player: ascean,
-            //     giver: enemy,
-            //     title: newQuest.title,
-            //     description: newQuest.description,
-            //     details: {
-            //         isBounty: newQuest.isBounty,
-            //         bounty: {
-            //             name: ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES][Math.floor(Math.random() * ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES].length)],
-            //             bounty: Math.floor(Math.random() * 3) + 2, // 2-4
-            //         },
-            //         isTimed: newQuest.isBounty,
-            //         timer: ascean?.level + Math.floor(Math.random() * 3) + 1, // 1-3
-            //         isGiver: enemy?.name,
-            //     },
-            // };
-            // const response = await questAPI.createQuest(quest);
-            // console.log(response, "Quest Response");
-            
+            let quest = {
+                player: ascean,
+                giver: enemy,
+                title: newQuest.title,
+                description: newQuest.description,
+                details: {
+                    isBounty: newQuest.isBounty,
+                    bounty: {
+                        name: ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES][Math.floor(Math.random() * ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES].length)],
+                        bounty: Math.floor(Math.random() * 3) + 2, // 2-4
+                    },
+                    isTimed: newQuest.isBounty,
+                    timer: ascean?.level + Math.floor(Math.random() * 3) + 1, // 1-3
+                    isGiver: enemy?.name,
+                },
+            };
+            console.log(quest, "New Quest");
+
+            const response = await questAPI.createQuest(quest);
+            console.log(response, "Quest Response");
+            setQuest(response);
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
             // setLoading(false);
         } catch (err: any) {
             console.log(err, "Error Getting Quest");
@@ -233,7 +228,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                 : currentIntent === 'challenge' ?
                     playerWin ? 
                         <>
-                        "Powerful {ascean.name}, you were fated this win. This is all I have to offer, if it pleases you." <br /><br /> 
+                        "Congratulations {ascean.name}, you were fated this win. This is all I have to offer, if it pleases you." <br /><br /> 
 
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
@@ -316,7 +311,10 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     <>
                         "Well if you want to know, you'll have to click the button."
                         <br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getQuest()}>What are the local whispers?</Button>
+                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getQuest()}>What are the local whispers?</Button><br />
+                        { quest?.title ?
+                            quest?.title
+                        : '' }
                     </>
                 : currentIntent === 'persuasion' ?
                     <>

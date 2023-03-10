@@ -2,6 +2,7 @@ import tokenService from "./tokenService";
 const BASE_URL = "/api/quest/";
 
 export async function createQuest(data: { player: { _id: any; }; }) {
+    console.log(data, "Quest in Create Quest API")
     return fetch(BASE_URL + "create/" + data.player._id, {
         method: "POST",
         body: JSON.stringify(data),

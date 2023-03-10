@@ -10,9 +10,10 @@ async function createQuest(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
         const quest = new QuestService(req.body);
-        // const newQuest = await Quest.create(quest);
-        // ascean.quests.push(newQuest._id);
-        // await ascean.save();
+        console.log(quest, "New Quest Made?")
+        const newQuest = await Quest.create(quest);
+        ascean.quests.push(newQuest._id);
+        await ascean.save();
 
         // console.log(quest, "Quest Created");
 

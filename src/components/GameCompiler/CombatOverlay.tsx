@@ -78,7 +78,7 @@ const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, lo
                 width: '100%',
                 height: '20%',
                 display: '',
-                backgroundColor: 'rgba(0, 0, 0, 0)',
+                backgroundColor: 'rgba(0, 0, 0, 0.65)',
                 zIndex: 9999,
             }}
             >

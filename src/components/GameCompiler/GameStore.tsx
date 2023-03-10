@@ -201,7 +201,7 @@ export const QUESTS = [
         isBounty: false,
     },
     {
-        name: ["Tshaeral Shaman", "Kyn'gian Shaman", "Achreon Druid", "Cambiren Druid"],
+        name: ["Tshaeral Shaman", "Kyn'gian Shaman", "Achreon Druid", "Cambiren Druid", "Se'va Shrieker", "Fyers Occultist"],
         title: "Replenish Firewater",
         description: "To walk in the land of hush and tendril and refill your flask, you must let it bleed--not of yourself but of our enemy",
         isBounty: true,
