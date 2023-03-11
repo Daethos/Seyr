@@ -584,7 +584,14 @@ const GameSolo = ({ user }: GameProps) => {
                 },
                 map: mapState
             };
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            gameDispatch({ 
+                type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
+                payload: `Saving Coordinates X: ${data.coordinates.x}, Y: ${data.coordinates.y}. \n\n Saving Map: ${data.map.name}. \n\n Enjoy your journey, ${gameState?.player?.name}` });
             const response = await asceanAPI.saveCoords(data);
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+            }, 2000);
             console.log(response, 'Response Saving Ascean Coordinates');
         } catch (err: any) {
             console.log(err.message, 'Error Saving Ascean Coordinates');
