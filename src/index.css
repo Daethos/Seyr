@@ -546,7 +546,7 @@ html, body {
   font-weight: 700;
   color: goldenrod;
   font-size: 25px;
-  z-index: 101;
+  z-index: 50;
 }
 .settings-button {
   position: absolute;
@@ -554,7 +554,7 @@ html, body {
   grid-row-start: 1;
   margin-left: -5%;
   margin-top: -1%;
-  z-index: 101;
+  z-index: 50;
   clip-path: circle(50% at 30% 30%);
 }
 #story-health {

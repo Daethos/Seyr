@@ -211,8 +211,22 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
             
             
             </div>
+            {
+                createSuccess
+                ? <button 
+                className="btn mt-4" 
+                value={asceanState} 
+                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textDecoration: 'none' }}
+                type="submit" disabled>Created {asceanState.name}!</button>
+                : <button 
+                className="btn mt-4" 
+                value={asceanState} 
+                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                type="submit">Create Ascean</button>
+            }
             </div>
-            <div className="section-right">
+            {/* <div className="section-right">
+                </div> */}
             {/* <Weapons asceanState={asceanState} setAsceanState={setAsceanState} weapons={weapons} weaponModalShow={weaponModalShow} setWeaponModalShow={setWeaponModalShow} />
 
                 <div className="actions">
@@ -250,20 +264,7 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
 
             </div>
             </div> */}
-            </div>
-            {
-                createSuccess
-                ? <button 
-                className="btn mt-4" 
-                value={asceanState} 
-                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textDecoration: 'none' }}
-                type="submit" disabled>Created {asceanState.name}!</button>
-                : <button 
-                className="btn mt-4" 
-                value={asceanState} 
-                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-                type="submit">Create Ascean</button>
-            }
+            
             
 
             <hr className="orange-border bottom" />

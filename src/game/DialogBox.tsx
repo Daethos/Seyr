@@ -14,7 +14,10 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
     const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
     const buttons = filteredOptions.map((o: any, i: number) => {
         return (
-            <Button variant='' key={i} onClick={() => setIntent(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            <>
+            <Button variant='' key={i} onClick={() => setIntent(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o}</Button>
+            <br />
+            </>
         )
     });
     return <>{buttons}</>;

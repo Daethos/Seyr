@@ -164,9 +164,9 @@ const GameMap = ({ mapData }: MapProps) => {
     function getQuadrantTiles(visitedTiles: {[key: string]: Tile}, quadX: string, quadY: string): {[key: string]: Tile} {
         const quadrantTiles: {[key: string]: Tile} = {};
         const xMin = quadX === 'left' ? -100 : 0;
-        const xMax = quadX === 'left' ? 0 : 100;
+        const xMax = quadX === 'left' ? 0 : 101;
         const yMin = quadY === 'top' ? 0 : -100;
-        const yMax = quadY === 'top' ? 100 : 0;
+        const yMax = quadY === 'top' ? 101 : 0;
         
         for (const coords in visitedTiles) {
             const [x, y] = coords.split(',').map(Number);
@@ -202,7 +202,6 @@ const GameMap = ({ mapData }: MapProps) => {
         };
     };
       
-      
     function renderSurroundingTiles() {
         const canvasWidth = 100;
         const canvasHeight = 100;
@@ -220,7 +219,6 @@ const GameMap = ({ mapData }: MapProps) => {
             };
         };
     };
-      
       
     function getSurroundingTiles(visitedTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): {[key: string]: Tile} {
         const surroundingTiles: {[key: string]: Tile} = {};
@@ -244,7 +242,7 @@ const GameMap = ({ mapData }: MapProps) => {
 
     return (
         <>
-        <Button variant='' onClick={setMapVisibility} style={{ 
+        <Button variant='' onClick={setMapVisibility} className='map-button' style={{ 
             color: "goldenrod", 
             gridColumnStart: 1, 
             gridRowStart: 1,
@@ -283,15 +281,16 @@ const GameMap = ({ mapData }: MapProps) => {
             (
                 <canvas
                     ref={canvasRef}
-                    width={canvasWidth}
-                    height={canvasHeight}
+                    // width={canvasWidth}
+                    // height={canvasHeight}
                     onClick={handleMap}
+                    className='game-map'
                     style={{ 
                         border: '2px solid purple', 
                         zIndex: 9999, 
-                        width: canvasWidth,
+                        // width: canvasWidth,
                         backgroundColor: "black", 
-                        height: canvasWidth,
+                        // height: canvasWidth,
                         position: 'absolute',
                         left: '50%',
                         top: '42.5%',

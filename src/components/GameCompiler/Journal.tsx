@@ -8,7 +8,7 @@ import { GAME_ACTIONS } from './GameStore';
 const QuestButtons = ({ options, setQuest }: { options: any, setQuest: any }) => {
     const buttons = options.map((o: any, i: number) => {
         return (
-            <Button variant='' key={i} onClick={() => setQuest(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o.title}</Button>
+            <Button variant='' key={i} onClick={() => setQuest(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='quest-buttons'>{o.title}</Button>
         );
     });
     return <>{buttons}</>;
@@ -19,7 +19,7 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     const buttons = Object.keys(options).map((o: any, i: number) => {
         console.log(o, 'Options in ProvincialWhispersButtons');
         return (
-            <Button variant='' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            <Button variant='' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
         )
     });
     return <>{buttons}</>;

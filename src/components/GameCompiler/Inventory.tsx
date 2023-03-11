@@ -232,7 +232,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
     async function handleEquipmentSwap(newAscean: Object) {
         try {
             setIsLoading(true);
-            setLoadingContent(`Equipping ${inventory?.name}`);
+            setLoadingContent(`Equipping ${inventory?.name} of ${inventory?.rarity} quality.`);
             console.log(newAscean, '<- newAscean in Swapping Equipment start');
             const response = await asceanAPI.equipmentSwap(newAscean);
             console.log(response, '<- Response in Swapping Equipment');

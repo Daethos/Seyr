@@ -84,9 +84,10 @@ return (
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      className='joystick-outer'
       style={{
-        width: "100px",
-        height: "100px",
+        // width: "100px",
+        // height: "100px",
         borderRadius: "50%",
         backgroundColor: "purple",
         border: "3px solid black",
@@ -100,14 +101,15 @@ return (
       }}
     >
       <div
+        className='joystick-inner'
         style={{
-            width: "50px",
-            height: "50px",
+            // width: "50px",
+            // height: "50px",
             borderRadius: "50%",
             border: "2px solid black",
             backgroundColor: "#fdf6d8",
             transform: `translate(${position.x}px, ${position.y}px)`,
-            transition: 'transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            transition: 'transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
         }}
       ></div>
     </div>
