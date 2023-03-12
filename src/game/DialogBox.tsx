@@ -318,9 +318,9 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     <>
                             "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play."
                             <p style = {{ color: 'dodgerblue' }}>
-                            You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})<br /> 
+                            <br /> 
+                            You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})
                             </p>
-                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Reduel {npc} To Win Back Your Honor?</Button>
                         </> 
                     :
                     <>

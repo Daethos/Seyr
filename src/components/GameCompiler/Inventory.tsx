@@ -375,6 +375,23 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
         };
     };
 
+    function equipLevel (rarity: string) {
+        switch (rarity) {
+            case 'Common':
+                return 0;
+            case 'Uncommon':
+                return 4;
+            case 'Rare':
+                return 6;
+            case 'Epic':
+                return 12;
+            case 'Legendary':
+                return 20;
+            default:
+                return 0;
+        };
+    };
+
     function textColor(val1: number, val2: number) {
         if (val1 === undefined) val1 = 0;
         if (val2 === undefined) val2 = 0;
@@ -638,12 +655,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
                     </tbody>
                 </Table>
             <br />
-            {
-                canEquip(ascean?.level, inventory?.rarity) ?
-                
-                <>
-                
-                
+        { canEquip(ascean?.level, inventory?.rarity) ?
+            <>
             <Form.Select value={
                 inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
                 editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? 
@@ -683,14 +696,22 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
             }
             <br />
             </>
-                    : ''
-                }
-            {/* { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' } */}
-            {/* {
-                canEquip(ascean?.level, inventory?.rarity) ? <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> : ''
-            } */}
-            <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
-            <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
+        : 
+            <div style={{ color: "gold", fontSize: "20px" }}>
+                Unforuntaely, {inventory?.name} requires you to be level {equipLevel(inventory?.rarity)} to equip.
+                <br /><br />    
+            </div>
+        }
+            { canEquip(ascean?.level, inventory?.rarity) ?
+                <> 
+                <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> 
+                <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
+                </>
+                : 
+                <Button variant='outline' style={{ color: 'red', fontWeight: 600, marginLeft: "16.5%" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
+            }
+            {/* <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
+            <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button> */}
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>
             </Modal.Body>
         </Modal>

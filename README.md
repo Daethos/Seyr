@@ -105,8 +105,8 @@
 <br /><br />
 
 # Attributions
-### Corwin ZX for the majority of the icons used for gear and visualization of the characters.
-### Lorc for the imagery of the wolf's attacks.
+### Artist Corwin ZX for the majority of the icons used for gear and visualization of the characters.
+### Artist Lorc for the images of the Wolf's attack and shield icons, in addition to the Merchant's quill.
 ### The Wolf's imagery is created by Stephen Challener (Redshrike), William Thompson (William.Thompsonj), & Jordan Irwin (AntumDeluge)
 
 [A First Place]: https://ascea.herokuapp.com/
