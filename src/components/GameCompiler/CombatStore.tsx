@@ -18,6 +18,7 @@ interface CombatData {
     player_defense: object;
     player_attributes: object;
     player_defense_default: object;
+    realized_player_damage: number;
 
     player_start_description: string;
     player_special_description: string;
@@ -50,6 +51,7 @@ interface CombatData {
     computer_defense: object;
     computer_attributes: object;
     computer_defense_default: object;
+    realized_computer_damage: number;
 
     attack_weight: number;
     counter_weight: number;
@@ -145,6 +147,7 @@ export const initialCombatData: CombatData = {
     player_defense: {},
     player_attributes: {},
     player_defense_default: {},
+    realized_player_damage: 0,
     player_start_description: '',
     player_special_description: '',
     player_action_description: '',
@@ -174,6 +177,7 @@ export const initialCombatData: CombatData = {
     computer_defense: {},
     computer_attributes: {},
     computer_defense_default: {},
+    realized_computer_damage: 0,
     attack_weight: 0,
     counter_weight: 0,
     dodge_weight: 0,
@@ -393,6 +397,12 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player_win: false,
                 computer_win: false,
+                action: '',
+                computer_action: '',
+                counter_guess: '',
+                computer_counter_guess: '',
+                realized_player_damage: 0,
+                realized_computer_damage: 0,
                 combatRound: 0,
                 sessionRound: 0,
             };

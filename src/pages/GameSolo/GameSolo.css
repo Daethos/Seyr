@@ -460,10 +460,12 @@
 .joystick-outer {
   width: 100px;
   height: 100px;
+  border: 3px solid black;
 }
 .joystick-inner {
   width: 50px;
   height: 50px;
+  border: 2px solid black;
 }
 @media screen and (max-width: 675px) {
   .game-block {
@@ -513,31 +515,39 @@
   .joystick-outer {
     width: 150px;
     height: 150px;
+    border: 4px solid black;
+    
   }
   .joystick-inner {
     width: 75px;
     height: 75px;
+    border: 3px solid black;
   }
   #console {
     transform: scale(1.25);
     margin-top: 7.5%;
     border-radius: 6px;
+    font-size: 12px;
   }
   #textarea {
     grid-column-start: 3;
     grid-column-end: 5;
   }
   .action-reader {
-    font-size: 14px;
-    margin-top: -20%;
+    padding-top: 8%;
+    font-size: 20px;
+    margin-top: -40%;
+    height: 20%;
   }
   #auto-engage {
-    font-size: 14px;
-    margin-top: -35%;
+    font-size: 20px;
+    margin-top: -45%;
+    height: 75%;
   }
   #attack-options {
-    font-size: 14px;
-    margin-top: -35%;
+    font-size: 20px;
+    margin-top: -45%;
+    height: 75%;
   }
   #action-buttons {
     margin-top: -6.5%;
@@ -573,14 +583,40 @@
     font-size: 18px;
   }
   .quest-buttons {
-    font-size: 12px;
+    font-size: 14px;
+  }
+  .city-button {
+    border: 3px solid purple;
+    font-size: 22px;
+    height: 75%;
+    margin-top: -15%;
+    font-weight: 600;
+  }
+  .dialog-button {
+    border: 3px solid purple;
+    font-size: 22px;
+    height: 75%;
+    margin-top: -15%;
+    font-weight: 600;
+  }
+  .inventory-button {
+    border: 3px solid purple;
+    font-size: 22px;
+    height: 75%;
+    margin-top: -15%;
+    font-weight: 600;
   }
   .dialog-box {
     margin-top: -3%;
+    border: 5px solid purple;
   }
   .dialog-box, .dialog-text, .dialog-options {
-    font-size: 16px;
+    font-size: 20px;
     height: 450px;
+  }
+  .story-box {
+    border: 3px solid purple;
+    font-size: 18px;
   }
   .game-map {
     margin-top: 3%;

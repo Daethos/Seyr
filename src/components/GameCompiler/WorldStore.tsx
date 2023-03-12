@@ -15,6 +15,7 @@ export interface MapData {
     context: string;
     generatingWorld: boolean;
     steps: number;
+    contentMoved: boolean;
 };
 
 interface Action {
@@ -37,6 +38,7 @@ export const MAP_ACTIONS = {
     SET_GENERATING_WORLD: 'SET_GENERATING_WORLD',
     SET_MOVE_CONTENT: 'SET_MOVE_CONTENT',
     SET_NEW_ENVIRONMENT: 'SET_NEW_ENVIRONMENT',
+    SET_MAP_MOVED: 'SET_MAP_MOVED',
 };
 
 export const initialMapData: MapData = {
@@ -55,6 +57,7 @@ export const initialMapData: MapData = {
     context: '',
     generatingWorld: false,
     steps: 0,
+    contentMoved: false,
 };
 
 export const MapStore = (map: MapData, action: Action) => {
@@ -95,9 +98,17 @@ export const MapStore = (map: MapData, action: Action) => {
             };
         case 'SET_MOVE_CONTENT':
             moveContent(action.payload, action.payload.contentClusters, action.payload.visitedTiles);
+            const { x, y } = action.payload.currentTile;
+            const mapX = x + 100;
+            const mapY = y + 100;
+            const newTile = action.payload.map[mapX][mapY];
+            if (newTile.content !== action.payload.currentTile.content) {
+                map.currentTile = newTile;      
+            }
             return {
                     ...map,
-                };
+                    contentMoved: true,
+            };
         case 'SET_MAP_NAME':
             return {
                 ...map,
@@ -119,6 +130,11 @@ export const MapStore = (map: MapData, action: Action) => {
             setVisitedTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
             return {
                 ...map,
+            };
+        case 'SET_MAP_MOVED':
+            return {
+                ...map,
+                contentMoved: action.payload,
             };
         default: return map;
     }

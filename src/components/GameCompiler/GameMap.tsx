@@ -27,7 +27,7 @@ const GameMap = ({ mapData }: MapProps) => {
 
     useEffect(() => {
         handleMapMode(mapMode);
-        console.log(mapData)
+        // console.log(mapData)
     }, [mapData, mapVisible, mapMode]);
     
     function handleMapMode(mode: MapMode) {

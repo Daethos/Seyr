@@ -342,6 +342,39 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
         </Popover>
     )
 
+    function canEquip (level: number, rarity: string) {
+        switch (rarity) {
+            case 'Common':
+                return true;
+            case 'Uncommon':
+                if (level > 3) {
+                    return true;
+                } else {
+                    return false;
+                };
+            case 'Rare':
+                if (level > 5) {
+                    return true;
+                } else {
+                    return false;
+                };
+            case 'Epic':
+                if (level > 11) {
+                    return true;
+                } else {
+                    return false;
+                };
+            case 'Legendary':
+                if (level > 19) {
+                    return true;
+                } else {
+                    return false;
+                };
+            default:
+                return false;
+        };
+    };
+
     function textColor(val1: number, val2: number) {
         if (val1 === undefined) val1 = 0;
         if (val2 === undefined) val2 = 0;
@@ -605,6 +638,12 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
                     </tbody>
                 </Table>
             <br />
+            {
+                canEquip(ascean?.level, inventory?.rarity) ?
+                
+                <>
+                
+                
             <Form.Select value={
                 inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
                 editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? 
@@ -617,8 +656,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
             {
                 inventory?.grip && inventory?.type ?
                 <><br />
-                 <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
-                    <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
+                <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
+                <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
                     <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
                     <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                 </Form.Select><br />
@@ -643,7 +682,13 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
                 : ''
             }
             <br />
+            </>
+                    : ''
+                }
             {/* { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' } */}
+            {/* {
+                canEquip(ascean?.level, inventory?.rarity) ? <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> : ''
+            } */}
             <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
             <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>

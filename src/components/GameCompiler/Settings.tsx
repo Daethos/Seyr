@@ -12,6 +12,8 @@ interface Props {
     dispatch: any;
     soundEffectsVolume: number;
     setSoundEffectsVolume: React.Dispatch<React.SetStateAction<number>>;
+    joystickSpeed: number;
+    setJoystickSpeed: React.Dispatch<React.SetStateAction<number>>;
     currentTile: any;
     saveAsceanCoords: (x: number, y: number) => Promise<void>;
     gameDispatch: React.Dispatch<any>;
@@ -19,7 +21,7 @@ interface Props {
     mapState: any;
 };
 
-const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState, mapState }: Props) => {
+const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState, mapState, joystickSpeed, setJoystickSpeed }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -36,6 +38,12 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         console.log(volume, 'New Volume');
         setSoundEffectsVolume(volume);
     };
+
+    function handleJoystickChange(e: React.ChangeEvent<HTMLInputElement>) {
+        let speed = parseFloat(e.target.value);
+        console.log(speed, 'New Speed');
+        setJoystickSpeed(speed);
+    }
 
     function returnHome() {
         // Clear Potential Loot
@@ -54,6 +62,12 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         : ""}
         <br />
         <Accordion flush >
+        <Accordion.Item eventKey="5" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Speed ({joystickSpeed})</h5></Accordion.Header>
+        <Accordion.Body className='settings-accordion'>
+            <Form.Range value={joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
+        </Accordion.Body>
+        </Accordion.Item>
         <Accordion.Item eventKey="0" >
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Volume ({soundEffectsVolume})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>

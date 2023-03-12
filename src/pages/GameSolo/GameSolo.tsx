@@ -54,6 +54,7 @@ const GameSolo = ({ user }: GameProps) => {
         background: ''
     }); // ------
     const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
+    const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
     // const { direction, handleDirectionChange } = useJoystick();
 
     type Direction = keyof typeof DIRECTIONS;
@@ -793,7 +794,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
     }; 
     
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, 150);
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, joystickSpeed);
 
     async function getAsceanCoords(x: number, y: number, map: any) {
         const tile = map?.[x + 100]?.[y + 100];
@@ -957,7 +958,7 @@ const GameSolo = ({ user }: GameProps) => {
             title: "Treasure!",
             description: `${gameState.player.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
         } });
-        await getOneLootDrop(gameState.player.level + 6);
+        await getOneLootDrop(gameState.player.level + 4);
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: true });
     };
 
@@ -1017,7 +1018,19 @@ const GameSolo = ({ user }: GameProps) => {
             });
         };
         if (content === 'city' && lastContent === 'city') {
+            if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
+                // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+                // console.log(response, "Response Moving Content ?");
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+            };
             return;
+        };
+        if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
+            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
+            // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+            // console.log(response, "Response Moving Content ?");
+            mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
         };
         try {
             switch (content) {
@@ -1115,12 +1128,12 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, 'Error Handling Tile Content');
         } finally {
-            if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
-                // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
-                // console.log(response, "Response Moving Content ?");
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            };
+            // if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
+            //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
+            //     // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+            //     // console.log(response, "Response Moving Content ?");
+            //     mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+            // };
         };
     };
 
@@ -1135,22 +1148,26 @@ const GameSolo = ({ user }: GameProps) => {
                     'background': getPlayerBackground.background
                 });
             };
-            if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
+            if (mapState.steps % 5 === 0 && mapState.steps !== 0 && !mapState.contentMoved) {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
                 // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
                 // console.log(response, "Response Moving Content ?");
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState })
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             } else {
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
                     payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
                 });
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_MAP_MOVED,
+                    payload: false
+                })
             };
             return;
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
-    }, [mapState.currentTile]);
+    }, [mapState.currentTile, mapState.steps]);
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
@@ -1509,6 +1526,7 @@ const GameSolo = ({ user }: GameProps) => {
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState} mapState={mapState}
+                joystickSpeed={joystickSpeed} setJoystickSpeed={setJoystickSpeed}
             />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?

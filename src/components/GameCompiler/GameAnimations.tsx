@@ -34,13 +34,13 @@ const GameAnimations = ({ combatEngaged, combatRound, rollSuccess, computerRollS
             <div className="player pulse" style={critStyle} id='player-animation'>
                 {combatEngaged && combatRound > 1 ? playerAction.charAt(0).toUpperCase() + playerAction.slice(1) : ''}
                 <br />
-                {combatEngaged && playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
+                {combatEngaged && playerDamageTotal > 0 && combatRound > 1 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
         : rollSuccess || counterSuccess ?
             <div className="player pulse" style={rollStyle} id='player-animation'>
                 {combatEngaged && combatRound > 1 ? playerAction.charAt(0).toUpperCase() + playerAction.slice(1) : ''}
                 <br />
-                {combatEngaged && playerDamageTotal > 0 ?  '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
+                {combatEngaged && playerDamageTotal > 0 && combatRound > 1 ?  '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
         :
             <div className="player pulse" id='player-animation'>

@@ -8,7 +8,9 @@ import { GAME_ACTIONS } from './GameStore';
 const QuestButtons = ({ options, setQuest }: { options: any, setQuest: any }) => {
     const buttons = options.map((o: any, i: number) => {
         return (
-            <Button variant='' key={i} onClick={() => setQuest(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='quest-buttons'>{o.title}</Button>
+            <div key={i}>
+            <Button variant='' onClick={() => setQuest(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='quest-buttons'>{o.title}</Button>
+            </div>
         );
     });
     return <>{buttons}</>;
@@ -103,7 +105,7 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
                 { questData?.details?.isBounty ? (
                     <>
                     Bounty: ({questData?.details?.bounty?.bounty}) {questData?.details?.bounty?.name} <br />
-                    Timer: {questData?.details?.timer} {questData?.details?.bounty?.timer === 1 ? 'Month' : 'Months'}<br />
+                    Timer: {questData?.details?.timer - ascean?.level} {questData?.details?.bounty?.timer === 1 ? 'Month' : 'Months'}<br />
                     </>
                 ) : ( "" ) }
                 Rewards: {questData?.rewards?.currency?.gold}g {questData?.rewards?.currency?.silver}s | 

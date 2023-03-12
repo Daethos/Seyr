@@ -15,6 +15,7 @@ const mapSchema = new Schema({
     visitedTiles: { type: Object, default: {} },
     context: { type: String, default: '' },
     steps: { type: Number, default: 0 },
+    contentMoved: { type: Boolean, default: false },
     }, {
     timestamps: true
 });
