@@ -101,7 +101,7 @@ export interface Equipment {
     itemType: string;
     grip: string | null;
     attack_type: string | null;
-    damage_type: [string] | [] | null;
+    damage_type: [string] | [string, string] | [] | null;
     physical_damage: number | null;
     magical_damage: number | null;
     physical_penetration: number | null;

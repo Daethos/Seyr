@@ -32,41 +32,41 @@ const GameAnimations = ({ combatEngaged, combatRound, rollSuccess, computerRollS
         <>
          { playerCritical ? 
             <div className="player pulse" style={critStyle} id='player-animation'>
-                {combatEngaged ? playerAction.charAt(0).toUpperCase() + playerAction.slice(1) : ''}
+                {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                 <br />
-                {combatEngaged && playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
+                { playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
         : rollSuccess || counterSuccess ?
             <div className="player pulse" style={rollStyle} id='player-animation'>
-                {combatEngaged ? playerAction.charAt(0).toUpperCase() + playerAction.slice(1) : ''}
+                {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                 <br />
-                {combatEngaged && playerDamageTotal > 0 ?  '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
+                { playerDamageTotal > 0 ?  '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
         :
             <div className="player pulse" id='player-animation'>
-                {combatEngaged ? playerAction.charAt(0).toUpperCase() + playerAction.slice(1) : ''}
+                {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
             <br />
-                {combatEngaged ? playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : (visibility ? '(Failure)\n[You]' : '(Failure)') : ''}
+                {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
         }
         <br />
         { computerCritical ?
             <div className="computer hidden" style={critStyle} id='computer-animation'>
-                {combatEngaged ? computerAction.charAt(0).toUpperCase() + computerAction.slice(1) : ''}
+                {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
-                {combatEngaged && computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
+                { computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
             </div>
         : computerRollSuccess || computerCounterSuccess ?
             <div className="computer hidden" style={rollStyle} id='computer-animation'>
-                {combatEngaged ? computerAction.charAt(0).toUpperCase() + computerAction.slice(1) : ''}
+                {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
-                {combatEngaged && computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
+                { computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
             </div> 
         :
             <div className="computer hidden" id='computer-animation'>
-                {combatEngaged ? computerAction.charAt(0).toUpperCase() + computerAction.slice(1) : ''}
+                {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
-                {combatEngaged ? computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : (visibility ? '(Failure)\n[Enemy]' : '(Failure)') : ''}
+                {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
             </div>
         }
         </>

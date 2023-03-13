@@ -32,7 +32,7 @@ import CityBox from '../../components/GameCompiler/CityBox';
 import StoryBox from '../../components/GameCompiler/StoryBox';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 import GameMap from '../../components/GameCompiler/GameMap';
-import { Wolf } from '../../components/GameCompiler/Animals';
+import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { Merchant } from '../../components/GameCompiler/NPCs';
 import useJoystick from '../../components/GameCompiler/useJoystick';
 import Journal from '../../components/GameCompiler/Journal';
@@ -311,6 +311,48 @@ const GameSolo = ({ user }: GameProps) => {
                 minLevel = 1;
                 maxLevel = 2;
             } else  if (gameState.player.level <= 4) { // 3-4
+                if (gameState.player.level === 3) {
+                    if (chance > 0.5) {
+                        const bear: Enemy = Object.assign({}, Bear);
+                        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: bear });
+                        const response = await asceanAPI.getAnimalStats(bear);
+                        setAsceanState({
+                            ...asceanState,
+                            'opponent': bear.level,
+                        });
+                        dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+                        setTimeout(() => {
+                            dispatch({
+                                type: ACTIONS.SET_DUEL,
+                                payload: ''
+                            });
+                            playOpponent();
+                            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+                        }, 2000);
+                        return;
+                    };
+                };
+                if (gameState.player.level === 4) {
+                    if (chance > 0.67) {
+                        const bear: Enemy = Object.assign({}, Bear);
+                        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: bear });
+                        const response = await asceanAPI.getAnimalStats(bear);
+                        setAsceanState({
+                            ...asceanState,
+                            'opponent': bear.level,
+                        });
+                        dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+                        setTimeout(() => {
+                            dispatch({
+                                type: ACTIONS.SET_DUEL,
+                                payload: ''
+                            });
+                            playOpponent();
+                            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+                        }, 2000);
+                        return;
+                    };
+                };
                 minLevel = 2;
                 maxLevel = 4;
             } else if (gameState.player.level <= 6) { // 5-6
@@ -1376,7 +1418,7 @@ const GameSolo = ({ user }: GameProps) => {
                 if (mapState?.currentTile?.content !== 'city') {
                     gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 };
-                if (gameState.opponent.name === "Wolf") {
+                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
                     mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
                 }
@@ -1398,7 +1440,7 @@ const GameSolo = ({ user }: GameProps) => {
                     type: ACTIONS.COMPUTER_WIN,
                     payload: combatData
                 });
-                if (gameState.opponent.name === "Wolf") {
+                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
                 }
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
