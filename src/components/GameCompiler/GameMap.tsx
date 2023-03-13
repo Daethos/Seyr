@@ -293,9 +293,16 @@ const GameMap = ({ mapData }: MapProps) => {
         const newWidth = canvasWidth * ratio;
         const newHeight = canvasHeight * ratio;
         
+        const canvas = canvasRef.current;
+        if (canvas) {
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+        };
+      
         setCanvasWidth(newWidth);
         setCanvasHeight(newHeight);
     };
+      
 
     const setMapVisibility = () => {
         setMapVisible(!mapVisible);
@@ -363,8 +370,8 @@ const GameMap = ({ mapData }: MapProps) => {
                     onClick={handleMap}
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
-                    // onTouchEnd={handleTouchEnd}
-                    onReset={handleResize}
+                    onTouchEnd={handleResize}
+                    // onReset={handleResize}
                     className='game-map'
                     style={{
                         border: '2px solid purple',
@@ -374,6 +381,7 @@ const GameMap = ({ mapData }: MapProps) => {
                         left: `${50 + (canvasPosition.x / 100)}%`,
                         top: `${42.5 + (canvasPosition.y / 100)}%`,
                         transform: 'translate(-50%, -50%)',
+                        // transform: `translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
                         width: canvasWidth,
                         height: canvasHeight,
                     }}
