@@ -7,6 +7,7 @@ import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/As
 import Delete from '../AsceanBuilder/Delete';
 import Update from '../AsceanBuilder/Update';
 import Play from '../AsceanBuilder/Play';
+import Save from '../AsceanBuilder/Save';
 
 interface Props {
     ascean: any;
@@ -15,9 +16,10 @@ interface Props {
     loggedUser?: any;
     loading?: boolean;
     accordion?: string;
+    handleAsceanCreate?: any;
 }
 
-const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion }: Props) => {
+const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, handleAsceanCreate }: Props) => {
 
   return (
     <React.Fragment>
@@ -28,6 +30,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion }: P
     { userProfile ? 
         <>
             <Play ascean={ascean} />
+            {/* <Save ascean={ascean} handleAsceanCreate={handleAsceanCreate} /> */}
             <Update ascean={ascean} NavBar={false} />
             <Delete ascean={ascean} deleteAscean={deleteAscean} />
             <svg height="5" width="100%" className="tapered-rule mt-1">

@@ -56,7 +56,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
 
     const autoAttack = async (combatData: any) => {
         if (combatData.player_win || combatData.computer_win || combatData.new_player_health === 0 || combatData.new_computer_health === 0) return;
-        setLoading(true);
+        // setLoading(true);
         setTimeLeft(10);
         try {
             setEmergencyText([`Auto Engagement Response`]);
@@ -70,7 +70,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
-            setLoading(false);
+            // setLoading(false);
         } catch (err: any) {
             setLoading(false);
             console.log(err.message, 'Error Initiating Action');

@@ -13,6 +13,8 @@ import Origin from '../AsceanBuilder/Origin';
 import Mastery from '../AsceanBuilder/Mastery';
 import Sex from '../AsceanBuilder/Sex';
 import Preference from '../AsceanBuilder/Preference';
+import Communal from '../AsceanBuilder/Communal';
+import Hardcore from '../AsceanBuilder/Hardcore';
 
 interface AsceanProps {
     loggedUser: any;
@@ -68,6 +70,9 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
         trinket: '',
         faith: 'none',
         preference: '',
+        hardcore: false,
+        visibility: 'public',
+        shareable: 'none',
     });
 
     const conMinusButton = document.getElementById('con-minus');
@@ -199,6 +204,8 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
             <Preference asceanState={asceanState} setAsceanState={setAsceanState} />
+            <Communal editState={asceanState} setEditState={setAsceanState} />
+            <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} />
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
@@ -216,12 +223,12 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
                 ? <button 
                 className="btn mt-4" 
                 value={asceanState} 
-                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textDecoration: 'none' }}
+                style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textDecoration: 'none', textAlign: "center" }}
                 type="submit" disabled>Created {asceanState.name}!</button>
                 : <button 
                 className="btn mt-4" 
                 value={asceanState} 
-                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textAlign: "center" }}
                 type="submit">Create Ascean</button>
             }
             </div>

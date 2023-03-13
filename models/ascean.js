@@ -103,6 +103,10 @@ const asceanSchema = new Schema(
             type: Boolean,
             default: true,
         },
+        lineage: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Ascean'
+        }],
         weapon_one: {
             type: Schema.Types.ObjectId,
             refPath: 'onWeapon'

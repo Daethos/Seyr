@@ -82,7 +82,7 @@ function App() {
       <div> 
       <NavBar user={user} setUser={setUser} handleLogout={handleLogout} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />
       <Routes>
-        <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} />} />
+        <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />

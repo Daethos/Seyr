@@ -24,6 +24,9 @@ const GameMap = ({ mapData }: MapProps) => {
     const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [mapVisible, setMapVisible] = useState(false);
+    const [canvasWidth, setCanvasWidth] = useState<number>(402);
+    const [canvasHeight, setCanvasHeight] = useState<number>(402);
+    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
     useEffect(() => {
         handleMapMode(mapMode);
@@ -56,7 +59,6 @@ const GameMap = ({ mapData }: MapProps) => {
         const playerX = mapData?.currentTile?.x;
         const playerY = mapData?.currentTile?.y;
       
-        // loop through the visited tiles and draw them onto the canvas
         for (const coords in visitedTiles) {
             const [x, y] = coords.split(',').map(Number);
             const tile = visitedTiles[coords];
@@ -158,8 +160,6 @@ const GameMap = ({ mapData }: MapProps) => {
             ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
         };
     };
-      
-      
 
     function getQuadrantTiles(visitedTiles: {[key: string]: Tile}, quadX: string, quadY: string): {[key: string]: Tile} {
         const quadrantTiles: {[key: string]: Tile} = {};
@@ -233,12 +233,77 @@ const GameMap = ({ mapData }: MapProps) => {
         return surroundingTiles;
     };
 
+    function getElementOffset(element: HTMLElement): { left: number; top: number } {
+        let left = 0;
+        let top = 0;
+        let currElement: HTMLElement | null = element;
+      
+        while (currElement) {
+          left += currElement.offsetLeft;
+          top += currElement.offsetTop;
+          currElement = currElement.offsetParent as HTMLElement | null;
+        };
+      
+        return { left, top };
+    };
+
+    function handleTouchStart(event: React.TouchEvent<HTMLCanvasElement>) {
+        console.log("touch start");
+        const touch = event.touches[0];
+        const canvas = canvasRef.current;
+      
+        if (canvas) {
+          const { left, top } = getElementOffset(canvas);
+          setCanvasPosition({
+            x: touch.clientX - left,
+            y: touch.clientY - top,
+          });
+        }
+    }
+
+    function handleTouchMove(event: React.TouchEvent<HTMLCanvasElement>) {
+        event.preventDefault();
+        console.log("touch move");
+      
+        const touch = event.touches[0];
+        const canvas = canvasRef.current;
+      
+        if (canvas) {
+          const { left, top } = getElementOffset(canvas);
+          const x = touch.clientX - left - canvasPosition.x;
+          const y = touch.clientY - top - canvasPosition.y;
+      
+          setCanvasPosition({ x, y });
+        }
+      }
+
+    function handleTouchEnd(event: React.TouchEvent<HTMLCanvasElement>) {
+        // Reset canvas position to center
+        setCanvasPosition({ x: 0, y: 0 });
+
+    }
+      
+
+    function handleResize(event: React.UIEvent<HTMLCanvasElement>) {
+        const maxWidth = 603;
+        const maxHeight = 603;
+        
+        const ratio = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight);
+        
+        const newWidth = canvasWidth * ratio;
+        const newHeight = canvasHeight * ratio;
+        
+        setCanvasWidth(newWidth);
+        setCanvasHeight(newHeight);
+    };
+
     const setMapVisibility = () => {
         setMapVisible(!mapVisible);
+        if (mapVisible) {
+            // Reset canvas position to center
+            setCanvasPosition({ x: 0, y: 0 });
+        };
     };
-    
-    const canvasWidth = 402;
-    const canvasHeight = canvasWidth;
 
     return (
         <>
@@ -279,24 +344,41 @@ const GameMap = ({ mapData }: MapProps) => {
         {
             mapVisible ?
             (
+                // <canvas
+                //     ref={canvasRef}
+                //     onClick={handleMap}
+                //     className='game-map'
+                //     style={{ 
+                //         border: '2px solid purple', 
+                //         zIndex: 9999, 
+                //         backgroundColor: "black", 
+                //         position: 'absolute',
+                //         left: '50%',
+                //         top: '42.5%',
+                //         transform: 'translate(-50%, -50%)',
+                //     }}
+                // />
                 <canvas
                     ref={canvasRef}
-                    // width={canvasWidth}
-                    // height={canvasHeight}
                     onClick={handleMap}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    // onTouchEnd={handleTouchEnd}
+                    onReset={handleResize}
                     className='game-map'
-                    style={{ 
-                        border: '2px solid purple', 
-                        zIndex: 9999, 
-                        // width: canvasWidth,
-                        backgroundColor: "black", 
-                        // height: canvasWidth,
+                    style={{
+                        border: '2px solid purple',
+                        zIndex: 9999,
+                        backgroundColor: "black",
                         position: 'absolute',
-                        left: '50%',
-                        top: '42.5%',
+                        left: `${50 + (canvasPosition.x / 100)}%`,
+                        top: `${42.5 + (canvasPosition.y / 100)}%`,
                         transform: 'translate(-50%, -50%)',
+                        width: canvasWidth,
+                        height: canvasHeight,
                     }}
                 />
+
             ) : ( '' )
         }
         </>

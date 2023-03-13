@@ -35,7 +35,169 @@ module.exports = {
     replenishFirewater,
     animalStats,
     getOneAsceanClean,
+    killAscean,
+    persistAscean,
 }
+
+async function killAscean(req, res) {
+    try {
+        const ascean = await Ascean.findById(req.params.id);
+        ascean.alive = false;
+        ascean.save();
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, "Error Killing Ascean");
+        res.status(400).json(err);
+    }
+};
+
+async function persistAscean(req, res) {
+    console.log(req.body, '<- Hopefully the Ascean!', req.user)
+    if (req.body.preference === 'Plate-Mail') {
+        req.body.helmet = '63f413a4acef90a6e298a3c4';
+        req.body.chest = '63f413a5acef90a6e298a3cf';
+        req.body.legs = '63f413a5acef90a6e298a429';
+    }
+    if (req.body.preference === 'Chain-Mail') {
+        req.body.helmet = '63f413a4acef90a6e298a3c5';
+        req.body.chest = '63f413a5acef90a6e298a3d0';
+        req.body.legs = '63f413a5acef90a6e298a42a';
+    }
+    if (req.body.preference === 'Leather-Mail') {
+        req.body.helmet = '63f413a4acef90a6e298a3c6';
+        req.body.chest = '63f413a5acef90a6e298a3d1';
+        req.body.legs = '63f413a5acef90a6e298a42b';
+    }
+    if (req.body.preference === 'Leather-Cloth') {
+        req.body.helmet = '63f413a4acef90a6e298a3c7'
+        req.body.chest = '63f413a5acef90a6e298a3d2';
+        req.body.legs = '63f413a5acef90a6e298a42c';
+    }
+
+    if (req.body.faith === 'devoted') { // Devoted to Daethos
+        if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
+            if (parseInt(req.body.strength) > parseInt(req.body.agility)) { // Daethic Halberd && Hush of Daethos
+                req.body.weapon_one = '63d059865df7503ef9cd71f4';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e58e';
+            } else if (parseInt(req.body.strength) < parseInt(req.body.agility)) { // Gladius && Daethic Bow
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e56c';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e586';
+            } else { // Same Value Daethic Bow && Daethic Halberd
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e586';
+                req.body.weapon_two = '63d059865df7503ef9cd71f4';
+            }
+        } else {
+            if (parseInt(req.body.achre) > parseInt(req.body.caeren)) { // Tendril && Daethic Bow
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e583';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e586';
+            } else if (parseInt(req.body.achre) < parseInt(req.body.caeren)) { // Hush of Daethos && Tendril of Daethos
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e58e';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e58f';
+            } else { // Same Value Blessed Dagger && Cursed Dagger
+                req.body.weapon_one = '63e47c140de4781b96411d67';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e572';
+            }
+        }
+    } else { // Adherent to the Ancients or Irreligious
+        if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
+            if (parseInt(req.body.strength) > parseInt(req.body.agility)) { // War Hammer && Sunshatter
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e578';
+                req.body.weapon_two = '63e47c140de4781b96411d6b';
+            } else if (parseInt(req.body.strength) < parseInt(req.body.agility)) { // Longsword && Sevashyr
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
+                req.body.weapon_two = '63e54b27d110dc7ef8fd630b';
+            } else { // Same Value Claymore && Longbow
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e576';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e585';
+            }
+        } else {
+            if (parseInt(req.body.achre) > parseInt(req.body.caeren)) { // Astral Spear && Quor'eite Crush
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e57f';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e581';
+            } else if (parseInt(req.body.achre) < parseInt(req.body.caeren)) { // Ashfyre && Nyrolean Wave
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e588';
+                req.body.weapon_two = '63b3460cd5c6cfea02a5e58b';
+            } else { // Same Value Wildstrike && Nightmare
+                req.body.weapon_one = '63b3460cd5c6cfea02a5e582';
+                req.body.weapon_two = '63e47c140de4781b96411d77';
+            }
+        }
+    }
+
+    const firstWeapon = await Weapon.findById(req.body.weapon_one);
+    await seedDB([firstWeapon], firstWeapon.rarity);
+    const secondWeapon = await Weapon.findById(req.body.weapon_two);
+    await seedDB([secondWeapon], secondWeapon.rarity);
+
+    try {
+        const previous = await Ascean.findById(req.params.id);
+        switch (previous.mastery) {
+            case "Constitution":
+                req.body.constitution = parseInt(req.body.constitution + 2) + previous.constitution > 100 ? 6 : previous.constitution > 50 ? 4 : 0;
+                break;
+            case "Strength":
+                req.body.strength = parseInt(req.body.strength + 2) + previous.strength > 100 ? 6 : previous.strength > 50 ? 4 : 0;
+                break;
+            case "Agility":
+                req.body.agility = parseInt(req.body.agility + 2) + previous.agility > 100 ? 6 : previous.agility > 50 ? 4 : 0;
+                break;
+            case "Achre":
+                req.body.achre = parseInt(req.body.achre + 2) + previous.achre > 100 ? 6 : previous.achre > 50 ? 4 : 0;
+                break;
+            case "Caeren":
+                req.body.caeren = parseInt(req.body.caeren + 2) + previous.caeren > 100 ? 6 : previous.caeren > 50 ? 4 : 0;
+                break;
+            case "Kyosir":
+                req.body.kyosir = parseInt(req.body.kyosir + 2) + previous.kyosir > 100 ? 6 : previous.kyosir > 50 ? 4 : 0;
+                break;
+            default:
+                break;
+        };
+
+        let weapon = imprintEquipment(previous.weapon_one);
+        let shield = imprintEquipment(previous.shield);
+
+        const ascean = await Ascean.create({
+            user: req.user,
+            name: req.body.name,
+            index: req.body.name,
+            origin: req.body.origin,
+            sex: req.body.sex,
+            description: req.body.description,
+            constitution: req.body.constitution,
+            strength: req.body.strength,
+            agility: req.body.agility,
+            achre: req.body.achre,
+            caeren: req.body.caeren,
+            kyosir: req.body.kyosir,
+            mastery: req.body.mastery,
+            weapon_one: firstWeapon._id,
+            weapon_two: secondWeapon._id,
+            weapon_three: weapon._id,
+            shield: shield._id,
+            helmet: req.body.helmet,
+            chest: req.body.chest,
+            legs: req.body.legs,
+            ring_one: '63b3491009fa8aa7e4495996',
+            ring_two: '63b3491009fa8aa7e4495996',
+            amulet: '63b3491109fa8aa7e4495999',
+            trinket: '63b3491109fa8aa7e449599b',
+            faith: req.body.faith,
+            currency: {
+                silver: req.body.kyosir,
+                gold: 0,
+            },
+            shareable: req.body.shareable,
+            visibility: req.body.visibility,
+            hardcore: req.body.hardcore,
+            lineage: [...previous.lineage, previous._id]
+        })
+        res.status(201).json({ ascean: ascean });
+    } catch (err) {
+        console.log(err.message, "Error Persisting Ascean");
+        res.status(400).json({ err });
+    }
+};
 
 async function editAscean(req, res) {
     try {
@@ -74,6 +236,49 @@ async function editAscean(req, res) {
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Editing the Ascean!')
     }
+};
+
+async function imprintEquipment(inventory) {
+    let type = ''
+    if (inventory.grip) {
+        type = 'Weapon';
+    };
+    if (inventory?.name.includes('Hood') || inventory?.name.includes('Helm') || inventory?.name.includes('Mask')) {
+        type = 'Helmet';
+    };
+    if (inventory?.name.includes('Cuirass') || inventory?.name.includes('Robes') || inventory?.name.includes('Armor')) {
+        type = 'Chest';
+    };
+    if (inventory?.name.includes('Greaves') || inventory?.name.includes('Pants') || inventory?.name.includes('Legs')) {
+        type = 'Legs';
+    };
+    if (inventory?.name.includes('Amulet') || inventory?.name.includes('Necklace')) {
+        type = 'Amulet';
+    };
+    if (inventory?.name.includes('Ring')) {
+        type = 'Ring';
+    };
+    if (inventory?.name.includes('Trinket')) {
+        type = 'Trinket';
+    };
+    if (inventory?.type.includes('Shield')) {
+        type = 'Shield';
+    };
+    let models = {
+        Weapon: Weapon,
+        Shield: Shield,
+        Helmet: Helmet,
+        Chest: Chest,
+        Legs: Legs,
+        Ring: Ring,
+        Amulet: Amulet,
+        Trinket: Trinket,
+
+    };
+    let rarity = 'Common';
+    const item = await models[type].aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
+    await seedDB(item, rarity);
+    return item[0];
 }
 
 async function determineItemType(id) {
@@ -497,6 +702,9 @@ async function create(req, res) {
                     silver: req.body.kyosir,
                     gold: 0,
                 },
+                shareable: req.body.shareable,
+                visibility: req.body.visibility,
+                hardcore: req.body.hardcore,
             })
             res.status(201).json({ ascean: ascean });
         } catch (err) {
@@ -507,7 +715,7 @@ async function create(req, res) {
 async function index(req, res) {
     try {
         console.log(req.user._id, '<- User ID in Ascean Index Controller')
-        const asceanCrew = await Ascean.find({ user: req.user._id });
+        const asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
 
         for await (let ascean of asceanCrew) {
             const populateOptions = await Promise.all([
@@ -537,7 +745,7 @@ async function index(req, res) {
 
 async function quickIndex(req, res) {
     try {
-        const asceanCrew = await Ascean.find({ user: req.user._id });
+        const asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
         res.status(200).json({ data: asceanCrew });
     } catch (err) { 
         console.log(err, 'Error in Lean Profile Controller') 

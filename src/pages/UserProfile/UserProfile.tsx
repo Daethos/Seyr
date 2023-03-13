@@ -9,9 +9,10 @@ import HomeSettings from '../../components/HomeSettings/HomeSettings';
 interface UserProps {
     loggedUser: any;
     setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+    handleAsceanCreate: (newAscean: Object) => Promise<void>;
 }
 
-const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
+const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserProps) => {
   const [accordionState, setAccordionState] = useState<string>('Tight');
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,6 +31,15 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
     } catch (err) {
       setLoading(false);
       console.log(err);
+    };
+  };
+
+  async function saveAsceanMiddleware(saveAscean: any) {
+    try {
+      await handleAsceanCreate(saveAscean);
+      await getAscean();
+    } catch (err: any) {
+      console.log(err.message, "Error Adding Middleware");
     };
   };
 
@@ -65,6 +75,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess }: UserProps) => {
                 ascean={ascean}
                 key={ascean._id}
                 userProfile={true}
+                handleAsceanCreate={saveAsceanMiddleware}
                 deleteAscean={deleteAscean}
                 accordion={accordionState}
               />
