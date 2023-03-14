@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useReducer, useRef } from 'react';
+import { useEffect, useState, useCallback, useReducer, useRef, CSSProperties } from 'react';
 import { useParams } from 'react-router-dom';
 import './GameSolo.css';
 import * as asceanAPI from '../../utils/asceanApi';  
@@ -37,6 +37,7 @@ import { Merchant } from '../../components/GameCompiler/NPCs';
 import useJoystick from '../../components/GameCompiler/useJoystick';
 import Journal from '../../components/GameCompiler/Journal';
 import * as io from 'socket.io-client'
+import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided, DraggableLocation, DraggableProps, DroppableProvided, DraggableStateSnapshot, DraggableProvided } from 'react-beautiful-dnd';
 
 let socket: any;
 
@@ -48,6 +49,8 @@ const GameSolo = ({ user }: GameProps) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [background, setBackground] = useState<any | null>({
@@ -1496,6 +1499,47 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Resetting Ascean')
         };
     };
+    
+    // const [translation, setTranslation] = useState({ x: -50, y: -50 });
+
+    // const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    //   console.log(translation, "Current Translation");
+    //   const mapElement = canvasRef.current;
+    
+    //   if (mapElement) {
+    //     const droppableRect = mapElement.getBoundingClientRect();
+        
+    //     useEffect(() => {
+    //       const draggableElement = document.getElementById(result.draggableId);
+    //       const draggableProps = (provided as unknown as DraggableProvided).draggableProps;
+    //       if (draggableElement) {
+    //         const draggableRect = draggableElement.getBoundingClientRect();
+    
+    //         const offset = {
+    //           x: draggableRect.left - droppableRect.left,
+    //           y: draggableRect.top - droppableRect.top,
+    //         };
+    
+    //         const windowWidth = window.innerWidth;
+    //         const windowHeight = window.innerHeight;
+    //         const translate = {
+    //           x: (-offset.x / droppableRect.width) * 100 + windowWidth / 2 / droppableRect.width * 100,
+    //           y: (-offset.y / droppableRect.height) * 100 + windowHeight / 2 / droppableRect.height * 100,
+    //         };
+    
+    //         setTranslation(translate);
+    //       }
+    //     }, []);
+    //   }
+    // };
+    
+      
+    
+      
+      
+      
+      
+      
 
     useEffect(() => {
         if (gameState?.player?.origin && background.background === '') {
@@ -1547,6 +1591,11 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     return (
+        
+        // <DragDropContext onDragEnd={onDragEnd}>
+        // <Droppable droppableId="canvas-element">
+        //     {(provided) => (
+        //         <div ref={provided.innerRef} {...provided.droppableProps}>
         <Container fluid id="game-container" style={ background }>
             { gameState.opponent ?
                 <>
@@ -1608,7 +1657,9 @@ const GameSolo = ({ user }: GameProps) => {
                 </>
             : 
                 <>
-                    <GameMap mapData={mapState} />
+                    <GameMap mapData={mapState} canvasRef={canvasRef} 
+                        // onDragEnd={onDragEnd} translation={translation} 
+                    />
                     <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
                     {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
                     { gameState.showDialog ?    
@@ -1665,6 +1716,12 @@ const GameSolo = ({ user }: GameProps) => {
                 lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved} mapDispatch={mapDispatch} mapState={mapState}
              />
         </Container>
+        
+        // {/* {provided.placeholder}
+        // </div>
+        // )}
+        // </Droppable>
+        // </DragDropContext> */}
     );
 };
 

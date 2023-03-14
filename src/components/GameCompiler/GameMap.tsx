@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import { MapData } from './WorldStore'
+import { MapData } from './WorldStore';
+import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided, DraggableProvided } from 'react-beautiful-dnd';
 
 interface Tile {
     x: number;
@@ -16,13 +17,20 @@ enum MapMode {
     SURROUNDING_TILES,
 }
 
-interface MapProps {
-  mapData: any;
+interface Position {
+    x: number;
+    y: number;
 };
 
-const GameMap = ({ mapData }: MapProps) => {
+interface MapProps {
+  mapData: any;
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+//   onDragEnd: (result: DropResult, provided: ResponderProvided) => void;
+//   translation: { x: number; y: number };
+};
+
+const GameMap = ({ mapData, canvasRef }: MapProps) => {
     const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [mapVisible, setMapVisible] = useState(false);
     const [canvasWidth, setCanvasWidth] = useState<number>(402);
     const [canvasHeight, setCanvasHeight] = useState<number>(402);
@@ -32,6 +40,10 @@ const GameMap = ({ mapData }: MapProps) => {
         handleMapMode(mapMode);
         // console.log(mapData)
     }, [mapData, mapVisible, mapMode]);
+
+    useEffect(() => {
+        console.log(canvasWidth, canvasHeight, canvasPosition, '<- Canvas Width, Height, Position');
+    }, [canvasWidth, canvasHeight, canvasPosition]);
     
     function handleMapMode(mode: MapMode) {
         switch (mode) {
@@ -233,83 +245,125 @@ const GameMap = ({ mapData }: MapProps) => {
         return surroundingTiles;
     };
 
-    function getElementOffset(element: HTMLElement): { left: number; top: number } {
-        let left = 0;
-        let top = 0;
-        let currElement: HTMLElement | null = element;
-      
-        while (currElement) {
-          left += currElement.offsetLeft;
-          top += currElement.offsetTop;
-          currElement = currElement.offsetParent as HTMLElement | null;
+    function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
+        let timer: ReturnType<typeof setTimeout>;
+        return function (this: T, ...args: any[]) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
         };
-      
-        return { left, top };
     };
 
-    function handleTouchStart(event: React.TouchEvent<HTMLCanvasElement>) {
-        console.log("touch start");
-        const touch = event.touches[0];
+
+    const canvasSizes = [100.5, 201, 301.5, 402, 502.5, 603];
+    const debounceDelay = 100; // milliseconds
+
+    // function handleResize(event: React.UIEvent<HTMLCanvasElement>) {
+    //     const maxWidth = canvasSizes[canvasSizes.length - 1];
+    //     const maxHeight = canvasSizes[canvasSizes.length - 1];
+        
+    //     let currentWidth = canvasWidth;
+    //     let currentHeight = canvasHeight;
+        
+    //     for (let i = 0; i < canvasSizes.length; i++) {
+    //         console.log(i, canvasSizes[i], currentWidth, "Resizing")
+    //         if (canvasSizes[i] === currentWidth) {
+    //             if (currentWidth === maxWidth) {
+    //                 currentWidth = canvasSizes[0];
+    //                 currentHeight = canvasSizes[0];
+    //                 break;
+    //             } else {
+    //                 currentWidth = canvasSizes[i + 1];
+    //                 currentHeight = canvasSizes[i + 1];
+    //                 break;
+    //             };
+    //         };
+    //     };
+
+    //     const canvas = canvasRef.current;
+    //     if (canvas) {
+    //     canvas.width = currentWidth;
+    //     canvas.height = currentHeight;
+    //     }
+
+    //     setCanvasWidth(currentWidth);
+    //     setCanvasHeight(currentHeight);
+    // };
+
+    // const debouncedResize = useCallback(debounce(handleResize, debounceDelay), []);
+
+    // function handleTouchEnd(event: React.TouchEvent<HTMLCanvasElement>) {
+    //     console.log("End Touch")
+    //     debouncedResize(event);
+    // }
+    const [translation, setTranslation] = useState({ x: -50, y: -50 });
+
+    useEffect(() => {
         const canvas = canvasRef.current;
-      
-        if (canvas) {
-          const { left, top } = getElementOffset(canvas);
-          setCanvasPosition({
-            x: touch.clientX - left,
-            y: touch.clientY - top,
-          });
+        if (!canvas) {
+          return;
         }
-    }
-
-    function handleTouchMove(event: React.TouchEvent<HTMLCanvasElement>) {
-        event.preventDefault();
-        console.log("touch move");
       
-        const touch = event.touches[0];
-        const canvas = canvasRef.current;
-      
-        if (canvas) {
-          const { left, top } = getElementOffset(canvas);
-          const x = touch.clientX - left - canvasPosition.x;
-          const y = touch.clientY - top - canvasPosition.y;
-      
-          setCanvasPosition({ x, y });
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return;
         }
-      }
-
-    function handleTouchEnd(event: React.TouchEvent<HTMLCanvasElement>) {
-        // Reset canvas position to center
-        setCanvasPosition({ x: 0, y: 0 });
-
-    }
+      
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(translation.x, translation.y);
+      
+        // Draw your canvas content here
+      
+        ctx.restore();
+    }, [translation]);
       
 
-    function handleResize(event: React.UIEvent<HTMLCanvasElement>) {
-        const maxWidth = 603;
-        const maxHeight = 603;
-        
-        const ratio = Math.min(maxWidth / canvasWidth, maxHeight / canvasHeight);
-        
-        const newWidth = canvasWidth * ratio;
-        const newHeight = canvasHeight * ratio;
-        
-        const canvas = canvasRef.current;
-        if (canvas) {
-          canvas.width = newWidth;
-          canvas.height = newHeight;
-        };
-      
-        setCanvasWidth(newWidth);
-        setCanvasHeight(newHeight);
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) {
+          return;
+        }
+        const mapElement = canvasRef.current;
+        if (result.draggableId === 'map' && mapElement) {
+          const destination = result.destination as unknown as { x: number, y: number };
+          const droppableRect = mapElement.getBoundingClientRect();
+          const newPosition = {
+            x: destination.x - droppableRect.left,
+            y: destination.y - droppableRect.top,
+          };
+          setTranslation(newPosition);
+        }
     };
+      
+      
+      
+      
+      
+    
+      
+    // const onDragEnd = (result: DropResult) => {
+    //     const { destination, source } = result;
+    //     console.log(destination, source, "Drag End")
+    //     if (!destination) {
+    //       return;
+    //     }
+    //     // Calculate the change in position of the draggable element
+    //     const deltaX = destination.index - source.index;
+    //     const deltaY = destination.index - source.index;
+      
+    //     // Get the current position of the canvas
+    //     const canvasElement = canvasRef.current;
+    //     if (!canvasElement) return;
+    //     const currentLeft = parseFloat(canvasElement.style.left);
+    //     const currentTop = parseFloat(canvasElement.style.top);
+      
+    //     // Update the style of the canvas based on the change in position of the draggable element
+    //     canvasElement.style.left = `${currentLeft + deltaX}px`;
+    //     canvasElement.style.top = `${currentTop + deltaY}px`;
+    //   };
       
 
     const setMapVisibility = () => {
         setMapVisible(!mapVisible);
-        if (mapVisible) {
-            // Reset canvas position to center
-            setCanvasPosition({ x: 0, y: 0 });
-        };
     };
 
     return (
@@ -351,41 +405,35 @@ const GameMap = ({ mapData }: MapProps) => {
         {
             mapVisible ?
             (
-                // <canvas
-                //     ref={canvasRef}
-                //     onClick={handleMap}
-                //     className='game-map'
-                //     style={{ 
-                //         border: '2px solid purple', 
-                //         zIndex: 9999, 
-                //         backgroundColor: "black", 
-                //         position: 'absolute',
-                //         left: '50%',
-                //         top: '42.5%',
-                //         transform: 'translate(-50%, -50%)',
-                //     }}
-                // />
+
+        <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="canvas-element">
+            {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+            <Draggable draggableId="map" index={1} >
+            {(provided) => (
                 <canvas
-                    ref={canvasRef}
-                    onClick={handleMap}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleResize}
-                    // onReset={handleResize}
-                    className='game-map'
-                    style={{
-                        border: '2px solid purple',
-                        zIndex: 9999,
-                        backgroundColor: "black",
-                        position: 'absolute',
-                        left: `${50 + (canvasPosition.x / 100)}%`,
-                        top: `${42.5 + (canvasPosition.y / 100)}%`,
-                        transform: 'translate(-50%, -50%)',
-                        // transform: `translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
-                        width: canvasWidth,
-                        height: canvasHeight,
-                    }}
+                ref={(el) => {
+                    canvasRef.current = el;
+                    provided.innerRef(el); 
+                }}
+                onClick={handleMap}
+                className='game-map'
+                {...provided.draggableProps} 
+                {...provided.dragHandleProps} 
+                style={{
+                    ...provided.draggableProps.style,
+                    // transform: `translate(${translation.x}%, ${translation.y}%)`
+                }}
                 />
+
+                )}
+            </Draggable>
+            {provided.placeholder}
+        </div>
+        )}
+        </Droppable>
+        </DragDropContext>
 
             ) : ( '' )
         }
