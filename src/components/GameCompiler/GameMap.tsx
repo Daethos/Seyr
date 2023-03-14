@@ -295,44 +295,44 @@ const GameMap = ({ mapData, canvasRef }: MapProps) => {
     //     console.log("End Touch")
     //     debouncedResize(event);
     // }
-    const [translation, setTranslation] = useState({ x: -50, y: -50 });
+    // const [translation, setTranslation] = useState({ x: -50, y: -50 });
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) {
-          return;
-        }
+    // useEffect(() => {
+    //     const canvas = canvasRef.current;
+    //     if (!canvas) {
+    //       return;
+    //     }
       
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          return;
-        }
+    //     const ctx = canvas.getContext("2d");
+    //     if (!ctx) {
+    //       return;
+    //     }
       
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.translate(translation.x, translation.y);
+    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //     ctx.save();
+    //     ctx.translate(translation.x, translation.y);
       
-        // Draw your canvas content here
+    //     // Draw your canvas content here
       
-        ctx.restore();
-    }, [translation]);
+    //     ctx.restore();
+    // }, [translation]);
       
 
-    const onDragEnd = (result: DropResult) => {
-        if (!result.destination) {
-          return;
-        }
-        const mapElement = canvasRef.current;
-        if (result.draggableId === 'map' && mapElement) {
-          const destination = result.destination as unknown as { x: number, y: number };
-          const droppableRect = mapElement.getBoundingClientRect();
-          const newPosition = {
-            x: destination.x - droppableRect.left,
-            y: destination.y - droppableRect.top,
-          };
-          setTranslation(newPosition);
-        }
-    };
+    // const onDragEnd = (result: DropResult) => {
+    //     if (!result.destination) {
+    //       return;
+    //     }
+    //     const mapElement = canvasRef.current;
+    //     if (result.draggableId === 'map' && mapElement) {
+    //       const destination = result.destination as unknown as { x: number, y: number };
+    //       const droppableRect = mapElement.getBoundingClientRect();
+    //       const newPosition = {
+    //         x: destination.x - droppableRect.left,
+    //         y: destination.y - droppableRect.top,
+    //       };
+    //       setTranslation(newPosition);
+    //     }
+    // };
       
       
       
@@ -406,34 +406,35 @@ const GameMap = ({ mapData, canvasRef }: MapProps) => {
             mapVisible ?
             (
 
-        <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="canvas-element">
-            {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps}>
-            <Draggable draggableId="map" index={1} >
-            {(provided) => (
+        // <DragDropContext onDragEnd={onDragEnd}>
+        // <Droppable droppableId="canvas-element">
+        //     {(provided) => (
+        //         <div ref={provided.innerRef} {...provided.droppableProps}>
+        //     <Draggable draggableId="map" index={1} >
+        //     {(provided) => (
                 <canvas
-                ref={(el) => {
-                    canvasRef.current = el;
-                    provided.innerRef(el); 
-                }}
+                ref={canvasRef}
+                // ref={(el) => {
+                //     canvasRef.current = el;
+                //     provided.innerRef(el); 
+                // }}
                 onClick={handleMap}
                 className='game-map'
-                {...provided.draggableProps} 
-                {...provided.dragHandleProps} 
+                // {...provided.draggableProps} 
+                // {...provided.dragHandleProps} 
                 style={{
-                    ...provided.draggableProps.style,
+                    // ...provided.draggableProps.style,
                     // transform: `translate(${translation.x}%, ${translation.y}%)`
                 }}
                 />
 
-                )}
-            </Draggable>
-            {provided.placeholder}
-        </div>
-        )}
-        </Droppable>
-        </DragDropContext>
+                // )}
+        //     </Draggable>
+        //     {provided.placeholder}
+        // </div>
+        // )}
+        // </Droppable>
+        // </DragDropContext>
 
             ) : ( '' )
         }

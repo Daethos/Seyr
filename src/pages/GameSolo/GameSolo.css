@@ -489,9 +489,9 @@
   z-index: 9999;
   position: absolute;
   background-color: black;
-  top: 18%;
-  /* left: 50%; */
-  /* transform: translate(-50%, -50%); */
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .gameplayername {
   font-size: 13.5px;
