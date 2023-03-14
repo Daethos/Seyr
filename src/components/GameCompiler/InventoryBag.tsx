@@ -100,8 +100,9 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     setDrinking(true);
     dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
     const response = await asceanAPI.drinkFirewater(ascean?._id);
+    gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater })
     console.log(response, "Response Drinking Firewater");
-    gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
+    gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
   };
 
   const replenishFirewater = async () => {
@@ -110,7 +111,13 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       console.log("Replenishing Firewater");
       const response = await asceanAPI.replenishFirewater(ascean?._id);
       console.log(response, "Response Replenishing Firewater");
-      gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
+      gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+      const cleanRes = await asceanAPI.getCleanAscean(ascean?._id);
+      dispatch({
+        type: ACTIONS.SAVE_EXPERIENCE,
+        payload: cleanRes.data
+      });
+      gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
     } catch (err: any) {
       console.log(err, "Error Replenishing Firewater");
     }

@@ -384,7 +384,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
             const secondResponse = await userService.getRandomEnemy(enemyData);
             console.log(secondResponse, 'Enemy Response');
-            const selectedOpponent = await asceanAPI.getOneAscean(secondResponse.data.ascean._id);
+            const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
             console.log(selectedOpponent, 'Selected Opponent');
             const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
             console.log(response.data.data, 'Opponent Response');
@@ -458,27 +458,28 @@ const GameSolo = ({ user }: GameProps) => {
                 gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points.`] });
             };
             const cleanRes = await asceanAPI.getCleanAscean(asceanID);
-            const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
+            console.log(cleanRes, "Saved Experience Response")
+            // const firstResponse = await asceanAPI.getOneAscean(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: cleanRes.data.experience });
             dispatch({
                 type: ACTIONS.SAVE_EXPERIENCE,
                 payload: cleanRes.data
             });
             setAsceanState({
                 ...asceanState,
-                'ascean': firstResponse.data,
+                'ascean': cleanRes.data,
                 'constitution': 0,
                 'strength': 0,
                 'agility': 0,
                 'achre': 0,
                 'caeren': 0,
                 'kyosir': 0,
-                'level': firstResponse.data.level,
+                'level': cleanRes.data.level,
                 'opponent': gameState.opponent.level,
                 'experience': 0,
-                'experienceNeeded': firstResponse.data.level * 1000,
-                'mastery': firstResponse.data.mastery,
-                'faith': firstResponse.data.faith,
+                'experienceNeeded': cleanRes.data.level * 1000,
+                'mastery': cleanRes.data.mastery,
+                'faith': cleanRes.data.faith,
             });
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         } catch (err: any) {
@@ -512,24 +513,26 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (gameState.itemSaved === false) return;
-        getAsceanQuickly();
+        getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         };
     }, [gameState.itemSaved, state]);
 
     useEffect(() => {
-        getAsceanSlicker();
-      return () => {
-        gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
-      };
+        if (gameState.eqpSwap === false) return;
+        getAsceanAndInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
+        };
     }, [gameState.eqpSwap]);
 
     useEffect(() => {
-      getAsceanSlicker();
-      return () => {
-        gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
-      };
+        if (gameState.removeItem === false) return;
+        getAsceanInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
+        };
     }, [gameState.removeItem]);
 
     const deleteEquipment = async (eqp: any) => {
@@ -543,8 +546,8 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getAsceanLeveled = async () => {
         try {
-            const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
+            const firstResponse = await asceanAPI.getCleanAscean(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_LEVEL_UP, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_LEVEL_UP,
@@ -552,6 +555,38 @@ const GameSolo = ({ user }: GameProps) => {
              });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Leveled');
+        };
+    };
+
+    const getAsceanInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
+            console.log(firstResponse.data, "Ascean Inventory ?")
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse.data });
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_SLICK,
+                payload: response.data.data
+            });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly')
+        };
+    };
+
+    const getAsceanAndInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_SLICK,
+                payload: response.data.data
+            });
+            // firstResponse is going to retrieve the inventory and the ascean, so a new dispatch will need to be set only the ascean and the inventory
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly')
         };
     };
 

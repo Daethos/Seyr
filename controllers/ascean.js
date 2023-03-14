@@ -12,6 +12,7 @@ const Equipment = require('../models/equipment');
 const Map = require('../models/map');
 const fs = require('fs');
 const seedDB = require('./equipment').seedDB;
+const zlib = require('zlib');
 
 module.exports = {
     create,
@@ -37,6 +38,8 @@ module.exports = {
     getOneAsceanClean,
     killAscean,
     persistAscean,
+    getAsceanAndInventory,
+    getAsceanInventory,
 }
 
 async function killAscean(req, res) {
@@ -283,6 +286,7 @@ async function imprintEquipment(inventory) {
 
 async function determineItemType(id) {
     const models = {
+        Equipment: Equipment,
         Weapon: Weapon,
         Shield: Shield,
         Helmet: Helmet,
@@ -291,10 +295,9 @@ async function determineItemType(id) {
         Ring: Ring,
         Amulet: Amulet,
         Trinket: Trinket,
-        Equipment: Equipment,
     };
       
-    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
+    const itemTypes = ['Equipment', 'Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();
         if (item) {
@@ -349,16 +352,29 @@ async function restoreFirewater(req, res) {
 
 async function saveCoordinates(req, res) {
     try {
+        console.log("Getting Ascean", Date.now())
         const ascean = await Ascean.findById(req.body.ascean);
         ascean.coordinates = req.body.coordinates;
+        console.log("Saving Ascean", Date.now())
         await ascean.save();
-        const map = await Map.findByIdAndUpdate(req.body.map._id, req.body.map, { new: true });
-        res.status(201).json({ ascean, map });
+        req.body.map.map = await compress(req.body.map.map);
+        console.log("Compressed Map", Date.now())
+        await Map.findByIdAndUpdate(req.body.map._id, req.body.map, { new: true });
+        console.log("Map Saved", Date.now())
+        
+        // const map = await Map.findByIdAndUpdate(req.body.map._id, req.body.map, { new: true });
+        res.status(201).json({ success: true });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving Coordinates!');
         res.status(400).json(err);
     }
-}
+};
+
+async function compress(map) {
+    console.log("Compressing Map", Date.now());
+    const compressedMap = zlib.deflateSync(JSON.stringify(map));
+    return compressedMap;
+};
 
 async function saveToInventory(req, res) {
     try {
@@ -755,6 +771,54 @@ async function quickIndex(req, res) {
 
 async function getOneAscean(req, res) {
     try {
+        let ascean = await Ascean.findById({ _id: req.params.id });
+        console.log(ascean, Date.now(), '<- Ascean in Get One Ascean Controller')
+        const populateOptions = await Promise.all([
+            'weapon_one',
+            'weapon_two',
+            'weapon_three',
+            'shield',
+            'helmet',
+            'chest',
+            'legs',
+            'ring_one',
+            'ring_two',
+            'amulet',
+            'trinket'
+        ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+        console.log("Populating Ascean", Date.now());
+        await Ascean.populate(ascean, [
+            { path: 'user' },{ path: 'maps', model: 'Map' },{ path: 'quests' },
+            ...populateOptions
+        ]);
+        let map = ascean.maps[0];
+        if (map) {
+            const decompressedMap = zlib.inflateSync(map.map.buffer).toString();
+            const parsedMap = JSON.parse(decompressedMap);
+            map.map = parsedMap;
+            ascean.maps[0] = map;
+        }
+
+        console.log("Ascean Populated with Map, starting Inventory Population", Date.now());
+        const inventoryPopulated = ascean.inventory.map(async item => {
+            const itemType = await determineItemType(item);
+            if (itemType) {
+                return itemType;
+            };
+            return null;
+        });
+        const inventory = await Promise.all(inventoryPopulated);
+        ascean.inventory = inventory;
+        console.log("Ascean Populated with Inventory", Date.now());
+        res.status(200).json({ data: ascean });
+    } catch (err) {
+        console.log(err, 'Error Getting An Ascean');
+        res.status(400).json({ err });
+    };
+};
+
+async function getAsceanAndInventory(req, res) {
+    try {
         const ascean = await Ascean.findById({ _id: req.params.id });
         const populateOptions = await Promise.all([
             'weapon_one',
@@ -771,7 +835,7 @@ async function getOneAscean(req, res) {
         ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
         
         await Ascean.populate(ascean, [
-            { path: 'user' },{ path: 'maps' },{ path: 'quests' },
+            { path: 'user' },{ path: 'quests' },
             ...populateOptions
         ]);
         
@@ -786,6 +850,27 @@ async function getOneAscean(req, res) {
         ascean.inventory = inventory;
     
         res.status(200).json({ data: ascean });
+    } catch (err) {
+        console.log(err, 'Error Getting An Ascean');
+        res.status(400).json({ err });
+    };
+};
+
+async function getAsceanInventory(req, res) {
+    try {
+        const ascean = await Ascean.findById({ _id: req.params.id });
+        
+        const inventoryPopulated = ascean.inventory.map(async item => {
+            const itemType = await determineItemType(item);
+            if (itemType) {
+                return itemType;
+            };
+            return null;
+        });
+        const inventory = await Promise.all(inventoryPopulated);
+        ascean.inventory = inventory;
+    
+        res.status(200).json({ data: ascean.inventory });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
         res.status(400).json({ err });
@@ -811,7 +896,7 @@ async function getOneAsceanClean(req, res) {
             ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
             
         await Ascean.populate(ascean, [
-            { path: 'user' }, ...populateOptions
+            { path: 'user' },{ path: 'quests' }, ...populateOptions
         ]);
 
         res.status(200).json({ data: ascean });
@@ -859,6 +944,7 @@ async function animalStats(req, res) {
 
 async function getModelType(id) {
     const models = {
+        Equipment: Equipment,
         Weapon: Weapon,
         Shield: Shield,
         Helmet: Helmet,
@@ -867,9 +953,8 @@ async function getModelType(id) {
         Ring: Ring,
         Amulet: Amulet,
         Trinket: Trinket,
-        Equipment: Equipment,
     };
-    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
+    const itemTypes = ['Equipment', 'Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();
         if (item) {

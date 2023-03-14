@@ -347,6 +347,12 @@ export const GAME_ACTIONS = {
     SET_SAVE_WORLD: 'SET_SAVE_WORLD',
     WORLD_SAVED: 'WORLD_SAVED',
 
+    SET_PLAYER_LEVEL_UP: 'SET_PLAYER_LEVEL_UP',
+    SET_EXPERIENCE: 'SET_EXPERIENCE',
+    SET_FIREWATER: 'SET_FIREWATER',
+    SET_INVENTORY: 'SET_INVENTORY',
+    SET_ASCEAN_AND_INVENTORY: 'SET_ASCEAN_AND_INVENTORY',
+
     LOOT_ROLL: 'LOOT_ROLL',
     ITEM_SAVED: 'ITEM_SAVED',
     EQP_SWAP: 'EQP_SWAP',
@@ -429,173 +435,210 @@ export const initialGameData: GameData = {
 
 export const GameStore = (game: GameData, action: Game_Action) => {
     switch (action.type) {
-        case GAME_ACTIONS.SET_GAME_DATA:
+        case 'SET_GAME_DATA':
             return {
                 ...game,
             };
-        case GAME_ACTIONS.SET_PLAYER:
+        case 'SET_PLAYER':
             return {
                 ...game,
                 player: action.payload,
             };
-        case GAME_ACTIONS.SET_OPPONENT:
+        case 'SET_OPPONENT':
             return {
                 ...game,
                 opponent: action.payload,
             };
-        case GAME_ACTIONS.GET_OPPONENT:
+        case 'GET_OPPONENT':
             return {
                 ...game,
                 checkLoot: action.payload,
                 loadingOpponent: action.payload,
             };
-        case GAME_ACTIONS.SET_SAVE_WORLD:
+        case 'SET_SAVE_WORLD':
             return {
                 ...game,
                 overlayContent: action.payload,
                 loadingContent: true,
             };
-        case GAME_ACTIONS.WORLD_SAVED:
+        case 'WORLD_SAVED':
             return {
                 ...game,
                 overlayContent: '',
                 loadingContent: false,
                 loadingOverlay: false,
             };
-        case GAME_ACTIONS.SET_BACKGROUND:
+        case 'SET_BACKGROUND':
             return {
                 ...game,
                 background: action.payload,
             };
-        case GAME_ACTIONS.SET_DIALOG:
+        case 'SET_DIALOG':
             return {
                 ...game,
                 dialog: action.payload,
             };
-        case GAME_ACTIONS.SAVE_EXP:
+        case 'SAVE_EXP':
             return {
                 ...game,
                 saveExp: action.payload,
             };
-        case GAME_ACTIONS.LOOT_ROLL:
+        case 'SET_PLAYER_LEVEL_UP':
+            return {
+                ...game,
+                player: {
+                    ...action.payload, // update all properties except inventory
+                    inventory: game.player.inventory // keep the existing inventory
+                }
+            };
+        case 'SET_EXPERIENCE':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    experience: action.payload,
+                },
+            };
+        case 'SET_FIREWATER':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    firewater: action.payload,
+                },
+            };
+        case 'SET_INVENTORY':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    inventory: action.payload,
+                },
+            };
+        case 'SET_ASCEAN_AND_INVENTORY':
+            return {
+                ...game,
+                player:  action.payload,
+            };
+        case 'LOOT_ROLL':
             return {
                 ...game,
                 lootRoll: action.payload,
             };
-        case GAME_ACTIONS.ITEM_SAVED:
+        case 'ITEM_SAVED':
             return {
                 ...game,
                 itemSaved: action.payload,
             };
-        case GAME_ACTIONS.EQP_SWAP:
+        case 'EQP_SWAP':
             return {
                 ...game,
                 eqpSwap: action.payload,
             };
-        case GAME_ACTIONS.CHECK_LOOT:
+        case 'CHECK_LOOT':
             return {
                 ...game,
                 checkLoot: action.payload,
             };
-        case GAME_ACTIONS.REMOVE_ITEM:
+        case 'REMOVE_ITEM':
             return {
                 ...game,
                 removeItem: action.payload,
             };
-        case GAME_ACTIONS.LOADING:
+        case 'LOADING':
             return {
                 ...game,
                 loading: action.payload,
             };
-        case GAME_ACTIONS.LOADING_ASCEAN:
+        case 'LOADING_ASCEAN':
             return {
                 ...game,
                 loadingAscean: action.payload,
             };
-        case GAME_ACTIONS.LOADING_OPPONENT:
+        case 'LOADING_OPPONENT':
             return {
                 ...game,
                 loadingOpponent: action.payload,
                 showInventory: false,
             };
-        case GAME_ACTIONS.LOADING_OVERLAY:
+        case 'LOADING_OVERLAY':
             return {
                 ...game,
                 loadingOverlay: action.payload,
             };
-        case GAME_ACTIONS.LOADING_CONTENT:
+        case 'LOADING_CONTENT':
             return {
                 ...game,
                 loadingContent: action.payload,
             };
-        case GAME_ACTIONS.LOADING_COMBAT_OVERLAY:
+        case 'LOADING_COMBAT_OVERLAY':
             return {
                 ...game,
                 loadingCombatOverlay: action.payload,
             };
-        case GAME_ACTIONS.LOADED_ASCEAN:
+        case 'LOADED_ASCEAN':
             return {
                 ...game,
                 loadedAscean: action.payload,
             };
-        case GAME_ACTIONS.SET_GAMEPLAY_MODAL:
+        case 'SET_GAMEPLAY_MODAL':
             return {
                 ...game,
                 gameplayModal: action.payload,
             };
-        case GAME_ACTIONS.SET_GAMEPLAY_EVENT:
+        case 'SET_GAMEPLAY_EVENT':
             return {
                 ...game,
                 gameplayEvent: action.payload,
             };
-        case GAME_ACTIONS.SET_COMBAT_RESOLVED:
+        case 'SET_COMBAT_RESOLVED':
             return {
                 ...game,
                 combatResolved: action.payload,
                 loadingCombatOverylay: action.payload,
                 combatOverlayText: '',
             };
-        case GAME_ACTIONS.SET_SHOW_CITY:
+        case 'SET_SHOW_CITY':
             return {
                 ...game,
                 showCity: action.payload,
             };
-        case GAME_ACTIONS.SET_SHOW_DIALOG:
+        case 'SET_SHOW_DIALOG':
             return {
                 ...game,
                 showDialog: action.payload,
             };
-        case GAME_ACTIONS.SET_SHOW_INVENTORY:
+        case 'SET_SHOW_INVENTORY':
             return {
                 ...game,
                 showInventory: action.payload,
             };
-        case GAME_ACTIONS.SET_CITY_BUTTON:
+        case 'SET_CITY_BUTTON':
             return {
                 ...game,
                 cityButton: action.payload,
             };
-        case GAME_ACTIONS.SET_LOOT_DROP:
+        case 'SET_LOOT_DROP':
             return {
                 ...game,
                 lootDrop: action.payload,
             };
-        case GAME_ACTIONS.SET_LOOT_DROP_TWO:
+        case 'SET_LOOT_DROP_TWO':
             return {
                 ...game,
                 lootDropTwo: action.payload,
             };
-        case GAME_ACTIONS.SET_MERCHANT_EQUIPMENT:
+        case 'SET_MERCHANT_EQUIPMENT':
             return {
                 ...game,
                 merchantEquipment: action.payload,
             };
-        case GAME_ACTIONS.SET_CITY_OPTION:
+        case 'SET_CITY_OPTION':
             return {
                 ...game,
                 cityOption: action.payload,
             };
-        case GAME_ACTIONS.SET_CURRENT_INTENT:
+        case 'SET_CURRENT_INTENT':
             return {
                 ...game,
                 currentIntent: action.payload,

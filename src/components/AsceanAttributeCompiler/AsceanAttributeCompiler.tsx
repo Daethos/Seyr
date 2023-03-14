@@ -56,7 +56,7 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
             <Popover.Header id='popover-header'>Agility</Popover.Header>
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic' }}>
-                The physical clarity you possess, weighing heavily into your abliity to perform and mitigate physical damage with finesse.
+                The physical clarity you possess, weighing heavily into your abliity to mitigate and perform physical damage with finesse.
             </p>
             <p> Increases Crit Damage, Dodge, Phys Damage, Roll, Affects Dual-Wielding One-Hand Weapons</p>
             </Popover.Body>
@@ -84,7 +84,7 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
             <br /> The Caer (Informal, Colloquial): Synonymous to 'the will.'
             </p>
             <br /><br />
-            <p>Increases Crit Damage, Defense, Health, Spell Damage, Affects Duel-Wielding Two-Hand Spells</p>
+            <p>Increases Crit Damage, Defense, Health, Spell Damage, Affects Dual-Wielding Two-Hand Spells</p>
             </Popover.Body>
         </Popover>
     )
