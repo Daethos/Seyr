@@ -111,6 +111,8 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         return () => {
         } 
     }, [enemy]);
+
+
     
     useEffect(() => {
         console.log(localWhispers, "Local Whisper")
@@ -223,38 +225,19 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
     }
 
     const getQuest = async (newQuest: any) => {
-        // setLoading(true);
         try {
             setShowQuest(false);
-            // let quest = {
-            //     player: ascean,
-            //     giver: enemy,
-            //     title: newQuest.title,
-            //     description: newQuest.description,
-            //     details: {
-            //         isBounty: newQuest.isBounty,
-            //         bounty: {
-            //             name: ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES][Math.floor(Math.random() * ENEMY_ENEMIES[enemy?.name as keyof typeof ENEMY_ENEMIES].length)],
-            //             bounty: Math.floor(Math.random() * 3) + 2, // 2-4
-            //         },
-            //         isTimed: newQuest.isBounty,
-            //         timer: ascean?.level + Math.floor(Math.random() * 3) + 1, // 1-3
-            //         isGiver: enemy?.name,
-            //     },
-            // };
-            // console.log(quest, "New Quest");
             let uniqueQuest = ascean?.quests.some((q: any) => q.title === newQuest.title);
             console.log(uniqueQuest, "Unique QUest ?")
             if (uniqueQuest) {
                 setError({ title: `Unique Quest`, content: `You already possess knowledge of ${newQuest.title}, given to you by ${newQuest.giver.name}.` });
                 return;
             };
-
             const response = await questAPI.createQuest(newQuest);
             console.log(response, "Quest Response");
             setQuest(response);
-            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
-            // setLoading(false);
+            setQuestModalShow(false);
+            gameDispatch({ type: GAME_ACTIONS.SAVE_QUEST, payload: true });
         } catch (err: any) {
             console.log(err, "Error Getting Quest");
         };

@@ -11,6 +11,7 @@ router.get('/:id', protect, asceanCtrl.getOneAscean);
 router.get('/clean/:id', protect, asceanCtrl.getOneAsceanClean);
 router.get('/inventory/:id', protect, asceanCtrl.getAsceanInventory);
 router.get('/ascean-inventory/:id', protect, asceanCtrl.getAsceanAndInventory);
+router.get('/quests/:id', protect, asceanCtrl.getAsceanQuests);
 router.get('/firewater/:id', protect, asceanCtrl.drinkFirewater);
 router.get('/restoreFirewater/:id', protect, asceanCtrl.restoreFirewater);
 router.get('/replenishFirewater/:id', protect, asceanCtrl.replenishFirewater);

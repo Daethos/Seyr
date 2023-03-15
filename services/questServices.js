@@ -1,9 +1,9 @@
 class Quest {
     constructor(quest) {
-        this.player = quest.player;
-        this.giver = quest.giver;
+        this.player = quest.player.name;
+        this.giver = quest.giver.name;
         this.title = quest.title;
-        this.level = this.getLevel(quest.giver);
+        this.level = this.getLevel(quest.giver.level);
         this.details = this.getDetails(quest.details);
         this.rewards = this.generateRewards();
         this.description = this.getDescription(this, quest.description);
@@ -12,7 +12,7 @@ class Quest {
     };
 
     getLevel(giver) {
-        const level = giver.level;
+        const level = giver;
         return level;
     };
 
@@ -75,12 +75,12 @@ class Quest {
     };
 
     getDescription(quest, desc) {
-        const article = ['a', 'e', 'i', 'o', 'u'].includes(quest.giver.name[0].toLowerCase()) ? "an" : "a";
+        const article = ['a', 'e', 'i', 'o', 'u'].includes(quest.giver[0].toLowerCase()) ? "an" : "a";
         const namelessDescriptors = ["druid", "shaman", "apostle", "jester", "occultist", "stalker", "guard", "knight", "daethic", "bard", "kingsman", "firesword", "shrieker", "northren", "southron", "marauder", "fang", "soldier", "soverain", "rahvrecur", "se'dyrist", "nyren"];
-        const nameParts = quest.giver.name.toLowerCase().split(" ");
+        const nameParts = quest.giver.toLowerCase().split(" ");
         const hasDescriptor = nameParts.some((part) => namelessDescriptors.includes(part));
         const nameless = hasDescriptor ? true : false;
-        const description = `${desc}. You have been tasked with ${quest.title} by ${nameless ? article + ' ' : ''}${quest.giver.name}.`;
+        const description = `${desc}. You have been tasked with ${quest.title} by ${nameless ? article + ' ' : ''}${quest.giver}.`;
         return description;
     };
     

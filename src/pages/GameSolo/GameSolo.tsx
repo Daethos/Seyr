@@ -184,43 +184,115 @@ const GameSolo = ({ user }: GameProps) => {
         // });
     // }, [])
 
-    const getAscean = useCallback(async () => {
-        try {
-            const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
-            console.log(firstResponse, 'First Response')
-            const response = await asceanAPI.getAsceanStats(asceanID);
-            // console.log(response, 'Response');
-            
-            dispatch({
-                type: ACTIONS.SET_PLAYER,
-                payload: response.data.data
-            });
-            setAsceanState({
-                ...asceanState,
-                'ascean': response.data.data.ascean,
-                'level': response.data.data.ascean.level,
-                'opponent': 0,
-                'experience': 0,
-                'experienceNeeded': response.data.data.ascean.level * 1000,
-                'mastery': response.data.data.ascean.mastery,
-                'faith': response.data.data.ascean.faith,
-            });
-            gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
-            if (response.data.data.ascean.tutorial.firstBoot === true) {
-                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            };
-            if (firstResponse.data.maps.length > 0) {
-                await loadMap(firstResponse.data, firstResponse.data.maps[0]);
-            };
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        };
-    }, [asceanID]);
-
     useEffect(() => {
-        getAscean();
-    }, [asceanID, getAscean]);
+        const fetchData = async () => {
+            try {
+                const [gameStateResponse, combatStateResponse, mapStateResponse] = await Promise.all([
+                    asceanAPI.getOneAscean(asceanID),
+                    asceanAPI.getAsceanStats(asceanID),
+                    mapAPI.getMap(asceanID),
+                ]);
+        
+                console.log(gameStateResponse.data, combatStateResponse.data.data, mapStateResponse);
+
+                // Update state for ascean and map data separately
+                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
+                dispatch({
+                    type: ACTIONS.SET_PLAYER,
+                    payload: combatStateResponse.data.data
+                });
+                setAsceanState({
+                    ...asceanState,
+                    'ascean': combatStateResponse.data.data.ascean,
+                    'level': combatStateResponse.data.data.ascean.level,
+                    'opponent': 0,
+                    'experience': 0,
+                    'experienceNeeded': combatStateResponse.data.data.ascean.level * 1000,
+                    'mastery': combatStateResponse.data.data.ascean.mastery,
+                    'faith': combatStateResponse.data.data.ascean.faith,
+                });
+
+                gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
+
+                // Show loading overlay for tutorial on first boot
+                if (gameStateResponse.data.tutorial.firstBoot === true) {
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                };
+
+                // Load map data
+                if (mapStateResponse) {
+                    await loadMap(gameStateResponse.data, mapStateResponse);
+                };
+                
+                // Set loading flags to false
+                // gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
+                
+            } catch (err: any) {
+                console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
+            };
+        };
+      
+        fetchData();
+
+    }, [asceanID]);
+      
+
+    // const getAscean = useCallback(async () => {
+    //     try {
+    //         const firstResponse = await asceanAPI.getOneAscean(asceanID);
+    //         gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
+    //         console.log(firstResponse, 'First Response')
+    //         const response = await asceanAPI.getAsceanStats(asceanID);
+    //         // console.log(response, 'Response');
+    //         dispatch({
+    //             type: ACTIONS.SET_PLAYER,
+    //             payload: response.data.data
+    //         });
+    //         setAsceanState({
+    //             ...asceanState,
+    //             'ascean': response.data.data.ascean,
+    //             'level': response.data.data.ascean.level,
+    //             'opponent': 0,
+    //             'experience': 0,
+    //             'experienceNeeded': response.data.data.ascean.level * 1000,
+    //             'mastery': response.data.data.ascean.mastery,
+    //             'faith': response.data.data.ascean.faith,
+    //         });
+    //         gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
+    //         if (response.data.data.ascean.tutorial.firstBoot === true) {
+    //             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+    //         };
+    //         if (firstResponse.data.maps.length > 0) {
+    //             await loadMap(firstResponse.data, firstResponse.data.maps[0]);
+    //         };
+    //     } catch (err: any) {
+    //         console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
+    //     };
+    // }, [asceanID]);
+
+    // const fetchMap = useCallback(async () => {
+    //     try {
+    //         const response = await mapAPI.getMap(asceanID);
+    //         // console.log(response, 'Response');
+    //         mapDispatch({
+    //             type: MAP_ACTIONS.SET_MAP_DATA,
+    //             payload: response.data,
+    //         });
+    //         const coords = getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.data.map);
+    //         mapDispatch({
+    //             type: MAP_ACTIONS.SET_MAP_COORDS,
+    //             payload: coords,
+    //         });
+    //         mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
+    //     } catch (err: any) {
+    //         console.log(err.message, '<- Error in Fetching a Map for Solo Gameplay')
+    //     };
+    // }, [asceanID]);
+
+    
+    // useEffect(() => {
+    //     getAscean();
+    // }, [asceanID, getAscean]);
 
     const loadMap = async (ascean: Player, map: MapData) => {
         console.log(map, "Loading Map");
@@ -513,27 +585,48 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (gameState.itemSaved === false) return;
+        console.log("Saving Item", gameState.itemSaved)
         getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         };
-    }, [gameState.itemSaved, state]);
+    }, [gameState, gameState.itemSaved]);
 
     useEffect(() => {
         if (gameState.eqpSwap === false) return;
+        console.log("Swapping Equipment", gameState.eqpSwap)
         getAsceanAndInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
         };
-    }, [gameState.eqpSwap]);
+    }, [gameState, gameState.eqpSwap]);
 
     useEffect(() => {
         if (gameState.removeItem === false) return;
+        console.log("Removing Item", gameState.removeItem)
         getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
         };
-    }, [gameState.removeItem]);
+    }, [gameState, gameState.removeItem]);
+
+    useEffect(() => {
+        if (gameState.purchasingItem === false) return;
+        console.log("Purchasing Item", gameState.purchasingItem)
+        getAsceanInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
+
+        };
+    }, [gameState, gameState.purchasingItem]);
+
+    useEffect(() => {
+        if (gameState.saveQuest === false) return;
+        getAsceanQuests();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.SAVE_QUEST, payload: false });
+        };
+    }, [gameState.saveQuest]);
 
     const deleteEquipment = async (eqp: any) => {
         try {
@@ -558,11 +651,27 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const getAsceanQuests = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanQuests(asceanID);
+            console.log(firstResponse, "Ascean Inventory ?")
+            gameDispatch({ type: GAME_ACTIONS.SET_QUESTS, payload: firstResponse });
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_SLICK,
+                payload: response.data.data
+            });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly')
+        };
+    };
+
     const getAsceanInventory = async () => {
         try {
             const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
-            console.log(firstResponse.data, "Ascean Inventory ?")
-            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse.data });
+            console.log(firstResponse, "Ascean Inventory ?")
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_SLICK,
@@ -576,6 +685,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getAsceanAndInventory = async () => {
         try {
+            console.log("Getting Ascean and Inventory");
             const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(asceanID);
@@ -1567,13 +1677,6 @@ const GameSolo = ({ user }: GameProps) => {
     //     }, []);
     //   }
     // };
-    
-      
-    
-      
-      
-      
-      
       
 
     useEffect(() => {
@@ -1722,11 +1825,11 @@ const GameSolo = ({ user }: GameProps) => {
                         <CityBox 
                             state={state} dispatch={dispatch} ascean={gameState.player} mapState={mapState} enemy={gameState.opponent} merchantEquipment={gameState.merchantEquipment}
                             inventory={gameState.player.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
-                            cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch}
+                            cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch} gameState={gameState}
                         />
                         : ''
                     }
-                    { gameState.cityButton ?
+                    { gameState.cityButton || mapState?.currentTile?.content === 'city' ?
                         <Button variant='' className='city-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_CITY, payload: !gameState.showCity })}>City</Button>
                         : ''
                     }

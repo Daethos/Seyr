@@ -14,12 +14,13 @@ const CityButtons = ({ options, setOptions }: { options: any, setOptions: any })
     // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
     const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
-            <Button variant='' key={i} onClick={() => setOptions(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            <div key={i}>
+            <Button variant='' onClick={() => setOptions(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            </div>
         )
     });
     return <>{buttons}</>;
 };
-
 
 const CITY_OPTIONS = {
     'Alchemist': 'Alchemist',
@@ -37,7 +38,6 @@ const CITY_OPTIONS = {
     'Weapons Gallery': 'Weapons Gallery',
 };
 
-
 interface CityProps {
     state: any;
     dispatch: any;
@@ -52,9 +52,10 @@ interface CityProps {
     deleteEquipment: (eqp: any) => Promise<void>;
     clearOpponent: () => Promise<void>;
     gameDispatch: React.Dispatch<any>;
+    gameState: any;
 }
 
-const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clearOpponent, cityOption, merchantEquipment, inventory, getOpponent, resetAscean, deleteEquipment }: CityProps) => {
+const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clearOpponent, cityOption, merchantEquipment, inventory, getOpponent, resetAscean, deleteEquipment, gameState }: CityProps) => {
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [loading, setLoading] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -67,17 +68,12 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         if (inventory.length > 2) {
             const matchedItem = canUpgrade(inventory);
             if (matchedItem) {
-                console.log(matchedItem[0], 'Matched Item')
                 setUpgradeItems(matchedItem);
             } else {
                 setUpgradeItems(null);
-            }
-        }
+            };
+        };
     }, [inventory]);
-
-    useEffect(() => {
-        console.log(upgradeItems, 'Upgrade Items');
-    }, [upgradeItems]);
 
     const canUpgrade = (inventory: any[]) => {
         const itemGroups: Record<string, any[]> = {};
@@ -95,9 +91,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 const items = itemGroups[key];
                 if (items.length >= 3) { 
                     matches.push(items[0]);
-                }
-            }
-        }
+                };
+            };
+        };
       
         return matches.length > 0 ? matches : null;
     };
@@ -153,7 +149,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         if (merchantEquipment.length > 0) {
             const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
             console.log(deleteResponse, 'Delete Response!');
-        }
+        };
         try {
             let response: any;
             setLoading(true);
@@ -179,7 +175,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
     if (loading) {
         return (
             <Loading Combat={true} />
-        )
+        );
     };
 
     return (

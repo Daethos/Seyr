@@ -78,10 +78,6 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
 
     const handleQuest = (quest: any) => {
         setQuestData(quest);
-        // gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_QUEST, payload: {
-        //     intent: quest.title,
-        //     questData: quest,
-        // }});
     };
 
     if (loading) {
@@ -101,7 +97,7 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
                 {questData?.title}<br />
                 {questData?.description}<br /><br />
                 Quest Level: {questData?.level}<br />
-                Quest Giver: {questData?.giver?.name}<br />
+                Quest Giver: {questData?.giver}<br />
                 { questData?.details?.isBounty ? (
                     <>
                     Bounty: ({questData?.details?.bounty?.bounty}) {questData?.details?.bounty?.name} <br />

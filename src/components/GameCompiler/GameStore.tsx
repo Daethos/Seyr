@@ -302,11 +302,13 @@ export interface GameData {
     loadedAscean: boolean;
 
     saveExp: boolean;
+    saveQuest: boolean;
     lootRoll: boolean;
     itemSaved: boolean;
     eqpSwap: boolean;
     checkLoot: boolean;
     removeItem: boolean;
+    purchasingItem: boolean;
 
     gameplayModal: boolean;
     gameplayEvent: object;
@@ -344,14 +346,18 @@ export const GAME_ACTIONS = {
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_DIALOG: 'SET_DIALOG',
     SAVE_EXP: 'SAVE_EXP',
+    SAVE_QUEST: 'SAVE_QUEST',
     SET_SAVE_WORLD: 'SET_SAVE_WORLD',
     WORLD_SAVED: 'WORLD_SAVED',
 
     SET_PLAYER_LEVEL_UP: 'SET_PLAYER_LEVEL_UP',
     SET_EXPERIENCE: 'SET_EXPERIENCE',
     SET_FIREWATER: 'SET_FIREWATER',
+    SET_QUESTS: 'SET_QUESTS',
     SET_INVENTORY: 'SET_INVENTORY',
     SET_ASCEAN_AND_INVENTORY: 'SET_ASCEAN_AND_INVENTORY',
+
+    SET_PURCHASING_ITEM: 'SET_PURCHASING_ITEM',
 
     LOOT_ROLL: 'LOOT_ROLL',
     ITEM_SAVED: 'ITEM_SAVED',
@@ -409,11 +415,13 @@ export const initialGameData: GameData = {
     loadingCombatOverlay: false,
     loadedAscean: false,
     saveExp: false,
+    saveQuest: false,
     lootRoll: false,
     itemSaved: false,
     eqpSwap: false,
     checkLoot: false,
     removeItem: false,
+    purchasingItem: false,
     gameplayModal: false,
     gameplayEvent: { title: "", description: "" },
     combatResolved: false,
@@ -483,6 +491,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 saveExp: action.payload,
             };
+        case 'SAVE_QUEST':
+            return {
+                ...game,
+                saveQuest: action.payload,
+            };
         case 'SET_PLAYER_LEVEL_UP':
             return {
                 ...game,
@@ -509,17 +522,27 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 },
             };
         case 'SET_INVENTORY':
+            console.log("Setting Inventory", action.payload)
             return {
                 ...game,
                 player: {
                     ...game.player,
-                    inventory: action.payload,
+                    currency: action.payload.currency,
+                    inventory: action.payload.inventory,
                 },
             };
         case 'SET_ASCEAN_AND_INVENTORY':
             return {
                 ...game,
                 player:  action.payload,
+            };
+        case 'SET_QUESTS':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    quests: action.payload,
+                },
             };
         case 'LOOT_ROLL':
             return {
@@ -532,6 +555,7 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 itemSaved: action.payload,
             };
         case 'EQP_SWAP':
+            console.log("Swapping Equipment?", action.payload);
             return {
                 ...game,
                 eqpSwap: action.payload,
@@ -545,6 +569,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 removeItem: action.payload,
+            };
+        case 'SET_PURCHASING_ITEM':
+            return {
+                ...game,
+                purchasingItem: action.payload,
             };
         case 'LOADING':
             return {

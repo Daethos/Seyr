@@ -40,6 +40,7 @@ module.exports = {
     persistAscean,
     getAsceanAndInventory,
     getAsceanInventory,
+    getAsceanQuests,
 }
 
 async function killAscean(req, res) {
@@ -765,8 +766,28 @@ async function quickIndex(req, res) {
 
 async function getOneAscean(req, res) {
     try {
-        let ascean = await Ascean.findById({ _id: req.params.id });
-        const populateOptions = await Promise.all([
+        console.log("Getting Ascean")
+        let ascean = await Ascean.findById({ _id: req.params.id })
+                                 .populate('user')
+                                 .populate('quests')
+                                 .exec();
+        console.log(ascean.name, "Ascean Name")
+        // const populateOptions = await Promise.all([
+        //     'weapon_one',
+        //     'weapon_two',
+        //     'weapon_three',
+        //     'shield',
+        //     'helmet',
+        //     'chest',
+        //     'legs',
+        //     'ring_one',
+        //     'ring_two',
+        //     'amulet',
+        //     'trinket'
+        // ].map(async field => ({ 
+        //     path: field, model: await getModelType(ascean[field]._id) 
+        // })));
+        let fields = [
             'weapon_one',
             'weapon_two',
             'weapon_three',
@@ -778,18 +799,16 @@ async function getOneAscean(req, res) {
             'ring_two',
             'amulet',
             'trinket'
-        ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-        await Ascean.populate(ascean, [
-            { path: 'user' },{ path: 'maps', model: 'Map' },{ path: 'quests' },
-            ...populateOptions
-        ]);
-        let map = ascean.maps[0];
-        if (map) {
-            const decompressedMap = zlib.inflateSync(map.map.buffer).toString();
-            const parsedMap = JSON.parse(decompressedMap);
-            map.map = parsedMap;
-            ascean.maps[0] = map;
-        }
+        ];
+        const populated = await Promise.all(fields.map(async field => {
+            const item = await determineItemType(ascean[field]);
+            return item ? item : null;
+        }));
+        // This needs to be reassimilated back into the ascean object, key for key.
+        populated.forEach((item, index) => {
+            ascean[fields[index]] = item;
+        });
+        console.log("Ascean Populated")
 
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = await determineItemType(item);
@@ -800,12 +819,25 @@ async function getOneAscean(req, res) {
         });
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
+        console.log("Inventory Populated")
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
         res.status(400).json({ err });
     };
 };
+
+async function getAsceanQuests(req, res) {
+    try {
+        const ascean = await Ascean.findById({ _id: req.params.id })
+                                   .populate('quests')
+                                   .exec();
+        res.status(200).json(ascean.quests);
+    } catch (err) {
+        console.log(err, 'Error Getting Ascean Quests');
+        res.status(400).json({ err });
+    }
+}
 
 async function getAsceanAndInventory(req, res) {
     try {
@@ -846,6 +878,18 @@ async function getAsceanAndInventory(req, res) {
     };
 };
 
+async function getCurrencyInventory(req, res) {
+    try {
+        const ascean = await Ascean.findById({ _id: req.params.id });
+
+        
+        res.status(200).json({ data: ascean.currency });
+    } catch (err) {
+        console.log(err, 'Error Getting An Ascean');
+        res.status(400).json({ err });
+    };
+};
+
 async function getAsceanInventory(req, res) {
     try {
         const ascean = await Ascean.findById({ _id: req.params.id });
@@ -860,7 +904,7 @@ async function getAsceanInventory(req, res) {
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
     
-        res.status(200).json({ data: ascean.inventory });
+        res.status(200).json({inventory:  ascean.inventory, currency: ascean.currency });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
         res.status(400).json({ err });
@@ -932,9 +976,59 @@ async function animalStats(req, res) {
     };
 };
 
+async function getModelTypes(ids) {
+    const models = {
+      Weapon: Weapon,
+      Shield: Shield,
+      Helmet: Helmet,
+      Chest: Chest,
+      Legs: Legs,
+      Ring: Ring,
+      Amulet: Amulet,
+      Trinket: Trinket,
+      Equipment: Equipment,
+    };
+  
+    const itemTypeMap = {};
+    // const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
+    for (const itemType of itemTypes) {
+      itemTypeMap[itemType] = [];
+    }
+  
+    // Group the item IDs by their corresponding model type
+    for (const id of ids) {
+      const itemType = id.itemType;
+      itemTypeMap[itemType].push(id);
+    }
+  
+    // Batch the database queries and retrieve all the items for each model type in a single query
+    const promises = [];
+    for (const itemType of itemTypes) {
+      const itemIds = itemTypeMap[itemType];
+      if (itemIds.length > 0) {
+        const model = models[itemType];
+        promises.push(model.find({ _id: { $in: itemIds } }).exec());
+      }
+    }
+  
+    const results = await Promise.all(promises);
+  
+    // Map the results back to the item IDs and return the itemType
+    const idToItemTypeMap = {};
+    for (const itemType of itemTypes) {
+      const model = models[itemType];
+      for (const item of results[itemType]) {
+        idToItemTypeMap[item._id.toString()] = itemType;
+      }
+    }
+  
+    const itemTypes = ids.map(id => idToItemTypeMap[id._id.toString()]);
+    return itemTypes;
+  }
+  
+
 async function getModelType(id) {
     const models = {
-        Equipment: Equipment,
         Weapon: Weapon,
         Shield: Shield,
         Helmet: Helmet,
@@ -943,8 +1037,9 @@ async function getModelType(id) {
         Ring: Ring,
         Amulet: Amulet,
         Trinket: Trinket,
+        Equipment: Equipment,
     };
-    const itemTypes = ['Equipment', 'Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
+    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();
         if (item) {
@@ -965,6 +1060,6 @@ async function searchAscean(req, res) {
     } : [];
 
     const ascean = await Ascean.find(keyword);
-    console.log(ascean, 'Ascean in search Ascean controller')
+    console.log(ascean, 'Ascean in search Ascean controller');
     res.send(ascean);
 };

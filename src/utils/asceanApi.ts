@@ -13,14 +13,13 @@ export async function create(ascean: any) {
         },
         // options.headers = { 'Content-Type': 'application/json' };
         // options.body = JSON.stringify(payload);
-    }).then((res) => {
+    }).then(async (res) => {
         // console.log(res.json(), '<- res.json in create function')
         if (res.ok) return res.json(); 
         // res.ok will be try if the http statusCode in the response is anything in the 200's
-        return res.json().then(response => {
-        console.log(response, '<- What response are you getting?')
-        throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response, '<- What response are you getting?');
+        throw new Error(response.err);
     });
 }
 
@@ -30,12 +29,11 @@ export async function getAllAscean() {
         'Authorization': 'Bearer ' + tokenService.getToken()
         }
     })
-    .then((res) => {
+    .then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-        console.log(response)
-        throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     });
 }
 
@@ -44,12 +42,11 @@ export async function getAllAsceanLean() {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 };
 
@@ -58,12 +55,11 @@ export async function getOneAscean(asceanID: string | undefined) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 }
 
@@ -72,12 +68,11 @@ export async function getCleanAscean(asceanID: string | undefined) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 }
 
@@ -86,12 +81,11 @@ export async function getAsceanAndInventory(asceanID: string | undefined) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 };
 
@@ -100,28 +94,37 @@ export async function getAsceanInventory(asceanID: string | undefined) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 };
 
-
+export async function getAsceanQuests(asceanID: string | undefined) {
+    return fetch(BASE_URL + 'quests/' + asceanID, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    })
+};
 
 export async function getNamedAscean(asceanName: string | undefined) {
     return fetch('/api/ascean/search?search=' + asceanName, {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 }
 
@@ -130,12 +133,11 @@ export async function getAsceanStats(ascean: any) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 }
 
@@ -147,12 +149,11 @@ export async function getAnimalStats(animal: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response)
-            throw new Error(response.err)
-        })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     })
 }
    
@@ -163,12 +164,11 @@ export async function deleteAscean(ascean: string) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then((response) => {
-            console.log(response, '<- Response in Delete Ascean in asceanApi')
-            throw new Error (response.err)
-        })
+        const response = await res.json();
+        console.log(response, '<- Response in Delete Ascean in asceanApi');
+        throw new Error(response.err);
     })
 }
 
@@ -181,11 +181,10 @@ export async function edit(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         },
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Edit Utility Return')
-        })
+        const response = await res.json();
+        console.log(response, '<- Response in Edit Utility Return');
     })
 }
 
@@ -198,11 +197,10 @@ export async function highScore(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         },
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in High Score Utility Return')
-        })
+        const response = await res.json();
+        console.log(response, '<- Response in High Score Utility Return');
     })
 }
 
@@ -213,11 +211,10 @@ export async function saveExperience(vaEsai: any) {
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
-    }}).then((res) => {
+    }}).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Save Experience Utility Return')
-        });
+        const response = await res.json();
+        console.log(response, '<- Response in Save Experience Utility Return');
     });
 }
 
@@ -229,11 +226,10 @@ export async function levelUp(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
     }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Level Up Utility Return')
-        });
+        const response = await res.json();
+        console.log(response, '<- Response in Level Up Utility Return');
     });
 }
 
@@ -245,11 +241,10 @@ export async function saveToInventory(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
     }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Save to Inventory Utility Return')
-        });
+        const response = await res.json();
+        console.log(response, '<- Response in Save to Inventory Utility Return');
     });
 }
 
@@ -261,11 +256,10 @@ export async function purchaseToInventory(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Purchase to Inventory Utility Return');
-        });
+        const response = await res.json();
+        console.log(response, '<- Response in Purchase to Inventory Utility Return');
     })
 }
 
@@ -277,11 +271,10 @@ export async function equipmentSwap(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Equipment Swap Utility Return');
-        });
+        const response = await res.json();
+        console.log(response, '<- Response in Equipment Swap Utility Return');
     });
 }
 
@@ -293,11 +286,10 @@ export async function removeItem(vaEsai: any) {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Remove Item Utility Return');
-        });
+        const response = await res.json();
+        console.log(response, '<- Response in Remove Item Utility Return');
     });
 };
 
@@ -306,11 +298,10 @@ export async function drinkFirewater(ascean: string) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, "<- Response in Drink Firewater Utility Return")
-        })
+        const response = await res.json();
+        console.log(response, "<- Response in Drink Firewater Utility Return");
     })
 }
 
@@ -319,11 +310,10 @@ export async function restoreFirewater(ascean: string) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, "<- Response in Drink Firewater Utility Return")
-        })
+        const response = await res.json();
+        console.log(response, "<- Response in Drink Firewater Utility Return");
     })
 }
 
@@ -332,11 +322,10 @@ export async function replenishFirewater(ascean: string) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, "<- Response in Drink Firewater Utility Return")
-        })
+        const response = await res.json();
+        console.log(response, "<- Response in Drink Firewater Utility Return");
     })
 };
 

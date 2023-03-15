@@ -3,11 +3,36 @@ const Map = require('../models/map');
 const WorldMap = require('../services/worldServices.js');
 const zlib = require('zlib');
 
-
-
 module.exports = {
     createMap,
     saveMap,
+    fetchMap,
+};
+
+async function fetchMap(req, res) {
+    try {
+        const ascean = await Ascean.findById(req.params.asceanID);
+        let map;
+        if (ascean.maps.length > 0) {
+            console.log("Finding Map")
+            map = await Map.findById(ascean.maps[0]);
+            console.log("Found Map")
+            const decompressedMap = zlib.inflateSync(map.map.buffer).toString();
+            const parsedMap = JSON.parse(decompressedMap);
+            map.map = parsedMap;
+            ascean.maps[0] = map;
+        } else {
+            map = null;
+        };
+        console.log("Sending Map");
+        // const decompressedMap = zlib.inflateSync(map.map).toString();
+        // const parsedMap = JSON.parse(decompressedMap);
+        // map.map = parsedMap;
+        res.status(200).json(map);
+    } catch (err) {
+        console.log(err, "Error Fetching Map");
+        res.status(400).json(err);
+    };
 };
 
 async function createMap(req, res) {
