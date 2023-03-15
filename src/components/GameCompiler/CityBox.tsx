@@ -131,7 +131,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         try {
             const response = await asceanAPI.restoreFirewater(ascean._id);
             console.log(response, 'Response Refilling Flask');
-            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
         } catch (err: any) {
             console.log(err, "Error Refilling Flask");
         };
