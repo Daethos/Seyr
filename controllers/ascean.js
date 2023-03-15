@@ -352,17 +352,12 @@ async function restoreFirewater(req, res) {
 
 async function saveCoordinates(req, res) {
     try {
-        console.log("Getting Ascean", Date.now())
         const ascean = await Ascean.findById(req.body.ascean);
         ascean.coordinates = req.body.coordinates;
-        console.log("Saving Ascean", Date.now())
         await ascean.save();
         req.body.map.map = await compress(req.body.map.map);
-        console.log("Compressed Map", Date.now())
         await Map.findByIdAndUpdate(req.body.map._id, req.body.map, { new: true });
-        console.log("Map Saved", Date.now())
         
-        // const map = await Map.findByIdAndUpdate(req.body.map._id, req.body.map, { new: true });
         res.status(201).json({ success: true });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving Coordinates!');
@@ -371,7 +366,6 @@ async function saveCoordinates(req, res) {
 };
 
 async function compress(map) {
-    console.log("Compressing Map", Date.now());
     const compressedMap = zlib.deflateSync(JSON.stringify(map));
     return compressedMap;
 };
@@ -772,7 +766,6 @@ async function quickIndex(req, res) {
 async function getOneAscean(req, res) {
     try {
         let ascean = await Ascean.findById({ _id: req.params.id });
-        console.log(ascean, Date.now(), '<- Ascean in Get One Ascean Controller')
         const populateOptions = await Promise.all([
             'weapon_one',
             'weapon_two',
@@ -786,7 +779,6 @@ async function getOneAscean(req, res) {
             'amulet',
             'trinket'
         ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-        console.log("Populating Ascean", Date.now());
         await Ascean.populate(ascean, [
             { path: 'user' },{ path: 'maps', model: 'Map' },{ path: 'quests' },
             ...populateOptions
@@ -799,7 +791,6 @@ async function getOneAscean(req, res) {
             ascean.maps[0] = map;
         }
 
-        console.log("Ascean Populated with Map, starting Inventory Population", Date.now());
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = await determineItemType(item);
             if (itemType) {
@@ -809,7 +800,6 @@ async function getOneAscean(req, res) {
         });
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
-        console.log("Ascean Populated with Inventory", Date.now());
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');

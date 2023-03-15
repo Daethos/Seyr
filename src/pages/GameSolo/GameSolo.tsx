@@ -460,7 +460,7 @@ const GameSolo = ({ user }: GameProps) => {
             const cleanRes = await asceanAPI.getCleanAscean(asceanID);
             console.log(cleanRes, "Saved Experience Response")
             // const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: cleanRes.data.experience });
+            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: cleanRes.data });
             dispatch({
                 type: ACTIONS.SAVE_EXPERIENCE,
                 payload: cleanRes.data

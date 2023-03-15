@@ -13,9 +13,6 @@ module.exports = {
 async function createMap(req, res) {
     try {
         const map = new WorldMap(req.body.name, req.body.ascean);
-        // console.log(map, "New Map Made")
-        const newMap = await compress(map);
-        console.log(newMap, "New Map Compressed")
         res.status(201).json(map);
     } catch (err) {
         console.log(err.message, "Error Creating Map");
@@ -26,16 +23,13 @@ async function createMap(req, res) {
 async function saveMap(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.asceanID);
-        console.log(req.body.map, "Map to Save")
         req.body.map = await compress(req.body.map);
-        console.log("Creating Map", Date.now());
         let map = await Map.create(req.body);
 
         const decompressedMap = zlib.inflateSync(map.map).toString();
         const parsedMap = JSON.parse(decompressedMap);
         map.map = parsedMap;
         
-        console.log("Map Created", Date.now());
         ascean.maps.push(map._id);
         if (ascean.tutorial.firstBoot === true) {
             ascean.tutorial.firstBoot = false;
@@ -49,7 +43,6 @@ async function saveMap(req, res) {
 };
 
 async function compress(map) {
-    console.log("Compressing Map", Date.now());
     const compressedMap = zlib.deflateSync(JSON.stringify(map));
     return compressedMap;
 };

@@ -27,6 +27,11 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false })
     };
 
+    const saveWorldMiddleware = async () => {
+        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Saving Map: ${mapState?.name} \n\n To \n\n Ascean: ${ascean?.name}` })
+        await saveWorld();
+    };
+
     return (
         <Overlay target={overlayRef} show={loadingOverlay}>
             <div
@@ -46,7 +51,8 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                 <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
                 </h6>
-            { !loadingContent && overlayContent === '' ?
+
+        { !loadingContent && overlayContent === '' ?
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
                     Welcome to the Ascea, {ascean?.name}!
@@ -87,7 +93,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. It won't save, so each time you generate a world, it'll be different.
                         Once you're ready, click your name.
                         </p>
-                        <Button variant='' onClick={saveWorld}>
+                        <Button variant='' onClick={saveWorldMiddleware}>
                         <h1 style={{ color: 'gold', textShadow: '2px 2px 2px darkgoldenrod', fontSize: "36px" }}>{ascean.name}</h1>
                         </Button>
                         </>
@@ -95,6 +101,14 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                     }
                 </div>
         : '' }
+
+        {
+            loadingContent && overlayContent === '' ?
+            <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
+                {overlayContent}
+            </h6>
+            : ''
+        }
         {
             overlayContent !== '' && loadingContent ?
             <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", marginTop: "92.5vh", marginLeft: "90vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
