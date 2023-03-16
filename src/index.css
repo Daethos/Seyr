@@ -166,8 +166,9 @@ html, body {
     stroke: #5a0043;
 }
 .creature-heading h1{
-    font-family: 'Libre Baskerville', 'Lora', 'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif;
+    font-family: 'Cinzel', 'Libre Baskerville', 'Lora', 'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif;
     /* color: #922610; */
+    /* font-weight: 900; */
     color: #5a0043;
     font-size: 23px;
     line-height: 1.2em;

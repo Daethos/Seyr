@@ -727,26 +727,49 @@ async function index(req, res) {
     try {
         console.log(req.user._id, '<- User ID in Ascean Index Controller')
         const asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
+        let fields = [
+            'weapon_one',
+            'weapon_two',
+            'weapon_three',
+            'shield',
+            'helmet',
+            'chest',
+            'legs',
+            'ring_one',
+            'ring_two',
+            'amulet',
+            'trinket'
+        ];
 
         for await (let ascean of asceanCrew) {
-            const populateOptions = await Promise.all([
-                'weapon_one',
-                'weapon_two',
-                'weapon_three',
-                'shield',
-                'helmet',
-                'chest',
-                'legs',
-                'ring_one',
-                'ring_two',
-                'amulet',
-                'trinket'
-                ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+            // const populateOptions = await Promise.all([
+            //     'weapon_one',
+            //     'weapon_two',
+            //     'weapon_three',
+            //     'shield',
+            //     'helmet',
+            //     'chest',
+            //     'legs',
+            //     'ring_one',
+            //     'ring_two',
+            //     'amulet',
+            //     'trinket'
+            //     ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
                 
-            await Ascean.populate(ascean, [
-                { path: 'user' },
-                ...populateOptions
-            ]);
+            // await Ascean.populate(ascean, [
+            //     { path: 'user' },
+            //     ...populateOptions
+            // ]);
+
+            const populated = await Promise.all(fields.map(async field => {
+                const item = await determineItemType(ascean[field]);
+                return item ? item : null;
+            }));
+            populated.forEach((item, index) => {
+                ascean[fields[index]] = item;
+            });
+
+            await Ascean.populate(ascean, { path: 'user' });
         };
         res.status(200).json({ data: asceanCrew });
     } catch (err) {
