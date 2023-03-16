@@ -1208,20 +1208,20 @@ const GameSolo = ({ user }: GameProps) => {
             });
         };
         if (content === 'city' && lastContent === 'city') {
-            if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
-                // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
-                // console.log(response, "Response Moving Content ?");
+            if (mapState.steps !== 0) {
+            //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
+            //     // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+            //     // console.log(response, "Response Moving Content ?");
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             };
             return;
         };
-        if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
-            // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
-            // console.log(response, "Response Moving Content ?");
-            mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-        };
+        // if (mapState.steps % 1 === 0 && mapState.steps !== 0) {
+        //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
+        //     // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+        //     // console.log(response, "Response Moving Content ?");
+        //     mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+        // };
         try {
             switch (content) {
                 case 'enemy': {
@@ -1318,12 +1318,15 @@ const GameSolo = ({ user }: GameProps) => {
         } catch (err: any) {
             console.log(err.message, 'Error Handling Tile Content');
         } finally {
-            // if (mapState.steps % 5 === 0 && mapState.steps !== 0) {
+            // console.log("Gonna call Move Content in handleTileContent")
+            if (mapState.steps % 1 === 0 && mapState.steps !== 0) {
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+            };
+            // mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
             //     // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
             //     // console.log(response, "Response Moving Content ?");
             //     mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            // };
         };
     };
 
@@ -1338,12 +1341,16 @@ const GameSolo = ({ user }: GameProps) => {
                     'background': getPlayerBackground.background
                 });
             };
-            if (mapState.steps % 5 === 0 && mapState.steps !== 0 && !mapState.contentMoved) {
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
-                // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
-                // console.log(response, "Response Moving Content ?");
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            } else {
+            // if (mapState.steps !== 0 && !mapState.contentMoved) {
+            //     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've traveled ${mapState.steps} times. The world looks at you and breathes.` });
+            //     // const response = moveContent(mapState, mapState.contentClusters, mapState.visitedTiles);
+            //     // console.log(response, "Response Moving Content ?");
+            //     mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+            // } else {
+                if (mapState.steps !== 0 && !mapState.contentMoved) {
+                    // console.log("Gonna call Move Content in useEffect")
+                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                };
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
@@ -1353,7 +1360,7 @@ const GameSolo = ({ user }: GameProps) => {
                     type: MAP_ACTIONS.SET_MAP_MOVED,
                     payload: false
                 })
-            };
+            // };
             return;
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);

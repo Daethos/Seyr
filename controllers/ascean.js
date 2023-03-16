@@ -766,12 +766,6 @@ async function quickIndex(req, res) {
 
 async function getOneAscean(req, res) {
     try {
-        console.log("Getting Ascean")
-        let ascean = await Ascean.findById({ _id: req.params.id })
-                                 .populate('user')
-                                 .populate('quests')
-                                 .exec();
-        console.log(ascean.name, "Ascean Name")
         // const populateOptions = await Promise.all([
         //     'weapon_one',
         //     'weapon_two',
@@ -787,6 +781,12 @@ async function getOneAscean(req, res) {
         // ].map(async field => ({ 
         //     path: field, model: await getModelType(ascean[field]._id) 
         // })));
+        console.log("Getting Ascean")
+        let ascean = await Ascean.findById({ _id: req.params.id })
+                                 .populate('user')
+                                 .populate('quests')
+                                 .exec();
+        console.log(ascean.name, "Ascean Name")
         let fields = [
             'weapon_one',
             'weapon_two',
@@ -804,7 +804,6 @@ async function getOneAscean(req, res) {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
         }));
-        // This needs to be reassimilated back into the ascean object, key for key.
         populated.forEach((item, index) => {
             ascean[fields[index]] = item;
         });
@@ -913,9 +912,32 @@ async function getAsceanInventory(req, res) {
 
 async function getOneAsceanClean(req, res) {
     try {
-        const ascean = await Ascean.findById({ _id: req.params.id });
+        // const ascean = await Ascean.findById({ _id: req.params.id });
 
-        const populateOptions = await Promise.all([
+        // const populateOptions = await Promise.all([
+        //     'weapon_one',
+        //     'weapon_two',
+        //     'weapon_three',
+        //     'shield',
+        //     'helmet',
+        //     'chest',
+        //     'legs',
+        //     'ring_one',
+        //     'ring_two',
+        //     'amulet',
+        //     'trinket'
+        //     ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+            
+        // await Ascean.populate(ascean, [
+        //     { path: 'user' },{ path: 'quests' }, ...populateOptions
+        // ]);
+
+        let ascean = await Ascean.findById({ _id: req.params.id })
+                                 .populate('user')
+                                 .populate('quests')
+                                 .exec();
+        console.log(ascean.name, "Ascean Name")
+        let fields = [
             'weapon_one',
             'weapon_two',
             'weapon_three',
@@ -927,11 +949,15 @@ async function getOneAsceanClean(req, res) {
             'ring_two',
             'amulet',
             'trinket'
-            ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-            
-        await Ascean.populate(ascean, [
-            { path: 'user' },{ path: 'quests' }, ...populateOptions
-        ]);
+        ];
+        const populated = await Promise.all(fields.map(async field => {
+            const item = await determineItemType(ascean[field]);
+            return item ? item : null;
+        }));
+        populated.forEach((item, index) => {
+            ascean[fields[index]] = item;
+        });
+        console.log("Ascean Populated")
 
         res.status(200).json({ data: ascean });
     } catch (err) {
@@ -942,8 +968,26 @@ async function getOneAsceanClean(req, res) {
 
 async function getAsceanStats(req, res) {
     try {
-        const ascean = await Ascean.findById({ _id: req.params.id });
-        const populateOptions = await Promise.all([
+        // const ascean = await Ascean.findById({ _id: req.params.id });
+        // const populateOptions = await Promise.all([
+        //     'weapon_one',
+        //     'weapon_two',
+        //     'weapon_three',
+        //     'shield',
+        //     'helmet',
+        //     'chest',
+        //     'legs',
+        //     'ring_one',
+        //     'ring_two',
+        //     'amulet',
+        //     'trinket'
+        // ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+        // await Ascean.populate(ascean, [{ path: 'user' }, ...populateOptions ]);
+        let ascean = await Ascean.findById({ _id: req.params.id })
+                                 .populate('user')
+                                 .exec();
+        console.log(ascean.name, "Ascean Name")
+        let fields = [
             'weapon_one',
             'weapon_two',
             'weapon_three',
@@ -955,8 +999,15 @@ async function getAsceanStats(req, res) {
             'ring_two',
             'amulet',
             'trinket'
-        ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-        await Ascean.populate(ascean, [{ path: 'user' }, ...populateOptions ]);
+        ];
+        const populated = await Promise.all(fields.map(async field => {
+            const item = await determineItemType(ascean[field]);
+            return item ? item : null;
+        }));
+        populated.forEach((item, index) => {
+            ascean[fields[index]] = item;
+        });
+        console.log("Ascean Populated")
         const data = await asceanService.asceanCompiler(ascean);
         res.status(200).json({ data });
     } catch (err) {
