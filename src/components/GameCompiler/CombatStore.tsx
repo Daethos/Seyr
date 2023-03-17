@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-interface CombatData {
+export interface CombatData {
     player: any;
     action: string;
     player_action: string;

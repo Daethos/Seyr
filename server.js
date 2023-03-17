@@ -4,10 +4,7 @@ const path = require('path');
 const logger = require('morgan');
 const favicon = require('serve-favicon');
 
-
 require('./config/database');
-
-// Require controllers here
 
 const app = express();
 const http = require('http');
@@ -15,29 +12,14 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 app.use(cors());
 
-
-
-
-// add in when the app is ready to be deployed
 app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json({ limit: '50mb' }));
 
 // app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, 'build'))); // this allows express to find the build folder
-// Configure the auth middleware
-// This decodes the jwt token, and assigns
-// the user information to req.user
-
-// TODO: Remember to update this
-// FIXME: When you add the file again
 app.use(require('./config/auth')); 
 
-
-// api routes must be before the "catch all" route
-
-// TODO: Remember to update this
-// FIXME: When you add the file again
 app.use('/api/users', require('./routes/api/users')); // USERS IS NOW LIVE!
 app.use('/api/equipment', require('./routes/api/equipment'));
 app.use('/api/ascean', require('./routes/api/ascean'));
@@ -56,33 +38,6 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-
-
-// const server = http.createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// io.on("connection", (socket) => {
-//   console.log(`User Connected: ${socket.id}`);
-
-//   socket.on("join_room", (data) => {
-//     socket.join(data);
-//     console.log(`User with ID: ${socket.id} joined room: ${data}`)
-//   })
-
-//   socket.on("disconnect", () => {
-//     console.log('User Disconnected', socket.id);
-//   });
-// });
-
-// server.listen(3002, () => {
-//   console.log('SERVER RUNNING')
-// });
 const pvpService = require('./services/pvpServices')
 const asceanService = require('./services/asceanServices')
 const questService = require('./services/questServices')
@@ -101,8 +56,6 @@ const io = require('socket.io')(server, {
   },
 });
 
-
-
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
@@ -112,12 +65,6 @@ io.on("connection", (socket) => {
     socket.emit("map-generated", map);
     console.log("Map Generated At: " + Date.now())
   });
-
-
-
-
-
-
 
   socket.on("setup", (userData) => {
     socket.join(userData._id);
@@ -144,11 +91,6 @@ io.on("connection", (socket) => {
       socket.in(user._id).emit("message_received", newMessageReceived);
     })
    });
-
-
-
-
-
 
 
   // THIS IS FOR NON SAVEABLE CHAT

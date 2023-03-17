@@ -41,6 +41,8 @@ module.exports = {
     getAsceanAndInventory,
     getAsceanInventory,
     getAsceanQuests,
+    killAscean,
+    persistAscean,
 }
 
 async function killAscean(req, res) {
@@ -56,27 +58,7 @@ async function killAscean(req, res) {
 };
 
 async function persistAscean(req, res) {
-    console.log(req.body, '<- Hopefully the Ascean!', req.user)
-    if (req.body.preference === 'Plate-Mail') {
-        req.body.helmet = '63f413a4acef90a6e298a3c4';
-        req.body.chest = '63f413a5acef90a6e298a3cf';
-        req.body.legs = '63f413a5acef90a6e298a429';
-    }
-    if (req.body.preference === 'Chain-Mail') {
-        req.body.helmet = '63f413a4acef90a6e298a3c5';
-        req.body.chest = '63f413a5acef90a6e298a3d0';
-        req.body.legs = '63f413a5acef90a6e298a42a';
-    }
-    if (req.body.preference === 'Leather-Mail') {
-        req.body.helmet = '63f413a4acef90a6e298a3c6';
-        req.body.chest = '63f413a5acef90a6e298a3d1';
-        req.body.legs = '63f413a5acef90a6e298a42b';
-    }
-    if (req.body.preference === 'Leather-Cloth') {
-        req.body.helmet = '63f413a4acef90a6e298a3c7'
-        req.body.chest = '63f413a5acef90a6e298a3d2';
-        req.body.legs = '63f413a5acef90a6e298a42c';
-    }
+    console.log(req.body.lineage.name, req.body.name, '<- Hopefully the Ascean!')
 
     if (req.body.faith === 'devoted') { // Devoted to Daethos
         if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
@@ -134,7 +116,7 @@ async function persistAscean(req, res) {
     await seedDB([secondWeapon], secondWeapon.rarity);
 
     try {
-        const previous = await Ascean.findById(req.params.id);
+        const previous = req.body.lineage;
         switch (previous.mastery) {
             case "Constitution":
                 req.body.constitution = parseInt(req.body.constitution + 2) + previous.constitution > 100 ? 6 : previous.constitution > 50 ? 4 : 0;
@@ -158,8 +140,11 @@ async function persistAscean(req, res) {
                 break;
         };
 
-        let weapon = imprintEquipment(previous.weapon_one);
-        let shield = imprintEquipment(previous.shield);
+        let weapon = await imprintEquipment(previous.weapon_one);
+        let shield = await imprintEquipment(previous.shield);
+        let helmet = await imprintEquipment(previous.helmet);
+        let chest = await imprintEquipment(previous.chest);
+        let legs = await imprintEquipment(previous.legs);
 
         const ascean = await Ascean.create({
             user: req.user,
@@ -179,21 +164,21 @@ async function persistAscean(req, res) {
             weapon_two: secondWeapon._id,
             weapon_three: weapon._id,
             shield: shield._id,
-            helmet: req.body.helmet,
-            chest: req.body.chest,
-            legs: req.body.legs,
+            helmet: helmet._id,
+            chest: chest._id,
+            legs: legs._id,
             ring_one: '63b3491009fa8aa7e4495996',
             ring_two: '63b3491009fa8aa7e4495996',
             amulet: '63b3491109fa8aa7e4495999',
             trinket: '63b3491109fa8aa7e449599b',
             faith: req.body.faith,
             currency: {
-                silver: req.body.kyosir,
+                silver: req.body.lineage.kyosir,
                 gold: 0,
             },
             shareable: req.body.shareable,
             visibility: req.body.visibility,
-            hardcore: req.body.hardcore,
+            hardcore: true,
             lineage: [...previous.lineage, previous._id]
         })
         res.status(201).json({ ascean: ascean });
@@ -256,15 +241,6 @@ async function imprintEquipment(inventory) {
     if (inventory?.name.includes('Greaves') || inventory?.name.includes('Pants') || inventory?.name.includes('Legs')) {
         type = 'Legs';
     };
-    if (inventory?.name.includes('Amulet') || inventory?.name.includes('Necklace')) {
-        type = 'Amulet';
-    };
-    if (inventory?.name.includes('Ring')) {
-        type = 'Ring';
-    };
-    if (inventory?.name.includes('Trinket')) {
-        type = 'Trinket';
-    };
     if (inventory?.type.includes('Shield')) {
         type = 'Shield';
     };
@@ -274,10 +250,6 @@ async function imprintEquipment(inventory) {
         Helmet: Helmet,
         Chest: Chest,
         Legs: Legs,
-        Ring: Ring,
-        Amulet: Amulet,
-        Trinket: Trinket,
-
     };
     let rarity = 'Common';
     const item = await models[type].aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();

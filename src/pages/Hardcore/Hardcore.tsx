@@ -1,6 +1,5 @@
 import { useEffect, useState, useReducer, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import './GameSolo.css';
 import * as asceanAPI from '../../utils/asceanApi';  
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as gameAPI from '../../utils/gameApi'
@@ -19,7 +18,7 @@ import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatStore, initialCombatData, CombatData } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
@@ -49,7 +48,7 @@ interface GameProps {
     user: any;
 };
 
-const GameSolo = ({ user }: GameProps) => {
+const Hardcore = ({ user }: GameProps) => {
     const { asceanID } = useParams();
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
@@ -1255,7 +1254,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
       
-    async function soundEffects(effects: any) {
+    async function soundEffects(effects: CombatData) {
         try {
             if (effects.critical_success === true) {
                 const soundEffectMap = {
@@ -1299,7 +1298,29 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    async function handlePlayerWin(combatData: any) {
+    async function handleHardcoreDeath(data: CombatData) {
+        try {
+            playDeath();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have died in battle to ${gameState?.opponent?.name}, yet there is another way.` });
+            const response = await asceanAPI.kill(asceanID);
+            setTimeout(() => {
+                setTimeLeft(0);
+                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: response });
+                dispatch({
+                    type: ACTIONS.COMPUTER_WIN,
+                    payload: data
+                });
+                clearOpponent();
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            }, 6000);
+        } catch (err: any) {
+            console.log(err, "Error Handling Hardcore Death");
+        };
+    };
+
+    async function handlePlayerWin(combatData: CombatData) {
         try {
             if (mapState?.currentTile?.content === 'city') {
                 playWin();
@@ -1328,7 +1349,11 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    async function handleComputerWin(combatData: any) {
+    async function handleComputerWin(combatData: CombatData) {
+        if (gameState?.player?.hardcore === true) {
+            await handleHardcoreDeath(combatData);
+            return;
+        };
         try {
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
@@ -1570,4 +1595,4 @@ const GameSolo = ({ user }: GameProps) => {
     );
 };
 
-export default GameSolo;
+export default Hardcore;

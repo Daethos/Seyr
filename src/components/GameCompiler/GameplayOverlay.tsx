@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS } from './GameStore';
 import { MAP_ACTIONS } from './WorldStore';
 import Loading from '../Loading/Loading';
+import PersistAscean from '../PersistAscean/PersistAscean';
 
 interface Props {
     ascean: any;
@@ -48,11 +49,18 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                 border: "0.2em solid purple",
             }}
             >
-                <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
+            <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
-                </h6>
+            </h6>
+            { !ascean?.alive ? (
+                <div style={{ textAlign: 'center' }}>
+                    <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
+                    Well now, {ascean?.name}, it seems your journey as met its end. Yet there is another way
+                    </h5><br />
+                </div>
+            ) : ( '' ) }
 
-        { !loadingContent && overlayContent === '' ?
+            { !loadingContent && overlayContent === '' ?
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
                     Welcome to the Ascea, {ascean?.name}!
@@ -100,20 +108,12 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         : ('')    
                     }
                 </div>
-        : '' }
-
-        {
-            loadingContent && overlayContent === '' ?
-            <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
-                {overlayContent}
-            </h6>
-            : ''
-        }
-        {
-            overlayContent !== '' && loadingContent ?
-            <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", marginTop: "92.5vh", marginLeft: "90vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
-            : ''
-        }
+            : '' }
+            {
+                overlayContent !== '' && loadingContent ?
+                <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", marginTop: "92.5vh", marginLeft: "90vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
+                : ''
+            }
             </div>
         </Overlay>
     )

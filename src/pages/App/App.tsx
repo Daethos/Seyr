@@ -48,9 +48,7 @@ function App() {
 
   async function handleAsceanCreate(newAscean: Object) {
     try {
-        console.log(newAscean, '<- newAscean in handleAsceanCreate start');
         const response = await asceanAPI.create(newAscean);
-        console.log(response, '<- Response in handleAsceanCreate');
         setAscean([response.data, ...ascean]);
         setCreateSuccess(true);
         navigate("/");
@@ -63,7 +61,6 @@ function App() {
     try {
       console.log(vaEsai, '<- Ascean in editAscean start');
       const response = await asceanAPI.edit(vaEsai);
-      console.log(response, '<- Response in editAscean');
       setAscean([response.data, ...ascean]);
       setCreateSuccess(true)
     } catch (err: any)  {

@@ -1,3 +1,4 @@
+import { Data } from 'phaser';
 import tokenService from './tokenService';
 const BASE_URL = '/api/ascean/';
 
@@ -21,7 +22,7 @@ export async function create(ascean: any) {
         console.log(response, '<- What response are you getting?');
         throw new Error(response.err);
     });
-}
+};
 
 export async function getAllAscean() {
     return fetch(BASE_URL, {
@@ -170,7 +171,38 @@ export async function deleteAscean(ascean: string) {
         console.log(response, '<- Response in Delete Ascean in asceanApi');
         throw new Error(response.err);
     })
-}
+};
+
+export async function kill(ascean: string | undefined) {
+    return fetch(BASE_URL + 'kill/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response, '<- Response in Delete Ascean in asceanApi');
+        throw new Error(response.err);
+    })
+};
+
+export async function persist(data: any) {
+    console.log(data, '<- data ');
+    return fetch(BASE_URL + 'persist/' + data.lineage._id, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: "Bearer " + tokenService.getToken(),
+        
+        },
+    }).then(async (res) => {
+        if (res.ok) return res.json(); 
+        const response = await res.json();
+        console.log(response, '<- What response are you getting?');
+        throw new Error(response.err);
+    });
+};
 
 export async function edit(vaEsai: any) {
     console.log(vaEsai, '<- New Ascean vaEsai!')

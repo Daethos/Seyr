@@ -28,7 +28,6 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
 
     function compareScores(a: any, b: any) {
         return a[0].score - b[0].score;
-       
     }
 
     async function getAscean() {
@@ -96,7 +95,6 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         }
         const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText))        
         filterAscean(filteredResults)
-        console.log(searchText, '<- the changing search text')
     }, [searchText, ascean])
 
     if (loading) {

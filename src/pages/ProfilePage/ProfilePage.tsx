@@ -10,12 +10,9 @@ import SearchCard from '../../components/SearchCard/SearchCard'
 import Loading from "../../components/Loading/Loading";
 import { useParams } from "react-router-dom";
 
-
 interface ProfileProps {
     user: any;
 }
-
-// TODO: Fix Friend Request Check, someone friended can still send a request
 
 const ProfilePage = ({ user }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
@@ -37,7 +34,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
         const response = await userService.getProfile(username);
         setProfileUser(response.data.user);
         setAscean(response.data.ascean);
-        console.log(response);
         setLoading(false)
         } catch (err: any) {
         console.log(err.message);
@@ -53,7 +49,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
         setLoading(true);
         try {
             const response = await friendAPI.friendRequest(profileUser._id, user._id)
-            console.log(response, '<- Response in Friend Request')
             setFriendRequest(true)
             setLoading(false)
         } catch (err: any) {
@@ -70,7 +65,6 @@ const ProfilePage = ({ user }: ProfileProps) => {
         setLoading(true);
         try {
             const response = await friendAPI.getAllFriends(user._id)
-            console.log(response.data.user.friends, '<- Response Finding a Friend on a Profile')
             setFriendState(response.data.user.friends)
             setLoading(false)
         } catch (err: any) {

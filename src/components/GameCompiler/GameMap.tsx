@@ -4,6 +4,7 @@ import { MapData } from './WorldStore';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import { MapMode } from '../../pages/GameSolo/GameSolo';
 
 interface Tile {
     x: number;
@@ -13,12 +14,6 @@ interface Tile {
     visited: boolean;
 }
 
-enum MapMode {
-    FULL_MAP,
-    QUADRANT,
-    SURROUNDING_TILES,
-};
-  
 interface MapProps {
     mapData: any;
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
@@ -28,10 +23,11 @@ interface MapProps {
     canvasWidth: number;
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>;
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>;
+    mapMode: MapMode;
+    setMapMode: React.Dispatch<React.SetStateAction<MapMode>>;
 };
 
-const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvasHeight, canvasWidth, setCanvasHeight, setCanvasWidth }: MapProps) => {
-    const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
+const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvasHeight, canvasWidth, setCanvasHeight, setCanvasWidth, mapMode, setMapMode }: MapProps) => {
     const [mapVisible, setMapVisible] = useState(false);
     const [draggableElements, setDraggingElements] = useState([
         { id: "dz-1" },

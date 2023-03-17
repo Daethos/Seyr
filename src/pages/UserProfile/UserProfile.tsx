@@ -25,7 +25,6 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
     setLoading(true);
     try {
       const response = await asceanAPI.getAllAscean();
-      console.log(response.data, '<- the response in Get All Ascean');
       setAsceanVaEsai([...response.data.reverse()]);
       setLoading(false);
     } catch (err) {
@@ -46,7 +45,6 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
   async function deleteAscean(e: any) {
     e.preventDefault();
     try {
-      console.log(e.currentTarget.value, '<- What are you in here?');
       await asceanAPI.deleteAscean(e.currentTarget.value);
       setCreateSuccess(true);
       await getAscean();

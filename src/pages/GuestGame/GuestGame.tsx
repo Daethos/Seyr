@@ -29,9 +29,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [dialog, setDialog] = useState<any>({});
-    const [lootRoll, setLootRoll] = useState<boolean>(false);
     const [background, setBackground] = useState<any>(null);
-    const [combatResolved, setCombatResolved] = useState<boolean>(false);
 
     const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
     const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
