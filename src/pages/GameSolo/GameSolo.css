@@ -66,7 +66,6 @@
   margin-top: -2.75%;
   z-index: 101;
   color: goldenrod;
-  /* clip-path: rect(1% at 20% 20%); */
 }
 
 .status-effects {
@@ -483,15 +482,10 @@
 }
 
 .game-map {
-  width: 402px;
-  height: 402px;
   border: 2px solid purple;
   z-index: 9999;
   position: absolute;
   background-color: black;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 .gameplayername {
   font-size: 13.5px;

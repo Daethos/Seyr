@@ -863,8 +863,32 @@ async function getAsceanQuests(req, res) {
 
 async function getAsceanAndInventory(req, res) {
     try {
-        const ascean = await Ascean.findById({ _id: req.params.id });
-        const populateOptions = await Promise.all([
+        // const ascean = await Ascean.findById({ _id: req.params.id });
+        // const populateOptions = await Promise.all([
+        //     'weapon_one',
+        //     'weapon_two',
+        //     'weapon_three',
+        //     'shield',
+        //     'helmet',
+        //     'chest',
+        //     'legs',
+        //     'ring_one',
+        //     'ring_two',
+        //     'amulet',
+        //     'trinket'
+        // ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+        
+        // await Ascean.populate(ascean, [
+        //     { path: 'user' },{ path: 'quests' },
+        //     ...populateOptions
+        // ]);
+
+        let ascean = await Ascean.findById({ _id: req.params.id })
+                                    .populate('user')
+                                    .populate('quests')
+                                    .exec();
+        console.log(ascean.name, "Ascean Name")
+        let fields = [
             'weapon_one',
             'weapon_two',
             'weapon_three',
@@ -876,12 +900,14 @@ async function getAsceanAndInventory(req, res) {
             'ring_two',
             'amulet',
             'trinket'
-        ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-        
-        await Ascean.populate(ascean, [
-            { path: 'user' },{ path: 'quests' },
-            ...populateOptions
-        ]);
+        ];
+        const populated = await Promise.all(fields.map(async field => {
+            const item = await determineItemType(ascean[field]);
+            return item ? item : null;
+        }));
+        populated.forEach((item, index) => {
+            ascean[fields[index]] = item;
+        });
         
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = await determineItemType(item);

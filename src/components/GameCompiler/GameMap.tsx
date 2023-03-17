@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import { MapData } from './WorldStore';
-import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided, DraggableProvided } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 
 interface Tile {
     x: number;
@@ -15,35 +17,78 @@ enum MapMode {
     FULL_MAP,
     QUADRANT,
     SURROUNDING_TILES,
-}
-
-interface Position {
-    x: number;
-    y: number;
 };
-
+  
 interface MapProps {
-  mapData: any;
-  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
-//   onDragEnd: (result: DropResult, provided: ResponderProvided) => void;
-//   translation: { x: number; y: number };
+    mapData: any;
+    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+    canvasPosition: { x: number; y: number };
+    setCanvasPosition: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
+    canvasHeight: number;
+    canvasWidth: number;
+    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>;
+    setCanvasWidth: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const GameMap = ({ mapData, canvasRef }: MapProps) => {
+const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvasHeight, canvasWidth, setCanvasHeight, setCanvasWidth }: MapProps) => {
     const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
     const [mapVisible, setMapVisible] = useState(false);
-    const [canvasWidth, setCanvasWidth] = useState<number>(402);
-    const [canvasHeight, setCanvasHeight] = useState<number>(402);
-    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const [draggableElements, setDraggingElements] = useState([
+        { id: "dz-1" },
+        { id: "dz-2" },
+        { id: "dz-3" },
+        { id: "dz-4" },
+        { id: "dz-5" },
+        { id: "dz-6" },
+        { id: "dz-7" },
+        { id: "dz-8" },
+        { id: "dz-9" },
+        { id: "dz-10" },
+        { id: "dz-11" },
+        { id: "dz-12" },
+        { id: "dz-13" },
+        { id: "dz-14" },
+        { id: "dz-15" },
+        { id: "dz-16" },
+        { id: "dz-17" },
+        { id: "dz-18" },
+        { id: "dz-19" },
+        { id: "dz-20" },
+        { id: "dz-21" },
+        { id: "dz-22" },
+        { id: "dz-23" },
+        { id: "dz-24" },
+        { id: "dz-25" },
+        { id: "dz-26" },
+        { id: "dz-27" },
+        { id: "dz-28" },
+        { id: "dz-29" },
+        { id: "dz-30" },
+        { id: "dz-31" },
+        { id: "dz-32" },
+        { id: "dz-33" },
+        { id: "dz-34" },
+        { id: "dz-35" },
+        { id: "dz-36" },
+        { id: "dz-37" },
+        { id: "dz-38" },
+        { id: "dz-39" },
+        { id: "dz-40" },
+        { id: "dz-41" },
+        { id: "dz-42" },
+        { id: "dz-43" },
+        { id: "dz-44" },
+        { id: "dz-45" },
+    ]);
+    const [canvasIndex, setCanvasIndex] = useState(draggableElements.length); // assuming canvas is the last element in the array
 
     useEffect(() => {
         handleMapMode(mapMode);
-        // console.log(mapData)
     }, [mapData, mapVisible, mapMode]);
 
     useEffect(() => {
-        console.log(canvasWidth, canvasHeight, canvasPosition, '<- Canvas Width, Height, Position');
-    }, [canvasWidth, canvasHeight, canvasPosition]);
+        console.log(draggableElements, canvasIndex, canvasPosition, '<- Canvas Index');
+    }, [canvasIndex, canvasPosition]);
     
     function handleMapMode(mode: MapMode) {
         switch (mode) {
@@ -85,7 +130,7 @@ const GameMap = ({ mapData, canvasRef }: MapProps) => {
         };
     };
 
-    const  handleMap = () => {
+    const handleMap = () => {
         setMapMode((mode) => {
             switch (mode) {
             case MapMode.FULL_MAP:
@@ -244,130 +289,72 @@ const GameMap = ({ mapData, canvasRef }: MapProps) => {
         };
         return surroundingTiles;
     };
+    const [mapModalShow, setMapModalShow] = useState(false);
+    const settingsStyle = {
+        color: 'orangered',
+        fontWeight: 400,
+        fontVariant: 'small-caps',
+        fontSize: 18 + 'px',
+        height: 40 + 'vh',
+        overflow: 'auto',
+    };
 
-    function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
-        let timer: ReturnType<typeof setTimeout>;
-        return function (this: T, ...args: any[]) {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
+    function handleCanvasHeight(e: React.ChangeEvent<HTMLInputElement>) {
+        setCanvasHeight(Number(e.target.value));
+    };
+    function handleCanvasWidth(e: React.ChangeEvent<HTMLInputElement>) {
+        setCanvasWidth(Number(e.target.value));
+    };
+
+    function handleCanvasWidthPosition(e: React.ChangeEvent<HTMLInputElement>) {
+        setCanvasPosition({ x: Number(e.target.value), y: canvasPosition.y });
+    };
+
+    function handleCanvasHeightPosition(e: React.ChangeEvent<HTMLInputElement>) {
+        setCanvasPosition({ x: canvasPosition.x, y: Number(e.target.value) });
     };
 
 
-    const canvasSizes = [100.5, 201, 301.5, 402, 502.5, 603];
-    const debounceDelay = 100; // milliseconds
+    const onDragEnd = (result: DropResult) => {
+        const { source, destination } = result;
+        console.log(source, destination, "Drag End")
+        if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return;
+      
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+      
+        const rowLength = 4;
+        const newIndex = destination.index;
+        const dX = newIndex % rowLength;
+        const dY = Math.floor(newIndex / rowLength);
 
-    // function handleResize(event: React.UIEvent<HTMLCanvasElement>) {
-    //     const maxWidth = canvasSizes[canvasSizes.length - 1];
-    //     const maxHeight = canvasSizes[canvasSizes.length - 1];
+        console.log(newIndex, dX, dY, "Drag End")
+
+        const canvasPosition = { x: dX, y: dY };
+        setCanvasPosition(canvasPosition);
+    };
         
-    //     let currentWidth = canvasWidth;
-    //     let currentHeight = canvasHeight;
-        
-    //     for (let i = 0; i < canvasSizes.length; i++) {
-    //         console.log(i, canvasSizes[i], currentWidth, "Resizing")
-    //         if (canvasSizes[i] === currentWidth) {
-    //             if (currentWidth === maxWidth) {
-    //                 currentWidth = canvasSizes[0];
-    //                 currentHeight = canvasSizes[0];
-    //                 break;
-    //             } else {
-    //                 currentWidth = canvasSizes[i + 1];
-    //                 currentHeight = canvasSizes[i + 1];
-    //                 break;
-    //             };
-    //         };
-    //     };
-
-    //     const canvas = canvasRef.current;
-    //     if (canvas) {
-    //     canvas.width = currentWidth;
-    //     canvas.height = currentHeight;
-    //     }
-
-    //     setCanvasWidth(currentWidth);
-    //     setCanvasHeight(currentHeight);
-    // };
-
-    // const debouncedResize = useCallback(debounce(handleResize, debounceDelay), []);
-
-    // function handleTouchEnd(event: React.TouchEvent<HTMLCanvasElement>) {
-    //     console.log("End Touch")
-    //     debouncedResize(event);
-    // }
-    // const [translation, setTranslation] = useState({ x: -50, y: -50 });
-
-    // useEffect(() => {
-    //     const canvas = canvasRef.current;
-    //     if (!canvas) {
-    //       return;
-    //     }
-      
-    //     const ctx = canvas.getContext("2d");
-    //     if (!ctx) {
-    //       return;
-    //     }
-      
-    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //     ctx.save();
-    //     ctx.translate(translation.x, translation.y);
-      
-    //     // Draw your canvas content here
-      
-    //     ctx.restore();
-    // }, [translation]);
-      
-
-    // const onDragEnd = (result: DropResult) => {
-    //     if (!result.destination) {
-    //       return;
-    //     }
-    //     const mapElement = canvasRef.current;
-    //     if (result.draggableId === 'map' && mapElement) {
-    //       const destination = result.destination as unknown as { x: number, y: number };
-    //       const droppableRect = mapElement.getBoundingClientRect();
-    //       const newPosition = {
-    //         x: destination.x - droppableRect.left,
-    //         y: destination.y - droppableRect.top,
-    //       };
-    //       setTranslation(newPosition);
-    //     }
-    // };
-      
-      
-      
-      
-      
-    
-      
-    // const onDragEnd = (result: DropResult) => {
-    //     const { destination, source } = result;
-    //     console.log(destination, source, "Drag End")
-    //     if (!destination) {
-    //       return;
-    //     }
-    //     // Calculate the change in position of the draggable element
-    //     const deltaX = destination.index - source.index;
-    //     const deltaY = destination.index - source.index;
-      
-    //     // Get the current position of the canvas
-    //     const canvasElement = canvasRef.current;
-    //     if (!canvasElement) return;
-    //     const currentLeft = parseFloat(canvasElement.style.left);
-    //     const currentTop = parseFloat(canvasElement.style.top);
-      
-    //     // Update the style of the canvas based on the change in position of the draggable element
-    //     canvasElement.style.left = `${currentLeft + deltaX}px`;
-    //     canvasElement.style.top = `${currentTop + deltaY}px`;
-    //   };
-      
-
     const setMapVisibility = () => {
         setMapVisible(!mapVisible);
     };
 
     return (
         <>
+        <Modal show={mapModalShow} onHide={() => setMapModalShow(false)} centered style={{ top: "25%" }}>
+            <Modal.Header>
+        <h3 style={{ fontSize: 24 + 'px', textAlign: 'center' }}>Map Size Settings</h3>
+            </Modal.Header>
+        <Modal.Body style={settingsStyle}>
+            Default Setup is 402x402 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
+        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100.5} max={603} step={50.25} />
+        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100.5} max={603} step={50.25} />
+        <br />
+        <br />
+        Positioning: X: {canvasPosition.x * 100}px Y: {canvasPosition.y * 100}px <br /> <br />
+        Top {canvasPosition.y * 100}px: <Form.Range value={canvasPosition.y} onChange={handleCanvasHeightPosition} min={0} max={8} step={0.25} />
+        Left {canvasPosition.x * 100}px: <Form.Range value={canvasPosition.x} onChange={handleCanvasWidthPosition} min={0} max={8} step={0.25} />
+        </Modal.Body>
+        </Modal>
         <Button variant='' onClick={setMapVisibility} className='map-button' style={{ 
             color: "goldenrod", 
             gridColumnStart: 1, 
@@ -403,38 +390,97 @@ const GameMap = ({ mapData, canvasRef }: MapProps) => {
             </svg>
         </Button>
         {
-            mapVisible ?
-            (
-
-        // <DragDropContext onDragEnd={onDragEnd}>
-        // <Droppable droppableId="canvas-element">
-        //     {(provided) => (
-        //         <div ref={provided.innerRef} {...provided.droppableProps}>
-        //     <Draggable draggableId="map" index={1} >
-        //     {(provided) => (
+            mapVisible ? (
+                <Button variant='' onClick={() => setMapModalShow(true)} className='map-button' style={{ 
+                    color: "goldenrod", 
+                    gridColumnStart: 1, 
+                    gridRowStart: 1,
+                    position: "absolute", 
+                    marginTop: "3.25%",
+                    marginLeft: "3%",
+                    zIndex: 99,
+                    clipPath: "rect(30% at 30% 30%)", 
+                    }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 511.998 511.998">
+                    <path d="M460.596,107.979H51.404C23.06,107.979,0,131.039,0,159.383v43.889c0,28.344,23.06,51.404,51.404,51.404h137.989v140.535    c0,3.327,1.874,6.369,4.845,7.866c2.97,1.496,6.531,1.192,9.204-0.788l25.593-18.958l25.593,18.958    c1.547,1.145,3.389,1.73,5.243,1.73c1.352,0,2.709-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866v-33.752l16.787,12.438    c1.547,1.146,3.39,1.731,5.245,1.731c1.35,0,2.708-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866V254.678h161.078    c28.344,0,51.404-23.06,51.404-51.404v-43.889C512,131.039,488.94,107.979,460.596,107.979z M68.855,232.196    c-7.369-4.451-12.927-11.613-15.224-20.117h30.391C81.727,220.568,76.207,227.743,68.855,232.196z M85.194,194.464H43.66    c-4.864,0-8.807,3.943-8.807,8.807c0,12.808,4.72,24.528,12.497,33.538c-16.726-2.01-29.735-16.279-29.735-33.538v-43.889    c0-18.632,15.158-33.79,33.79-33.79c18.632,0,33.79,15.158,33.79,33.79V194.464z M223.793,365.292l-16.786,12.434V254.677h44.057    v123.049l-16.786-12.434C231.164,362.986,226.909,362.986,223.793,365.292z M266.842,203.272c0,18.632-15.158,33.79-33.79,33.79    H90.093c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79h142.96    c18.632,0,33.79,15.158,33.79,33.79V203.272z M281.902,349.332l-13.223-9.797v-84.858h13.223V349.332z M328.514,203.272    c0,18.632-15.158,33.79-33.79,33.79h-22.982c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79    h22.981c18.633,0,33.791,15.158,33.791,33.79V203.272z M460.596,237.061H333.413c7.908-9.042,12.715-20.862,12.715-33.79v-43.889    c0-12.928-4.808-24.746-12.715-33.79h127.182c18.632,0,33.79,15.158,33.79,33.79v43.889h0.001    C494.385,221.903,479.227,237.061,460.596,237.061z"></path>
+                    </svg>
+                </Button> 
+                ) : ( '' )
+        }
+        { mapVisible ? (
+        <DragDropContext onDragEnd={onDragEnd}>
+        
+        {draggableElements.map((draggableElement, index) => (
+        <Droppable droppableId={`droppable-${index + 1}`} key={index}>
+            {(provided, snapshot) => (
+            <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                
+                style={{
+                    backgroundColor: snapshot.isDraggingOver ? 'lightgreen' : '',
+                    border: snapshot.isDraggingOver ? '3px solid gold' : '',
+                    display: "grid",
+                    gridTemplateColumns: `repeat(5, ${100}px)`,
+                    gridAutoRows: `${100}px`,
+                    width: "100%",
+                    margin: "0 auto",
+            }}
+            >
+                <Draggable
+                draggableId={draggableElement.id}
+                index={index}
+                isDragDisabled
+                >
+                {(provided) => (
+                    <div
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref={provided.innerRef}
+                    style={{
+                        ...provided.draggableProps.style,
+                        width: `${100.5}px`,
+                        height: `${100.5}px`,
+                    }}
+                    >
+                        
+                    </div>
+                )}
+                </Draggable>
+                {provided.placeholder}
+            </div>
+            )}
+        </Droppable>
+        ))}
+<Droppable droppableId="canvas-element">
+            {(provided) => (
+        <div ref={provided.innerRef} {...provided.droppableProps}>
+            <Draggable draggableId="map" index={canvasIndex} >
+            {(provided) => (
                 <canvas
-                ref={canvasRef}
-                // ref={(el) => {
-                //     canvasRef.current = el;
-                //     provided.innerRef(el); 
-                // }}
+                ref={(el) => {
+                    canvasRef.current = el;
+                    provided.innerRef(el); 
+                }}
                 onClick={handleMap}
                 className='game-map'
-                // {...provided.draggableProps} 
-                // {...provided.dragHandleProps} 
+                {...provided.draggableProps} 
+                {...provided.dragHandleProps} 
                 style={{
-                    // ...provided.draggableProps.style,
-                    // transform: `translate(${translation.x}%, ${translation.y}%)`
+                    ...provided.draggableProps.style,
+                    width: `${canvasWidth}px`,
+                    height: `${canvasHeight}px`,
+                    top: (canvasPosition.y) * 100,
+                    left: (canvasPosition.x) * 100,
                 }}
-                />
+            /> )}
+            </Draggable>
 
-                // )}
-        //     </Draggable>
-        //     {provided.placeholder}
-        // </div>
-        // )}
-        // </Droppable>
-        // </DragDropContext>
+        {provided.placeholder}
+        </div> )}
+        
+        </Droppable>
+        </DragDropContext>
 
             ) : ( '' )
         }

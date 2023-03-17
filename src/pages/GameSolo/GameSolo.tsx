@@ -56,6 +56,9 @@ const GameSolo = ({ user }: GameProps) => {
     const [background, setBackground] = useState<any | null>({
         background: ''
     }); // ------
+    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.25, y: 1.75 });
+    const [canvasWidth, setCanvasWidth] = useState<number>(402);
+    const [canvasHeight, setCanvasHeight] = useState<number>(402);
     const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
     const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
     // const { direction, handleDirectionChange } = useJoystick();
@@ -195,7 +198,6 @@ const GameSolo = ({ user }: GameProps) => {
         
                 console.log(gameStateResponse.data, combatStateResponse.data.data, mapStateResponse);
 
-                // Update state for ascean and map data separately
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
                     type: ACTIONS.SET_PLAYER,
@@ -214,18 +216,14 @@ const GameSolo = ({ user }: GameProps) => {
 
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
 
-                // Show loading overlay for tutorial on first boot
                 if (gameStateResponse.data.tutorial.firstBoot === true) {
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                 };
 
-                // Load map data
                 if (mapStateResponse) {
                     await loadMap(gameStateResponse.data, mapStateResponse);
                 };
                 
-                // Set loading flags to false
-                // gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
@@ -235,64 +233,6 @@ const GameSolo = ({ user }: GameProps) => {
         fetchData();
 
     }, [asceanID]);
-      
-
-    // const getAscean = useCallback(async () => {
-    //     try {
-    //         const firstResponse = await asceanAPI.getOneAscean(asceanID);
-    //         gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
-    //         console.log(firstResponse, 'First Response')
-    //         const response = await asceanAPI.getAsceanStats(asceanID);
-    //         // console.log(response, 'Response');
-    //         dispatch({
-    //             type: ACTIONS.SET_PLAYER,
-    //             payload: response.data.data
-    //         });
-    //         setAsceanState({
-    //             ...asceanState,
-    //             'ascean': response.data.data.ascean,
-    //             'level': response.data.data.ascean.level,
-    //             'opponent': 0,
-    //             'experience': 0,
-    //             'experienceNeeded': response.data.data.ascean.level * 1000,
-    //             'mastery': response.data.data.ascean.mastery,
-    //             'faith': response.data.data.ascean.faith,
-    //         });
-    //         gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
-    //         if (response.data.data.ascean.tutorial.firstBoot === true) {
-    //             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-    //         };
-    //         if (firstResponse.data.maps.length > 0) {
-    //             await loadMap(firstResponse.data, firstResponse.data.maps[0]);
-    //         };
-    //     } catch (err: any) {
-    //         console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
-    //     };
-    // }, [asceanID]);
-
-    // const fetchMap = useCallback(async () => {
-    //     try {
-    //         const response = await mapAPI.getMap(asceanID);
-    //         // console.log(response, 'Response');
-    //         mapDispatch({
-    //             type: MAP_ACTIONS.SET_MAP_DATA,
-    //             payload: response.data,
-    //         });
-    //         const coords = getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.data.map);
-    //         mapDispatch({
-    //             type: MAP_ACTIONS.SET_MAP_COORDS,
-    //             payload: coords,
-    //         });
-    //         mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
-    //     } catch (err: any) {
-    //         console.log(err.message, '<- Error in Fetching a Map for Solo Gameplay')
-    //     };
-    // }, [asceanID]);
-
-    
-    // useEffect(() => {
-    //     getAscean();
-    // }, [asceanID, getAscean]);
 
     const loadMap = async (ascean: Player, map: MapData) => {
         console.log(map, "Loading Map");
@@ -1651,40 +1591,6 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(err.message, 'Error Resetting Ascean')
         };
     };
-    
-    // const [translation, setTranslation] = useState({ x: -50, y: -50 });
-
-    // const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
-    //   console.log(translation, "Current Translation");
-    //   const mapElement = canvasRef.current;
-    
-    //   if (mapElement) {
-    //     const droppableRect = mapElement.getBoundingClientRect();
-        
-    //     useEffect(() => {
-    //       const draggableElement = document.getElementById(result.draggableId);
-    //       const draggableProps = (provided as unknown as DraggableProvided).draggableProps;
-    //       if (draggableElement) {
-    //         const draggableRect = draggableElement.getBoundingClientRect();
-    
-    //         const offset = {
-    //           x: draggableRect.left - droppableRect.left,
-    //           y: draggableRect.top - droppableRect.top,
-    //         };
-    
-    //         const windowWidth = window.innerWidth;
-    //         const windowHeight = window.innerHeight;
-    //         const translate = {
-    //           x: (-offset.x / droppableRect.width) * 100 + windowWidth / 2 / droppableRect.width * 100,
-    //           y: (-offset.y / droppableRect.height) * 100 + windowHeight / 2 / droppableRect.height * 100,
-    //         };
-    
-    //         setTranslation(translate);
-    //       }
-    //     }, []);
-    //   }
-    // };
-      
 
     useEffect(() => {
         if (gameState?.player?.origin && background.background === '') {
@@ -1802,8 +1708,8 @@ const GameSolo = ({ user }: GameProps) => {
                 </>
             : 
                 <>
-                    <GameMap mapData={mapState} canvasRef={canvasRef} 
-                        // onDragEnd={onDragEnd} translation={translation} 
+                    <GameMap mapData={mapState} canvasRef={canvasRef} canvasPosition={canvasPosition} setCanvasPosition={setCanvasPosition} 
+                        canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
                     />
                     <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
                     {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
