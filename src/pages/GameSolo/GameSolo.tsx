@@ -1,5 +1,5 @@
 import { useEffect, useState, useReducer, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './GameSolo.css';
 import * as asceanAPI from '../../utils/asceanApi';  
 import * as eqpAPI from '../../utils/equipmentApi';
@@ -19,7 +19,7 @@ import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatStore, initialCombatData, CombatData } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
@@ -51,6 +51,7 @@ interface GameProps {
 
 const GameSolo = ({ user }: GameProps) => {
     const { asceanID } = useParams();
+    const navigate = useNavigate();
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
@@ -61,7 +62,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
-    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.25, y: 1.75 });
+    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
     const [canvasWidth, setCanvasWidth] = useState<number>(402);
     const [canvasHeight, setCanvasHeight] = useState<number>(402);
     const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
@@ -1255,7 +1256,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
       
-    async function soundEffects(effects: any) {
+    async function soundEffects(effects: CombatData) {
         try {
             if (effects.critical_success === true) {
                 const soundEffectMap = {
@@ -1299,7 +1300,33 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    async function handlePlayerWin(combatData: any) {
+    async function handleHardcoreDeath(data: CombatData) {
+        try {
+            playDeath();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have died in battle to ${gameState?.opponent?.name}, yet there is another way.` });
+            const response = await asceanAPI.kill(asceanID);
+            setTimeout(() => {
+                setTimeLeft(0);
+                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: response });
+                dispatch({
+                    type: ACTIONS.COMPUTER_WIN,
+                    payload: data
+                });
+                clearOpponent();
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+                if (gameState?.player?.level > 3) {
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                } else {
+                    navigate('/');
+                };
+            }, 6000);
+        } catch (err: any) {
+            console.log(err, "Error Handling Hardcore Death");
+        };
+    };
+
+    async function handlePlayerWin(combatData: CombatData) {
         try {
             if (mapState?.currentTile?.content === 'city') {
                 playWin();
@@ -1328,7 +1355,11 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    async function handleComputerWin(combatData: any) {
+    async function handleComputerWin(combatData: CombatData) {
+        if (gameState?.player?.hardcore === true) {
+            await handleHardcoreDeath(combatData);
+            return;
+        };
         try {
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });

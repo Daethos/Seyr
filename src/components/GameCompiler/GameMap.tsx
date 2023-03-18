@@ -347,8 +347,8 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         <br />
         <br />
         Positioning: X: {canvasPosition.x * 100}px Y: {canvasPosition.y * 100}px <br /> <br />
-        Top {canvasPosition.y * 100}px: <Form.Range value={canvasPosition.y} onChange={handleCanvasHeightPosition} min={0} max={8} step={0.25} />
-        Left {canvasPosition.x * 100}px: <Form.Range value={canvasPosition.x} onChange={handleCanvasWidthPosition} min={0} max={8} step={0.25} />
+        Top {canvasPosition.y * 100}px: <Form.Range value={canvasPosition.y} onChange={handleCanvasHeightPosition} min={0} max={8} step={0.125} />
+        Left {canvasPosition.x * 100}px: <Form.Range value={canvasPosition.x} onChange={handleCanvasWidthPosition} min={0} max={8} step={0.125} />
         </Modal.Body>
         </Modal>
         <Button variant='' onClick={setMapVisibility} className='map-button' style={{ 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import './PersistAscean.css';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Character from '../AsceanBuilder/Character';
@@ -11,16 +10,22 @@ import Mastery from '../AsceanBuilder/Mastery';
 import Sex from '../AsceanBuilder/Sex';
 import Communal from '../AsceanBuilder/Communal';
 import * as asceanAPI from '../../utils/asceanApi';
+import ToastAlert from '../ToastAlert/ToastAlert';
+
+interface Error {
+    title: string;
+    content: string;
+};
 
 interface AsceanProps {
     lineage: any;
-    createSuccess: boolean;
 };
 
-const PersistAscean = ({ lineage, createSuccess }: AsceanProps) => {
+const PersistAscean = ({ lineage }: AsceanProps) => {
     const navigate = useNavigate();
-    const [faithModalShow, setFaithModalShow] = React.useState<boolean>(false)
-    const [originModalShow, setOriginModalShow] = React.useState<boolean>(false)
+    const [faithModalShow, setFaithModalShow] = React.useState<boolean>(false);
+    const [originModalShow, setOriginModalShow] = React.useState<boolean>(false);
+    const [error, setError] = useState<Error>({ title: '', content: '' });
     const [asceanState, setAsceanState] = useState<any>({
         name: '',
         description: '',
@@ -67,11 +72,19 @@ const PersistAscean = ({ lineage, createSuccess }: AsceanProps) => {
 
     function handleSubmit(e: any) {
         e.preventDefault();
+        if (asceanState.name === '') {
+            setError({ title: 'Name is required', content: 'Please enter a name for your character' });
+            return;
+        };
+        if (asceanState.description === '') {
+            setError({ title: 'Description is required', content: 'Please enter a description for your character' });
+            return;
+        };
         async function createAscean() {
             try {
                 const newAscean = await asceanAPI.persist(asceanState);
                 console.log(newAscean, "New Ascean ?");
-                navigate(`/GameSolo/${newAscean._id}`);
+                navigate(`/`);
             } catch (err) {
                 console.log(err, '%c <- You have an error in creating a character', 'color: red')
             };
@@ -80,6 +93,7 @@ const PersistAscean = ({ lineage, createSuccess }: AsceanProps) => {
     };
 
     useEffect(() => {
+        console.log(lineage, "Lineage?")
     }, [asceanState]);
 
     
@@ -87,40 +101,41 @@ const PersistAscean = ({ lineage, createSuccess }: AsceanProps) => {
         if (conOut !== null) {
             conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
         };
-    }, [constitutionOutput]);
+    }, [constitutionOutput, conOut]);
 
     useEffect(() => {
         if (strOut !== null) {
             strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
         };
-    }, [strengthOutput]);
+    }, [strengthOutput, strOut]);
 
     useEffect(() => {
         if (agiOut !== null) {
             agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
         };
-    }, [agilityOutput]);
+    }, [agilityOutput, agiOut]);
 
     useEffect(() => {
         if (achOut !== null) {
             achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
         };
-    }, [achreOutput]);
+    }, [achreOutput, achOut]);
 
     useEffect(() => {
         if (caerOut !== null) {
             caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         };
-    }, [caerenOutput]);
+    }, [caerenOutput, caerOut]);
 
     useEffect(() => {
         if (kyoOut !== null) {
             kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
         };
-    }, [kyosirOutput]);
+    }, [kyosirOutput, kyoOut]);
 
     return (
-        <Row className="justify-content-center my-3">
+        <Row className="justify-content-center my-3" style={{ overflow: "scroll", maxHeight: "70vh", border: "3px solid purple" }}>
+            <ToastAlert error={error} setError={setError} />
             <h3 style={{ color: '#fdf6d8', textAlign: 'center' }}>Persist Caeren of {lineage?.name}</h3>
             <Form className="stat-block wide my-3" id="new-ascean" onSubmit={handleSubmit}>
             <hr className="orange-border" />

@@ -6,21 +6,21 @@ interface Props {
   }
 
 const Hardcore = ({ asceanState, setAsceanState }: Props) => {
-    function handleHardcore(e: { target: { name: any; value: any; }; }) {
-        let { name, value }  = e.target;
-        if (value === 'true') value = true;
-        if (value === 'false') value = false;
-        console.log(value,typeof value, '<- Name and Value in Visibility / Shareable Handler');
-        asceanState[name] =  value;
-        setAsceanState({...asceanState});
-        console.log(asceanState);
-      }
+  function handleHardcore(e: { target: { name: any; value: any; }; }) {
+      let { name, value }  = e.target;
+      if (value === 'true') value = true;
+      if (value === 'false') value = false;
+      console.log(value,typeof value, '<- Name and Value in Visibility / Shareable Handler');
+      asceanState[name] =  value;
+      setAsceanState({...asceanState});
+      console.log(asceanState);
+    }
   return (
     <>
     <div className='actions'>
     <h3>Hardcore</h3></div>
     <p style={{ color: 'purple', fontSize: "14px" }}>
-        Whether or not you're toggled hardcore. This wildly affects the game and is not recommended for new players. If it was implemented. Soon to come.
+        Whether or not you're toggled hardcore. This wildly affects the game and is not recommended for new players.
     </p>
     <Form.Select onChange={handleHardcore} name="hardcore" className="my-3">
         <option value={asceanState?.hardcore}>Select Preference</option>
@@ -28,7 +28,7 @@ const Hardcore = ({ asceanState, setAsceanState }: Props) => {
         <option value='false' label="False">{false}</option>
     </Form.Select>
     </>
-  )
-}
+  );
+};
 
-export default Hardcore
+export default Hardcore;

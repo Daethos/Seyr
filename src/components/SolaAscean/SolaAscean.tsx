@@ -21,6 +21,15 @@ interface Props {
 
 const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, handleAsceanCreate }: Props) => {
 
+    const hardcoreStyle = {
+        color: "red",
+        fontWeight: 600,
+        marginLeft: "4.5%",
+        fontFamily: "Cinzel",
+        fontSize: "1.5rem",
+        display: "inline-block",
+    }
+
   return (
     <React.Fragment>
     <Row className="justify-content-center my-3">
@@ -33,6 +42,13 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
             {/* <Save ascean={ascean} handleAsceanCreate={handleAsceanCreate} /> */}
             <Update ascean={ascean} NavBar={false} />
             <Delete ascean={ascean} deleteAscean={deleteAscean} />
+            {/* {
+                ascean?.hardcore ?
+                <span style={hardcoreStyle}>
+                Hardcore
+                </span>
+                : ''
+            } */}
             <svg height="5" width="100%" className="tapered-rule mt-1">
             <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>

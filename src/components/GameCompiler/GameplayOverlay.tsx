@@ -5,6 +5,8 @@ import { GAME_ACTIONS } from './GameStore';
 import { MAP_ACTIONS } from './WorldStore';
 import Loading from '../Loading/Loading';
 import PersistAscean from '../PersistAscean/PersistAscean';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Props {
     ascean: any;
@@ -23,7 +25,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
     const [mapName, setMapName] = useState<string>(`${(ascean?.name || '').trim().replace(/\s+/g, '_')}_${ascean?.maps?.length + 1 < 10 ? '0' + (ascean?.maps?.length + 1) : ascean?.maps?.length + 1}`);
     const overlayRef = useRef(null);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(ascean?.maps?.[0]?.currentTile?.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-
+    const navigate = useNavigate();
     const closeEverything = () => {
         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false })
     };
@@ -52,15 +54,18 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
             <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
             </h6>
-            { !ascean?.alive ? (
+            { !ascean?.alive && overlayContent === '' ? (
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
                     Well now, {ascean?.name}, it seems your journey as met its end. Yet there is another way
                     </h5><br />
+                    <PersistAscean lineage={ascean} />
                 </div>
-            ) : ( '' ) }
+            ) : 
+            // ( '' ) }
 
-            { !loadingContent && overlayContent === '' ?
+            // { 
+            !loadingContent && overlayContent === '' ?
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
                     Welcome to the Ascea, {ascean?.name}!

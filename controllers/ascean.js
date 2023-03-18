@@ -58,7 +58,7 @@ async function killAscean(req, res) {
 };
 
 async function persistAscean(req, res) {
-    console.log(req.body.lineage.name, req.body.name, '<- Hopefully the Ascean!')
+    console.log(req.body.lineage.name, req.body.name, '<- Hopefully the Ascean!');
 
     if (req.body.faith === 'devoted') { // Devoted to Daethos
         if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
@@ -117,29 +117,65 @@ async function persistAscean(req, res) {
 
     try {
         const previous = req.body.lineage;
+
+        let fields = [
+            'weapon_one',
+            'weapon_two',
+            'weapon_three',
+            'shield',
+            'helmet',
+            'chest',
+            'legs',
+            'ring_one',
+            'ring_two',
+            'amulet',
+            'trinket'
+        ];
+        const populated = await Promise.all(fields.map(async field => {
+            const item = await determineItemType(previous[field]);
+            return item ? item : null;
+        }));
+        populated.forEach((item, index) => {
+            previous[fields[index]] = item;
+        });
+
+        let pCon = previous.constitution > 100 ? 6 : previous.constitution > 50 ? 4 : previous.constitution > 25 ? 2 : 0;
+        let pStr = previous.strength > 100 ? 6 : previous.strength > 50 ? 4 : previous.strength > 25 ? 2 : 0;
+        let pAgi = previous.agility > 100 ? 6 : previous.agility > 50 ? 4 : previous.agility > 25 ? 2 : 0;
+        let pAch = previous.achre > 100 ? 6 : previous.achre > 50 ? 4 : previous.achre > 25 ? 2 : 0;
+        let pCae = previous.caeren > 100 ? 6 : previous.caeren > 50 ? 4 : previous.caeren > 25 ? 2 : 0;
+        let pKyo = previous.kyosir > 100 ? 6 : previous.kyosir > 50 ? 4 : previous.kyosir > 25 ? 2 : 0;
+
+        let nCon = Number(req.body.constitution);
+        let nStr = Number(req.body.strength);
+        let nAgi = Number(req.body.agility);
+        let nAch = Number(req.body.achre);
+        let nCae = Number(req.body.caeren);
+        let nKyo = Number(req.body.kyosir);
+
         switch (previous.mastery) {
             case "Constitution":
-                req.body.constitution = parseInt(req.body.constitution + 2) + previous.constitution > 100 ? 6 : previous.constitution > 50 ? 4 : 0;
+                nCon += pCon;
                 break;
             case "Strength":
-                req.body.strength = parseInt(req.body.strength + 2) + previous.strength > 100 ? 6 : previous.strength > 50 ? 4 : 0;
+                nStr += pStr;
                 break;
             case "Agility":
-                req.body.agility = parseInt(req.body.agility + 2) + previous.agility > 100 ? 6 : previous.agility > 50 ? 4 : 0;
+                nAgi += pAgi;
                 break;
             case "Achre":
-                req.body.achre = parseInt(req.body.achre + 2) + previous.achre > 100 ? 6 : previous.achre > 50 ? 4 : 0;
+                nAch += pAch;
                 break;
             case "Caeren":
-                req.body.caeren = parseInt(req.body.caeren + 2) + previous.caeren > 100 ? 6 : previous.caeren > 50 ? 4 : 0;
+                nCae += pCae;
                 break;
             case "Kyosir":
-                req.body.kyosir = parseInt(req.body.kyosir + 2) + previous.kyosir > 100 ? 6 : previous.kyosir > 50 ? 4 : 0;
+                nKyo += pKyo;
                 break;
             default:
                 break;
         };
-
+        console.log(req.body.achre, nAch, pAch, "Achre - Pre, New, Bonus")
         let weapon = await imprintEquipment(previous.weapon_one);
         let shield = await imprintEquipment(previous.shield);
         let helmet = await imprintEquipment(previous.helmet);
@@ -153,12 +189,12 @@ async function persistAscean(req, res) {
             origin: req.body.origin,
             sex: req.body.sex,
             description: req.body.description,
-            constitution: req.body.constitution,
-            strength: req.body.strength,
-            agility: req.body.agility,
-            achre: req.body.achre,
-            caeren: req.body.caeren,
-            kyosir: req.body.kyosir,
+            constitution: nCon,
+            strength: nStr,
+            agility: nAgi,
+            achre: nAch,
+            caeren: nCae,
+            kyosir: nKyo,
             mastery: req.body.mastery,
             weapon_one: firstWeapon._id,
             weapon_two: secondWeapon._id,
@@ -181,7 +217,7 @@ async function persistAscean(req, res) {
             hardcore: true,
             lineage: [...previous.lineage, previous._id]
         })
-        res.status(201).json({ ascean: ascean });
+        res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, "Error Persisting Ascean");
         res.status(400).json({ err });
@@ -252,9 +288,9 @@ async function imprintEquipment(inventory) {
         Legs: Legs,
     };
     let rarity = 'Common';
-    const item = await models[type].aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-    await seedDB(item, rarity);
-    return item[0];
+    item = await models[type].findOne({ name: inventory.name, rarity: rarity }).exec();
+    await seedDB([item], rarity);
+    return item;
 }
 
 async function determineItemType(id) {
@@ -364,7 +400,6 @@ async function rebalanceCurrency(ascean) {
       ascean.currency.silver -= 100;
     };
 };
-  
 
 async function purchaseToInventory(req, res) {
     try {
@@ -381,6 +416,7 @@ async function purchaseToInventory(req, res) {
         res.status(400).json({ err });
     };
 };
+
 async function swapItems(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
@@ -714,24 +750,6 @@ async function index(req, res) {
         ];
 
         for await (let ascean of asceanCrew) {
-            // const populateOptions = await Promise.all([
-            //     'weapon_one',
-            //     'weapon_two',
-            //     'weapon_three',
-            //     'shield',
-            //     'helmet',
-            //     'chest',
-            //     'legs',
-            //     'ring_one',
-            //     'ring_two',
-            //     'amulet',
-            //     'trinket'
-            //     ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-                
-            // await Ascean.populate(ascean, [
-            //     { path: 'user' },
-            //     ...populateOptions
-            // ]);
 
             const populated = await Promise.all(fields.map(async field => {
                 const item = await determineItemType(ascean[field]);
@@ -761,21 +779,6 @@ async function quickIndex(req, res) {
 
 async function getOneAscean(req, res) {
     try {
-        // const populateOptions = await Promise.all([
-        //     'weapon_one',
-        //     'weapon_two',
-        //     'weapon_three',
-        //     'shield',
-        //     'helmet',
-        //     'chest',
-        //     'legs',
-        //     'ring_one',
-        //     'ring_two',
-        //     'amulet',
-        //     'trinket'
-        // ].map(async field => ({ 
-        //     path: field, model: await getModelType(ascean[field]._id) 
-        // })));
         console.log("Getting Ascean")
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
@@ -835,26 +838,6 @@ async function getAsceanQuests(req, res) {
 
 async function getAsceanAndInventory(req, res) {
     try {
-        // const ascean = await Ascean.findById({ _id: req.params.id });
-        // const populateOptions = await Promise.all([
-        //     'weapon_one',
-        //     'weapon_two',
-        //     'weapon_three',
-        //     'shield',
-        //     'helmet',
-        //     'chest',
-        //     'legs',
-        //     'ring_one',
-        //     'ring_two',
-        //     'amulet',
-        //     'trinket'
-        // ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-        
-        // await Ascean.populate(ascean, [
-        //     { path: 'user' },{ path: 'quests' },
-        //     ...populateOptions
-        // ]);
-
         let ascean = await Ascean.findById({ _id: req.params.id })
                                     .populate('user')
                                     .populate('quests')
@@ -898,22 +881,9 @@ async function getAsceanAndInventory(req, res) {
     };
 };
 
-async function getCurrencyInventory(req, res) {
-    try {
-        const ascean = await Ascean.findById({ _id: req.params.id });
-
-        
-        res.status(200).json({ data: ascean.currency });
-    } catch (err) {
-        console.log(err, 'Error Getting An Ascean');
-        res.status(400).json({ err });
-    };
-};
-
 async function getAsceanInventory(req, res) {
     try {
         const ascean = await Ascean.findById({ _id: req.params.id });
-        
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = await determineItemType(item);
             if (itemType) {
@@ -933,31 +903,10 @@ async function getAsceanInventory(req, res) {
 
 async function getOneAsceanClean(req, res) {
     try {
-        // const ascean = await Ascean.findById({ _id: req.params.id });
-
-        // const populateOptions = await Promise.all([
-        //     'weapon_one',
-        //     'weapon_two',
-        //     'weapon_three',
-        //     'shield',
-        //     'helmet',
-        //     'chest',
-        //     'legs',
-        //     'ring_one',
-        //     'ring_two',
-        //     'amulet',
-        //     'trinket'
-        //     ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-            
-        // await Ascean.populate(ascean, [
-        //     { path: 'user' },{ path: 'quests' }, ...populateOptions
-        // ]);
-
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .populate('quests')
                                  .exec();
-        console.log(ascean.name, "Ascean Name")
         let fields = [
             'weapon_one',
             'weapon_two',
@@ -978,8 +927,6 @@ async function getOneAsceanClean(req, res) {
         populated.forEach((item, index) => {
             ascean[fields[index]] = item;
         });
-        console.log("Ascean Populated")
-
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
@@ -989,21 +936,6 @@ async function getOneAsceanClean(req, res) {
 
 async function getAsceanStats(req, res) {
     try {
-        // const ascean = await Ascean.findById({ _id: req.params.id });
-        // const populateOptions = await Promise.all([
-        //     'weapon_one',
-        //     'weapon_two',
-        //     'weapon_three',
-        //     'shield',
-        //     'helmet',
-        //     'chest',
-        //     'legs',
-        //     'ring_one',
-        //     'ring_two',
-        //     'amulet',
-        //     'trinket'
-        // ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
-        // await Ascean.populate(ascean, [{ path: 'user' }, ...populateOptions ]);
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .exec();
@@ -1028,7 +960,6 @@ async function getAsceanStats(req, res) {
         populated.forEach((item, index) => {
             ascean[fields[index]] = item;
         });
-        console.log("Ascean Populated")
         const data = await asceanService.asceanCompiler(ascean);
         res.status(200).json({ data });
     } catch (err) {
