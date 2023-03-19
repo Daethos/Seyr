@@ -342,8 +342,8 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
             </Modal.Header>
         <Modal.Body style={settingsStyle}>
             Default Setup is 402x402 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
-        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100.5} max={603} step={50.25} />
-        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100.5} max={603} step={50.25} />
+        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100.5} max={603} step={25.125} />
+        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100.5} max={603} step={25.125} />
         <br />
         <br />
         Positioning: X: {canvasPosition.x * 100}px Y: {canvasPosition.y * 100}px <br /> <br />

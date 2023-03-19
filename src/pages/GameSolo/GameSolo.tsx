@@ -1304,7 +1304,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have died in battle to ${gameState?.opponent?.name}, yet there is another way.` });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have died in battle to ${gameState?.opponent?.name}, yet there is another way for those with the fortitude.` });
             const response = await asceanAPI.kill(asceanID);
             setTimeout(() => {
                 setTimeLeft(0);

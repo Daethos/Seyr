@@ -2665,6 +2665,7 @@ const instantActionSplitter = async (combatData) => {
             await prayerSplitter(combatData, 'Debuff');
             break;
     };
+    await statusEffectCheck(combatData);
     return combatData;
 };
 
@@ -2699,6 +2700,12 @@ const consumePrayerSplitter = async (combatData) => {
             case 'Damage':
                 combatData.new_computer_health -= effect.effect.damage * 0.5;
                 combatData.current_computer_health -= effect.effect.damage * 0.5;
+
+                if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+                    combatData.new_computer_health = 0;
+                    combatData.player_win = true;
+                };
+
                 break;
             case 'Debuff':
                 for (let key in effect.effect) {
@@ -2756,9 +2763,14 @@ const consumePrayerSplitter = async (combatData) => {
                 };
             };
         };
-        return false;
+        
+        if (effect.prayer === combatData.prayerSacrifice) {
+            return false;
+        } else {
+            return true;
+        };
     });
-
+    combatData.prayerSacrifice = '';
     return combatData;
 };
 

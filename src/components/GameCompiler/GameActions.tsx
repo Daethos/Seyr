@@ -27,7 +27,7 @@ interface Props {
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
 };
 
-const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, timeLeft, setTimeLeft, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, timeLeft, setTimeLeft, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const { actionStatus } = state;
   const { dodgeStatus } = state;
@@ -85,7 +85,7 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
         type: ACTIONS.SET_DODGE_STATUS,
         payload: false,
       });
-    }, (state?.weapons?.[0]?.dodge * 1000));
+    }, (state?.weapons?.[0]?.dodge * 500));
     return () => clearTimeout(dodgeTimer);
   }, [dodgeStatus]);
 
@@ -99,19 +99,21 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
     return () => clearTimeout(initiateTimer);
   }, [actionStatus]);
 
-  const sacrificePrayer = async (prayer: string) => {
+  useEffect(() => {
+    console.log(state.prayerSacrifice, "Pre-Check Prayer")
+    if (state.prayerSacrifice === '') return;
+    console.log(state.prayerSacrifice, "Sacrifing Prayer")
+    handlePrayer({ preventDefault: () => {} });
+
+  }, [state.prayerSacrifice]);
+
+  const handlePrayerMiddleware = async (prayer: string) => {
+    console.log("Setting Prayer to Sacrifice: ", prayer);
     dispatch({
       type: ACTIONS.SET_PRAYER_SACRIFICE,
       payload: prayer,
     });
   };
-
-  const handlePrayerMiddleware = async (prayer: string) => {
-    await sacrificePrayer(prayer);
-    console.log("prayer middleware", state.prayerSacrifice);
-    await handlePrayer({ preventDefault: () => {} });
-  };
-  
 
   
   const borderColor = (mastery: string) => {

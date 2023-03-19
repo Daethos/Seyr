@@ -318,21 +318,22 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     <>
                     { playerWin ?
                         <>
-                        "Go on now, {ascean.name}, and find better pastures. I'll be here licking my wounds."<br />
+                        "Go now, {ascean.name}, and find better pastures."<br />
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
                         </>
                     : computerWin ?
                     <>
-                        "Find shelter {ascean.name}, your frailty concerns me."<br />
+                        "Seek refuge {ascean.name}, your frailty wears on my Caer."<br />
                         <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
                         </>
                     : 
                     <>
                         { enemy?.level > ascean?.level && enemy?.name !== 'Traveling General Merchant' ?
                             <>
-                            "You're not ready for this, {ascean?.name}. Come back when you've grown stronger."
+                            "You may not be ready, {ascean?.name}, yet time has tethered us here. Come now, prepare."
                             <br />
-                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
+                            {/* <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button> */}
+                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Prepare to strike {npc}?</Button>
                             </>
                         : enemy?.name !== 'Traveling General Merchant' ?
                         <>

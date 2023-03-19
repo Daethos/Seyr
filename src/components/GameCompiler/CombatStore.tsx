@@ -407,6 +407,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 gameIsLive: false,
                 combatEngaged: false,
                 dodgeStatus: false,
+                instantStatus: false,
             };
         case 'COMPUTER_WIN':
             return {
@@ -416,6 +417,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 gameIsLive: false,
                 combatEngaged: false,
                 dodgeStatus: false,
+                instantStatus: false,
             }
         case 'CLEAR_DUEL':
             return {
