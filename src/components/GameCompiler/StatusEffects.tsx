@@ -62,7 +62,9 @@ const StatusEffects = ({ effect, player }: Props) => {
 
     return (
         <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
-            <Button variant='' style={getEffectStyle} className='status-effects'><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/></Button>
+            <Button variant='' style={getEffectStyle} className='status-effects'>
+                <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/>
+            </Button>
         </OverlayTrigger>
     );
 };

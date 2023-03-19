@@ -6,6 +6,7 @@ export interface CombatData {
     player_action: string;
     counter_guess: string;
     playerBlessing: string;
+    prayerSacrifice: string;
     player_health: number;
     current_player_health: number;
     new_player_health: number;
@@ -84,6 +85,7 @@ export interface CombatData {
     gameIsLive: boolean;
     combatEngaged: boolean;
     dodgeStatus: boolean;
+    instantStatus: boolean;
     combatRound: number;
     sessionRound: number;
     highScore: number;
@@ -112,9 +114,12 @@ export const ACTIONS = {
     SET_COMBAT_INITIATED: 'SET_COMBAT_INITIATED',
     SET_DAMAGE_TYPE: 'SET_DAMAGE_TYPE',
     SET_DODGE_STATUS: 'SET_DODGE_STATUS',
+    SET_INSTANT_STATUS: 'SET_INSTANT_STATUS',
     SET_PRAYER_BLESSING: 'SET_PRAYER_BLESSING',
+    SET_PRAYER_SACRIFICE: 'SET_PRAYER_SACRIFICE',
     SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
     INITIATE_COMBAT: 'INITIATE_COMBAT',
+    INSTANT_COMBAT: 'INSTANT_COMBAT',
     AUTO_COMBAT: 'AUTO_COMBAT',
     SET_PLAYER_QUICK: 'SET_PLAYER_QUICK',
     SET_PLAYER_SLICK: 'SET_PLAYER_SLICK',
@@ -135,6 +140,7 @@ export const initialCombatData: CombatData = {
     player_action: '',
     counter_guess: '',
     playerBlessing: 'Buff',
+    prayerSacrifice: '',
     player_health: 0,
     current_player_health: 0,
     new_player_health: 0,
@@ -206,6 +212,7 @@ export const initialCombatData: CombatData = {
     gameIsLive: false,
     combatEngaged: false,
     dodgeStatus: false,
+    instantStatus: false,
     combatRound: 0,
     sessionRound: 0,
     highScore: 0,
@@ -347,10 +354,20 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 dodgeStatus: action.payload,
             };
+        case 'SET_INSTANT_STATUS':
+            return {
+                ...state,
+                instantStatus: action.payload,
+            };
         case 'SET_PRAYER_BLESSING':
             return {
                 ...state,
                 playerBlessing: action.payload,
+            };
+        case 'SET_PRAYER_SACRIFICE':
+            return {
+                ...state,
+                prayerSacrifice: action.payload,
             };
         case 'SET_WEAPON_ORDER':
             return {
@@ -365,6 +382,14 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 actionStatus: true,
                 dodgeStatus: action.payload.action === 'dodge' ? true : action.payload.dodgeStatus === true ? true : false,
                 combatInitiated: true,
+            };
+        case 'INSTANT_COMBAT':
+            return {
+                ...action.payload,
+                action: '',
+                actionStatus: true,
+                combatInitiated: true,
+                instantStatus: true,
             };
         case 'AUTO_COMBAT':
             return {

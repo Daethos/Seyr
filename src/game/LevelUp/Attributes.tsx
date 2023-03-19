@@ -175,6 +175,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             [e.target.name]: e.target.value,
         });
         setConstitutionOutput(e.target.value);
+        setConstitutionCurrent((constitutionCurrent) => (constitutionCurrent - 1));
         setPoolTotal(poolTotal - 1);
     };
     function handleConPlus(e: any) {
@@ -184,6 +185,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         })
+        setConstitutionCurrent((constitutionCurrent) => (constitutionCurrent + 1));
         setConstitutionOutput(e.target.value)
         setPoolTotal(poolTotal + 1)
     };
@@ -195,6 +197,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setStrengthCurrent((strengthCurrent) => (strengthCurrent - 1));
         setStrengthOutput(e.target.value);
         setPoolTotal(poolTotal - 1);
     };
@@ -205,6 +208,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setStrengthCurrent((strengthCurrent) => (strengthCurrent + 1));
         setStrengthOutput(e.target.value);
         setPoolTotal(poolTotal + 1);
     };
@@ -216,6 +220,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setAgilityCurrent((agilityCurrent) => (agilityCurrent - 1));
         setAgilityOutput(e.target.value);
         setPoolTotal(poolTotal - 1);
     };
@@ -226,6 +231,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setAgilityCurrent((agilityCurrent) => (agilityCurrent + 1));
         setAgilityOutput(e.target.value);
         setPoolTotal(poolTotal + 1);
     };
@@ -237,6 +243,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setAchreCurrent((achreCurrent) => (achreCurrent - 1));
         setAchreOutput(e.target.value);
         setPoolTotal(poolTotal - 1);
     };
@@ -247,6 +254,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setAchreCurrent((achreCurrent) => (achreCurrent + 1));
         setAchreOutput(e.target.value);
         setPoolTotal(poolTotal + 1);
     };
@@ -258,6 +266,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setCaerenCurrent((caerenCurrent) => (caerenCurrent - 1));
         setCaerenOutput(e.target.value);
         setPoolTotal(poolTotal - 1);
     };
@@ -268,6 +277,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setCaerenCurrent((caerenCurrent) => (caerenCurrent + 1));
         setCaerenOutput(e.target.value);
         setPoolTotal(poolTotal + 1);
     };
@@ -279,6 +289,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setKyosirCurrent((kyosirCurrent) => (kyosirCurrent - 1));
         setKyosirOutput(e.target.value);
         setPoolTotal(poolTotal - 1);
     };
@@ -289,6 +300,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             ...asceanState,
             [e.target.name]: e.target.value,
         });
+        setKyosirCurrent((kyosirCurrent) => (kyosirCurrent + 1));
         setKyosirOutput(e.target.value);
         setPoolTotal(poolTotal + 1);
     };

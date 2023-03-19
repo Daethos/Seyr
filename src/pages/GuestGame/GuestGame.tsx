@@ -432,6 +432,50 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
+    async function handleInstant(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            setEmergencyText([``]);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            const response = await gameAPI.instantAction(state);
+            dispatch({
+                type: ACTIONS.INITIATE_COMBAT,
+                payload: response.data
+            });
+            await soundEffects(response.data);
+            if (response.data.player_win === true) {
+                await handlePlayerWin(response.data);
+            };
+            if (response.data.computer_win === true) {
+                await handleComputerWin(response.data);
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Insant Action')
+        };
+    };
+
+    async function handlePrayer(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            setEmergencyText([``]);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            const response = await gameAPI.consumePrayer(state);
+            dispatch({
+                type: ACTIONS.INITIATE_COMBAT,
+                payload: response.data
+            });
+            await soundEffects(response.data);
+            if (response.data.player_win === true) {
+                await handlePlayerWin(response.data);
+            };
+            if (response.data.computer_win === true) {
+                await handleComputerWin(response.data);
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Action')
+        };
+    };
+
     const engageCombat = () => {
         dispatch({
             type: ACTIONS.SET_DUEL,
@@ -566,7 +610,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             
             { state.player_win || state.computer_win || !state.combatEngaged ? '' : state?.weapons ?
             <GameActions 
-                setDamageType={setDamageType} dispatch={dispatch} state={state}
+                setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                 sleep={sleep} setPrayerBlessing={setPrayerBlessing}
                 weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 

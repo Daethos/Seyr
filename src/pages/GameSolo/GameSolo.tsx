@@ -1402,6 +1402,54 @@ const GameSolo = ({ user }: GameProps) => {
                 await handleComputerWin(response.data);
             };
         } catch (err: any) {
+            console.log(err.message, 'Error Initiating Combat')
+        };
+    };
+
+    async function handleInstant(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            setEmergencyText([``]);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            const response = await gameAPI.instantAction(state);
+            dispatch({
+                type: ACTIONS.INSTANT_COMBAT,
+                payload: response.data
+            });
+            await soundEffects(response.data);
+            if (response.data.player_win === true) {
+                await handlePlayerWin(response.data);
+            };
+            if (response.data.computer_win === true) {
+                await handleComputerWin(response.data);
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Insant Action')
+        };
+    };
+
+    async function handlePrayer(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            if (state.prayerSacrifice === '') {
+                setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose A Prayer to Sacrifice!\n`]);
+                return;
+            };
+            setEmergencyText([``]);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            const response = await gameAPI.consumePrayer(state);
+            dispatch({
+                type: ACTIONS.INITIATE_COMBAT,
+                payload: response.data
+            });
+            await soundEffects(response.data);
+            if (response.data.player_win === true) {
+                await handlePlayerWin(response.data);
+            };
+            if (response.data.computer_win === true) {
+                await handleComputerWin(response.data);
+            };
+        } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
     };
@@ -1518,7 +1566,7 @@ const GameSolo = ({ user }: GameProps) => {
                         counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combatEngaged}
                     />
                     <GameActions 
-                        setDamageType={setDamageType} dispatch={dispatch} state={state}
+                        setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                         sleep={sleep} setPrayerBlessing={setPrayerBlessing}
                         weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                         handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 

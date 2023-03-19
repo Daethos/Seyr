@@ -269,6 +269,21 @@
   background: black;
   box-shadow: 2px 2px 2px black;
 }
+.prayer-button {
+  font-size: 8px;
+  background-color: black;
+  grid-column-start: 2;
+  grid-row-start: 5;
+  border-radius: 50%;
+}
+
+.instant-button {
+  font-size: 8px;
+  background-color: black;
+  grid-column-start: 3;
+  grid-row-start: 5;
+}
+
 #action-button {
   font-size: 8px;
   color: rgb(226, 130, 255);

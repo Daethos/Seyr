@@ -23,13 +23,16 @@ interface Props {
     setPrayerBlessing: any;
     state: any;
     dispatch: any;
+    handleInstant: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
 };
 
-const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageType, currentDamageType, setPrayerBlessing, timeLeft, setTimeLeft, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, timeLeft, setTimeLeft, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const { actionStatus } = state;
   const { dodgeStatus } = state;
   const { combatInitiated } = state;
+  const { instantStatus } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
@@ -67,6 +70,16 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
   }, [combatInitiated]);
 
   useEffect(() => {
+    const instantTimer = setTimeout(() => {
+      dispatch({
+        type: ACTIONS.SET_INSTANT_STATUS,
+        payload: false,
+      });
+    }, (state?.weapons?.[0]?.dodge * 1000));
+    return () => clearTimeout(instantTimer);
+  }, [instantStatus]);
+
+  useEffect(() => {
     const dodgeTimer = setTimeout(() => {
       dispatch({
         type: ACTIONS.SET_DODGE_STATUS,
@@ -85,14 +98,86 @@ const GameActions = ({ state, dispatch, setEmergencyText, setDamageType, damageT
     }, 3000);
     return () => clearTimeout(initiateTimer);
   }, [actionStatus]);
+
+  const sacrificePrayer = async (prayer: string) => {
+    dispatch({
+      type: ACTIONS.SET_PRAYER_SACRIFICE,
+      payload: prayer,
+    });
+  };
+
+  const handlePrayerMiddleware = async (prayer: string) => {
+    await sacrificePrayer(prayer);
+    console.log("prayer middleware", state.prayerSacrifice);
+    await handlePrayer({ preventDefault: () => {} });
+  };
   
+
+  
+  const borderColor = (mastery: string) => {
+    switch (mastery) {
+        case 'Constitution': return 'white';
+        case 'Strength': return 'red';
+        case 'Agility': return 'green';
+        case 'Achre': return 'blue';
+        case 'Caeren': return 'purple';
+        case 'Kyosir': return 'gold';
+        default: return 'black';
+    };
+};
+
+  const getEffectStyle = {
+    border: 2 + 'px solid ' + borderColor(state?.player?.mastery),
+    boxShadow: '0 0 1em ' + borderColor(state?.player?.mastery),  
+    borderRadius: "50%",
+  };
+
+  const prayerColor = (prayer: string) => {
+    switch (prayer) {
+        case 'Buff': 
+          return {
+            border: '2px solid gold',
+            boxShadow: '0 0 1em gold',
+          };
+        case 'Debuff': 
+          return {
+            border: '2px solid purple',
+            boxShadow: '0 0 1em purple',
+          };
+        case 'Heal': 
+          return {
+            border: '2px solid green',
+            boxShadow: '0 0 1em green',
+          };
+        case 'Damage': 
+          return {
+            border: '2px solid red',
+            boxShadow: '0 0 1em red',
+          };
+        default: return {};
+    };
+};
+
+
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
     <CombatSettingModal state={state} damageType={damageType} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={weapons} prayers={prayers} />
+    {state.playerEffects.length > 0 ?
+          (state.playerEffects.map((effect: any, index: number) => {
+            return (
+              <button key={index} className='prayer-button' style={prayerColor(effect?.prayer)} onClick={() => handlePrayerMiddleware(effect?.prayer)}><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} /></button> 
+            
+            )
+      })) : '' }
+    { !state?.instantStatus ?
+      <button className='instant-button' style={getEffectStyle} onClick={handleInstant}>
+        <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
+      </button>
+    : '' }
     <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
-          <button value='initiate' type='submit' className='btn btn-outline ' disabled={state.actionStatus ? true : false} id='initiate-button'>Initiate</button>
+          <button value='initiate' type='submit' className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button'>Initiate</button>
       </Form>
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>

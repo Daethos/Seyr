@@ -1804,7 +1804,7 @@ const attackCompiler = async (combatData, player_action) => {
 
     if (combatData.computer_action === 'attack') {
         combatData.realized_player_damage *= 1.1;
-    }
+    };
 
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
@@ -1815,7 +1815,7 @@ const attackCompiler = async (combatData, player_action) => {
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
-    }
+    };
 
     // console.log(player_total_damage, 'Total Player Damage');
 
@@ -2311,11 +2311,13 @@ const actionSplitter = async (combatData) => {
         computerEffects: combatData.computerEffects,
         playerBlessing: combatData.playerBlessing,
         computerBlessing: combatData.computerBlessing,
+        prayerSacrifice: combatData.prayerSacrifice,
         combatInitiated: combatData.combatInitiated,
         actionStatus: combatData.actionStatus,
         gameIsLive: combatData.gameIsLive,
         combatEngaged: combatData.combatEngaged,
         dodgeStatus: combatData.dodgeStatus,
+        instantStatus: combatData.instantStatus,
         highScore: combatData.highScore,
         winStreak: combatData.winStreak,
         loseStreak: combatData.loseStreak,
@@ -2558,23 +2560,207 @@ const actionSplitter = async (combatData) => {
     if (newData.player_win === true) {
         newData.computer_death_description = 
         `${newData.computer.name} has been defeated. Hail ${newData.player.name}, you have won the duel!`;
-    }
+    };
     if (newData.computer_win === true) {
         newData.player_death_description = 
         `You have been defeated. Hail ${newData.computer.name}, they have won the duel!`;
-    }
-
+    };
     if (newData.player_win === true || newData.computer_win === true) {
         // To Remove Effects
         await statusEffectCheck(newData);
-    }
-    
+    };
 
     newData.combatRound += 1;
     newData.sessionRound += 1;
 
-    return newData
-}
+    return newData;
+};
+
+const prayerSplitter = async (combatData, prayer) => {
+    let originalPrayer = combatData.playerBlessing;
+    combatData.playerBlessing = prayer;
+    let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+    // Handles the creation of a new Status Effect if it doesn't already exist
+    if (!existingEffect) {
+        existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+        combatData.playerEffects.push(existingEffect);
+        combatData.player_influence_description = existingEffect.description;
+        // console.log(existingEffect, 'New Status Effect in Game Services');
+    } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+        existingEffect.tick.end += 2;
+        existingEffect.activeStacks += 1;
+        existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+        combatData.player_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+        switch (existingEffect.prayer) {
+            case 'Buff': {
+                for (let key in existingEffect.effect) {
+                    if (existingEffect.effect[key] && key !== 'dodge') {
+                        combatData.weapons[0][key] += existingEffect.effect[key];
+                    } else {
+                        combatData.weapons[0][key] -= existingEffect.effect[key];
+                    }
+                }
+                for (let key in combatData.player_defense) {
+                    if (existingEffect.effect[key]) {
+                        combatData.player_defense[key] += existingEffect.effect[key];
+                    }
+                }
+                break;
+            }
+            case 'Damage': {
+                existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                break;
+            }
+        }
+    } else if (existingEffect.refreshes) {
+        existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+        existingEffect.tick.end += existingEffect.duration + 1;
+        existingEffect.activeRefreshes += 1;
+        combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+    };
+    combatData.playerBlessing = originalPrayer;
+    return combatData;   
+};
+
+const instantDamageSplitter = async (combatData, mastery) => {
+    let damage = combatData.player[mastery] * 0.5;
+    console.log(damage, 'Damage');
+    combatData.realized_player_damage = damage;
+    combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+    combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+    combatData.player_action_description = 
+        `You instantly attack ${combatData.computer.name}'s Caeren with your Conviction for ${Math.round(damage)} Pure Damage.`    
+
+    if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+        combatData.new_computer_health = 0;
+        combatData.player_win = true;
+    };
+};
+
+const instantActionSplitter = async (combatData) => {
+    switch (combatData.player.mastery) {
+        case 'Constitution':
+            await prayerSplitter(combatData, 'Heal');
+            await prayerSplitter(combatData, 'Buff');
+            break;
+        case 'Strength':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'strength');
+            break;
+        case 'Agility':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'agility');
+            break;
+        case 'Achre':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'achre');
+            break;
+        case 'Caeren':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'caeren');
+            break;
+        case 'Kyosir':
+            await prayerSplitter(combatData, 'Damage');
+            await prayerSplitter(combatData, 'Debuff');
+            break;
+    };
+    return combatData;
+};
+
+const consumePrayerSplitter = async (combatData) => {
+    combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+        const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
+        const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
+
+        switch (combatData.prayerSacrifice) {
+            case 'Heal':
+                combatData.new_player_health += effect.effect.healing * 0.5;
+                combatData.current_player_health += effect.effect.healing * 0.5;
+
+                if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                    combatData.computer_win = false;
+                };
+                break;
+            case 'Buff':
+                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+                combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+            
+                combatData.player_action_description = 
+                    `This winds warp to wrap ${combatData.computer.name}, buffeting them for ${Math.round(combatData.realized_player_damage)} more damage.`    
+            
+                if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+                    combatData.new_computer_health = 0;
+                    combatData.player_win = true;
+                };
+                break;
+            case 'Damage':
+                combatData.new_computer_health -= effect.effect.damage * 0.5;
+                combatData.current_computer_health -= effect.effect.damage * 0.5;
+                break;
+            case 'Debuff':
+                for (let key in effect.effect) {
+                    if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] += (effect.effect[key] * effect.activeStacks) * 0.2;
+                        } else {
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] -= (effect.effect[key] * effect.activeStacks) * 0.2;
+                        };
+                    };
+                    if (key in combatData.computer_defense) {
+                        combatData.computer_defense[key] += (effect.effect[key] * effect.activeStacks) * 0.2;
+                    };
+                    if (key in combatData.weapons[matchingWeaponIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.weapons[matchingWeaponIndex][key] -= (effect.effect[key] * effect.activeStacks) * 0.2;
+                        } else {
+                            combatData.weapons[matchingWeaponIndex][key] += (effect.effect[key] * effect.activeStacks) * 0.2;
+                        };
+                    };
+                    if (key in combatData.player_defense) {
+                        combatData.player_defense[key] -= (effect.effect[key] * effect.activeStacks) * 0.2;
+                    };
+                };
+                break;
+            default: break;
+        };
+
+
+        if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+            for (let key in effect.effect) {
+                if (key in combatData.weapons[matchingWeaponIndex]) {
+                    if (key !== 'dodge') {
+                        combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                    } else {
+                        combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                    };
+                };
+                if (key in combatData.player_defense) {
+                    combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                };
+            };
+        };
+        if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+            for (let key in effect.effect) {
+                if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
+                    if (key !== 'dodge') {
+                        combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                    } else {
+                        combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                    };
+                };
+                if (key in combatData.computer_defense) {
+                    combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
+                };
+            };
+        };
+        return false;
+    });
+
+    return combatData;
+};
 
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
@@ -2583,14 +2769,43 @@ const actionCompiler = async (combatData) => {
         const result = await actionSplitter(combatData);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
-        }
+        };
         return result
     } catch (err) {
         console.log(err, 'Error in the Action Compiler of Game Services');
         res.status(400).json({ err })
-    }
-}
+    };
+};
+
+const instantActionCompiler = async (combatData) => {
+    try {
+        const result = await instantActionSplitter(combatData);
+        console.log(result, 'Result of Instant Action Splitter');
+        if (result.player_win === true || result.computer_win === true) {
+            await statusEffectCheck(result);
+        };
+        return result;
+    } catch (err) {
+        console.log(err, 'Error in the Instant Action Compiler of Game Services');
+        res.status(400).json({ err })
+    };
+};
+
+const consumePrayer = async (combatData) => {
+    try {
+        const result = await consumePrayerSplitter(combatData);
+        if (result.player_win === true || result.computer_win === true) {
+            await statusEffectCheck(result);
+        };
+        return result;
+    } catch (err) {
+        console.log(err, 'Error in the Consume Prayer of Game Services');
+        res.status(400).json({ err })
+    };
+};
 
 module.exports = {
-    actionCompiler
-}
+    actionCompiler,
+    instantActionCompiler,
+    consumePrayer
+};

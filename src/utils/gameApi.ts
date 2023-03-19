@@ -1,38 +1,68 @@
 import tokenService from './tokenService';
 const BASE_URL = '/api/game/'
 
-export function initiateAction(combatData: any) {
+export async function initiateAction(combatData: any) {
     console.log(combatData, 'Combat Data in the Game API Utility');
     
-    return fetch(BASE_URL + 'initiate', { //  = combatData.action !
+    const res = await fetch(BASE_URL + 'initiate', {
         method: 'PUT',
         body: JSON.stringify(combatData),
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         },
-    }).then((res) => {
-        if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Game Utility API')
-        })
-    })
-}
+    });
+    if (res.ok)
+        return res.json();
+    const response = await res.json();
+    console.log(response, '<- Response in Game Utility API');
+};
 
-export function pvpAction(combatData: any) {
+export async function instantAction(combatData: any) {
     console.log(combatData, 'Combat Data in the Game API Utility');
-    
-    return fetch(BASE_URL + 'pvp', { //  = combatData.action !
+    const res = await fetch(BASE_URL + 'instant', {
         method: 'PUT',
         body: JSON.stringify(combatData),
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken(),
         },
-    }).then((res) => {
-        if (res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response, '<- Response in Game Utility API')
-        })
-    })
+    });
+    if (res.ok)
+        return res.json();
+    const response = await res.json();
+    console.log(response, '<- Response in Game Utility API');
+};
+
+export async function consumePrayer(combatData: any) {
+    console.log(combatData, 'Combat Data in the Game API Utility');
+    const res = await fetch(BASE_URL + 'prayer', {
+        method: 'PUT',
+        body: JSON.stringify(combatData),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        },
+    });
+    if (res.ok)
+        return res.json();
+    const response = await res.json();
+    console.log(response, '<- Response in Game Utility API');
+};
+
+export async function pvpAction(combatData: any) {
+    console.log(combatData, 'Combat Data in the Game API Utility');
+    
+    const res = await fetch(BASE_URL + 'pvp', {
+        method: 'PUT',
+        body: JSON.stringify(combatData),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        },
+    });
+    if (res.ok)
+        return res.json();
+    const response = await res.json();
+    console.log(response, '<- Response in Game Utility API');
 }
