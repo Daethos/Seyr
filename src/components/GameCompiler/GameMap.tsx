@@ -81,10 +81,6 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
     useEffect(() => {
         handleMapMode(mapMode);
     }, [mapData, mapVisible, mapMode]);
-
-    useEffect(() => {
-        console.log(draggableElements, canvasIndex, canvasPosition, '<- Canvas Index');
-    }, [canvasIndex, canvasPosition]);
     
     function handleMapMode(mode: MapMode) {
         switch (mode) {
@@ -96,6 +92,9 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
                 break;
             case MapMode.SURROUNDING_TILES:
                 renderSurroundingTiles();
+                break;
+            case MapMode.TIGHT:
+                renderTight();
                 break;
             default:
                 break;
@@ -134,6 +133,8 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
             case MapMode.QUADRANT:
                 return MapMode.SURROUNDING_TILES;
             case MapMode.SURROUNDING_TILES:
+                return MapMode.TIGHT;
+            case MapMode.TIGHT:
                 return MapMode.FULL_MAP;
             default:
                 return mode;
@@ -272,6 +273,24 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
             };
         };
     };
+
+    function renderTight() {
+        const canvasWidth = 50;
+        const canvasHeight = 50;
+        const canvas = canvasRef.current;
+        if (canvas) {
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                const playerX = mapData?.currentTile?.x;
+                const playerY = mapData?.currentTile?.y;
+                const surroundingTiles = getSurroundingTiles(mapData?.visitedTiles, { x: playerX, y: playerY });
+                ctx.translate(canvasWidth / 2, canvasHeight / 2); // translate the canvas to center on the player
+                drawSurroundingTiles(ctx, canvas, surroundingTiles, { x: playerX, y: playerY });
+            };
+        };
+    };
       
     function getSurroundingTiles(visitedTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): {[key: string]: Tile} {
         const surroundingTiles: {[key: string]: Tile} = {};
@@ -342,8 +361,8 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
             </Modal.Header>
         <Modal.Body style={settingsStyle}>
             Default Setup is 402x402 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
-        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100.5} max={603} step={25.125} />
-        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100.5} max={603} step={25.125} />
+        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100.5} max={603} step={12.5625} />
+        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100.5} max={603} step={12.5625} />
         <br />
         <br />
         Positioning: X: {canvasPosition.x * 100}px Y: {canvasPosition.y * 100}px <br /> <br />
@@ -392,7 +411,7 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
                     gridColumnStart: 1, 
                     gridRowStart: 1,
                     position: "absolute", 
-                    marginTop: "3.25%",
+                    marginTop: "4.5%",
                     marginLeft: "3%",
                     zIndex: 99,
                     clipPath: "rect(30% at 30% 30%)", 

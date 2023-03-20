@@ -43,6 +43,7 @@ export enum MapMode {
     FULL_MAP,
     QUADRANT,
     SURROUNDING_TILES,
+    TIGHT,
 };
 
 interface GameProps {
@@ -1590,7 +1591,9 @@ const GameSolo = ({ user }: GameProps) => {
                         canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
                         mapMode={mapMode} setMapMode={setMapMode}
                     />
-                    <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
+                    { gameState.player.quests.length > 0 ?
+                        <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
+                    : '' }
                     {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
                     { gameState.showDialog ?    
                         <DialogBox 

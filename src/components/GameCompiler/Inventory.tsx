@@ -480,7 +480,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
                 style={{ color: 'red', fontWeight: 600 }} onClick={() => handleRemoveItem()}>Destroy</Button>    
             </Modal.Body>
         </Modal>
-        <Modal show={inventoryModalShow} onHide={() => setInventoryModalShow(false)} centered id='modal-weapon' style={{ marginTop: 30 + '%', overflow: 'auto', maxHeight: '70vh' }}>
+        <Modal show={inventoryModalShow} onHide={() => setInventoryModalShow(false)} centered id='modal-weapon' style={{ marginTop: 30 + '%', overflow: 'auto', maxHeight: '70vh', zIndex: 9999 }}>
             <Modal.Header style={{ color: 'blueviolet', fontSize: "20px" }}>
                 Do You Wish To Change Your {editState[inventoryType as keyof typeof editState]?.name} to {inventory?.name}?
             </Modal.Header>

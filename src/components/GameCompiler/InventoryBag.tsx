@@ -56,12 +56,11 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
         more resilient and able to withstand combat and other challenges. This bottle has {firewater?.charges} charges left.
         <br /><br />
         
-      {
-        firewater?.charges === 0 && mapState?.currentTile?.content !== 'city' ?
+      { firewater?.charges === 0 && mapState?.currentTile?.content !== 'city' ?
           <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
             Inspect
           </Button>
-          : 
+      : 
           <Button variant='' onClick={drinkFirewater} style={{ color: "gold", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
             Take a Drink?
         </Button> 

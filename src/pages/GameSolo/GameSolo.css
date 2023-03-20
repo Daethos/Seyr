@@ -65,7 +65,7 @@
   grid-row-start: 1;
   margin-left: -16%;
   margin-top: -2.75%;
-  z-index: 101;
+  z-index: 50;
   color: goldenrod;
 }
 
@@ -512,7 +512,7 @@
 
 .game-map {
   border: 2px solid purple;
-  z-index: 9999;
+  z-index: 99;
   position: absolute;
   background-color: black;
 }

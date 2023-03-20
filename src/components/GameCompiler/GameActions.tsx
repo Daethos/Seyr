@@ -152,6 +152,16 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
     };
 };
 
+  const instantStyle = {
+    color: borderColor(state?.player?.mastery),
+    fontSize: "1.1em",
+    textShadow: '1.5px 1.5px 1.5px black',
+    gridColumnStart: 3, 
+    gridRowStart: 6,
+    marginTop: "3.25em",
+    marginLeft: "",
+  }
+
   const getEffectStyle = {
     border: 2 + 'px solid ' + borderColor(state?.player?.mastery),
     boxShadow: '0 0 1em ' + borderColor(state?.player?.mastery),  
@@ -184,17 +194,17 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
     };
 };
 
-const consumeTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
-  <Tooltip id='consume-tooltip' {...props}>
-    <strong>Consume Prayer</strong>
-  </Tooltip>
-);
+  const consumeTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
+    <Tooltip id='consume-tooltip' {...props}>
+      <strong>Consume Prayer</strong>
+    </Tooltip>
+  );
 
-const instantTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
-  <Tooltip id='instant-tooltip' {...props}>
-    <strong>Instant Attack</strong>
-  </Tooltip>
-);
+  const instantTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
+    <Tooltip id='instant-tooltip' {...props}>
+      <strong>Invocation</strong>
+    </Tooltip>
+  );
 
   return (
     <>
@@ -246,11 +256,16 @@ const instantTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttri
         </div>
       : '' }
     { !state?.instantStatus ?
+    <>
+      <p style={instantStyle}>
+      Invoke
+      </p>
       <OverlayTrigger placement='auto-start' overlay={instantTooltip}>
         <button className='instant-button' style={getEffectStyle} onClick={handleInstant}>
           <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
         </button>
       </OverlayTrigger>
+    </>
     : '' }
     <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
