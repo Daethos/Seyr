@@ -1508,8 +1508,8 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     let computer_physical_defense_multiplier = 1 - (combatData.computer_defense.physicalDefenseModifier / 100);
     let computer_magical_defense_multiplier = 1 - (combatData.computer_defense.magicalDefenseModifier / 100);
 
-    const weapOneClearance = Math.floor(Math.random() * 101);
-    const weapTwoClearance = Math.floor(Math.random() * 101);
+    const weapOneClearance = Math.floor(Math.random() * 10100) / 100;
+    const weapTwoClearance = Math.floor(Math.random() * 10100) / 100;
     let weapOneCrit = combatData.weapons[0].critical_chance;
     let weapTwoCrit = combatData.weapons[1].critical_chance;
     weapOneCrit -= combatData.computer_attributes.kyosirMod;
@@ -1737,7 +1737,7 @@ const attackCompiler = async (combatData, player_action) => {
     };
 
     // This is for Critical Strikes
-    const criticalClearance = Math.floor(Math.random() * 101);
+    const criticalClearance = Math.floor(Math.random() * 10100) / 100;
     let criticalChance = combatData.weapons[0].critical_chance;
     criticalChance -= combatData.computer_attributes.kyosirMod;
     if (combatData.weather === 'Astralands') criticalChance += 10;
@@ -2073,7 +2073,9 @@ const damageTypeCompiler = async (combatData, weapon, player_physical_damage, pl
 }
 
 const criticalCompiler = async (combatData, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
-    // console.log(critChance, critClearance, 'Crit Chance and Clearance');
+    let num = critClearance;
+    num = (critClearance * 100) / 100; 
+    console.log(critChance, critClearance, 'Crit Chance and Clearance');
     if (critChance >= critClearance) {
         player_physical_damage *= weapon.critical_damage;
         player_magical_damage *= weapon.critical_damage;

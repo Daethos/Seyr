@@ -789,6 +789,7 @@ const GameSolo = ({ user }: GameProps) => {
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
                 options[random]();
+                if ('vibrate' in navigator) navigator.vibrate(200);
             };
         };
     };
@@ -1033,6 +1034,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
             return;
         };
+        if ('vibrate' in navigator) navigator.vibrate(200);
         try {
             switch (content) {
                 case 'enemy': {
@@ -1391,6 +1393,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
+            if ('vibrate' in navigator) navigator.vibrate(200);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1413,6 +1416,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
+            if ('vibrate' in navigator) navigator.vibrate(200);
             dispatch({
                 type: ACTIONS.INSTANT_COMBAT,
                 payload: response.data
@@ -1439,6 +1443,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
+            if ('vibrate' in navigator) navigator.vibrate(200);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data

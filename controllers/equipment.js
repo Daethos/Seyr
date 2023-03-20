@@ -133,14 +133,13 @@ const randomFloatFromInterval = (min, max) => {
 }
 
 const randomizeStats = (item, rarity) => {
-    // console.log(item, 'Item in randomizeStats()')
     const stats = {};
     const attributeRanges = {
-        Common: [1, 1, 2, 2],
-        Uncommon: [1, 2, 3, 4],
-        Rare: [2, 3, 4, 7],
-        Epic: [4, 5, 6, 9],
-        Legendary: [10, 13, 16, 20],
+        Common: [1, 1, 1, 2, 3],
+        Uncommon: [1, 2, 2, 3, 5],
+        Rare: [2, 3, 4, 5, 8],
+        Epic: [4, 5, 6, 9, 12],
+        Legendary: [10, 13, 16, 20, 25],
     };
 
     const range = attributeRanges[rarity];
@@ -154,9 +153,9 @@ const randomizeStats = (item, rarity) => {
         console.log(attribute, item[attribute], 'Attribute')
         if (item[attribute] > 0) {
             if (attributeCount === 1) {
-                item[attribute] = randomIntFromInterval(range[3], (range[3] + 2));
+                item[attribute] = randomIntFromInterval(range[3], range[4]);
             } else if (attributeCount === 2) {
-                item[attribute] = randomIntFromInterval(range[1], (range[3] - 1));
+                item[attribute] = randomIntFromInterval(range[2], range[3]);
             } else if (attributeCount === 3) {
                 item[attribute] = randomIntFromInterval(range[0], range[2]);
             } else { // 4-6

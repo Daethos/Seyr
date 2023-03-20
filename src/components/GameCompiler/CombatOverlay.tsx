@@ -83,18 +83,17 @@ const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, lo
             }}
             >
             <h5 className='overlay-content-combat' style={ loadingCombatOverlay ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
-                {
-                    playerWin ?
+                { playerWin ?
                     <p style={getStyle()}>{ascean?.name} Wins with {pArticle} {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}, dealing {Math.round(playerDamageTotal)} Damage!
                     <br />
                     {combatOverlayText}
                     </p> 
-                    : computerWin ?
+                : computerWin ?
                     <p style={getEnemyStyle()}>{enemy?.name} Wins with {cArticle} {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}, dealing {Math.round(computerDamageTotal)} Damage!
                     <br />
                     {combatOverlayText}
                     </p>
-                    : null
+                : null
                 }
             </h5>
             </div>
