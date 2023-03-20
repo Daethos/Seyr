@@ -1341,7 +1341,7 @@ const GameSolo = ({ user }: GameProps) => {
                     type: ACTIONS.PLAYER_WIN,
                     payload: combatData
                 });
-                if (mapState?.currentTile?.content !== 'city') {
+                if (mapState?.currentTile?.content !== 'city' && gameState.opponent.name !== "Wolf" && gameState.opponent.name !== "Bear") {
                     gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 };
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
@@ -1416,13 +1416,13 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.INSTANT_COMBAT,
                 payload: response.data
             });
-            await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            playReligion();
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
         };
@@ -1442,13 +1442,13 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
             });
-            await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            playReligion();
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };

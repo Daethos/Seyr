@@ -2670,17 +2670,20 @@ const instantActionSplitter = async (combatData) => {
 };
 
 const consumePrayerSplitter = async (combatData) => {
+    console.log("Consuming Prayer: ", combatData.new_player_health, combatData.current_player_health, "Player Health Before");
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
-
+        if (effect.prayer !== combatData.prayerSacrifice) return true;
         switch (combatData.prayerSacrifice) {
             case 'Heal':
+                console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")
+                console.log("Healing for :", effect.effect.healing * 0.5);
                 combatData.new_player_health += effect.effect.healing * 0.5;
                 combatData.current_player_health += effect.effect.healing * 0.5;
-
+                console.log(combatData.new_player_health, combatData.current_player_health, "Player Health After")
                 if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
                     combatData.computer_win = false;
                 };
@@ -2690,11 +2693,23 @@ const consumePrayerSplitter = async (combatData) => {
                 combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
             
                 combatData.player_action_description = 
-                    `This winds warp to wrap ${combatData.computer.name}, buffeting them for ${Math.round(combatData.realized_player_damage)} more damage.`    
+                    `${combatData.weapons[0].influences[0]}'s Tendrils serenade ${combatData.computer.name}, echoing ${Math.round(combatData.realized_player_damage)} more damage.`    
             
                 if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
                     combatData.new_computer_health = 0;
                     combatData.player_win = true;
+                };
+                for (let key in effect.effect) {
+                    if (key in combatData.weapons[matchingWeaponIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                        };
+                    };
+                    if (key in combatData.player_defense) {
+                        combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                    };
                 };
                 break;
             case 'Damage':
@@ -2708,67 +2723,34 @@ const consumePrayerSplitter = async (combatData) => {
 
                 break;
             case 'Debuff':
+                
+                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_computer_damage;
+                combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+            
+                combatData.player_action_description = 
+                    `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.computer.name}, wearing for ${Math.round(combatData.realized_computer_damage)} more damage.`    
+            
+                if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+                    combatData.new_computer_health = 0;
+                    combatData.player_win = true;
+                };
+
                 for (let key in effect.effect) {
                     if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
-                            combatData.computer_weapons[matchingDebuffTargetIndex][key] += (effect.effect[key] * effect.activeStacks) * 0.2;
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
                         } else {
-                            combatData.computer_weapons[matchingDebuffTargetIndex][key] -= (effect.effect[key] * effect.activeStacks) * 0.2;
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
                         };
                     };
                     if (key in combatData.computer_defense) {
-                        combatData.computer_defense[key] += (effect.effect[key] * effect.activeStacks) * 0.2;
-                    };
-                    if (key in combatData.weapons[matchingWeaponIndex]) {
-                        if (key !== 'dodge') {
-                            combatData.weapons[matchingWeaponIndex][key] -= (effect.effect[key] * effect.activeStacks) * 0.2;
-                        } else {
-                            combatData.weapons[matchingWeaponIndex][key] += (effect.effect[key] * effect.activeStacks) * 0.2;
-                        };
-                    };
-                    if (key in combatData.player_defense) {
-                        combatData.player_defense[key] -= (effect.effect[key] * effect.activeStacks) * 0.2;
+                        combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
                     };
                 };
                 break;
             default: break;
         };
-
-
-        if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
-            for (let key in effect.effect) {
-                if (key in combatData.weapons[matchingWeaponIndex]) {
-                    if (key !== 'dodge') {
-                        combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
-                    } else {
-                        combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
-                    };
-                };
-                if (key in combatData.player_defense) {
-                    combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
-                };
-            };
-        };
-        if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
-            for (let key in effect.effect) {
-                if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
-                    if (key !== 'dodge') {
-                        combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
-                    } else {
-                        combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
-                    };
-                };
-                if (key in combatData.computer_defense) {
-                    combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
-                };
-            };
-        };
-        
-        if (effect.prayer === combatData.prayerSacrifice) {
-            return false;
-        } else {
-            return true;
-        };
+        return false;
     });
     combatData.prayerSacrifice = '';
     return combatData;
@@ -2792,7 +2774,6 @@ const actionCompiler = async (combatData) => {
 const instantActionCompiler = async (combatData) => {
     try {
         const result = await instantActionSplitter(combatData);
-        console.log(result, 'Result of Instant Action Splitter');
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };

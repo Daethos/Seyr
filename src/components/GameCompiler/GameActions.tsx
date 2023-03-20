@@ -1,8 +1,13 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, RefAttributes } from 'react';
 import Form from 'react-bootstrap/Form';
 import './GameCompiler.css';
 import CombatSettingModal from './CombatSettingModal';
 import { ACTIONS } from './CombatStore';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip, { TooltipProps } from 'react-bootstrap/Tooltip';
+import Popover from 'react-bootstrap/Popover';
+import Modal from 'react-bootstrap/Modal';
+import { Button } from 'react-bootstrap';
 
 interface Props {
     handleAction: (action: any) => void;
@@ -29,6 +34,7 @@ interface Props {
 
 const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, timeLeft, setTimeLeft, handleAction, handleCounter, handleInitiate, sleep, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
+  const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const { actionStatus } = state;
   const { dodgeStatus } = state;
   const { combatInitiated } = state;
@@ -75,7 +81,7 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
         type: ACTIONS.SET_INSTANT_STATUS,
         payload: false,
       });
-    }, (state?.weapons?.[0]?.dodge * 1000));
+    }, (state?.weapons?.[0]?.dodge * 500));
     return () => clearTimeout(instantTimer);
   }, [instantStatus]);
 
@@ -85,7 +91,7 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
         type: ACTIONS.SET_DODGE_STATUS,
         payload: false,
       });
-    }, (state?.weapons?.[0]?.dodge * 500));
+    }, (state?.weapons?.[0]?.dodge * 1000));
     return () => clearTimeout(dodgeTimer);
   }, [dodgeStatus]);
 
@@ -114,6 +120,24 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
       payload: prayer,
     });
   };
+
+  const prayerPopover = (
+    <Popover className="text-info" id="popover" >
+        <Popover.Header id="popover-header" className="" as="h2" style={{ backgroundColor: "black" }}>Consume Prayer<span id="popover-image"></span></Popover.Header>
+        <Popover.Body id="popover-body" className="" style={{ backgroundColor: "black", fontSize: "12px" }}>
+            Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
+            {' '} to enhance their being, those favored to the Ancients were granted strength in the glow of their beloved Ancient. Some believed this was more than simply a boost to one's disposition.
+            {' '} Others sought to channel it through their caer into a single burst.
+            <br /><br />
+            Consume a Prayer to experience a burst of caerenic beauty.
+            <p style={{ color: "gold" }}></p>
+            Damage - Damage Opponent for 150% Round Damage<br />
+            Debuff - Damage Opponent From Opponent's Last Attack<br />
+            Buff - Damage Opponent From Last Attack<br />
+            Heal - Heal for 150% Round Heal
+        </Popover.Body>
+    </Popover>
+);
 
   
   const borderColor = (mastery: string) => {
@@ -160,22 +184,73 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
     };
 };
 
+const consumeTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
+  <Tooltip id='consume-tooltip' {...props}>
+    <strong>Consume Prayer</strong>
+  </Tooltip>
+);
+
+const instantTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
+  <Tooltip id='instant-tooltip' {...props}>
+    <strong>Instant Attack</strong>
+  </Tooltip>
+);
 
   return (
     <>
+
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
     <CombatSettingModal state={state} damageType={damageType} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={weapons} prayers={prayers} />
     {state.playerEffects.length > 0 ?
-          (state.playerEffects.map((effect: any, index: number) => {
-            return (
-              <button key={index} className='prayer-button' style={prayerColor(effect?.prayer)} onClick={() => handlePrayerMiddleware(effect?.prayer)}><img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} /></button> 
-            
-            )
-      })) : '' }
+      <div className='prayers'>
+        <Modal show={prayerModal} onHide={() => setPrayerModal(false)} centered id="modal-weapon">
+          <Modal.Header closeButton closeVariant='white' style={{ color: "gold" }}>Consume Prayer</Modal.Header>
+          <Modal.Body style={{ textAlign: "center", fontSize: "14px" }}>
+            <p style={{ color: "#fdf6d8" }}>
+          Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
+            {' '} to enhance their being, those favored to the Ancients were granted strength in the glow of their beloved Ancient. Some believed this was more than simply a boost to one's disposition.
+            {' '} Others sought to channel it through their caer into a single burst.
+            <br />
+            </p>
+
+            Consume a Prayer to experience a burst of caerenic beauty.
+            <br /><br />
+            <p style={{ color: "gold" }}>
+            Damage - Damage Opponent for 150% Round Damage<br />
+            </p>
+            <p style={{ color: "gold" }}>
+            Debuff - Damage Opponent From Opponent's Last Attack<br />
+            </p>
+            <p style={{ color: "gold" }}>
+            Buff - Damage Opponent From Last Attack<br />
+            </p>
+            <p style={{ color: "gold" }}>
+            Heal - Heal for 150% Round Heal
+            </p>
+          </Modal.Body>
+        </Modal>
+        <Button variant='' onClick={() => setPrayerModal(true)} style={{ color: "gold", fontSize: "20px", textShadow: "2.5px 2.5px 2.5px black", fontWeight: 600 }}>Sacrifical Prayers </Button><br />
+        {/* <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={prayerPopover}>
+        <p style={{ color: "gold" }}>Sacrifical Prayers</p>
+        </OverlayTrigger> */}
+        {
+      state.playerEffects.map((effect: any, index: number) => {
+        return (
+          <OverlayTrigger key={index} placement='auto-start' overlay={consumeTooltip}>
+              <button className='prayer-button' style={prayerColor(effect?.prayer)} onClick={() => handlePrayerMiddleware(effect?.prayer)}>
+                <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} />
+              </button> 
+            </OverlayTrigger>
+          )
+        })} 
+        </div>
+      : '' }
     { !state?.instantStatus ?
-      <button className='instant-button' style={getEffectStyle} onClick={handleInstant}>
-        <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
-      </button>
+      <OverlayTrigger placement='auto-start' overlay={instantTooltip}>
+        <button className='instant-button' style={getEffectStyle} onClick={handleInstant}>
+          <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
+        </button>
+      </OverlayTrigger>
     : '' }
     <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                

@@ -323,7 +323,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         </>
                     : computerWin ?
                     <>
-                        "Seek refuge {ascean.name}, your frailty wears on my Caer."<br />
+                        "Seek refuge {ascean.name}, your frailty wears on my caer."<br />
                         <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
                         </>
                     : 
