@@ -87,7 +87,7 @@ return (
       className='joystick-outer'
       style={{
         borderRadius: "50%",
-        backgroundColor: "purple",
+        backgroundColor: "black",
         position: "fixed",
         bottom: "75px",
         right: "75px",
@@ -101,9 +101,9 @@ return (
         className='joystick-inner'
         style={{
             borderRadius: "50%",
-            backgroundColor: "#fdf6d8",
+            backgroundColor: "black",
             transform: `translate(${position.x}px, ${position.y}px)`,
-            transition: 'transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            transition: 'transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1.0)',
         }}
       ></div>
     </div>

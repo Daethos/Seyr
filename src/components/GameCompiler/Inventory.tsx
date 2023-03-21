@@ -458,7 +458,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
 
     return (
         <>
-        <Modal show={forgeModalShow} onHide={() => setForgeModalShow(false)} centered id='modal-weapon'>
+        <Modal show={forgeModalShow} onHide={() => setForgeModalShow(false)} centered id='modal-weapon' style={{ zIndex: 99999 }}>
             <Modal.Header style={{ color: "red", fontSize: "18px" }}>
                 Do You Wish To Collapse Three {inventory?.name} into one of {getNextRarity[inventory?.rarity as keyof typeof getNextRarity]} Quality for {getForgeCost[inventory?.rarity as keyof typeof getForgeCost]} Gold?
             </Modal.Header>
@@ -471,7 +471,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
                 </p>
             </Modal.Body>
         </Modal>
-        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon'>
+        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ zIndex: 99999 }}>
             <Modal.Header>
                 Do You Wish To Remove and Destroy Your {inventory?.name}?
             </Modal.Header>

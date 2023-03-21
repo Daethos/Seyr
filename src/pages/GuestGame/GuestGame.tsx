@@ -403,6 +403,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
+            if ('vibrate' in navigator) navigator.vibrate(100);
             console.log(response.data, 'Response Initiating Combat');
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
@@ -438,6 +439,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
+            if ('vibrate' in navigator) navigator.vibrate(100);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -460,6 +462,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
+            if ('vibrate' in navigator) navigator.vibrate(100);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -579,7 +582,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             />
             <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={100}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
             />
             <Button variant='' className='settings-button' style={{ color: 'gold' }} onClick={() => handleLogout()}>

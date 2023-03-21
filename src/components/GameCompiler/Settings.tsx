@@ -19,9 +19,11 @@ interface Props {
     gameDispatch: React.Dispatch<any>;
     gameState: any;
     mapState: any;
+    vibrationTime: number;
+    setVibrationTime: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState, mapState, joystickSpeed, setJoystickSpeed }: Props) => {
+const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState, mapState, joystickSpeed, setJoystickSpeed, vibrationTime, setVibrationTime }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
     const navigate = useNavigate();
@@ -45,6 +47,12 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         setJoystickSpeed(speed);
     }
 
+    function handleVibrationChange(e: React.ChangeEvent<HTMLInputElement>) {
+        let speed = parseFloat(e.target.value);
+        console.log(speed, 'New Speed');
+        setVibrationTime(speed);
+    }
+
     function returnHome() {
         // Clear Potential Loot
         navigate('/');
@@ -62,19 +70,24 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         : ""}
         <br />
         <Accordion flush >
-        <Accordion.Item eventKey="5" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Speed ({joystickSpeed})</h5></Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-            <Form.Range value={joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
-        </Accordion.Body>
-        </Accordion.Item>
         <Accordion.Item eventKey="0" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Volume ({soundEffectsVolume})</h5></Accordion.Header>
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Sound Volume ({soundEffectsVolume})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <Form.Range value={soundEffectsVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />
         </Accordion.Body>
         </Accordion.Item>
-
+        <Accordion.Item eventKey="5" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Joystick Delay ({joystickSpeed})</h5></Accordion.Header>
+        <Accordion.Body className='settings-accordion'>
+            <Form.Range value={joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
+        </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="6" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Vibration Time ({vibrationTime})</h5></Accordion.Header>
+        <Accordion.Body className='settings-accordion'>
+            <Form.Range value={vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
+        </Accordion.Body>
+        </Accordion.Item>
         <Accordion.Item eventKey="4">
         <Accordion.Header>
             <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>

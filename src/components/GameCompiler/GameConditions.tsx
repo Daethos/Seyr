@@ -13,9 +13,10 @@ interface Props {
     soundEffects: (effects: any) => Promise<void>;
     handlePlayerWin: (combatData: any) => Promise<void>;
     handleComputerWin: (combatData: any) => Promise<void>;
+    vibrationTime: number;
 };
 
-const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, setEmergencyText, handlePlayerWin, handleComputerWin }: Props) => {
+const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, setEmergencyText, handlePlayerWin, handleComputerWin, vibrationTime }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [timeLeftDisplay, setTimeLeftDisplay] = useState<number>(timeLeft);
 
@@ -61,6 +62,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
         try {
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);
+            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
             console.log(response.data, 'Response Auto Engaging');
             dispatch({ type: ACTIONS.AUTO_COMBAT, payload: response.data });
             await soundEffects(response.data);

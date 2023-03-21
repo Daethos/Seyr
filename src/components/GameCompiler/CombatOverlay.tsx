@@ -23,9 +23,10 @@ interface CombatProps {
     computerWin: boolean;
     combatOverlayText: string;
     gameDispatch: React.Dispatch<any>;
+    combatEngaged: boolean;
 };
 
-const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, loadingCombatOverlay, combatOverlayText, combatResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
+const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, computerWin, loadingCombatOverlay, combatOverlayText, combatResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
     const overlayRef = useRef(null);
     const pArticle = ['a', 'e', 'i', 'o', 'u'].includes(playerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
     const cArticle = ['a', 'e', 'i', 'o', 'u'].includes(computerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
@@ -77,8 +78,7 @@ const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, lo
                 left: 0,
                 width: '100%',
                 height: '35%',
-                display: '',
-                backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                // backgroundColor: 'rgba(0, 0, 0, 0.65)',
                 zIndex: 9999,
             }}
             >
@@ -93,8 +93,14 @@ const CombatOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, lo
                     <br />
                     {combatOverlayText}
                     </p>
+                : combatEngaged ?
+                    <>
+                    <p style={getStyle()}>{ascean?.name}: {pArticle} {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)} for {Math.round(playerDamageTotal)} Damage </p>
+                    <p style={getEnemyStyle()}>{enemy?.name}: {cArticle} {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)} for {Math.round(computerDamageTotal)} Damage </p>
+                    {combatOverlayText}
+                    </>
                 : null
-                }
+}
             </h5>
             </div>
         </Overlay>

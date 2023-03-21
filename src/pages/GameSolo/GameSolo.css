@@ -488,12 +488,12 @@
 .joystick-outer {
   width: 100px;
   height: 100px;
-  border: 3px solid black;
+  border: 3px solid purple;
 }
 .joystick-inner {
   width: 50px;
   height: 50px;
-  border: 2px solid black;
+  border: 2px solid purple;
 }
 @media screen and (max-width: 675px) {
   .game-block {
@@ -545,13 +545,13 @@
   .joystick-outer {
     width: 150px;
     height: 150px;
-    border: 4px solid black;
+    border: 4px solid gold;
     
   }
   .joystick-inner {
     width: 75px;
     height: 75px;
-    border: 3px solid black;
+    border: 3px solid gold;
   }
   #console {
     transform: scale(1.25);

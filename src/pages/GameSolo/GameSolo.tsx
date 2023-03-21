@@ -63,6 +63,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
+    const [vibrationTime, setVibrationTime] = useState<number>(100);
     const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
     const [canvasWidth, setCanvasWidth] = useState<number>(402);
     const [canvasHeight, setCanvasHeight] = useState<number>(402);
@@ -789,7 +790,7 @@ const GameSolo = ({ user }: GameProps) => {
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
                 options[random]();
-                if ('vibrate' in navigator) navigator.vibrate(200);
+                if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
             };
         };
     };
@@ -1034,7 +1035,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
             return;
         };
-        if ('vibrate' in navigator) navigator.vibrate(200);
+        if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
         try {
             switch (content) {
                 case 'enemy': {
@@ -1393,7 +1394,25 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(200);
+            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            // // gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
+
+            // setTimeout(() => { 
+            //     dispatch({
+            //         type: ACTIONS.INITIATE_COMBAT,
+            //         payload: response.data
+            //     });
+            //     soundEffects(response.data);
+            //     if (response.data.player_win === true) {
+            //         handlePlayerWin(response.data);
+            //     };
+            //     if (response.data.computer_win === true) {
+            //         handleComputerWin(response.data);
+            //     };
+            //     gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            // }, 2000);
+
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1416,7 +1435,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(200);
+            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
             dispatch({
                 type: ACTIONS.INSTANT_COMBAT,
                 payload: response.data
@@ -1443,7 +1462,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
-            if ('vibrate' in navigator) navigator.vibrate(200);
+            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1538,20 +1557,20 @@ const GameSolo = ({ user }: GameProps) => {
                     ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                     playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
                     rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
-                    loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText}  gameDispatch={gameDispatch}
+                    loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
                 />
                 </>
             : '' }
 
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={vibrationTime}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
             />
             
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState} mapState={mapState}
-                joystickSpeed={joystickSpeed} setJoystickSpeed={setJoystickSpeed}
+                joystickSpeed={joystickSpeed} setJoystickSpeed={setJoystickSpeed} vibrationTime={vibrationTime} setVibrationTime={setVibrationTime}
             />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
