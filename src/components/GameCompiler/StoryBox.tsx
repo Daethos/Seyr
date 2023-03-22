@@ -13,9 +13,10 @@ interface StoryProps {
     ascean: any;
     mapState: any;
     storyContent: string;
+    moveTimer: number;
 };
 
-const StoryBox = ({ ascean, mapState, storyContent }: StoryProps) => {
+const StoryBox = ({ ascean, mapState, storyContent, moveTimer }: StoryProps) => {
     const [currentTileContent, setCurrentTileContent] = useState<Tile>({
         x: 0,
         y: 0,
@@ -27,7 +28,7 @@ const StoryBox = ({ ascean, mapState, storyContent }: StoryProps) => {
 
 
     useEffect(() => {
-        console.log('mapState.currentTile: ', mapState.currentTile)
+        // console.log('mapState.currentTile: ', mapState.currentTile)
         setCurrentTileContent(mapState.currentTile);
     }, [mapState]);
 
@@ -40,7 +41,7 @@ const StoryBox = ({ ascean, mapState, storyContent }: StoryProps) => {
     return (
         <div className='story-box'>
             <p className='story-box-content'>
-                [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ] | {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)}
+                [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ] | {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)} | Movement: ({moveTimer})
                 <br /><br />
                 { mapState?.currentTile?.x === 0 && mapState?.currentTile?.y === 0 ?
                     `You are at the beginning of your journey, standing around in some part of the ${mapState?.province} region, without recollection of how you got there, yet here you are. So, what is there to do when you don't know what to do?`

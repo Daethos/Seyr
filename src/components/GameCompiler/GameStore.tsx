@@ -92,6 +92,7 @@ export interface NPC {
     currency: object;
     level: number;
     experience: number;
+    dialogId: string;
 };
 
 export interface Equipment {

@@ -9,7 +9,8 @@ import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
 import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests } from '../components/GameCompiler/GameStore';
-
+import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
+import dialogNodes from "../components/GameCompiler/DialogNodes.json"
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
     const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -84,6 +85,7 @@ interface Region {
 
 const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, generateWorld, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const [combatAction, setCombatAction] = useState<any | null>('actions');
+    const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});
     const [showQuest, setShowQuest] = useState<boolean>(false);
     const regionInformation = {
@@ -101,6 +103,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [quest, setQuest] = useState<any>({});
     const [questModalShow, setQuestModalShow] = useState<boolean>(false);
+    const [dialogTree, setDialogTree] = useState<any>([]);
 
     useEffect(() => {
         console.log(ascean.quests, "Ascean")
@@ -108,15 +111,25 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         let newQuest = enemyQuests[Math.floor(Math.random() * enemyQuests.length)];
         setLocalWhispers(enemyQuests);
         setShowQuest(true);
+        getDialogTree();
         return () => {
         } 
     }, [enemy]);
 
-
+    useEffect(() => {
+        console.log(dialogTree, "Dialog Tree")
+    }, [dialogTree]);
     
     useEffect(() => {
         console.log(localWhispers, "Local Whisper")
     }, [localWhispers]);
+
+    const getDialogTree = () => {
+        console.log(enemy, "New Enemy")
+        if (!enemy.dialogId) return;
+        let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
+        setDialogTree(dialogTree);
+    }
 
     const handleCurrentQuest = (currentQuest: any) => {
         let quest = {
@@ -376,11 +389,12 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         : '' }
                     </>
                 : currentIntent === 'persuasion' ?
-                <>
+                    <>
                         "This has not been written yet."
                     </>
                 : currentIntent === 'services' ?
                 <>
+                        {/* <DialogTree ascean={ascean} enemy={enemy} dialogNodes={dialogTree} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} /> */}
                         "Greetings, chance meeting you here. I've been traveling these lands for some time now, and it's good to see those with a mind for wander. I have some items you have find of you here on your adventures, if it interests you."
                         <br /><br />
                         <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
@@ -390,6 +404,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         { merchantEquipment?.length > 0 ?
                             <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                         : '' }
+
                     </>
                 : currentIntent === 'provincialWhispers' ?
                 <>

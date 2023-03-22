@@ -97,6 +97,7 @@ export const MapStore = (map: MapData, action: Action) => {
                 steps: map.steps + 1,
             };
         case 'SET_MOVE_CONTENT':
+            console.log("Moving Content");
             moveContent(action.payload, action.payload.contentClusters, action.payload.visitedTiles);
             const { x, y } = action.payload.currentTile;
             const mapX = x + 100;

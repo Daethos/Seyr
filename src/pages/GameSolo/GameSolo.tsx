@@ -37,6 +37,8 @@ import Journal from '../../components/GameCompiler/Journal';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import * as io from 'socket.io-client'
 
+
+
 let socket: any;
 
 export enum MapMode {
@@ -60,6 +62,7 @@ const GameSolo = ({ user }: GameProps) => {
     const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
+    const [moveTimer, setMoveTimer] = useState<number>(6)
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
@@ -143,6 +146,35 @@ const GameSolo = ({ user }: GameProps) => {
         };
         fetchData();
     }, [asceanID]);
+
+    const [moveTimerDisplay, setMoveTimerDisplay] = useState<number>(moveTimer);
+
+    useEffect(() => {
+        if (!moveTimerDisplay) return;
+        const intervalId = setInterval(() => {
+            setMoveTimer((moveTimer) => moveTimer - 1);
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, [moveTimerDisplay]);
+
+    useEffect(() => {
+        setMoveTimerDisplay(moveTimer);
+    }, [moveTimer]);
+
+    useEffect(() => {
+        if (mapState.currentTile.content === 'enemy') {
+            console.log("Fighting An Enemy, Not Triggering Move Timer Content")
+            return;
+        }
+        const timer = setTimeout(() => {
+            if (moveTimer === 0) {
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                setMoveTimer(6);
+            }
+        }, moveTimer);
+        return () => clearTimeout(timer);
+    }, [moveTimer, mapState]);
+    
 
     const loadMap = async (ascean: Player, map: MapData) => {
         console.log(map, "Loading Map");
@@ -939,6 +971,8 @@ const GameSolo = ({ user }: GameProps) => {
             const npc: NPC = Object.assign({}, Merchant);
             gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: npc });
             const response = await asceanAPI.getAnimalStats(npc);
+            // const dialog = getNodesForNPC(npcIds[npc.dialogId]);
+            // console.log(dialog, "Merchant Dialog ??")
             dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
             await getNPCDialog(npc.name);
             gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: 'services' });
@@ -1118,11 +1152,12 @@ const GameSolo = ({ user }: GameProps) => {
             };
         } catch (err: any) {
             console.log(err.message, 'Error Handling Tile Content');
-        } finally {
-            if (mapState.steps % 1 === 0 && mapState.steps !== 0) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            };
-        };
+        } 
+        // finally {
+        //     if (mapState.steps % 1 === 0 && mapState.steps !== 0) {
+        //         mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+        //     };
+        // };
     };
 
     useEffect(() => {
@@ -1150,7 +1185,7 @@ const GameSolo = ({ user }: GameProps) => {
             return;
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
-    }, [mapState.currentTile, mapState.steps]);
+    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
@@ -1635,7 +1670,7 @@ const GameSolo = ({ user }: GameProps) => {
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
                         : 
                         <>
-                        <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} />
+                        <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
                         <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
                         <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>

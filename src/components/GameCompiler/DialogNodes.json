@@ -1,0 +1,395 @@
+{
+    "nodes": [
+        {
+            "id": "0001",
+            "text": "Greethings there, I'm ${enemy.name}. Whom am I hailing this glorious day?",
+            "options": [
+                {
+                    "text": "Hello there ${enemy.name}, my name is ${ascean.name}.",
+                    "next": "0002",
+                    "npcIds": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                }
+            ],
+            "npcIds": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "id": "0002",
+            "text": "Well a pleasure, ${ascean.name}.",
+            "options": [
+                {
+                    "text": "Gracious to have met you too.",
+                    "next": "0003",
+                    "npcIds": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                },
+                {
+                    "text": "Oh, yes, of course. A pleasure I'm sure.",
+                    "next": "0003",
+                    "npcIds": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                },
+                {
+                    "text": "Yes, yes, enough pleasantries and the like. What is it you wish of me?",
+                    "next": "0003",
+                    "npcIds": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                },
+                {
+                    "text": "Bitch, please shut up.",
+                    "next": "0003",
+                    "npcIds": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                }
+            ],
+            "npcIds": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "id": "0003",
+            "text": "What can I help you with?",
+            "options": [
+                {
+                    "text": "I'm interested in a bit of everything you can say.",
+                    "next": "0021",
+                    "npcIds": [
+                        1
+                    ]
+                },
+                {
+                    "text": "I need to purchase some equipment",
+                    "next": "0004",
+                    "npcIds": [
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                },
+                {
+                    "text": "I need to repair some equipment",
+                    "next": "0005",
+                    "npcIds": [
+                        6,
+                        7
+                    ]
+                },
+                {
+                    "text": "I need to equipment forged",
+                    "next": "0006",
+                    "npcIds": [
+                        4,
+                        6,
+                        7
+                    ]
+                },
+                {
+                    "text": "I'm not sure what I'm looking for",
+                    "next": "0020",
+                    "npcIds": [
+                        5
+                    ]
+                }
+            ],
+            "npcIds": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "id": "0004",
+            "text": "What kind of equipment do you need?",
+            "options": [
+                {
+                    "text": "I require weaponry",
+                    "next": "0007",
+                    "npcIds": [
+                        2,
+                        6
+                    ]
+                },
+                {
+                    "text": "I require defensive equipment",
+                    "next": "0008",
+                    "npcIds": [
+                        3,
+                        6,
+                        8
+                    ]
+                },
+                {
+                    "text": "I'm curious about jewelry",
+                    "next": "0009",
+                    "npcIds": [
+                        4
+                    ]
+                }
+            ],
+            "npcIds": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "id": "0005",
+            "text": "Let me have a look at your equipment and see what I can do.",
+            "options": [],
+            "npcIds": [
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "id": "0006",
+            "text": "What kind of equipment do you need forged, weaponry, shields, armor?",
+            "options": [
+                {
+                    "text": "I need a new weapon forged",
+                    "next": "0010",
+                    "npcIds": [
+                        6,
+                        7
+                    ]
+                },
+                {
+                    "text": "I need a new shield forged",
+                    "next": "0011",
+                    "npcIds": [
+                        6
+                    ]
+                },
+                {  
+                    "text": "I need some new armor forged",
+                    "next": "0012",
+                    "npcIds": [
+                        6,
+                        8
+                    ]
+                },
+                {
+                    "text": "Can you craft new jewelry for me from lesser materials?",
+                    "next": "0013",
+                    "npcIds": [
+                        4
+                    ]
+                }
+            ],
+            "npcIds": [
+                4,
+                6,
+                7,
+                8
+            ]
+        },
+        {
+            "id": "0007",
+            "text": "What kind of weapon do you need?",
+            "options": [
+                {
+                    "text": "Weapons of this world preferred.",
+                    "next": "0014",
+                    "npcIds": [
+                        2,
+                        6
+                    ]
+                },
+                {
+                    "text": "Perhaps something a little more bizarre?",
+                    "next": "0015",
+                    "npcIds": [
+                        1,
+                        2,
+                        7
+                    ]
+                }
+            ],
+            "npcIds": [
+                2,
+                6,
+                7
+            ]
+        },
+        {
+            "id": "0008",
+            "text": "What kind of defensive equipment do you need?",
+            "options": [
+                {
+                    "text": "I've need of shields, show me what you have.",
+                    "next": "0016",
+                    "npcIds": [
+                        3,
+                        6
+                    ]
+                },
+                {
+                    "text": "I have need for some armor",
+                    "next": "0017",
+                    "npcIds": [
+                        3,
+                        6,
+                        8
+                    ]
+                }
+            ],
+            "npcIds": [
+                3,
+                6,
+                8
+            ]
+        },
+        {
+            "id": "0009",
+            "text": "Here are my artifacts and oddities, do they amuse you?",
+            "options": [],
+            "npcIds": [
+                4
+            ]
+        },
+        {
+            "id": "0010",
+            "text": "What kind of weapon are you looking to forge?",
+            "options": [
+                {
+                    "text": "A weapon forged of wood and steel, nothing bizarre.",
+                    "next": "0018",
+                    "npcIds": [
+                        6
+                    ]
+                },
+                {
+                    "text": "A weapon with some essence, some might call it magic.",
+                    "next": "0019",
+                    "npcIds": [
+                        7
+                    ]
+                }
+            ],
+            "npcIds": [
+                6,
+                7
+            ]
+        },
+        {
+            "id": "0011",
+            "text": "Hand over your material you want me to forge into a shield, and give me some time.",
+            "options": [],
+            "npcIds": [
+                6
+            ]
+        },
+        {
+            "id": "0012",
+            "text": "Hand over your material you want me to forge into armor, and give me some time.",
+            "options": [],
+            "npcIds": [
+                6,
+                8
+            ]
+        },
+        {
+            "id": "0013",
+            "text": "Hand over your material you want me to forge into jewelry, and give me some time.",
+            "options": [],
+            "npcIds": [
+                4
+            ]
+        },
+        {
+            "id": "0014",
+            "text": "Aye, I have the kind you're looking for",
+            "options": [],
+            "npcIds": [
+                2,
+                6
+            ]
+        },
+        {
+            "id": "0020",
+            "text": "[The Alchemist looks away to reach for some various vials] For one who isn't sure of what should strike them, I tend to have their soothe.",
+            "options": [],
+            "npcIds": [
+                5
+            ]
+        },
+        {
+            "id": "0021",
+            "text": "Good thing I carry a bit of every desire, have a chance look at my wares.",
+            "options": [],
+            "npcIds": [
+                1
+            ]
+        }
+    ]
+}
