@@ -525,14 +525,6 @@ html, body {
   top: 12.5%;
   pointer-events: visible;
 }
-/* .ascean-ui {
-  top: 7.5%;
-  left: 5.75%;
-  z-index: 9;
-} */
-/* #world-status {
-  float: right;
-} */
 .story-ascean {
   background-color: rgba(0, 0, 0, 0.7);
   margin-top: -5%;
@@ -564,7 +556,6 @@ html, body {
   width: 34%;
   margin-left: 33%;
   margin-top: 1%;
-  /* align-items: center; */
 }
 
 .story-progress {
@@ -590,8 +581,6 @@ html, body {
   border-radius: 50%;
 }
 #story-popover-image {
-  /* float: left; */
   margin-top: 4%;
-  /* margin-left: -5%; */
   transform: scale(1.75);
 }

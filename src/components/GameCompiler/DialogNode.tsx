@@ -68,7 +68,6 @@ const DialogOption = ({ option, onClick }: DialogOptionProps) => {
     };
 
     const buttonStyle = {
-      // border: "1px solid purple",
       backgroundColor: "black",
       color: "green"
     }

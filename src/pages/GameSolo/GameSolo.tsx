@@ -37,8 +37,6 @@ import Journal from '../../components/GameCompiler/Journal';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import * as io from 'socket.io-client'
 
-
-
 let socket: any;
 
 export enum MapMode {
@@ -68,12 +66,13 @@ const GameSolo = ({ user }: GameProps) => {
     });
     const [vibrationTime, setVibrationTime] = useState<number>(100);
     const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
-    const [canvasWidth, setCanvasWidth] = useState<number>(402);
-    const [canvasHeight, setCanvasHeight] = useState<number>(402);
+    const [canvasWidth, setCanvasWidth] = useState<number>(400);
+    const [canvasHeight, setCanvasHeight] = useState<number>(400);
     const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
     const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
+
 
     const [asceanState, setAsceanState] = useState({
         ascean: gameState.player,
@@ -167,7 +166,7 @@ const GameSolo = ({ user }: GameProps) => {
             return;
         }
         const timer = setTimeout(() => {
-            if (moveTimer === 0) {
+            if (moveTimer === 0 && mapState?.steps > 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
                 setMoveTimer(6);
             }
@@ -308,11 +307,14 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 minLevel = 2;
                 maxLevel = 4;
-            } else if (gameState.player.level <= 6) { // 5-6
+            } else if (gameState.player.level === 5) { // 5
+                minLevel = 4;
+                maxLevel = 6;
+            } else if (gameState.player.level === 6) { // 6
                 minLevel = 4;
                 maxLevel = 8;
             } else if (gameState.player.level <= 8) { // 7-8
-                minLevel = 4;
+                minLevel = 6;
                 maxLevel = 10;
             } else if (gameState.player.level <= 10) { // 9-10
                 minLevel = 6;
@@ -641,10 +643,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const data = {
                 ascean: gameState.player._id, 
-                coordinates: {
-                    x: x,
-                    y: y,
-                },
+                coordinates: { x: x, y: y },
                 map: mapState
             };
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });

@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-export interface CombatData {
+export interface PvPData {
+    room: string;
+
     player: any;
     action: string;
     player_action: string;
@@ -36,23 +38,23 @@ export interface CombatData {
     roll_success: boolean;
     player_win: boolean;
 
-    computer: any;
-    computer_action: string;
-    computer_counter_guess: string;
-    computerBlessing: string;
-    computer_health: number;
-    current_computer_health: number;
-    new_computer_health: number;
-    computer_weapons: any[];
-    computer_weapon_one: object;
-    computer_weapon_two: object;
-    computer_weapon_three: object;
-    computerEffects: any[];
-    computer_damage_type: string;
-    computer_defense: object;
-    computer_attributes: object;
-    computer_defense_default: object;
-    realized_computer_damage: number;
+    enemy: any;
+    enemy_action: string;
+    enemy_counter_guess: string;
+    enemyBlessing: string;
+    enemy_health: number;
+    current_enemy_health: number;
+    new_enemy_health: number;
+    enemy_weapons: any[];
+    enemy_weapon_one: object;
+    enemy_weapon_two: object;
+    enemy_weapon_three: object;
+    enemyEffects: any[];
+    enemy_damage_type: string;
+    enemy_defense: object;
+    enemy_attributes: object;
+    enemy_defense_default: object;
+    realized_enemy_damage: number;
 
     attack_weight: number;
     counter_weight: number;
@@ -65,20 +67,20 @@ export interface CombatData {
     counter_posture_weight: number;
     counter_roll_weight: number;
 
-    computer_start_description: string;
-    computer_special_description: string;
-    computer_action_description: string;
-    computer_influence_description: string;
-    computer_influence_description_two: string;
-    computer_death_description: string;
+    enemy_start_description: string;
+    enemy_special_description: string;
+    enemy_action_description: string;
+    enemy_influence_description: string;
+    enemy_influence_description_two: string;
+    enemy_death_description: string;
 
-    computer_critical_success: boolean;
-    computer_counter_success: boolean;
-    computer_dual_wielding: boolean;
-    computer_glancing_blow: boolean;
-    computer_religious_success: boolean;
-    computer_roll_success: boolean;
-    computer_win: boolean;
+    enemy_critical_success: boolean;
+    enemy_counter_success: boolean;
+    enemy_dual_wielding: boolean;
+    enemy_glancing_blow: boolean;
+    enemy_religious_success: boolean;
+    enemy_roll_success: boolean;
+    enemy_win: boolean;
 
     combatInitiated: boolean;
     actionStatus: boolean;
@@ -93,48 +95,16 @@ export interface CombatData {
     loseStreak: number;
 
     weather: string;
-}
+};
 
 interface Action {
     type: string;
     payload: any;
-}
+};
 
-export const ACTIONS = {
-    SET_PLAYER: 'SET_PLAYER',
-    SET_COMPUTER: 'SET_COMPUTER',
-    SET_DUEL: 'SET_DUEL',
-    RESET_PLAYER: 'RESET_PLAYER',
-    RESET_COMPUTER: 'RESET_COMPUTER',
-    RESET_DUEL: 'RESET_DUEL',
-    SET_NEW_COMPUTER: 'SET_NEW_COMPUTER',
-    SET_ACTION_STATUS: 'SET_ACTION_STATUS',
-    SET_COMBAT_ACTION: 'SET_COMBAT_ACTION',
-    SET_COMBAT_COUNTER: 'SET_COMBAT_COUNTER',
-    SET_COMBAT_INITIATED: 'SET_COMBAT_INITIATED',
-    SET_DAMAGE_TYPE: 'SET_DAMAGE_TYPE',
-    SET_DODGE_STATUS: 'SET_DODGE_STATUS',
-    SET_INSTANT_STATUS: 'SET_INSTANT_STATUS',
-    SET_PRAYER_BLESSING: 'SET_PRAYER_BLESSING',
-    SET_PRAYER_SACRIFICE: 'SET_PRAYER_SACRIFICE',
-    SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
-    INITIATE_COMBAT: 'INITIATE_COMBAT',
-    INSTANT_COMBAT: 'INSTANT_COMBAT',
-    AUTO_COMBAT: 'AUTO_COMBAT',
-    SET_PLAYER_QUICK: 'SET_PLAYER_QUICK',
-    SET_PLAYER_SLICK: 'SET_PLAYER_SLICK',
-    SET_PLAYER_LEVEL_UP: 'SET_PLAYER_LEVEL_UP',
-    SAVE_EXPERIENCE: 'SAVE_EXPERIENCE',
-    CLEAR_COUNTER: 'CLEAR_COUNTER',
-    AUTO_ENGAGE: 'AUTO_ENGAGE',
-    PLAYER_WIN: 'PLAYER_WIN',
-    COMPUTER_WIN: 'COMPUTER_WIN',
-    CLEAR_DUEL: 'CLEAR_DUEL',
-    SET_WEATHER: 'SET_WEATHER',
-    PLAYER_REST: 'PLAYER_REST',
-}
 
-export const initialCombatData: CombatData = {
+export const initialPvPData: PvPData = {
+    room: '',
     player: {},
     action: '',
     player_action: '',
@@ -167,23 +137,23 @@ export const initialCombatData: CombatData = {
     religious_success: false,
     roll_success: false,
     player_win: false,
-    computer: {},
-    computer_action: '',
-    computer_counter_guess: '',
-    computerBlessing: 'Buff',
-    computer_health: 0,
-    current_computer_health: 0,
-    new_computer_health: 0,
-    computer_weapons: [],
-    computer_weapon_one: {},
-    computer_weapon_two: {},
-    computer_weapon_three: {},
-    computerEffects: [],
-    computer_damage_type: '',
-    computer_defense: {},
-    computer_attributes: {},
-    computer_defense_default: {},
-    realized_computer_damage: 0,
+    enemy: {},
+    enemy_action: '',
+    enemy_counter_guess: '',
+    enemyBlessing: 'Buff',
+    enemy_health: 0,
+    current_enemy_health: 0,
+    new_enemy_health: 0,
+    enemy_weapons: [],
+    enemy_weapon_one: {},
+    enemy_weapon_two: {},
+    enemy_weapon_three: {},
+    enemyEffects: [],
+    enemy_damage_type: '',
+    enemy_defense: {},
+    enemy_attributes: {},
+    enemy_defense_default: {},
+    realized_enemy_damage: 0,
     attack_weight: 0,
     counter_weight: 0,
     dodge_weight: 0,
@@ -194,19 +164,19 @@ export const initialCombatData: CombatData = {
     counter_dodge_weight: 0,
     counter_posture_weight: 0,
     counter_roll_weight: 0,
-    computer_start_description: '',
-    computer_special_description: '',
-    computer_action_description: '',
-    computer_influence_description: '',
-    computer_influence_description_two: '',
-    computer_death_description: '',
-    computer_critical_success: false,
-    computer_counter_success: false,
-    computer_dual_wielding: false,
-    computer_glancing_blow: false,
-    computer_religious_success: false,
-    computer_roll_success: false,
-    computer_win: false,
+    enemy_start_description: '',
+    enemy_special_description: '',
+    enemy_action_description: '',
+    enemy_influence_description: '',
+    enemy_influence_description_two: '',
+    enemy_death_description: '',
+    enemy_critical_success: false,
+    enemy_counter_success: false,
+    enemy_dual_wielding: false,
+    enemy_glancing_blow: false,
+    enemy_religious_success: false,
+    enemy_roll_success: false,
+    enemy_win: false,
     combatInitiated: false,
     actionStatus: false,
     gameIsLive: false,
@@ -219,9 +189,43 @@ export const initialCombatData: CombatData = {
     winStreak: 0,
     loseStreak: 0,
     weather: '',
+};
+
+export const ACTIONS = {
+    SET_PLAYER: 'SET_PLAYER',
+    SET_ENEMY: 'SET_ENEMY',
+    SET_DUEL: 'SET_DUEL',
+    RESET_PLAYER: 'RESET_PLAYER',
+    RESET_ENEMY: 'RESET_ENEMY',
+    RESET_DUEL: 'RESET_DUEL',
+    SET_NEW_ENEMY: 'SET_NEW_ENEMY',
+    SET_ACTION_STATUS: 'SET_ACTION_STATUS',
+    SET_COMBAT_ACTION: 'SET_COMBAT_ACTION',
+    SET_COMBAT_COUNTER: 'SET_COMBAT_COUNTER',
+    SET_COMBAT_INITIATED: 'SET_COMBAT_INITIATED',
+    SET_DAMAGE_TYPE: 'SET_DAMAGE_TYPE',
+    SET_DODGE_STATUS: 'SET_DODGE_STATUS',
+    SET_INSTANT_STATUS: 'SET_INSTANT_STATUS',
+    SET_PRAYER_BLESSING: 'SET_PRAYER_BLESSING',
+    SET_PRAYER_SACRIFICE: 'SET_PRAYER_SACRIFICE',
+    SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
+    INITIATE_COMBAT: 'INITIATE_COMBAT',
+    INSTANT_COMBAT: 'INSTANT_COMBAT',
+    AUTO_COMBAT: 'AUTO_COMBAT',
+    SET_PLAYER_QUICK: 'SET_PLAYER_QUICK',
+    SET_PLAYER_SLICK: 'SET_PLAYER_SLICK',
+    SET_PLAYER_LEVEL_UP: 'SET_PLAYER_LEVEL_UP',
+    SAVE_EXPERIENCE: 'SAVE_EXPERIENCE',
+    CLEAR_COUNTER: 'CLEAR_COUNTER',
+    AUTO_ENGAGE: 'AUTO_ENGAGE',
+    PLAYER_WIN: 'PLAYER_WIN',
+    ENEMY_WIN: 'ENEMY_WIN',
+    CLEAR_DUEL: 'CLEAR_DUEL',
+    SET_WEATHER: 'SET_WEATHER',
+    PLAYER_REST: 'PLAYER_REST',
 }
 
-export const CombatStore = (state: CombatData, action: Action) => {
+export const PvPStore = (state: PvPData, action: Action) => {
     switch (action.type) {
         case 'SET_PLAYER':
             return {
@@ -239,20 +243,20 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_damage_type: action.payload.combat_weapon_one.damage_type[0],
                 highScore: action.payload.ascean.high_score,
             };
-        case 'SET_COMPUTER':
+        case 'SET_ENEMY':
             return {
                 ...state,
-                computer: action.payload.ascean,
-                computer_health: action.payload.attributes.healthTotal,
-                current_computer_health: action.payload.attributes.healthTotal,
-                new_computer_health: action.payload.attributes.healthTotal,
-                computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                computer_weapon_one: action.payload.combat_weapon_one,
-                computer_weapon_two: action.payload.combat_weapon_two,
-                computer_weapon_three: action.payload.combat_weapon_three,
-                computer_defense: action.payload.defense,
-                computer_attributes: action.payload.attributes,
-                computer_damage_type: action.payload.combat_weapon_one.damage_type[0]
+                enemy: action.payload.ascean,
+                enemy_health: action.payload.attributes.healthTotal,
+                current_enemy_health: action.payload.attributes.healthTotal,
+                new_enemy_health: action.payload.attributes.healthTotal,
+                enemy_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                enemy_weapon_one: action.payload.combat_weapon_one,
+                enemy_weapon_two: action.payload.combat_weapon_two,
+                enemy_weapon_three: action.payload.combat_weapon_three,
+                enemy_defense: action.payload.defense,
+                enemy_attributes: action.payload.attributes,
+                enemy_damage_type: action.payload.combat_weapon_one.damage_type[0]
             };
         case 'SET_DUEL':
             return {
@@ -267,48 +271,48 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 current_player_health: state.player_health,
                 new_player_health: state.player_health,
-                current_computer_health: state.computer_health,
-                new_computer_health: state.computer_health,
+                current_enemy_health: state.enemy_health,
+                new_enemy_health: state.enemy_health,
                 combatEngaged: true,
                 gameIsLive: false,
                 player_win: false,
-                computer_win: false,
+                enemy_win: false,
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
                 winStreak: 0,
             };
-        case 'RESET_COMPUTER':
+        case 'RESET_ENEMY':
             return {
                 ...state,
                 current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
                 new_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                current_computer_health: state.computer_health,
-                new_computer_health: state.computer_health,
+                current_enemy_health: state.enemy_health,
+                new_enemy_health: state.enemy_health,
                 combatEngaged: true,
                 gameIsLive: false,
                 player_win: false,
-                computer_win: false,
+                enemy_win: false,
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
-                winStreak: state.player.level > state.computer.level ? 0: state.winStreak,
+                winStreak: state.player.level > state.enemy.level ? 0: state.winStreak,
             };
-        case 'SET_NEW_COMPUTER':
+        case 'SET_NEW_ENEMY':
             return {
                 ...state,
                 current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
                 new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
-                computer: action.payload.ascean,
-                computer_health: action.payload.attributes.healthTotal,
-                current_computer_health: action.payload.attributes.healthTotal,
-                new_computer_health: action.payload.attributes.healthTotal,
-                computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                computer_weapon_one: action.payload.combat_weapon_one,
-                computer_weapon_two: action.payload.combat_weapon_two,
-                computer_weapon_three: action.payload.combat_weapon_three,
-                computer_defense: action.payload.defense,
-                computer_attributes: action.payload.attributes,
+                enemy: action.payload.ascean,
+                enemy_health: action.payload.attributes.healthTotal,
+                current_enemy_health: action.payload.attributes.healthTotal,
+                new_enemy_health: action.payload.attributes.healthTotal,
+                enemy_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                enemy_weapon_one: action.payload.combat_weapon_one,
+                enemy_weapon_two: action.payload.combat_weapon_two,
+                enemy_weapon_three: action.payload.combat_weapon_three,
+                enemy_defense: action.payload.defense,
+                enemy_attributes: action.payload.attributes,
                 player_win: false,
-                computer_win: false,
+                enemy_win: false,
                 combatRound: 1,
             };
         case 'AUTO_ENGAGE':
@@ -425,17 +429,17 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 player_win: false,
-                computer_win: false,
+                enemy_win: false,
                 combatEngaged: false,
                 gameIsLive: false,
                 dodgeStatus: false,
                 instantStatus: false,
                 action: '',
-                computer_action: '',
+                enemy_action: '',
                 counter_guess: '',
-                computer_counter_guess: '',
+                enemy_counter_guess: '',
                 realized_player_damage: 0,
-                realized_computer_damage: 0,
+                realized_enemy_damage: 0,
                 combatRound: 0,
                 sessionRound: 0,
             };
@@ -498,22 +502,55 @@ export const CombatStore = (state: CombatData, action: Action) => {
     };
 };
 
-export const useInterval = (callback: () => void, delay: number) => {
-    const savedCallback = useRef<() => void>();
+export interface PlayerData {
+    playerOne: object;
+    playerTwo: object;
+    playerThree: object;
+    playerFour: object;
+};
 
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
+export const initialPlayerData: PlayerData = {
+    playerOne: {},
+    playerTwo: {},
+    playerThree: {},
+    playerFour: {},
+};
 
-    useEffect(() => {
-        function tick() {
-            if (savedCallback.current) {
-                savedCallback.current();
-            }
-        }
-        if (delay !== null) {
-            let id = setInterval(tick, delay);
-            return () => clearInterval(id);
-        }   
-    }, [delay]);
-}
+export interface PlayerAction {
+    type: string;
+    payload: any;
+};
+
+export const PLAYER_ACTIONS = {
+    SET_PLAYER_ONE: 'SET_PLAYER_ONE',
+    SET_PLAYER_TWO: 'SET_PLAYER_TWO',
+    SET_PLAYER_THREE: 'SET_PLAYER_THREE',
+    SET_PLAYER_FOUR: 'SET_PLAYER_FOUR',
+};
+
+export const PlayerStore = (playerState: PlayerData, playerAction: PlayerAction) => {
+    switch (playerAction.type) {
+        case 'SET_PLAYER_ONE':
+            return {
+                ...playerState,
+                playerOne: playerAction.payload,
+            };
+        case 'SET_PLAYER_TWO':
+            return {
+                ...playerState,
+                playerTwo: playerAction.payload,
+            };
+        case 'SET_PLAYER_THREE':
+            return {
+                ...playerState,
+                playerThree: playerAction.payload,
+            };
+        case 'SET_PLAYER_FOUR':
+            return {
+                ...playerState,
+                playerFour: playerAction.payload,
+            };
+        default:
+            return playerState;
+    };
+};

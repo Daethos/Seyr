@@ -27,7 +27,7 @@ export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) 
       ...state,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
   async function handleSubmit(e: { preventDefault: () => void; }) {
     e.preventDefault();

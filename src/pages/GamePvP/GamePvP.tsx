@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './GamePvP.css'
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -9,222 +9,107 @@ import PvPConditions from '../../components/GameCompiler/PvPConditions';
 import PvPCombatText from '../../components/GameCompiler/PvPCombatText';
 import PvPActions from '../../components/GameCompiler/PvPActions';
 import PVPAnimations from '../../components/GameCompiler/PvPAnimations';
+import { ACTIONS, initialPvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
+import useGameSounds from '../../components/GameCompiler/Sounds';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
+import GameMap from '../../components/GameCompiler/GameMap';
+
+export enum MapMode {
+    FULL_MAP,
+    QUADRANT,
+    SURROUNDING_TILES,
+    TIGHT,
+};
 
 interface GameProps {
+    state: PvPData;
+    dispatch: any;
+    playerState: PlayerData;
+    playerDispatch: any;
+    mapState: MapData;
+    mapDispatch: any;
     user: any;
     ascean: any;
     opponent: any;
     room: any;
     socket: any;
-    combatData: any;
-    setCombatData: any;
     setModalShow: any;
     enemyPlayer: any;
     yourData: any;
     enemyData: any;
     spectator: boolean;
-    handleRoomReset: () => void;
-}
+};
 
-const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, setCombatData, setModalShow, enemyPlayer, yourData, enemyData, handleRoomReset }: GameProps) => {
+const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDispatch, user, ascean, opponent, spectator, room, socket, setModalShow, enemyPlayer, yourData, enemyData }: GameProps) => {
     const [loading, setLoading] = useState(false);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
-    const [combatInitiated, setCombatInitiated] = useState<boolean>(false)
-    const [actionStatus, setActionStatus] = useState<boolean>(false)
-    const [highScore, setHighScore] = useState<number>(0)
-    const [winStreak, setWinStreak] = useState<number>(0)
-    const [loseStreak, setLoseStreak] = useState<number>(0)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
-    const [freshCombatData, setFreshCombatData] = useState<any>(combatData)
     const [timeLeft, setTimeLeft] = useState<number>(0);
-
-    const [playerWin, setPlayerWin] = useState<boolean>(false)
-    const [computerWin, setComputerWin] = useState<boolean>(false)
-
-    const [gameIsLive, setGameIsLive] = useState<boolean>(true)
-    const [undefinedStats, setUndefinedStats] = useState<boolean>(false)
-    const [undefinedComputer, setUndefinedComputer] = useState<boolean>(false)
-
-    const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`
-    const [playOpponent] = useSound(opponentSfx, { volume: 0.5 })
-
-    const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`
-    const [playWO] = useSound(weaponOrderSfx, { volume: 0.5 })
-    const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`
-    const [playCounter] = useSound(counterSfx, { volume: 0.5 })
-    const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`
-    const [playRoll] = useSound(rollSfx, { volume: 0.5 })
-
-    const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
-    const [playPierce] = useSound(pierceSfx, { volume: 0.5 });
-
-    const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
-    const [playSlash] = useSound(slashSfx, { volume: 0.5 });
-
-    const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
-    const [playBlunt] = useSound(bluntSfx, { volume: 0.5 });
-
-    const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`
-    const [playDeath] = useSound(deathSfx, { volume: 0.5 })
-
-    const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`
-    const [playWin] = useSound(winSfx, { volume: 0.5 })
-
-    const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`
-    const [playReplay] = useSound(replaySfx, { volume: 0.5 })
-
-    const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`
-    const [playReligion] = useSound(religiousSfx, { volume: 0.5 })
-
-    const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`
-    const [playDaethic] = useSound(daethicSfx, { volume: 0.5 })
-
-    const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`
-    const [playWild] = useSound(wildSfx, { volume: 0.5 })
-
-    const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`
-    const [playEarth] = useSound(earthSfx, { volume: 0.5 })
-
-    const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`
-    const [playFire] = useSound(fireSfx, { volume: 0.5 })
-
-    const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`
-    const [playBow] = useSound(bowSfx, { volume: 0.5 })
-
-    const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`
-    const [playFrost] = useSound(frostSfx, { volume: 0.5 })
-
-    const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`
-    const [playLightning] = useSound(lightningSfx, { volume: 0.5 })
-
-    const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`
-    const [playSorcery] = useSound(sorcerySfx, { volume: 0.5 })
-
-    const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`
-    const [playWind] = useSound(windSfx, { volume: 0.5 })
-
-
-    const [dodgeStatus, setDodgeStatus] = useState<boolean>(false)
-
-    const [totalPlayerOneHealth, setTotalPlayerOneHealth] = useState<number>(combatData?.player_one_attributes?.healthTotal)
-    const [currentPlayerOneHealth, setCurrentPlayerOneHealth] = useState<number>(combatData?.current_player_one_health)
-
-    const [totalPlayerTwoHealth, setTotalPlayerTwoHealth] = useState<number>(combatData?.player_two_attributes?.healthTotal)
-    const [currentPlayerTwoHealth, setCurrentPlayerTwoHealth] = useState<number>(combatData?.current_player_two_health)
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
+    const [vibrationTime, setVibrationTime] = useState<number>(100);
+    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
+    const [canvasWidth, setCanvasWidth] = useState<number>(400);
+    const [canvasHeight, setCanvasHeight] = useState<number>(400);
+    const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
+    const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(soundEffectVolume);
+    
 
     function handleAction(action: any) {
-        console.log(action.target.value, '<- Action being handled')
-        if (yourData.player === 1) {
-            setCombatData({
-                ...combatData,
-                'action': action.target.value,
-                'player_one_counter_guess': ''
-            })
-            setTimeLeft(10)
-        } else {
-            setCombatData({
-                ...combatData,
-                'action_two': action.target.value,
-                'player_two_counter_guess': ''
-            })
-        }
-    }
+        console.log(action.target.value, '<- Action being handled');
+        setTimeLeft(10);
+    };
 
     function handleCounter(counter: any) {
-        console.log(counter.target.value, 'New Counter')
-        if (yourData.player === 1) {
-            setCombatData({
-                ...combatData,
-                'action': 'counter',
-                'player_one_counter_guess': counter.target.value
-            })
-            setTimeLeft(10)
-        } else {
-            setCombatData({
-                ...combatData,
-                'action_two': 'counter',
-                'player_two_counter_guess': counter.target.value
-            })
-        }
-    }
+        console.log(counter.target.value, 'New Counter');
+        setTimeLeft(10);
+    };
 
     async function setWeaponOrder(weapon: any) {
         let weapons: any[];
-        if (yourData.player === 1) {
-            weapons = combatData.player_one_weapons
-        } else {
-            weapons = combatData.player_two_weapons
-        }
+        weapons = state.weapons;
         const findWeapon = weapons.filter(
             (weap: { name: any; }) => weap?.name === weapon.target.value
         );
         const newWeaponOrder = async () => weapons.sort((a: any, b: any) => {
             return (
                 a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0
-            )
-        })
+            );
+        });
         const response = await newWeaponOrder();
+        setTimeLeft(10);
         playWO();
-        if (yourData.player === 1) {
-            setCombatData({...combatData, 'player_one_weapons': response})
-            setTimeLeft(10);
-        } else {
-            setCombatData({...combatData, 'player_two_weapons': response})
-            setTimeLeft(10);
-        }
     }
 
     async function setDamageType(damageType: any) {
         console.log(damageType.target.value, '<- Damage Type')
+        setTimeLeft(10);
         playWO();
-        if (yourData.player === 1) {
-            setCombatData({...combatData, 'player_one_damage_type': damageType.target.value});
-            setTimeLeft(10);
-        } else {
-            setCombatData({...combatData, 'player_two_damage_type': damageType.target.value});
-            setTimeLeft(10);
-        }
+        
     }
 
     async function handleInitiate(e: { preventDefault: () => void; }) {
         e.preventDefault()
-        if (yourData.player === 1) {
-            if (combatData.action === 'dodge') { 
-                setDodgeStatus(true) 
-            }
-            if (combatData.action === '') {
-                setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`])
-                return
-            }
-        } else {
-            if (combatData.action_two === 'dodge') { 
-                setDodgeStatus(true) 
-            }
-            if (combatData.action_two === '') {
-                setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`])
-                return
-            }
-        }
+       
         try {
-            setEmergencyText([``])
-            setTimeLeft(10)
-            await socket.emit(`initiated`, combatData)
-            console.log(combatData, 'Socket Emit Combat Data')
-            setCombatInitiated(true)
-            setActionStatus(true)
+            setEmergencyText([``]);
+            setTimeLeft(10);
+            await socket.emit(`initiated`, state);
+            console.log(state, 'Socket Emit Combat Data');
         } catch (err: any) {
-            console.log(err.message, 'Error Initiating Action')
-        }
-    }
+            console.log(err.message, 'Error Initiating Action');
+        };
+    };
 
     const resetAscean = async () => {
         try {
-            await socket.emit(`request_reduel`, combatData)
+            await socket.emit(`request_reduel`, state);
            
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
-        }
-    }
+        };
+    };
 
     // TODO:FIXME: Send it via like an auto-engage to update both peoples combatData to check for both player's initiation of actions
 
@@ -232,223 +117,81 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
         socket.on(`combat_response`, (response: any) => {
             console.log('Combat Response!')
             statusUpdate(response)
-        })
-    }, [])
+        });
+    }, []);
 
-    const [reduelRequest, setReduelRequest] = useState<boolean>(false)
+    const [reduelRequest, setReduelRequest] = useState<boolean>(false);
 
     useEffect(() => {
         socket.on(`reduel_requested`, async (newData: any) => {
-            setCombatData(newData)
-            if (newData.player_one_reduel === true || newData.player_two_reduel === true) {
-                setReduelRequest(true)
-            }
-        })
-    })
+        });
+    });
 
     useEffect(() => {
         socket.on(`reset_duel`, async () => {
-            console.log('Duel Resetting')
-            await resetCombat()
-        })
-    }, [])
+            console.log('Duel Resetting');
+            await resetCombat();
+        });
+    }, []);
 
     const resetCombat = async () => {
         try {
-            setLoading(true)
-            setCurrentPlayerOneHealth(totalPlayerOneHealth);
-            setCurrentPlayerTwoHealth(totalPlayerTwoHealth)
-            setComputerWin(false);
-            setPlayerWin(false);
-            setGameIsLive(true);
-            setReduelRequest(false);
-            setCombatData(freshCombatData)
-            setTimeout(() => setLoading(false), 3000)
+            setLoading(true);
+            setTimeout(() => setLoading(false), 3000);
         } catch (err: any) {
-            console.log(err.message, 'Error Resetting Combat')
-        }
-    }
+            console.log(err.message, 'Error Resetting Combat');
+        };
+    };
 
     useEffect(() => {
         socket.on(`soft_response`, (response: any) => {
-            console.log(`Soft Response`)
-            softUpdate(response)
-        })
-    })
+            console.log(`Soft Response`);
+            softUpdate(response);
+        });
+    });
 
     const softUpdate = async (response: any) => {
         try {
-            setLoading(true)
-            setTimeLeft(10)
-            setCombatData({...response})
-            setLoading(false)
+            setLoading(true);
+            setTimeLeft(10);
+            setLoading(false);
         } catch (err: any) {
-            console.log(err.message, 'Error Performing Soft Update')
-        }
-    }
-
-    useEffect(() => {
-        console.log(winStreak, highScore, 'Win Streak and High Score')
-        if (winStreak> highScore) {
-            setHighScore((score) => score + 1)
-        }
-    }, [winStreak])
-
+            console.log(err.message, 'Error Performing Soft Update');
+        };
+    };
+    
     const statusUpdate = async (response: any) => {
-        console.log(yourData.player, 'Which player are you?')
+        console.log(yourData.player, 'Which player are you?');
         try {
-            setLoading(true)
-            console.log(response, 'Response Auto Engaging')
-            setCombatData({...response, 'action': '', 'action_two': '', 'player_one_counter_guess': '', 'player_two_counter_guess': ''})
-            setCurrentPlayerOneHealth(response.new_player_one_health)
-            setCurrentPlayerTwoHealth(response.new_player_two_health)
-            setPlayerWin(yourData.player === 1 ? response.player_one_win : response.player_two_win)
-            setComputerWin(enemyData.player === 2 ? response.player_two_win : response.player_one_win)
-            if (yourData.player === 1) {
-                if (response.player_one_critical_success === true) {
-                    if (response.player_one_damage_type === 'Spooky' || response.player_one_damage_type === 'Righteous') {
-                        playDaethic();
-                    }
-                    if (response.player_one_damage_type === 'Wild') {
-                        playWild();
-                    }
-                    if (response.player_one_damage_type === 'Earth') {
-                        playEarth();
-                    }
-                    if (response.player_one_damage_type === 'Fire') {
-                        playFire();
-                    }
-                    if (response.player_one_damage_type === 'Frost') {
-                        playFrost();
-                    }
-                    if (response.player_one_damage_type === 'Lightning') {
-                        playLightning();
-                    }
-                    if (response.player_one_damage_type === 'Sorcery') {
-                        playSorcery();
-                    }
-                    if (response.player_one_damage_type === 'Wind') {
-                        playWind();
-                    }
-                    if (response.player_one_damage_type === 'Pierce' && response.player_one_weapons[0].type !== 'Bow') {
-                        playPierce();
-                    }
-                    if (response.player_one_damage_type === 'Blunt') {
-                        playBlunt();
-                    }
-                    if (response.player_one_damage_type === 'Slash') {
-                        playSlash();
-                    }
-                    if (response.player_one_weapons[0].type === 'Bow') {
-                        playBow();
-                    }
-                }
-                if (response.player_one_religious_success === true) {
-                    playReligion();
-                }
-                if (response.player_one_win === true) {
-                    playWin();
-                    setWinStreak((winStreak) => winStreak + 1)
-                    setLoseStreak(0)
-                    setGameIsLive(false)
-                    setDodgeStatus(false)
-                }
-                if (response.player_two_win === true) {
-                    console.log(winStreak, 'Former Win Streak?')
-                    playDeath()
-                    setLoseStreak((loseStreak) => loseStreak + 1)
-                    setWinStreak((winStreak) =>  winStreak = 0)
-                    setGameIsLive(false)
-                    setDodgeStatus(false)
-                }
-            } 
-            if (yourData.player === 2) {
-                if (response.player_two_critical_success === true) {
-                    if (response.player_two_damage_type === 'Spooky' || response.player_two_damage_type === 'Righteous') {
-                        playDaethic()
-                    }
-                    if (response.player_two_damage_type === 'Wild') {
-                        playWild()
-                    }
-                    if (response.player_two_damage_type === 'Earth') {
-                        playEarth()
-                    }
-                    if (response.player_two_damage_type === 'Fire') {
-                        playFire()
-                    }
-                    if (response.player_two_damage_type === 'Frost') {
-                        playFrost()
-                    }
-                    if (response.player_two_damage_type === 'Lightning') {
-                        playLightning()
-                    }
-                    if (response.player_two_damage_type === 'Sorcery') {
-                        playSorcery()
-                    }
-                    if (response.player_two_damage_type === 'Wind') {
-                        playWind()
-                    }
-                    if (response.player_two_damage_type === 'Pierce' && response.player_two_weapons[0].type !== 'Bow') {
-                        playPierce()
-                    }
-                    if (response.player_two_damage_type === 'Blunt') {
-                        playBlunt()
-                    }
-                    if (response.player_two_damage_type === 'Slash') {
-                        playSlash()
-                    }
-                    if (response.player_two_weapons[0].type === 'Bow') {
-                        playBow()
-                    }
-                }
-                if (response.player_two_religious_success === true) {
-                    playReligion()
-                }
-                if (response.player_two_win === true) {
-                    playWin()
-                    setWinStreak((winStreak) => winStreak + 1)
-                    setLoseStreak(0)
-
-                    setGameIsLive(false)
-                    setDodgeStatus(false)
-                }
-                if (response.player_one_win === true) {
-                    console.log(winStreak, 'Former Win Streak?')
-                    playDeath()
-                    setLoseStreak((loseStreak) => loseStreak + 1)
-                    setWinStreak((winStreak) => winStreak = 0)
-                    
-                    setGameIsLive(false)
-                    setDodgeStatus(false)
-                }
-            }
-            if (response.player_one_roll_success === true || response.player_two_roll_success === true) {
-                playRoll()
-            }
-            if (response.player_one_counter_success === true || response.player_two_counter_success === true) {
-                playCounter()
-            }
-            setLoading(false)
+            setLoading(true);
+            console.log(response, 'Response Auto Engaging');
+            
+            setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Updating Status')
-        }
-    }
+        };
+    };
 
     function sleep(ms: number) {
         return new Promise(
             resolve => setTimeout(resolve, ms)
         );
-    }
+    };
 
     if (loadingAscean || loading) {
         return (
             <Loading Combat={true} />
-        )
-    }
+        );
+    };
 
     return (
         <Container fluid id="game-container" >
-            <PVPAnimations 
+            <GameMap 
+                mapData={mapState} canvasRef={canvasRef} canvasPosition={canvasPosition} setCanvasPosition={setCanvasPosition} 
+                canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
+                mapMode={mapMode} setMapMode={setMapMode}
+            />
+            {/* <PVPAnimations 
                 sleep={sleep} 
                 playerCritical={yourData.player === 1 ? combatData.player_one_critical_success : combatData.player_two_critical_success} 
                 computerCritical={enemyData.player === 2 ? combatData.player_two_critical_success : combatData.player_one_critical_success}
@@ -465,13 +208,13 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 counterSuccess={yourData.player === 1 ? combatData.player_one_counter_success : combatData.player_two_counter_success} 
 
                 computerCounterSuccess={enemyData.player === 2 ? combatData.player_two_counter_success : combatData.player_one_counter_success}
-            />
-                <PvPAscean ascean={enemyData.ascean} PvP={true} 
+            /> */}
+                {/* <PvPAscean ascean={enemyData.ascean} PvP={true} 
                     loading={loadingAscean} yourData={yourData} enemyData={enemyData}
                     undefined={undefinedStats} setUndefined={setUndefinedStats} 
                     undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} 
-                    player={false} combatData={combatData} currentPlayerHealth={enemyData.player === 2 ? currentPlayerTwoHealth : currentPlayerOneHealth} />
-            <PvPConditions 
+                    player={false} combatData={combatData} currentPlayerHealth={enemyData.player === 2 ? currentPlayerTwoHealth : currentPlayerOneHealth} /> */}
+            {/* <PvPConditions 
                 combatData ={combatData} setCombatData={setCombatData} setEmergencyText={setEmergencyText} reduelRequest={reduelRequest}
                 setCurrentPlayerHealth={yourData.player === 1 ? setCurrentPlayerOneHealth : setCurrentPlayerTwoHealth} 
                 setCurrentComputerHealth={enemyData.player === 2 ? setCurrentPlayerTwoHealth : setCurrentPlayerOneHealth}
@@ -485,12 +228,12 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                 playSlash={playSlash} playBlunt={playBlunt} playWin={playWin} playWild={playWild}
                 playReligion={playReligion} setDodgeStatus={setDodgeStatus} socket={socket} freshCombatData={freshCombatData} setFreshCombatData={setFreshCombatData}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft}
-            />
-                <PvPAscean ascean={ascean} PvP={true} player={true} yourData={yourData} enemyData={enemyData}
+            /> */}
+                {/* <PvPAscean ascean={ascean} PvP={true} player={true} yourData={yourData} enemyData={enemyData}
                     combatData={combatData} undefined={undefinedStats} 
                     setUndefined={setUndefinedStats} undefinedComputer={undefinedComputer} setUndefinedComputer={setUndefinedComputer} 
-                    currentPlayerHealth={yourData.player === 1 ? currentPlayerOneHealth : currentPlayerTwoHealth} loading={loadingAscean} />
-            <span style={{ float: 'right' }} id='chat-button'>
+                    currentPlayerHealth={yourData.player === 1 ? currentPlayerOneHealth : currentPlayerTwoHealth} loading={loadingAscean} /> */}
+            {/* <span style={{ float: 'right' }} id='chat-button'>
                 <Button variant='outline-danger'
                     style={{ color: '#fdf6d8', borderRadius: 50 + '%',
                         marginTop: 46 + 'vh', 
@@ -510,32 +253,32 @@ const GamePvP = ({ user, ascean, opponent, spectator, room, socket, combatData, 
                             <img src={enemyData.user.photoUrl} alt={enemyData.user.username} style={{ width: 40 + 'px', height: 40 + 'px', borderRadius: 50 + '%' }} />
                         }
                 </Button>
-            </span>
-            { playerWin || computerWin ? '' : combatData?.player_one_weapons?.[0]?.name ?
+            </span> */}
+            {/* { playerWin || computerWin ? '' : combatData?.player_one_weapons?.[0]?.name ?
             <PvPActions 
                 setDodgeStatus={setDodgeStatus} actionStatus={actionStatus} setActionStatus={setActionStatus} PvP={true}
-                combatData={combatData} sleep={sleep} dodgeStatus={dodgeStatus} yourData={yourData} enemyData={enemyData}
-                weapons={yourData.player === 1 ? combatData.player_one_weapons : combatData.player_two_weapons} setWeaponOrder={setWeaponOrder} 
-                damageType={yourData.player === 1 ? combatData.player_one_weapons[0].damage_type : combatData.player_two_weapons[0].damage_type} setDamageType={setDamageType}
-                currentDamageType={yourData.player === 1 ? combatData.player_one_damage_type : combatData.player_two_damage_type}
+                state={state} sleep={sleep} dodgeStatus={dodgeStatus} yourData={yourData} enemyData={enemyData}
+                weapons={yourData.player === 1 ? state.player_one_weapons : state.player_two_weapons} setWeaponOrder={setWeaponOrder} 
+                damageType={yourData.player === 1 ? state.player_one_weapons[0].damage_type : state.player_two_weapons[0].damage_type} setDamageType={setDamageType}
+                currentDamageType={yourData.player === 1 ? state.player_one_damage_type : state.player_two_damage_type}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} combatInitiated={combatInitiated} setCombatInitiated={setCombatInitiated}
-                currentWeapon={yourData.player === 1 ? combatData.player_one_weapons[0] : combatData.player_two_weapons[0]} 
-                currentAction={yourData.player === 1 ? combatData.player_one_action : combatData.player_two_action} 
-                currentCounter={yourData.player === 1 ? combatData.player_one_counter_guess : combatData.player_two_counter_guess} 
-                setCombatData={setCombatData} setEmergencyText={setEmergencyText}
+                currentWeapon={yourData.player === 1 ? state.player_one_weapons[0] : state.player_two_weapons[0]} 
+                currentAction={yourData.player === 1 ? state.player_one_action : state.player_two_action} 
+                currentCounter={yourData.player === 1 ? state.player_one_counter_guess : state.player_two_counter_guess} 
+                setEmergencyText={setEmergencyText}
             /> : <Loading Combat={true} />
-            }
-            <PvPCombatText 
-                ascean={ascean} user={user} combatData={combatData} emergencyText={emergencyText} 
-                playerAction={yourData.player === 1 ? combatData.player_one_action : combatData.player_two_action} 
-                computerAction={enemyData.player === 2 ? combatData.player_two_action : combatData.player_one_action} 
-                playerDeathText={combatData.player_one_death_description} computerDeathText={combatData.player_two_death_description}
-                playerCombatText={combatData.player_one_action_description} computerCombatText={combatData.player_two_action_description} 
-                playerActionText={combatData.player_one_start_description} computerActionText={combatData.player_two_start_description}
-                playerSpecialText={combatData.player_one_special_description} computerSpecialText={combatData.player_two_special_description}
-                playerReligiousText={combatData.player_one_influence_description} computerReligiousText={combatData.player_two_influence_description}
-                playerReligiousTextTwo={combatData.player_one_influence_description_two} computerReligiousTextTwo={combatData.player_two_influence_description_two}
-            />
+            } */}
+            {/* <PvPCombatText 
+                ascean={ascean} user={user} state={state} emergencyText={emergencyText} 
+                playerAction={yourData.player === 1 ? state.player_one_action : state.player_two_action} 
+                computerAction={enemyData.player === 2 ? state.player_two_action : state.player_one_action} 
+                playerDeathText={state.player_one_death_description} computerDeathText={state.player_two_death_description}
+                playerCombatText={state.player_one_action_description} computerCombatText={state.player_two_action_description} 
+                playerActionText={state.player_one_start_description} computerActionText={state.player_two_start_description}
+                playerSpecialText={state.player_one_special_description} computerSpecialText={state.player_two_special_description}
+                playerReligiousText={state.player_one_influence_description} computerReligiousText={state.player_two_influence_description}
+                playerReligiousTextTwo={state.player_one_influence_description_two} computerReligiousTextTwo={state.player_two_influence_description_two}
+            /> */}
         </Container>
     )
 }

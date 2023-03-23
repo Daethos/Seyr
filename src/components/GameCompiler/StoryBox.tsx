@@ -41,7 +41,7 @@ const StoryBox = ({ ascean, mapState, storyContent, moveTimer }: StoryProps) => 
     return (
         <div className='story-box'>
             <p className='story-box-content'>
-                [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ] | {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)} | Movement: ({moveTimer})
+                [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ] | {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)} | ({moveTimer})
                 <br /><br />
                 { mapState?.currentTile?.x === 0 && mapState?.currentTile?.y === 0 ?
                     `You are at the beginning of your journey, standing around in some part of the ${mapState?.province} region, without recollection of how you got there, yet here you are. So, what is there to do when you don't know what to do?`

@@ -7,17 +7,13 @@ interface Props {
     handleChange: any;
     handleSubmit: any
     messageDraft: any;
-}
+};
 
 const FormMessage = ({ friendProfile, handleChange, handleSubmit, messageDraft }: Props) => {
       
     return (
-        <>
-        
         <Form onSubmit={handleSubmit} id="chat-form" className=''>
         <InputGroup className="" id="chat-input" size="lg">
-            {/* <FloatingLabel label={`Text ${friendProfile.username.charAt(0).toUpperCase()} ${friendProfile.username.slice(1)}`}> */}
-
             <Form.Control
             as="textarea"
             style={{ maxHeight: 50 + 'px' }}
@@ -28,12 +24,10 @@ const FormMessage = ({ friendProfile, handleChange, handleSubmit, messageDraft }
             value={messageDraft.message}
             onChange={handleChange}
             />
-            {/* </FloatingLabel> */}
         <Button type="submit" variant="" className="text-success">Submit</Button>
         </InputGroup>
         </Form>
-        </>
-    )
-}
+    );
+};
 
-export default FormMessage
+export default FormMessage;

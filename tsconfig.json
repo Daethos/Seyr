@@ -20,9 +20,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": [
-			"Phaser"
-		]
   },
   "include": [
     "src"

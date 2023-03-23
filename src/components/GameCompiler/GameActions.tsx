@@ -168,27 +168,28 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
     borderRadius: "50%",
   };
 
-  const prayerColor = (prayer: string) => {
+  const prayerColor = (prayer: string, endTick: number, combatRound: number) => {
+    console.log(prayer, endTick, combatRound)
     switch (prayer) {
         case 'Buff': 
           return {
-            border: '2px solid gold',
-            boxShadow: '0 0 1em gold',
+            border: endTick === combatRound ? '2px solid #ffff66' : '2px solid gold',
+            boxShadow: endTick === combatRound ? '0 0 1em #ffff66' : '0 0 1em gold',
           };
         case 'Debuff': 
           return {
-            border: '2px solid purple',
-            boxShadow: '0 0 1em purple',
+            border: endTick === combatRound ? '2px solid #ee82ee' : '2px solid purple',
+            boxShadow: endTick === combatRound ? '0 0 1em #ee82ee' : '0 0 1em purple',
           };
         case 'Heal': 
           return {
-            border: '2px solid green',
-            boxShadow: '0 0 1em green',
+            border: endTick === combatRound ? '2px solid lightgreen' : '2px solid green',
+            boxShadow: endTick === combatRound ? '0 0 1em lightgreen' : '0 0 1em green',
           };
         case 'Damage': 
           return {
-            border: '2px solid red',
-            boxShadow: '0 0 1em red',
+            border: endTick === combatRound ? '2px solid #ff6666' : '2px solid red',
+            boxShadow: endTick === combatRound ? '0 0 1em #ff6666' : '0 0 1em red',
           };
         default: return {};
     };
@@ -202,7 +203,7 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
 
   const instantTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
     <Tooltip id='instant-tooltip' {...props}>
-      <strong>Invocation</strong>
+      <strong>Invocation Of Your Mastery And Faith</strong>
     </Tooltip>
   );
 
@@ -217,37 +218,33 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
           <Modal.Header closeButton closeVariant='white' style={{ color: "gold" }}>Consume Prayer</Modal.Header>
           <Modal.Body style={{ textAlign: "center", fontSize: "14px" }}>
             <p style={{ color: "#fdf6d8" }}>
-          Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
+            Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
             {' '} to enhance their being, those favored to the Ancients were granted strength in the glow of their beloved Ancient. Some believed this was more than simply a boost to one's disposition.
             {' '} Others sought to channel it through their caer into a single burst.
             <br />
+            <br />
+            Consume a prayer to experience a burst of caerenic beauty.
             </p>
-
-            Consume a Prayer to experience a burst of caerenic beauty.
-            <br /><br />
+            <br />
             <p style={{ color: "gold" }}>
-            Damage - Damage Opponent for 150% Round Damage<br />
-            </p>
-            <p style={{ color: "gold" }}>
-            Debuff - Damage Opponent From Opponent's Last Attack<br />
+            <b>Damage</b> - Burst Tick for 150% Round Damage<br />
             </p>
             <p style={{ color: "gold" }}>
-            Buff - Damage Opponent From Last Attack<br />
+            <b>Debuff</b> - Damage Opponent From  <b>Opponent's</b> Last Attack<br />
             </p>
             <p style={{ color: "gold" }}>
-            Heal - Heal for 150% Round Heal
+            <b>Buff</b> - Damage Opponent From Last Attack<br />
+            </p>
+            <p style={{ color: "gold" }}>
+            <b>Heal</b> - Burst Tick for 150% Round Heal
             </p>
           </Modal.Body>
         </Modal>
-        <Button variant='' onClick={() => setPrayerModal(true)} style={{ color: "gold", fontSize: "20px", textShadow: "2.5px 2.5px 2.5px black", fontWeight: 600 }}>Sacrifical Prayers </Button><br />
-        {/* <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={prayerPopover}>
-        <p style={{ color: "gold" }}>Sacrifical Prayers</p>
-        </OverlayTrigger> */}
-        {
-      state.playerEffects.map((effect: any, index: number) => {
-        return (
-          <OverlayTrigger key={index} placement='auto-start' overlay={consumeTooltip}>
-              <button className='prayer-button' style={prayerColor(effect?.prayer)} onClick={() => handlePrayerMiddleware(effect?.prayer)}>
+        <Button variant='' onClick={() => setPrayerModal(true)} style={{ color: "gold", fontSize: "20px", textShadow: "2.5px 2.5px 2.5px black", fontWeight: 600 }}>Consume Prayers </Button><br />
+        { state.playerEffects.map((effect: any, index: number) => {
+          return (
+            <OverlayTrigger key={index} placement='auto-start' overlay={consumeTooltip}>
+              <button className='prayer-button' style={prayerColor(effect?.prayer, effect?.tick?.end, state?.combatRound)} onClick={() => handlePrayerMiddleware(effect?.prayer)}>
                 <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} />
               </button> 
             </OverlayTrigger>
@@ -255,18 +252,18 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
         })} 
         </div>
       : '' }
-    { !state?.instantStatus ?
+    {/* { !state?.instantStatus ? */}
     <>
-      <p style={instantStyle}>
+      <OverlayTrigger placement='auto-start' overlay={instantTooltip}>
+      <p style={instantStyle} className={`invoke${state?.instantStatus ? '-instant' : ''}`} >
       Invoke
       </p>
-      <OverlayTrigger placement='auto-start' overlay={instantTooltip}>
-        <button className='instant-button' style={getEffectStyle} onClick={handleInstant}>
+      </OverlayTrigger>
+        <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={state.instantStatus ? true : false}>
           <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
         </button>
-      </OverlayTrigger>
     </>
-    : '' }
+    {/* : '' } */}
     <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
           <button value='initiate' type='submit' className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button'>Initiate</button>

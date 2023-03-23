@@ -8,6 +8,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.186.0",
     "@fortawesome/fontawesome-free": "^6.2.0",
+    "@pixi/filter-crt": "^5.1.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -42,6 +43,7 @@
     "phaser": "^3.55.2",
     "phaser-matter-collision-plugin": "^1.0.0",
     "phaser3-rex-plugins": "^1.1.77",
+    "pixi.js": "^7.2.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.5.0",

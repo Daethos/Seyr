@@ -32,9 +32,9 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
         bottomRef.current?.scrollIntoView({behavior: 'smooth'});
       }, [sortedDMs]);
 
-    const cleanFriendMessages = async () => userMessages.filter((message: any, index: number) => message.username === friend.username)
+    const cleanFriendMessages = async () => userMessages.filter((message: any) => message.username === friend.username)
 
-    const cleanUserMessages = async () => friendMessages.filter((message: any, index: number) => message.username === user.username)
+    const cleanUserMessages = async () => friendMessages.filter((message: any) => message.username === user.username)
 
     async function getDMs() {
         try {

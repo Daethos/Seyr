@@ -297,7 +297,12 @@
   grid-row-start: 7;
   margin-left: -10%;
 }
-
+.instant-button:disabled {
+  display: none;
+}
+.invoke-instant {
+  display: none;
+}
 #action-button {
   font-size: 8px;
   color: rgb(226, 130, 255);

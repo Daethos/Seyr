@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import ScrollToBottom from 'react-scroll-to-bottom'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import Container from 'react-bootstrap/Container';
@@ -9,16 +9,20 @@ import GamePvP from '../../pages/GamePvP/GamePvP';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import PvPChatModal from './PvPChatModal';
+import { ACTIONS, initialPvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
 
 interface Props {
+    state: PvPData;
+    dispatch: any;
+    playerState: PlayerData;
+    playerDispatch: any;
     user: any;
     room: any;
     ascean: any;
     opponent: any;
     socket: any;
     setShowChat: React.Dispatch<React.SetStateAction<boolean>>;
-    combatData: any;
-    setCombatData: any;
     enemyPlayer: any;
     yourData: any;
     enemyData: any;
@@ -26,7 +30,8 @@ interface Props {
     handleRoomReset: () => void;
 }
 
-const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat, combatData, setCombatData, enemyPlayer, yourData, enemyData, handleRoomReset }: Props) => {
+const GameChat = ({ state, dispatch, playerState, playerDispatch, user, ascean, opponent, spectator, room, socket, setShowChat, enemyPlayer, yourData, enemyData, handleRoomReset }: Props) => {
+    const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [modalShow, setModalShow] = useState(false)
     const [currentMessage, setCurrentMessage] = useState("")
     const [messageList, setMessageList] = useState<any>([])
@@ -46,47 +51,42 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
             await socket.emit("send_message", messageData);
             setMessageList((list: any) => [...list, messageData]);
             setCurrentMessage("");
-        }
-    }
+        };
+    };
 
     const readyDuel = async () => {
-
         try {
-
-            await socket.emit(`duel_ready`, combatData)
+            await socket.emit(`duel_ready`, state);
             setDuelReady(true)
         } catch (err: any) {
             console.log(err.message, 'Error Preparing To Duel')
-        }
-    }
+        };
+    };
 
     const revealAscean = async () => {
-        if (!ascean) {
-            return
-        }
+        if (!ascean) return;
         const asceanData = {
             room: room,
             author: user.username,
             message: `My character is ${ascean.name}, using their ${ascean.weapon_one.name}.`,
             time: Date.now()
-        }
+        };
         await socket.emit("send_ascean", asceanData);
         setMessageList((list: any) => [...list, asceanData]);
-    }
+    };
 
     useEffect(() => {
         socket.on("receive_message", (data: any) => {
             setMessageList((list: any) => [...list, data]);
-        })
-        // socket.on(`Game Commencing`, () => {
-        //     setLiveGameplay(true)
-        //     console.log('Game Commencing')
-        // })
-    }, [socket])
+        });
+        socket.on(`Game Commencing`, () => {
+            setLiveGameplay(true);
+            console.log('Game Commencing');
+        });
+    }, [socket]);
 
     useEffect(() => {
       socket.on(`Game Commencing`, async () => {
-        // if (ascean && opponent) {
             console.log('Setting Gameplay to Live')
             const messageData = {
                 room: room,
@@ -97,17 +97,14 @@ const GameChat = ({ user, ascean, opponent, spectator, room, socket, setShowChat
             await socket.emit(`send_message`, messageData);
             // setLiveGameplay(true)
             setTimeout(() => setLiveGameplay(true), 10000)
-        // }
-      })
-    }, [])
-
-    
+      });
+    }, []);
 
     return (
         <>
         { liveGameplay ?
             <>
-            <GamePvP user={user} spectator={spectator} handleRoomReset={handleRoomReset} ascean={ascean} opponent={opponent} yourData={yourData} enemyData={enemyData} enemyPlayer={enemyPlayer} room={room} socket={socket} combatData={combatData} setCombatData={setCombatData} setModalShow={setModalShow} />
+            <GamePvP state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} mapState={mapState} mapDispatch={mapDispatch} user={user} spectator={spectator} ascean={ascean} opponent={opponent} yourData={yourData} enemyData={enemyData} enemyPlayer={enemyPlayer} room={room} socket={socket} setModalShow={setModalShow} />
             <Modal 
                 show={modalShow}
                 onHide={() => setModalShow(false)}

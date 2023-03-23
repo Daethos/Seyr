@@ -92,11 +92,11 @@ io.on("connection", (socket) => {
     })
    });
 
+   let numPlayers = 0;
 
   // THIS IS FOR NON SAVEABLE CHAT
   socket.on("join_room", async (data) => {
     socket.join(data.room);
-    
     // console.log(room.user.use, 'New Player Joining')
     console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`)
     
@@ -107,137 +107,140 @@ io.on("connection", (socket) => {
       room: data.room,
       ascean: data.ascean,
       user: data.user,
-      combatData: data.combatData,
       player: connectedUsersCount,
     }
 
-    const response = await asceanService.asceanCompiler(data.ascean)
+    const response = await asceanService.asceanCompiler(data.ascean);
+    io.to(data.room).emit(`player_data`, response.data);
     // console.log(response, 'Response from Ascean Service')
 
     let combatData = {
+
       room: data.room,
+
+      player: {},
       action: '',
-      player_one: '',
-      player_one_action: '',
-      player_one_counter_guess: '',
-      player_one_health: 0,
-      player_one_weapons: [],
-      player_one_weapon_one: {},
-      player_one_weapon_two: {},
-      player_one_weapon_three: {},
-      player_one_damage_type: '',
-      player_one_defense: {},
-      player_one_attributes: {},
-      current_player_one_health: 0,
-      new_player_one_health: 0,
+      player_action: '',
+      counter_guess: '',
+      playerBlessing: 'Buff',
+      prayerSacrifice: '',
+      player_health: 0,
+      current_player_health: 0,
+      new_player_health: 0,
 
-      player_one_ready: false,
-      player_one_religious_success: false,
-      player_one_dual_wielding: false,
-      player_one_critical_success: false,
-      player_one_counter_success: false,
-      player_one_roll_success: false,
-      player_one_win: false,
+      weapons: [],
+      weapon_one: {},
+      weapon_two: {},
+      weapon_three: {},
+      playerEffects: [],
+      player_damage_type: '',
+      player_defense: {},
+      player_attributes: {},
+      player_defense_default: {},
+      realized_player_damage: 0,
+      player_start_description: '',
+      player_special_description: '',
+      player_action_description: '',
+      player_influence_description: '',
+      player_influence_description_two: '',
+      player_death_description: '',
 
-      player_one_start_description: '',
-      player_one_special_description: '',
-      player_one_action_description: '',
-      player_one_influence_description: '',
-      player_one_influence_description_two: '',
+      critical_success: false,
+      counter_success: false,
+      dual_wielding: false,
+      glancing_blow: false,
+      religious_success: false,
+      roll_success: false,
+      player_win: false,
 
-      player_two: '',
-      player_two_health: 0,
-      player_two_action: '',
-      player_two_counter_guess: '',
-      player_two_weapons: [],
-      player_two_weapon_one: {},
-      player_two_weapon_two: {},
-      player_two_weapon_three: {},
-      player_two_damage_type: '',
-      player_two_defense: {},
-      player_two_attributes: {},
-      player_two_start_description: '',
-      player_two_special_description: '',
-      player_two_action_description: '',
-      player_two_influence_description: '',
-      player_two_influence_description_two: '',
+      enemy: {},
+      enemy_action: '',
+      enemy_counter_guess: '',
+      enemyBlessing: 'Buff',
+      enemy_health: 0,
+      current_enemy_health: 0,
+      new_enemy_health: 0,
 
-      current_player_two_health: 0,
-      new_player_two_health: 0,
+      enemy_weapons: [],
+      enemy_weapon_one: {},
+      enemy_weapon_two: {},
+      enemy_weapon_three: {},
+      enemyEffects: [],
+      enemy_damage_type: '',
+      enemy_defense: {},
+      enemy_attributes: {},
+      enemy_defense_default: {},
+      realized_enemy_damage: 0,
 
-      player_two_ready: false,
-      player_two_critical_success: false,
-      player_two_dual_wielding: false,
-      player_two_roll_success: false,
-      player_two_counter_success: false,
-      player_two_win: false,
+      attack_weight: 0,
+      counter_weight: 0,
+      dodge_weight: 0,
+      posture_weight: 0,
+      roll_weight: 0,
+      counter_attack_weight: 0,
+      counter_counter_weight: 0,
+      counter_dodge_weight: 0,
+      counter_posture_weight: 0,
+      counter_roll_weight: 0,
+
+      enemy_start_description: '',
+      enemy_special_description: '',
+      enemy_action_description: '',
+      enemy_influence_description: '',
+      enemy_influence_description_two: '',
+      enemy_death_description: '',
+
+      enemy_critical_success: false,
+      enemy_counter_success: false,
+      enemy_dual_wielding: false,
+      enemy_glancing_blow: false,
+      enemy_religious_success: false,
+      enemy_roll_success: false,
+      enemy_win: false,
+
+      combatInitiated: false,
+      actionStatus: false,
+      gameIsLive: false,
+      combatEngaged: false,
+      dodgeStatus: false,
+      instantStatus: false,
+
+      combatRound: 0,
+      sessionRound: 0,
+      highScore: 0,
+      winStreak: 0,
+      loseStreak: 0,
+      weather: '',
+
     }
 
-    if (newUser.player === 1) {
-      newUser.combatData.player_one = response.data.ascean,
-      newUser.combatData.player_one_health = response.data.attributes.healthTotal,
-      newUser.combatData.current_player_one_health = response.data.attributes.healthTotal,
-      newUser.combatData.new_player_one_health = response.data.attributes.healthTotal,
-      newUser.combatData.player_one_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-      newUser.combatData.player_one_weapon_one = response.data.combat_weapon_one,
-      newUser.combatData.player_one_weapon_two = response.data.combat_weapon_two,
-      newUser.combatData.player_one_weapon_three = response.data.combat_weapon_three,
-      newUser.combatData.player_one_damage_type = response.data.combat_weapon_one.damage_type,
-      newUser.combatData.player_one_defense = response.data.defense,
-      newUser.combatData.player_one_attributes = response.data.attributes
-      
-      
-      combatData.player_one = response.data.ascean,
-      combatData.player_one_health = response.data.attributes.healthTotal,
-      combatData.current_player_one_health = response.data.attributes.healthTotal,
-      combatData.new_player_one_health = response.data.attributes.healthTotal,
-      combatData.player_one_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-      combatData.player_one_weapon_one = response.data.combat_weapon_one,
-      combatData.player_one_weapon_two = response.data.combat_weapon_two,
-      combatData.player_one_weapon_three = response.data.combat_weapon_three,
-      combatData.player_one_damage_type = response.data.combat_weapon_one.damage_type,
-      combatData.player_one_defense = response.data.defense,
-      combatData.player_one_attributes = response.data.attributes
+    newUser.combatData.player_one = response.data.ascean,
+    newUser.combatData.player_one_health = response.data.attributes.healthTotal,
+    newUser.combatData.current_player_one_health = response.data.attributes.healthTotal,
+    newUser.combatData.new_player_one_health = response.data.attributes.healthTotal,
+    newUser.combatData.player_one_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
+    newUser.combatData.player_one_weapon_one = response.data.combat_weapon_one,
+    newUser.combatData.player_one_weapon_two = response.data.combat_weapon_two,
+    newUser.combatData.player_one_weapon_three = response.data.combat_weapon_three,
+    newUser.combatData.player_one_damage_type = response.data.combat_weapon_one.damage_type,
+    newUser.combatData.player_one_defense = response.data.defense,
+    newUser.combatData.player_one_attributes = response.data.attributes
     
-    }
-
-    if (newUser.player === 2) {
-      newUser.combatData.player_two = response.data.ascean,
-      newUser.combatData.player_two_health = response.data.attributes.healthTotal,
-      newUser.combatData.current_player_two_health = response.data.attributes.healthTotal,
-      newUser.combatData.new_player_two_health = response.data.attributes.healthTotal,
-      newUser.combatData.player_two_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-      newUser.combatData.player_two_weapon_one = response.data.combat_weapon_one,
-      newUser.combatData.player_two_weapon_two = response.data.combat_weapon_two,
-      newUser.combatData.player_two_weapon_three = response.data.combat_weapon_three,
-      newUser.combatData.player_two_damage_type = response.data.combat_weapon_one.damage_type,
-      newUser.combatData.player_two_defense = response.data.defense,
-      newUser.combatData.player_two_attributes = response.data.attributes
     
-      
-      combatData.player_two = response.data.ascean,
-      combatData.player_two_health = response.data.attributes.healthTotal,
-      combatData.current_player_two_health = response.data.attributes.healthTotal,
-      combatData.new_player_two_health = response.data.attributes.healthTotal,
-      combatData.player_two_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-      combatData.player_two_weapon_one = response.data.combat_weapon_one,
-      combatData.player_two_weapon_two = response.data.combat_weapon_two,
-      combatData.player_two_weapon_three = response.data.combat_weapon_three,
-      combatData.player_two_damage_type = response.data.combat_weapon_one.damage_type,
-      combatData.player_two_defense = response.data.defense,
-      combatData.player_two_attributes = response.data.attributes
+    combatData.player = response.data.ascean,
+    combatData.player_health = response.data.attributes.healthTotal,
+    combatData.current_player_health = response.data.attributes.healthTotal,
+    combatData.new_player_health = response.data.attributes.healthTotal,
+    combatData.player_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
+    combatData.player_weapon_one = response.data.combat_weapon_one,
+    combatData.player_weapon_two = response.data.combat_weapon_two,
+    combatData.player_weapon_three = response.data.combat_weapon_three,
+    combatData.player_damage_type = response.data.combat_weapon_one.damage_type,
+    combatData.player_defense = response.data.defense,
+    combatData.player_attributes = response.data.attributes
     
-    }
 
     io.to(data.room).emit(`new_user`, newUser)
-
-    // let newUser = {
-    //   room: data.room,
-    //   ascean: data.ascean,
-    //   user: data.user,
-    //   combatData: data.combatData,
-    //   player: connectedUsersCount,
-    // }
 
     const helloMessage = {
       room: data.room,
@@ -248,9 +251,9 @@ io.on("connection", (socket) => {
 
     io.to(data.room).emit(`receive_message`, helloMessage)
 
-    socket.on(`ascean`, async (asceanData) => {
-      console.log('Did the Ascean Update start?')
-      socket.to(asceanData.room).emit(`update_ascean`, asceanData)
+    socket.on(`ascean`, async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
+      console.log('Did the Ascean Update start?');
+      socket.to(asceanData.room).emit(`update_ascean`, asceanData);
     })
 
     socket.on(`combatData_update`, async () => {
@@ -266,7 +269,7 @@ io.on("connection", (socket) => {
       io.to(newData.room).emit(`updated_combatData`, newData)
     })
 
-    socket.on(`share_combatdata`, async (data) => {
+    socket.on(`share_combatdata`, async (data) => { // THis was to share combatData but now I have it passing via the entire newUser object
       console.log('Sharing Combat Data')
       let newData = {
         user: newUser.user,
@@ -277,18 +280,15 @@ io.on("connection", (socket) => {
       socket.to(newUser.room).emit(`sharing_combatdata`, newData)
     })
 
-    socket.on(`request_data`, async () => {
+    socket.on(`request_new_player`, async () => {
       console.log(`Requesting Data`)
-      socket.to(newUser.room).emit(`requesting_data`)
-    })
-    socket.on(`data_responding`, async () => {
+      socket.to(newUser.room).emit(`requesting_player_data`);
+    });
+
+    socket.on(`player_data_responding`, async () => {
       console.log(`Responding Data`)
-      socket.to(newUser.room).emit(`data_response`, newUser)
-    })
-    
-    // if (connectedUsersCount === 2) {
-    //   io.to(data.room).emit(`Game Commencing`)
-    // }
+      socket.to(newUser.room).emit(`new_player_data_response`, newUser)
+    });
 
     socket.on(`duel_ready`, async (data) => {
       let newData = data;
@@ -322,7 +322,7 @@ io.on("connection", (socket) => {
         newData.player_one_initiated = true;
       } else {
         newData.player_two_initiated = true;
-      }
+      };
       
       if (newData.player_one_initiated === true && newData.player_two_initiated === true) {
         const response = await pvpService.actionCompiler(data)
@@ -330,8 +330,8 @@ io.on("connection", (socket) => {
         io.to(newUser.room).emit(`combat_response`, response);
       } else {
         io.to(newUser.room).emit(`soft_response`, newData);
-      }
-    })
+      };
+    });
 
     socket.on(`request_reduel`, async (data) => {
       let newData = data;

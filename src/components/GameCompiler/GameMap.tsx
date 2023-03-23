@@ -143,8 +143,8 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
     };
 
     function renderFullMap() {
-        const canvasWidth = 402;
-        const canvasHeight = 402;
+        const canvasWidth = 400;
+        const canvasHeight = 400;
         const canvas = canvasRef.current;
         if (canvas) {
             canvas.width = canvasWidth;
@@ -245,16 +245,23 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         for (const coords in surroundingTiles) {
             const [x, y] = coords.split(',').map(Number);
             const tile = surroundingTiles[coords];
-            let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
-            if (x === playerPosition.x && y === playerPosition.y) {
-                color = 'gold'; // set the current tile color to gold
-            };
-            const offsetX = canvasWidth / 2 + (x - playerPosition.x) * tileSize; // calculate the tile position on the canvas
-            const offsetY = canvasHeight / 2 - (y - playerPosition.y) * tileSize;
-            ctx.fillStyle = color;
-            ctx.fillRect(offsetX, offsetY, tileSize, tileSize); 
+            let color = tile.color || 'gray';
+                const offsetX = canvasWidth / 2 + (x - playerPosition.x) * tileSize; // calculate the tile position on the canvas
+                const offsetY = canvasHeight / 2 - (y - playerPosition.y) * tileSize;
+                ctx.fillStyle = color;
+                ctx.fillRect(offsetX, offsetY, tileSize, tileSize); 
+            
         };
-    };
+        // draw the player tile on top of the rest of the tiles
+            const color = 'gold';
+            const offsetX = canvasWidth / 2 + (playerPosition.x - playerPosition.x) * tileSize;
+            const offsetY = canvasHeight / 2 - (playerPosition.y - playerPosition.y) * tileSize;
+            ctx.fillStyle = color;
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 0.75;
+            ctx.strokeRect(offsetX, offsetY, tileSize, tileSize);
+            ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
+        };
       
     function renderSurroundingTiles() {
         const canvasWidth = 100;
@@ -360,9 +367,9 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         <h3 style={{ fontSize: 24 + 'px', textAlign: 'center' }}>Map Size Settings</h3>
             </Modal.Header>
         <Modal.Body style={settingsStyle}>
-            Default Setup is 402x402 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
-        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100.5} max={603} step={12.5625} />
-        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100.5} max={603} step={12.5625} />
+            Default Setup is 400x400 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
+        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100} max={600} step={12.5} />
+        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100} max={600} step={12.5} />
         <br />
         <br />
         Positioning: X: {canvasPosition.x * 100}px Y: {canvasPosition.y * 100}px <br /> <br />
@@ -424,7 +431,6 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         }
         { mapVisible ? (
         <DragDropContext onDragEnd={onDragEnd}>
-        
         {draggableElements.map((draggableElement, index) => (
         <Droppable droppableId={`droppable-${index + 1}`} key={index}>
             {(provided, snapshot) => (
@@ -467,7 +473,7 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
             )}
         </Droppable>
         ))}
-<Droppable droppableId="canvas-element">
+        <Droppable droppableId="canvas-element">
             {(provided) => (
         <div ref={provided.innerRef} {...provided.droppableProps}>
             <Draggable draggableId="map" index={canvasIndex} >
