@@ -5,14 +5,13 @@
 <br /><br />
 
 # Screenshot[s] of This Exciting Opportunity! 
-## NavBar Featuers: [Castle]: Home, [Helm]: New Character, [Quill]: Edit Character, [Scarecrow]: Computer Arena, [Scroll]: Community Feed, [Chat]: DMs, [Axes]: PvP Arena
+## NavBar Featuers: [Castle]: Home, [Helm]: New Character, [Scroll]: Community Feed, [Chat]: Direct Messages
 <br /><br />
 <details>
     <summary>JWT-Auth Login/Signup</summary>
 
 ## At the opening of the app, you'll be prompted to signup with your personal credentials. Everything requested of a new user is required for best experience playing the game, including profile picture!
-![App Start](https://i.imgur.com/erxSZr1.png)
-![App Start](https://i.imgur.com/aHGCG3f.png)
+![App Start](https://i.imgur.com/ox5XneD.png)
 </details>
 <br /><br /><br />
 
@@ -21,8 +20,7 @@
     <summary>Character Creation</summary>
 
 ## From Here, we're asked to create a character if you are not in possession of one--which at the beginning, of course not! You may be yourself, but who are you, really? And now we can settle on the matter of what you believe it is best to wear to a sudden and proper death in front of an adoring crowd, of course we are antiquitous in nature, and are not prone toward bothering to cheer for anyone but the proper favorites, of which you cannot hope to be--not yet, that is!
-![Profile New](https://i.imgur.com/P3hrNqz.png)
-![Profile New](https://i.imgur.com/yZJvyBL.png)
+![Profile New](https://i.imgur.com/Aq8jBlr.png)
 </details>
 <br /><br /><br />
 
@@ -30,25 +28,27 @@
     <summary>Profile Page</summary>
 
 ## Phew, made it to our profile, and now with a character! Whomst would hope to defeat the greatest Ascean that walked this world? It's good I'm here to show you how to use this that I am selling to you now. What impeccable luck!
-![Profile Create](https://i.imgur.com/jXCjulJ.png)
+![Profile Create](https://i.imgur.com/k1jI3ma.png)
 </details>
 <br /><br /><br />
 
-<details>
+<!-- <details>
     <summary>Edit Character</summary>
 
 ## Incase there are any concerns or necessary tweaks to find yourself in the best position to take on this world whether for honor of your ancient beliefs, culture, daethic devotion, or even individuality if it suits you.
 ![Profile Create](https://i.imgur.com/NG9l9eF.png)
 ![Profile Create](https://i.imgur.com/utfNx0b.png)
 </details>
-<br /><br /><br />
+<br /><br /><br /> -->
 
 <details>
-    <summary>Computer Arena</summary>
+    <summary>Story Mode</summary>
 
 ## Well look at you, I cannot attest for that cursed and maddening weapon you've chosen, but the beautiful attire you've selected to wear to battle is a sight to behold, it reminds me of our standard issue Licivitan equipment for soldiers, though the Daethic Knights tend to look a bit too Northren--yet I am a worldy man of course, and see no issue in such matters. Hopefully here it is where you prove yourself before venturing to thwart more active and dynamic opponents.
-![Character Create](https://i.imgur.com/TOpZr3V.png?1)
-![Character Create](https://i.imgur.com/CVuegtB.png?1)
+![Character Create](https://i.imgur.com/4Hmz6iO.png)
+![Character Create](https://i.imgur.com/SOopuqG.png)
+![Character Create](https://i.imgur.com/oxrBnNo.png)
+![Character Create](https://i.imgur.com/toomIdh.png)
 </details>
 <br /><br /><br />
 
@@ -56,7 +56,7 @@
     <summary>Community Feed</summary>
 
 ## And here we can see other characters that have chosen to be on display, to see your potential enemies and friends alike. You can view any character with more precision and even take a gander at the user who has created them if you so choose.
-![Profile Show](https://i.imgur.com/YVdR4ob.png)
+![Profile Show](https://i.imgur.com/8RJFWwS.png)
 </details>
 <br /><br /><br />
 
@@ -64,12 +64,11 @@
     <summary>Chat Messages</summary>
 
 ## Wehther you're speaking to someone directly 1-on-1 or in a group, this is the area to find them and speak with them one on one. Warning, there is no profanity filter or way to block people, so play nicely! ^_^
-![Profile Show](https://i.imgur.com/QFywc9F.png)
-![Profile Show](https://i.imgur.com/OiuFilh.png)
+![Profile Show](https://i.imgur.com/WGSZTax.png)
 </details>
 <br /><br /><br />
 
-<details>
+<!-- <details>
     <summary>PvP Arena</summary>
 
 ## Here is the PvP portion of the game. This allows you to choose an Ascean, connect to a room whether you're the first or second person, and ready yourself for combat against them, complete with real-time chat features during the duel, and options to reduel ad infinitum.
@@ -77,7 +76,7 @@
 ![Profile Show](https://i.imgur.com/r1Yi2QN.png)
 ![Profile Show](https://i.imgur.com/SKeif4I.png)
 </details>
-<br /><br /><br />
+<br /><br /><br /> -->
 
 # Sorceries Conjured
 <br />

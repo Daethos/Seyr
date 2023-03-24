@@ -431,6 +431,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 dodgeStatus: false,
                 instantStatus: false,
                 action: '',
+                player_action: '',
                 computer_action: '',
                 counter_guess: '',
                 computer_counter_guess: '',
