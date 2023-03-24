@@ -59,7 +59,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
 
   if (loading) {
     return (
-      <Loading />
+      <Loading Chat={true} />
     );
   };
 

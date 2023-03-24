@@ -648,15 +648,17 @@ async function create(req, res) {
                     req.body.weapon_two = '63d059865df7503ef9cd71f4';
                 }
             } else {
-                if (parseInt(req.body.achre) > parseInt(req.body.caeren)) { // Tendril && Daethic Bow
+                if (parseInt(req.body.achre) > parseInt(req.body.caeren)) { // Tendril && Daethic Bow && Hush
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e583';
                     req.body.weapon_two = '63b3460cd5c6cfea02a5e586';
+                    // req.body.weapon_three = '63b3460cd5c6cfea02a5e57d';
                 } else if (parseInt(req.body.achre) < parseInt(req.body.caeren)) { // Hush of Daethos && Tendril of Daethos
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e58e';
                     req.body.weapon_two = '63b3460cd5c6cfea02a5e58f';
-                } else { // Same Value Blessed Dagger && Cursed Dagger
+                } else { // Same Value Blessed Dagger && Cursed Dagger && Tendril
                     req.body.weapon_one = '63e47c140de4781b96411d67';
                     req.body.weapon_two = '63b3460cd5c6cfea02a5e572';
+                    // req.body.weapon_three = '63b3460cd5c6cfea02a5e583';
                 }
             }
         } else { // Adherent to the Ancients or Irreligious
@@ -664,9 +666,10 @@ async function create(req, res) {
                 if (parseInt(req.body.strength) > parseInt(req.body.agility)) { // War Hammer && Sunshatter
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e578';
                     req.body.weapon_two = '63e47c140de4781b96411d6b';
-                } else if (parseInt(req.body.strength) < parseInt(req.body.agility)) { // Longsword && Sevashyr
+                } else if (parseInt(req.body.strength) < parseInt(req.body.agility)) { // Longsword && Sevashyr && Shotel
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e56d';
                     req.body.weapon_two = '63e54b27d110dc7ef8fd630b';
+                    // req.body.weapon_three = '63b3460cd5c6cfea02a5e573';
                 } else { // Same Value Claymore && Longbow
                     req.body.weapon_one = '63b3460cd5c6cfea02a5e576';
                     req.body.weapon_two = '63b3460cd5c6cfea02a5e585';

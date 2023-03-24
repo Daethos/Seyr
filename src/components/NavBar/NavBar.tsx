@@ -61,7 +61,7 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
   };
 
   return (
-    <Navbar className="" expand="xxl" expanded={expanded} id="navbar" style={location.pathname.startsWith('/Game/Solo') || location.pathname.startsWith(`/GamePvPLobby`) ? { display: 'none' } : {}}>
+    <Navbar className="" expand="xxl" expanded={expanded} id="navbar" style={location.pathname.startsWith('/Game/Solo') || location.pathname.startsWith(`/Hardcore`) || location.pathname.startsWith(`/GamePvPLobby`) ? { display: 'none' } : {}}>
       <Container fluid>
       <Button className="nav-item" variant='' onClick={() => setModalShow(true)}>
           <img src={user?.photoUrl} alt={user?.photoUrl} id="nav-pic" />
@@ -212,6 +212,7 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
         <path d="M208.82,395.53H80.034c-3.038,0-5.5,2.462-5.5,5.5s2.462,5.5,5.5,5.5H208.82c3.038,0,5.5-2.462,5.5-5.5   S211.857,395.53,208.82,395.53z"></path>
         </svg>
       </Nav.Link>{' '}
+    
 
       <Nav.Link as={NavLink} to='/Game/Lobby'
       style={{ marginLeft: -20 + 'px', marginTop: -0 + 'px' }}

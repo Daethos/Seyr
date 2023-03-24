@@ -23,6 +23,7 @@ import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
 import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
+import HardCoreAscea from "../HardcoreAscea/HardCoreAscea";
 
 function App() {
   const [user, setUser] = useState(userService.getUser());
@@ -72,7 +73,7 @@ function App() {
     return (
         <Loading />
     );
-  }
+  };
 
   if (user) {
     return (
@@ -83,6 +84,7 @@ function App() {
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
+        <Route path='/Hardcore/:asceanID' element={<HardCoreAscea user={user} />} />
         <Route path="/Story/:asceanID" element={<Story user={user} />} />
         <Route path="/Game/Lobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />
@@ -97,15 +99,15 @@ function App() {
       </Routes>
       </div>
     );
-  }
+  };
 
   if (guest) {
     return (
       <Routes>
         <Route path="/guestMatch" element={<GuestGame guest={guest} handleLogout={handleLogout} />} />
       </Routes>
-    )
-  }
+    );
+  };
 
   return (
     <Routes>
@@ -113,6 +115,6 @@ function App() {
       <Route path="/*" element={<Navigate to="/Authorization" />} />
     </Routes>
   );
-}
+};
 
 export default App;

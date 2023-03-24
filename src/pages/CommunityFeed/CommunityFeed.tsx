@@ -15,7 +15,7 @@ import { NavLink } from 'react-router-dom';
 
 interface CommunityProps {
     loggedUser: any;
-}
+};
 
 const CommunityFeed = ({ loggedUser }: CommunityProps) => {
     const [ascean, setAscean] = useState<any>([]);
@@ -24,31 +24,26 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
 
     useEffect(() => {
         getAscean()
-    }, [])
+    }, []);
 
     function compareScores(a: any, b: any) {
         return a[0].score - b[0].score;
-    }
+    };
 
     async function getAscean() {
         setLoading(true);
         try {
             const response = await communityAPI.getEveryone();
             const scores = await response.data.map((ascean: any, index: number) => {
-                let scoreData = {
-                  ascean: ascean.name,
-                  score: ascean.high_score,
-                  key: index,
-                  _id: ascean._id,
-                  mastery: ascean.mastery,
-                  photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'
-                }
-                let newArr = []
+              let newArr = []
+              if (ascean.hardcore) {
+                let scoreData = { ascean: ascean.name, score: ascean.high_score, key: index, _id: ascean._id, mastery: ascean.mastery, photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg' };
                 newArr.push(scoreData)
-                return (
+              };
+              return (
                   newArr
-                )
-              })
+              );
+            });
               const sortedScores = await scores.sort(compareScores)
               setHighScores(sortedScores.reverse())
             setAscean([...response.data].reverse());
@@ -67,35 +62,35 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         for (let i = 0; i < results.length; i++) {
           if (finalResults.length < ascean.length) {
             finalResults.push(results[i]);
-          }        
-        }
+          };        
+        };
       setAllAscean(finalResults);
-    }
+    };
 
     function displayResults() {
         let views = [];
         for (let i = 0; i < allAscean.length; i++) {
             views.push(
                 <CommunityAscean ascean={allAscean[i]} key={allAscean[i]._id} />
-            )
-        }
+            );
+        };
         return (views)
-    }
+    };
 
     function handleChange(e: any) {
-        e.preventDefault()
+        e.preventDefault();
         setSearchText(e.target.value);
-    }
+    };
 
     useEffect(() => {
         setAllAscean([]);
         if (searchText === '') {
             setAllAscean([]);
-            return
-        }
-        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText))        
-        filterAscean(filteredResults)
-    }, [searchText, ascean])
+            return;
+        };
+        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText));        
+        filterAscean(filteredResults);
+    }, [searchText, ascean]);
 
     if (loading) {
         return (

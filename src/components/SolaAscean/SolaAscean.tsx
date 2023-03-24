@@ -8,6 +8,7 @@ import Delete from '../AsceanBuilder/Delete';
 import Update from '../AsceanBuilder/Update';
 import Play from '../AsceanBuilder/Play';
 import Save from '../AsceanBuilder/Save';
+import Ascea from '../AsceanBuilder/Ascea';
 
 interface Props {
     ascean: any;
@@ -42,13 +43,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
             {/* <Save ascean={ascean} handleAsceanCreate={handleAsceanCreate} /> */}
             <Update ascean={ascean} NavBar={false} />
             <Delete ascean={ascean} deleteAscean={deleteAscean} />
-            {/* {
-                ascean?.hardcore ?
-                <span style={hardcoreStyle}>
-                Hardcore
-                </span>
-                : ''
-            } */}
+            { ascean?.hardcore ?  <Ascea ascean={ascean} />  : '' }
             <svg height="5" width="100%" className="tapered-rule mt-1">
             <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>

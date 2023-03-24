@@ -9,57 +9,39 @@ class Tile {
     setColor(content) {
       const colorMap = {
         'enemy': 'red',
-        'npc': 'blue',
         'treasure': 'gold',
-        'landmark': 'blueviolet',
-        'hazard': 'darkorange',
-        'dungeon': 'brown',
-        'city': 'purple',
         'nothing': 'green',
         'weather': 'teal',
-        'ruins': 'grey',
-        'cave': 'sienna',
-        'phenomena': 'pink',
-        'wonder': 'white'
+        'phenomena': 'purple',
       };
       return colorMap[content] || 'black';
     }
 }
-  
 
-class WorldMap {
+class ArenaMap {
     constructor(name, player) {
         this.name = name;
-        this.player = player.name + "_" + player.origin + "_MAP_" + Date.now()  + player._id;
+        this.player = player.name + "_" + player.origin + "_MAP_" + player._id;
         this.province = this.generateProvince(player.origin);
         this.size = 100;
         this.reference = player._id;
-        this.contentOptions = ['enemy', 'npc', 'treasure', 'landmark', 'hazard', 'dungeon', 'city', 'nothing', 'weather', 'ruins', 'cave', 'phenomena', 'wonder'];
+        this.contentOptions = ['enemy', 'treasure', 'nothing', 'weather', 'phenomena', 'wonder'];
         // this.contentClusters = this.generateContentClusters(this.province);
         this.contentClusters = this.generateContentClusters(this.provinceWeights(this.generateProvince(player.origin)));
-
         this.map = this.generateMap();
         this.contentCounts = {};
         this.countContent();
         this.updateContentClusters();
         this.steps = 0;
     };
-
+  
     countContent() {
         this.contentCounts = {
-          'nothing': 0,
-          'enemy': 0,
-          'npc': 0,
-          'treasure': 0,
-          'landmark': 0,
-          'hazard': 0,
-          'dungeon': 0,
-          'city': 0,
-          'weather': 0,
-          'ruins': 0,
-          'cave': 0,
-          'phenomena': 0,
-          'wonder': 0
+            'nothing': 0,
+            'enemy': 0,
+            'treasure': 0,
+            'phenomena': 0,
+            'weather': 0,
         };
       
         for (let j = 0; j < 201; j++) {
@@ -73,7 +55,7 @@ class WorldMap {
           };
         };
     };
-
+  
     generateProvince(origin) {
         switch (origin) {
             case "Ashtre" : {
@@ -102,123 +84,59 @@ class WorldMap {
             };
         };
     };
-
+  
     provinceWeights(province) {
         const provinceWeights = {
             'Astralands': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
             'Fangs': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
             'Firelands': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
             'Kingdom': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
             'Licivitas': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
             'Sedyrus': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
             'Soverains': {
-              'enemy': 600,
-              'npc': 50,
+              'enemy': 400,
               'phenomena': 10,
-              'wonder': 5,
-              'ruins': 10,
-              'cave': 20,
               'weather': 4,
               'treasure': 30,
-              'landmark': 10,
-              'hazard': 10,
-              'dungeon': 10,
-              'city': 4,
             },
         };
         return provinceWeights[province];
     };
-
+  
     generateContentClusters(provinceWeights) {
         const contentOptionClusterSizes = {
-          city: { min: 24, max: 33 },
           weather: { min: 24, max: 33 },
           enemy: { min: 1, max: 1 },
-          npc: { min: 1, max: 1 },
-          landmark: { min: 3, max: 5 },
-          hazard: { min: 3, max: 5 },
-          ruins: { min: 3, max: 5 },
-          wonder: { min: 3, max: 5 },
-          dungeon: { min: 2, max: 3 },
-          cave: { min: 2, max: 3 },
           treasure: { min: 1, max: 3 },
           phenomena: { min: 1, max: 3 },
           nothing: { min: 1, max: 1 },
@@ -267,7 +185,6 @@ class WorldMap {
         return clusters;
     }
   
-
     generateMap() {
         const clusters = this.contentClusters;
         const map = [];
@@ -286,9 +203,8 @@ class WorldMap {
         };
         return map;
     };
-
+  
     updateContentClusters() {
-        const updatedClusters = {};
         const options = ['enemy', 'npc', 'phenomena'];
         for (const option of options) {
             if (!this.contentClusters[option]) {
@@ -315,6 +231,6 @@ class WorldMap {
     getCoordinate(x, y) {
         return this.map.find((coord) => coord.coordinate.x === x && coord.coordinate.y === y);
     };
-};
+  };
 
-module.exports = WorldMap;
+  module.exports = ArenaMap;
