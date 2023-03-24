@@ -18,9 +18,7 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
             </Popover.Header>
             <Popover.Body id="popover-body">
             <div className='creature-heading'>
-                <h2>
-                {player.description}
-                </h2>
+                <h2>{player.description}</h2>
             </div>
             <div>
             Level: {player.level}<br />
@@ -33,11 +31,10 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
             </div>
             <div>Constitution: {attributes.totalConstitution} [ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ] </div>
             <div>Strength: {attributes.totalStrength} [ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</div>
-            {
-                player?.animal ?
+            { player?.animal ?
                 <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + player?.helmet?.imgURL} alt="Origin Culture Here" id="origin-pic" /></span>
-                :
-            <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
+            :
+                <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
             }
             <div>Agility: {attributes.totalAgility} [ {attributes.totalAgility < 10 ? '- ' + attributes.agilityMod : '+ ' + attributes.agilityMod} ]</div>
             <div>Achre: {attributes.totalAchre} [ {attributes.totalAchre < 10 ? '- ' + attributes.achreMod : '+ ' + attributes.achreMod} ]</div>
@@ -45,7 +42,7 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
             <div>Kyosir: {attributes.totalKyosir} [ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</div>
             </Popover.Body>
         </Popover>
-      );
+    );
     return (
         <div style={{ textAlign: 'center' }}>
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={playerPopover}>

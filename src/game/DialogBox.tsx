@@ -63,7 +63,6 @@ interface Props {
     state: any;
     deleteEquipment: (eqp: any) => Promise<void>;
     merchantEquipment: any;
-    generateWorld: (mapName: string) => Promise<void>;
     mapState: any;
     mapDispatch: any;
     currentIntent: any;
@@ -83,7 +82,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, generateWorld, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
+const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});

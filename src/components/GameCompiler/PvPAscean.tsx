@@ -1,46 +1,47 @@
-import React, { useState } from 'react'
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import Loading from '../Loading/Loading';
 import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
+import ExperienceBar from './ExperienceBar';
+import StatusEffects from './StatusEffects';
 
 interface Props {
   ascean: any;
   currentPlayerHealth: number;
-  combatData: any;
   player: boolean;
   loading: boolean;
-  undefined: boolean;
-  setUndefined: React.Dispatch<React.SetStateAction<boolean>>;
-  undefinedComputer: boolean;
-  setUndefinedComputer: React.Dispatch<React.SetStateAction<boolean>>;
-  PvP?: boolean;
-  yourData: any;
-  enemyData: any;
-}
+  totalPlayerHealth: number;
+  state: any;
+};
 
-const PvPAscean = ({ ascean, player, PvP, yourData, enemyData, currentPlayerHealth, combatData, loading, undefined, setUndefined, undefinedComputer, setUndefinedComputer }: Props) => {
-  const [playerCharacter, setPlayerCharacter] = useState<boolean>(player)
+const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading }: Props) => {
+
+  const getBlockStyle = {
+    marginTop: state.playerEffects.length > 0 ? '-16%' : '6%',
+  };
 
   if (loading) {
     return (
       <Loading Combat={true} />
-    )
-  }
+    );
+  };
+
   return (
     <>
-    { playerCharacter ?
-      <div className="game-block" style={{ marginLeft: 7.5 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -20 + '%' }}>
-      <div className="actions">
-      <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-      <GameHealthBar 
-        totalPlayerHealth={yourData.player === 1 ? combatData.player_one_attributes.healthTotal : combatData.player_two_attributes.healthTotal} 
-        currentPlayerHealth={yourData.player === 1 ? combatData.current_player_one_health : combatData.current_player_two_health} />
+    { player ?
+      <div id='game-block' className="game-block" style={getBlockStyle}>
+        {state.playerEffects.length > 0 ?
+          (state.playerEffects.map((effect: any, index: number) => {
+            return ( <StatusEffects effect={effect} player={true} key={index} /> )
+        })) : '' }
+      <div className="">
+      <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
+      <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
         <AsceanImageCard
-            weapon_one={yourData.player === 1 ? combatData.player_one_weapons[0] : combatData.player_two_weapons[0]}
-            weapon_two={yourData.player === 1 ? combatData.player_one_weapons[1] : combatData.player_two_weapons[1]}
-            weapon_three={yourData.player === 1 ? combatData.player_one_weapons[2] : combatData.player_two_weapons[2]}
+            weapon_one={state.weapons[0]}
+            weapon_two={state.weapons[1]}
+            weapon_three={state.weapons[2]}
             shield={ascean.shield}
             helmet={ascean.helmet}
             chest={ascean.chest}
@@ -54,26 +55,19 @@ const PvPAscean = ({ ascean, player, PvP, yourData, enemyData, currentPlayerHeal
             key={ascean._id}
         />
       <div className="actions">
-        {
-            yourData.player === 1
-            ? <GamePlayerStats attributes={combatData.player_one_attributes} player={combatData.player_one} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
-            : <GamePlayerStats attributes={combatData.player_two_attributes} player={combatData.player_two} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
-        }
+      <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} />
       </div>
       </div>
     : 
-    <div className="game-block" style={{ gridRowStart: 1, gridColumnStart: 2, marginLeft: 25 + '%', transform: 'scale(' + 1.1 + ')', marginTop: -10 + '%' }}>
-    <div className="actions">
-    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', marginTop: 5 + 'px' }} className='mb-2'>{ascean.name}</h3>
-    <GameHealthBar 
-        totalPlayerHealth={enemyData.player === 1 ? combatData.player_one_attributes.healthTotal : combatData.player_two_attributes.healthTotal} 
-        currentPlayerHealth={enemyData.player === 1 ? combatData.current_player_one_health : combatData.current_player_two_health}
-    />
+    <div className="game-block" id='opponent-block'>
+    <div className="">
+    <GamePlayerStats attributes={state.enemy_attributes} player={state.enemy} magicalDefense={state.enemy_defense.magicalDefenseModifier} magicalPosture={state.enemy_defense.magicalPosture} physicalDefense={state.enemy_defense.physicalDefenseModifier} physicalPosture={state.enemy_defense.physicalPosture} />
+    <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
     </div>
       <AsceanImageCard
-          weapon_one={enemyData.player === 2 ? combatData.player_two_weapons[0] : combatData.player_one_weapons[0]}
-          weapon_two={enemyData.player === 2 ? combatData.player_two_weapons[1] : combatData.player_one_weapons[1]}
-          weapon_three={enemyData.player === 2 ? combatData.player_two_weapons[2] : combatData.player_one_weapons[2]}
+          weapon_one={state.enemy_weapons[0]}
+          weapon_two={state.enemy_weapons[1]}
+          weapon_three={state.enemy_weapons[2]}
           shield={ascean.shield}
           helmet={ascean.helmet}
           chest={ascean.chest}
@@ -87,16 +81,15 @@ const PvPAscean = ({ ascean, player, PvP, yourData, enemyData, currentPlayerHeal
           key={ascean._id}
       />
     <div className="actions">
-        {
-            enemyData.player === 1
-            ? <GamePlayerStats attributes={combatData.player_one_attributes} player={combatData.player_one} magicalDefense={combatData.player_one_defense.magicalDefenseModifier} magicalPosture={combatData.player_one_defense.magicalPosture} physicalDefense={combatData.player_one_defense.physicalDefenseModifier} physicalPosture={combatData.player_one_defense.physicalPosture} />
-            : <GamePlayerStats attributes={combatData.player_two_attributes} player={combatData.player_two} magicalDefense={combatData.player_two_defense.magicalDefenseModifier} magicalPosture={combatData.player_two_defense.magicalPosture} physicalDefense={combatData.player_two_defense.physicalDefenseModifier} physicalPosture={combatData.player_two_defense.physicalPosture} />
-        }
     </div>
+    {state.enemyEffects.length > 0 ?
+          (state.enemyEffects.map((effect: any, index: number) => {
+            return ( <StatusEffects effect={effect} key={index} /> )
+        })) : '' }
     </div>
     }
     </>
-  )
-}
+  );
+};
 
-export default PvPAscean
+export default PvPAscean;

@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container'
 import Loading from '../../components/Loading/Loading'
 import GameChat from '../../components/GameCompiler/GameChat';
 import { ACTIONS, initialPvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore } from '../../components/GameCompiler/PvPStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
 
 let socket: any;
 
@@ -15,13 +16,13 @@ interface Props {
 const GamePvPLobby = ({ user }: Props) => {
     const [state, dispatch] = useReducer(PvPStore, initialPvPData);
     const [playerState, playerDispatch] = useReducer(PlayerStore, initialPlayerData);
+    const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
+
     const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
     const [ascean, setAscean] = useState<any>({});
     const [opponent, setOpponent] = useState<any>(null);
     const [username, setUsername] = useState<any>('');
     const [enemyPlayer, setEnemyPlayer] = useState<any>(null);
-    const [yourData, setYourData] = useState<any>(null);
-    const [enemyData, setEnemyData] = useState<any>(null);
     const [users, setUsers] = useState<any>([]);
     const [spectator, setSpectator] = useState<boolean>(false);
     const [room, setRoom] = useState<any>("");
@@ -68,6 +69,11 @@ const GamePvPLobby = ({ user }: Props) => {
                     break;
             };
         });
+
+        socket.on(`player_position`, async (player: any) => {
+            dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: player });
+        });
+
         socket.on(`requesting_player_data`, async () => {
             await socket.emit(`player_data_responding`);
         });
@@ -106,24 +112,28 @@ const GamePvPLobby = ({ user }: Props) => {
         
         socket.on(`duel_ready_response`, async (data: any) => {
         // TODO:FIXME: DISPATCH
-    //         setCombatData(data);
+        //         setCombatData(data);
         });
     }, []);
 
+    useEffect(() => {
+        getUserAscean();
+    }, []);
 
     const setPlayerOrder = async (you: any, enemy: any) => {
         setLoading(true);
         try {   
             console.log(you, enemy, 'Hey are you two doing?')
-            
-
         setLoading(false);
 
         } catch (err: any) {
             console.log('Error Setting Player Order');
         };
-
     };
+
+    useEffect(() => { console.log(gameState, "GameState") }, [gameState]);
+
+    useEffect(() => { console.log(playerState, "playerState") }, [playerState]);
 
     // useEffect(() => {
     //     if (enemyData && yourData) {
@@ -140,9 +150,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
     // }, [users]);
 
-    useEffect(() => {
-        getUserAscean();
-    }, []);
+
 
     useEffect(() => {
         console.log(opponent, 'Did the Opponent set correctly?');
@@ -154,7 +162,8 @@ const GamePvPLobby = ({ user }: Props) => {
         );
         const response = findAscean;
         console.log(response[0], 'Response in Filtering Ascean');
-        setAscean(response[0]);
+        gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: response[0] });
+        //TODO:FIXME: DISPATCH
     }, [username]);
 
     const getUserAscean = async () => {
@@ -173,7 +182,7 @@ const GamePvPLobby = ({ user }: Props) => {
         if (username !== '' && room !== '') {
             console.log(`Connecting to Room: ${room}`);
             const asceanData = {
-                ascean: ascean,
+                ascean: gameState.player,
                 room: room,
                 user: user,
                 combatData: state
@@ -257,7 +266,11 @@ const GamePvPLobby = ({ user }: Props) => {
             <button className='btn btn-outline-info my-2' onClick={joinRoom}> Join Room </button>
             </Container>
             : 
-            <GameChat state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} user={user} ascean={ascean} spectator={spectator} yourData={yourData} enemyData={enemyData} opponent={opponent} enemyPlayer={enemyPlayer} handleRoomReset={handleRoomReset} room={room} setShowChat={setShowChat} socket={socket} />
+            <GameChat 
+                state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} gameState={gameState} gameDispatch={gameDispatch} 
+                user={user} ascean={gameState.player} spectator={spectator} opponent={gameState.opponent} enemyPlayer={enemyPlayer} 
+                handleRoomReset={handleRoomReset} room={room} setShowChat={setShowChat} socket={socket} 
+            />
         }
         </>
 

@@ -2621,11 +2621,11 @@ const prayerSplitter = async (combatData, prayer) => {
         combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
     };
     combatData.playerBlessing = originalPrayer;
-    return combatData;   
+    return combatData;
 };
 
 const instantDamageSplitter = async (combatData, mastery) => {
-    let damage = combatData.player[mastery] * 0.5;
+    let damage = combatData.player[mastery] * 0.5 + combatData.player.level;
     console.log(damage, 'Damage');
     combatData.realized_player_damage = damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
@@ -2667,8 +2667,74 @@ const instantActionSplitter = async (combatData) => {
             await prayerSplitter(combatData, 'Debuff');
             break;
     };
-    await statusEffectCheck(combatData);
+    //TODO:FIXME: Change the statusEffect Check into a personalized variant for the insant action
+    await instantEffectCheck(combatData);
     return combatData;
+};
+
+const instantEffectCheck = async (combatData) => {
+    combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        if (effect.tick.start !== combatData.combatRound) return true;
+        const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+            switch (effect.prayer) {
+                case 'Buff': { // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
+                    if (effect.activeStacks === 1) {
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                            } else {
+                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            };
+                        };
+                        for (let key in combatData.player_defense) {
+                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                        };
+                    };
+                    break;
+                };
+                case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+                    if (effect.activeRefreshes === 0) {
+                        effect.debuffTarget = combatData.computer_weapons[0].name;
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.computer_weapons[0][key] -= effect.effect[key];
+                            } else {
+                                combatData.computer_weapons[0][key] += effect.effect[key];
+                            };
+                        };
+                        for (let key in combatData.computer_defense) { // Buff
+                            if (effect.effect[key]) {
+                                combatData.computer_defense[key] -= effect.effect[key];
+                            };
+                        };
+                    };
+                    break;
+                };
+                case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                    combatData.new_computer_health -= effect.effect.damage * 0.33;
+                    combatData.current_computer_health -= effect.effect.damage * 0.33;
+
+                    if (combatData.current_computer_health < 0 || combatData.new_computer_health < 0) {
+                        combatData.new_computer_health = 0;
+                        combatData.current_computer_health = 0;
+                        combatData.computer_win = false;
+                        combatData.player_win = true;
+                    };
+                    break;
+                };
+                case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                    combatData.new_player_health += effect.effect.healing * 0.33;
+                    combatData.current_player_health += effect.effect.healing * 0.33;
+
+                    if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                        combatData.computer_win = false;
+                    };
+                    break;
+                };
+            };
+        return true;
+    });
 };
 
 const consumePrayerSplitter = async (combatData) => {
@@ -2682,9 +2748,9 @@ const consumePrayerSplitter = async (combatData) => {
         switch (combatData.prayerSacrifice) {
             case 'Heal':
                 console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")
-                console.log("Healing for :", effect.effect.healing * 0.5);
-                combatData.new_player_health += effect.effect.healing * 0.5;
-                combatData.current_player_health += effect.effect.healing * 0.5;
+                console.log("Healing for :", effect.effect.healing * 0.33);
+                combatData.new_player_health += effect.effect.healing * 0.33;
+                combatData.current_player_health += effect.effect.healing * 0.33;
                 console.log(combatData.new_player_health, combatData.current_player_health, "Player Health After")
                 if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
                     combatData.computer_win = false;
@@ -2715,8 +2781,8 @@ const consumePrayerSplitter = async (combatData) => {
                 };
                 break;
             case 'Damage':
-                combatData.new_computer_health -= effect.effect.damage * 0.5;
-                combatData.current_computer_health -= effect.effect.damage * 0.5;
+                combatData.new_computer_health -= effect.effect.damage * 0.33;
+                combatData.current_computer_health -= effect.effect.damage * 0.33;
 
                 if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
                     combatData.new_computer_health = 0;

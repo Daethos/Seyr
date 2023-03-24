@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import * as gameAPI from '../../utils/gameApi'
 import Loading from '../Loading/Loading';
 import { ACTIONS } from './CombatStore';
-import { GAME_ACTIONS } from './GameStore';
 
 interface Props {
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
@@ -37,7 +36,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
         const timer = setTimeout(() => {
             if (state.gameIsLive && timeLeft === 0) {
                 autoAttack(state);
-            }
+            };
         }, timeLeft);
         return () => clearTimeout(timer);
     }, [timeLeft, state]);
@@ -57,7 +56,6 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
 
     const autoAttack = async (combatData: any) => {
         if (combatData.player_win || combatData.computer_win || combatData.new_player_health === 0 || combatData.new_computer_health === 0) return;
-        // setLoading(true);
         setTimeLeft(10);
         try {
             setEmergencyText([`Auto Engagement Response`]);
@@ -72,7 +70,6 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
-            // setLoading(false);
         } catch (err: any) {
             setLoading(false);
             console.log(err.message, 'Error Initiating Action');
@@ -85,12 +82,12 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
         );
     };
 
-  return (
+    return (
         <>            
         { state.player_win || state.computer_win || !state.combatEngaged ? '' : 
-        <button className="btn" id='auto-engage' onClick={autoEngage}>
-            {!state.gameIsLive ? `Auto Engage` : `Disengage`}
-        </button>
+            <button className="btn" id='auto-engage' onClick={autoEngage}>
+                {!state.gameIsLive ? `Auto Engage` : `Disengage`}
+            </button>
         }
         </>
     );

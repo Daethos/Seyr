@@ -50,6 +50,7 @@ const server = app.listen(port, function() {
 // https://ascea.herokuapp.com
 // http://localhost:3000
 const io = require('socket.io')(server, {
+  maxHttpBufferSize: 1e8,
   cors:  {
     origin: "*",
     methods: ["GET", "POST"],
@@ -97,7 +98,7 @@ io.on("connection", (socket) => {
   // THIS IS FOR NON SAVEABLE CHAT
   socket.on("join_room", async (data) => {
     socket.join(data.room);
-    // console.log(room.user.use, 'New Player Joining')
+
     console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`)
     
     let connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size
@@ -108,11 +109,14 @@ io.on("connection", (socket) => {
       ascean: data.ascean,
       user: data.user,
       player: connectedUsersCount,
+      ready: false,
     }
+    console.log(data.ascean, "Ascean Data ?")
 
     const response = await asceanService.asceanCompiler(data.ascean);
     io.to(data.room).emit(`player_data`, response.data);
-    // console.log(response, 'Response from Ascean Service')
+    console.log(newUser.player, "Submitting Position")
+    io.to(data.room).emit(`player_position`, newUser.player);
 
     let combatData = {
 
@@ -212,21 +216,8 @@ io.on("connection", (socket) => {
       loseStreak: 0,
       weather: '',
 
-    }
+    };
 
-    newUser.combatData.player_one = response.data.ascean,
-    newUser.combatData.player_one_health = response.data.attributes.healthTotal,
-    newUser.combatData.current_player_one_health = response.data.attributes.healthTotal,
-    newUser.combatData.new_player_one_health = response.data.attributes.healthTotal,
-    newUser.combatData.player_one_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-    newUser.combatData.player_one_weapon_one = response.data.combat_weapon_one,
-    newUser.combatData.player_one_weapon_two = response.data.combat_weapon_two,
-    newUser.combatData.player_one_weapon_three = response.data.combat_weapon_three,
-    newUser.combatData.player_one_damage_type = response.data.combat_weapon_one.damage_type,
-    newUser.combatData.player_one_defense = response.data.defense,
-    newUser.combatData.player_one_attributes = response.data.attributes
-    
-    
     combatData.player = response.data.ascean,
     combatData.player_health = response.data.attributes.healthTotal,
     combatData.current_player_health = response.data.attributes.healthTotal,
@@ -249,7 +240,12 @@ io.on("connection", (socket) => {
       time: Date.now()
     }
 
-    io.to(data.room).emit(`receive_message`, helloMessage)
+    io.to(data.room).emit(`receive_message`, helloMessage);
+
+    socket.on(`playerDirectionChange`, async (data) => {
+      console.log('Player Direction Change')
+      io.to(data.room).emit(`playerDirectionChanged`, data);
+    })
 
     socket.on(`ascean`, async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
       console.log('Did the Ascean Update start?');
@@ -267,7 +263,7 @@ io.on("connection", (socket) => {
       // newData = combatData
       // console.log(newData, 'Updated Data?')
       io.to(newData.room).emit(`updated_combatData`, newData)
-    })
+    });
 
     socket.on(`share_combatdata`, async (data) => { // THis was to share combatData but now I have it passing via the entire newUser object
       console.log('Sharing Combat Data')
@@ -289,6 +285,19 @@ io.on("connection", (socket) => {
       console.log(`Responding Data`)
       socket.to(newUser.room).emit(`new_player_data_response`, newUser)
     });
+ 
+    socket.on(`createMap`, async (mapData) => {
+      console.log(`Creating Map`)
+      const newMap = new WorldMap(mapData.name, mapData.ascean);
+      console.log("Map Created")
+      io.to(newUser.room).emit(`mapCreated`, newMap);
+    });
+
+    socket.on(`player_game_ready`, async (data) => {
+      let newData = data;
+
+      io.to(newData.room).emit(`player_ready`, newData);
+    });
 
     socket.on(`duel_ready`, async (data) => {
       let newData = data;
@@ -306,19 +315,19 @@ io.on("connection", (socket) => {
         newData.player_two_ready = true;
         duelMessage.message = `${data.player_two.name.charAt(0).toUpperCase() + data.player_two.name.slice(1)} is ready to duel.`
         io.to(duelMessage.room).emit(`receive_message`, duelMessage)
-      } 
+      };
       if (newData.player_one_ready === true && newData.player_two_ready === true) {
-        io.to(newUser.room).emit(`Game Commencing`)
+        io.to(newUser.room).emit(`Game Commencing`);
       } else {
         console.log(newUser.room, 'New User Room?')
         io.to(newUser.room).emit(`duel_ready_response`, newData)
-      }
-    })
+      };
+    });
 
     socket.on(`initiated`, async (data) => {
       let newData = data;
       // console.log(newData, 'Did the New Data transcribe?')
-      if (newUser.player === 1) {
+      if (newUser.playerPosition === 1) {
         newData.player_one_initiated = true;
       } else {
         newData.player_two_initiated = true;
@@ -365,17 +374,8 @@ io.on("connection", (socket) => {
 
   socket.on("send_ascean", (data) => {
     socket.to(data.room).emit("receive_opponent", data);
-
     console.log(players, 'Player(s) in Send Ascean Socket')
-
-    // console.log(data)
-  })
-
-
-
-  // socket.on("disconnect", () => {
-  //   console.log('User Disconnected', socket.id);
-  // });
+  });
 
   socket.off("setup", () => {
     console.log('User Disonnected');

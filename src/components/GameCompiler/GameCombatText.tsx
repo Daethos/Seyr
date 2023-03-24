@@ -12,7 +12,7 @@ interface Props {
     playerDeathText: string;
     computerDeathText: string;
     emergencyText: any[] | (() => any[]);
-    combatRoundText: string;
+    combatRoundText: string | number;
 };
 
 const GameCombatText = ({ emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {

@@ -39,6 +39,7 @@ export const MAP_ACTIONS = {
     SET_MOVE_CONTENT: 'SET_MOVE_CONTENT',
     SET_NEW_ENVIRONMENT: 'SET_NEW_ENVIRONMENT',
     SET_MAP_MOVED: 'SET_MAP_MOVED',
+    SET_MULTIPLAYER_PLAYER: 'SET_MULTIPLAYER_PLAYER',
 };
 
 export const initialMapData: MapData = {
@@ -87,7 +88,7 @@ export const MapStore = (map: MapData, action: Action) => {
                     color: tile.color,
                     content: tile.content, 
                 };
-            }
+            };
             // console.log(visitedTiles, "Visited Tiles")
             return {
                 ...map,
@@ -95,6 +96,32 @@ export const MapStore = (map: MapData, action: Action) => {
                 lastTile: action.payload.oldTile,
                 visitedTiles: visitedTiles,
                 steps: map.steps + 1,
+            };
+        case 'SET_MULTIPLAYER_PLAYER':
+            const player = action.payload.player;
+            const newerCoords = action.payload.newCoords;
+            if (player === 1) {
+                return {
+                    ...map,
+                    player1Coords: newerCoords
+                };
+            } else if (player === 2) {
+                return {
+                    ...map,
+                    player2Coords: newerCoords
+                };
+            } else if (player === 3) {
+                return {
+                    ...map,
+                    player3Coords: newerCoords
+                };
+            } else if (player === 4) {
+                return {
+                    ...map,
+                    player4Coords: newerCoords
+                };
+            } else {
+                return map;
             };
         case 'SET_MOVE_CONTENT':
             console.log("Moving Content");

@@ -320,7 +320,7 @@ const defenseCompiler = async (ascean, attributes, combatStats, rarities) => {
 }
 
 const coefficientCompiler = async (ascean, item) => {
-    // console.log(item.rarity, 'Item Rarity In Coefficient Compiler')
+    console.log(item, 'Item Rarity In Coefficient Compiler')
     let coefficient = 0;
     switch (item.rarity) {
         case 'Common':

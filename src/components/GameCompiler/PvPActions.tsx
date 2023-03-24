@@ -2,8 +2,11 @@ import { isDisabled } from '@testing-library/user-event/dist/utils';
 import { useEffect, useState, useRef } from 'react'
 import Form from 'react-bootstrap/Form'
 import './GameCompiler.css'
+import { PvPData } from './PvPStore';
 
 interface Props {
+    state: PvPData;
+    dispatch: any;
     handleAction: (action: any) => void;
     handleCounter: (action: any) => void;
     handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
@@ -15,14 +18,11 @@ interface Props {
     setWeaponOrder: any;
     weapons: any;
     dodgeStatus: boolean;
-    setDodgeStatus: React.Dispatch<React.SetStateAction<boolean>>;
     sleep: (ms: number) => Promise<unknown>;
     actionStatus: boolean;
     setActionStatus: React.Dispatch<React.SetStateAction<boolean>>;
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
     PvP?: boolean;
-    yourData: any;
-    enemyData: any;
     combatInitiated: boolean;
     setCombatInitiated: React.Dispatch<React.SetStateAction<boolean>>;
     damageType: any;
@@ -30,7 +30,7 @@ interface Props {
     currentDamageType: string;
 }
 
-const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, damageType, setDamageType, currentDamageType, yourData, enemyData, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, combatInitiated, setCombatInitiated, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
+const PvPActions = ({ state, dispatch, setEmergencyText, PvP, damageType, setDamageType, currentDamageType, actionStatus, setActionStatus, handleAction, handleCounter, handleInitiate, combatInitiated, setCombatInitiated, sleep, currentAction, currentCounter, combatData, setCombatData, currentWeapon, setWeaponOrder, weapons, dodgeStatus }: Props) => {
     const [displayedAction, setDisplayedAction] = useState<any>([])
     const counters = ['attack', 'counter', 'dodge', 'posture', 'roll']
     const dropdownRef = useRef<HTMLSelectElement | null>(null);
@@ -67,8 +67,8 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, damageType, setDama
     useEffect(() => {
 
         const dodgeTimer = setTimeout(() => {
-        setDodgeStatus(false);
-        }, (yourData.player === 1 ? combatData.player_one_weapons[0].dodge * 1000 : combatData.player_two_weapons[0].dodge * 1000))
+            // TODO:FIXME: DISPATCH
+        }, (state.weapons[0].dodge * 1000))
         return () => clearTimeout(dodgeTimer)
     }, [dodgeStatus])
 
@@ -85,14 +85,14 @@ const PvPActions = ({ setDodgeStatus, setEmergencyText, PvP, damageType, setDama
     return (
         <>
         <textarea className='action-reader' value={displayedAction} readOnly></textarea>
-        <select name="Damage" id="damage-options" value={yourData.player === 1 ? combatData.player_one_damage_type : combatData.player_two_damage_type} onChange={setDamageType}>
+        <select name="Damage" id="damage-options" value={state.player_damage_type} onChange={setDamageType}>
         {
             damageType ?
             damageType.map((damage: string, index: number) => { return ( <option value={damage} key={index} >{damage}</option> ) } )
             : ''
         }
         </select>
-        <select name="Attacks" id="attack-options" value={yourData.player === 1 ? combatData.player_one_weapons[0].name : combatData.player_two_weapons[0].name} onChange={setWeaponOrder}>
+        <select name="Attacks" id="attack-options" value={state.weapons[0].name} onChange={setWeaponOrder}>
             {
             weapons ?
             weapons?.map((weapon: any, index: number) => { return ( <option value={weapon?.name} key={index} >{weapon?.name}</option> ) } )

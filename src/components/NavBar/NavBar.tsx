@@ -61,7 +61,7 @@ const NavBar = ({ user, setUser, handleLogout, createSuccess, setCreateSuccess }
   };
 
   return (
-    <Navbar className="" expand="xxl" expanded={expanded} id="navbar" style={location.pathname.startsWith('/Game/Solo') ? { display: 'none' } : {}}>
+    <Navbar className="" expand="xxl" expanded={expanded} id="navbar" style={location.pathname.startsWith('/Game/Solo') || location.pathname.startsWith(`/GamePvPLobby`) ? { display: 'none' } : {}}>
       <Container fluid>
       <Button className="nav-item" variant='' onClick={() => setModalShow(true)}>
           <img src={user?.photoUrl} alt={user?.photoUrl} id="nav-pic" />

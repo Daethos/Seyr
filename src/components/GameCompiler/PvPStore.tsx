@@ -1,8 +1,19 @@
 import { useEffect, useRef } from 'react';
+import { Player } from './GameStore';
+
+export interface UserData {
+    _id: string;
+    bio: string;
+    email: string;
+    username: string;
+    photoUrl: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 export interface PvPData {
     room: string;
-
+    playerPosition: number;
     player: any;
     action: string;
     player_action: string;
@@ -94,6 +105,9 @@ export interface PvPData {
     winStreak: number;
     loseStreak: number;
 
+    playerReady: boolean;
+    enemyReady: boolean;
+
     weather: string;
 };
 
@@ -105,6 +119,7 @@ interface Action {
 
 export const initialPvPData: PvPData = {
     room: '',
+    playerPosition: 0,
     player: {},
     action: '',
     player_action: '',
@@ -188,11 +203,14 @@ export const initialPvPData: PvPData = {
     highScore: 0,
     winStreak: 0,
     loseStreak: 0,
+    playerReady: false,
+    enemyReady: false,
     weather: '',
 };
 
 export const ACTIONS = {
     SET_PLAYER: 'SET_PLAYER',
+    SET_PLAYER_POSITION: 'SET_PLAYER_POSITION',
     SET_ENEMY: 'SET_ENEMY',
     SET_DUEL: 'SET_DUEL',
     RESET_PLAYER: 'RESET_PLAYER',
@@ -223,6 +241,8 @@ export const ACTIONS = {
     CLEAR_DUEL: 'CLEAR_DUEL',
     SET_WEATHER: 'SET_WEATHER',
     PLAYER_REST: 'PLAYER_REST',
+    SET_PLAYER_READY: 'SET_PLAYER_READY',
+    SET_ENEMY_READY: 'SET_ENEMY_READY',
 }
 
 export const PvPStore = (state: PvPData, action: Action) => {
@@ -243,6 +263,11 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 player_damage_type: action.payload.combat_weapon_one.damage_type[0],
                 highScore: action.payload.ascean.high_score,
             };
+        case 'SET_PLAYER_POSITION':
+            return {
+                ...state,
+                playerPosition: action.payload
+            };
         case 'SET_ENEMY':
             return {
                 ...state,
@@ -257,6 +282,16 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 enemy_defense: action.payload.defense,
                 enemy_attributes: action.payload.attributes,
                 enemy_damage_type: action.payload.combat_weapon_one.damage_type[0]
+            };
+        case 'SET_PLAYER_READY':
+            return {
+                ...state,
+                playerReady: true
+            };
+        case 'SET_ENEMY_READY':
+            return {
+                ...state,
+                enemyReady: true
             };
         case 'SET_DUEL':
             return {
@@ -503,17 +538,17 @@ export const PvPStore = (state: PvPData, action: Action) => {
 };
 
 export interface PlayerData {
-    playerOne: object;
-    playerTwo: object;
-    playerThree: object;
-    playerFour: object;
+    playerOne: { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
+    playerTwo:  { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
+    playerThree:  { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
+    playerFour:  { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
 };
 
 export const initialPlayerData: PlayerData = {
-    playerOne: {},
-    playerTwo: {},
-    playerThree: {},
-    playerFour: {},
+    playerOne: null,
+    playerTwo: null,
+    playerThree: null,
+    playerFour: null,
 };
 
 export interface PlayerAction {

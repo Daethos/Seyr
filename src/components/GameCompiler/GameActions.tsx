@@ -120,25 +120,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
       payload: prayer,
     });
   };
-
-  const prayerPopover = (
-    <Popover className="text-info" id="popover" >
-        <Popover.Header id="popover-header" className="" as="h2" style={{ backgroundColor: "black" }}>Consume Prayer<span id="popover-image"></span></Popover.Header>
-        <Popover.Body id="popover-body" className="" style={{ backgroundColor: "black", fontSize: "12px" }}>
-            Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
-            {' '} to enhance their being, those favored to the Ancients were granted strength in the glow of their beloved Ancient. Some believed this was more than simply a boost to one's disposition.
-            {' '} Others sought to channel it through their caer into a single burst.
-            <br /><br />
-            Consume a Prayer to experience a burst of caerenic beauty.
-            <p style={{ color: "gold" }}></p>
-            Damage - Damage Opponent for 150% Round Damage<br />
-            Debuff - Damage Opponent From Opponent's Last Attack<br />
-            Buff - Damage Opponent From Last Attack<br />
-            Heal - Heal for 150% Round Heal
-        </Popover.Body>
-    </Popover>
-);
-
   
   const borderColor = (mastery: string) => {
     switch (mastery) {
@@ -169,7 +150,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
   };
 
   const prayerColor = (prayer: string, endTick: number, combatRound: number) => {
-    console.log(prayer, endTick, combatRound)
     switch (prayer) {
         case 'Buff': 
           return {
@@ -227,7 +207,7 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
             </p>
             <br />
             <p style={{ color: "gold" }}>
-            <b>Damage</b> - Burst Tick for 150% Round Damage<br />
+            <b>Damage</b> - Burst Tick for 100% Round Damage<br />
             </p>
             <p style={{ color: "gold" }}>
             <b>Debuff</b> - Damage Opponent From  <b>Opponent's</b> Last Attack<br />
@@ -236,7 +216,7 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
             <b>Buff</b> - Damage Opponent From Last Attack<br />
             </p>
             <p style={{ color: "gold" }}>
-            <b>Heal</b> - Burst Tick for 150% Round Heal
+            <b>Heal</b> - Burst Tick for 100% Round Heal
             </p>
           </Modal.Body>
         </Modal>
@@ -252,7 +232,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
         })} 
         </div>
       : '' }
-    {/* { !state?.instantStatus ? */}
     <>
       <OverlayTrigger placement='auto-start' overlay={instantTooltip}>
       <p style={instantStyle} className={`invoke${state?.instantStatus ? '-instant' : ''}`} >
@@ -263,7 +242,6 @@ const GameActions = ({ state, dispatch, setEmergencyText, handleInstant, handleP
           <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
         </button>
     </>
-    {/* : '' } */}
     <div className="actionButtons" id='action-buttons'>
       <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
           <button value='initiate' type='submit' className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button'>Initiate</button>
