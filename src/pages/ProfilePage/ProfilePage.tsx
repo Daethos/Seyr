@@ -57,9 +57,9 @@ const ProfilePage = ({ user }: ProfileProps) => {
         }
     }
 
-    useEffect(() => {
-        friends();
-    }, [username, getProfile])
+    // useEffect(() => {
+    //     friends();
+    // }, [username, getProfile])
 
     async function friends() {
         setLoading(true);
@@ -73,7 +73,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
         }
     }
 
-    useEffect(() => {queryProfile()}, [friends, friendRequest])
+    // useEffect(() => {queryProfile()}, [friends, friendRequest])
 
     async function queryProfile() {
         console.log('Querying Profile For Friends / Requests')
@@ -135,7 +135,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
                 </div> 
             </div>
         </div>
-        {
+        {/* {
             yourFriends > -1
             ? <h3 
             className="my-3"
@@ -160,7 +160,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
                         style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
                         >Send friend request to {profileUser.username} ?
                         </button>
-        }
+        } */}
 
         <hr className="orange-border bottom" />
         </Col>

@@ -20,6 +20,8 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
         <div className="creature-heading">
         <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}><h1>{ascean.name}</h1></Link>
         <div className="property-line">
+            <h4>Level</h4>
+            <p> {ascean.level}</p>{' | '}
             <h4>High Score</h4>
             <p> {ascean.high_score}</p>
         </div>
@@ -34,11 +36,11 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             <polyline points="0,0 550,2.5 0,5"></polyline>
         </svg>
         <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} />
-        <svg height="5" width="100%" className="tapered-rule mt-3">
+        {/* <svg height="5" width="100%" className="tapered-rule mt-3">
             <polyline points="0,0 550,2.5 0,5"></polyline>
-        </svg>
+        </svg> */}
         
-        <AsceanImageCard
+        {/* <AsceanImageCard
             weapon_one={ascean.weapon_one}
             weapon_two={ascean.weapon_two}
             weapon_three={ascean.weapon_three}
@@ -54,7 +56,7 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             key={ascean._id + 2}
         />
         <div className="top-stats">
-        </div>
+        </div> */}
         <div className="actions" style={{ marginTop: -6 + '%', marginBottom: -1 + '%' }}><h3> </h3></div>
         <FeelingsCard ascean={ascean} loggedUser={loggedUser} />
         <hr className='orange-border bottom' />

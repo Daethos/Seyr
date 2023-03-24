@@ -60,7 +60,8 @@ html, body {
   vertical-align: top; 
   width: 17%; 
   min-width:280px; 
-  background: #fdf6d8; 
+  
+  /* background: #fdf6d8;  */
   padding: 5px 10px 20px; 
   box-shadow: 0 0 1.5em #726f57; 
 }
@@ -76,7 +77,6 @@ html, body {
 	}
 	.stat-block.wide .section-left,
 	.stat-block.wide .section-right{
-        
         display: block;
         width: 100%;
 	}
@@ -143,16 +143,6 @@ html, body {
 #community-column {
   width: 25%;
 }
-.orange-border{
-    display: block;
-    background: #791200;
-    border: 1px solid #000;
-    height: 5px;
-    padding: 0 10px 0;
-    margin: -10px -10px 0;
-    box-sizing: initial;
-}
-
 .orange-border.bottom{
     margin: 15px -10px -20px;
 }
@@ -169,7 +159,7 @@ html, body {
     font-family: 'Cinzel', 'Libre Baskerville', 'Lora', 'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif;
     /* color: #922610; */
     /* font-weight: 900; */
-    color: #5a0043;
+    color: #9803b3;
     font-size: 23px;
     line-height: 1.2em;
     margin: 10px 0 0;
@@ -179,6 +169,7 @@ html, body {
 }
 .creature-heading h2{
     font-weight: normal;
+    color: #fdf6d8;
     font-style: italic;
     font-size: 14px;
     line-height: 1.2em;
@@ -189,7 +180,7 @@ html, body {
     display: inline;
     margin: 0;
     /* color: #922610; */
-    color: #5a0043;
+    color: #fdf6d8;
     font-size: 13.5px;
     line-height: 1.2em;
 }
@@ -228,7 +219,7 @@ html, body {
     line-height: 1.2em;
     text-transform: uppercase;
     /* color: #7A200D; */
-    color: #5a0043;
+    color: #fdf6d8;
 }
 .abilities p{
     margin: 0 0 10px;

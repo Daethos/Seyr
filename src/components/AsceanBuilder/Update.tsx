@@ -37,13 +37,13 @@ const Update = ({ ascean, NavBar }: Props) => {
             aria-labelledby="contained-modal-title-vcenter"
             id="modal-update"
             >
-        <Modal.Body id="modal-update" className="equipment-modal">
+        <Modal.Body id="modal-update" className="equipment-modal" style={{ color: "gold" }}>
             Do you wish to Update {ascean.name} ?
             <Link to={{ pathname: `/edit/${ascean._id}` }}>
             <button 
             className="btn" 
             value={ascean._id} 
-            style={{ color: 'gold', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
+            style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
                 <h3><>Edit </>
                 <img 
                 src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 

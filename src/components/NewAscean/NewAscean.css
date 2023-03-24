@@ -56,8 +56,9 @@
 }
 .orange-border{
     display: block;
-    background: #E69A28;
-    border: 1px solid #000;
+    /* background: #E69A28; */
+    background: purple;
+    border: 1px solid purple;
     height: 5px;
     padding: 0 10px 0;
     margin: -10px -10px 0;
@@ -92,14 +93,6 @@
     font-size: 14px;
     line-height: 1.2em;
     margin: 0 0 10px;
-}
-.property-line h4,
-.property-line p{
-    display: inline;
-    margin: 0;
-    color: #5a0043;
-    font-size: 13.5px;
-    line-height: 1.2em;
 }
 .property-line h4{
     color: #9803b3;

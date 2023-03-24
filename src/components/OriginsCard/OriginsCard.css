@@ -11,10 +11,6 @@
     max-width: 6.5vw;
     max-height: 6.5vh;
 }
-/* #popover-spec-image {
-    float: right;
-    margin-top: -5px;
-} */
 #popover-body {
     max-height: 80vh;
     /* overflow-y: auto; */
@@ -27,12 +23,6 @@
 .eqp-popover.spec {
     border: 2px solid purple;
 }
-
-/* #origin-pic {
-    width: 10vw;
-    border: 2px solid purple;
-    border-radius: 50%;
-} */
 
 @media screen and (max-width: 675px) {
     .origin-popover {
@@ -51,8 +41,6 @@
         
     }
     #origin-pic {
-        /* width: 20vw; */
         border: 1px solid purple;
-        /* border-radius: 50%; */
     }
 }

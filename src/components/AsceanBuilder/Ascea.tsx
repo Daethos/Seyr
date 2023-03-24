@@ -35,7 +35,7 @@ const Ascea = ({ ascean }: Props) => {
         aria-labelledby="contained-modal-title-vcenter"
         id="modal-delete"
     >
-    <Modal.Body id="modal-delete" className="equipment-modal">
+    <Modal.Body id="modal-delete" className="equipment-modal" style={{ color: "gold" }}>
         Do you wish to enter the Ascea with {ascean.name} ?
         <Nav.Link as={NavLink} to={'/Hardcore/' + ascean._id}
             style={{ color: 'gold' }} 

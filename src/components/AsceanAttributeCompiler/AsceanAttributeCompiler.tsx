@@ -117,45 +117,45 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={constitutionPopover}>
             <h4>CON</h4>
             </OverlayTrigger>
-                <p className="mt-2" id="con-box">{attributes.totalConstitution}<br /> ({attributes.rawConstitution} + {attributes.equipConstitution})</p>
-                <p className="" id="">[ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ]</p>
+                <p style={{ color: "#fdf6d8" }} className="mt-2" id="con-box">{attributes.totalConstitution}<br /> ({attributes.rawConstitution} + {attributes.equipConstitution})</p>
+                <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalConstitution < 10 ? '- ' + attributes.constitutionMod : '+ ' + attributes.constitutionMod} ]</p>
         </div>
         <div className="ability-dexterity">
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={strengthPopover}>
             <h4>STR</h4>
             </OverlayTrigger>    
-            <p className="mt-2" id="str-box">{attributes.totalStrength}<br /> ({attributes.rawStrength} + {attributes.equipStrength})</p>
-            <p className="" id="">[ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</p>
+            <p style={{ color: "#fdf6d8" }} className="mt-2" id="str-box">{attributes.totalStrength}<br /> ({attributes.rawStrength} + {attributes.equipStrength})</p>
+            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalStrength < 10 ? '- ' + attributes.strengthMod : '+ ' + attributes.strengthMod} ]</p>
         </div>
         <div className="ability-constitution">
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={agilityPopover}>
             <h4>AGI</h4>
             </OverlayTrigger>
-            <p className="mt-2" id="">{attributes.totalAgility}<br /> ({attributes.rawAgility} + {attributes.equipAgility})</p>
-            <p className="" id="">[ {attributes.totalAgility < 10 ? '- ' + attributes.agilityMod : '+ ' + attributes.agilityMod} ]</p>
+            <p style={{ color: "#fdf6d8" }} className="mt-2" id="">{attributes.totalAgility}<br /> ({attributes.rawAgility} + {attributes.equipAgility})</p>
+            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalAgility < 10 ? '- ' + attributes.agilityMod : '+ ' + attributes.agilityMod} ]</p>
             
         </div>
         <div className="ability-intelligence">
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={achrePopover}>
             <h4>ACH</h4>
              </OverlayTrigger>
-            <p className="mt-2" id="ach-box">{attributes.totalAchre}<br /> ({attributes.rawAchre} + {attributes.equipAchre})</p>
-            <p className="" id="">[ {attributes.totalAchre < 10 ? '- ' + attributes.achreMod : '+ ' + attributes.achreMod} ]</p>
+            <p style={{ color: "#fdf6d8" }} className="mt-2" id="ach-box">{attributes.totalAchre}<br /> ({attributes.rawAchre} + {attributes.equipAchre})</p>
+            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalAchre < 10 ? '- ' + attributes.achreMod : '+ ' + attributes.achreMod} ]</p>
             
         </div>
         <div className="ability-wisdom">
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={caerenPopover}>
             <h4>CAER</h4>
             </OverlayTrigger>
-            <p className="mt-2" id="caer-box">{attributes.totalCaeren}<br /> ({attributes.rawCaeren} + {attributes.equipCaeren})</p>
-            <p className="" id="">[ {attributes.totalCaeren < 10 ? '- ' + attributes.caerenMod : '+ ' + attributes.caerenMod} ]</p>
+            <p style={{ color: "#fdf6d8" }} className="mt-2" id="caer-box">{attributes.totalCaeren}<br /> ({attributes.rawCaeren} + {attributes.equipCaeren})</p>
+            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalCaeren < 10 ? '- ' + attributes.caerenMod : '+ ' + attributes.caerenMod} ]</p>
         </div>
         <div className="ability-wisdom">
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={kyosirPopover}>
             <h4>KYO</h4>
             </OverlayTrigger>
-            <p className="mt-2" id="kyo-box">{attributes.totalKyosir}<br /> ({attributes.rawKyosir} + {attributes.equipKyosir})</p>
-            <p className="" id="">[ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</p>
+            <p style={{ color: "#fdf6d8" }} className="mt-2" id="kyo-box">{attributes.totalKyosir}<br /> ({attributes.rawKyosir} + {attributes.equipKyosir})</p>
+            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</p>
         </div>
         </div>
         </>

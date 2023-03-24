@@ -19,7 +19,7 @@ const Hardcore = ({ asceanState, setAsceanState }: Props) => {
     <>
     <div className='actions'>
     <h3>Hardcore</h3></div>
-    <p style={{ color: 'purple', fontSize: "14px" }}>
+    <p style={{ color: '#fdf6d8', fontSize: "14px" }}>
         Whether or not you're toggled hardcore. This wildly affects the game and is not recommended for new players.
     </p>
     <Form.Select onChange={handleHardcore} name="hardcore" className="my-3">

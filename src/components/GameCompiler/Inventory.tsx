@@ -10,6 +10,7 @@ import * as eqpAPI from '../../utils/equipmentApi';
 import Overlay from 'react-bootstrap/Overlay';
 import Table from 'react-bootstrap/Table';
 import { GAME_ACTIONS } from './GameStore';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
     inventory: any;
@@ -30,7 +31,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingContent, setLoadingContent] = useState<string>('');
     const targetRef = useRef(null);
-
+    const location = useLocation();
     
     const [editState, setEditState] = useState({
         weapon_one: ascean.weapon_one,
@@ -710,6 +711,11 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
                 : 
                 <Button variant='outline' style={{ color: 'red', fontWeight: 600, marginLeft: "16.5%" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
             }
+            { ascean?.hardcore && location.pathname.startsWith(`/Hardcore`) ? (
+                <>
+                { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
+                </>
+            ) : ( '' ) }
             {/* <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
             <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button> */}
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>

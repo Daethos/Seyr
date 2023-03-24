@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import './SignUpForm.css'
 import Form from 'react-bootstrap/Form';
 import userService from "../../utils/userService";
 import { useNavigate } from "react-router-dom";

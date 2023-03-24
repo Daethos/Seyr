@@ -23,8 +23,10 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
     const [highScores, setHighScores] = useState<any>([]);
 
     useEffect(() => {
-        getAscean()
+        getAscean();
     }, []);
+
+    useEffect(() => { console.log(ascean, "THe Community ???") }, [ascean])
 
     function compareScores(a: any, b: any) {
         return a[0].score - b[0].score;
@@ -34,19 +36,22 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         setLoading(true);
         try {
             const response = await communityAPI.getEveryone();
+            console.log(response.data, "Community Response")
+            setAscean([...response.data].reverse());
             const scores = await response.data.map((ascean: any, index: number) => {
               let newArr = []
               if (ascean.hardcore) {
                 let scoreData = { ascean: ascean.name, score: ascean.high_score, key: index, _id: ascean._id, mastery: ascean.mastery, photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg' };
                 newArr.push(scoreData)
-              };
+              } else {
+                console.log("No Hardcore Scores")
+              }
               return (
                   newArr
               );
             });
-              const sortedScores = await scores.sort(compareScores)
-              setHighScores(sortedScores.reverse())
-            setAscean([...response.data].reverse());
+            const sortedScores = await scores.sort(compareScores);
+            setHighScores(sortedScores.reverse());
             setLoading(false);
         } catch (err: any) {
             setLoading(false);
@@ -94,11 +99,9 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
 
     if (loading) {
         return (
-        <>
-            <Loading />
-        </>
+            <Loading Chat={true} />
         );
-    }
+    };
 
   return (
     <Container fluid>
@@ -121,17 +124,15 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
             />
             </InputGroup>
             </Col>
-            {
-                ascean.length > 0
+            { ascean.length > 0
                 ? <>{displayResults()}</>
-                : ''
-            }
+            : '' }
         </Row>
         <Row className="justify-content-center my-2">
             <h6 style={{ textAlign: 'center' }}className='mb-5' >
         <Accordion>
         <Accordion.Item eventKey="0">
-        <Accordion.Header>High Scores [Public] :</Accordion.Header>
+        <Accordion.Header>Hardcore High Scores [Public] :</Accordion.Header>
         <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
         <Table responsive style={{ color: '#fdf6d8' }}>
           <thead>
@@ -167,12 +168,13 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         </Accordion>
         </h6>
         {ascean.map((a: any) => {
-            return (
-                <CommunityAscean
-                    ascean={a}
-                    key={a._id}
-                    loggedUser={loggedUser}
-                />
+          console.log(a, "THese are the Ascean")
+          return (
+            <CommunityAscean
+                ascean={a}
+                key={a._id}
+                loggedUser={loggedUser}
+            />
         )})}
         </Row>
     </Container>

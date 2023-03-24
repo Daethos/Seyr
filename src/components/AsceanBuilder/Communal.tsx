@@ -16,7 +16,7 @@ const Communal = ({ editState, setEditState }: Props) => {
     <> 
     <div className='actions'>
     <h3>Communal Visibility</h3></div>
-    <p style={{ color: 'purple', fontSize: "14px" }}>
+    <p style={{ color: '#fdf6d8', fontSize: "14px" }}>
     Whether or not you show up in the Community Feed and can be searched for by other users.
     </p>
         <Form.Select onChange={handleVisibility} name="visibility" className="my-3">
@@ -26,7 +26,7 @@ const Communal = ({ editState, setEditState }: Props) => {
         </Form.Select>
         <div className='actions'>
     <h3>Communal Sharibility</h3></div>
-    <p style={{ color: 'purple', fontSize: "14px" }}>
+    <p style={{ color: '#fdf6d8', fontSize: "14px" }}>
     Whether or not other users can clone your character to play with.
     </p>
         <Form.Select onChange={handleVisibility} name="shareable" className="my-3">

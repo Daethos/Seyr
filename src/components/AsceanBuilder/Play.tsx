@@ -36,10 +36,10 @@ const Play = ({ ascean }: Props) => {
             aria-labelledby="contained-modal-title-vcenter"
             id="modal-delete"
         >
-        <Modal.Body id="modal-delete" className="equipment-modal">
+        <Modal.Body id="modal-delete" className="equipment-modal" style={{ color: "gold" }}>
             Do you wish to Play as {ascean.name} ?
             <Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id}
-                style={{ color: 'blue' }} 
+                style={{ color: ascean.hardcore ? 'red' : 'blue' }} 
                 className='btn btn-lg btn-outline-black mb-1 update-links'>
                 <h3><>Play </>
                 <img 

@@ -67,32 +67,32 @@ async function indexCommunity(req, res) {
         console.log(req.user._id, '<- Index Function in Community Controller')
         const asceanCrew = await Ascean.find({ visibility: 'public' })
 
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
+        // let fields = [
+        //     'weapon_one',
+        //     'weapon_two',
+        //     'weapon_three',
+        //     'shield',
+        //     'helmet',
+        //     'chest',
+        //     'legs',
+        //     'ring_one',
+        //     'ring_two',
+        //     'amulet',
+        //     'trinket'
+        // ];
 
-        for await (let ascean of asceanCrew) {
+        // for await (let ascean of asceanCrew) {
 
-            const populated = await Promise.all(fields.map(async field => {
-                const item = await determineItemType(ascean[field]);
-                return item ? item : null;
-            }));
-            populated.forEach((item, index) => {
-                ascean[fields[index]] = item;
-            });
+        //     const populated = await Promise.all(fields.map(async field => {
+        //         const item = await determineItemType(ascean[field]);
+        //         return item ? item : null;
+        //     }));
+        //     populated.forEach((item, index) => {
+        //         ascean[fields[index]] = item;
+        //     });
 
-            await Ascean.populate(ascean, { path: 'user' });
-        };
+        //     await Ascean.populate(ascean, { path: 'user' });
+        // };
         res.status(200).json({ data: asceanCrew });
     } catch (err) {
         res.status(400).json({ err });
