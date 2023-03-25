@@ -30,7 +30,6 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
       );
 
     const accessChat = async (userId: string) => {
-
         try {
             setLoadingChat(true)
             const response = await chatAPI.accessChat(userId)

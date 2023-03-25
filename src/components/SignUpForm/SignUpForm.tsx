@@ -62,7 +62,7 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
     try {
       await userService.signup(formData); 
       handleSignUpOrLogin(); 
-      navigate("/");
+      navigate("/Ascean");
     } catch (err: any) {
       console.log(err);
       setError({ title: 'Signup User Error', content: err.message, passwordError: false});

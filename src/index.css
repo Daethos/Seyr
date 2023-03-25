@@ -60,7 +60,7 @@ html, body {
   vertical-align: top; 
   width: 17%; 
   min-width:280px; 
-  
+  border-radius: 1em;
   /* background: #fdf6d8;  */
   padding: 5px 10px 20px; 
   box-shadow: 0 0 1.5em #726f57; 
@@ -144,7 +144,9 @@ html, body {
   width: 25%;
 }
 .orange-border.bottom{
-    margin: 15px -10px -20px;
+    /* margin: 15px 0px -20px; */
+    width: 95%;
+    border-radius: 25%;
 }
 .tapered-rule{
     display: block;
@@ -159,7 +161,7 @@ html, body {
     font-family: 'Cinzel', 'Libre Baskerville', 'Lora', 'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif;
     /* color: #922610; */
     /* font-weight: 900; */
-    color: #9803b3;
+    color: gold;
     font-size: 23px;
     line-height: 1.2em;
     margin: 10px 0 0;

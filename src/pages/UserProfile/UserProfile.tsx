@@ -1,5 +1,6 @@
 import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
 import * as asceanAPI from '../../utils/asceanApi';
@@ -16,7 +17,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
   const [accordionState, setAccordionState] = useState<string>('Tight');
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     getAscean();
   }, []);
@@ -25,6 +26,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
     setLoading(true);
     try {
       const response = await asceanAPI.getAllAscean();
+      if (response.data.length === 0) navigate('/Ascean');
       setAsceanVaEsai([...response.data.reverse()]);
       setLoading(false);
     } catch (err) {
@@ -79,18 +81,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
               />
             )
           })
-        : 
-          <p className='' style={{ textAlign: 'center', color: '#fdf6d8' }}>
-            No Characters? No worries ^_^ <br />
-            Here's a Quick Overview of the NavBar to Catch You Up<br />
-            Castle: Home Page, holds your characters and their basic information.<br />
-            Knight: New Character, let's you create a new one to use in their own story.<br />
-            Scarecrow: Story Mode, here you can duel, level, and progress your character.<br />
-            Scroll: Community Feed, shows characters from other players in additon to high score rankings for the story mode.<br />
-            Chat Bubbles: Direct Messages, whether 1-to-1 or group chat, you can create or access conversations and their history.<br />
-            Double-Axes: PvP Arena, choose a character and create or join an existing room, once two players have joined you can duel each other ad nauseum.<br />
-          </p>
-        }
+        : '' }
     </Container>
   );
 };
