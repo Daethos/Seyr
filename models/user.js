@@ -33,8 +33,7 @@ const userSchema = new mongoose.Schema({
   photoUrl: String,  // string from aws!
   friends: [friendSchema],
   messages: [messageSchema],
-  requests: [requestSchema]
-  // color: String,
+  requests: [requestSchema],
 }, {
   timestamps: true
 });

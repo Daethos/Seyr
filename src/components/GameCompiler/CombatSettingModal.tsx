@@ -20,7 +20,7 @@ const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessin
     return (
         <>
         <Modal show={combatModalShow} onHide={() => setCombatModalShow(false)} centered id='modal-weapon'>
-        <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center' }}>Settings For Weapons, Damage, Prayer</Modal.Header>
+        <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', color: "gold", fontSize: "18px" }}>Settings For Weapons, Damage, Prayer</Modal.Header>
         <Modal.Body id='weapon-modal'>
             <p style={{ color: 'gold' }}>Current Main Weapon: {state.weapons[0].name}</p>
             <Form.Select name="Attacks" className='combat-settings' value={state.weapons[0].name} onChange={setWeaponOrder}>

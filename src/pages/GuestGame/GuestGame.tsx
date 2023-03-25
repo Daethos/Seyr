@@ -614,11 +614,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             { state.player_win || state.computer_win || !state.combatEngaged ? '' : state?.weapons ?
             <GameActions 
                 setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
-                sleep={sleep} setPrayerBlessing={setPrayerBlessing}
-                weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
+                setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                 currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
-                setEmergencyText={setEmergencyText} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
             /> : <Loading Combat={true} />
             }
             <GameCombatText 

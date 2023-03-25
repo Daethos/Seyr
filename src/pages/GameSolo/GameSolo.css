@@ -469,12 +469,12 @@
 
 .combat-settings {
   background-color: rgb(0, 0, 0);
-  font-size: 12px;
+  font-size: 16px;
   text-align: center;
   justify-content: center;
-  color: purple;
+  color: goldenrod;
   font-weight: 600;
-  border: 2px solid purple;
+  border: 2px solid goldenrod;
   border-radius: 6px;
   height: 50%;
   padding: 2.5%;

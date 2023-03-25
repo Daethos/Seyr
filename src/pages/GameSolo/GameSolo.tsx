@@ -73,7 +73,6 @@ const GameSolo = ({ user }: GameProps) => {
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
 
-
     const [asceanState, setAsceanState] = useState({
         ascean: gameState.player,
         constitution: 0,
@@ -1626,11 +1625,9 @@ const GameSolo = ({ user }: GameProps) => {
                     />
                     <GameActions 
                         setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
-                        sleep={sleep} setPrayerBlessing={setPrayerBlessing}
-                        weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
+                        setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                         handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
                         currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
-                        setEmergencyText={setEmergencyText} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
                     /> 
                     <GameCombatText 
                         emergencyText={emergencyText} combatRoundText={state.combatRound}

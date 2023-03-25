@@ -1457,11 +1457,9 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
                 />
                 <GameActions 
                     setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
-                    sleep={sleep} setPrayerBlessing={setPrayerBlessing}
-                    weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
+                    setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                     handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
-                    currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
-                    setEmergencyText={setEmergencyText} timeLeft={timeLeft} setTimeLeft={setTimeLeft}
+                    currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess}
                 /> 
                 <GameCombatText 
                     emergencyText={emergencyText} combatRoundText={state.combatRound}
