@@ -4,6 +4,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as gameAPI from '../../utils/gameApi'
 import * as mapAPI from '../../utils/mapApi';
+import * as settingsAPI from '../../utils/settingsApi';
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -56,13 +57,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
-    const [vibrationTime, setVibrationTime] = useState<number>(100);
-    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
-    const [canvasWidth, setCanvasWidth] = useState<number>(400);
-    const [canvasHeight, setCanvasHeight] = useState<number>(400);
-    const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
-    const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(soundEffectVolume);
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
 
 
@@ -86,9 +81,10 @@ const HardCoreAscea = ({ user }: GameProps) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [gameStateResponse, combatStateResponse] = await Promise.all([
+                const [gameStateResponse, combatStateResponse, settingsResponse] = await Promise.all([
                     asceanAPI.getOneAscean(asceanID),
                     asceanAPI.getAsceanStats(asceanID),
+                    settingsAPI.getSettings(),
                 ]);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
@@ -105,6 +101,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                     'mastery': combatStateResponse.data.data.ascean.mastery,
                     'faith': combatStateResponse.data.data.ascean.faith,
                 });
+                gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: settingsResponse });
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             } catch (err: any) {
@@ -652,7 +649,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
                 options[random]();
-                if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             };
         };
     };
@@ -665,7 +662,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
         };
     }; 
     
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, joystickSpeed);
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
 
     async function getAsceanCoords(x: number, y: number, map: any) {
         const tile = map?.[x + 100]?.[y + 100];
@@ -799,7 +796,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
     };
 
     const handleTileContent = async (content: string) => {
-        if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+        if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
         try {
             switch (content) {
                 case 'enemy': {
@@ -1071,7 +1068,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1094,7 +1091,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INSTANT_COMBAT,
                 payload: response.data
@@ -1118,7 +1115,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1192,13 +1189,12 @@ const HardCoreAscea = ({ user }: GameProps) => {
             : '' }
 
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={vibrationTime}
-                timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleHardcoreDeath}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={gameState.vibrationTime}
+                timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleHardcoreDeath} gameState={gameState}
             />
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
-                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState} mapState={mapState}
-                joystickSpeed={joystickSpeed} setJoystickSpeed={setJoystickSpeed} vibrationTime={vibrationTime} setVibrationTime={setVibrationTime}
+                gameDispatch={gameDispatch} gameState={gameState} mapState={mapState}
             />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
@@ -1232,9 +1228,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             : 
                 <>
                     <GameMap 
-                        mapData={mapState} canvasRef={canvasRef} canvasPosition={canvasPosition} setCanvasPosition={setCanvasPosition} 
-                        canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
-                        mapMode={mapMode} setMapMode={setMapMode}
+                        mapData={mapState} canvasRef={canvasRef} mapMode={mapMode} setMapMode={setMapMode} gameState={gameState} gameDispatch={gameDispatch}
                     />
                     { gameState.showInventory ?
                         <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />

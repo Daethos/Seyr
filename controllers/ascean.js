@@ -819,7 +819,11 @@ async function getOneAscean(req, res) {
         });
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
-        console.log("Inventory Populated")
+        console.log("Inventory Populated");
+
+        
+
+
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');

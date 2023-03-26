@@ -5,6 +5,9 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { MapMode } from '../../pages/GameSolo/GameSolo';
+import { GAME_ACTIONS } from './GameStore';
+import Loading from '../Loading/Loading';
+import * as settingsAPI from '../../utils/settingsApi';
 
 interface Tile {
     x: number;
@@ -15,20 +18,17 @@ interface Tile {
 }
 
 interface MapProps {
+    gameState: any;
+    gameDispatch: any;
     mapData: any;
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
-    canvasPosition: { x: number; y: number };
-    setCanvasPosition: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>;
-    canvasHeight: number;
-    canvasWidth: number;
-    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>;
-    setCanvasWidth: React.Dispatch<React.SetStateAction<number>>;
     mapMode: MapMode;
     setMapMode: React.Dispatch<React.SetStateAction<MapMode>>;
 };
 
-const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvasHeight, canvasWidth, setCanvasHeight, setCanvasWidth, mapMode, setMapMode }: MapProps) => {
+const GameMap = ({ mapData, canvasRef, mapMode, setMapMode, gameState, gameDispatch }: MapProps) => {
     const [mapVisible, setMapVisible] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [draggableElements, setDraggingElements] = useState([
         { id: "dz-1" },
         { id: "dz-2" },
@@ -79,21 +79,42 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
     const [canvasIndex, setCanvasIndex] = useState(draggableElements.length); // assuming canvas is the last element in the array
 
     useEffect(() => {
-        handleMapMode(mapMode);
-    }, [mapData, mapVisible, mapMode]);
+        handleMapMode(gameState.mapMode);
+    }, [mapData, mapVisible, gameState.mapMode]);
+
+    const saveMapSettings = async () => {
+        try {
+            setLoading(true);
+            const settings = {
+                mapMode: gameState.mapMode,
+                joystickSpeed: gameState.joystickSpeed,
+                soundEffectVolume: gameState.soundEffectVolume,
+                timeLeft: gameState.timeLeft,
+                moveTimer: gameState.moveTimer,
+                canvasPosition: gameState.canvasPosition,
+                canvasHeight: gameState.canvasHeight,
+                canvasWidth: gameState.canvasWidth,
+                vibrationTime: gameState.vibrationTime,
+            };
+            await settingsAPI.updateSettings(settings);
+            setLoading(false);
+        } catch (err: any) {
+            console.log(err, "Error Saving Map Settings")
+        }
+    };
     
-    function handleMapMode(mode: MapMode) {
+    function handleMapMode(mode: string) {
         switch (mode) {
-            case MapMode.FULL_MAP:
+            case 'FULL_MAP':
                 renderFullMap();
                 break;
-            case MapMode.QUADRANT:
+            case 'QUADRANT':
                 renderQuadrant();
                 break;
-            case MapMode.SURROUNDING_TILES:
+            case 'SURROUNDING_TILES':
                 renderSurroundingTiles();
                 break;
-            case MapMode.TIGHT:
+            case 'TIGHT':
                 renderTight();
                 break;
             default:
@@ -126,20 +147,18 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
     };
 
     const handleMap = () => {
-        setMapMode((mode) => {
-            switch (mode) {
-            case MapMode.FULL_MAP:
-                return MapMode.QUADRANT;
-            case MapMode.QUADRANT:
-                return MapMode.SURROUNDING_TILES;
-            case MapMode.SURROUNDING_TILES:
-                return MapMode.TIGHT;
-            case MapMode.TIGHT:
-                return MapMode.FULL_MAP;
+        switch (gameState.mapMode) {
+            case 'FULL_MAP':
+                return gameDispatch({ type: GAME_ACTIONS.SET_MAP_MODE, payload: 'QUADRANT' })
+            case 'QUADRANT':
+                return gameDispatch({ type: GAME_ACTIONS.SET_MAP_MODE, payload: 'SURROUNDING_TILES' })
+            case 'SURROUNDING_TILES':
+                return gameDispatch({ type: GAME_ACTIONS.SET_MAP_MODE, payload: 'TIGHT' });
+            case 'TIGHT':
+                return gameDispatch({ type: GAME_ACTIONS.SET_MAP_MODE, payload: 'FULL_MAP' });
             default:
-                return mode;
-            };
-        });
+                break;
+        };
     };
 
     function renderFullMap() {
@@ -317,23 +336,27 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         fontWeight: 400,
         fontVariant: 'small-caps',
         fontSize: 18 + 'px',
-        height: 40 + 'vh',
+        height: 30 + 'vh',
         overflow: 'auto',
     };
 
     function handleCanvasHeight(e: React.ChangeEvent<HTMLInputElement>) {
-        setCanvasHeight(Number(e.target.value));
+        // setCanvasHeight(Number(e.target.value));
+        gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_HEIGHT, payload: Number(e.target.value) });
     };
     function handleCanvasWidth(e: React.ChangeEvent<HTMLInputElement>) {
-        setCanvasWidth(Number(e.target.value));
+        // setCanvasWidth(Number(e.target.value));
+        gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_WIDTH, payload: Number(e.target.value) });
     };
 
     function handleCanvasWidthPosition(e: React.ChangeEvent<HTMLInputElement>) {
-        setCanvasPosition({ x: Number(e.target.value), y: canvasPosition.y });
+        // setCanvasPosition({ x: Number(e.target.value), y: canvasPosition.y });
+        gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: { x: Number(e.target.value), y: gameState.canvasPosition.y }})
     };
 
     function handleCanvasHeightPosition(e: React.ChangeEvent<HTMLInputElement>) {
-        setCanvasPosition({ x: canvasPosition.x, y: Number(e.target.value) });
+        // setCanvasPosition({ x: canvasPosition.x, y: Number(e.target.value) });
+        gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: { x: gameState.canvasPosition.x, y: Number(e.target.value) }})
     };
 
 
@@ -353,7 +376,8 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         console.log(newIndex, dX, dY, "Drag End")
 
         const canvasPosition = { x: dX, y: dY };
-        setCanvasPosition(canvasPosition);
+        // setCanvasPosition(canvasPosition);
+        gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: canvasPosition });
     };
         
     const setMapVisibility = () => {
@@ -365,16 +389,19 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
         <Modal show={mapModalShow} onHide={() => setMapModalShow(false)} centered style={{ top: "25%" }}>
             <Modal.Header>
         <h3 style={{ fontSize: 24 + 'px', textAlign: 'center' }}>Map Size Settings</h3>
+        <Button variant='' onClick={saveMapSettings}>
+        <span style={{ float: "right", color: "gold", fontSize: "20px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
+        </Button>
             </Modal.Header>
         <Modal.Body style={settingsStyle}>
             Default Setup is 400x400 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
-        Height {canvasHeight}px: <Form.Range value={canvasHeight} onChange={handleCanvasHeight} min={100} max={600} step={12.5} />
-        Width {canvasWidth}px: <Form.Range value={canvasWidth} onChange={handleCanvasWidth} min={100} max={600} step={12.5} />
+        Height {gameState.canvasHeight}px: <Form.Range value={gameState.canvasHeight} onChange={handleCanvasHeight} min={100} max={600} step={12.5} />
+        Width {gameState.canvasWidth}px: <Form.Range value={gameState.canvasWidth} onChange={handleCanvasWidth} min={100} max={600} step={12.5} />
         <br />
         <br />
-        Positioning: X: {canvasPosition.x * 100}px Y: {canvasPosition.y * 100}px <br /> <br />
-        Top {canvasPosition.y * 100}px: <Form.Range value={canvasPosition.y} onChange={handleCanvasHeightPosition} min={0} max={8} step={0.125} />
-        Left {canvasPosition.x * 100}px: <Form.Range value={canvasPosition.x} onChange={handleCanvasWidthPosition} min={0} max={8} step={0.125} />
+        Positioning: X: {gameState.canvasPosition.x * 100}px Y: {gameState.canvasPosition.y * 100}px <br /> <br />
+        Top {gameState.canvasPosition.y * 100}px: <Form.Range value={gameState.canvasPosition.y} onChange={handleCanvasHeightPosition} min={0} max={8} step={0.125} />
+        Left {gameState.canvasPosition.x * 100}px: <Form.Range value={gameState.canvasPosition.x} onChange={handleCanvasWidthPosition} min={0} max={8} step={0.125} />
         </Modal.Body>
         </Modal>
         <Button variant='' onClick={setMapVisibility} className='map-button' style={{ 
@@ -489,10 +516,10 @@ const GameMap = ({ mapData, canvasRef, canvasPosition, setCanvasPosition, canvas
                 {...provided.dragHandleProps} 
                 style={{
                     ...provided.draggableProps.style,
-                    width: `${canvasWidth}px`,
-                    height: `${canvasHeight}px`,
-                    top: (canvasPosition.y) * 100,
-                    left: (canvasPosition.x) * 100,
+                    width: `${gameState.canvasWidth}px`,
+                    height: `${gameState.canvasHeight}px`,
+                    top: (gameState.canvasPosition.y) * 100,
+                    left: (gameState.canvasPosition.x) * 100,
                 }}
             /> )}
             </Draggable>

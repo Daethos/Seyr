@@ -5,6 +5,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as gameAPI from '../../utils/gameApi'
 import * as mapAPI from '../../utils/mapApi';
+import * as settingsAPI from '../../utils/settingsApi';
 import userService from "../../utils/userService";
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
@@ -59,18 +60,12 @@ const GameSolo = ({ user }: GameProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
-    const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [moveTimer, setMoveTimer] = useState<number>(6)
+    const [timeLeft, setTimeLeft] = useState<number>(gameState.timeLeft);
+    const [moveTimer, setMoveTimer] = useState<number>(gameState.moveTimer)
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
-    const [vibrationTime, setVibrationTime] = useState<number>(100);
-    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
-    const [canvasWidth, setCanvasWidth] = useState<number>(400);
-    const [canvasHeight, setCanvasHeight] = useState<number>(400);
-    const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
-    const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(soundEffectVolume);
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
 
     const [asceanState, setAsceanState] = useState({
@@ -111,11 +106,13 @@ const GameSolo = ({ user }: GameProps) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [gameStateResponse, combatStateResponse, mapStateResponse] = await Promise.all([
+                const [gameStateResponse, combatStateResponse, mapStateResponse, gameSettingResponse] = await Promise.all([
                     asceanAPI.getOneAscean(asceanID),
                     asceanAPI.getAsceanStats(asceanID),
                     mapAPI.getMap(asceanID),
+                    settingsAPI.getSettings(),
                 ]);
+                console.log(gameSettingResponse, "Game Settings");
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
                     type: ACTIONS.SET_PLAYER,
@@ -131,6 +128,7 @@ const GameSolo = ({ user }: GameProps) => {
                     'mastery': combatStateResponse.data.data.ascean.mastery,
                     'faith': combatStateResponse.data.data.ascean.faith,
                 });
+                gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse });
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 if (gameStateResponse.data.tutorial.firstBoot === true) {
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -167,7 +165,7 @@ const GameSolo = ({ user }: GameProps) => {
         const timer = setTimeout(() => {
             if (moveTimer === 0 && mapState?.steps > 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                setMoveTimer(6);
+                setMoveTimer(gameState.moveTimer);
             }
         }, moveTimer);
         return () => clearTimeout(timer);
@@ -820,7 +818,7 @@ const GameSolo = ({ user }: GameProps) => {
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
                 options[random]();
-                if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             };
         };
     };
@@ -833,7 +831,7 @@ const GameSolo = ({ user }: GameProps) => {
         };
     }; 
     
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, joystickSpeed);
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
 
     async function getAsceanCoords(x: number, y: number, map: any) {
         const tile = map?.[x + 100]?.[y + 100];
@@ -1067,7 +1065,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
             return;
         };
-        if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+        if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
         try {
             switch (content) {
                 case 'enemy': {
@@ -1237,7 +1235,7 @@ const GameSolo = ({ user }: GameProps) => {
             type: ACTIONS.SET_COMBAT_ACTION,
             payload: action.target.value
         });
-        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
     function handleCounter(counter: any) {
@@ -1246,7 +1244,7 @@ const GameSolo = ({ user }: GameProps) => {
             type: ACTIONS.SET_COMBAT_COUNTER,
             payload: counter.target.value
         });
-        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
     async function setWeaponOrder(weapon: any) {
@@ -1261,7 +1259,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_WEAPON_ORDER,
                 payload: response
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order');
         };
@@ -1274,7 +1272,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_DAMAGE_TYPE,
                 payload: damageType.target.value
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type');
         };
@@ -1287,7 +1285,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_PRAYER_BLESSING,
                 payload: prayer.target.value
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
         };
@@ -1383,7 +1381,6 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
-                    mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
                 };
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
@@ -1425,9 +1422,9 @@ const GameSolo = ({ user }: GameProps) => {
                 return;
             };
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             // // gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
 
@@ -1466,9 +1463,9 @@ const GameSolo = ({ user }: GameProps) => {
         e.preventDefault();
         try {
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INSTANT_COMBAT,
                 payload: response.data
@@ -1493,9 +1490,9 @@ const GameSolo = ({ user }: GameProps) => {
                 return;
             };
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1596,14 +1593,13 @@ const GameSolo = ({ user }: GameProps) => {
             : '' }
 
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={vibrationTime}
-                timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={gameState.vibrationTime}
+                timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin} gameState={gameState}
             />
             
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
-                gameDispatch={gameDispatch} soundEffectsVolume={soundEffectVolume} setSoundEffectsVolume={setSoundEffectVolume} gameState={gameState} mapState={mapState}
-                joystickSpeed={joystickSpeed} setJoystickSpeed={setJoystickSpeed} vibrationTime={vibrationTime} setVibrationTime={setVibrationTime}
+                gameDispatch={gameDispatch}gameState={gameState} mapState={mapState}
             />
             
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
@@ -1642,9 +1638,7 @@ const GameSolo = ({ user }: GameProps) => {
             : 
                 <>
                     <GameMap 
-                        mapData={mapState} canvasRef={canvasRef} canvasPosition={canvasPosition} setCanvasPosition={setCanvasPosition} 
-                        canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
-                        mapMode={mapMode} setMapMode={setMapMode}
+                        mapData={mapState} canvasRef={canvasRef} mapMode={mapMode} setMapMode={setMapMode} gameDispatch={gameDispatch} gameState={gameState}
                     />
                     { gameState.player.quests.length > 0 ?
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />

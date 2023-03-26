@@ -570,6 +570,10 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         );
     };
 
+    const gameState = {
+        timeLeft: 10,
+    }
+
     return (
         <Container fluid id="game-container" style={ background }>
 
@@ -582,7 +586,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             />
             <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
             <GameConditions 
-                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={100}
+                setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={100} gameState={gameState}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
             />
             <Button variant='' className='settings-button' style={{ color: 'gold' }} onClick={() => handleLogout()}>

@@ -333,6 +333,16 @@ export interface GameData {
     overlayContent: string;
     storyContent: string;
     combatOverlayText: string;
+
+    mapMode: string;
+    timeLeft: number;
+    moveTimer: number;
+    vibrationTime: number;
+    canvasPosition: { x: number, y: number };
+    canvasWidth: number;
+    canvasHeight: number;
+    joystickSpeed: number;
+    soundEffectVolume: number;
 };
 
 interface Game_Action {
@@ -401,6 +411,16 @@ export const GAME_ACTIONS = {
     SET_STORY_CONTENT: 'SET_STORY_CONTENT',
     SET_COMBAT_OVERLAY_TEXT: 'SET_COMBAT_OVERLAY_TEXT',
 
+    SET_GAME_SETTINGS: 'SET_GAME_SETTINGS',
+    SET_MAP_MODE: 'SET_MAP_MODE',
+    SET_TIME_LEFT: 'SET_TIME_LEFT',
+    SET_MOVE_TIMER: 'SET_MOVE_TIMER',
+    SET_VIBRATION_TIME: 'SET_VIBRATION_TIME',
+    SET_CANVAS_POSITION: 'SET_CANVAS_POSITION',
+    SET_CANVAS_WIDTH: 'SET_CANVAS_WIDTH',
+    SET_CANVAS_HEIGHT: 'SET_CANVAS_HEIGHT',
+    SET_JOYSTICK_SPEED: 'SET_JOYSTICK_SPEED',
+    SET_VOLUME: 'SET_VOLUME',
 };
 
 export const initialGameData: GameData = {
@@ -440,6 +460,15 @@ export const initialGameData: GameData = {
     overlayContent: '',
     storyContent: '', 
     combatOverlayText: '',
+    mapMode: 'FULL_MAP',
+    timeLeft: 0,
+    moveTimer: 0,
+    vibrationTime: 0,
+    canvasPosition: { x: 0, y: 0 },
+    canvasWidth: 0,
+    canvasHeight: 0,
+    joystickSpeed: 0,
+    soundEffectVolume: 0,
 };
 
 export const GameStore = (game: GameData, action: Game_Action) => {
@@ -726,7 +755,66 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     ...game,
                     lootDropTwo: null,
                 };
-            }
+            };
+        case 'SET_GAME_SETTINGS':
+            return {
+                ...game,
+                mapMode: action.payload.mapMode,
+                joystickSpeed: action.payload.joystickSpeed,
+                soundEffectVolume: action.payload.soundEffectVolume,
+                timeLeft: action.payload.timeLeft,
+                moveTimer: action.payload.moveTimer,
+                canvasPosition: action.payload.canvasPosition,
+                canvasHeight: action.payload.canvasHeight,
+                canvasWidth: action.payload.canvasWidth,
+                vibrationTime: action.payload.vibrationTime,
+            };
+        case 'SET_MAP_MODE':
+            console.log(action, "MAP MODE")
+            return {
+                ...game,
+                mapMode: action.payload,
+            };
+        case 'SET_TIME_LEFT':
+            return {
+                ...game,
+                timeLeft: action.payload,
+            };
+        case 'SET_MOVE_TIMER':
+            return {
+                ...game,
+                moveTimer: action.payload,
+            };
+        case 'SET_CANVAS_POSITION':
+            return {
+                ...game,
+                canvasPosition: action.payload,
+            };
+        case 'SET_CANVAS_HEIGHT':
+            return {
+                ...game,
+                canvasHeight: action.payload,
+            };
+        case 'SET_CANVAS_WIDTH':
+            return {
+                ...game,
+                canvasWidth: action.payload,
+            };
+        case 'SET_JOYSTICK_SPEED':
+            return {
+                ...game,
+                joystickSpeed: action.payload,
+            };
+        case 'SET_VIBRATION_TIME':
+            return {
+                ...game,
+                vibrationTime: action.payload,
+            };
+        case 'SET_VOLUME':
+            return {
+                ...game,
+                soundEffectVolume: action.payload,
+            };
         default:
             return game;
     };

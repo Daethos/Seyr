@@ -5,27 +5,25 @@ import Button from 'react-bootstrap/Button';
 import Accordion from 'react-bootstrap/Accordion';
 import InventoryBag from './InventoryBag';
 import Form from 'react-bootstrap/Form';
+import { GAME_ACTIONS } from './GameStore';
+import * as settingsAPI from '../../utils/settingsApi';
+import Loading from '../Loading/Loading';
 
 interface Props {
     inventory: any;
     ascean: any;
     dispatch: any;
-    soundEffectsVolume: number;
-    setSoundEffectsVolume: React.Dispatch<React.SetStateAction<number>>;
-    joystickSpeed: number;
-    setJoystickSpeed: React.Dispatch<React.SetStateAction<number>>;
     currentTile: any;
     saveAsceanCoords: (x: number, y: number) => Promise<void>;
     gameDispatch: React.Dispatch<any>;
     gameState: any;
     mapState: any;
-    vibrationTime: number;
-    setVibrationTime: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolume, setSoundEffectsVolume, currentTile, saveAsceanCoords, gameState, mapState, joystickSpeed, setJoystickSpeed, vibrationTime, setVibrationTime }: Props) => {
-    const [settingsModalShow, setSettingsModalShow] = useState(false);
-    const [showInventory, setShowInventory] = useState(false);
+const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, saveAsceanCoords, gameState, mapState }: Props) => {
+    const [settingsModalShow, setSettingsModalShow] = useState<boolean>(false);
+    const [showInventory, setShowInventory] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const settingsStyle = {
         color: 'orangered',
@@ -35,22 +33,59 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         height: 65 + 'vh',
         overflow: 'auto',
     };
+
+    const saveGameSettings = async () => {
+        try {
+            setLoading(true);
+            const settings = {
+                mapMode: gameState.mapMode,
+                joystickSpeed: gameState.joystickSpeed,
+                soundEffectVolume: gameState.soundEffectVolume,
+                timeLeft: gameState.timeLeft,
+                moveTimer: gameState.moveTimer,
+                canvasPosition: gameState.canvasPosition,
+                canvasHeight: gameState.canvasHeight,
+                canvasWidth: gameState.canvasWidth,
+                vibrationTime: gameState.vibrationTime,
+            };
+            await settingsAPI.updateSettings(settings);
+            setLoading(false);
+        } catch (err: any) {
+            console.log(err, "Error Saving Map Settings")
+        }
+    };
+
+    function handleCombatTimer(e: React.ChangeEvent<HTMLInputElement>) {
+        let timer = parseFloat(e.target.value);
+        console.log(timer, 'New Time Left');
+        gameDispatch({ type: GAME_ACTIONS.SET_TIME_LEFT, payload: timer });
+    };
+
+    function handleMoveTimer(e: React.ChangeEvent<HTMLInputElement>) {
+        let timer = parseFloat(e.target.value);
+        console.log(timer, 'New Move Timer');
+        gameDispatch({ type: GAME_ACTIONS.SET_MOVE_TIMER, payload: timer });
+    };
+
     function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
         let volume = parseFloat(e.target.value);
         console.log(volume, 'New Volume');
-        setSoundEffectsVolume(volume);
+        // setSoundEffectsVolume(volume);
+        gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: volume });
     };
 
     function handleJoystickChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
         console.log(speed, 'New Speed');
-        setJoystickSpeed(speed);
+        // setJoystickSpeed(speed);
+        gameDispatch({ type: GAME_ACTIONS.SET_JOYSTICK_SPEED, payload: speed });
     }
 
     function handleVibrationChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
         console.log(speed, 'New Speed');
-        setVibrationTime(speed);
+        // setVibrationTime(speed);
+        gameDispatch({ type: GAME_ACTIONS.SET_VIBRATION_TIME, payload: speed });
     }
 
     function returnHome() {
@@ -61,8 +96,13 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
     return (
         <>
         <Modal show={settingsModalShow} onHide={() => setSettingsModalShow(false)} centered>
+        <Modal.Header>
+        <h3 style={{ fontSize: '24px' }}>Gameplay Settings</h3>
+        <Button variant='' onClick={saveGameSettings}>
+        <span style={{ float: "right", color: "gold", fontSize: "20px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
+        </Button>
+        </Modal.Header>
         <Modal.Body style={settingsStyle}>
-        <h3 style={{ fontSize: 24 + 'px', textAlign: 'center' }}>Gameplay Settings</h3>
         <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Coordinates</Button>
         <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
         { showInventory ?
@@ -70,22 +110,34 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, soundEffectsVolum
         : ""}
         <br />
         <Accordion flush >
-        <Accordion.Item eventKey="0" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Sound Volume ({soundEffectsVolume})</h5></Accordion.Header>
+        <Accordion.Item eventKey="7" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Combat Timer ({gameState.timeLeft})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
-            <Form.Range value={soundEffectsVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />
+            <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={10} step={1} />
+        </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="7" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Movement Timer ({gameState.moveTimer})</h5></Accordion.Header>
+        <Accordion.Body className='settings-accordion'>
+            <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={10} step={1} />
+        </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="0" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Sound Volume ({gameState.soundEffectVolume})</h5></Accordion.Header>
+        <Accordion.Body className='settings-accordion'>
+            <Form.Range value={gameState.soundEffectVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />
         </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="5" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Joystick Delay ({joystickSpeed})</h5></Accordion.Header>
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Joystick Delay ({gameState.joystickSpeed})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
-            <Form.Range value={joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
+            <Form.Range value={gameState.joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
         </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="6" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Vibration Time ({vibrationTime})</h5></Accordion.Header>
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Vibration Time ({gameState.vibrationTime})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
-            <Form.Range value={vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
+            <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
         </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="4">

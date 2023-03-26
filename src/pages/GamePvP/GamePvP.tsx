@@ -1473,11 +1473,11 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             </>
         ) : (
             <>
-                <GameMap 
+                {/* <GameMap 
                     mapData={mapState} canvasRef={canvasRef} canvasPosition={canvasPosition} setCanvasPosition={setCanvasPosition} 
                     canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
                     mapMode={mapMode} setMapMode={setMapMode}
-                />
+                /> */}
                 { gameState.showDialog ?    
                     <DialogBox 
                         npc={gameState.opponent.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}

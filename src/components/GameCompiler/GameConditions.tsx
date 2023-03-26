@@ -13,9 +13,10 @@ interface Props {
     handlePlayerWin: (combatData: any) => Promise<void>;
     handleComputerWin: (combatData: any) => Promise<void>;
     vibrationTime: number;
+    gameState: any;
 };
 
-const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, setEmergencyText, handlePlayerWin, handleComputerWin, vibrationTime }: Props) => {
+const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, setEmergencyText, handlePlayerWin, handleComputerWin, vibrationTime, gameState }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [timeLeftDisplay, setTimeLeftDisplay] = useState<number>(timeLeft);
 
@@ -56,7 +57,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
 
     const autoAttack = async (combatData: any) => {
         if (combatData.player_win || combatData.computer_win || combatData.new_player_health === 0 || combatData.new_computer_health === 0) return;
-        setTimeLeft(10);
+        setTimeLeft(gameState.timeLeft);
         try {
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);

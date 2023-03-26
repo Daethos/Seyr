@@ -9,6 +9,7 @@ const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
+const GameSetting = require('../models/gamesetting');
 const jwt = require('jsonwebtoken');
 const S3 = require("aws-sdk/clients/s3");
 const s3 = new S3(); // initate the S3 constructor which can talk to aws/s3 our bucket!
