@@ -50,7 +50,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [moveTimer, setMoveTimer] = useState<number>(6)
@@ -1228,7 +1227,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             : 
                 <>
                     <GameMap 
-                        mapData={mapState} canvasRef={canvasRef} mapMode={mapMode} setMapMode={setMapMode} gameState={gameState} gameDispatch={gameDispatch}
+                        mapData={mapState} canvasRef={canvasRef} gameState={gameState} gameDispatch={gameDispatch}
                     />
                     { gameState.showInventory ?
                         <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />

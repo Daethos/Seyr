@@ -151,6 +151,9 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
         <Button onClick={() => setShowFirewaterModal(false)} variant='' style={{ float: "right", color: "gold", fontSize: "24px" }}>Resist</Button>
     </Modal.Body>
     </Modal>
+
+
+
     <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
       { activeTab === 'gear' && inventory?.length > 0 ?
         inventory.map((item: any, index: number) => {
@@ -160,6 +163,12 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
         })
       : '' }
     </div>
+
+
+
+
+
+    
     { !drinking ?
       <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} setShowFirewaterModal={setShowFirewaterModal} mapState={mapState} />
       :

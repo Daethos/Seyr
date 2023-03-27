@@ -205,7 +205,7 @@ export const QUESTS = [
         name: ["Tshaeral Shaman", "Kyn'gian Shaman", "Achreon Druid", "Cambiren Druid", "Se'va Shrieker", "Fyers Occultist"],
         title: "Replenish Firewater",
         description: "To walk in the land of hush and tendril and refill your flask, you must let it bleed--not of yourself but of our enemy",
-        isBounty: true,
+        isBounty: false,
     },
     {
         name: ["Northren Wanderer", "Southron Wanderer", "Nyren", "Rahvrecur", "Se'dyrist"],
@@ -217,7 +217,7 @@ export const QUESTS = [
         name: ["Fang Duelist", "Shrygeian Bard", "Chiomic Jester"],
         title: "The Murder of a Merchant",
         description: "Aid in the investigation of a murder that occured recently",
-        isBounty: true,
+        isBounty: false,
     },
     {
         name: ["Ma'ier Occultist", "Old Li'ivi Occultist", "Eugenes", "Garris Ashenus"],
@@ -285,6 +285,33 @@ export const QUESTS = [
 
 export const getQuests = (name: string) => {
     return QUESTS.filter(quest => quest.name.includes(name));
+};
+
+export const getAsceanTraits = (ascean: Player) => {
+    let traits: string[] = [];
+    switch (ascean.mastery) {
+        case "Constitution":
+            traits = ["Heroism", "Kyn'gian [Inexorable Negation]", "Arbitious", "Faithful", "Apathetic"];
+            break;
+        case "Strength":
+            traits = ["Heroism", "Grappling", "Sedyrist [Inexorable Analysis]", "Conviction", "Intimidation"];
+            break;
+        case "Agility":
+            traits = ["Kyn'gian [Inexorable Negation]", "Grappling", "Thievery", "Transubstantiation", "Knavery"];
+            break;
+        case "Achre":
+            traits = ["Arbitious", "Sedyrist [Inexorable Analysis]", "Thievery", "Seer", "Chiomism"];
+            break;
+        case "Caeren":
+            traits = ["Faithful", "Conviction", "Transubstantiation", "Seer", "Astralism [Inexorable Affirmation]"];
+            break;
+        case "Kyosir":
+            traits = ["Apathetic", "Intimidation", "Knavery", "Chiomism", "Astralism [Inexorable Affirmation]"];
+            break;
+        default:
+            break;
+    };
+    return traits;
 };
 
 export interface GameData {

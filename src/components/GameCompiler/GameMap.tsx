@@ -4,7 +4,6 @@ import { MapData } from './WorldStore';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { MapMode } from '../../pages/GameSolo/GameSolo';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
 import * as settingsAPI from '../../utils/settingsApi';
@@ -22,11 +21,9 @@ interface MapProps {
     gameDispatch: any;
     mapData: any;
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
-    mapMode: MapMode;
-    setMapMode: React.Dispatch<React.SetStateAction<MapMode>>;
 };
 
-const GameMap = ({ mapData, canvasRef, mapMode, setMapMode, gameState, gameDispatch }: MapProps) => {
+const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
     const [mapVisible, setMapVisible] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [draggableElements, setDraggingElements] = useState([

@@ -103,44 +103,75 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         </Button>
         </Modal.Header>
         <Modal.Body style={settingsStyle}>
-        <Button variant='' className='mb-3' style={{ color: 'gold', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Coordinates</Button>
-        <Button variant='outline' className='mb-3' style={{ color: 'gold', fontSize: 20 + 'px' }} onClick={() => setShowInventory(!showInventory)}>Check Inventory</Button> 
+        <Button variant='' className='mb-3' style={{ color: '#fdf6d8', fontSize: "16px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Map: {mapState.name}</Button>
+        <Button variant='outline' className='mb-3' style={{ color: '#fdf6d8', fontSize: '16px' }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button><br />
         { showInventory ?
             <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} gameState={gameState} mapState={mapState} />
         : ""}
         <br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Combat Timer: ({gameState.timeLeft})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={10} step={1} /><br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Movement Timer: ({gameState.moveTimer})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={10} step={1} /><br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Joystick Delay ({gameState.joystickSpeed})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} /><br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Sound Volume ({gameState.soundEffectVolume})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.soundEffectVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} /><br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Vibration Time ({gameState.vibrationTime})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
+
         <Accordion flush >
-        <Accordion.Item eventKey="7" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Combat Timer ({gameState.timeLeft})</h5></Accordion.Header>
+        {/* <Accordion.Item eventKey="0" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Set Combat Timer ({gameState.timeLeft})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={10} step={1} />
         </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="7" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Movement Timer ({gameState.moveTimer})</h5></Accordion.Header>
+        <Accordion.Item eventKey="1" >
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Set Movement Timer ({gameState.moveTimer})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={10} step={1} />
         </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="0" >
+        <Accordion.Item eventKey="2" >
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Sound Volume ({gameState.soundEffectVolume})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <Form.Range value={gameState.soundEffectVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />
         </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="5" >
+        <Accordion.Item eventKey="3" >
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Joystick Delay ({gameState.joystickSpeed})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <Form.Range value={gameState.joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
         </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="6" >
+        <Accordion.Item eventKey="4" >
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Vibration Time ({gameState.vibrationTime})</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
         </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="4">
+        </Accordion.Item> */}
+        <Accordion.Item eventKey="5">
         <Accordion.Header>
             <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
             Map Legend
@@ -185,7 +216,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         </Accordion.Body>
         </Accordion.Item>
 
-        <Accordion.Item eventKey="1">
+        <Accordion.Item eventKey="6">
         <Accordion.Header>
             <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
             Combat Actions
@@ -257,7 +288,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
           <p style={{ color: 'gold', fontSize: 25 + 'px' }}>Good luck, and have fun!</p>
         </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="2">
+        <Accordion.Item eventKey="7">
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Combat Tactics (Settings)</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <br />
@@ -283,7 +314,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             </p>
         </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="3">
+        <Accordion.Item eventKey="8">
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>General Information</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
 
@@ -332,10 +363,8 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
             <path d="M20,28h2v1H10v-1h2l1-3h6L20,28z M31,3v21H1V3H31z M29,5H3v17h26V5z M28,21H4V6h24V21z M7,10h8V9  H7V10z M11,17H7v1h4V17z M19,15h-9v1h9V15z M19,13h-9v1h9V13z M20,11H10v1h10V11z"></path>
             </svg>{' '}
-            Progression - And this is the developer trying to keep you informed and updated. Currently I am working on the framework of how the game will technically function i.e. combat, equipment, leveling, and scaling. I don't have a roadmap nor have I looked up how people actually work through game development stem to sternum but I'm hammering out what I can recollect from myriad gameplay seems to be necessary for the game itself to be fun and functional. So it's gameplay first to make sure anyone would trouble themself to play the thing, story connectivity-vignettes to somewhat storyboard for myself the actual game conceptually, then the phaser canvas to give what is generally static gameplay (however much I can add to the 'life' of the game I will continue to do so) and transform it into an interconnected world where the PvP (which is live and functional) and ability to communicate would be more amusing and enjoyable. If you are reading this, I appreciate you humoring me. Thank you.
+            Progression - And this is the developer trying to keep you informed and updated. Currently I am working on the framework of how the game will technically function i.e. combat, equipment, leveling, and scaling. I don't have a roadmap nor have I looked up how people actually work through game development stem to sternum but I'm hammering out what I can recollect from myriad gameplay seems to be necessary for the game itself to be fun and functional. So it's gameplay first to make sure anyone would trouble themself to play the thing, story connectivity-vignettes to somewhat storyboard for myself the actual game conceptually, then the phaser canvas to give what is generally static gameplay (however much I can add to the 'life' of the game I will continue to do so) and transform it into an interconnected world where the PvP and ability to communicate would be more amusing and enjoyable. If you are reading this, I appreciate you humoring me. Thank you.
             </p>
-
-
         </Accordion.Body>
         </Accordion.Item>
         </Accordion>

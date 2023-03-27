@@ -58,10 +58,9 @@ const GameSolo = ({ user }: GameProps) => {
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(gameState.timeLeft);
-    const [moveTimer, setMoveTimer] = useState<number>(gameState.moveTimer)
+    const [moveTimer, setMoveTimer] = useState<number>(gameState.moveTimer);
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
@@ -1494,7 +1493,7 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await gameAPI.consumePrayer(state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
+                type: ACTIONS.CONSUME_PRAYER,
                 payload: response.data
             });
             if (response.data.player_win === true) {
@@ -1565,16 +1564,10 @@ const GameSolo = ({ user }: GameProps) => {
                 return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
         };
     };
-      
-    function sleep(ms: number) {
-        return new Promise(
-            resolve => setTimeout(resolve, ms)
-        );
-    };
 
     if (gameState.loading || gameState.loadingAscean) {
         return (
-            <Loading Combat={true} />
+            <Loading Chat={true} />
         );
     };
 
@@ -1638,7 +1631,7 @@ const GameSolo = ({ user }: GameProps) => {
             : 
                 <>
                     <GameMap 
-                        mapData={mapState} canvasRef={canvasRef} mapMode={mapMode} setMapMode={setMapMode} gameDispatch={gameDispatch} gameState={gameState}
+                        mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState}
                     />
                     { gameState.player.quests.length > 0 ?
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />

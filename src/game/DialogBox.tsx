@@ -274,6 +274,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 ) : ( "" ) }
                 <br />
+                [Note: These Quests are classified as Curiosities, and are not required to complete the game. No quests are required to complete the game.]
                 <Button variant='' style={{ color: "green", fontSize: "20px" }} onClick={() => getQuest(quest)}>Accept {quest?.title}?</Button>
             </Modal.Body>
         </Modal>
@@ -310,7 +311,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                             </p>
                         </> 
                     : computerWin ? 
-                    <>
+                        <>
                             "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play."
                             <p style = {{ color: 'dodgerblue' }}>
                             <br /> 
@@ -324,13 +325,24 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        "This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like."
+                        This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like
                     </>
                 : currentIntent === 'farewell' ?
                     <>
                     { playerWin ?
                         <>
-                        "Go now, {ascean.name}, and find better pastures."<br />
+                        "Go now, {ascean.name}, and find better pastures. But before you wander, if you wish, its yours."<br /><br />
+
+                        { lootDrop?._id && lootDropTwo?._id ?
+                            <>
+                                <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                                <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            </>
+                        : lootDrop?._id ?
+                        <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        : lootDropTwo?._id ?
+                        <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        : '' }
                         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
                         </>
                     : computerWin ?
@@ -357,7 +369,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         <> 
                             "Well, {ascean?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
                             <br />
-                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
+                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
                             </>
                         }
 
@@ -370,11 +382,11 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 : currentIntent === 'localLore' ?
                 <>
-                        "This has not been written yet."
+                        This has not been written yet
                     </>
                 : currentIntent === 'localWhispers' ?
                     <>
-                        "Well if you want to know, you'll have to click the button."
+                        "Well, if you wish to know more, you'll have to ask."
                         <br />
                         { showQuest ?
                             localWhispers ?
@@ -389,10 +401,10 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 : currentIntent === 'persuasion' ?
                     <>
-                        "This has not been written yet."
+                        This has not been written yet
                     </>
                 : currentIntent === 'services' ?
-                <>
+                    <>
                         {/* <DialogTree ascean={ascean} enemy={enemy} dialogNodes={dialogTree} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} /> */}
                         "Greetings, chance meeting you here. I've been traveling these lands for some time now, and it's good to see those with a mind for wander. I have some items you have find of you here on your adventures, if it interests you."
                         <br /><br />
@@ -423,7 +435,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 : currentIntent === 'worldLore' ?
                 <>
-                        "This has not been written yet."
+                        This has not been written yet
                     </>
                 : '' }
             </div>

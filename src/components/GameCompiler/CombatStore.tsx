@@ -120,6 +120,7 @@ export const ACTIONS = {
     SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
     INITIATE_COMBAT: 'INITIATE_COMBAT',
     INSTANT_COMBAT: 'INSTANT_COMBAT',
+    CONSUME_PRAYER: 'CONSUME_PRAYER',
     AUTO_COMBAT: 'AUTO_COMBAT',
     SET_PLAYER_QUICK: 'SET_PLAYER_QUICK',
     SET_PLAYER_SLICK: 'SET_PLAYER_SLICK',
@@ -391,6 +392,12 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 actionStatus: true,
                 combatInitiated: true,
                 instantStatus: true,
+            };
+        case 'CONSUME_PRAYER':
+            return {
+                ...action.payload,
+                action: '',
+                combatInitiated: true,
             };
         case 'AUTO_COMBAT':
             return {
