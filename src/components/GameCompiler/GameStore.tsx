@@ -393,6 +393,7 @@ export const GAME_ACTIONS = {
     SET_FIREWATER: 'SET_FIREWATER',
     SET_QUESTS: 'SET_QUESTS',
     SET_INVENTORY: 'SET_INVENTORY',
+    SET_INVENTORY_POSITION: 'SET_INVENTORY_POSITION',
     SET_ASCEAN_AND_INVENTORY: 'SET_ASCEAN_AND_INVENTORY',
 
     SET_PURCHASING_ITEM: 'SET_PURCHASING_ITEM',
@@ -586,6 +587,15 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     ...game.player,
                     currency: action.payload.currency,
                     inventory: action.payload.inventory,
+                },
+            };
+        case 'SET_INVENTORY_POSITION':
+            console.log("Setting Inventory Positions", action.payload)
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    inventory: action.payload,
                 },
             };
         case 'SET_ASCEAN_AND_INVENTORY':

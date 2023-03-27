@@ -397,7 +397,7 @@ async function saveInventory(req, res) {
         const ascean = await Ascean.findById(req.body.ascean);
         ascean.inventory = req.body.inventory;
         await ascean.save();
-        res.status(201).json({ ascean });
+        res.status(201).json(ascean.inventory);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving to Inventory!')
     };

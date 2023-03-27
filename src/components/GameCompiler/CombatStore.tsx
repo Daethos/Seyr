@@ -389,7 +389,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...action.payload,
                 action: '',
-                actionStatus: true,
                 combatInitiated: true,
                 instantStatus: true,
             };

@@ -194,7 +194,7 @@
   border: 3px solid purple;
   width: 100vw;
   height: 62vh;
-  /* overflow-y: scroll; */
+  overflow-y: scroll;
   border-radius: 6px;
 }
 .inventory-bag-settings {
