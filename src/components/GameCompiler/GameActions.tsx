@@ -230,16 +230,16 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
             Consume a prayer to experience a burst of caerenic beauty.
             </p><br />
             <p style={{ color: "gold" }}>
-            <b>Damage</b> - Burst Tick for 100% Round Damage<br />
+            <b>Damage</b> - Burst Tick for <b>50%</b> Round Damage<br />
             </p>
             <p style={{ color: "gold" }}>
-            <b>Debuff</b> - Damage Opponent From <b>Opponent's</b> Last Attack<br />
+            <b>Debuff</b> - Damage Opponent With <b>50%</b> of <b>Opponent's</b> Last Attack<br />
             </p>
             <p style={{ color: "gold" }}>
-            <b>Buff</b> - Damage Opponent From <b>Your</b> Last Attack<br />
+            <b>Buff</b> - Damage Opponent With <b>50%</b> of <b>Your</b> Last Attack<br />
             </p>
             <p style={{ color: "gold" }}>
-            <b>Heal</b> - Burst Tick for 100% Round Heal
+            <b>Heal</b> - Burst Tick for <b>50%</b> Round Heal
             </p>
           </Modal.Body>
         </Modal>

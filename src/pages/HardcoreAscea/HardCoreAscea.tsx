@@ -450,6 +450,15 @@ const HardCoreAscea = ({ user }: GameProps) => {
         };
     }, [gameState, gameState.removeItem]);
 
+    useEffect(() => {
+        if (gameState.repositionInventory === false) return;
+        console.log("Repositioning Inventory", gameState.repositionInventory)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
+        };
+    }, [gameState, gameState.repositionInventory]);
+
     const deleteEquipment = async (eqp: any) => {
         try {
             const response = await eqpAPI.deleteEquipment(eqp);
@@ -505,6 +514,17 @@ const HardCoreAscea = ({ user }: GameProps) => {
         };
     };
 
+    const getOnlyInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
+            console.log(firstResponse, "Ascean Inventory ?")
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
+
     const clearOpponent = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
@@ -525,12 +545,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
 
     const saveWorld = async () => {
         try {
-            // const response = await mapAPI.saveNewMap(mapState);
-            // console.log(response);
-            // mapDispatch({
-            //     type: MAP_ACTIONS.SET_MAP_DATA,
-            //     payload: response
-            // });
             gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${gameState.player.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms as you encounter mercenaries, knights, druids, occultists, and more \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' Those who are of consideration in earnest must triumph in the grand melee. \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.WORLD_SAVED, payload: true });
@@ -1159,12 +1173,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
             case 'Sedyreal':
                 return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
         };
-    };
-      
-    function sleep(ms: number) {
-        return new Promise(
-            resolve => setTimeout(resolve, ms)
-        );
     };
 
     if (gameState.loading || gameState.loadingAscean) {

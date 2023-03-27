@@ -3,6 +3,8 @@ import Popover from 'react-bootstrap/Popover';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading';
+import { useEffect, useState } from 'react';
+import { ACTIONS } from '../GameCompiler/CombatStore';
 
 interface Props {
     weapon_one: any;
@@ -18,9 +20,26 @@ interface Props {
     trinket: any;
     gameDisplay?: boolean;
     loading?: boolean;
+    damage?: boolean;
 };
 
-const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay, loading }: Props) => {
+const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay, loading, damage }: Props) => {
+    const [damaged, setDamaged] = useState<boolean>(false);
+
+    useEffect(() => {
+        console.log(damage, "Damage Boolean");
+        if (damage) setDamaged(true);
+    }, [damage]);
+
+    useEffect(() => {
+        console.log("Damaged: ", damaged);
+        if (damaged) {
+            setTimeout(() => {
+                setDamaged(false);
+            }, 1500);
+        };
+    }, [damaged]);
+
     const weaponOnePopover = (
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{weapon_one?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + weapon_one?.imgURL} alt={weapon_one?.name} /></span></Popover.Header>
@@ -308,66 +327,77 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getWeaponTwoStyle = {
         border: getBorderStyle(weapon_two?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getWeaponThreeStyle = {
         border: getBorderStyle(weapon_three?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getShieldStyle = {
         border: getBorderStyle(shield?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getHelmStyle = {
         border: getBorderStyle(helmet?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getChestStyle = {
         border: getBorderStyle(chest?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getLegsStyle = {
         border: getBorderStyle(legs?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getAmuletStyle = {
         border: getBorderStyle(amulet?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getRingOneStyle = {
         border: getBorderStyle(ring_one?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getRingTwoStyle = {
         border: getBorderStyle(ring_two?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
     const getTrinketStyle = {
         border: getBorderStyle(trinket?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
+        // opacity: damaged ? "0.65" : "1",
     };
 
     if (loading) {
@@ -377,75 +407,63 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     };
     return (
         <>
-            {
-                gameDisplay
-                ? 
-                <Row 
-            // className="justify-content-center"
-            className="justify-content-center"
-            style={{ marginTop: -15 + '%', marginBottom: -25 + '%' }}
-            >
+        { gameDisplay ? 
+            <Row className="justify-content-center" style={{ marginTop: -15 + '%', marginBottom: -25 + '%' }} >
                 <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
             style={{marginLeft: -62 + 'px', marginRight: 10 + 'px'}}
             xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
             className="my-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={weaponOnePopover}>
-            <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" alt={weapon_one?.name} style={getWeaponOneStyle} />
+            <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" alt={weapon_one?.name} style={getWeaponOneStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={weaponTwoPopover}>
-            <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" alt={weapon_two?.name} style={getWeaponTwoStyle} />
+            <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" alt={weapon_two?.name} style={getWeaponTwoStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={weaponThreePopover}>
-            <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" alt={weapon_three?.name} style={getWeaponThreeStyle} />
+            <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" alt={weapon_three?.name} style={getWeaponThreeStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={shieldPopover}>
-            <img src={shield?.imgURL} className="m-1 eqp-popover spec" alt={shield?.name} style={getShieldStyle} />
+            <img src={shield?.imgURL} className="m-1 eqp-popover spec" alt={shield?.name} style={getShieldStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-3" >
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={helmetPopover}>
-            <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} />
+            <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={chestPopover}>
-            <img src={chest?.imgURL} className="m-1 eqp-popover spec" alt={chest?.name} style={getChestStyle} />
+            <img src={chest?.imgURL} className="m-1 eqp-popover spec" alt={chest?.name} style={getChestStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={legsPopover}>
-            <img src={legs?.imgURL} className="m-1 eqp-popover spec" alt={legs?.name} style={getLegsStyle} />
+            <img src={legs?.imgURL} className="m-1 eqp-popover spec" alt={legs?.name} style={getLegsStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-2">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={amuletPopover}>
-            <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getAmuletStyle} />
+            <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getAmuletStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={ringOnePopover}>
-            <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" alt={ring_one?.name} style={getRingOneStyle} />
+            <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" alt={ring_one?.name} style={getRingOneStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={ringTwoPopover}>
-            <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" alt={ring_two?.name} style={getRingTwoStyle} />
+            <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" alt={ring_two?.name} style={getRingTwoStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={trinketPopover}>
-            <img src={trinket?.imgURL} className="m-1 eqp-popover spec" alt={trinket?.name} style={getTrinketStyle} />
+            <img src={trinket?.imgURL} className="m-1 eqp-popover spec" alt={trinket?.name} style={getTrinketStyle} id={damaged ? 'flicker' : ''} />
             </OverlayTrigger>
             </Col>
 
             </Row>
-                :
-            <Row 
-            // className="justify-content-center"
-            className="justify-content-center"
-            >
-                <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
-            <Col 
-            style={{marginLeft: -50 + 'px', marginRight: 10 + 'px'}}
-            xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
-            className="my-4">
+        :
+            <Row className="justify-content-center">
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
+            <Col style={{marginLeft: -50 + 'px', marginRight: 10 + 'px'}} xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={weaponOnePopover}>
             <img src={weapon_one?.imgURL} className="m-2 eqp-popover spec" alt={weapon_one?.name} style={getWeaponOneStyle} />
             </OverlayTrigger>
@@ -490,9 +508,8 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             <img src={trinket?.imgURL} className="m-2 eqp-popover spec" alt={trinket?.name} style={getTrinketStyle} />
             </OverlayTrigger>
             </Col>
-
             </Row>
-            }
+        }
         </>
     );
 };

@@ -523,6 +523,33 @@
   height: 50px;
   border: 2px solid purple;
 }
+
+#flicker {
+  animation: flicker 1.5s linear;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.5;
+  }
+  33% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+  /* 80% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  } */
+}
+
+
 @media screen and (max-width: 675px) {
   .game-block {
       height: 100%;

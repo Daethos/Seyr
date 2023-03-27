@@ -20,6 +20,7 @@ export interface CombatData {
     player_attributes: object;
     player_defense_default: object;
     realized_player_damage: number;
+    playerDamaged: boolean;
 
     player_start_description: string;
     player_special_description: string;
@@ -53,6 +54,7 @@ export interface CombatData {
     computer_attributes: object;
     computer_defense_default: object;
     realized_computer_damage: number;
+    computerDamaged: boolean;
 
     attack_weight: number;
     counter_weight: number;
@@ -133,6 +135,7 @@ export const ACTIONS = {
     CLEAR_DUEL: 'CLEAR_DUEL',
     SET_WEATHER: 'SET_WEATHER',
     PLAYER_REST: 'PLAYER_REST',
+    TOGGLED_DAMAGED: 'TOGGLED_DAMAGED',
 }
 
 export const initialCombatData: CombatData = {
@@ -155,6 +158,7 @@ export const initialCombatData: CombatData = {
     player_attributes: {},
     player_defense_default: {},
     realized_player_damage: 0,
+    playerDamaged: false,
     player_start_description: '',
     player_special_description: '',
     player_action_description: '',
@@ -185,6 +189,7 @@ export const initialCombatData: CombatData = {
     computer_attributes: {},
     computer_defense_default: {},
     realized_computer_damage: 0,
+    computerDamaged: false,
     attack_weight: 0,
     counter_weight: 0,
     dodge_weight: 0,
@@ -383,7 +388,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 actionStatus: true,
                 dodgeStatus: action.payload.action === 'dodge' ? true : action.payload.dodgeStatus === true ? true : false,
                 combatInitiated: true,
-                instantStatus: action.payload.instantStatus === true ? true : false,
             };
         case 'INSTANT_COMBAT':
             return {
@@ -404,7 +408,12 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 action: '',
                 dodgeStatus: action.payload.action === 'dodge' ? true : action.payload.dodgeStatus === true ? true : false,
                 combatInitiated: true,
-                instantStatus: action.payload.instantStatus === true ? true : false,
+            };
+        case 'TOGGLED_DAMAGED': 
+            return {
+                ...state,
+                playerDamaged: action.payload,
+                computerDamaged: action.payload,
             };
         case 'PLAYER_WIN':
             return {
@@ -523,4 +532,30 @@ export const useInterval = (callback: () => void, delay: number) => {
             return () => clearInterval(id);
         }   
     }, [delay]);
-}
+};
+
+export function shakeScreen() {
+    const intensity = 10; // set the intensity of the shake
+    const duration = 500; // set the duration of the shake
+    const startX = window.pageXOffset; // get the starting X position
+    const startY = window.pageYOffset; // get the starting Y position
+    let startTime: number | null = null;
+  
+    function shake(currentTime: number) {
+      if (!startTime) startTime = currentTime;
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
+      const randomX = Math.floor(Math.random() * intensity) + 1;
+      const randomY = Math.floor(Math.random() * intensity) + 1;
+      const offsetX = randomX * Math.sin(progress * 4 * Math.PI);
+      const offsetY = randomY * Math.sin(progress * 4 * Math.PI);
+      window.scrollTo(startX + offsetX, startY + offsetY);
+  
+      if (progress < 1) {
+        requestAnimationFrame(shake);
+      };
+    };
+  
+    requestAnimationFrame(shake);
+};
+  

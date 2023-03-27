@@ -20,7 +20,7 @@ import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData, CombatData } from '../../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
@@ -303,17 +303,20 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 minLevel = 2;
                 maxLevel = 4;
-            } else if (gameState.player.level === 5) { // 5
+            } else if (gameState.player.level === 5) { 
                 minLevel = 4;
                 maxLevel = 6;
-            } else if (gameState.player.level === 6) { // 6
+            } else if (gameState.player.level === 6) {
                 minLevel = 4;
                 maxLevel = 8;
-            } else if (gameState.player.level <= 8) { // 7-8
+            } else if (gameState.player.level === 7) {
+                minLevel = 5;
+                maxLevel = 9;
+            } else if (gameState.player.level === 8) {
                 minLevel = 6;
                 maxLevel = 10;
             } else if (gameState.player.level <= 10) { // 9-10
-                minLevel = 6;
+                minLevel = 7;
                 maxLevel = 12;
             } else if (gameState.player.level <= 14) { // 11-14
                 minLevel = 8;
@@ -342,6 +345,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_NEW_COMPUTER,
                 payload: response.data.data
             });
+            shakeScreen();
             playOpponent();
             await getOpponentDialog(selectedOpponent.data.name);
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
@@ -482,12 +486,20 @@ const GameSolo = ({ user }: GameProps) => {
     }, [gameState, gameState.removeItem]);
 
     useEffect(() => {
+        if (gameState.repositionInventory === false) return;
+        console.log("Repositioning Inventory", gameState.repositionInventory)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
+        };
+    }, [gameState, gameState.repositionInventory]);
+
+    useEffect(() => {
         if (gameState.purchasingItem === false) return;
         console.log("Purchasing Item", gameState.purchasingItem)
         getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
-
         };
     }, [gameState, gameState.purchasingItem]);
 
@@ -534,7 +546,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly')
+            console.log(err.message, 'Error Getting Ascean Quickly');
         };
     };
 
@@ -550,7 +562,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly')
+            console.log(err.message, 'Error Getting Ascean Quickly');
         };
     };
 
@@ -566,37 +578,18 @@ const GameSolo = ({ user }: GameProps) => {
             });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly')
+            console.log(err.message, 'Error Getting Ascean Quickly');
         };
     };
 
-    const getAsceanSlicker = async () => {
+    const getOnlyInventory = async () => {
         try {
-            const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
-            const response = await asceanAPI.getAsceanStats(asceanID);
-            dispatch({
-                type: ACTIONS.SET_PLAYER_SLICK,
-                payload: response.data.data
-            });
+            const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
+            console.log(firstResponse, "Ascean Inventory ?")
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly')
-        };
-    };
-
-    const getAsceanQuickly = async () => {
-        try {
-            const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            const cleanRes = await asceanAPI.getCleanAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
-            dispatch({
-                type: ACTIONS.SET_PLAYER_QUICK,
-                payload: cleanRes.data
-            });
-            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
-        } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly')
+            console.log(err.message, 'Error Getting Ascean Quickly');
         };
     };
 
@@ -1070,7 +1063,7 @@ const GameSolo = ({ user }: GameProps) => {
                 case 'enemy': {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger whose reaction appears defensive.` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger to your presence. They appear to be approaching you now. \n\n May you be sure, ${gameState?.player?.name}.` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger to your presence. They appear to be approaching you now. \n\n May you be fyers, ${gameState?.player?.name}.` });
                     await getOpponent();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -1147,12 +1140,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
         } catch (err: any) {
             console.log(err.message, 'Error Handling Tile Content');
-        } 
-        // finally {
-        //     if (mapState.steps % 1 === 0 && mapState.steps !== 0) {
-        //         mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-        //     };
-        // };
+        };
     };
 
     useEffect(() => {
@@ -1176,7 +1164,6 @@ const GameSolo = ({ user }: GameProps) => {
                     type: MAP_ACTIONS.SET_MAP_MOVED,
                     payload: false
                 })
-            // };
             return;
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
@@ -1204,27 +1191,6 @@ const GameSolo = ({ user }: GameProps) => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop');
-        };
-    };
-    
-    // useEffect(() => {
-    //     if (state.highScore > gameState.player.high_score) {
-    //         updateHighScore();
-    //     } else {
-    //         return;
-    //     }
-    // }, [state.highScore]);
-
-    const updateHighScore = async () => {
-        try {
-            const response = await asceanAPI.highScore({
-                'asceanId': gameState.player._id,
-                'highScore': state.highScore
-            });
-            const firstResponse = await asceanAPI.getOneAscean(asceanID);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: firstResponse.data });
-        } catch (err: any) {
-            console.log(err.message, 'Error Updating High Score');
         };
     };
 
@@ -1307,7 +1273,7 @@ const GameSolo = ({ user }: GameProps) => {
                       weapons[0].type === "Bow" ? playBow() : playPierce(),
                     Slash: playSlash,
                     Blunt: playBlunt,
-                  };
+                };
             
                 const { player_damage_type, weapons } = effects;
                 const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
@@ -1423,6 +1389,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.initiateAction(state);
+            console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             // // gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
@@ -1446,6 +1413,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
             });
+            shakeScreen();
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
@@ -1453,6 +1421,9 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Combat')
         };
@@ -1464,6 +1435,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
+            console.log(response.data, "Instant Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INSTANT_COMBAT,
@@ -1475,7 +1447,11 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            shakeScreen();
             playReligion();
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
         };
@@ -1491,6 +1467,7 @@ const GameSolo = ({ user }: GameProps) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
+            console.log(response.data, "Prayer Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.CONSUME_PRAYER,
@@ -1502,7 +1479,11 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            shakeScreen();
             playReligion();
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
@@ -1575,7 +1556,7 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container" style={ background }>
             { gameState.opponent ?
                 <>
-                <GameAscean state={state} ascean={gameState.opponent} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+                <GameAscean state={state} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
                 <CombatOverlay 
                     ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                     playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
@@ -1598,7 +1579,7 @@ const GameSolo = ({ user }: GameProps) => {
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
-            <GameAscean state={state} ascean={gameState.player} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <GameAscean state={state} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
             
             {/* TODO:FIXME: EVERYTHING THAT OCCURS SPECIFICALLY INSIDE OR OUTSIDE OF COMBAT NEEDS TO BE REFACTORED INTO THE BELOW */}
             {/* Enemies will probably automatically trigger combatEngaged, certain NPCs can be coaxed, certain enemies with higher disposition 

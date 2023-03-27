@@ -18,7 +18,7 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
             </Popover.Header>
             <Popover.Body id="popover-body">
             <div className='creature-heading'>
-                <h2>{player.description}</h2>
+                <h2 style={{ color: "purple" }} >{player.description}</h2>
             </div>
             <div>
             Level: {player.level}<br />

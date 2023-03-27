@@ -2267,6 +2267,8 @@ const actionSplitter = async (combatData) => {
         potential_computer_damage: 0, // All the Damage that is possible on hit for a computer
         realized_player_damage: 0, // Player Damage - Computer Defenses
         realized_computer_damage: 0, // Computer Damage - Player Defenses
+        playerDamaged: false,
+        computerDamaged: false,
         player_start_description: '',
         computer_start_description: '',
         player_special_description: '',
@@ -2630,7 +2632,7 @@ const instantDamageSplitter = async (combatData, mastery) => {
     combatData.realized_player_damage = damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-
+    combatData.computerDamaged = true;
     combatData.player_action_description = 
         `You instantly attack ${combatData.computer.name}'s Caeren with your Conviction for ${Math.round(damage)} Pure Damage.`    
 
@@ -2748,20 +2750,20 @@ const consumePrayerSplitter = async (combatData) => {
         switch (combatData.prayerSacrifice) {
             case 'Heal':
                 console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")
-                console.log("Healing for :", effect.effect.healing * 0.33);
-                combatData.new_player_health += effect.effect.healing * 0.33;
-                combatData.current_player_health += effect.effect.healing * 0.33;
+                console.log("Healing for :", effect.effect.healing * 0.165);
+                combatData.new_player_health += effect.effect.healing * 0.165;
+                combatData.current_player_health += effect.effect.healing * 0.165;
                 console.log(combatData.new_player_health, combatData.current_player_health, "Player Health After")
                 if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
                     combatData.computer_win = false;
                 };
                 break;
             case 'Buff':
-                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
+                combatData.new_computer_health = combatData.current_computer_health - (combatData.realized_player_damage * 0.5);
                 combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
             
                 combatData.player_action_description = 
-                    `${combatData.weapons[0].influences[0]}'s Tendrils serenade ${combatData.computer.name}, echoing ${Math.round(combatData.realized_player_damage)} more damage.`    
+                    `${combatData.weapons[0].influences[0]}'s Tendrils serenade ${combatData.computer.name}, echoing ${Math.round(combatData.realized_player_damage * 0.5)} more damage.`    
             
                 if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
                     combatData.new_computer_health = 0;
@@ -2781,8 +2783,8 @@ const consumePrayerSplitter = async (combatData) => {
                 };
                 break;
             case 'Damage':
-                combatData.new_computer_health -= effect.effect.damage * 0.33;
-                combatData.current_computer_health -= effect.effect.damage * 0.33;
+                combatData.new_computer_health -= effect.effect.damage * 0.165;
+                combatData.current_computer_health -= effect.effect.damage * 0.165;
 
                 if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
                     combatData.new_computer_health = 0;
@@ -2792,11 +2794,11 @@ const consumePrayerSplitter = async (combatData) => {
                 break;
             case 'Debuff':
                 
-                combatData.new_computer_health = combatData.current_computer_health - combatData.realized_computer_damage;
+                combatData.new_computer_health = combatData.current_computer_health - (combatData.realized_computer_damage * 0.5);
                 combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
             
                 combatData.player_action_description = 
-                    `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.computer.name}, wearing for ${Math.round(combatData.realized_computer_damage)} more damage.`    
+                    `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.computer.name}, wearing for ${Math.round(combatData.realized_computer_damage * 0.5)} more damage.`    
             
                 if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
                     combatData.new_computer_health = 0;
@@ -2820,6 +2822,11 @@ const consumePrayerSplitter = async (combatData) => {
         };
         return false;
     });
+    if (combatData.prayerSacrifice !== 'Heal') {
+        if (combatData.realized_player_damage > 0) {
+            combatData.computerDamaged = true;
+        };
+    };
     combatData.prayerSacrifice = '';
     return combatData;
 };
@@ -2828,7 +2835,10 @@ const consumePrayerSplitter = async (combatData) => {
 
 const actionCompiler = async (combatData) => {
     try {
-        const result = await actionSplitter(combatData);
+        let result = await actionSplitter(combatData);
+        if (result.realized_computer_damage > 0) result.playerDamaged = true;
+        if (result.realized_player_damage > 0) result.computerDamaged = true;
+        console.log(result.realized_computer_damage, result.realized_player_damage, 'Comp-Player Damage Dealt', result.playerDamaged, result.computerDamaged, 'Comp-Player Damaged')
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };
@@ -2841,7 +2851,7 @@ const actionCompiler = async (combatData) => {
 
 const instantActionCompiler = async (combatData) => {
     try {
-        const result = await instantActionSplitter(combatData);
+        let result = await instantActionSplitter(combatData);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };
@@ -2854,7 +2864,7 @@ const instantActionCompiler = async (combatData) => {
 
 const consumePrayer = async (combatData) => {
     try {
-        const result = await consumePrayerSplitter(combatData);
+        let result = await consumePrayerSplitter(combatData);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };

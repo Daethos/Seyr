@@ -71,6 +71,9 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             setLoading(false);
             console.log(err.message, 'Error Initiating Action');

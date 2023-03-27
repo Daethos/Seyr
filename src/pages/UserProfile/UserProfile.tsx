@@ -18,6 +18,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
   const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  
   useEffect(() => {
     getAscean();
   }, []);

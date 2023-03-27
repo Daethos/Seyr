@@ -86,13 +86,14 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
   const [showFirwawterModal, setShowFirewaterModal] = useState<boolean>(false);
   const [showBleed, setShowBleed] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (gameState.loadedAscean) {
       setDrinking(false);
       setShowBleed(true);
       setShowFirewaterModal(false);
       gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
-    }
+    };
   }, [gameState.loadedAscean, drinking]);
 
   useEffect(() => {
@@ -105,7 +106,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       const flattenedInventory = inventory.map((item: any) => item._id);
       const data = { ascean: ascean._id, inventory: flattenedInventory };
       await asceanAPI.saveAsceanInventory(data);
-      gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
+      gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: true });
       setLoading(false);
     } catch (err: any) {
       console.log(err, "Error Saving Inventory");
@@ -114,20 +115,21 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
 
   const drinkFirewater = async () => {
     if (ascean?.firewater?.charges === 0) return;
-    setDrinking(true);
-    dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
-    const response = await asceanAPI.drinkFirewater(ascean?._id);
-    gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater })
-    console.log(response, "Response Drinking Firewater");
-    gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+    try {
+      setDrinking(true);
+      dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
+      const response = await asceanAPI.drinkFirewater(ascean?._id);
+      gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+      gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+    } catch (err: any) {
+      console.log(err, "Error Drinking Firewater");
+    };
   };
 
   const replenishFirewater = async () => {
     setShowBleed(false);
     try {
-      console.log("Replenishing Firewater");
       const response = await asceanAPI.replenishFirewater(ascean?._id);
-      console.log(response, "Response Replenishing Firewater");
       gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
       const cleanRes = await asceanAPI.getCleanAscean(ascean?._id);
       dispatch({
@@ -146,31 +148,17 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
 
   
   const onDragEnd = (result: DropResult) => {
-    console.log("Drag End")
-    console.log(result, "Result")
     const { destination, source, draggableId } = result;
     if (!destination) return;
-
     if (destination.index === source.index) return;
-
     const itemIndex = dndInventory.findIndex((item: { _id: string; }) => item._id === draggableId);
     if (itemIndex !== -1) {
-      // setDndInventory((prevState: any) => {
-      //   const newState = [...prevState];
-      //   newState.splice(source.index, 1);
-      //   newState.splice(destination.index, 0, itemIndex);
-      //   return newState;
-      // });
       const itemsCopy = Array.from(dndInventory);
       const [reorderedItem] = itemsCopy.splice(source.index, 1);
       itemsCopy.splice(destination.index, 0, reorderedItem);
-
-      // Update the state with the new inventory order
       setDndInventory(itemsCopy);
     }
   };
-  
-  
 
   const modalStyle = {
     color: 'gold',
@@ -202,12 +190,9 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     </Modal.Body>
     </Modal>
 
-  <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-  {/* <Droppable droppableId='Inventory'>
-    {(provided) => {
-      return ( */}
-        <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
-          { activeTab === 'gear' && dndInventory?.length > 0 ?
+    <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+      <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
+        { activeTab === 'gear' && dndInventory?.length > 0 ?
             dndInventory.map((item: any, index: number) => {
               return (
                 <Droppable key={item._id} droppableId={item._id}>
@@ -222,24 +207,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
             })
           : '' }
         </div>
-          {/* {provided.placeholder}
-      )
-    }}
-  </Droppable> */}
-</DragDropContext>
-
-
-    {/* <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
-      { activeTab === 'gear' && dndInventory?.length > 0 ?
-        dndInventory.map((item: any, index: number) => {
-          return (
-            <Inventory gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} key={index} index={index} />
-            )
-          })
-          : '' }
-    </div> */}
-
-
+    </DragDropContext>
 
     { !drinking ?
       <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} setShowFirewaterModal={setShowFirewaterModal} mapState={mapState} />

@@ -11,6 +11,7 @@ import ToastAlert from '../components/ToastAlert/ToastAlert';
 import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import dialogNodes from "../components/GameCompiler/DialogNodes.json"
+import { useLocation } from 'react-router-dom';
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
     const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -83,6 +84,7 @@ interface Region {
 
 
 const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
+    const location = useLocation();
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});
@@ -305,18 +307,21 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         : lootDropTwo?._id ?
                         <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : '' }
-                            {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Refresh Your Duel With {npc}.</Button> */}
+                        { location.pathname.startsWith(`/Hardcore`) ?
                             <p style={{ color: 'orangered' }}>
-                            You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
+                                You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
                             </p>
+                        : ''  }
                         </> 
                     : computerWin ? 
                         <>
                             "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play."
-                            <p style = {{ color: 'dodgerblue' }}>
-                            <br /> 
-                            You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})
-                            </p>
+                            { location.pathname.startsWith(`/Hardcore`) ?
+                                <p style = {{ color: 'dodgerblue' }}>
+                                <br /> 
+                                You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})
+                                </p>
+                            : '' }
                         </> 
                     :
                     <>
@@ -331,19 +336,18 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     <>
                     { playerWin ?
                         <>
-                        "Go now, {ascean.name}, and find better pastures. But before you wander, if you wish, its yours."<br /><br />
-
+                            "Go now, {ascean.name}, and find better pastures. But before you wander, if you wish, its yours."<br /><br />
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
-                                <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
-                                <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                             </>
                         : lootDrop?._id ?
-                        <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : lootDropTwo?._id ?
-                        <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : '' }
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
+                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
                         </>
                     : computerWin ?
                     <>
@@ -372,11 +376,6 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                             <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
                             </>
                         }
-
-                        {/* 
-                        "Perhaps we'll meet again, {ascean.name}."<br />
-                        <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek A New Duelist Instead</Button> 
-                        */}
                         </>
                     }
                     </>

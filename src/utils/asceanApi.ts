@@ -1,4 +1,3 @@
-import { Data } from 'phaser';
 import tokenService from './tokenService';
 const BASE_URL = '/api/ascean/';
 
@@ -12,12 +11,8 @@ export async function create(ascean: any) {
             Authorization: "Bearer " + tokenService.getToken(),
         
         },
-        // options.headers = { 'Content-Type': 'application/json' };
-        // options.body = JSON.stringify(payload);
     }).then(async (res) => {
-        // console.log(res.json(), '<- res.json in create function')
         if (res.ok) return res.json(); 
-        // res.ok will be try if the http statusCode in the response is anything in the 200's
         const response = await res.json();
         console.log(response, '<- What response are you getting?');
         throw new Error(response.err);

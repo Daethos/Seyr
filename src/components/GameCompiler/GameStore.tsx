@@ -336,6 +336,7 @@ export interface GameData {
     eqpSwap: boolean;
     checkLoot: boolean;
     removeItem: boolean;
+    repositionInventory: boolean;
     purchasingItem: boolean;
 
     gameplayModal: boolean;
@@ -403,6 +404,7 @@ export const GAME_ACTIONS = {
     EQP_SWAP: 'EQP_SWAP',
     CHECK_LOOT: 'CHECK_LOOT',
     REMOVE_ITEM: 'REMOVE_ITEM',
+    REPOSITION_INVENTORY: 'REPOSITION_INVENTORY',
 
     LOADING: 'LOADING',
     LOADING_ASCEAN: 'LOADING_ASCEAN',
@@ -470,6 +472,7 @@ export const initialGameData: GameData = {
     eqpSwap: false,
     checkLoot: false,
     removeItem: false,
+    repositionInventory: false,
     purchasingItem: false,
     gameplayModal: false,
     gameplayEvent: { title: "", description: "" },
@@ -636,6 +639,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 removeItem: action.payload,
+            };
+        case 'REPOSITION_INVENTORY':
+            return {
+                ...game,
+                repositionInventory: action.payload,
             };
         case 'SET_PURCHASING_ITEM':
             return {
