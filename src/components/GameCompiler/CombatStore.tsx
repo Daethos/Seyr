@@ -535,27 +535,28 @@ export const useInterval = (callback: () => void, delay: number) => {
 };
 
 export function shakeScreen() {
-    const intensity = 10; // set the intensity of the shake
-    const duration = 500; // set the duration of the shake
-    const startX = window.pageXOffset; // get the starting X position
-    const startY = window.pageYOffset; // get the starting Y position
+    const intensity = 1; // set the intensity of the shake
+    const duration = 200; // set the duration of the shake
+    const body = document.querySelector('body')!;
+    const initialPosition = body.style.transform;
     let startTime: number | null = null;
   
     function shake(currentTime: number) {
-      if (!startTime) startTime = currentTime;
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-      const randomX = Math.floor(Math.random() * intensity) + 1;
-      const randomY = Math.floor(Math.random() * intensity) + 1;
-      const offsetX = randomX * Math.sin(progress * 4 * Math.PI);
-      const offsetY = randomY * Math.sin(progress * 4 * Math.PI);
-      window.scrollTo(startX + offsetX, startY + offsetY);
-  
-      if (progress < 1) {
-        requestAnimationFrame(shake);
-      };
+        if (!startTime) startTime = currentTime;
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+        const randomX = Math.floor(Math.random() * intensity) + 1;
+        const randomY = Math.floor(Math.random() * intensity) + 1;
+        const offsetX = randomX * Math.sin(progress * 4 * Math.PI);
+        const offsetY = randomY * Math.sin(progress * 4 * Math.PI);
+        body.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        if (progress < 1) {
+            requestAnimationFrame(shake);
+        } else {
+            body.style.transform = initialPosition;
+        };
     };
-  
     requestAnimationFrame(shake);
 };
+  
   

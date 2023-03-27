@@ -345,7 +345,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_NEW_COMPUTER,
                 payload: response.data.data
             });
-            shakeScreen();
+            // shakeScreen();
             playOpponent();
             await getOpponentDialog(selectedOpponent.data.name);
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
@@ -1413,7 +1413,7 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
             });
-            shakeScreen();
+            // shakeScreen();
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
