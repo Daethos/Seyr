@@ -7,6 +7,7 @@ import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
 import { GAME_ACTIONS } from './GameStore';
 import Modal from 'react-bootstrap/Modal';
+import { DragDropContext, Draggable, DragStart, Droppable, DropResult } from 'react-beautiful-dnd';
 
 interface Firewater {
   charges: number;
@@ -32,12 +33,11 @@ interface IOProps {
 
 const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, mapState }: IOProps) => {
   const getBorder = (firewater: number) => {
-    console.log(firewater, "How many charges do you have left?");
     switch (firewater) {
       case 0:
-        return "2px solid red";
+        return "3px solid red";
       default:
-        return "2px solid gold";
+        return "3px solid gold";
     };
   };
 
@@ -71,7 +71,6 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
 
   return (
     <div style={{ display: "flex", gridColumnStart: 3, gridRowStart: 7, zIndex: 999, color: "gold", marginTop: "22.5%", float: "right" }} className="">
-
       <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={firewaterPopover}>
         <img src={process.env.PUBLIC_URL + '/images/firewater.png'} alt="Firewater" style={firewaterStyle} /> 
       </OverlayTrigger>
@@ -80,6 +79,7 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
 }
 
 const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gameState, mapState }: IBProps) => {
+  const [dndInventory, setDndInventory] = useState(inventory);
   const [activeTab, setActiveTab] = useState('gear');
   const [drinking, setDrinking] = useState(false);
   const [showFirwawterModal, setShowFirewaterModal] = useState<boolean>(false);
@@ -93,6 +93,18 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
     }
   }, [gameState.loadedAscean, drinking]);
+
+  const saveInventory = async (inventory: any) => {
+    try {
+      const flattenedInventory = inventory.map((item: any) => item._id);
+      const data = { ascean: ascean._id, inventory: flattenedInventory };
+      const response = await asceanAPI.saveAsceanInventory(data);
+      console.log(response, "Response Saving Inventory");
+      gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
+    } catch (err: any) {
+      console.log(err, "Error Saving Inventory");
+    };
+  };
 
   const drinkFirewater = async () => {
     if (ascean?.firewater?.charges === 0) return;
@@ -121,6 +133,38 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       console.log(err, "Error Replenishing Firewater");
     }
   };
+
+  const onDragStart = (start: DragStart) => {
+    console.log('drag start:', start);
+  }
+
+  
+  const onDragEnd = (result: DropResult) => {
+    console.log("Drag End")
+    console.log(result, "Result")
+    const { destination, source, draggableId } = result;
+    if (!destination) return;
+
+    if (destination.index === source.index) return;
+
+    const itemIndex = dndInventory.findIndex((item: { _id: string; }) => item._id === draggableId);
+    if (itemIndex !== -1) {
+      // setDndInventory((prevState: any) => {
+      //   const newState = [...prevState];
+      //   newState.splice(source.index, 1);
+      //   newState.splice(destination.index, 0, itemIndex);
+      //   return newState;
+      // });
+      const itemsCopy = Array.from(dndInventory);
+      const [reorderedItem] = itemsCopy.splice(source.index, 1);
+      itemsCopy.splice(destination.index, 0, reorderedItem);
+
+      // Update the state with the new inventory order
+      setDndInventory(itemsCopy);
+    }
+  };
+  
+  
 
   const modalStyle = {
     color: 'gold',
@@ -152,27 +196,52 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     </Modal.Body>
     </Modal>
 
+  <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+  {/* <Droppable droppableId='Inventory'>
+    {(provided) => {
+      return ( */}
+        <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
+          { activeTab === 'gear' && dndInventory?.length > 0 ?
+            dndInventory.map((item: any, index: number) => {
+              return (
+                <Droppable key={item._id} droppableId={item._id}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} >
+              <Inventory gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} key={index} index={index} />
+              {provided.placeholder}
+            </div>
+                  )}
+                </Droppable>
+                )
+            })
+          : '' }
+        </div>
+          {/* {provided.placeholder}
+      )
+    }}
+  </Droppable> */}
+</DragDropContext>
 
 
-    <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
-      { activeTab === 'gear' && inventory?.length > 0 ?
-        inventory.map((item: any, index: number) => {
+    {/* <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
+      { activeTab === 'gear' && dndInventory?.length > 0 ?
+        dndInventory.map((item: any, index: number) => {
           return (
-            <Inventory gameDispatch={gameDispatch} bag={inventory} inventory={item} ascean={ascean} key={index} />
-          )
-        })
-      : '' }
-    </div>
+            <Inventory gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} key={index} index={index} />
+            )
+          })
+          : '' }
+    </div> */}
 
 
 
-
-
-    
     { !drinking ?
       <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} setShowFirewaterModal={setShowFirewaterModal} mapState={mapState} />
       :
     '' }
+    <div style={{ display: "flex", gridColumnStart: 4, gridRowStart: 7, zIndex: 999, marginTop: "18%", float: "right" }}>
+    <Button onClick={() => saveInventory(dndInventory)} variant='' style={{ fontSize: "16px", fontWeight: 600, textShadow: "1px 1px 1px black", color: "gold", border: "2px solid gold", background: "black", boxShadow: "2px 2px 2px black" }}>Save Inventory</Button>
+    </div>
     </>
   )
 }

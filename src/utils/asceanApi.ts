@@ -103,6 +103,22 @@ export async function getAsceanInventory(asceanID: string | undefined) {
     })
 };
 
+export async function saveAsceanInventory(data: any) {
+    return fetch(BASE_URL + 'save-inventory/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
+
 export async function getAsceanQuests(asceanID: string | undefined) {
     return fetch(BASE_URL + 'quests/' + asceanID, {
         headers: {

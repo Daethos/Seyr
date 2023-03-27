@@ -178,21 +178,23 @@
 }
 .inventory-bag {
   position: absolute;
+  /* display: flex;
+  flex-wrap: wrap; */
   display: grid;
   grid-template-columns: repeat(6, 16%);
   grid-template-rows: repeat(36, 16%);
   justify-content: space-evenly;
   z-index: 99;
-  margin-left: -3%;
-  grid-column-start: 1;
-  grid-column-end: 5;
-  grid-row-start: 1;
+  /* margin-left: -3%; */
+  /* grid-column-start: 1; */
+  /* grid-column-end: 5; */
+  /* grid-row-start: 1; */
   color: #fdf6d8;
   background-color: black;
   border: 3px solid purple;
-  width: 106%;
+  width: 100vw;
   height: 62vh;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   border-radius: 6px;
 }
 .inventory-bag-settings {
@@ -227,13 +229,34 @@
 .inventory-icon {
   width: 64px;
   height: 64px;
-  border: 2px solid purple;
   background-color: black;
   color: #fdf6d8;
   font-weight: 600;
   display: inline-block;
   vertical-align: top;
+};
+
+
+.rarity-common {
+  border: 5px solid white;
 }
+
+.rarity-uncommon {
+  border: 5px solid green;
+}
+
+.rarity-rare {
+  border: 5px solid blue;
+}
+
+.rarity-epic {
+  border: 5px solid purple;
+}
+
+.rarity-legendary {
+  border: 5px solid orange;
+}
+
 .text-box {
   font-family: monospace;
   border: 2px solid purple;

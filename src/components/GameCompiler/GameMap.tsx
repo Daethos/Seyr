@@ -338,21 +338,15 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
     };
 
     function handleCanvasHeight(e: React.ChangeEvent<HTMLInputElement>) {
-        // setCanvasHeight(Number(e.target.value));
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_HEIGHT, payload: Number(e.target.value) });
     };
     function handleCanvasWidth(e: React.ChangeEvent<HTMLInputElement>) {
-        // setCanvasWidth(Number(e.target.value));
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_WIDTH, payload: Number(e.target.value) });
     };
-
     function handleCanvasWidthPosition(e: React.ChangeEvent<HTMLInputElement>) {
-        // setCanvasPosition({ x: Number(e.target.value), y: canvasPosition.y });
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: { x: Number(e.target.value), y: gameState.canvasPosition.y }})
     };
-
     function handleCanvasHeightPosition(e: React.ChangeEvent<HTMLInputElement>) {
-        // setCanvasPosition({ x: canvasPosition.x, y: Number(e.target.value) });
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: { x: gameState.canvasPosition.x, y: Number(e.target.value) }})
     };
 
@@ -435,8 +429,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             <path d="M208.82,395.53H80.034c-3.038,0-5.5,2.462-5.5,5.5s2.462,5.5,5.5,5.5H208.82c3.038,0,5.5-2.462,5.5-5.5   S211.857,395.53,208.82,395.53z"></path>
             </svg>
         </Button>
-        {
-            mapVisible ? (
+        { mapVisible ? (
                 <Button variant='' onClick={() => setMapModalShow(true)} className='map-button' style={{ 
                     color: "goldenrod", 
                     gridColumnStart: 1, 
@@ -451,8 +444,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                     <path d="M460.596,107.979H51.404C23.06,107.979,0,131.039,0,159.383v43.889c0,28.344,23.06,51.404,51.404,51.404h137.989v140.535    c0,3.327,1.874,6.369,4.845,7.866c2.97,1.496,6.531,1.192,9.204-0.788l25.593-18.958l25.593,18.958    c1.547,1.145,3.389,1.73,5.243,1.73c1.352,0,2.709-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866v-33.752l16.787,12.438    c1.547,1.146,3.39,1.731,5.245,1.731c1.35,0,2.708-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866V254.678h161.078    c28.344,0,51.404-23.06,51.404-51.404v-43.889C512,131.039,488.94,107.979,460.596,107.979z M68.855,232.196    c-7.369-4.451-12.927-11.613-15.224-20.117h30.391C81.727,220.568,76.207,227.743,68.855,232.196z M85.194,194.464H43.66    c-4.864,0-8.807,3.943-8.807,8.807c0,12.808,4.72,24.528,12.497,33.538c-16.726-2.01-29.735-16.279-29.735-33.538v-43.889    c0-18.632,15.158-33.79,33.79-33.79c18.632,0,33.79,15.158,33.79,33.79V194.464z M223.793,365.292l-16.786,12.434V254.677h44.057    v123.049l-16.786-12.434C231.164,362.986,226.909,362.986,223.793,365.292z M266.842,203.272c0,18.632-15.158,33.79-33.79,33.79    H90.093c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79h142.96    c18.632,0,33.79,15.158,33.79,33.79V203.272z M281.902,349.332l-13.223-9.797v-84.858h13.223V349.332z M328.514,203.272    c0,18.632-15.158,33.79-33.79,33.79h-22.982c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79    h22.981c18.633,0,33.791,15.158,33.791,33.79V203.272z M460.596,237.061H333.413c7.908-9.042,12.715-20.862,12.715-33.79v-43.889    c0-12.928-4.808-24.746-12.715-33.79h127.182c18.632,0,33.79,15.158,33.79,33.79v43.889h0.001    C494.385,221.903,479.227,237.061,460.596,237.061z"></path>
                     </svg>
                 </Button> 
-                ) : ( '' )
-        }
+        ) : ( '' ) }
         { mapVisible ? (
         <DragDropContext onDragEnd={onDragEnd}>
         {draggableElements.map((draggableElement, index) => (

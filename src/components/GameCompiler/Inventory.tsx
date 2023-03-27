@@ -11,6 +11,7 @@ import Overlay from 'react-bootstrap/Overlay';
 import Table from 'react-bootstrap/Table';
 import { GAME_ACTIONS } from './GameStore';
 import { useLocation } from 'react-router-dom';
+import { Draggable } from 'react-beautiful-dnd'
 
 interface Props {
     inventory: any;
@@ -18,9 +19,10 @@ interface Props {
     bag: any;
     gameDispatch: React.Dispatch<any>;
     blacksmith?: boolean;
+    index: number;
 }
 
-const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) => {
+const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [forgeModalShow, setForgeModalShow] = useState<boolean>(false);
@@ -408,17 +410,17 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
     function getBorderStyle(rarity: string) {
         switch (rarity) {
             case 'Common':
-                return '3px solid white';
+                return '4px solid white';
             case 'Uncommon':
-                return '3px solid green';
+                return '4px solid green';
             case 'Rare':
-                return '3px solid blue';
+                return '4px solid blue';
             case 'Epic':
-                return '3px solid purple';
+                return '4px solid purple';
             case 'Legendary':
-                return '3px solid orange';
+                return '4px solid orange';
             default:
-                return '3px solid grey';
+                return '4px solid grey';
         };
     };
 
@@ -436,11 +438,21 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
         Epic: "Legendary",
     };
 
-    const getItemStyle = {
+    const getDraggingStyle = {
         margin: blacksmith ? '0 2% 10% 2%' : '0 0 0 0',
-        background: 'black',
+        // background: 'gold',
         border: getBorderStyle(inventory?.rarity),
+        boxShadow: '0 0 0 0.25rem gold',
         display: "inline-block"
+    };
+
+    const getItemStyle = (rarity: string) => {
+        return {
+            margin: blacksmith ? '0 2% 10% 2%' : '0 0 0 0',
+            background: 'black',
+            border: getBorderStyle(rarity),
+            display: "inline-block"
+        };
     };
 
     const getCurrentItemStyle = {
@@ -721,12 +733,31 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith }: Props) 
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>
             </Modal.Body>
         </Modal>
-        <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
-            <Button variant="" className="inventory-icon" style={getItemStyle}>
-                <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} />
-            </Button>
-        </OverlayTrigger>
-            {blacksmith ? <><Button variant='outline' className='mb-2' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button></>:''}
+
+        { blacksmith ?
+            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
+                <Button variant="" className={`inventory-icon`} style={getItemStyle(inventory?.rarity)} >
+                    <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} />
+                </Button>
+            </OverlayTrigger>   
+        :
+        <Draggable draggableId={inventory?._id} index={index} key={inventory?._id}>
+        {(provided, snapshot) => (
+          <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
+              {/* <Button variant="" className={`inventory-icon rarity-${inventory?.rarity.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)}> */}
+                <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={`inventory-icon rarity-${inventory?.rarity.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
+              {/* </Button> */}
+            </OverlayTrigger>
+          </div>
+        )}
+      </Draggable>
+      
+        }
+        
+
+
+        {blacksmith ? <><Button variant='outline' className='mb-2' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button></>:''}
         <Overlay target={targetRef} show={isLoading}>
         <div
           className='d-flex align-items-center justify-content-center'

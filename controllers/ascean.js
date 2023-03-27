@@ -26,6 +26,7 @@ module.exports = {
     updateLevel,
     saveExperience,
     saveToInventory,
+    saveInventory,
     swapItems,
     removeItem,
     purchaseToInventory,
@@ -383,6 +384,18 @@ async function saveToInventory(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
         ascean.inventory.push(req.body.lootDrop._id);
+        await ascean.save();
+        res.status(201).json({ ascean });
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Saving to Inventory!')
+    };
+};
+
+async function saveInventory(req, res) {
+    try {
+        console.log(req.body, "Req.body")
+        const ascean = await Ascean.findById(req.body.ascean);
+        ascean.inventory = req.body.inventory;
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
@@ -821,7 +834,7 @@ async function getOneAscean(req, res) {
         ascean.inventory = inventory;
         console.log("Inventory Populated");
 
-        
+
 
 
         res.status(200).json({ data: ascean });

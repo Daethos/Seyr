@@ -25,6 +25,7 @@ router.put('/exp', protect, asceanCtrl.saveExperience);
 router.put('/purchase', protect, asceanCtrl.purchaseToInventory)
 router.put('/levelup', protect, asceanCtrl.updateLevel);
 router.put('/inventory', protect, asceanCtrl.saveToInventory);
+router.put('/save-inventory', protect, asceanCtrl.saveInventory);
 router.put('/:id/swap', protect, asceanCtrl.swapItems);
 router.put('/remove/:id', protect, asceanCtrl.removeItem);
 router.put('/:id', protect, asceanCtrl.editAscean);

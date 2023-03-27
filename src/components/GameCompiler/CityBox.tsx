@@ -234,7 +234,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                         <>
                         {upgradeItems.map((item: any, index: number) => {
                             return (
-                                <Inventory key={index} inventory={item} bag={inventory} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} />
+                                <Inventory key={index} inventory={item} bag={inventory} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} index={index} />
                             )
                         })}
                         </>
