@@ -226,26 +226,6 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
     </>
 }
         </div>
-        <>
-        <div className="section-right">
-        {/* <AsceanStatCompiler communityFocus={false} ascean={ascean} key={ascean._id + 2} />
-            { userProfile ? 
-            <>
-                <div className="actions">
-                <h3>Communal</h3>
-                </div>
-                <div className="property-line first">
-                <h4>Visible to the Community ? </h4>
-                <p>{ascean.visibility.charAt(0).toUpperCase() + ascean.visibility.slice(1)}</p>
-                </div>
-                <div className="property-line first">
-                <h4>Shareable to the Community ? </h4>
-                <p>{ascean.shareable.charAt(0).toUpperCase() + ascean.shareable.slice(1)}</p>
-                </div>
-            </>
-            : '' } */}
-        </div>
-        </>
 
          <hr className='orange-border bottom' />
     </Col>

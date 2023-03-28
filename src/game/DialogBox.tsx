@@ -8,7 +8,7 @@ import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import dialogNodes from "../components/GameCompiler/DialogNodes.json"
 import { useLocation } from 'react-router-dom';
@@ -18,7 +18,7 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
     const buttons = filteredOptions.map((o: any, i: number) => {
         return (
             <div key={i}>
-            <Button variant='' onClick={() => setIntent(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o}</Button>
+            <Button variant='' className='dialog-buttons' onClick={() => setIntent(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
             </div>
         )
     });
@@ -28,7 +28,7 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
 const CombatDialogButtons = ({ options, handleCombatAction }: { options: any, handleCombatAction: any }) => {
     const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
-            <Button variant='' key={i} onClick={() => handleCombatAction('actions', o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            <Button variant='' className='dialog-buttons' key={i} onClick={() => handleCombatAction('actions', o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
         )
     });
     return <>{buttons}</>;
@@ -39,11 +39,16 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     const buttons = Object.keys(options).map((o: any, i: number) => {
         console.log(o, 'Options in ProvincialWhispersButtons');
         return (
-            <Button variant='' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            <Button variant='' className='dialog-buttons' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
         )
     });
     return <>{buttons}</>;
 };
+
+interface Traits {
+    traitOne: { name: string, description: string };
+    traitTwo: { name: string, description: string };
+}
 
 interface Props {
     ascean: any;
@@ -85,6 +90,7 @@ interface Region {
 
 const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const location = useLocation();
+    const [traits, setTraits] = useState<Traits | null>(null);
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});
@@ -257,6 +263,12 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
         };
     };
 
+    const getTraits = () => {
+        const response = getAsceanTraits(ascean);
+        console.log(response, "Response");
+        setTraits(response);
+    };
+
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -276,14 +288,14 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                     </>
                 ) : ( "" ) }
                 <br />
-                [Note: These Quests are classified as Curiosities, and are not required to complete the game. No quests are required to complete the game.]
+                [Note: These Quests are classified as Curiosities, and are not required to complete the game. No quests are required to complete the game.]<br />
                 <Button variant='' style={{ color: "green", fontSize: "20px" }} onClick={() => getQuest(quest)}>Accept {quest?.title}?</Button>
             </Modal.Body>
         </Modal>
         <div className='dialog-box'>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
-            <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+            <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
             {' '}{enemy.name} (Level {enemy.level})<br />
                 { currentIntent === 'combat' ?
                     <>
@@ -330,7 +342,18 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like
+                        This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like. At the moment, this will register to you your qualities you are capable of, ranked in highest to lowest order.
+                        <br /><br />
+                        <Button variant='' className='dialog-buttons' style={{ color: 'gold', fontVariant: 'small-caps', outline: 'none' }} onClick={getTraits}>Check Personal Traits?</Button>
+                        <br /><br />
+                        { traits ?
+                            <>
+                                <div style={{ fontSize: '12px', whiteSpace: 'pre-wrap', color: 'gold' }}>
+                                    {traits.traitOne.name}: {traits.traitOne.description}<br /><br />
+                                    {traits.traitTwo.name}: {traits.traitTwo.description}
+                                </div>
+                            </>
+                        : ''}
                     </>
                 : currentIntent === 'farewell' ?
                     <>
@@ -347,12 +370,12 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         : lootDropTwo?._id ?
                             <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : '' }
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
                         </>
                     : computerWin ?
                     <>
                         "Seek refuge {ascean.name}, your frailty wears on my caer."<br />
-                        <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
+                        <Button variant='' className='dialog-buttons' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
                         </>
                     : 
                     <>
@@ -360,20 +383,20 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                             <>
                             "You may not be ready, {ascean?.name}, yet time has tethered us here. Come now, prepare."
                             <br />
-                            {/* <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button> */}
-                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Prepare to strike {npc}?</Button>
+                            {/* <Button variant='' className='dialog-buttons' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button> */}
+                            <Button variant='' className='dialog-buttons' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Prepare to strike {npc}?</Button>
                             </>
                         : enemy?.name !== 'Traveling General Merchant' ?
                         <>
                             "Where do you think you're going, {ascean?.name}? You think this is a game?"
                             <br />
-                            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'red', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Engage with {npc}?</Button>
                             </>
                         : 
                         <> 
                             "Well, {ascean?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
                             <br />
-                            <Button variant='' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'teal', fontVariant: 'small-caps', outline: 'none' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
                             </>
                         }
                         </>
@@ -392,7 +415,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                                 localWhispers.map((whisper: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleCurrentQuest(whisper)}>{whisper.title}</Button>
+                                        <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleCurrentQuest(whisper)}>{whisper.title}</Button>
                                         </div>
                                 )})
                             : ''
@@ -409,7 +432,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         <br /><br />
                         <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                         <br /><br />
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
+                        <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
                         <br />
                         { merchantEquipment?.length > 0 ?
                             <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -423,7 +446,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
                         <>
                         "There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"<br />
                         <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
-                        <div style={{ color: 'gold', fontSize: 12 + 'px' }}>
+                        <div style={{ color: 'gold' }}>
                             "{regionInformation[province]}"
                         </div>
                         </>

@@ -24,7 +24,7 @@ interface MapProps {
 };
 
 const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
-    const [mapVisible, setMapVisible] = useState(false);
+    // const [mapVisible, setMapVisible] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [draggableElements, setDraggingElements] = useState([
         { id: "dz-1" },
@@ -77,7 +77,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
 
     useEffect(() => {
         handleMapMode(gameState.mapMode);
-    }, [mapData, mapVisible, gameState.mapMode]);
+    }, [mapData, gameState.showMap, gameState.mapMode]);
 
     const saveMapSettings = async () => {
         try {
@@ -372,7 +372,8 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
     };
         
     const setMapVisibility = () => {
-        setMapVisible(!mapVisible);
+        // setMapVisible(!mapVisible);
+        gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: !gameState.showMap });
     };
 
     return (
@@ -386,8 +387,8 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             </Modal.Header>
         <Modal.Body style={settingsStyle}>
             Default Setup is 400x400 to adjust for the 2-D Map. You may find other sizes to be more useful <br /><br />
-        Height {gameState.canvasHeight}px: <Form.Range value={gameState.canvasHeight} onChange={handleCanvasHeight} min={100} max={600} step={12.5} />
-        Width {gameState.canvasWidth}px: <Form.Range value={gameState.canvasWidth} onChange={handleCanvasWidth} min={100} max={600} step={12.5} />
+        Height {gameState.canvasHeight}px: <Form.Range value={gameState.canvasHeight} onChange={handleCanvasHeight} min={100} max={800} step={12.5} />
+        Width {gameState.canvasWidth}px: <Form.Range value={gameState.canvasWidth} onChange={handleCanvasWidth} min={100} max={800} step={12.5} />
         <br />
         <br />
         Positioning: X: {gameState.canvasPosition.x * 100}px Y: {gameState.canvasPosition.y * 100}px <br /> <br />
@@ -429,7 +430,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             <path d="M208.82,395.53H80.034c-3.038,0-5.5,2.462-5.5,5.5s2.462,5.5,5.5,5.5H208.82c3.038,0,5.5-2.462,5.5-5.5   S211.857,395.53,208.82,395.53z"></path>
             </svg>
         </Button>
-        { mapVisible ? (
+        { gameState.showMap ? (
                 <Button variant='' onClick={() => setMapModalShow(true)} className='map-button' style={{ 
                     color: "goldenrod", 
                     gridColumnStart: 1, 
@@ -445,7 +446,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                     </svg>
                 </Button> 
         ) : ( '' ) }
-        { mapVisible ? (
+        { gameState.showMap ? (
         <DragDropContext onDragEnd={onDragEnd}>
         {draggableElements.map((draggableElement, index) => (
         <Droppable droppableId={`droppable-${index + 1}`} key={index}>

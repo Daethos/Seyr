@@ -178,17 +178,11 @@
 }
 .inventory-bag {
   position: absolute;
-  /* display: flex;
-  flex-wrap: wrap; */
   display: grid;
   grid-template-columns: repeat(6, 16%);
   grid-template-rows: repeat(36, 16%);
   justify-content: space-evenly;
   z-index: 99;
-  /* margin-left: -3%; */
-  /* grid-column-start: 1; */
-  /* grid-column-end: 5; */
-  /* grid-row-start: 1; */
   color: #fdf6d8;
   background-color: black;
   border: 3px solid purple;
@@ -235,7 +229,6 @@
   display: inline-block;
   vertical-align: top;
 };
-
 
 .rarity-common {
   border: 5px solid white;
@@ -309,7 +302,6 @@
   background-color: black;
   display: inline-block;
   border-radius: 50%;
-  /* margin-left: 25%; */
 }
 
 .instant-button {
@@ -319,9 +311,19 @@
   grid-column-start: 3;
   grid-row-start: 7;
   margin-left: -10%;
+  font-size: 1.1rem;
+  border-radius: 50%;
+  text-shadow: 1.5px 1.5px 1.5px black;
 }
 .instant-button:disabled {
   display: none;
+}
+.invoke {
+  font-size: 1.1rem;
+  text-shadow: 1.5px 1.5px 1.5px black;
+  grid-column-start: 3;
+  grid-row-start: 6;
+  margin-top: 3.25em;
 }
 .invoke-instant {
   display: none;
@@ -397,8 +399,6 @@
 #player-xp {
   background-color: transparent;
   border: 2px solid black;
-  /* color: purple; */
-  /* font-size: 8px; */
   margin-top: -6.5%;
   height: 15%;
   left: -0.75%;
@@ -415,8 +415,6 @@
   color: #fdf6d8;
   font-weight: 900;
   background: transparent;
-  /* -webkit-text-stroke-width: 0.75px;
-  -webkit-text-stroke-color: purple; */
   text-shadow: 1.5px 1.5px 1.5px black;
 }
 .progress-text {
@@ -541,16 +539,9 @@
   100% {
     opacity: 1;
   }
-  /* 80% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  } */
 }
 
-
-@media screen and (max-width: 675px) {
+@media screen and (max-width: 800px) {
   .game-block {
       height: 100%;
   }
@@ -580,7 +571,228 @@
 .dialog-buttons {
   font-size: 9px;
 }
-@media screen and (min-width: 800px) and (min-height: 800px) {
+.dialog-picture {
+  width: 15vw;
+}
+.firewater {
+  float: right;
+  color: gold;
+  z-index: 999;
+  display: flex;
+  grid-column-start: 3;
+  grid-row-start: 7;
+  margin-top: 22.5%;
+}
+
+@media screen and (min-width: 1000px) {
+  #game-container {
+    background-repeat: no-repeat;
+  }
+  #game-block {
+    transform: scale(2);
+    margin-left: 35%;
+    top: -25%;
+  }
+  #opponent-block {
+    grid-row-start: 2;
+    transform: scale(2);
+    left: 35%;
+  }
+  .settings-button {
+    transform: scale(2);
+    margin-left: 0%;
+    margin-top: 1%;
+  }
+  .settings-accordion {
+    font-size: 18px;
+  }
+  .map-button {
+    transform: scale(2);
+    left: 0%;
+    top: 4.25%;
+  }
+  .journal-button {
+    transform: scale(2);
+    left: -8%;
+    top: 4%;
+  }
+  #computer-animation {
+    grid-column-start: 4;
+    margin-left: 15%;
+  }
+  #player-animation {
+    grid-column-start: 2;
+    margin-left: -45%;
+  }
+  .joystick-outer {
+    width: 200px;
+    height: 200px;
+    border: 5px solid gold; 
+  }
+  .joystick-inner {
+    width: 100px;
+    height: 100px;
+    border: 4px solid gold;
+  }
+  #console {
+    transform: scale(1.25);
+    margin-top: 7.5%;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  #textarea {
+    grid-column-start: 3;
+    grid-column-end: 5;
+  }
+  .action-reader {
+    padding-top: 6%;
+    font-size: 24px;
+    margin-top: -20%;
+    height: 20%;
+  }
+  #auto-engage {
+    font-size: 24px;
+    margin-top: -25%;
+    height: 75%;
+  }
+  #attack-options {
+    font-size: 24px;
+    margin-top: -25%;
+    height: 75%;
+  }
+  #action-buttons {
+    margin-top: -2.5%;
+    font-size: 24px;
+  }
+  .actionButtons{
+    height: 20%;
+  }
+  #action-button, #initiate-button, #dodge-button {
+    font-size: 24px;
+    margin-left: 2.5%;
+  }
+  .combat-settings {
+    font-size: 24px;
+  }
+  .prayers {
+    width: 100vw;
+    height: 10vh;
+    margin-left: -5%;
+    margin-top: 15%;
+    grid-row-start: 5;
+    text-shadow: 1.5px 1.5px 1.5px black;
+    /* font-size: 20px; */
+  }
+  
+  .prayer-button {
+    width: 6.5%;
+    height: 75%;
+  }
+  .prayer-button img {
+    transform: scale(2);
+  }
+  
+  .instant-button {
+    max-width: 25%;
+    max-height: 100%;
+    background-color: black;
+    grid-column-start: 3;
+    grid-row-start: 6;
+    margin-top: -2.5%;
+    margin-left: 49%;
+    font-size: 1.1rem;
+    text-shadow: 1.5px 1.5px 1.5px black;
+  }
+  .instant-button img {
+    transform: scale(2);
+  }
+  .invoke {
+    font-size: 1.25rem;
+    grid-row-start: 5;
+    grid-column-start: 3;
+    margin-left: 55.5%;
+  }
+  .status-effects {
+    background: black;
+    width: 15%;
+    height: 35%;
+    margin-bottom: 20.5%;
+  }
+  #player-xp {
+    height: 25%;
+    margin-top: 11.5%;
+    margin-left: 5%;
+  }
+  .progressxp-text {
+    margin-top: 10.25%;
+    font-size: 16px;
+  }
+  .progress {
+    height: 30%;
+    margin-top: -20%;
+    margin-left: 5%;
+    width: 90%;
+  }
+  .progress-text {
+    font-size: 20px;
+    margin-top: -2.5%;
+  }
+  .text-box {
+    height: 20%;
+    width: 80%;
+    font-size: 7.5px;
+    margin-left: 10%;
+  }
+  .inventory-bag {
+    grid-template-columns: repeat(20, 5%);
+    width: 75vw;
+    margin-top: 1%;
+    margin-left: 12%;
+  }
+  .inventory-bag-settings {
+    width: 100%;
+  }
+  .gameplayername {
+    /* margin-top: -15%; */
+    font-size: 20px;
+  }
+  .quest-buttons {
+    font-size: 20px;
+  }
+  .city-button, .dialog-button, .inventory-button {
+    border: 4px solid purple;
+    font-size: 32px;
+    height: 75%;
+    margin-top: -7.5%;
+    font-weight: 600;
+  }
+  .dialog-box {
+    margin-top: -3%;
+    border: 5px solid purple;
+  }
+  .dialog-box, .dialog-text, .dialog-options {
+    font-size: 20px;
+    height: 450px;
+  }
+  .dialog-picture {
+    width: 7.5vw;
+  }
+  .dialog-buttons {
+    font-size: 20px;
+  }
+  .story-box {
+    border: 5px solid purple;
+    font-size: 24px;
+    height: 300px;
+  }
+  .firewater {
+    grid-column-start: 3;
+    grid-row-start: 7;
+    margin-top: 12.5%;
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 1000px) {
   #game-block {
     transform: scale(1.25);
     margin-left: 15%;
@@ -651,7 +863,7 @@
     width: 80%;
     font-size: 7.5px;
     margin-left: 10%;
-    }
+  }
   .dialog-buttons {
     font-size: 14px;
   }
@@ -702,11 +914,6 @@
   .story-box {
     border: 3px solid purple;
     font-size: 18px;
-  }
-  .game-map {
-    margin-top: 3%;
-    width: 603px;
-    height: 603px;
   }
   #player-xp {
     height: 25%;

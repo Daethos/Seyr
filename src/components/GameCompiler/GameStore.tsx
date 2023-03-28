@@ -288,29 +288,109 @@ export const getQuests = (name: string) => {
 };
 
 export const getAsceanTraits = (ascean: Player) => {
-    let traits: string[] = [];
-    switch (ascean.mastery) {
-        case "Constitution":
-            traits = ["Heroism", "Kyn'gian [Inexorable Negation]", "Arbitious", "Faithful", "Apathetic"];
-            break;
-        case "Strength":
-            traits = ["Heroism", "Grappling", "Sedyrist [Inexorable Analysis]", "Conviction", "Intimidation"];
-            break;
-        case "Agility":
-            traits = ["Kyn'gian [Inexorable Negation]", "Grappling", "Thievery", "Transubstantiation", "Knavery"];
-            break;
-        case "Achre":
-            traits = ["Arbitious", "Sedyrist [Inexorable Analysis]", "Thievery", "Seer", "Chiomism"];
-            break;
-        case "Caeren":
-            traits = ["Faithful", "Conviction", "Transubstantiation", "Seer", "Astralism [Inexorable Affirmation]"];
-            break;
-        case "Kyosir":
-            traits = ["Apathetic", "Intimidation", "Knavery", "Chiomism", "Astralism [Inexorable Affirmation]"];
-            break;
-        default:
-            break;
+    let traits = {
+        traitOne: {
+            name: "",
+            description: "",
+        },
+        traitTwo: {
+            name: "",
+            description: "",
+        },
+        // traitThree: {
+        //     name: "",
+        //     description: "",
+        // },
+        // traitFour: {
+        //     name: "",
+        //     description: "",
+        // },
+        // traitFive: {
+        //     name: "",
+        //     description: "",
+        // },
     };
+
+    // Persuasion = Disposition, Not Combat Related Directly, 8
+    // Luckouts = Winning Enemy Encounter w/o Combat, Combat Related, 4
+    // Mini-Game = Enemy Encounter w/ Altered Abilities, Rules, 4
+
+    const ATTRIBUTE_TRAITS = {
+        Constitution: {
+            strength: 'Ilian', // Heroism, Persuasion (Autoritas - Most Powerful)
+            agility: "Kyn'gian", // Inexorable Negation (Avoidance), Endurance
+            achre: "Arbitious", // Persuasion (Ethos - Law), Luckout (Rhetoric)
+            caeren: "Lilosian", // Faithful, Persuasion (Pathos - Faith), Luckout (Peace)
+            kyosir: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
+        },
+        Strength: {
+            constitution: 'Ilian', // Heroism, Persuasion (Autoritas - Most Powerful)
+            agility: "Se'van", // Mini-Game (Grappling), TBD
+            achre: "Sedyrist", // Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)
+            caeren: "Shaorahi", // Conviction, Persuasion (Awe), 
+            kyosir: "Tshaeral", // Persuasion (Fear), Mini-Game (Fear) 
+        },
+        Agility: {
+            constitution: "Kyn'gian", // Inexorable Negation (Avoidance), Endurance
+            strength: "Se'van", // Mini-Game (Grappling), TBD
+            achre: "Ma'anreic", // Thievery, Physical Negation, Stealing (Merchants, Enemies)
+            caeren: "Cambiren", // Transubstantiation, Caerenic Mini-Game
+            kyosir: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
+        },
+        Achre: {
+            constitution: "Arbitious", // Persuasion (Ethos - Law), Luckout (Rhetoric)
+            strength: "Sedyrist", // Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)
+            agility: "Ma'anreic", // Thievery, Physical Negation, Stealing (Merchants, Enemies)
+            caeren: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
+            kyosir: "Chiomism", // Persuasion (Humor), Luckout (Shatter)
+        },
+        Caeren: {
+            constitution: "Lilosian", // Faithful, Persuasion (Pathos - Faith), Luckout (Peace)
+            strength: "Shaorahi", // Conviction, Persuasion (Awe), 
+            agility: "Cambiren", // Transubstantiation, Caerenic Mini-Game
+            achre: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
+            kyosir: "Astralism", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
+        },
+        Kyosir: {
+            constitution: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
+            strength: "Tshaeral", // Persuasion (Fear), Mini-Game (Fear) 
+            agility: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
+            achre: "Chiomism", // Persuasion (Humor), Luckout (Shatter)
+            caeren: "Astralism", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
+        },
+    };
+
+    let asceanTraits = ATTRIBUTE_TRAITS[ascean.mastery as keyof typeof ATTRIBUTE_TRAITS];
+    let topTwo = Object.entries(asceanTraits).sort((a, b) => b[1].length - a[1].length).slice(0, 2);
+    traits.traitOne.name = topTwo[0][1];
+    traits.traitTwo.name = topTwo[1][1];
+
+    const TRAIT_DESCRIPTIONS = {
+        "Ilian": "Persuasion (Autoritas), Inexorable - (Heroism - Can Change Encounters)",
+        "Kyn'gian": "Inexorable Negation (Avoidance - Can Shirk Encounters), Endurance (Gains Power Over Time in Combat)",
+        "Arbitious": "Persuasion (Ethos - Law), Luckout (Rhetoric)",
+        "Lilosian": "[Faithful], Persuasion (Pathos - Faith), Luckout (Peace)",
+        "Kyr'naic": "[Apathetic], Persuasion (Apathy), Luckout (Aenservaesai)",
+        "Se'van": "Mini-Game (Grappling), Poise (Combat Ability - Can debuff enemies for enhanced damage)",
+        "Sedyrist": "Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
+        "Ma'anreic": "Physical Negation (Combat Abiilty), Thievery (Merchants, Enemies)",
+        "Cambiren": "Caerenic (Combat Ability), Mini-Game (Caerenic)",
+        "Shrygeian": "Dueling Mini-Game, Knavery (Exploration Boosts)",
+        "Fyeran": "Seer (Combat Abiilty), Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)",
+        "Shaorahi": "Conviction (Combat Ability), Persuasion (Awe)",
+        "Tshaeral": "Persuasion (Fear), Mini-Game (Fear)",
+        "Chiomism": "Persuasion (Humor), Luckout (Shatter)",
+        "Astralism": "Inexorable Affirmation (Pursuit - Can Force Encounters), Impermanence (Redo Combat)",
+    };
+
+    let first = TRAIT_DESCRIPTIONS[traits.traitOne.name as keyof typeof TRAIT_DESCRIPTIONS];
+    let second = TRAIT_DESCRIPTIONS[traits.traitTwo.name as keyof typeof TRAIT_DESCRIPTIONS];
+
+    traits.traitOne.description = first;
+    traits.traitTwo.description = second;
+
+    console.log(traits, "traits before return");
+
     return traits;
 };
 
@@ -344,6 +424,7 @@ export interface GameData {
 
     combatResolved: boolean;
 
+    showMap: boolean;
     showCity: boolean;
     showDialog: boolean;
     showInventory: boolean;
@@ -429,6 +510,7 @@ export const GAME_ACTIONS = {
     SET_SHOW_CITY: 'SET_SHOW_CITY',
     SET_SHOW_DIALOG: 'SET_SHOW_DIALOG',
     SET_SHOW_INVENTORY: 'SET_SHOW_INVENTORY',
+    SET_SHOW_MAP: 'SET_SHOW_MAP',
     SET_CITY_BUTTON: 'SET_CITY_BUTTON',
     SET_LOOT_DROP: 'SET_LOOT_DROP',
     SET_LOOT_DROP_TWO: 'SET_LOOT_DROP_TWO',
@@ -480,6 +562,7 @@ export const initialGameData: GameData = {
     showCity: false,
     showDialog: false,
     showInventory: false,
+    showMap: false,
     cityButton: false,
     lootDrop: [] as unknown as Equipment,
     lootDropTwo: [] as unknown as Equipment,
@@ -717,6 +800,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 showInventory: action.payload,
+            };
+        case 'SET_SHOW_MAP':
+            return {
+                ...game,
+                showMap: action.payload,
             };
         case 'SET_CITY_BUTTON':
             return {

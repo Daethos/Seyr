@@ -635,9 +635,12 @@ const GameSolo = ({ user }: GameProps) => {
             if (gameState.showDialog) {
                 gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             };
-            if (mapState.currentTile.content !== 'city' && mapState.currentTile.content !== 'weather' && state.new_computer_health <= 0) {
+            if (mapState.currentTile.content === 'enemy' && state.new_computer_health <= 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
+            if (mapState.currentTile.content !== 'city') {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true })
+            }
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
         };

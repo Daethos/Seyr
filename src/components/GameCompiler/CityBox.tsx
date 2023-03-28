@@ -15,7 +15,7 @@ const CityButtons = ({ options, setOptions }: { options: any, setOptions: any })
     const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
             <div key={i}>
-            <Button variant='' onClick={() => setOptions(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550, fontSize: 9 + 'px' }}>{o}</Button>
+            <Button variant='' onClick={() => setOptions(o)} className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
             </div>
         )
     });
@@ -187,7 +187,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 <ToastAlert error={error} setError={setError} />
             { cityOption === 'Alchemist' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt='Fyersman' style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt='Fyersman' className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Alchemist
                     <br />   
                     "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.{' '}
@@ -198,7 +198,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Armorer' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt='Notheon' style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt='Notheon' className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Armorer
                     <br />
                     "Hello there, see what the local blacksmith has been supplying for the city."
@@ -213,14 +213,14 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Bank' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Banker
                     <br />
                     "This is the bank, where you can deposit and withdraw your gold, silver, and inventory items. This feature is not yet available, though when it is I imagine you'll be in need, as loss of life and limb and may lead toward a levitivity most unwanted."
                 </>
             : cityOption === 'Blacksmith' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Ashtre' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Ashtre' + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Blacksmith
                     <br />
                     "You've come for forging? I only handle chiomic quality and above. Check my rates and hand me anything you think worth's it. Elsewise I trade with the Armorer if you want to find what I've made already."
@@ -246,18 +246,18 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Innkeep' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Innkeeper
                     <br />
                     "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night (Free at the moment)."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleRest()}>Rest for 1 Night.</Button>
+                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleRest()}>Rest for 1 Night.</Button>
                 </>
             : cityOption === 'Jeweler' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Jeweler
                     <br />
                     "Greetings there, have a gander at the glint."
@@ -265,9 +265,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
                     { ascean?.level < 4 ?
-                        "Oh dear, you don't seem quite ready yet, come back in a while and perhaps."
+                        `"Oh dear, you don't seem quite ready yet, come back in a while and perhaps."`
                     :
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('jewelry')}>See such bejeweled spectacles.</Button>
+                        <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('jewelry')}>See such bejeweled spectacles.</Button>
                     }
                     <br />
                     { merchantEquipment?.length > 0 ?
@@ -276,14 +276,14 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Merchant' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}General Merchant
                     <br />
                     "Feast your eyes for your belly and pursestrings."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
+                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -291,14 +291,14 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Tailor' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Tailor
                     <br />
                     "Have an eye for softer garb? You've come proper, then."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('cloth')}>See the cloth wares.</Button>
+                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('cloth')}>See the cloth wares.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -308,7 +308,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 <>
                     { enemy ?
                         <>
-                            <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                            <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                             {' '}{enemy.name} (Level {enemy.level})<br />
                         </>
                     : ''
@@ -317,17 +317,17 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                         <>
                             "You are a breath of fresh air around these parts, I'm honored to have been bested by you."
                             <br />
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Challenge them to a duel once more.</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Challenge them to a duel once more.</Button>
                             <br />
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek other, stronger opponents to test your skills.</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek other, stronger opponents to test your skills.</Button>
                         </>
                     : state?.computer_win ?
                         <> 
                             "You seemed a little eager there, perhaps you ought to sit the next one out and watch the others. I'm sure you'll learn something."
                             <br />
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Challenge them to a duel once more.</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Challenge them to a duel once more.</Button>
                             <br />
-                            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Find an easier opponent, hopefully.</Button>
+                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Find an easier opponent, hopefully.</Button>
                         </>
                     :
                         <>
@@ -337,26 +337,26 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                             { enemy ?
                                 <>
                                     <br />
-                                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Initiate the duel with {enemy?.name}</Button>
+                                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Initiate the duel with {enemy?.name}</Button>
                                     <br />
-                                    <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Step toward another duelist instead.</Button>
+                                    <Button variant='' className='dialog-buttons' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Step toward another duelist instead.</Button>
                                 </>
                             : 
-                                <Button variant='' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Step toward a duelist and challenge them.</Button>
+                                <Button variant='' className='dialog-buttons' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Step toward a duelist and challenge them.</Button>
                             }
                         </>
                     }
                 </>
             : cityOption === 'Mystic Gallery' ?
                 <>  
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Seer
                     <br />
                     "I imagine you know why you've come, {ascean.name}."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('magical-weapon')}>See the mystic weapons available.</Button>
+                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('magical-weapon')}>See the mystic weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -364,14 +364,14 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Weapons Gallery' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Weaponsmith
                     <br />
                     "The finest armaments fresh off the forge from our talented smith."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('physical-weapon')}>See the martial weapons available.</Button>
+                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('physical-weapon')}>See the martial weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -379,7 +379,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Guild Hall' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Adecian (Stonemason)
                     <br />
                     "This is the Guild Hall. At the moment it is not a feature available. Concerning guild history; over time, the reach of Daethos and its most fierce preacher Lorian changed the minds of many across the land, showing the Ancient's hand in bloodshed of endless humans in their sacrificial war. 
@@ -389,7 +389,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Museum' ?    
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Nyren (Observational Sage)
                     <br />
                     "This is a small post of the Sages. At the moment it is not a feature available. The Sages are a group of scholars who've been trained since children to study this world and its fascinations, in observation, notation, and machination. 
@@ -397,13 +397,16 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                 </>
             : cityOption === 'Daeth' ?
                 <>    
-                    <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Daestra (Lower Priest)
                     <br />
                     "This is the place of reverence and worship for Daethos. At the moment it is not a feature available. 
                     <br /><br />
                     "Daeth's are smaller, local temples that are often built in most cities of Licivitas, though some newer ones have been seen in the outer reaches of this world. 
                     These sources of faith for the devoted find themselves burgeoning during prayer and service, spreading their influence to many who have lost guidance from their Ancient's teachings."
+                    <br /><br />
+                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleRest()}>Rest for 1 Night.</Button>
+        
                 </>
             : '' }
             </div>

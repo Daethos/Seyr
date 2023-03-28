@@ -71,7 +71,7 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
   );
 
   return (
-    <div style={{ display: "flex", gridColumnStart: 3, gridRowStart: 7, zIndex: 999, color: "gold", marginTop: "22.5%", float: "right" }} className="">
+    <div className="firewater">
       <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={firewaterPopover}>
         <img src={process.env.PUBLIC_URL + '/images/firewater.png'} alt="Firewater" style={firewaterStyle} /> 
       </OverlayTrigger>

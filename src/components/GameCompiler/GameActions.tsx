@@ -175,17 +175,11 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
 
   const instantStyle = {
     color: borderColor(state?.player?.mastery),
-    fontSize: "1.1em",
-    textShadow: '1.5px 1.5px 1.5px black',
-    gridColumnStart: 3, 
-    gridRowStart: 6,
-    marginTop: "3.25em",
   }
 
   const getEffectStyle = {
-    border: 2 + 'px solid ' + borderColor(state?.player?.mastery),
-    boxShadow: '0 0 1em ' + borderColor(state?.player?.mastery),  
-    borderRadius: "50%",
+    border: 3 + 'px solid ' + borderColor(state?.player?.mastery),
+    boxShadow: '0 0 1.5em ' + borderColor(state?.player?.mastery),  
   };
 
   const prayerColor = (prayer: string, endTick: number, combatRound: number) => {
