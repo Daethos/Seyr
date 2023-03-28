@@ -35,6 +35,7 @@ const CITY_OPTIONS = {
     'Merchant': 'Merchant',
     'Museum': 'Museum',
     'Tailor': 'Tailor',
+    'Mystic Gallery': 'Mystic Gallery',
     'Weapons Gallery': 'Weapons Gallery',
 };
 
@@ -153,8 +154,10 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         try {
             let response: any;
             setLoading(true);
-            if (type === 'weapon') {
-                response = await eqpAPI.getWeaponEquipment(ascean?.level);
+            if (type === 'physical-weapon') {
+                response = await eqpAPI.getPhysicalWeaponEquipment(ascean?.level);
+            } else if (type === 'magical-weapon') {
+                response = await eqpAPI.getMagicalWeaponEquipment(ascean?.level);
             } else if (type === 'armor') {
                 response = await eqpAPI.getArmorEquipment(ascean?.level);
             } else if (type === 'jewelry') {
@@ -295,7 +298,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('cloth')}>See the cloth wares and weapons.</Button>
+                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('cloth')}>See the cloth wares.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -344,16 +347,31 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                         </>
                     }
                 </>
+            : cityOption === 'Mystic Gallery' ?
+                <>  
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    {' '}Seer
+                    <br />
+                    "I imagine you know why you've come, {ascean.name}."
+                    <br /><br />
+                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
+                    <br /><br />
+                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('magical-weapon')}>See the mystic weapons available.</Button>
+                    <br />
+                    { merchantEquipment?.length > 0 ?
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                    : '' }
+                </>
             : cityOption === 'Weapons Gallery' ?
                 <>
-                    <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt="Merchant" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Weaponsmith
                     <br />
                     "The finest armaments fresh off the forge from our talented smith."
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('weapon')}>See the various weapons available.</Button>
+                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('physical-weapon')}>See the martial weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />

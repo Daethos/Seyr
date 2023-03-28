@@ -141,36 +141,6 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
 
         <Accordion flush >
-        {/* <Accordion.Item eventKey="0" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Set Combat Timer ({gameState.timeLeft})</h5></Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-            <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={10} step={1} />
-        </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="1" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Set Movement Timer ({gameState.moveTimer})</h5></Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-            <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={10} step={1} />
-        </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="2" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Sound Volume ({gameState.soundEffectVolume})</h5></Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-            <Form.Range value={gameState.soundEffectVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} />
-        </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="3" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Joystick Delay ({gameState.joystickSpeed})</h5></Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-            <Form.Range value={gameState.joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} />
-        </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="4" >
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Vibration Time ({gameState.vibrationTime})</h5></Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-            <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
-        </Accordion.Body>
-        </Accordion.Item> */}
         <Accordion.Item eventKey="5">
         <Accordion.Header>
             <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
@@ -211,8 +181,6 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         <p style={{ color: 'white', display: "inline-block" }}>
             Wonder 
         </p>
-
-
         </Accordion.Body>
         </Accordion.Item>
 

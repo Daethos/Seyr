@@ -541,8 +541,8 @@ export function shakeScreen() {
     const initialPosition = body.style.transform;
     let startTime: number | null = null;
   
-    function shake(currentTime: number) {
-        if (!startTime) startTime = currentTime;
+function shake(currentTime: number) {
+    if (!startTime) startTime = currentTime;
         const elapsedTime = currentTime - startTime;
         const progress = Math.min(elapsedTime / duration, 1);
         const randomX = Math.floor(Math.random() * intensity) + 1;

@@ -357,6 +357,38 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const getDeadAscean = async () => {
+        gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
+        try {
+            const enemyData = {
+                username: user.username,
+                minLevel: 4,
+                maxLevel: 20
+            };
+            const secondResponse = await userService.getRandomDeadEnemy(enemyData);
+            const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
+            const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data })
+            setAsceanState({
+                ...asceanState,
+                'opponent': selectedOpponent.data.level,
+            });
+            dispatch({
+                type: ACTIONS.SET_NEW_COMPUTER,
+                payload: response.data.data
+            });
+            shakeScreen();
+            playOpponent();
+            await getOpponentDialog(selectedOpponent.data.name);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+            if (!gameState?.showDialog && mapState?.currentTile?.content !== 'city') {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error retrieving Enemies')
+        };
+    };
+
     const levelUpAscean = async (vaEsai: any) => {
         try {
             let response = await asceanAPI.levelUp(vaEsai);

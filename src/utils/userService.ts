@@ -1,35 +1,48 @@
 import tokenService from './tokenService';
 const BASE_URL = '/api/users/';
 
-function getProfile(username: any){
+async function getProfile(username: any){
   console.log('getProfile calling: ', username)
-  return fetch(BASE_URL + username, {
+  const res = await fetch(BASE_URL + username, {
     headers: {
       Authorization: "Bearer " + tokenService.getToken(), // <- since this will be called when we're logged in, send over the jwt token
-      // so the server knows who's making the request from the client
     }
-  }).then(res => {
-    // This function happens when the browser recieves a response from the express server
-    if(res.ok) return res.json();
-    throw new Error('Error from getProfile Request, check the server terminal!')
-  })
+  });
+  // This function happens when the browser recieves a response from the express server
+  if (res.ok)
+    return res.json();
+  throw new Error('Error from getProfile Request, check the server terminal!');
 }
 
-function getRandomEnemy(data: object) {
-  return fetch(BASE_URL + 'enemy', {
+async function getRandomEnemy(data: object) {
+  const res = await fetch(BASE_URL + 'enemy', {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
       Authorization: "Bearer " + tokenService.getToken(),
     }
-  }).then(res => {
-    if(res.ok) return res.json();
-    throw new Error('Error from getRandomEnemy Request, check the server terminal!');
-  })
-}
+  });
+  if (res.ok)
+    return res.json();
+  throw new Error('Error from getRandomEnemy Request, check the server terminal!');
+};
 
-function signup(user: any) {
+async function getRandomDeadEnemy(data: object) {
+  const res = await fetch(BASE_URL + 'dead-enemy', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: "Bearer " + tokenService.getToken(),
+    }
+  });
+  if (res.ok)
+    return res.json();
+  throw new Error('Error from getRandomEnemy Request, check the server terminal!');
+};
+
+async function signup(user: any) {
   return fetch(BASE_URL + 'signup', {
     method: 'POST',
     body: user
@@ -45,7 +58,7 @@ function signup(user: any) {
   // The above could have been written as .then((token) => token.token);
 }
 
-function updateUser(user: object) {
+async function updateUser(user: object) {
   return fetch (BASE_URL + 'update', {
     method: 'PUT',
     body: JSON.stringify(user),
@@ -60,7 +73,7 @@ function updateUser(user: object) {
   })
 }
 
-function updateBio(user: object) {
+async function updateBio(user: object) {
   return fetch (BASE_URL + 'updateBio', {
     method: 'PUT',
     body: JSON.stringify(user),
@@ -83,7 +96,7 @@ function logout() {
   tokenService.removeToken();
 }
 
-function login(creds: any) {
+async function login(creds: any) {
   return fetch(BASE_URL + 'login', {
     method: 'POST',
     headers: new Headers({'Content-Type': 'application/json'}),
@@ -100,7 +113,7 @@ function login(creds: any) {
   .then(({token}) => tokenService.setToken(token));
 }
 
-function searchUser(search: string) {
+async function searchUser(search: string) {
   return fetch(`/api/users?search=` + search, {
     headers: {
       Authorization: "Bearer " + tokenService.getToken()
@@ -111,7 +124,7 @@ function searchUser(search: string) {
   })
 }
 
-function createGuestToken() {
+async function createGuestToken() {
   return fetch(BASE_URL + 'guest-token')
     .then(res => {
       if (res.ok) return res.json();
@@ -133,5 +146,6 @@ export default {
   updateUser,
   updateBio,
   getRandomEnemy,
+  getRandomDeadEnemy,
   createGuestToken
 };

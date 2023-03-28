@@ -199,7 +199,7 @@ const DialogBox = ({ state, dispatch, gameDispatch, mapState, mapDispatch, clear
             let response: any;
             setLoading(true);
             if (type === 'weapon') {
-                response = await eqpAPI.getWeaponEquipment(ascean?.level);
+                response = await eqpAPI.getPhysicalWeaponEquipment(ascean?.level);
             } else if (type === 'armor') {
                 response = await eqpAPI.getArmorEquipment(ascean?.level);
             } else if (type === 'jewelry') {

@@ -22,6 +22,7 @@ module.exports = {
   login,
   profile,
   profileCharacter,
+  deadEnemy,
   allUsers,
   updateUser,
   updateUserBio,
@@ -117,7 +118,33 @@ async function profileCharacter(req, res) {
     console.log(err.message, " <- Error fetching Character from Profile");
     res.status(400).json({ err });
   }
-}
+};
+
+async function deadEnemy(req, res) {
+  console.log(req.body, 'Getting Profile Character')
+  try {
+    const user = await User.findOne({ username: req.body.username, alive: false });
+    const ascean = await Ascean.find({ user: user._id });
+    let randomAscean;
+    if (ascean) {
+      const asceanInRange = ascean.filter((a) => a.level >= req.body.minLevel && a.level <= req.body.maxLevel);
+      randomAscean = asceanInRange[Math.floor(Math.random() * asceanInRange.length)];
+    } else {
+      // This needs to profile the community of all ascean and return a random dead one
+     randomAscean = await Ascean.find({ alive: false, level: { $gte: req.body.minLevel, $lte: req.body.maxLevel } });
+    };
+
+    res.status(200).json({
+      data: {
+        user: user,
+        ascean: randomAscean,
+      }
+    });
+  } catch (err) {
+    console.log(err.message, " <- Error fetching Character from Profile");
+    res.status(400).json({ err });
+  }
+};
 
 async function signup(req, res) {
   console.log(req.body, " req.body in signup", req.file);
