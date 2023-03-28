@@ -18,7 +18,7 @@ import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/D
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData, CombatData } from '../../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
@@ -1093,6 +1093,9 @@ const HardCoreAscea = ({ user }: GameProps) => {
             if (response.data.computer_win === true) {
                 await handleHardcoreDeath(response.data);
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Combat')
         };
@@ -1112,7 +1115,11 @@ const HardCoreAscea = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
+            shakeScreen();
             playReligion();
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
         };
@@ -1136,7 +1143,11 @@ const HardCoreAscea = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
+            shakeScreen();
             playReligion();
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
@@ -1185,7 +1196,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
         <Container fluid id="game-container" style={ background }>
             { gameState.opponent ?
                 <>
-                <GameAscean state={state} ascean={gameState.opponent} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+                <GameAscean state={state} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
                 <CombatOverlay 
                     ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                     playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
@@ -1206,7 +1217,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
-            <GameAscean state={state} ascean={gameState.player} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <GameAscean state={state} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
             { state.combatEngaged ? 
                 <>
                     <GameAnimations 
