@@ -36,6 +36,7 @@ export interface CombatData {
     religious_success: boolean;
     roll_success: boolean;
     player_win: boolean;
+    player_luckout: boolean;
 
     computer: any;
     computer_action: string;
@@ -106,6 +107,7 @@ export const ACTIONS = {
     SET_PLAYER: 'SET_PLAYER',
     SET_COMPUTER: 'SET_COMPUTER',
     SET_DUEL: 'SET_DUEL',
+    RESET_LUCKOUT: 'RESET_LUCKOUT',
     RESET_PLAYER: 'RESET_PLAYER',
     RESET_COMPUTER: 'RESET_COMPUTER',
     RESET_DUEL: 'RESET_DUEL',
@@ -130,6 +132,7 @@ export const ACTIONS = {
     SAVE_EXPERIENCE: 'SAVE_EXPERIENCE',
     CLEAR_COUNTER: 'CLEAR_COUNTER',
     AUTO_ENGAGE: 'AUTO_ENGAGE',
+    PLAYER_LUCKOUT: 'PLAYER_LUCKOUT',
     PLAYER_WIN: 'PLAYER_WIN',
     COMPUTER_WIN: 'COMPUTER_WIN',
     CLEAR_DUEL: 'CLEAR_DUEL',
@@ -172,6 +175,7 @@ export const initialCombatData: CombatData = {
     religious_success: false,
     roll_success: false,
     player_win: false,
+    player_luckout: false,
     computer: {},
     computer_action: '',
     computer_counter_guess: '',
@@ -425,6 +429,22 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 combatEngaged: false,
                 dodgeStatus: false,
                 instantStatus: false,
+            };
+        case 'PLAYER_LUCKOUT':
+            return {
+                ...state,
+                winStreak: state.winStreak + 1,
+                highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
+                loseStreak: 0,
+                new_computer_health: 0,
+                current_computer_health: 0,
+                player_luckout: action.payload,
+                player_win: action.payload,
+            };
+        case 'RESET_LUCKOUT':
+            return {
+                ...state,
+                player_luckout: action.payload,
             };
         case 'COMPUTER_WIN':
             return {

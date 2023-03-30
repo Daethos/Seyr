@@ -493,6 +493,18 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
+        if (state.player_luckout) {
+          handlePlayerLuckout();
+          setTimeout(() => {
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
+          }, 6000);
+        }
+    }, [state.player_luckout]);
+      
+
+    useEffect(() => {
         if (gameState.itemSaved === false) return;
         console.log("Saving Item", gameState.itemSaved)
         getAsceanInventory();
@@ -1363,6 +1375,27 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    async function handlePlayerLuckout() {
+        try {
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            if (mapState?.currentTile?.content === 'city') {
+                playWin();
+            } else {
+                playReligion();
+            };
+            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
+            await gainExperience();
+            // setTimeout(() => {
+            //     gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            //     gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            //     dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
+            // }, 6000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
     async function handlePlayerWin(combatData: CombatData) {
         try {
             if (mapState?.currentTile?.content === 'city') {
@@ -1370,7 +1403,7 @@ const GameSolo = ({ user }: GameProps) => {
             } else {
                 playReligion();
             };
-            gainExperience();
+            await gainExperience();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
                 setTimeLeft(0);
@@ -1599,6 +1632,7 @@ const GameSolo = ({ user }: GameProps) => {
                     playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
                     rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
                     loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
+                    playerLuckout={state.player_luckout}
                 />
                 </>
             : '' }

@@ -185,7 +185,7 @@ async function gripCompiler(weapon, attributes, ascean) {
         weapon.physical_damage *= 1 + ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 8) + (attributes.agilityMod / 3)) / (100 + (20 / ascean.level));
         weapon.magical_damage *= 1 + (((weapon.achre / 8) + (weapon.caeren / 2) + (attributes.achreMod / 3)) + attributes.caerenMod) / (100 + (20 / ascean.level));
     }
-    console.log(weapon.physical_damage, weapon.magical_damage, 'Damage After Attributes')
+    // console.log(weapon.physical_damage, weapon.magical_damage, 'Damage After Attributes')
 }
 
 async function penetrationCompiler(weapon, attributes, combatStats) { 
@@ -320,7 +320,7 @@ const defenseCompiler = async (ascean, attributes, combatStats, rarities) => {
 }
 
 const coefficientCompiler = async (ascean, item) => {
-    console.log(item, 'Item Rarity In Coefficient Compiler')
+    // console.log(item, 'Item Rarity In Coefficient Compiler')
     let coefficient = 0;
     switch (item.rarity) {
         case 'Common':

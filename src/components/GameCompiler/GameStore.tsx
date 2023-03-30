@@ -144,7 +144,7 @@ const namedEnemy =
     "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", 
     "Sera Lorian", "Synaethis Spiras", "Torreous Ashfyre", "Vincere"];
 
-const nameCheck = (name: string) => {
+export const nameCheck = (name: string) => {
     if (namedEnemy.includes(name)) {
         return true;
     } else {
@@ -332,7 +332,7 @@ export const getAsceanTraits = async (ascean: Player) => {
         Constitution: {
             strength: 'Ilian', // Heroism, Persuasion (Autoritas - Most Powerful)
             agility: "Kyn'gian", // Inexorable Negation (Avoidance), Endurance
-            achre: "Arbitious", // Persuasion (Ethos - Law), Luckout (Rhetoric)
+            achre: "Arbituous", // Persuasion (Ethos - Law), Luckout (Rhetoric)
             caeren: "Lilosian", // Faithful, Persuasion (Pathos - Faith), Luckout (Peace)
             kyosir: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
         },
@@ -351,7 +351,7 @@ export const getAsceanTraits = async (ascean: Player) => {
             kyosir: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
         },
         Achre: {
-            constitution: "Arbitious", // Persuasion (Ethos - Law), Luckout (Rhetoric)
+            constitution: "Arbituous", // Persuasion (Ethos - Law), Luckout (Rhetoric)
             strength: "Sedyrist", // Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)
             agility: "Ma'anreic", // Thievery, Physical Negation, Stealing (Merchants, Enemies)
             caeren: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
@@ -382,7 +382,7 @@ export const getAsceanTraits = async (ascean: Player) => {
     const TRAIT_DESCRIPTIONS = {
         "Ilian": "Persuasion (Autoritas), Inexorable - (Heroism - Can Change Encounters)",
         "Kyn'gian": "Inexorable Negation (Avoidance - Can Shirk Encounters), Endurance (Health Regeneration)",
-        "Arbitious": "Persuasion (Ethos - Law), Luckout (Rhetoric)",
+        "Arbituous": "Persuasion (Ethos - Law), Luckout (Rhetoric)",
         "Lilosian": "[Faithful], Persuasion (Pathos - Faith), Luckout (Peace)",
         "Kyr'naic": "[Apathetic], Persuasion (Apathy), Luckout (Aenservaesai)",
         "Se'van": "Mini-Game (Grappling), Poise (Combat Ability - Can debuff enemies for enhanced damage)",

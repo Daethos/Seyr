@@ -24,9 +24,10 @@ interface CombatProps {
     combatOverlayText: string;
     gameDispatch: React.Dispatch<any>;
     combatEngaged: boolean;
+    playerLuckout: boolean;
 };
 
-const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, computerWin, loadingCombatOverlay, combatOverlayText, combatResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
+const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, computerWin, playerLuckout, loadingCombatOverlay, combatOverlayText, combatResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
     const overlayRef = useRef(null);
     const pArticle = ['a', 'e', 'i', 'o', 'u'].includes(playerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
     const cArticle = ['a', 'e', 'i', 'o', 'u'].includes(computerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
@@ -42,6 +43,11 @@ const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, 
         color: 'red',
         fontSize: 32 + 'px',
     };
+
+    const luckoutStyle = {
+        color: 'gold',
+        fontSize: 32 + 'px',
+    }
 
     const rollStyle = {
         color: 'green',
@@ -83,7 +89,12 @@ const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, 
             }}
             >
             <h5 className='overlay-content-combat' style={ loadingCombatOverlay ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
-                { playerWin ?
+                { playerLuckout ?
+                    <p style={luckoutStyle}>{ascean?.name} has successfully defeated {enemy?.name} without needing to land a single strike.
+                    <br />
+                    {combatOverlayText}
+                    </p>
+                : playerWin ?
                     <p style={getStyle()}>{ascean?.name} Wins with {pArticle} {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}, dealing {Math.round(playerDamageTotal)} Damage!
                     <br />
                     {combatOverlayText}

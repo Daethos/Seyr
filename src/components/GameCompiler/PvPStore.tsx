@@ -48,6 +48,7 @@ export interface PvPData {
     religious_success: boolean;
     roll_success: boolean;
     player_win: boolean;
+    player_luckout: boolean;
 
     enemy: any;
     enemy_action: string;
@@ -152,6 +153,7 @@ export const initialPvPData: PvPData = {
     religious_success: false,
     roll_success: false,
     player_win: false,
+    player_luckout: false,
     enemy: {},
     enemy_action: '',
     enemy_counter_guess: '',
@@ -449,6 +451,16 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 combatEngaged: false,
                 dodgeStatus: false,
                 instantStatus: false,
+            };
+        case 'PLAYER_LUCKOUT':
+            return {
+                ...state,
+                winStreak: state.winStreak + 1,
+                highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
+                loseStreak: 0,
+                new_computer_health: 0,
+                current_computer_health: 0,
+                player_luckout: true,
             };
         case 'COMPUTER_WIN':
             return {

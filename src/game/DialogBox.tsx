@@ -10,7 +10,7 @@ import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import dialogNodes from "../components/GameCompiler/DialogNodes.json"
 import { useLocation } from 'react-router-dom';
@@ -94,6 +94,7 @@ interface Region {
 
 const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const location = useLocation();
+    const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<Traits | null>(null);
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
@@ -114,27 +115,26 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [quest, setQuest] = useState<any>({});
     const [questModalShow, setQuestModalShow] = useState<boolean>(false);
+    const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
     const [dialogTree, setDialogTree] = useState<any>([]);
     const [luckout, setLuckout] = useState<boolean>(false);
-    const [luckoutTrait, setLuckoutTrait] = useState({
-        name: '',
-        description: '',
-    });
+    const [luckoutTrait, setLuckoutTrait] = useState<any>([]);
+    const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
         console.log(ascean.quests, "Ascean");
-        checkLuckout();
         let enemyQuests = getQuests(enemy?.name);
-        let newQuest = enemyQuests[Math.floor(Math.random() * enemyQuests?.length)];
         setLocalWhispers(enemyQuests);
         setShowQuest(true);
         getDialogTree();
+        checkLuckout();
+        setNamedEnemy(nameCheck(enemy?.name));
         return () => {
-        } 
+            
+        }; 
     }, [enemy]);
 
     useEffect(() => {
-
     }, [luckout]);
 
     useEffect(() => {
@@ -283,23 +283,88 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         setTraits(response);
     };
 
+    const attemptLuckout = async (luck: string) => {
+        switch (luck) {
+            case 'Arbituous':
+                const playerRhetoric = ascean.constitution + ascean.achre;
+                const enemyRhetoric = enemy.constitution + enemy.achre;
+                if (playerRhetoric > enemyRhetoric) {
+                    return dispatch({
+                        type: ACTIONS.PLAYER_LUCKOUT,
+                        payload: true
+                    });
+                } else {
+                    await checkingLoot();
+                    return dispatch({
+                        type: ACTIONS.SET_DUEL,
+                        payload: ''
+                    });
+                };
+            case 'Chiomic':
+                const playerShatter = ascean.achre + ascean.kyosir;
+                const enemyShatter = enemy.achre + enemy.kyosir;
+                if (playerShatter > enemyShatter) {
+                    return dispatch({
+                        type: ACTIONS.PLAYER_LUCKOUT,
+                        payload: true
+                    });
+                } else {
+                    await checkingLoot();
+                    return dispatch({
+                        type: ACTIONS.SET_DUEL,
+                        payload: ''
+                    });
+                };
+            case 'Kyr\'naic':
+                const playerApathy = ascean.constitution + ascean.kyosir;
+                const enemyApathy = enemy.constitution + enemy.kyosir;
+                if (playerApathy > enemyApathy) {
+                    return dispatch({
+                        type: ACTIONS.PLAYER_LUCKOUT,
+                        payload: true
+                    });
+                } else {
+                    await checkingLoot();
+                    return dispatch({
+                        type: ACTIONS.SET_DUEL,
+                        payload: ''
+                    });
+                };
+            case 'Lilosian':
+                const playerPeace = ascean.constitution + ascean.caeren;
+                const enemyPeace = enemy.constitution + enemy.caeren;
+                if (playerPeace > enemyPeace) {
+                    return dispatch({
+                        type: ACTIONS.PLAYER_LUCKOUT,
+                        payload: true
+                    });
+                } else {
+                    await checkingLoot();
+                    return dispatch({
+                        type: ACTIONS.SET_DUEL,
+                        payload: ''
+                    });
+                };
+            default:
+                break;
+        };
+    };
 
-    const checkLuckout = () => {
+
+    const checkLuckout = async () => {
         const traits = {
             primary: gameState?.primary,
             secondary: gameState?.secondary,
             tertiary: gameState?.tertiary,
         };
-        const luckoutTraits = ['Lilosian', 'Rhetoric', "Kyr'naic", 'Chiomic'];
-        const luckout = luckoutTraits.some((trait: string) => traits.primary.name === trait || traits.secondary.name === trait || traits.tertiary.name === trait);
-        
-        if (!luckout) {
-            setLuckout(false)
+        const luckoutTraits = ['Lilosian', 'Arbituous', "Kyr'naic", 'Chiomic'];
+        const matchingTraits = Object.values(traits).filter(trait => luckoutTraits.includes(trait.name));
+        if (matchingTraits.length === 0) {
+            setLuckout(false);
             return;
-        };
+        }
         setLuckout(true);
-
-
+        setLuckoutTrait(matchingTraits);
     };
 
     if (loading) {
@@ -325,6 +390,19 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 <br />
                 [Note: These Quests are classified as Curiosities, and are not required to complete the game. No quests are required to complete the game.]<br /><br />
                 <Button variant='' style={{ color: "green", fontSize: "20px" }} onClick={() => getQuest(quest)}>Accept {quest?.title}?</Button>
+            </Modal.Body>
+        </Modal>
+        <Modal show={luckoutModalShow} onHide={() => setLuckoutModalShow(false)} centered id='modal-weapon'>
+            <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
+            <Modal.Body style={{ textAlign: 'center' }}>
+                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement.<br /><br />
+                <p style={{ fontSize: "18px", color: "gold" }}>
+                Arbituous - Rhetoric (Convince the enemy to cease hostility) <br /><br />
+                Chiomic - Shatter (Mental seizure of the enemy) <br /><br />
+                Kyr'naic - Apathy (Unburden the enemy to acquiesce and die) <br /><br /> 
+                Lilosian - Peace (Allow the enemy to let go of their human failures) <br /><br />
+                </p>
+                [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
             </Modal.Body>
         </Modal>
         <div className='dialog-box'>
@@ -371,12 +449,28 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             : '' }
                         </> 
                     :
-                    <>
-                            "{ascean.name} is it? Very well, you don't seem much for talking either, shall we then?"<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'gold' }} onClick={engageCombat}>Engage with {npc}?</Button>
+                        <>
+                        { namedEnemy ? ( 
+                            <>
+                            "Greetings, I am {enemy.name}. {ascean.name}, is it? How can I be of some help?"<br />
+                            </> 
+                        ) : ( 
+                            <>
+                            {article} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            </> 
+                        ) }
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage with {npc}?</Button>
                             { luckout ?
-                                ( 
-                                    <Button variant='' className='dialog-buttons inner' style={{  }}>Luckout ^_^ {luckoutTrait?.name}</Button>
+                                ( <div>
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setLuckoutModalShow(true)}>[Combat Alternative]</Button>
+                                    {luckoutTrait.map((trait: any, index: number) => {
+                                        return (
+                                            <div key={index}>
+                                            <Button variant='' className='dialog-buttons inner' onClick={() => attemptLuckout(trait.name)}>{trait.name}</Button>
+                                        </div>
+                                    )
+                                    })}
+                                </div>
                             ) : ('') }
 
                         </> 
@@ -420,7 +514,12 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         </>
                     : 
                     <>
-                        { enemy?.level > ascean?.level && enemy?.name !== 'Traveling General Merchant' ?
+                        { namedEnemy ? 
+                            <>
+                            "I hope you find what you seek, {ascean.name}. Take care in these parts, you may never know when someone wishes to approach out of malice and nothing more."
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
+                            </>
+                        : enemy?.level > ascean?.level && enemy?.name !== 'Traveling General Merchant' ?
                             <>
                             "You may not be ready, {ascean?.name}, yet time has tethered us here. Come now, prepare."
                             <br />
@@ -444,7 +543,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     }
                     </>
                 : currentIntent === 'localLore' ?
-                <>
+                    <>
                         This has not been written yet
                     </>
                 : currentIntent === 'localWhispers' ?
@@ -497,7 +596,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     }
                     </>
                 : currentIntent === 'worldLore' ?
-                <>
+                    <>
                         This has not been written yet
                     </>
                 : '' }
