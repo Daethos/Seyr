@@ -1484,7 +1484,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
                         playerWin={state.player_win} computerWin={state.enemy_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
                         winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}
                         resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
-                        gameDispatch={gameDispatch}
+                        gameDispatch={gameDispatch} gameState={gameState}
                     />
                 : '' }
                 { gameState.showInventory ?

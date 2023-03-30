@@ -44,6 +44,7 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
 
   const firewaterStyle = {
     border: getBorder(firewater?.charges),
+    boxShadow: "2px 2px 2px black",
     backgroundColor: "black",
     height: "60px",
     borderRadius: "3px"

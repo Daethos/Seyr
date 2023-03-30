@@ -48,8 +48,10 @@ export interface Ascean {
 };
 
 export interface Player extends Ascean {
-    currentCharges: number;
-    maxCharges: number;
+    // Ascean Traits Determined By Mastery + Attributes
+    primary: { name: string, description: string };
+    secondary: { name: string, description: string };
+    tertiary: { name: string, description: string };
 };
 
 export interface Enemy extends Ascean {
@@ -141,6 +143,14 @@ const namedEnemy =
     "Fierous Ashfyre", "Garris Ashenus", "King Mathyus Caderyn", "Kreceus", 
     "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", 
     "Sera Lorian", "Synaethis Spiras", "Torreous Ashfyre", "Vincere"];
+
+const nameCheck = (name: string) => {
+    if (namedEnemy.includes(name)) {
+        return true;
+    } else {
+        return false;
+    };
+};
 
 export const ENEMY_ENEMIES = {
     "Achreon Druid": ["Kyn'gian Shaman", "Tshaeral Shaman", "Kingsman", "Northren Wanderer"],
@@ -287,20 +297,23 @@ export const getQuests = (name: string) => {
     return QUESTS.filter(quest => quest.name.includes(name));
 };
 
-export const getAsceanTraits = (ascean: Player) => {
+export const getAsceanTraits = async (ascean: Player) => {
     let traits = {
-        traitOne: {
+        primary: {
             name: "",
             description: "",
+            type: '',
         },
-        traitTwo: {
+        secondary: {
             name: "",
             description: "",
+            type: '',
         },
-        // traitThree: {
-        //     name: "",
-        //     description: "",
-        // },
+        tertiary: {
+            name: "",
+            description: "",
+            type: '',
+        },
         // traitFour: {
         //     name: "",
         //     description: "",
@@ -342,7 +355,7 @@ export const getAsceanTraits = (ascean: Player) => {
             strength: "Sedyrist", // Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)
             agility: "Ma'anreic", // Thievery, Physical Negation, Stealing (Merchants, Enemies)
             caeren: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
-            kyosir: "Chiomism", // Persuasion (Humor), Luckout (Shatter)
+            kyosir: "Chiomic", // Persuasion (Humor), Luckout (Shatter)
         },
         Caeren: {
             constitution: "Lilosian", // Faithful, Persuasion (Pathos - Faith), Luckout (Peace)
@@ -355,39 +368,42 @@ export const getAsceanTraits = (ascean: Player) => {
             constitution: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
             strength: "Tshaeral", // Persuasion (Fear), Mini-Game (Fear) 
             agility: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
-            achre: "Chiomism", // Persuasion (Humor), Luckout (Shatter)
+            achre: "Chiomic", // Persuasion (Humor), Luckout (Shatter)
             caeren: "Astralism", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
         },
     };
 
     let asceanTraits = ATTRIBUTE_TRAITS[ascean.mastery as keyof typeof ATTRIBUTE_TRAITS];
-    let topTwo = Object.entries(asceanTraits).sort((a, b) => b[1].length - a[1].length).slice(0, 2);
-    traits.traitOne.name = topTwo[0][1];
-    traits.traitTwo.name = topTwo[1][1];
+    let topThree = Object.entries(asceanTraits).sort((a, b) => b[1].length - a[1].length).slice(0, 3);
+    traits.primary.name = topThree[0][1];
+    traits.secondary.name = topThree[1][1];
+    traits.tertiary.name = topThree[2][1];
 
     const TRAIT_DESCRIPTIONS = {
         "Ilian": "Persuasion (Autoritas), Inexorable - (Heroism - Can Change Encounters)",
-        "Kyn'gian": "Inexorable Negation (Avoidance - Can Shirk Encounters), Endurance (Gains Power Over Time in Combat)",
+        "Kyn'gian": "Inexorable Negation (Avoidance - Can Shirk Encounters), Endurance (Health Regeneration)",
         "Arbitious": "Persuasion (Ethos - Law), Luckout (Rhetoric)",
         "Lilosian": "[Faithful], Persuasion (Pathos - Faith), Luckout (Peace)",
         "Kyr'naic": "[Apathetic], Persuasion (Apathy), Luckout (Aenservaesai)",
         "Se'van": "Mini-Game (Grappling), Poise (Combat Ability - Can debuff enemies for enhanced damage)",
-        "Sedyrist": "Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
+        "Sedyrist": "Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
         "Ma'anreic": "Physical Negation (Combat Abiilty), Thievery (Merchants, Enemies)",
         "Cambiren": "Caerenic (Combat Ability), Mini-Game (Caerenic)",
         "Shrygeian": "Dueling Mini-Game, Knavery (Exploration Boosts)",
         "Fyeran": "Seer (Combat Abiilty), Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)",
         "Shaorahi": "Conviction (Combat Ability), Persuasion (Awe)",
         "Tshaeral": "Persuasion (Fear), Mini-Game (Fear)",
-        "Chiomism": "Persuasion (Humor), Luckout (Shatter)",
+        "Chiomic": "Persuasion (Humor), Luckout (Shatter)",
         "Astralism": "Inexorable Affirmation (Pursuit - Can Force Encounters), Impermanence (Redo Combat)",
     };
 
-    let first = TRAIT_DESCRIPTIONS[traits.traitOne.name as keyof typeof TRAIT_DESCRIPTIONS];
-    let second = TRAIT_DESCRIPTIONS[traits.traitTwo.name as keyof typeof TRAIT_DESCRIPTIONS];
+    let first = TRAIT_DESCRIPTIONS[traits.primary.name as keyof typeof TRAIT_DESCRIPTIONS];
+    let second = TRAIT_DESCRIPTIONS[traits.secondary.name as keyof typeof TRAIT_DESCRIPTIONS];
+    let third = TRAIT_DESCRIPTIONS[traits.tertiary.name as keyof typeof TRAIT_DESCRIPTIONS];
 
-    traits.traitOne.description = first;
-    traits.traitTwo.description = second;
+    traits.primary.description = first;
+    traits.secondary.description = second;
+    traits.tertiary.description = third;
 
     console.log(traits, "traits before return");
 
@@ -395,10 +411,14 @@ export const getAsceanTraits = (ascean: Player) => {
 };
 
 export interface GameData {
-    player: Ascean;
+    player: Player;
     opponent: Enemy;
     background: string;
     dialog: object;
+
+    primary: { name: string, description: string, style: string };
+    secondary: { name: string, description: string, style: string };
+    tertiary: { name: string, description: string, style: string };
 
     loading: boolean;
     loadingAscean: boolean;
@@ -462,6 +482,7 @@ interface Game_Action {
 export const GAME_ACTIONS = {
     SET_GAME_DATA: 'SET_GAME_DATA',
     SET_PLAYER: 'SET_PLAYER',
+    SET_PLAYER_TRAITS: 'SET_PLAYER_TRAITS',
     SET_OPPONENT: 'SET_OPPONENT',
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_DIALOG: 'SET_DIALOG',
@@ -540,6 +561,9 @@ export const initialGameData: GameData = {
     opponent: null as unknown as Enemy,
     background: '',
     dialog: {},
+    primary: { name: '', description: '', style: '' },
+    secondary: { name: '', description: '', style: '' },
+    tertiary: { name: '', description: '', style: '' },
     loading: true,
     loadingAscean: false,
     loadingOpponent: false,
@@ -595,6 +619,13 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 player: action.payload,
+            };
+        case 'SET_PLAYER_TRAITS':
+            return {
+                ...game,
+                primary: action.payload.primary,
+                secondary: action.payload.secondary,
+                tertiary: action.payload.tertiary,
             };
         case 'SET_OPPONENT':
             return {

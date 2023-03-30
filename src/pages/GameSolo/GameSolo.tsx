@@ -19,7 +19,7 @@ import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/D
 import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
-import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
@@ -111,12 +111,14 @@ const GameSolo = ({ user }: GameProps) => {
                     mapAPI.getMap(asceanID),
                     settingsAPI.getSettings(),
                 ]);
-                console.log(gameSettingResponse, "Game Settings");
+                const traitResponse = await getAsceanTraits(gameStateResponse.data);
+                console.log(traitResponse, "Ascean Traits");
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
                     type: ACTIONS.SET_PLAYER,
                     payload: combatStateResponse.data.data
                 });
+                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_TRAITS, payload: traitResponse });
                 setAsceanState({
                     ...asceanState,
                     'ascean': combatStateResponse.data.data.ascean,
@@ -1659,7 +1661,7 @@ const GameSolo = ({ user }: GameProps) => {
                             playerWin={state.player_win} computerWin={state.computer_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
                             winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}
                             resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
-                            gameDispatch={gameDispatch}
+                            gameDispatch={gameDispatch} gameState={gameState}
                         />
                     : '' }
                     { gameState.showInventory ?

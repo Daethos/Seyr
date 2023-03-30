@@ -1,12 +1,10 @@
 .modal-content {
-    background: #f9e8fd;
     background: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
     text-align: center;
     font-variant: small-caps;
-    color: purple;
-    border: 1.5px solid orangered;
-    box-shadow: 0 0 1.5em #b00000; 
-    
+    color: #fdf6d8;
+    border: 3px solid purple;
+    box-shadow: 0 0 1.5em purple; 
 }
 
 #ascean-pic {

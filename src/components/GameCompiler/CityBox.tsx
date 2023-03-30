@@ -15,7 +15,7 @@ const CityButtons = ({ options, setOptions }: { options: any, setOptions: any })
     const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
             <div key={i}>
-            <Button variant='' onClick={() => setOptions(o)} className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
+            <Button variant='' onClick={() => setOptions(o)} className='dialog-buttons' style={{ fontWeight: 550 }}>{o}</Button>
             </div>
         )
     });
@@ -194,7 +194,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
                     <br /><br />
-                    <Button variant='' style={{ color: 'blueviolet', fontVariant: 'small-caps', outline: 'none' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
+                    <Button variant='' className='dialog-buttons inner' style={{ color: 'blueviolet' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
                 </>
             : cityOption === 'Armorer' ?
                 <>
@@ -205,7 +205,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
                     <br /><br />
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('armor')}>See the various armor available.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('armor')}>See the various armor available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch}  ascean={ascean} error={error} setError={setError} />
@@ -253,7 +253,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
                     <br /><br />
-                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleRest()}>Rest for 1 Night.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => handleRest()}>Rest for 1 Night.</Button>
                 </>
             : cityOption === 'Jeweler' ?
                 <>
@@ -267,7 +267,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     { ascean?.level < 4 ?
                         `"Oh dear, you don't seem quite ready yet, come back in a while and perhaps."`
                     :
-                        <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('jewelry')}>See such bejeweled spectacles.</Button>
+                        <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('jewelry')}>See such bejeweled spectacles.</Button>
                     }
                     <br />
                     { merchantEquipment?.length > 0 ?
@@ -283,7 +283,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('general')}>See the merchant's wares.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('general')}>See the merchant's wares.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -298,7 +298,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('cloth')}>See the cloth wares.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('cloth')}>See the cloth wares.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -317,17 +317,17 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                         <>
                             "You are a breath of fresh air around these parts, I'm honored to have been bested by you."
                             <br />
-                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Challenge them to a duel once more.</Button>
+                            <Button variant='' className='dialog-buttons inner' onClick={checkReset}>Challenge them to a duel once more.</Button>
                             <br />
-                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Seek other, stronger opponents to test your skills.</Button>
+                            <Button variant='' className='dialog-buttons inner' onClick={checkOpponent}>Seek other, stronger opponents to test your skills.</Button>
                         </>
                     : state?.computer_win ?
                         <> 
                             "You seemed a little eager there, perhaps you ought to sit the next one out and watch the others. I'm sure you'll learn something."
                             <br />
-                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkReset}>Challenge them to a duel once more.</Button>
+                            <Button variant='' className='dialog-buttons inner' onClick={checkReset}>Challenge them to a duel once more.</Button>
                             <br />
-                            <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Find an easier opponent, hopefully.</Button>
+                            <Button variant='' className='dialog-buttons inner' onClick={checkOpponent}>Find an easier opponent, hopefully.</Button>
                         </>
                     :
                         <>
@@ -337,12 +337,12 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                             { enemy ?
                                 <>
                                     <br />
-                                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={engageCombat}>Initiate the duel with {enemy?.name}</Button>
+                                    <Button variant='' className='dialog-buttons inner' onClick={engageCombat}>Initiate the duel with {enemy?.name}</Button>
                                     <br />
-                                    <Button variant='' className='dialog-buttons' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Step toward another duelist instead.</Button>
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'yellow' }} onClick={checkOpponent}>Step toward another duelist instead.</Button>
                                 </>
                             : 
-                                <Button variant='' className='dialog-buttons' style={{ color: 'yellow', fontVariant: 'small-caps', outline: 'none' }} onClick={checkOpponent}>Step toward a duelist and challenge them.</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: 'yellow' }} onClick={checkOpponent}>Step toward a duelist and challenge them.</Button>
                             }
                         </>
                     }
@@ -356,7 +356,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('magical-weapon')}>See the mystic weapons available.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('magical-weapon')}>See the mystic weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -371,7 +371,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br /><br />
                     <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
                     <br /><br />
-                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => getLoot('physical-weapon')}>See the martial weapons available.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('physical-weapon')}>See the martial weapons available.</Button>
                     <br />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
@@ -405,7 +405,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     "Daeth's are smaller, local temples that are often built in most cities of Licivitas, though some newer ones have been seen in the outer reaches of this world. 
                     These sources of faith for the devoted find themselves burgeoning during prayer and service, spreading their influence to many who have lost guidance from their Ancient's teachings."
                     <br /><br />
-                    <Button variant='' className='dialog-buttons' style={{ color: 'green', fontVariant: 'small-caps', outline: 'none' }} onClick={() => handleRest()}>Rest for 1 Night.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => handleRest()}>Rest for 1 Night.</Button>
         
                 </>
             : '' }

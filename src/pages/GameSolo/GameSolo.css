@@ -186,6 +186,7 @@
   color: #fdf6d8;
   background-color: black;
   border: 3px solid purple;
+  box-shadow: 2px 2px 2px black;
   width: 100vw;
   height: 62vh;
   overflow-y: scroll;
@@ -205,6 +206,7 @@
   color: #fdf6d8;
   background-color: black;
   border: 3px solid purple;
+  box-shadow: 2px 2px 2px black;
   width: 98%;
   height: 57vh;
   overflow-y: scroll;
@@ -522,6 +524,13 @@
   border: 2px solid purple;
 }
 
+.dialog-buttons {
+  font-size: 9px;
+  font-variant: small-caps;
+  outline: none;
+  color: green;
+}
+
 #flicker {
   animation: flicker 1.5s linear;
 }
@@ -568,9 +577,7 @@
 .quest-buttons {
   font-size: 9px;
 }
-.dialog-buttons {
-  font-size: 9px;
-}
+
 .dialog-picture {
   width: 15vw;
 }
@@ -583,7 +590,9 @@
   grid-row-start: 7;
   margin-top: 22.5%;
 }
-
+.dialog-buttons.inner {
+  font-size: 16px;
+}
 @media screen and (min-width: 1000px) {
   #game-container {
     background-repeat: no-repeat;

@@ -31,12 +31,11 @@
     }
     #popover-spec-image {
         float: right;
-        margin-top: 0%;
+        margin-top: 2.5%;
         margin-bottom: 5%;
         margin-left: 10%;
         margin-right: 10%;
         transform: scale(3.5);
-        
     }
     #origin-pic {
         border: 1px solid purple;
