@@ -32,10 +32,10 @@
         },
         {
             "id": "0002",
-            "text": "Well a pleasure, ${ascean.name}.",
+            "text": "Well a pleasure, ${ascean.name}, hope to see a face such as yours more often in these parts.",
             "options": [
                 {
-                    "text": "Gracious to have met you too.",
+                    "text": "Gracious to have met you too, ${enemy.name}.",
                     "next": "0003",
                     "npcIds": [
                         1,
@@ -63,7 +63,7 @@
                     ]
                 },
                 {
-                    "text": "Yes, yes, enough pleasantries and the like. What is it you wish of me?",
+                    "text": "Yes, yes, enough pleasantries and the like. What is it you wish of me, ${enemy.name}?",
                     "next": "0003",
                     "npcIds": [
                         1,
@@ -77,7 +77,7 @@
                     ]
                 },
                 {
-                    "text": "Bitch, please shut up.",
+                    "text": "You know we've had this conversation previously, yes?",
                     "next": "0003",
                     "npcIds": [
                         1,
@@ -114,37 +114,34 @@
                     ]
                 },
                 {
-                    "text": "I need to purchase some equipment",
+                    "text": "I would like to see some of your wares for purchase.",
                     "next": "0004",
                     "npcIds": [
                         2,
                         3,
                         4,
-                        5,
-                        6,
                         7,
                         8
                     ]
                 },
                 {
-                    "text": "I need to repair some equipment",
+                    "text": "I need to repair some equipment if you are able.",
                     "next": "0005",
                     "npcIds": [
                         6,
-                        7
+                        8
                     ]
                 },
                 {
-                    "text": "I need to equipment forged",
+                    "text": "I actually require some equipment forged if you're capable of that.",
                     "next": "0006",
                     "npcIds": [
                         4,
-                        6,
-                        7
+                        6
                     ]
                 },
                 {
-                    "text": "I'm not sure what I'm looking for",
+                    "text": "I'm not sure what I'm looking for, if I'm being honest.",
                     "next": "0020",
                     "npcIds": [
                         5
@@ -167,24 +164,23 @@
             "text": "What kind of equipment do you need?",
             "options": [
                 {
-                    "text": "I require weaponry",
+                    "text": "I require some weaponry, your signs said you sold as much.",
                     "next": "0007",
                     "npcIds": [
                         2,
-                        6
+                        7
                     ]
                 },
                 {
-                    "text": "I require defensive equipment",
+                    "text": "I require something with a bit more armor and finesse, the road isn't getting any easier to travel.",
                     "next": "0008",
                     "npcIds": [
                         3,
-                        6,
                         8
                     ]
                 },
                 {
-                    "text": "I'm curious about jewelry",
+                    "text": "I'm curious about some jewelry your sign mentioned.",
                     "next": "0009",
                     "npcIds": [
                         4
@@ -196,7 +192,6 @@
                 3,
                 4,
                 5,
-                6,
                 7,
                 8
             ]
@@ -258,61 +253,85 @@
             "text": "What kind of weapon do you need?",
             "options": [
                 {
-                    "text": "Weapons of this world preferred.",
+                    "text": "Something of this world, please. Martial and reliable.",
                     "next": "0014",
                     "npcIds": [
-                        2,
-                        6
+                        2
                     ]
                 },
                 {
-                    "text": "Perhaps something a little more bizarre?",
+                    "text": "Perhance something a little bizarre, not quite of this world?",
                     "next": "0015",
                     "npcIds": [
-                        1,
-                        2,
                         7
                     ]
                 }
             ],
             "npcIds": [
                 2,
-                6,
                 7
             ]
         },
         {
             "id": "0008",
-            "text": "What kind of defensive equipment do you need?",
+            "text": "Of course, allow me to show you what I have on hand at the moment. I hope it's to your liking, ${ascean.name}.",
             "options": [
                 {
-                    "text": "I've need of shields, show me what you have.",
-                    "next": "0016",
+                    "text": "See what the local blacksmith has been supplying for the city.",
+                    "next": "0008",
                     "npcIds": [
-                        3,
-                        6
-                    ]
+                        3
+                    ],
+                    "action": "getArmor"
                 },
                 {
-                    "text": "I have need for some armor",
-                    "next": "0017",
+                    "text": "See what softer garb may be proper for your travels.",
+                    "next": "0008",
                     "npcIds": [
-                        3,
-                        6,
                         8
-                    ]
+                    ],
+                    "action": "getTailor"
                 }
             ],
             "npcIds": [
                 3,
-                6,
                 8
             ]
         },
         {
             "id": "0009",
             "text": "Here are my artifacts and oddities, do they amuse you?",
-            "options": [],
+            "options": [
+                {
+                    "text": "See such bejeweled spectcles.",
+                    "next": "0009",
+                    "npcIds": [
+                        4
+                    ],
+                    "conditions": [
+                        {
+                            "key": "level",
+                            "operator": ">=",
+                            "value": "4"
+                        }
+                    ],
+                    "action": "getJewelry"
+                },
+                {
+                    "text": "Oh dear, you don't seem quite ready yet, come back in time and perchance I'll have something for you.",
+                    "next": "0001",
+                    "npcIds": [
+                        4
+                    ],
+                    "conditions": [
+                        {
+                            "key": "level",
+                            "operator": "<",
+                            "value": "4"
+                        }
+                    ]
+                }
+            ],
             "npcIds": [
                 4
             ]
@@ -368,11 +387,36 @@
         },
         {
             "id": "0014",
-            "text": "Aye, I have the kind you're looking for",
-            "options": [],
+            "text": "Aye, I have the kind you're looking for, the finest armaments fresh off the forge from our talented smith.",
+            "options": [
+                {
+                    "text": "See the martial weapons available.",
+                    "next": "0014",
+                    "npcIds": [
+                        2
+                    ],
+                    "action": "getWeapon"
+                }
+            ],
             "npcIds": [
-                2,
-                6
+                2
+            ]
+        },
+        {
+            "id": "0015",
+            "text": "I imagine you knew why you've came, ${ascean.name}.",
+            "options": [
+                {
+                    "text": "See the mystic weapons available.",
+                    "next": "0015",
+                    "npcIds": [
+                        7
+                    ],
+                    "action": "getMystic"
+                }
+            ],
+            "npcIds": [
+                7
             ]
         },
         {
@@ -386,7 +430,16 @@
         {
             "id": "0021",
             "text": "Good thing I carry a bit of every desire, have a chance look at my wares.",
-            "options": [],
+            "options": [
+                {
+                    "text": "See the merchant's wares.",
+                    "next": "0021",
+                    "npcIds": [
+                        1
+                    ],
+                    "action": "getGeneral"
+                }
+            ],
             "npcIds": [
                 1
             ]

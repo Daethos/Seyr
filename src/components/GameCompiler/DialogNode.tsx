@@ -2,11 +2,14 @@ import DialogNodes from "./DialogNodes.json";
 import { useState, useEffect, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Ascean, Enemy, NPC } from "./GameStore";
+import { CombatData } from "./CombatStore";
 
 interface DialogNodeOption {
     text: string;
     next: string | null;
     npcIds?: any[];
+    conditions?: { key: string; operator: string; value: string; }[];
+    action?: string;
 };
 
 export interface DialogNode {
@@ -34,7 +37,6 @@ export const npcIds: NpcIds = {
 
 export function getNodesForNPC(npcId: number): DialogNode[] {
     const matchingNodes: DialogNode[] = [];
-    console.log(npcId, "Npc Id")
     for (const node of DialogNodes.nodes) {
         if (node.options.length === 0) {
             continue;
@@ -49,46 +51,61 @@ export function getNodesForNPC(npcId: number): DialogNode[] {
     return matchingNodes;
 };
 
-interface DialogTreeProps {
-    ascean: Ascean;
-    enemy: NPC | Enemy;
-    dialogNodes: DialogNode[];
-    currentNodeIndex: number;
-    setCurrentNodeIndex: (index: number) => void;
-}
-  
 interface DialogOptionProps {
     option: DialogNodeOption;
     onClick: (nextNodeId: string | null) => void;
-}
+    actions: { [key: string]: Function }
+};
 
-const DialogOption = ({ option, onClick }: DialogOptionProps) => {
-    const handleClick = () => {
+const DialogOption = ({ option, onClick, actions }: DialogOptionProps) => {
+    const handleClick = async () => {
+      if (option.action && typeof option.action === 'string') {
+        const actionName = option.action.trim();
+        console.log(actionName, "Did we make it here?")
+        const actionFunction = actions[actionName];
+        if (actionFunction) {
+          actionFunction();
+          return;
+        };
+      };
       onClick(option.next);
     };
 
-    const buttonStyle = {
-      backgroundColor: "black",
-      color: "green"
-    }
-
     return (
       <div>
-      <Button variant='' onClick={handleClick} style={buttonStyle} className='my-1'>
+      <Button variant='' onClick={handleClick} className='dialog-buttons inner' >
         {option.text}
       </Button>
       </div>
     );
 };
 
-const DialogTree = ({ ascean, enemy, dialogNodes, currentNodeIndex, setCurrentNodeIndex }: DialogTreeProps) => {
+interface DialogTreeProps {
+  ascean: Ascean;
+  enemy: NPC | Enemy | any;
+  dialogNodes: DialogNode[];
+  currentNodeIndex: number;
+  setCurrentNodeIndex: (index: number) => void;
+  getLoot: (type: string) => void;
+  refillFlask: () => void;
+  state: any;
+};
+
+const DialogTree = ({ ascean, enemy, getLoot, dialogNodes, currentNodeIndex, setCurrentNodeIndex, state, refillFlask }: DialogTreeProps) => {
   const [renderedText, setRenderedText] = useState<any>('');
   const [renderedOptions, setRenderedOptions] = useState<DialogNodeOption[]>([]);
   const [currentNode, setCurrentNode] = useState<DialogNode | undefined>(undefined);
-
+  const actions = {
+    getArmor: () => getLoot('armor'),
+    getGeneral: () => getLoot('general'),
+    getJewelry: () => getLoot('jewelry'),
+    getMystic: () => getLoot('magical-weapon'),
+    getTailor: () => getLoot('cloth'),
+    getWeapon: () => getLoot('physical-weapon'),
+    getFlask: () => refillFlask()
+  };
   // Compute the rendered text and options whenever the current node changes.
   useEffect(() => {
-    console.log(currentNodeIndex, "Current Node Index")
     setCurrentNode(dialogNodes[currentNodeIndex]);
   }, [currentNodeIndex, dialogNodes]);
   
@@ -99,18 +116,42 @@ const DialogTree = ({ ascean, enemy, dialogNodes, currentNodeIndex, setCurrentNo
       if (currentNode.text) {
         newText = currentNode.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
       };
-      if (currentNode.options) {
-        newOptions = currentNode.options.map((option) => {
-          const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
-          return {
-            ...option,
-            text: renderedOption,
-          };
-        });
-      };
-      setRenderedText(newText);
-      setRenderedOptions(newOptions);
+    if (currentNode.options) {
+      newOptions = currentNode.options.filter(option => {
+        if (option.conditions) {
+          return option.conditions.every(condition => {
+            const { key, operator, value } = condition;
+            const optionValue = ascean[key] !== undefined ? ascean[key] : state[key]; // Hopefully this works!
+            switch (operator) {
+              case '>':
+                return optionValue > value;
+              case '>=':
+                return optionValue >= value;
+              case '<':
+                return optionValue < value;
+              case '<=':
+                return optionValue <= value;
+              case '=':
+                return optionValue === value;
+              default:
+                return false;
+            }
+          });
+        } else {
+          return true;
+        };
+      }).map(option => {
+        const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
+        return {
+          ...option,
+          text: renderedOption,
+        };
+      });
     };
+    setRenderedText(newText);
+    setRenderedOptions(newOptions);
+  };
+
   }, [currentNode]);
 
   const handleOptionClick = (nextNodeId: string | null) => {
@@ -132,67 +173,11 @@ const DialogTree = ({ ascean, enemy, dialogNodes, currentNodeIndex, setCurrentNo
     <div>
       <p>{renderedText}</p>
       {renderedOptions?.map((option: DialogNodeOption) => (
-        <DialogOption key={option.text} option={option} onClick={handleOptionClick} />
+        <DialogOption key={option.text} option={option} onClick={handleOptionClick} actions={actions} />
       ))}
-      <br /><br />
+      <br />
     </div>
   );
 };
 
 export default DialogTree;
-
-
-// const DialogTree = ({ ascean, dialogNodes }: DialogTreeProps) => {
-//   const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
-//   const [currentNode, setCurrentNode] = useState(dialogNodes?.[currentNodeIndex])
-//   const [renderedText, setRenderedText] = useState<any>('');
-//   const [renderedOptions, setRenderedOptions] = useState<any>([]);
-//   useEffect(() => {
-//     console.log(currentNode, "Current Node Index")
-//     const newText = currentNode?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g))
-//     console.log(newText, "New Text")
-//     if (newText !== undefined) {
-//       setRenderedText(newText)
-//     } else {
-//       setRenderedText(currentNode?.text)
-//     };
-//     const newOptions = currentNode?.options.map(option => {
-//       const renderedOptions = option?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g));
-//       return {
-//         ...option,
-//         text: renderedOptions,
-//       };
-//     });
-//     if (newOptions !== undefined) {
-//       setRenderedOptions(newOptions)
-//     } else {
-//       setRenderedOptions(currentNode?.options)
-//     }
-//   }, [currentNodeIndex]);
-
-//   useEffect(() => {
-//     console.log(renderedText, "Rendered Text")
-//   }, [renderedText])
-  
-//   const handleOptionClick = (nextNodeId: string | null) => {
-//     if (nextNodeId === null) {
-//       // End of dialog tree
-//       setCurrentNodeIndex(0);
-//     } else {
-//       const nextNodeIndex = dialogNodes.findIndex(node => node.id === nextNodeId);
-//       setCurrentNodeIndex(nextNodeIndex);
-//     }
-//   };
-  
-//   return (
-//     <div>
-//       <p>{renderedText}</p>
-//       {renderedOptions?.map((option: DialogNodeOption) => (
-//         <DialogOption key={option.text} option={option} onClick={handleOptionClick} />
-//       ))}
-//       <br /><br />
-//     </div>
-//   );
-// };
-  
-// export default DialogTree;

@@ -17,7 +17,6 @@ import FriendFeed from "../FriendFeed/FriendFeed";
 import FriendMessages from "../FriendMessages/FriendMessages";
 import FocusMessages from "../FocusMessages/FocusMessages";
 import GameSolo from "../GameSolo/GameSolo";
-import GamePvP from "../GamePvP/GamePvP";
 import GameLobby from "../GameLobby/GameLobby";
 import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
@@ -25,27 +24,36 @@ import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
 import HardCoreAscea from "../HardcoreAscea/HardCoreAscea";
 
+interface User {
+  _id: string;
+  username: string;
+  email: string;
+  password: string;
+  bio: string;
+  photoUrl: string;
+};
+
 function App() {
-  const [user, setUser] = useState(userService.getUser());
+  const [user, setUser] = useState<User | null>(userService.getUser());
   const [guest, setGuest] = useState(userService.getUser());
   const [loading, setLoading] = useState<boolean>(false);
-  const [ascean, setAscean] = useState<object[]>([])
-  const [createSuccess, setCreateSuccess] = useState<boolean>(false)
+  const [ascean, setAscean] = useState<object[]>([]);
+  const [createSuccess, setCreateSuccess] = useState<boolean>(false);
   const navigate = useNavigate();
 
   function handleSignUpOrLogin() {
     setUser(userService.getUser());
-  }
+  };
 
   function handleGuest() {
     setGuest(userService.getUser());
-  }
+  };
 
   function handleLogout() {
     userService.logout();
     setUser(null);
     setGuest(null);
-  }
+  };
 
   async function handleAsceanCreate(newAscean: Object) {
     try {
@@ -55,19 +63,19 @@ function App() {
         navigate("/");
     } catch (err) {
         console.log(err, '<- This is the error in handleAsceanCreate');
-    }
-  }
+    };
+  };
 
   async function editAscean(vaEsai: Object) {
     try {
       console.log(vaEsai, '<- Ascean in editAscean start');
       const response = await asceanAPI.edit(vaEsai);
       setAscean([response.data, ...ascean]);
-      setCreateSuccess(true)
+      setCreateSuccess(true);
     } catch (err: any)  {
-      console.log(err.message, '<- You are having an error in the editAscean function in App.jsx');
-    }
-  }
+      console.log(err.message, '<- You are having an error in editAscean');
+    };
+  };
 
   if (loading) {
     return (

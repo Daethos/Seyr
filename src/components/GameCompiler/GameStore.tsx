@@ -45,6 +45,7 @@ export interface Ascean {
     dislikes: [];
     double_dislikes: [];
     likes: [];
+    [key: string]: any;
 };
 
 export interface Player extends Ascean {

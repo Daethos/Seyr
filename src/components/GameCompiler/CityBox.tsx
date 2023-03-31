@@ -11,6 +11,7 @@ import { GAME_ACTIONS } from './GameStore';
 import Inventory from './Inventory';
 import DialogTree, { getNodesForNPC, npcIds } from '../GameCompiler/DialogNode';
 import dialogNodes from "../GameCompiler/DialogNodes.json"
+import Currency from './Currency';
 
 const CityButtons = ({ options, setOptions }: { options: any, setOptions: any }) => {
     // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -40,6 +41,10 @@ const CITY_OPTIONS = {
     'Mystic Gallery': 'Mystic Gallery',
     'Weapons Gallery': 'Weapons Gallery',
 };
+
+const merchant = {
+    name: 'Merchant'
+}
 
 interface CityProps {
     state: any;
@@ -107,6 +112,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         await checkingLoot();
         if (enemy) await clearOpponent();
         gameDispatch({ type: GAME_ACTIONS.SET_CITY_OPTION, payload: option });
+        setCurrentNodeIndex(0);
     };
 
     const engageCombat = async () => {
@@ -156,7 +162,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         };
         try {
             let response: any;
-            setLoading(true);
+            // setLoading(true);
             if (type === 'physical-weapon') {
                 response = await eqpAPI.getPhysicalWeaponEquipment(ascean?.level);
             } else if (type === 'magical-weapon') {
@@ -172,7 +178,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
             }
             console.log(response.data, 'Response!');
             gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data })
-            setLoading(false);
+            // setLoading(false);
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
         };
@@ -184,37 +190,37 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         );
     };
 
-    // let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
-    // setDialogTree(dialogTree);
-
     return (
         <div className='dialog-box'>
-            {/* <DialogTree ascean={ascean} enemy={enemy} dialogNodes={getNodesForNPC(npcIds["Merchant-General"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} /> */}
-            {/*    const [currentNodeIndex, setCurrentNodeIndex] = useState(0); */}
             <div className='dialog-text'>
                 <ToastAlert error={error} setError={setError} />
             { cityOption === 'Alchemist' ?
                 <>
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Man' + '.jpg'} alt='Fyersman' className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Alchemist
-                    <br />   
-                    "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.{' '}
-                    <br /><br />
-                    "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
-                    <br /><br />
-                    <Button variant='' className='dialog-buttons inner' style={{ color: 'blueviolet' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
+                    <br />
+                    { ascean?.firewater?.charges === 5 ?
+                        <>
+                        The Alchemist sways in a slight tune to the swish of your flask as he turns to you.<br /><br />
+                        "If you're needing potions of amusement and might I'm setting up craft now. Seems you're set for now, come back when you're needing more."
+                        </>
+                    :
+                        <>
+                        "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, 
+                        its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.<br /><br />
+                        "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
+                        <br /><br />
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'blueviolet' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
+                        </>
+                    }
                 </>
             : cityOption === 'Armorer' ?
                 <>
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt='Notheon' className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Armorer
                     <br />
-                    "Hello there, see what the local blacksmith has been supplying for the city."
-                    <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
-                    <br /><br />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('armor')}>See the various armor available.</Button>
-                    <br />
+                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Armor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch}  ascean={ascean} error={error} setError={setError} />
                     : '' }
@@ -239,8 +245,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <p style={{ color: "purple", fontSize: "20px", marginBottom: "-1px", fontWeight: 700 }}>Kyris: 12g</p>
                     <p style={{ color: "darkorange", fontSize: "20px", marginBottom: "-1px", fontWeight: 700 }}>Sedyrus: 60g</p>
                     <br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
+                    <Currency ascean={ascean} />
                     { upgradeItems ?
                         <>
                         {upgradeItems.map((item: any, index: number) => {
@@ -259,8 +264,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <br />
                     "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night (Free at the moment)."
                     <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver} 
-                    <br /><br />
+                    <Currency ascean={ascean} />
                     <Button variant='' className='dialog-buttons inner' onClick={() => handleRest()}>Rest for 1 Night.</Button>
                 </>
             : cityOption === 'Jeweler' ?
@@ -268,16 +272,8 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Jeweler
                     <br />
-                    "Greetings there, have a gander at the glint."
-                    <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
-                    { ascean?.level < 4 ?
-                        `"Oh dear, you don't seem quite ready yet, come back in a while and perhaps."`
-                    :
-                        <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('jewelry')}>See such bejeweled spectacles.</Button>
-                    }
-                    <br />
+                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Jewelry"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
@@ -287,12 +283,8 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}General Merchant
                     <br />
-                    "Feast your eyes for your belly and pursestrings."
-                    <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('general')}>See the merchant's wares.</Button>
-                    <br />
+                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-General"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
@@ -302,12 +294,8 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Tailor
                     <br />
-                    "Have an eye for softer garb? You've come proper, then."
-                    <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('cloth')}>See the cloth wares.</Button>
-                    <br />
+                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Tailor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
@@ -319,8 +307,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                             <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                             {' '}{enemy.name} (Level {enemy.level})<br />
                         </>
-                    : ''
-                    }
+                    : '' }
                     { state?.player_win ?
                         <>
                             "You are a breath of fresh air around these parts, I'm honored to have been bested by you."
@@ -342,16 +329,16 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                             Ahh the dueling grounds, packged dirt and trampled grass stained with blood and sweat of past duels litter the area. 
                             Seems a few folk have been testing themselves and are loitering about, hungry for another bout. 
                             <br />
-                            { enemy ?
-                                <>
-                                    <br />
-                                    <Button variant='' className='dialog-buttons inner' onClick={engageCombat}>Initiate the duel with {enemy?.name}</Button>
-                                    <br />
-                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'yellow' }} onClick={checkOpponent}>Step toward another duelist instead.</Button>
-                                </>
-                            : 
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'yellow' }} onClick={checkOpponent}>Step toward a duelist and challenge them.</Button>
-                            }
+                        { enemy ?
+                            <>
+                                <br />
+                                <Button variant='' className='dialog-buttons inner' onClick={engageCombat}>Initiate the duel with {enemy?.name}</Button>
+                                <br />
+                                <Button variant='' className='dialog-buttons inner' style={{ color: 'yellow' }} onClick={checkOpponent}>Step toward another duelist instead.</Button>
+                            </>
+                        : 
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'yellow' }} onClick={checkOpponent}>Step toward a duelist and challenge them.</Button>
+                        }
                         </>
                     }
                 </>
@@ -360,12 +347,8 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Seer
                     <br />
-                    "I imagine you know why you've come, {ascean.name}."
-                    <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('magical-weapon')}>See the mystic weapons available.</Button>
-                    <br />
+                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Mystic"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
@@ -375,12 +358,8 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Weaponsmith
                     <br />
-                    "The finest armaments fresh off the forge from our talented smith."
-                    <br /><br />
-                    <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}
-                    <br /><br />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('physical-weapon')}>See the martial weapons available.</Button>
-                    <br />
+                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Weapon"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
                     : '' }
