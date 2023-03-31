@@ -9,6 +9,8 @@ import MerchantTable from './MerchantTable';
 import { ACTIONS } from './CombatStore';
 import { GAME_ACTIONS } from './GameStore';
 import Inventory from './Inventory';
+import DialogTree, { getNodesForNPC, npcIds } from '../GameCompiler/DialogNode';
+import dialogNodes from "../GameCompiler/DialogNodes.json"
 
 const CityButtons = ({ options, setOptions }: { options: any, setOptions: any }) => {
     // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -63,6 +65,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
     const [loadingContent, setLoadingContent] = useState<string>('');
     const targetRef = useRef(null);
     const [upgradeItems, setUpgradeItems] = useState<any | null>(null);
+    const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
 
     useEffect(() => {
         console.log(inventory, "Inventory");
@@ -181,8 +184,13 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         );
     };
 
+    // let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
+    // setDialogTree(dialogTree);
+
     return (
         <div className='dialog-box'>
+            {/* <DialogTree ascean={ascean} enemy={enemy} dialogNodes={getNodesForNPC(npcIds["Merchant-General"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} /> */}
+            {/*    const [currentNodeIndex, setCurrentNodeIndex] = useState(0); */}
             <div className='dialog-text'>
                 <ToastAlert error={error} setError={setError} />
             { cityOption === 'Alchemist' ?

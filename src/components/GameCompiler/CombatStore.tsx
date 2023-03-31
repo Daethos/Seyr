@@ -38,6 +38,7 @@ export interface CombatData {
     roll_success: boolean;
     player_win: boolean;
     player_luckout: boolean;
+    playerTrait: string;
 
     computer: any;
     computer_action: string;
@@ -179,6 +180,7 @@ export const initialCombatData: CombatData = {
     roll_success: false,
     player_win: false,
     player_luckout: false,
+    playerTrait: '',
     computer: {},
     computer_action: '',
     computer_counter_guess: '',
@@ -441,7 +443,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 loseStreak: 0,
                 new_computer_health: 0,
                 current_computer_health: 0,
-                player_luckout: action.payload,
+                player_luckout: action.payload.playerLuckout,
+                playerTrait: action.payload.playerTrait,
                 player_win: action.payload,
             };
         case 'ENEMY_PERSUADED':
@@ -474,6 +477,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 gameIsLive: false,
                 dodgeStatus: false,
                 instantStatus: false,
+                playerTrait: '',
                 action: '',
                 player_action: '',
                 computer_action: '',

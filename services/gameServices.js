@@ -1985,42 +1985,42 @@ const damageTypeCompiler = async (combatData, weapon, player_physical_damage, pl
 
         if (weapon.attack_type === 'Physical') {
             if (combatData.computer.helmet.type === 'Plate-Mail') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.9 + Math.random() * 0.15;
             }
             if (combatData.computer.helmet.type === 'Chain-Mail') {
                 player_physical_damage *= 0.925 + Math.random() * 0.15;
             }   
             if (combatData.computer.helmet.type === 'Leather-Mail') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.95 + Math.random() * 0.15;
             }
             if (combatData.computer.helmet.type === 'Leather-Cloth') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.975 + Math.random() * 0.15;
             }
     
             if (combatData.computer.chest.type === 'Plate-Mail') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.9 + Math.random() * 0.15;
             }
             if (combatData.computer.chest.type === 'Chain-Mail') {
                 player_physical_damage *= 0.925 + Math.random() * 0.15;
             }
             if (combatData.computer.chest.type === 'Leather-Mail') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.95 + Math.random() * 0.15;
             }
             if (combatData.computer.chest.type === 'Leather-Cloth') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.975 + Math.random() * 0.15;
             }
     
             if (combatData.computer.legs.type === 'Plate-Mail') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.9 + Math.random() * 0.15;
             }
             if (combatData.computer.legs.type === 'Chain-Mail') {
                 player_physical_damage *= 0.925 + Math.random() * 0.15;
             }
             if (combatData.computer.legs.type === 'Leather-Mail') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.95 + Math.random() * 0.15;
             }
             if (combatData.computer.legs.type === 'Leather-Cloth') {
-                player_physical_damage *= 0.925 + Math.random() * 0.15;
+                player_physical_damage *= 0.975 + Math.random() * 0.15;
             }
         }
         if (weapon.attack_type === 'Magic') {
@@ -2305,6 +2305,7 @@ const actionSplitter = async (combatData) => {
         computer_counter_success: false,
         player_win: false,
         player_luckout: false,
+        playerTrait: combatData.playerTrait,
         enemyPersuaded: false,
         computer_win: false,
         critical_success: false,

@@ -390,7 +390,10 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         if (playerLuck >= enemyLuck) {
             dispatch({
                 type: ACTIONS.PLAYER_LUCKOUT,
-                payload: true
+                payload: {
+                    playerLuckout: true,
+                    playerTrait: luck
+                }
             });
         } else {
             await checkingLoot();
@@ -494,8 +497,78 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         </div>
                     </>
                 : currentIntent === 'challenge' ?
-                    playerWin ? 
-                    <>
+                    state.playerTrait !== '' ?
+                        <div>
+                        { namedEnemy ? (
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                {enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in {enemy.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            ) }
+                            </>
+                        ) : ( 
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                The {enemy.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in the {enemy.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            ) }         
+                            </>
+                        ) }
+                        { lootDrop?._id && lootDropTwo?._id ?
+                            <>
+                                <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                                <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            </>
+                        : lootDrop?._id ?
+                        <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        : lootDropTwo?._id ?
+                        <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        : '' }
+                        { location.pathname.startsWith(`/Hardcore`) ?
+                            <p style={{ color: 'orangered' }}>
+                                You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
+                            </p>
+                        : ''  }
+                        { location.pathname.startsWith(`/Hardcore`) ?
+                            <p style={{ color: 'orangered' }}>
+                                You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
+                            </p>
+                        : ''  }
+                        </div>
+                    : playerWin ? 
+                        <div>
                         { namedEnemy ? (
                             <>
                             "Congratulations {ascean.name}, you were fated this win. This is all I have to offer, if it pleases you." <br /><br />        
@@ -520,9 +593,9 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
                             </p>
                         : ''  }
-                        </> 
+                        </div> 
                     : computerWin ? 
-                        <>
+                        <div>
                             { namedEnemy ? (
                                 <>
                                 "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play. What was it that possessed you to even attempt this failure?" <br /><br />        
@@ -539,9 +612,9 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 You Lose. Cold Streak: {loseStreak} Hi-Score ({highScore})
                                 </p>
                             : '' }
-                        </> 
+                        </div> 
                     :
-                        <>
+                        <div>
                         { namedEnemy ? ( 
                             <>
                             "Greetings, I am {enemy.name}. {ascean.name}, is it? How can I be of some help?"<br />
@@ -565,7 +638,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         })} 
                             </div>
                         ) : ('') }
-                        </> 
+                        </div> 
                 : currentIntent === 'conditions' ?
                     <>
                         This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like. 

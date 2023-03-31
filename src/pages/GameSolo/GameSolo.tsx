@@ -1444,16 +1444,15 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    async function handleInitiate(e: { preventDefault: () => void; }) {
-        e.preventDefault();
+    async function handleInitiate(combatData: CombatData) {
         try {
-            if (state.action === '') {
+            if (combatData.action === '') {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`]);
                 return;
             };
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            const response = await gameAPI.initiateAction(state);
+            const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });

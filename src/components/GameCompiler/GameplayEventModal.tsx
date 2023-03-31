@@ -27,7 +27,7 @@ const GameplayEventModal = ({ ascean, gameDispatch, gameplayEvent, show, lootDro
             await deleteEquipment([lootDropTwo]);
             gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
         };
-        mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+        if (mapState?.currentTile?.content === 'treasure') mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: false });
     };
 

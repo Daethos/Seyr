@@ -141,7 +141,7 @@ const nonNamedEnemy =
 const namedEnemy = 
     ["Achreus", "Ashreu'ul" ,"Cyrian Shyne", "Daetheus", "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", 
     "Fierous Ashfyre", "Garris Ashenus", "King Mathyus Caderyn", "Kreceus", 
-    "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", "Quor'estes", 
+    "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavros Ilios", "Mirio", "Quor'estes", 
     "Sera Lorian", "Synaethi Spiras", "Torreous Ashfyre", "Vincere"];
 
 export const nameCheck = (name: string) => {

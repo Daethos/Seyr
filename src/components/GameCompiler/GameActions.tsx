@@ -9,7 +9,8 @@ import { Button } from 'react-bootstrap';
 interface Props {
     handleAction: (action: any) => void;
     handleCounter: (action: any) => void;
-    handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
+    // handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
+    handleInitiate: (state: any) => void;
     currentAction: string;
     currentCounter: string;
     currentWeapon: any;
@@ -254,9 +255,9 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
       </button>
     </>
     <div className="actionButtons" id='action-buttons'>
-      <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                
-          <button value='initiate' type='submit' className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button'>Initiate</button>
-      </Form>
+      {/* <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                 */}
+          <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
+      {/* </Form> */}
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
         <option>Counter</option>

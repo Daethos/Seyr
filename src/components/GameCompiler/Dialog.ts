@@ -9349,7 +9349,591 @@ const Opponent: Record<string, Dialog> = {
         },}, // Sedyrus || Lvl 4
 
     // // Named Opponents
+    "Ashreu'ul": {
+        conditions: {
+            respect: ["lesser", "neutral", "greater"],
+            familiarity: ["unfamiliar", "familiar", "intimate"]
+        },
+        challenge: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        defeat: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        farewell: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        greeting: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        persuasion: {
+            request: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            offer: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            acceptance: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            rejection: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            }
+        },
+        praise: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        provincialWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        taunt: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        victory: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        worldLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },},
     "Cyrian Shyne": {
+        conditions: {
+            respect: ["lesser", "neutral", "greater"],
+            familiarity: ["unfamiliar", "familiar", "intimate"]
+        },
+        challenge: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        defeat: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        farewell: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        greeting: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        persuasion: {
+            request: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            offer: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            acceptance: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            rejection: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            }
+        },
+        praise: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        provincialWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        taunt: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        victory: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        worldLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },},
+    "Daetheus": {
         conditions: {
             respect: ["lesser", "neutral", "greater"],
             familiarity: ["unfamiliar", "familiar", "intimate"]
@@ -13145,6 +13729,590 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },},
+    "Quor'estes": {
+        conditions: {
+            respect: ["lesser", "neutral", "greater"],
+            familiarity: ["unfamiliar", "familiar", "intimate"]
+        },
+        challenge: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        defeat: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        farewell: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        greeting: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        persuasion: {
+            request: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            offer: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            acceptance: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            rejection: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            }
+        },
+        praise: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        provincialWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        taunt: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        victory: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        worldLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },},
+    "Relien": {
+        conditions: {
+            respect: ["lesser", "neutral", "greater"],
+            familiarity: ["unfamiliar", "familiar", "intimate"]
+        },
+        challenge: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        defeat: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        farewell: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        greeting: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        localWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        persuasion: {
+            request: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            offer: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            acceptance: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            },
+            rejection: {
+                text: {
+                    lesser: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    neutral: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    },
+                    greater: {
+                        unfamiliar: "",
+                        familiar: "",
+                        intimate: ""
+                    }
+                },
+            }
+        },
+        praise: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },
+        provincialWhispers: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        taunt: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        victory: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+        },
+        },
+        worldLore: {
+            text: {
+                lesser: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                neutral: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                },
+                greater: {
+                    unfamiliar: "",
+                    familiar: "",
+                    intimate: ""
+                }
+            },
+        },},
     "Sera Lorian": {
         conditions: {
             respect: ["lesser", "neutral", "greater"],
@@ -13437,7 +14605,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },},
-    "Sulla": {
+    "Sky": {
         conditions: {
             respect: ["lesser", "neutral", "greater"],
             familiarity: ["unfamiliar", "familiar", "intimate"]
