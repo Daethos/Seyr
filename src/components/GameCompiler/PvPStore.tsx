@@ -49,6 +49,7 @@ export interface PvPData {
     roll_success: boolean;
     player_win: boolean;
     player_luckout: boolean;
+    enemyPersuaded: boolean;
 
     enemy: any;
     enemy_action: string;
@@ -154,6 +155,7 @@ export const initialPvPData: PvPData = {
     roll_success: false,
     player_win: false,
     player_luckout: false,
+    enemyPersuaded: false,
     enemy: {},
     enemy_action: '',
     enemy_counter_guess: '',
@@ -215,6 +217,8 @@ export const ACTIONS = {
     SET_PLAYER_POSITION: 'SET_PLAYER_POSITION',
     SET_ENEMY: 'SET_ENEMY',
     SET_DUEL: 'SET_DUEL',
+    RESET_LUCKOUT: 'RESET_LUCKOUT',
+    ENEMY_PERSUADED: 'ENEMY_PERSUADED',
     RESET_PLAYER: 'RESET_PLAYER',
     RESET_ENEMY: 'RESET_ENEMY',
     RESET_DUEL: 'RESET_DUEL',
@@ -239,6 +243,7 @@ export const ACTIONS = {
     CLEAR_COUNTER: 'CLEAR_COUNTER',
     AUTO_ENGAGE: 'AUTO_ENGAGE',
     PLAYER_WIN: 'PLAYER_WIN',
+    PLAYER_LUCKOUT: 'PLAYER_LUCKOUT',
     ENEMY_WIN: 'ENEMY_WIN',
     CLEAR_DUEL: 'CLEAR_DUEL',
     SET_WEATHER: 'SET_WEATHER',
@@ -452,6 +457,16 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 dodgeStatus: false,
                 instantStatus: false,
             };
+        case 'ENEMY_PERSUADED':
+            return {
+                ...state,
+                enemyPersuaded: action.payload,
+            };
+        case 'RESET_LUCKOUT':
+            return {
+                ...state,
+                player_luckout: action.payload,
+            };
         case 'PLAYER_LUCKOUT':
             return {
                 ...state,
@@ -477,6 +492,7 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 ...state,
                 player_win: false,
                 enemy_win: false,
+                enemyPersuaded: false,
                 combatEngaged: false,
                 gameIsLive: false,
                 dodgeStatus: false,

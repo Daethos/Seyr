@@ -1386,11 +1386,6 @@ const GameSolo = ({ user }: GameProps) => {
             };
             gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
             await gainExperience();
-            // setTimeout(() => {
-            //     gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
-            //     gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
-            //     dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
-            // }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
         };
@@ -1402,8 +1397,8 @@ const GameSolo = ({ user }: GameProps) => {
                 playWin();
             } else {
                 playReligion();
+                await gainExperience();
             };
-            await gainExperience();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
                 setTimeLeft(0);

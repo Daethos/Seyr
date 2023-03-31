@@ -139,10 +139,10 @@ const nonNamedEnemy =
     "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
 
 const namedEnemy = 
-    ["Cyrian Shyne", "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", 
+    ["Achreus", "Ashreu'ul" ,"Cyrian Shyne", "Daetheus", "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", 
     "Fierous Ashfyre", "Garris Ashenus", "King Mathyus Caderyn", "Kreceus", 
-    "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", 
-    "Sera Lorian", "Synaethis Spiras", "Torreous Ashfyre", "Vincere"];
+    "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavrios Ilios", "Mirio", "Quor'estes", 
+    "Sera Lorian", "Synaethi Spiras", "Torreous Ashfyre", "Vincere"];
 
 export const nameCheck = (name: string) => {
     if (namedEnemy.includes(name)) {
@@ -314,19 +314,8 @@ export const getAsceanTraits = async (ascean: Player) => {
             description: "",
             type: '',
         },
-        // traitFour: {
-        //     name: "",
-        //     description: "",
-        // },
-        // traitFive: {
-        //     name: "",
-        //     description: "",
-        // },
     };
 
-    // Persuasion = Disposition, Not Combat Related Directly, 8
-    // Luckouts = Winning Enemy Encounter w/o Combat, Combat Related, 4
-    // Mini-Game = Enemy Encounter w/ Altered Abilities, Rules, 4
 
     const ATTRIBUTE_TRAITS = {
         Constitution: {
@@ -380,21 +369,21 @@ export const getAsceanTraits = async (ascean: Player) => {
     traits.tertiary.name = topThree[2][1];
 
     const TRAIT_DESCRIPTIONS = {
-        "Ilian": "Persuasion (Autoritas), Inexorable - (Heroism - Can Change Encounters)",
-        "Kyn'gian": "Inexorable Negation (Avoidance - Can Shirk Encounters), Endurance (Health Regeneration)",
-        "Arbituous": "Persuasion (Ethos - Law), Luckout (Rhetoric)",
-        "Lilosian": "[Faithful], Persuasion (Pathos - Faith), Luckout (Peace)",
-        "Kyr'naic": "[Apathetic], Persuasion (Apathy), Luckout (Aenservaesai)",
-        "Se'van": "Mini-Game (Grappling), Poise (Combat Ability - Can debuff enemies for enhanced damage)",
-        "Sedyrist": "Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
-        "Ma'anreic": "Physical Negation (Combat Abiilty), Thievery (Merchants, Enemies)",
-        "Cambiren": "Caerenic (Combat Ability), Mini-Game (Caerenic)",
-        "Shrygeian": "Dueling Mini-Game, Knavery (Exploration Boosts)",
-        "Fyeran": "Seer (Combat Abiilty), Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)",
-        "Shaorahi": "Conviction (Combat Ability), Persuasion (Awe)",
-        "Tshaeral": "Persuasion (Fear), Mini-Game (Fear)",
+        "Ilian": "Persuasion (Autoritas), Heroism  (Can Change Encounters)",
+        "Kyn'gian": "Avoidance (Can Shirk Encounters), Endurance (Health Regeneration)",
+        "Arbituous": "Persuasion (Ethos), Luckout (Rhetoric)",
+        "Lilosian": "Persuasion (Pathos), Luckout (Peace)",
+        "Kyr'naic": "Persuasion (Apathy), Luckout (Aenservaesai)",
+        "Se'van": "Mini-Game (Grappling), Combat Ability (Berserk)",
+        "Sedyrist": "Investigative (Analysis), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
+        "Ma'anreic": "Combat Ability (Negation), Thievery (NPCs)",
+        "Cambiren": "Combat Ability (Caerenicism), Mini-Game (Hush and Tendril)",
+        "Shrygeian": "Mini-Game (Dueling), Knavery (Exploration Boosts)",
+        "Fyeran": "Combat Abiilty (Seer), Persuasion (Seer)",
+        "Shaorahi": "Combat Ability (Conviction), Persuasion (Awe)",
+        "Tshaeral": "Mini-Game (Fear), Persuasion (Fear)",
         "Chiomic": "Persuasion (Humor), Luckout (Shatter)",
-        "Astralism": "Inexorable Affirmation (Pursuit - Can Force Encounters), Impermanence (Redo Combat)",
+        "Astralism": "Combat Ability (Impermanence), Pursuit (Can Force Encounters)",
     };
 
     let first = TRAIT_DESCRIPTIONS[traits.primary.name as keyof typeof TRAIT_DESCRIPTIONS];
@@ -404,8 +393,6 @@ export const getAsceanTraits = async (ascean: Player) => {
     traits.primary.description = first;
     traits.secondary.description = second;
     traits.tertiary.description = third;
-
-    console.log(traits, "traits before return");
 
     return traits;
 };

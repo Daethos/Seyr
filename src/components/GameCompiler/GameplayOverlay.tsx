@@ -37,70 +37,20 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
 
     return (
         <Overlay target={overlayRef} show={loadingOverlay}>
-            <div
-            className='d-flex align-items-center justify-content-center'
+            <div className='d-flex align-items-center justify-content-center'
             style={{
                 position: 'fixed',
                 top: 0,
                 left: 0,
                 width: '100%',
                 height: '100%',
-                display: '',
                 backgroundColor: 'rgba(0, 0, 0, 1)',
                 zIndex: 9999,
                 border: "0.2em solid purple",
-            }}
-            >
+            }}>
             <h6 className='overlay-content' style={ overlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
                 {overlayContent}
             </h6>
-            {/* {
-                ascean?.hardcore && location.pathname.startsWith(`/Hardcore`) ? (
-                    <div style={{ textAlign: 'center' }}>
-                        <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
-                        Welcome to the Ascea, {ascean?.name}!
-                    Have you generated an arena, yet? Simply press the button, or input a name you prefer.
-                    </h5><br />
-                    <input type='text' value={mapName} onChange={(e: any) => setMapName(e.target.value)} />
-                    <br />
-                    <Button variant='' style={{ color: '#fdf6d8', fontVariant: 'small-caps', outline: 'none' }} onClick={() => generateWorld(mapName)}>Generate Arena Environment: <br /> 
-                    <p style={{ color: 'gold' }}>
-                    {mapName}
-                    </p>
-                    </Button>
-                    <br />
-                    {   mapState?.generatingWorld ?
-                        <Loading NavBar={true} />
-                        :
-                        mapState.name !== '' ?
-                        <>
-                        <p style={{ color: '#fdf6d8', fontSize: "13.5px" }}>
-                        Map Name: {mapState?.name}<br />
-                        Current Position: x: {mapState?.currentTile?.x}, y: {mapState?.currentTile?.y} | Content: {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)}<br /><br />
-                        Enemy: {mapState?.contentCounts?.enemy} | 
-                        Nothing: {mapState?.contentCounts?.nothing} | 
-                        Treasure: {mapState?.contentCounts?.treasure} <br /> 
-                        Weather: {mapState?.contentCounts?.weather} |
-                        <br />
-                        This is where you're starting, and hopefully, nothing is happening, because you are starting here and now. 
-                        {' '}Let's imagine a chunk of this arena is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering combat in any direction.<br /><br /> 
-                        {' '}You may find the arena you're in to be lacking, as this lightweight design is to simulate a Phaser canvas for coherence of gameplay.
-                        {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. It won't save, so each time you generate an arena, it'll be different.
-                        Once you're ready, click your name.
-                        <br /><br />
-                        Don't forget, you lose, it's over for your character. And yet their caeren may yearn if it's strong enough.
-                        </p>
-                        <Button variant='' onClick={saveWorldMiddleware}>
-                        <h1 style={{ color: 'gold', textShadow: '2px 2px 2px darkgoldenrod', fontSize: "36px" }}>{ascean.name}</h1>
-                        </Button>
-                        </>
-                        : ('')    
-                    }
-                    </div>
-                ) : (
-                    ''
-                )
-            } */}
             { !ascean?.alive && overlayContent === '' ? (
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
@@ -200,11 +150,9 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                     }
                 </div>
             : '' }
-            {
-                overlayContent !== '' && loadingContent ?
+            { overlayContent !== '' && loadingContent ?
                 <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", marginTop: "92.5vh", marginLeft: "90vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
-                : ''
-            }
+            : '' }
             </div>
         </Overlay>
     )

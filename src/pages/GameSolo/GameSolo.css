@@ -598,17 +598,17 @@
     background-repeat: no-repeat;
   }
   #game-block {
-    transform: scale(2);
+    transform: scale(1.75);
     margin-left: 35%;
     top: -25%;
   }
   #opponent-block {
     grid-row-start: 2;
-    transform: scale(2);
+    transform: scale(1.75);
     left: 35%;
   }
   .settings-button {
-    transform: scale(2);
+    transform: scale(1.75);
     margin-left: 0%;
     margin-top: 1%;
   }
@@ -788,6 +788,9 @@
   }
   .dialog-buttons {
     font-size: 20px;
+  }
+  .dialog-buttons.inner {
+    font-size: 24px;
   }
   .story-box {
     border: 5px solid purple;

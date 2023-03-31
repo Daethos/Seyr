@@ -2304,6 +2304,8 @@ const actionSplitter = async (combatData) => {
         computer_roll_success: false,
         computer_counter_success: false,
         player_win: false,
+        player_luckout: false,
+        enemyPersuaded: false,
         computer_win: false,
         critical_success: false,
         computer_critical_success: false,

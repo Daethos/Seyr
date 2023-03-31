@@ -21,6 +21,7 @@ export interface CombatData {
     player_defense_default: object;
     realized_player_damage: number;
     playerDamaged: boolean;
+    enemyPersuaded: boolean;
 
     player_start_description: string;
     player_special_description: string;
@@ -108,6 +109,7 @@ export const ACTIONS = {
     SET_COMPUTER: 'SET_COMPUTER',
     SET_DUEL: 'SET_DUEL',
     RESET_LUCKOUT: 'RESET_LUCKOUT',
+    ENEMY_PERSUADED: 'ENEMY_PERSUADED',
     RESET_PLAYER: 'RESET_PLAYER',
     RESET_COMPUTER: 'RESET_COMPUTER',
     RESET_DUEL: 'RESET_DUEL',
@@ -162,6 +164,7 @@ export const initialCombatData: CombatData = {
     player_defense_default: {},
     realized_player_damage: 0,
     playerDamaged: false,
+    enemyPersuaded: false,
     player_start_description: '',
     player_special_description: '',
     player_action_description: '',
@@ -441,6 +444,11 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_luckout: action.payload,
                 player_win: action.payload,
             };
+        case 'ENEMY_PERSUADED':
+            return {
+                ...state,
+                enemyPersuaded: action.payload,
+            };
         case 'RESET_LUCKOUT':
             return {
                 ...state,
@@ -461,6 +469,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player_win: false,
                 computer_win: false,
+                enemyPersuaded: false,
                 combatEngaged: false,
                 gameIsLive: false,
                 dodgeStatus: false,

@@ -115,9 +115,37 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
         };
     };
 
+    const getScale = () => {
+        const width = window.innerWidth;
+        switch (true) {
+          case width < 576:
+            return 1;
+          case width < 768:
+            return 1.1;
+          case width < 992:
+            return 1.2;
+          case width < 1200:
+            return 1.3;
+          case width < 1400:
+            return 1.4;
+          case width < 1600:
+            return 1.5;
+          case width < 1800:
+            return 1.6;
+          case width < 2000:
+            return 1.7;
+          case width >= 2000:
+            return 1.8;
+          default:
+            return 1;
+        };
+      }
+      
+
     const getItemStyle = {
         background: 'black',
-        border: getBorderStyle(lootDrop?.rarity)
+        border: getBorderStyle(lootDrop?.rarity),
+        transform: `scale(${getScale()})`,
     };
 
     return (

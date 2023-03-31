@@ -116,9 +116,13 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const [quest, setQuest] = useState<any>({});
     const [questModalShow, setQuestModalShow] = useState<boolean>(false);
     const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
+    const [persuasionModalShow, setPersuasionModalShow] = useState<boolean>(false);
     const [dialogTree, setDialogTree] = useState<any>([]);
     const [luckout, setLuckout] = useState<boolean>(false);
-    const [luckoutTrait, setLuckoutTrait] = useState<any>([]);
+    const [luckoutTraits, setLuckoutTraits] = useState<any>([]);
+    const [persuasion, setPersuasion] = useState<boolean>(false);
+    const [persuasionTraits, setPersuasionTraits] = useState<any>([]);
+    const [enemyPersuaded, setEnemyPersuaded] = useState<boolean>(false);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
@@ -128,6 +132,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         setShowQuest(true);
         getDialogTree();
         checkLuckout();
+        checkePersuasion();
         setNamedEnemy(nameCheck(enemy?.name));
         return () => {
             
@@ -283,70 +288,122 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         setTraits(response);
     };
 
-    const attemptLuckout = async (luck: string) => {
-        switch (luck) {
-            case 'Arbituous':
-                const playerRhetoric = ascean.constitution + ascean.achre;
-                const enemyRhetoric = enemy.constitution + enemy.achre;
-                if (playerRhetoric > enemyRhetoric) {
-                    return dispatch({
-                        type: ACTIONS.PLAYER_LUCKOUT,
-                        payload: true
-                    });
-                } else {
-                    await checkingLoot();
-                    return dispatch({
-                        type: ACTIONS.SET_DUEL,
-                        payload: ''
-                    });
-                };
-            case 'Chiomic':
-                const playerShatter = ascean.achre + ascean.kyosir;
-                const enemyShatter = enemy.achre + enemy.kyosir;
-                if (playerShatter > enemyShatter) {
-                    return dispatch({
-                        type: ACTIONS.PLAYER_LUCKOUT,
-                        payload: true
-                    });
-                } else {
-                    await checkingLoot();
-                    return dispatch({
-                        type: ACTIONS.SET_DUEL,
-                        payload: ''
-                    });
-                };
-            case 'Kyr\'naic':
-                const playerApathy = ascean.constitution + ascean.kyosir;
-                const enemyApathy = enemy.constitution + enemy.kyosir;
-                if (playerApathy > enemyApathy) {
-                    return dispatch({
-                        type: ACTIONS.PLAYER_LUCKOUT,
-                        payload: true
-                    });
-                } else {
-                    await checkingLoot();
-                    return dispatch({
-                        type: ACTIONS.SET_DUEL,
-                        payload: ''
-                    });
-                };
-            case 'Lilosian':
-                const playerPeace = ascean.constitution + ascean.caeren;
-                const enemyPeace = enemy.constitution + enemy.caeren;
-                if (playerPeace > enemyPeace) {
-                    return dispatch({
-                        type: ACTIONS.PLAYER_LUCKOUT,
-                        payload: true
-                    });
-                } else {
-                    await checkingLoot();
-                    return dispatch({
-                        type: ACTIONS.SET_DUEL,
-                        payload: ''
-                    });
-                };
+    const checkePersuasion = async () => {
+        const traits = {
+            primary: gameState?.primary,
+            secondary: gameState?.secondary,
+            tertiary: gameState?.tertiary,
+        };
+        const persuasionTraits = ['Ilian', 'Lilosian', 'Arbituous', "Kyr'naic", 'Chiomic', 'Fyeran', 'Shaorahi', 'Tashaeral'];
+        const matchingTraits = Object.values(traits).filter(trait => persuasionTraits.includes(trait.name));
+        if (matchingTraits.length === 0) {
+            setPersuasion(false);
+            return;
+        };
+        setPersuasion(true);
+        setPersuasionTraits(matchingTraits);
+    };
+
+    const attemptPersuasion = async (persuasion: string) => {
+        let playerPersuasion: number = 0;
+        let enemyPersuasion: number = 0;
+        switch (persuasion) {
+            case 'Arbituous': // Ethos (Law)
+                playerPersuasion = ascean.constitution + ascean.achre;
+                enemyPersuasion = enemy.constitution + enemy.achre;
+                break;
+            case 'Chiomic': // Humor
+                playerPersuasion = ascean.achre + ascean.kyosir;
+                enemyPersuasion = enemy.achre + enemy.kyosir;
+                break;
+            case 'Kyr\'naic': // Apathy
+                playerPersuasion = ascean.constitution + ascean.kyosir;
+                enemyPersuasion = enemy.constitution + enemy.kyosir;
+                break;
+            case 'Lilosian': // Peace
+                playerPersuasion = ascean.constitution + ascean.caeren;
+                enemyPersuasion = enemy.constitution + enemy.caeren;
+                break;
+            case 'Ilian': // Heroism
+                playerPersuasion = ascean.constitution + ascean.strength;
+                enemyPersuasion = enemy.constitution + enemy.strength;
+                break;
+            case 'Fyeran': // Seer
+                playerPersuasion = ascean.achre + ascean.caeren;
+                enemyPersuasion = enemy.achre + enemy.caeren;
+                break;
+            case 'Shaorahi': // Awe
+                playerPersuasion = ascean.strength + ascean.caeren;
+                enemyPersuasion = enemy.strength + enemy.caeren;
+                break;
+            case 'Tashaeral': // Fear
+                playerPersuasion = ascean.strength + ascean.kyosir;
+                enemyPersuasion = enemy.strength + enemy.kyosir;  
+                break;
             default:
                 break;
+        };
+        if (namedEnemy) { enemyPersuasion *= 1.25; } else { enemyPersuasion *= 1.1; };
+        console.log(playerPersuasion, enemyPersuasion, "Persuasion");
+        if (playerPersuasion >= enemyPersuasion) {
+            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: true });        
+        } else {
+            await checkingLoot();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Failure. Despite your ${persuasion} nature,${namedEnemy ? '' : ` the`} ${enemy.name} was not persuased, and infact, became incensed. Presumably, this was not your intention. \n\n Nevertheless, prepare for combat, ${ascean.name}, and perhaps leave the pleasantries for warmer company.` });
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
+                dispatch({
+                    type: ACTIONS.SET_DUEL,
+                    payload: ''
+                });
+            }, 4000);
+        };
+    };
+
+    const attemptLuckout = async (luck: string) => {
+        let playerLuck: number = 0;
+        let enemyLuck: number = 0;
+        switch (luck) {
+            case 'Arbituous': // Rhetoric
+                playerLuck = ascean.constitution + ascean.achre;
+                enemyLuck = enemy.constitution + enemy.achre;
+                break;
+            case 'Chiomic': // Shatter
+                playerLuck = ascean.achre + ascean.kyosir;
+                enemyLuck = enemy.achre + enemy.kyosir;
+                break;
+            case 'Kyr\'naic': // Apathy
+                playerLuck = ascean.constitution + ascean.kyosir;
+                enemyLuck = enemy.constitution + enemy.kyosir;
+                break;
+            case 'Lilosian': // Peace
+                playerLuck = ascean.constitution + ascean.caeren;
+                enemyLuck = enemy.constitution + enemy.caeren;
+                break;
+            default:
+                break;
+        };
+        if (namedEnemy) { enemyLuck *= 1.5; } else { enemyLuck *= 1.25; };
+        console.log(playerLuck, enemyLuck, "Luckout");
+        if (playerLuck >= enemyLuck) {
+            dispatch({
+                type: ACTIONS.PLAYER_LUCKOUT,
+                payload: true
+            });
+        } else {
+            await checkingLoot();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Failure. Despite your ${luck} nature,${namedEnemy ? '' : ` ${article}`} ${enemy.name} managed to resist. \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
+                dispatch({
+                    type: ACTIONS.SET_DUEL,
+                    payload: ''
+                });
+            }, 4000);
         };
     };
 
@@ -362,9 +419,9 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         if (matchingTraits.length === 0) {
             setLuckout(false);
             return;
-        }
+        };
         setLuckout(true);
-        setLuckoutTrait(matchingTraits);
+        setLuckoutTraits(matchingTraits);
     };
 
     if (loading) {
@@ -395,12 +452,31 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         <Modal show={luckoutModalShow} onHide={() => setLuckoutModalShow(false)} centered id='modal-weapon'>
             <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
             <Modal.Body style={{ textAlign: 'center' }}>
-                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement.<br /><br />
+                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement. Named Enemies are 50% more difficult to defeat with this method.<br /><br />
                 <p style={{ fontSize: "18px", color: "gold" }}>
                 Arbituous - Rhetoric (Convince the enemy to cease hostility) <br /><br />
                 Chiomic - Shatter (Mental seizure of the enemy) <br /><br />
                 Kyr'naic - Apathy (Unburden the enemy to acquiesce and die) <br /><br /> 
                 Lilosian - Peace (Allow the enemy to let go of their human failures) <br /><br />
+                </p>
+                [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
+            </Modal.Body>
+        </Modal>
+        <Modal show={persuasionModalShow} onHide={() => setPersuasionModalShow(false)} centered id='modal-weapon'>
+            <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Correspondence</Modal.Header>
+            <Modal.Body style={{ textAlign: 'center' }}>
+                These offer a unique opportunity to entreat with your enemies without the need for combat. 
+                However, failure may result anywhere from stymied conversation to hostile engagement. 
+                Named Enemies are 25% more difficult to persuade. Perhaps with more notoriety this can change.<br /><br />
+                <p style={{ fontSize: "18px", color: "gold" }}>
+                Arbituous - Ethos (Affects all enemies within the Ley) <br /><br />
+                Chiomic - Humor (This affects enemies of lesser Chomism) <br /><br />
+                Fyeran - Seer (Affects all enemies who are more mystic than martial) <br /><br />
+                Ilian - Heroism (This can affect all potential enemies) <br /><br />
+                Kyr'naic - Apathy (Affects all enemies of lesser conviction) <br /><br /> 
+                Lilosian - Pathos (Affects all enemies of the same faith) <br /><br />
+                Shaorahi - Awe (Affects all enemies of lesser conviction) <br /><br />
+                Tshaeral - Fear (Affects all enemies who can be fearful of your Tshaeral presence) <br /><br />
                 </p>
                 [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
             </Modal.Body>
@@ -420,8 +496,15 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 : currentIntent === 'challenge' ?
                     playerWin ? 
                     <>
-                        "Congratulations {ascean.name}, you were fated this win. This is all I have to offer, if it pleases you." <br /><br /> 
-
+                        { namedEnemy ? (
+                            <>
+                            "Congratulations {ascean.name}, you were fated this win. This is all I have to offer, if it pleases you." <br /><br />        
+                            </>
+                        ) : ( 
+                            <>
+                            "Appears I were wrong to treat with you in such a way, {ascean.name}. Take this if it suits you, I've no need." <br /><br />         
+                            </>
+                        ) }
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
                                 <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
@@ -440,7 +523,16 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         </> 
                     : computerWin ? 
                         <>
-                            "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play."
+                            { namedEnemy ? (
+                                <>
+                                "{ascean.name}, surely this was a jest? Come now, you disrespect me with such play. What was it that possessed you to even attempt this failure?" <br /><br />        
+                                </>
+                            ) : ( 
+                                <>
+                                "The {npc} are not to be trifled with."<br /><br />         
+                                </>
+                            ) }
+                            
                             { location.pathname.startsWith(`/Hardcore`) ?
                                 <p style = {{ color: 'dodgerblue' }}>
                                 <br /> 
@@ -453,36 +545,38 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         { namedEnemy ? ( 
                             <>
                             "Greetings, I am {enemy.name}. {ascean.name}, is it? How can I be of some help?"<br />
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise atack {npc}?</Button>
                             </> 
                         ) : ( 
                             <>
-                            {article} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            {article.charAt(0).toUpperCase()} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities {npc}?</Button>
                             </> 
                         ) }
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage with {npc}?</Button>
-                            { luckout ?
-                                ( <div>
-                                    <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setLuckoutModalShow(true)}>[Combat Alternative]</Button>
-                                    {luckoutTrait.map((trait: any, index: number) => {
-                                        return (
-                                            <div key={index}>
-                                            <Button variant='' className='dialog-buttons inner' onClick={() => attemptLuckout(trait.name)}>{trait.name}</Button>
-                                        </div>
+                        { luckout ?
+                            ( <div>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
+                                {luckoutTraits.map((trait: any, index: number) => {
+                                    return (
+                                        <div key={index}>
+                                        <Button variant='' className='dialog-buttons inner' onClick={() => attemptLuckout(trait.name)}>{trait.name} - {trait.description}</Button>
+                                    </div>
                                     )
-                                    })}
-                                </div>
-                            ) : ('') }
-
+                        })} 
+                            </div>
+                        ) : ('') }
                         </> 
                 : currentIntent === 'conditions' ?
                     <>
-                        This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like. At the moment, this will register to you your qualities you are capable of, ranked in highest to lowest order.
+                        This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like. 
+                        At the moment, this will register to you your qualities you are capable of, ranked in highest to lowest order in efficacy. You may temporarily experience all benefits simultaneously, 
+                        but will be level-locked when fully fleshed out.
                         <br /><br />
                         <Button variant='' className='dialog-buttons inner' style={{ color: 'gold' }} onClick={getTraits}>Check Personal Traits?</Button>
                         <br /><br />
                         { traits ?
                             <>
-                                <div style={{ fontSize: '12px', whiteSpace: 'pre-wrap', color: 'gold' }}>
+                                <div style={{ fontSize: '16px', whiteSpace: 'pre-wrap', color: 'gold' }}>
                                     {traits.primary.name}: {traits.primary.description}<br /><br />
                                     {traits.secondary.name}: {traits.secondary.description}<br /><br />
                                     {traits.tertiary.name}: {traits.tertiary.description}<br /><br />
@@ -494,7 +588,15 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     <>
                     { playerWin ?
                         <>
-                            "Go now, {ascean.name}, and find better pastures. But before you wander, if you wish, its yours."<br /><br />
+                        { namedEnemy ? (
+                            <>
+                            "{ascean.name}, you are truly unique in someone's design. Before you travel further, if you wish to have it, its yours."<br /><br />       
+                            </>
+                        ) : ( 
+                            <>
+                            "Go now, {ascean.name}, take what you will and find those better pastures."<br /><br />        
+                            </>
+                        ) }
                         { lootDrop?._id && lootDropTwo?._id ?
                             <>
                             <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
@@ -505,30 +607,34 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         : lootDropTwo?._id ?
                             <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
                         : '' }
-                            <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pity.</Button>
+                            <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pitious nature.</Button>
                         </>
                     : computerWin ?
-                    <>
-                        "Seek refuge {ascean.name}, your frailty wears on my caer."<br />
-                        <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide shame and wounds.</Button>
+                        <>
+                        "If you weren't entertaining in defeat I'd have a mind to simply snuff you out here and now. Seek refuge {ascean.name}, your frailty wears on my caer."<br />
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide your shame and wounds. There's always another chance, perhaps.</Button>
                         </>
-                    : 
-                    <>
+                    : state.enemyPersuaded ?
+                        <>
+                        You have persuaded {namedEnemy ? '' : ` ${article}`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
+                        </>
+                    :
+                        <>
                         { namedEnemy ? 
                             <>
-                            "I hope you find what you seek, {ascean.name}. Take care in these parts, you may never know when someone wishes to approach out of malice and nothing more."
+                            "I hope you find what you seek, {ascean.name}. Take care in these parts, you may never know when someone wishes to approach out of malice and nothing more. Strange denizens these times." <br/>
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
                             </>
                         : enemy?.level > ascean?.level && enemy?.name !== 'Traveling General Merchant' ?
                             <>
-                            "You may not be ready, {ascean?.name}, yet time has tethered us here. Come now, prepare."
+                            "You may not be ready, yet time has tethered us here. Come now {ascean?.name}, prepare."
                             <br />
-                            {/* <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button> */}
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Prepare to strike {npc}?</Button>
                             </>
                         : enemy?.name !== 'Traveling General Merchant' ?
                         <>
-                            "Where do you think you're going, {ascean?.name}? You think this is a game?"
+                            "Where do you think you're going, {ascean?.name}? Yes, I know who you are, and you may be stronger, but I'm not going to let you pass."
                             <br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage with {npc}?</Button>
                             </>
@@ -544,11 +650,14 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     </>
                 : currentIntent === 'localLore' ?
                     <>
-                        This has not been written yet
+                        This has not been written yet.<br /><br />
+                        This will entail the local lore of the region you inhabit, and the history of the area from the perspective of the enemy in question, and hopefully grant more insight into the world.
                     </>
                 : currentIntent === 'localWhispers' ?
                     <>
                         "Well, if you wish to know more, you'll have to ask."
+                        <br /><br/>
+                        [Note: This is currently a work in progress, yet you may still accept quests.]
                         <br />
                         { showQuest ?
                             localWhispers ?
@@ -563,7 +672,27 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     </>
                 : currentIntent === 'persuasion' ?
                     <>
-                        This has not been written yet
+                        At the moment this is testing the utilization of traits, in creation and evaluation. 
+                        As a temporary display of its concept, you may persuade an enemy--if available, to cease hostility 
+                        (This currently only affects non-named enemies, as named enemies start neutral).<br /><br />
+                        { persuasion ?
+                            ( <div>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
+                                {persuasionTraits.map((trait: any, index: number) => {
+                                    return (
+                                        <div key={index}>
+                                        <Button variant='' className='dialog-buttons inner' onClick={() => attemptPersuasion(trait.name)}>{trait.name} - {trait.description}</Button>
+                                    </div>
+                                    )
+                        })} 
+                            </div>
+                        ) : ('') }
+                        { state.enemyPersuaded ?
+                            <>
+                            You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
+                            </>
+                        : '' }
                     </>
                 : currentIntent === 'services' ?
                     <>
@@ -597,7 +726,10 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     </>
                 : currentIntent === 'worldLore' ?
                     <>
-                        This has not been written yet
+                        This has not been written yet<br /><br />
+                        This will entail the world lore of the region you inhabit, 
+                        the history of the world from the perspective of the enemy in question, 
+                        and hopefully grant more insight into the cultural mindset.
                     </>
                 : '' }
             </div>
