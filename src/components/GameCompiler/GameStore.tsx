@@ -587,14 +587,14 @@ export const initialGameData: GameData = {
     storyContent: '', 
     combatOverlayText: '',
     mapMode: 'FULL_MAP',
-    timeLeft: 0,
-    moveTimer: 0,
-    vibrationTime: 0,
-    canvasPosition: { x: 0, y: 0 },
-    canvasWidth: 0,
-    canvasHeight: 0,
-    joystickSpeed: 0,
-    soundEffectVolume: 0,
+    timeLeft: 12,
+    moveTimer: 12,
+    vibrationTime: 150,
+    canvasPosition: { x: 0.5, y: 1.5 },
+    canvasWidth: 300,
+    canvasHeight: 300,
+    joystickSpeed: 150,
+    soundEffectVolume: 0.3,
 };
 
 export const GameStore = (game: GameData, action: Game_Action) => {

@@ -36,6 +36,7 @@ import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
 import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal';
 import { Merchant } from '../../components/GameCompiler/NPCs';
 import PvPAscean from '../../components/GameCompiler/PvPAscean';
+import Settings from '../../components/GameCompiler/Settings';
 
 export enum MapMode {
     FULL_MAP,
@@ -155,6 +156,27 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             }, 60000);
         } catch (err: any) {
             console.log(err.message, 'Error Saving World');
+        };
+    };
+
+    const saveAsceanCoords = async (x: number, y: number) => {
+        try {
+            const data = {
+                ascean: gameState.player._id, 
+                coordinates: { x: x, y: y },
+                map: mapState
+            };
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            gameDispatch({ 
+                type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
+                payload: `Saving Coordinates X: ${data.coordinates.x}, Y: ${data.coordinates.y}. \n\n Saving Map: ${data.map.name}. \n\n Enjoy your journey, ${gameState?.player?.name}` });
+            const response = await asceanAPI.saveCoords(data);
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+            }, 2000);
+            console.log(response, 'Response Saving Ascean Coordinates');
+        } catch (err: any) {
+            console.log(err.message, 'Error Saving Ascean Coordinates');
         };
     };
 
@@ -1454,6 +1476,10 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             />
             </>
         ) : ( '' )}
+            <Settings 
+                inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
+                gameDispatch={gameDispatch}gameState={gameState} mapState={mapState}
+            />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }

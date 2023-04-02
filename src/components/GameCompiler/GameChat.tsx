@@ -48,9 +48,8 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
     // }, [playerState]);
 
     useEffect(() => {
-        console.log(state.playerPosition, "Player Position in State in GameChat");
         console.log(state, "State in GameChat")
-    }, [state.playerPosition]);
+    }, [state]);
 
     useEffect(() => { console.log(mapState, "Map in GameChat") }, [mapState]);
 
@@ -214,7 +213,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
 
     return (
         <>
-        { liveGameplay ?
+        { !liveGameplay ?
             <>
             <GamePvP 
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} mapState={mapState} mapDispatch={mapDispatch} 

@@ -112,7 +112,6 @@ io.on("connection", (socket) => {
       player: connectedUsersCount,
       ready: false,
     }
-    console.log(data.ascean, "Ascean Data?");
 
     let playerStateData = {
       playerOne: null,
@@ -132,8 +131,11 @@ io.on("connection", (socket) => {
     };
 
     const response = await asceanService.asceanCompiler(data.ascean);
-    io.to(data.room).emit(`player_data`, response.data);
-    console.log(newUser.player, "Submitting Position")
+    const responseData = {
+      data: response.data,
+      user: data.user,
+    };
+    io.to(data.room).emit(`player_data`, responseData);
     io.to(data.room).emit(`player_position`, newUser);
     io.to(data.room).emit(`player_state`, playerStateData);
 
@@ -240,10 +242,8 @@ io.on("connection", (socket) => {
     let newMap = {};
  
     socket.on(`createMap`, async (mapData) => {
-      console.log(`Creating Map`)
       const map = new WorldMap(mapData.name, mapData.ascean);
       newMap = map;
-      console.log("Map Created")
       io.to(newUser.room).emit(`mapCreated`, map);
     });
 
@@ -258,9 +258,10 @@ io.on("connection", (socket) => {
 
     io.to(data.room).emit(`receive_message`, helloMessage);
 
-    socket.on(`playerDirectionChange`, async (data) => {
-      console.log('Player Direction Change')
-      io.to(data.room).emit(`playerDirectionChanged`, data);
+    socket.on(`playerDirectionChange`, async (directionData) => {
+      // console.log('Player Direction Change');
+      const newDirection = directionData;
+      io.to(data.room).emit(`playerDirectionChanged`, newDirection);
     });
 
     socket.on(`ascean`, async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers

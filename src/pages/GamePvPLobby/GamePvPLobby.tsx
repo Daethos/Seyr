@@ -168,7 +168,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
         const playerDataCallback = (player: any) => {
           console.log(player, "Receiving Player Data");
-          dispatch({ type: ACTIONS.SET_PLAYER, payload: player });
+          if (player.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER, payload: player.data });
         };
         handleSocketEvent('player_data', playerDataCallback);
     

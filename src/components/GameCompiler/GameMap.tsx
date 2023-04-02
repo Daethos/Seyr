@@ -135,7 +135,28 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
             if (x === playerX && y === playerY) {
                 color = 'gold'; // set the current tile color to gold
-            }
+            };
+            if (mapData.player1Tile) {
+                if (x === mapData.player1Tile.x && y === mapData.player1Tile.y) {
+                    color = 'gold';
+                };
+            };
+            if (mapData.player2Tile) {
+                if (x === mapData.player2Tile.x && y === mapData.player2Tile.y) {
+                    color = 'purple';
+                };
+            };
+            if (mapData.player3Tile) {
+                if (x === mapData.player3Tile.x && y === mapData.player3Tile.y) {
+                    color = 'blue';
+                };
+            };
+            if (mapData.player4Tile) {
+                if (x === mapData.player4Tile.x && y === mapData.player4Tile.y) {
+                    color = 'green';
+                };
+            };
+            
             const offsetX = canvasWidth / 2 + x * tileSize; // calculate the tile position on the canvas
             const offsetY = canvasHeight / 2 - y * tileSize;
             ctx.fillStyle = color;
@@ -223,7 +244,27 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             let color = tile.color || 'gray'; // set the tile color to gray if no color is specified
             if (x === playerX && y === playerY) {
                 color = 'gold'; // set the current tile color to gold
-            }
+            };
+            if (mapData.player1Tile) {
+                if (x === mapData.player1Tile.x && y === mapData.player1Tile.y) {
+                    color = 'gold';
+                };
+            };
+            if (mapData.player2Tile) {
+                if (x === mapData.player2Tile.x && y === mapData.player2Tile.y) {
+                    color = 'purple';
+                };
+            };
+            if (mapData.player3Tile) {
+                if (x === mapData.player3Tile.x && y === mapData.player3Tile.y) {
+                    color = 'blue';
+                };
+            };
+            if (mapData.player4Tile) {
+                if (x === mapData.player4Tile.x && y === mapData.player4Tile.y) {
+                    color = 'green';
+                };
+            };
             const offsetX = canvasWidth / 2 + (x - quadOffset[0]) * tileSize; // calculate the tile position on the canvas
             const offsetY = canvasHeight / 2 - (y - quadOffset[1]) * tileSize;
             ctx.fillStyle = color;
@@ -250,7 +291,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
         return quadrantTiles;
     };
       
-    function drawSurroundingTiles(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, surroundingTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): void {
+    function drawSurroundingTiles(mapData: MapData, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, surroundingTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): void {
         const tileSize = 2; 
       
         const canvasWidth = canvas.width;
@@ -262,21 +303,45 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             const [x, y] = coords.split(',').map(Number);
             const tile = surroundingTiles[coords];
             let color = tile.color || 'gray';
-                const offsetX = canvasWidth / 2 + (x - playerPosition.x) * tileSize; // calculate the tile position on the canvas
-                const offsetY = canvasHeight / 2 - (y - playerPosition.y) * tileSize;
-                ctx.fillStyle = color;
-                ctx.fillRect(offsetX, offsetY, tileSize, tileSize); 
-            
-        };
-        // draw the player tile on top of the rest of the tiles
-            const color = 'gold';
-            const offsetX = canvasWidth / 2 + (playerPosition.x - playerPosition.x) * tileSize;
-            const offsetY = canvasHeight / 2 - (playerPosition.y - playerPosition.y) * tileSize;
+            const offsetX = canvasWidth / 2 + (x - playerPosition.x) * tileSize; // calculate the tile position on the canvas
+            const offsetY = canvasHeight / 2 - (y - playerPosition.y) * tileSize;
+            if (x === playerPosition.x && y === playerPosition.y) {
+                color = 'gold';
+            };
+            if (mapData.player1Tile) {
+                if (x === mapData.player1Tile.x && y === mapData.player1Tile.y) {
+                    color = 'gold';
+                };
+            };
+            if (mapData.player2Tile) {
+                if (x === mapData.player2Tile.x && y === mapData.player2Tile.y) {
+                    color = 'purple';
+                };
+            };
+            if (mapData.player3Tile) {
+                if (x === mapData.player3Tile.x && y === mapData.player3Tile.y) {
+                    color = 'blue';
+                };
+            };
+            if (mapData.player4Tile) {
+                if (x === mapData.player4Tile.x && y === mapData.player4Tile.y) {
+                    color = 'green';
+                };
+            };
             ctx.fillStyle = color;
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 0.75;
-            ctx.strokeRect(offsetX, offsetY, tileSize, tileSize);
-            ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
+            ctx.fillRect(offsetX, offsetY, tileSize, tileSize); 
+        };
+
+        // draw the player tile on top of the rest of the tiles
+        
+            // const color = 'gold';
+            // const offsetX = canvasWidth / 2 + (playerPosition.x - playerPosition.x) * tileSize;
+            // const offsetY = canvasHeight / 2 - (playerPosition.y - playerPosition.y) * tileSize;
+            // ctx.fillStyle = color;
+            // ctx.strokeStyle = 'black';
+            // ctx.lineWidth = 0.5;
+            // ctx.strokeRect(offsetX, offsetY, tileSize, tileSize);
+            // ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
         };
       
     function renderSurroundingTiles() {
@@ -292,7 +357,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                 const playerY = mapData?.currentTile?.y;
                 const surroundingTiles = getSurroundingTiles(mapData?.visitedTiles, { x: playerX, y: playerY });
                 ctx.translate(canvasWidth / 2, canvasHeight / 2); // translate the canvas to center on the player
-                drawSurroundingTiles(ctx, canvas, surroundingTiles, { x: playerX, y: playerY });
+                drawSurroundingTiles(mapData, ctx, canvas, surroundingTiles, { x: playerX, y: playerY });
             };
         };
     };
@@ -310,7 +375,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                 const playerY = mapData?.currentTile?.y;
                 const surroundingTiles = getSurroundingTiles(mapData?.visitedTiles, { x: playerX, y: playerY });
                 ctx.translate(canvasWidth / 2, canvasHeight / 2); // translate the canvas to center on the player
-                drawSurroundingTiles(ctx, canvas, surroundingTiles, { x: playerX, y: playerY });
+                drawSurroundingTiles(mapData, ctx, canvas, surroundingTiles, { x: playerX, y: playerY });
             };
         };
     };

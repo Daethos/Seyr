@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep';
 export interface MapData {
     name: string;
     player: string;
@@ -16,6 +15,10 @@ export interface MapData {
     generatingWorld: boolean;
     steps: number;
     contentMoved: boolean;
+    player1Tile: null | { x: number; y: number; content: string; color: string };
+    player2Tile: null | { x: number; y: number; content: string; color: string };
+    player3Tile: null | { x: number; y: number; content: string; color: string };
+    player4Tile: null | { x: number; y: number; content: string; color: string };
 };
 
 interface Action {
@@ -59,6 +62,10 @@ export const initialMapData: MapData = {
     generatingWorld: false,
     steps: 0,
     contentMoved: false,
+    player1Tile:  null,
+    player2Tile:  null,
+    player3Tile:  null,
+    player4Tile:  null,
 };
 
 export const MapStore = (map: MapData, action: Action) => {
@@ -79,7 +86,6 @@ export const MapStore = (map: MapData, action: Action) => {
         case 'SET_NEW_MAP_COORDS':
             console.log(action.payload, "Setting New Map Coords")
             const newCoords = action.payload.newTile;
-            // const visitedTiles = cloneDeep(map.visitedTiles);
             const visitedTiles = {...action.payload.map.visitedTiles};
             visitedTiles[`${newCoords.x},${newCoords.y}`] = { 
                 color: newCoords.color,
@@ -91,7 +97,6 @@ export const MapStore = (map: MapData, action: Action) => {
                     content: tile.content, 
                 };
             };
-            // console.log(visitedTiles, "Visited Tiles")
             return {
                 ...map,
                 currentTile: action.payload.newTile,
@@ -100,27 +105,28 @@ export const MapStore = (map: MapData, action: Action) => {
                 steps: map.steps + 1,
             };
         case 'SET_MULTIPLAYER_PLAYER':
+            console.log(action.payload, "Setting Multiplayer Player");
             const player = action.payload.player;
-            const newerCoords = action.payload.newCoords;
+            const newerTile = action.payload.newTile;
             if (player === 1) {
                 return {
                     ...map,
-                    player1Coords: newerCoords
+                    player1Tile: newerTile
                 };
             } else if (player === 2) {
                 return {
                     ...map,
-                    player2Coords: newerCoords
+                    player2Tile: newerTile
                 };
             } else if (player === 3) {
                 return {
                     ...map,
-                    player3Coords: newerCoords
+                    player3Tile: newerTile
                 };
             } else if (player === 4) {
                 return {
                     ...map,
-                    player4Coords: newerCoords
+                    player4Tile: newerTile
                 };
             } else {
                 return map;
@@ -134,7 +140,7 @@ export const MapStore = (map: MapData, action: Action) => {
             const newTile = action.payload.map[mapX][mapY];
             if (newTile.content !== action.payload.currentTile.content) {
                 map.currentTile = newTile;      
-            }
+            };
             return {
                     ...map,
                     contentMoved: true,
@@ -216,195 +222,17 @@ function sliceContentCluster(oldX: number, oldY: number, contentType: string, co
 };
   
 export function moveContent(mapState: MapData, contentClusters: any, visitedTiles: any) {
-    // console.log("Content on the Move")
     // Define a function to get the adjacent tiles for a given coordinate
-    // console.log(mapState, "Moving Content")
     function getAdjacentTiles(x: number, y: number): [number, number][] {
         return [
             [x, y + 1],
-            [x + 1, y + 1],
-            [x + 1, y],
-            [x + 1, y - 1],
             [x, y - 1],
-            [x - 1, y - 1],
+            [x + 1, y],
             [x - 1, y],
-            [x - 1, y + 1], //
-            // [x, y + 2],
-            // [x + 2, y + 2],
-            // [x + 2, y],
-            // [x + 2, y - 2],
-            // [x, y - 2],
-            // [x - 2, y - 2],
-            // [x - 2, y],
-            // [x - 2, y + 2], //
-            // [x, y + 3],
-            // [x + 3, y + 3],
-            // [x + 3, y],
-            // [x + 3, y - 3],
-            // [x, y - 3],
-            // [x - 3, y - 3],
-            // [x - 3, y],
-            // [x - 3, y + 3],
-            // [x + 1, y + 2],
-            // [x + 2, y + 1],
-            // [x + 1, y - 2],
-            // [x + 2, y - 1],
-            // [x - 1, y - 2],
-            // [x - 2, y - 1],
-            // [x - 1, y + 2],
-            // [x - 2, y + 1],
-            // [x + 1, y + 3],
-            // [x + 3, y + 1],
-            // [x + 1, y - 3],
-            // [x + 3, y - 1],
-            // [x - 1, y - 3],
-            // [x - 3, y - 1],
-            // [x - 1, y + 3],
-            // [x - 3, y + 1],
-            // [x + 2, y + 3],
-            // [x + 3, y + 2],
-            // [x + 2, y - 3],
-            // [x + 3, y - 2],
-            // [x - 2, y - 3],
-            // [x - 3, y - 2],
-            // [x - 2, y + 3],
-            // [x - 3, y + 2],
-            // the way to 5
-            // [x, y + 4],
-            // [x + 4, y + 4],
-            // [x + 4, y],
-            // [x + 4, y - 4],
-            // [x, y - 4],
-            // [x - 4, y - 4],
-            // [x - 4, y],
-            // [x - 4, y + 4], //
-            // [x, y + 5],
-            // [x + 5, y + 5],
-            // [x + 5, y],
-            // [x + 5, y - 5],
-            // [x, y - 5],
-            // [x - 5, y - 5],
-            // [x - 5, y],
-            // [x - 5, y + 5], //
-            // [x, y + 6],
-            // [x + 6, y + 6],
-            // [x + 6, y],
-            // [x + 6, y - 6],
-            // [x, y - 6],
-            // [x - 6, y - 6],
-            // [x - 6, y],
-            // [x - 6, y + 6], //
-            // // And now the 4/1 to 4/6, and 6/1 to 6/6
-            // [x + 1, y + 4],
-            // [x + 4, y + 1],
-            // [x + 1, y - 4],
-            // [x + 4, y - 1],
-            // [x - 1, y - 4],
-            // [x - 4, y - 1],
-            // [x - 1, y + 4],
-            // [x - 4, y + 1],
-            // [x + 1, y + 5],
-            // [x + 5, y + 1],
-            // [x + 1, y - 5],
-            // [x + 5, y - 1],
-            // [x - 1, y - 5],
-            // [x - 5, y - 1],
-            // [x - 1, y + 5],
-            // [x - 5, y + 1],
-            // [x + 1, y + 6],
-            // [x + 6, y + 1],
-            // [x + 1, y - 6],
-            // [x + 6, y - 1],
-            // [x - 1, y - 6],
-            // [x - 6, y - 1],
-            // [x - 1, y + 6],
-            // [x - 6, y + 1],
-            // [x + 2, y + 4],
-            // [x + 4, y + 2],
-            // [x + 2, y - 4],
-            // [x + 4, y - 2],
-            // [x - 2, y - 4],
-            // [x - 4, y - 2],
-            // [x - 2, y + 4],
-            // [x - 4, y + 2],
-            // [x + 2, y + 5],
-            // [x + 5, y + 2],
-            // [x + 2, y - 5],
-            // [x + 5, y - 2],
-            // [x - 2, y - 5],
-            // [x - 5, y - 2],
-            // [x - 2, y + 5],
-            // [x - 5, y + 2],
-            // [x + 2, y + 6],
-            // [x + 6, y + 2],
-            // [x + 2, y - 6],
-            // [x + 6, y - 2],
-            // [x - 2, y - 6],
-            // [x - 6, y - 2],
-            // [x - 2, y + 6],
-            // [x - 6, y + 2],
-            // [x + 3, y + 4],
-            // [x + 4, y + 3],
-            // [x + 3, y - 4],
-            // [x + 4, y - 3],
-            // [x - 3, y - 4],
-            // [x - 4, y - 3],
-            // [x - 3, y + 4],
-            // [x - 4, y + 3],
-            // [x + 3, y + 5],
-            // [x + 5, y + 3],
-            // [x + 3, y - 5],
-            // [x + 5, y - 3],
-            // [x - 3, y - 5],
-            // [x - 5, y - 3],
-            // [x - 3, y + 5],
-            // [x - 5, y + 3],
-            // [x + 3, y + 6],
-            // [x + 6, y + 3],
-            // [x + 3, y - 6],
-            // [x + 6, y - 3],
-            // [x - 3, y - 6],
-            // [x - 6, y - 3],
-            // [x - 3, y + 6],
-            // [x - 6, y + 3],
-            // [x + 4, y + 5],
-            // [x + 5, y + 4],
-            // [x + 4, y - 5],
-            // [x + 5, y - 4],
-            // [x - 4, y - 5],
-            // [x - 5, y - 4],
-            // [x - 4, y + 5],
-            // [x - 5, y + 4],
-            // [x + 4, y + 6],
-            // [x + 6, y + 4],
-            // [x + 4, y - 6],
-            // [x + 6, y - 4],
-            // [x - 4, y - 6],
-            // [x - 6, y - 4],
-            // [x - 4, y + 6],
-            // [x - 6, y + 4],
-            // [x + 5, y + 6],
-            // [x + 6, y + 5],
-            // [x + 5, y - 6],
-            // [x + 6, y - 5],
-            // [x - 5, y - 6],
-            // [x - 6, y - 5],
-            // [x - 5, y + 6],
-            // [x - 6, y + 5],
-            // // Now the 4/4s, 5/5s, and 6/6s
-            // [x + 4, y + 4],
-            // [x + 4, y - 4],
-            // [x - 4, y - 4],
-            // [x - 4, y + 4],
-            // [x + 5, y + 5],
-            // [x + 5, y - 5],
-            // [x - 5, y - 5],
-            // [x - 5, y + 5],
-            // [x + 6, y + 6],
-            // [x + 6, y - 6],
-            // [x - 6, y - 6],
-            // [x - 6, y + 6],
-
+            [x + 1, y + 1],
+            [x + 1, y - 1],
+            [x - 1, y - 1],
+            [x - 1, y + 1],
         ];
     };
 
@@ -451,8 +279,6 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
             };
         };
     };
-
-
 
     function updateContentClusters(oldX: number, oldY: number, newX: number, newY: number, contentType: string) {
         // Get the index of the old coordinate in the corresponding array in contentClusters
@@ -550,6 +376,5 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
             };
         };
     };
-    // console.log("Moving Content Complete");
     return mapState;
 };
