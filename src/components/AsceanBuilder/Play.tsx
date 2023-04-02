@@ -3,22 +3,15 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { NavLink } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
+import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
+import AsceanAttributeCompiler from '../AsceanAttributeCompiler/AsceanAttributeCompiler';
 
 interface Props {
     ascean?: any;
-}
+};
 
 const Play = ({ ascean }: Props) => {
     const [playModalShow, setPlayModalShow] = useState<boolean>(false);
-
-    const hardcoreStyle = {
-        color: "red",
-        fontWeight: 600,
-        marginLeft: "4.5%",
-        fontFamily: "Cinzel",
-        fontSize: "1.5rem",
-        display: "inline-block",
-    }
 
     return (
         <>
@@ -35,21 +28,43 @@ const Play = ({ ascean }: Props) => {
             centered
             aria-labelledby="contained-modal-title-vcenter"
             id="modal-delete"
+            style={{ fontFamily: "Cinzel" }}
         >
-        <Modal.Body id="modal-delete" className="equipment-modal" style={{ color: "gold" }}>
-            Do you wish to Play as {ascean.name} ?
-            <Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id}
-                style={{ color: ascean.hardcore ? 'red' : 'blue' }} 
-                className='btn btn-lg btn-outline-black mb-1 update-links'>
-                <h3><>Play </>
-                <img 
-                src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
-                alt={ascean.origin + ascean.sex} 
-                style={{ width: 100 + 'px', height: 100 + 'px', borderRadius: 50 + '%', border: 2 + 'px solid purple' }}
-                /> 
-                <> {ascean.name}</>
-                </h3>
-            </Nav.Link>
+        <Modal.Header style={{ fontSize: "28px", color: "gold" }}>
+           {ascean.name}
+           <span style={{ float: "right" }}>
+            <img 
+            src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
+            alt={ascean.origin + ascean.sex} 
+            style={{ width: '15vw', borderRadius: 50 + '%', border: '2px solid gold', boxShadow: '0 0 10px gold' }}
+            /> 
+            </span>
+        </Modal.Header>
+        <Modal.Body id="modal-delete" className="equipment-modal" style={{ color: "#fdf6d8" }}>
+            <div className='creature-heading'>
+                <h2 style={{ fontSize: "18px", color: "gold" }}>{ascean.description}</h2>
+            </div>
+            Level: {ascean.level}<br />
+            Experience: {ascean.experience} / {ascean.level * 1000}<br />
+            Mastery: {ascean.mastery}<br />
+            <AsceanAttributeCompiler ascean={ascean} />
+            <AsceanImageCard 
+                weapon_one={ascean.weapon_one}
+                weapon_two={ascean.weapon_two}
+                weapon_three={ascean.weapon_three}
+                shield={ascean.shield}
+                helmet={ascean.helmet}
+                chest={ascean.chest}
+                legs={ascean.legs}
+                amulet={ascean.amulet}
+                ring_one={ascean.ring_one}
+                ring_two={ascean.ring_two}
+                trinket={ascean.trinket}
+                key={ascean._id} 
+            />
+        <Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id} style={{ color: ascean.hardcore ? 'red' : 'blue', fontSize: "32px", fontWeight: 900, textShadow: "1px 1px 1px purple" }} className='btn btn-lg btn-outline-black mb-1 update-links'>
+            Play as {ascean.name}
+        </Nav.Link>
         </Modal.Body>
         </Modal>
         </>

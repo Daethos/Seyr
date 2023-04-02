@@ -14,24 +14,16 @@
     float: right;
     margin-top: -5px;
 }
-.eqp-popover {
-    font-size: 20px;
-    border: 1.5px solid orangered;
-    
-}
 #origin-pic {
     max-width: 5vw;
     border: 2px solid purple;
     border-radius: 50%;
 }
-
 @media screen and (max-width: 675px) {
     .origin-popover {
         font-size: 10px;
-        
     }
     #popover-body {
         max-height: 80vh;
     }
-    
 }

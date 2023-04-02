@@ -1,44 +1,44 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Loading from '../Loading/Loading';
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
 import { FloatingLabel } from 'react-bootstrap';
-import userService from '../../utils/userService'
+import userService from '../../utils/userService';
 import ToastAlert from '../ToastAlert/ToastAlert';
 
 interface Props {
     user: any;
     setUser: any;
-}
+};
 
 const UserModal = ({ user, setUser }: Props) => {
-    const [newName, setNewName] = useState("")
-    const [newEmail, setNewEmail] = useState("")
-    const [newBio, setNewBio] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [loadingBio, setLoadingBio] = useState(false)
-    const [error, setError] = useState<any>({})
+    const [newName, setNewName] = useState("");
+    const [newEmail, setNewEmail] = useState("");
+    const [newBio, setNewBio] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [loadingBio, setLoadingBio] = useState(false);
+    const [error, setError] = useState<any>({});
 
     const handleUser = async () => {
-        if (!newName) return
+        if (!newName) return;
         try {
             setLoading(true)
             const response = await userService.updateUser({
                 username: newName,
-            })
-            console.log(response.data, 'Response Updating User')
-            setUser(response.data)
-            setLoading(false)
+            });
+            console.log(response.data, 'Response Updating User');
+            setUser(response.data);
+            setLoading(false);
         } catch (err: any) {
-            console.log(err.message, 'Error Updating User')
+            console.log(err.message, 'Error Updating User');
             setError({
                 title: 'Updating Username Error',
                 content: err.message
-            })
-        }
+            });
+        };
      }
      const handleBio = async () => {
-        if (!newBio) return
+        if (!newBio) return;
         try {
             setLoadingBio(true)
             const response = await userService.updateBio({
@@ -52,9 +52,9 @@ const UserModal = ({ user, setUser }: Props) => {
             setError({
                 title: 'Updating Bio Error',
                 content: err.message
-            })
-        }
-     }
+            });
+        };
+     };
 
     return (
         <>
@@ -153,7 +153,7 @@ const UserModal = ({ user, setUser }: Props) => {
             Update {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
         </Button> */}
         </>
-    )
-}
+    );
+};
 
-export default UserModal
+export default UserModal;

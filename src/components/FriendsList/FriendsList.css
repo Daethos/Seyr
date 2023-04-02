@@ -1,6 +1,5 @@
 #friend-card {
     float: left;
-    
 }
 .friend-block {
     width: 100%;
@@ -9,13 +8,11 @@
     border-radius: 20px;
     padding: 5px 10px 20px; 
     box-shadow: 0 0 0.7em #ff0195;
-    /* color: #fdf6d8; */
 }
 .friend-pic {
     border-radius: 50%;
     width: 75px;
     height: 75px;
-    
     overflow: hidden;
     border: 2px solid purple;
 }

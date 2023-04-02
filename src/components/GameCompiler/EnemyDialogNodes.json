@@ -1,0 +1,36 @@
+{
+    "nodes": [
+        {
+            "id": "0001",
+            "text": "This is Text from Node 0001",
+            "options": [
+                {
+                    "text": "Response Text Node 0001",
+                    "next": "0002",
+                    "npcIds": [
+                        "Achreon Druid"
+                    ]
+                }
+            ],
+            "npcIds": [
+                "Achreon Druid"
+            ]
+        },
+        {
+            "id": "0002",
+            "text": "This is Text from Node 0002",
+            "options": [
+                {
+                    "text": "Response Text Node 0002",
+                    "next": "0003",
+                    "npcIds": [
+                        "Achreon Druid"
+                    ]
+                }
+            ],
+            "npcIds": [
+                "Achreon Druid"
+            ]
+        }
+    ]
+}

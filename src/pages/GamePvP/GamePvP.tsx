@@ -1,5 +1,4 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
-import './GamePvP.css'
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button';
@@ -63,24 +62,18 @@ interface GameProps {
     enemyPlayer: any;
     spectator: boolean;
     getAsceanCoords: (x: number, y: number, map: any) => Promise<any>;
-    generateWorld: (mapName: string) => Promise<void>
+    generateWorld: (mapName: string) => Promise<void>;
+    handleSocketEvent: (event: string, callback: Function) => void;
 };
 
-const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, getAsceanCoords, generateWorld, user, ascean, opponent, spectator, room, socket, setModalShow, enemyPlayer }: GameProps) => {
+const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, getAsceanCoords, generateWorld, user, ascean, opponent, spectator, room, socket, setModalShow, enemyPlayer }: GameProps) => {
     const [loading, setLoading] = useState(false);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [moveTimer, setMoveTimer] = useState<number>(6)
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [mapMode, setMapMode] = useState<MapMode>(MapMode.FULL_MAP);
-    const [vibrationTime, setVibrationTime] = useState<number>(100);
-    const [canvasPosition, setCanvasPosition] = useState<{ x: number; y: number }>({ x: 0.125, y: 1.75 });
-    const [canvasWidth, setCanvasWidth] = useState<number>(400);
-    const [canvasHeight, setCanvasHeight] = useState<number>(400);
-    const [soundEffectVolume, setSoundEffectVolume] = useState<number>(0.3);
-    const [joystickSpeed, setJoystickSpeed] = useState<number>(150);
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(soundEffectVolume);
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
     const [background, setBackground] = useState<any | null>({
         background: ''
@@ -275,8 +268,6 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
         };
     };
-
-
 
     const getOpponent = async () => {
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
@@ -730,7 +721,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             //TODO:FIXME: Socket.Emit
             const response = await gameAPI.instantAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INSTANT_COMBAT,
                 payload: response.data
@@ -758,7 +749,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             //TODO:FIXME: Socket.Emit 
             const response = await gameAPI.consumePrayer(state);
-            if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -778,7 +769,6 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
     const resetAscean = async () => {
         try {
             await socket.emit(`request_reduel`, state);
-           
         } catch (err: any) {
             console.log(err.message, 'Error Resetting Ascean')
         };
@@ -786,42 +776,42 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
 
     // TODO:FIXME: Send it via like an auto-engage to update both peoples combatData to check for both player's initiation of actions
 
-    useEffect(() => {
-        socket.on(`combat_response`, (response: any) => {
-            console.log('Combat Response!')
-            statusUpdate(response)
-        });
-    }, []);
+    // useEffect(() => {
+    //     socket.on(`combat_response`, (response: any) => {
+    //         console.log('Combat Response!')
+    //         statusUpdate(response)
+    //     });
+    // }, []);
 
     const [reduelRequest, setReduelRequest] = useState<boolean>(false);
 
-    useEffect(() => {
-        socket.on(`reduel_requested`, async (newData: any) => {
-        });
-    });
+    // useEffect(() => {
+    //     socket.on(`reduel_requested`, async (newData: any) => {
+    //     });
+    // });
 
-    useEffect(() => {
-        socket.on(`reset_duel`, async () => {
-            console.log('Duel Resetting');
-            await resetCombat();
-        });
-    }, []);
+    // useEffect(() => {
+    //     socket.on(`reset_duel`, async () => {
+    //         console.log('Duel Resetting');
+    //         await resetCombat();
+    //     });
+    // }, []);
 
-    const resetCombat = async () => {
-        try {
-            setLoading(true);
-            setTimeout(() => setLoading(false), 3000);
-        } catch (err: any) {
-            console.log(err.message, 'Error Resetting Combat');
-        };
-    };
+    // const resetCombat = async () => {
+    //     try {
+    //         setLoading(true);
+    //         setTimeout(() => setLoading(false), 3000);
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error Resetting Combat');
+    //     };
+    // };
 
-    useEffect(() => {
-        socket.on(`soft_response`, (response: any) => {
-            console.log(`Soft Response`);
-            softUpdate(response);
-        });
-    });
+    // useEffect(() => {
+    //     socket.on(`soft_response`, (response: any) => {
+    //         console.log(`Soft Response`);
+    //         softUpdate(response);
+    //     });
+    // });
 
     const softUpdate = async (response: any) => {
         try {
@@ -1174,7 +1164,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             };
             return;
         };
-        if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+        if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
         try {
             switch (content) {
                 case 'enemy': {
@@ -1266,6 +1256,34 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
     };
 
     useEffect(() => {
+
+        const playerDirectionChangedCallback = (data: any) => {
+            mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data });
+        }; 
+        handleSocketEvent('playerDirectionChanged', playerDirectionChangedCallback);
+
+        const combatResponseCallback = async (response: any) => {
+            console.log('Combat Response!')
+            await statusUpdate(response);
+        };
+        handleSocketEvent('combat_response', combatResponseCallback);
+
+        const softResponseCallback = async (response: any) => {
+            console.log(`Soft Response`);
+            await softUpdate(response);
+        };
+        handleSocketEvent('soft_response', softResponseCallback);
+
+        return () => {
+            if (socket) {
+                socket.off('playerDirectionChanged');
+                socket.off('combat_response');
+                socket.off('soft_response');
+            };
+        };
+    }, [socket]);
+
+    useEffect(() => {
         if (mapState?.currentTile?.content === 'nothing') {
             if (gameState.cityButton) {
                 gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
@@ -1291,9 +1309,9 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
 
-        socket.on(`playerDirectionChanged`, async (data: any) => {
-            mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data })
-        });
+        // socket.on(`playerDirectionChanged`, async (data: any) => {
+        //     mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data })
+        // });
 
     }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
@@ -1347,7 +1365,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
                 options[random]();
-                if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             };
         };
     };
@@ -1360,7 +1378,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
         };
     }; 
     
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, joystickSpeed);
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
 
     async function getAsceanGroupCoords(x: number, y: number, map: any) {
         let tiles = [];
@@ -1412,12 +1430,6 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             case 'Sedyreal':
                 return process.env.PUBLIC_URL + `/images/sedyrus_${num}.jpg`;
         };
-    };
-
-    function sleep(ms: number) {
-        return new Promise(
-            resolve => setTimeout(resolve, ms)
-        );
     };
 
     if (loadingAscean || loading) {
@@ -1474,11 +1486,7 @@ const GamePvP = ({ state, dispatch, playerState, playerDispatch, mapState, mapDi
             </>
         ) : (
             <>
-                {/* <GameMap 
-                    mapData={mapState} canvasRef={canvasRef} canvasPosition={canvasPosition} setCanvasPosition={setCanvasPosition} 
-                    canvasHeight={canvasHeight} canvasWidth={canvasWidth} setCanvasHeight={setCanvasHeight} setCanvasWidth={setCanvasWidth}
-                    mapMode={mapMode} setMapMode={setMapMode}
-                /> */}
+                    <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                 { gameState.showDialog ?    
                     <DialogBox 
                         npc={gameState.opponent.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}

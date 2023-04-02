@@ -1,11 +1,3 @@
-#popover, #popover-header, #popover-body {
-    font-family: 'Cinzel';
-    background: #fafafa;
-    color: purple;
-    box-shadow: 10px 5px 20px 0 rgba(80, 0, 0, 0.55), 10px 6px 20px 0 rgba(80, 0, 0, 0.55);
-    font-weight: 900;
-    z-index: 100;
-}
 #nav-pic {
     max-width: 6.5vw;
     max-height: 6.5vh;
@@ -13,8 +5,4 @@
 #popover-image {
     float: right;
     margin-top: -5px;
-}
-.eqp-popover {
-    font-size: 20px;
-    border: 1.5px solid orangered;
 }

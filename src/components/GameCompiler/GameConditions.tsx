@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import * as gameAPI from '../../utils/gameApi'
 import Loading from '../Loading/Loading';
-import { ACTIONS, shakeScreen } from './CombatStore';
+import { ACTIONS } from './CombatStore';
 
 interface Props {
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;

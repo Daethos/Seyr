@@ -327,77 +327,66 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getWeaponTwoStyle = {
         border: getBorderStyle(weapon_two?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getWeaponThreeStyle = {
         border: getBorderStyle(weapon_three?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getShieldStyle = {
         border: getBorderStyle(shield?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getHelmStyle = {
         border: getBorderStyle(helmet?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getChestStyle = {
         border: getBorderStyle(chest?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getLegsStyle = {
         border: getBorderStyle(legs?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getAmuletStyle = {
         border: getBorderStyle(amulet?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getRingOneStyle = {
         border: getBorderStyle(ring_one?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getRingTwoStyle = {
         border: getBorderStyle(ring_two?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
     const getTrinketStyle = {
         border: getBorderStyle(trinket?.rarity),
         background: 'black',
         boxShadow: '2px 2px 2px black',
         borderRadius: 1 + 'px',
-        // opacity: damaged ? "0.65" : "1",
     };
 
     if (loading) {

@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from '../../components/NavBar/NavBar';
 import UserProfile from '../UserProfile/UserProfile';
 import NewAscean from "../../components/NewAscean/NewAscean";
-import './App.css';
 import userService from "../../utils/userService";
 import * as asceanAPI from '../../utils/asceanApi';
 import EditAscean from "../../components/EditAscean/EditAscean";

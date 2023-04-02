@@ -5,11 +5,9 @@ html, body {
   height: 100vh;
   background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
   overflow: scroll;
-  /* justify-content: center; */
   font-family: 'Cinzel';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* color: #fdf6d8; */
 }
 .signup-button {
   width: 75%;
@@ -18,7 +16,6 @@ html, body {
   display: block;
   margin-left: auto;
   margin-top: -16%;
-  /* margin-right: auto; */
   width: 25%;
   border: 2px solid purple;
   border-radius: 50%;
@@ -47,7 +44,6 @@ html, body {
   margin-top: -15%;
   width: 150%;
   color: gold;
-  /* background-color: gold; */
   box-shadow: 0 0 2.5em #c3af18;
   border-radius: 1em;
   border: 1px solid gold;
@@ -116,7 +112,6 @@ html, body {
   animation: fade 1.5s ease-in 2s forwards;
 }
 .auth {
-  /* pointer-events: none; */
   opacity: 0;
   animation: fade 1.5s ease-in 3.5s forwards;
 }

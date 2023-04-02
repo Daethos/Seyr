@@ -347,7 +347,6 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.SET_NEW_COMPUTER,
                 payload: response.data.data
             });
-            // shakeScreen();
             playOpponent();
             await getOpponentDialog(selectedOpponent.data.name);
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
@@ -507,7 +506,7 @@ const GameSolo = ({ user }: GameProps) => {
     useEffect(() => {
         if (gameState.itemSaved === false) return;
         console.log("Saving Item", gameState.itemSaved)
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         };
@@ -525,7 +524,7 @@ const GameSolo = ({ user }: GameProps) => {
     useEffect(() => {
         if (gameState.removeItem === false) return;
         console.log("Removing Item", gameState.removeItem)
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
         };
@@ -543,7 +542,7 @@ const GameSolo = ({ user }: GameProps) => {
     useEffect(() => {
         if (gameState.purchasingItem === false) return;
         console.log("Purchasing Item", gameState.purchasingItem)
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
         };

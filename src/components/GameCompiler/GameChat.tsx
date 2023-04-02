@@ -29,9 +29,10 @@ interface Props {
     enemyPlayer: any;
     spectator: boolean;
     handleRoomReset: () => void;
+    handleSocketEvent: (event: string, callback: Function) => void;
 }
 
-const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, user, ascean, opponent, spectator, room, socket, setShowChat, enemyPlayer, handleRoomReset }: Props) => {
+const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, user, ascean, opponent, spectator, room, socket, setShowChat, enemyPlayer, handleRoomReset, handleSocketEvent }: Props) => {
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [modalShow, setModalShow] = useState(false);
     const [currentMessage, setCurrentMessage] = useState("");
@@ -46,71 +47,115 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
     //     };
     // }, [playerState]);
 
-    useEffect(() => { console.log(mapState, "Map") }, [mapState])
-
     useEffect(() => {
-        socket.on("mapCreated", async (response: any) => {
+        console.log(state.playerPosition, "Player Position in State in GameChat");
+        console.log(state, "State in GameChat")
+    }, [state.playerPosition]);
+
+    useEffect(() => { console.log(mapState, "Map in GameChat") }, [mapState]);
+
+    // TODO:FIXME: state.playerPosition doesn't work as it updates to the number of the last joined player, so it'll go from 1 to 4 eventually  TODO:FIXME:
+    useEffect(() => {
+        const mapCreatedCallback = async (response: any) => {
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
             });
-            let playerCoords = { x: 0, y: 0 };
-            switch (state.playerPosition) {
-                case 1:
-                    playerCoords = { x: -75, y: 75 };
-                    break;
-                case 2:
-                    playerCoords = { x: 75, y: 75 };
-                    break;
-                case 3:
-                    playerCoords = { x: -75, y: -75 };
-                    break;
-                case 4:
-                    playerCoords = { x: 75, y: -75 };
-                    break;
-                default:
-                    break;
+            const messageData = {
+                room: room,
+                author: user.username,
+                message: `Received created map with variables: City: ${response.contentCounts.city}, Enemy: ${response.contentCounts.enemy}, Treasure: ${response.contentCounts.treasure}.`,
+                time: Date.now()
             };
-            // const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
+            await socket.emit("send_message", messageData);
+            setMessageList((list: any) => [...list, messageData]);
+            await setCoordinates(playerState, response);
+        };
+        handleSocketEvent("mapCreated", mapCreatedCallback);
 
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_COORDS,
-                payload: playerCoords,
-            });
-            mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
-        });
-
-        socket.on(`player_ready`, async (data: any) => {
-            //TODO:FIXME: This is the switch to show everyone that a player is ready.
-
+        const playerReadyCallback = async (data: any) => {
             console.log(data, 'Player Ready');
-        });
-    }, []);
-    
-    const generateWorld = async (mapName: string) => {
-        mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: true });
-        try {
-            // const data = { name: mapName, ascean: gameState.player };
-            // const response = await mapAPI.createMap(data);
-            // console.log(response, 'Response Generating World Environment.');
-            // mapDispatch({
-            //     type: MAP_ACTIONS.SET_MAP_DATA,
-            //     payload: response
-            // });
-            socket.emit("createMap", { name: mapName, ascean: ascean });
+            //TODO:FIXME: This is the switch to show everyone that a player is ready.
+            if (data._id === playerState?.playerOne?.user?._id) {
+                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE_READY, payload: true });
+            } else if (data._id === playerState?.playerTwo?.user?._id) {
+                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO_READY, payload: true });
+            } else if (data._id === playerState?.playerThree?.user?._id) {
+                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE_READY, payload: true });
+            } else if (data._id === playerState?.playerFour?.user?._id) {
+                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR_READY, payload: true });
+            };
+        };
+        handleSocketEvent("player_ready", playerReadyCallback);
 
-            // const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
-            // mapDispatch({
-            //     type: MAP_ACTIONS.SET_MAP_COORDS,
-            //     payload: coords,
-            // });
-            // mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
+        const gameCommencingCallback = async () => {
+            console.log('Setting Gameplay to Live')
+            const messageData = {
+                room: room,
+                author: `The Seyr`,
+                message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
+                time: Date.now()
+            };
+            await socket.emit(`send_message`, messageData);
+            setTimeout(() => setLiveGameplay(true), 10000);
+        };
+        handleSocketEvent(`Game Commencing`, gameCommencingCallback);
+
+        const receiveMessageCallback = async (data: any) => {
+            setMessageList((list: any) => [...list, data]);
+        };
+        handleSocketEvent(`receive_message`, receiveMessageCallback);
+
+        return () => {
+            if (socket) {
+                socket.off("mapCreated");
+                socket.off(`player_ready`);
+                socket.off(`Game Commencing`);
+                socket.off(`receive_message`);
+            };
+        };
+    }, [socket, playerState]);
+    
+    // May make this a server side function to limit issues with client side data
+    const generateWorld = async (mapName: string) => {
+        try {
+            socket.emit("createMap", { name: mapName, ascean: ascean });
         } catch (err: any) {
             console.log(err.message, 'Error Generating World Environment.');
         };
     };
 
+    const setCoordinates = async (players: any, map: any) => {
+        try {
+            console.log(players, "Players ?")
+            let playerCoords = { x: 0, y: 0 };
+            console.log(players?.playerOne?.ascean, ascean?._id, "Player One ?");
+            console.log(players?.playerTwo?.ascean, ascean?._id, "Player Two ?");
+            console.log(players?.playerThree?.ascean, ascean?._id, "Player Three ?");
+            console.log(players?.playerFour?.ascean, ascean?._id, "Player Four ?");
+            if (players?.playerOne?.ascean._id === ascean._id) {
+                playerCoords = { x: -75, y: 75 };
+            } else if (players?.playerTwo?.ascean?._id === ascean?._id) {
+                playerCoords = { x: 75, y: 75 };
+            } else if (players?.playerThree?.ascean?._id === ascean?._id) {
+                playerCoords = { x: -75, y: -75 };
+            } else if (players?.playerFour?.ascean?._id === ascean?._id) {
+                playerCoords = { x: 75, y: -75 };
+            };
+            console.log(mapState, "Map State in Set Coordinates");
+            const coords = await getAsceanCoords(playerCoords.x, playerCoords.y, map.map);
+            console.log(coords, "Coords in Set Coordinates");
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_COORDS,
+                payload: coords,
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Coordinates');
+        };
+    };
+
     async function getAsceanCoords(x: number, y: number, map: any) {
+        console.log(x, y, map, "X, Y, Map");
         const tile = map?.[x + 100]?.[y + 100];
         return tile ?? null;
     };
@@ -122,7 +167,6 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                 author: user.username,
                 message: currentMessage,
                 time: Date.now()
-                    // new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
             };
             await socket.emit("send_message", messageData);
             setMessageList((list: any) => [...list, messageData]);
@@ -134,15 +178,11 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
     // TODO:FIXME: This is the button to commit you as a player to be 'ready'
 
     const playerReady = async () => {
-        playerDispatch({})
-    }
-
-    const readyDuel = async () => {
-        try {
-            await socket.emit(`player_game_ready`, playerState);
-        } catch (err: any) {
-            console.log(err.message, 'Error Preparing To Duel')
-        };
+        // playerDispatch({})
+        try { 
+            await socket.emit(`player_game_ready`, user);
+        } catch (err: any) { 
+            console.log(err.message, 'Error With Player Ready') };
     };
 
     const revealAscean = async () => {
@@ -169,25 +209,8 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
         socket.on("receive_message", (data: any) => {
             setMessageList((list: any) => [...list, data]);
         });
-        socket.on(`Game Commencing`, () => {
-            setLiveGameplay(true);
-            console.log('Game Commencing');
-        });
     }, [socket]);
 
-    useEffect(() => {
-        socket.on(`Game Commencing`, async () => {
-            console.log('Setting Gameplay to Live')
-            const messageData = {
-                room: room,
-                author: `The Seyr`,
-                message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
-                time: Date.now()
-            };
-            await socket.emit(`send_message`, messageData);
-            setTimeout(() => setLiveGameplay(true), 10000);
-         });
-    }, []);
 
     return (
         <>
@@ -197,6 +220,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} mapState={mapState} mapDispatch={mapDispatch} 
                 gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} opponent={opponent} 
                 enemyPlayer={enemyPlayer} room={room} socket={socket} setModalShow={setModalShow} getAsceanCoords={getAsceanCoords} generateWorld={generateWorld}
+                handleSocketEvent={handleSocketEvent}
             />
             <Modal 
                 show={modalShow}
@@ -299,9 +323,11 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                         </h3>
                         <p>Level: {playerState.playerOne.ascean.level} | {playerState.playerOne.ascean.mastery}
                         </p>
-                        <span style={{ float: "right", marginTop: "-10%" }}>
-                        <Button variant='' style={{ color: "gold" }} onClick={() => generateWorld(`${ascean?.name}_PVP_${Date.now()}`)} disabled={checkPlayer()}>Get Map</Button>
-                        </span>
+                        { ascean._id === playerState.playerOne.ascean._id ? (
+                            <span style={{ float: "right", marginTop: "-10%" }}>
+                                <Button variant='' style={{ color: "gold" }} onClick={() => generateWorld(`${ascean?.name}_PVP_${Date.now()}`)} disabled={checkPlayer()}>Get Map</Button>
+                            </span>
+                        ) : ( '' ) }
                         <span style={{ float: "left", marginTop: "-14.5%" }}>
                         <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                         </span>

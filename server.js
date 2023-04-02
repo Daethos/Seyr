@@ -112,36 +112,54 @@ io.on("connection", (socket) => {
       player: connectedUsersCount,
       ready: false,
     }
-    console.log(data.ascean, "Ascean Data ?")
+    console.log(data.ascean, "Ascean Data?");
+
+    let playerStateData = {
+      playerOne: null,
+      playerTwo: null,
+      playerThree: null,
+      playerFour: null,
+    };
+
+    if (newUser.player === 1) {
+      playerStateData.playerOne = newUser;
+    } else if (newUser.player === 2) {
+      playerStateData.playerTwo = newUser;
+    } else if (newUser.player === 3) {
+      playerStateData.playerThree = newUser;
+    } else if (newUser.player === 4) {
+      playerStateData.playerFour = newUser;
+    };
 
     const response = await asceanService.asceanCompiler(data.ascean);
     io.to(data.room).emit(`player_data`, response.data);
     console.log(newUser.player, "Submitting Position")
-    io.to(data.room).emit(`player_position`, newUser.player);
+    io.to(data.room).emit(`player_position`, newUser);
+    io.to(data.room).emit(`player_state`, playerStateData);
 
     let combatData = {
 
       room: data.room,
 
-      player: {},
+      player: response.data.ascean,
       action: '',
       player_action: '',
       counter_guess: '',
       playerBlessing: 'Buff',
       prayerSacrifice: '',
-      player_health: 0,
-      current_player_health: 0,
-      new_player_health: 0,
+      player_health: response.data.attributes.healthTotal,
+      current_player_health: response.data.attributes.healthTotal,
+      new_player_health: response.data.attributes.healthTotal,
 
-      weapons: [],
-      weapon_one: {},
-      weapon_two: {},
-      weapon_three: {},
+      weapons: [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
+      weapon_one: response.data.combat_weapon_one,
+      weapon_two: response.data.combat_weapon_two,
+      weapon_three: response.data.combat_weapon_three,
       playerEffects: [],
-      player_damage_type: '',
-      player_defense: {},
-      player_attributes: {},
-      player_defense_default: {},
+      player_damage_type: response.data.combat_weapon_one.damage_type,
+      player_defense: response.data.defense,
+      player_attributes: response.data.attributes,
+      player_defense_default: response.data.defense,
       realized_player_damage: 0,
       player_start_description: '',
       player_special_description: '',
@@ -219,18 +237,15 @@ io.on("connection", (socket) => {
 
     };
 
-    combatData.player = response.data.ascean,
-    combatData.player_health = response.data.attributes.healthTotal,
-    combatData.current_player_health = response.data.attributes.healthTotal,
-    combatData.new_player_health = response.data.attributes.healthTotal,
-    combatData.player_weapons = [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-    combatData.player_weapon_one = response.data.combat_weapon_one,
-    combatData.player_weapon_two = response.data.combat_weapon_two,
-    combatData.player_weapon_three = response.data.combat_weapon_three,
-    combatData.player_damage_type = response.data.combat_weapon_one.damage_type,
-    combatData.player_defense = response.data.defense,
-    combatData.player_attributes = response.data.attributes
-    
+    let newMap = {};
+ 
+    socket.on(`createMap`, async (mapData) => {
+      console.log(`Creating Map`)
+      const map = new WorldMap(mapData.name, mapData.ascean);
+      newMap = map;
+      console.log("Map Created")
+      io.to(newUser.room).emit(`mapCreated`, map);
+    });
 
     io.to(data.room).emit(`new_user`, newUser)
 
@@ -239,19 +254,19 @@ io.on("connection", (socket) => {
       author: `The Seyr`,
       message: `Welcome to the Ascea, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
       time: Date.now()
-    }
+    };
 
     io.to(data.room).emit(`receive_message`, helloMessage);
 
     socket.on(`playerDirectionChange`, async (data) => {
       console.log('Player Direction Change')
       io.to(data.room).emit(`playerDirectionChanged`, data);
-    })
+    });
 
     socket.on(`ascean`, async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
       console.log('Did the Ascean Update start?');
       socket.to(asceanData.room).emit(`update_ascean`, asceanData);
-    })
+    });
 
     socket.on(`combatData_update`, async () => {
       console.log('Updating Combat Data')
@@ -286,17 +301,9 @@ io.on("connection", (socket) => {
       console.log(`Responding Data`)
       socket.to(newUser.room).emit(`new_player_data_response`, newUser)
     });
- 
-    socket.on(`createMap`, async (mapData) => {
-      console.log(`Creating Map`)
-      const newMap = new WorldMap(mapData.name, mapData.ascean);
-      console.log("Map Created")
-      io.to(newUser.room).emit(`mapCreated`, newMap);
-    });
 
-    socket.on(`player_game_ready`, async (data) => {
+    socket.on(`player_game_ready`, async (data) => { // user
       let newData = data;
-
       io.to(newData.room).emit(`player_ready`, newData);
     });
 

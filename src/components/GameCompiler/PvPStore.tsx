@@ -14,6 +14,7 @@ export interface UserData {
 export interface PvPData {
     room: string;
     playerPosition: number;
+    enemyPosition: number;
     player: any;
     action: string;
     player_action: string;
@@ -122,6 +123,7 @@ interface Action {
 export const initialPvPData: PvPData = {
     room: '',
     playerPosition: 0,
+    enemyPosition: 0,
     player: {},
     action: '',
     player_action: '',
@@ -585,14 +587,24 @@ export interface PlayerAction {
 };
 
 export const PLAYER_ACTIONS = {
+    SET_PLAYER_STATE: 'SET_PLAYER_STATE',
     SET_PLAYER_ONE: 'SET_PLAYER_ONE',
     SET_PLAYER_TWO: 'SET_PLAYER_TWO',
     SET_PLAYER_THREE: 'SET_PLAYER_THREE',
     SET_PLAYER_FOUR: 'SET_PLAYER_FOUR',
+    SET_PLAYER_ONE_READY: 'SET_PLAYER_ONE_READY',
+    SET_PLAYER_TWO_READY: 'SET_PLAYER_TWO_READY',
+    SET_PLAYER_THREE_READY: 'SET_PLAYER_THREE_READY',
+    SET_PLAYER_FOUR_READY: 'SET_PLAYER_FOUR_READY',
 };
 
 export const PlayerStore = (playerState: PlayerData, playerAction: PlayerAction) => {
     switch (playerAction.type) {
+        case 'SET_PLAYER_STATE':
+            return {
+                ...playerState,
+                ...playerAction.payload,
+            };
         case 'SET_PLAYER_ONE':
             return {
                 ...playerState,
@@ -612,6 +624,38 @@ export const PlayerStore = (playerState: PlayerData, playerAction: PlayerAction)
             return {
                 ...playerState,
                 playerFour: playerAction.payload,
+            };
+        case 'SET_PLAYER_ONE_READY':
+            return {
+                ...playerState,
+                playerOne: {
+                    ...playerState.playerOne,
+                    ready: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_TWO_READY':
+            return {
+                ...playerState,
+                playerTwo: {
+                    ...playerState.playerTwo,
+                    ready: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_THREE_READY':
+            return {
+                ...playerState,
+                playerThree: {
+                    ...playerState.playerThree,
+                    ready: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_FOUR_READY':
+            return {
+                ...playerState,
+                playerFour: {
+                    ...playerState.playerFour,
+                    ready: playerAction.payload,
+                },
             };
         default:
             return playerState;

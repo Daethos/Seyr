@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from 'react'
+import { useCallback, useEffect, useState, useReducer } from 'react'
 import * as asceanAPI from '../../utils/asceanApi';
 import * as io from 'socket.io-client'
 import Container from 'react-bootstrap/Container'
@@ -7,13 +7,22 @@ import GameChat from '../../components/GameCompiler/GameChat';
 import { ACTIONS, initialPvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore } from '../../components/GameCompiler/PvPStore';
 import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
 
-let socket: any;
+// let socket: any;
+
+// interface SocketEventHandlers {
+//     onPlayerData: (player: Player) => void;
+//     onNewUser: (userData: any) => void;
+//     onPlayerPosition: (player: Player) => void;
+//     onRequestingPlayerData: () => void;
+//     onNewPlayerDataResponse: (data: any) => void;
+// }
 
 interface Props {
     user: any;
 };
 
 const GamePvPLobby = ({ user }: Props) => {
+    const [socket, setSocket] = useState<any>(null);
     const [state, dispatch] = useReducer(PvPStore, initialPvPData);
     const [playerState, playerDispatch] = useReducer(PlayerStore, initialPlayerData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
@@ -33,51 +42,184 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
 
-    useEffect(() => {
-        socket = io.connect("http://localhost:3001") 
+    const handleSocketEvent = useCallback((event: string, callback: Function) => {
+        if (socket) {
+          socket.on(event, callback);
+        };
+    }, [socket]);
+
+      useEffect(() => {
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
-        socket.emit("setup", user);
-        socket.on("Connected", () => setSocketConnected(true));
+        const newSocket = io.connect('http://localhost:3000');
+        setSocket(newSocket);
+        return () => {
+          newSocket.disconnect();
+        };
+      }, []);
 
-        socket.on('typing', () => setIsTyping(true));
-        socket.on('stop_typing', () => setIsTyping(false));
+    // useEffect(() => {
+        // socket = io.connect("http://localhost:3001") 
+        // "http://localhost:3001" When Tinkering Around 
+        // "https://ascea.herokuapp.com" When Deploying
+        // socket.emit("setup", user);
+        // socket.on("Connected", () => setSocketConnected(true));
 
-        socket.on('player_data', async (player: any) => {
-            dispatch({ type: ACTIONS.SET_PLAYER, payload: player });
-        });
+        // socket.on('typing', () => setIsTyping(true));
+        // socket.on('stop_typing', () => setIsTyping(false));
 
-        socket.on('new_user', async (userData: any) => {
+        // socket.on('player_data', async (player: any) => {
+        //     console.log(player, "Receiving Player Data")
+        //     dispatch({ type: ACTIONS.SET_PLAYER, payload: player });
+        // });
+
+        // socket.on('new_user', async (userData: any) => {
+        //     if (userData.user._id === user._id && userData.player !== 1) {
+        //         console.log("Requesting New Player")
+        //         await socket.emit(`request_new_player`);
+        //     };
+        //     console.log(userData, 'New User');
+        //     switch (userData.player) {
+        //         case 1:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE, payload: userData });
+        //             break;
+        //         case 2:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO, payload: userData });
+        //             break;
+        //         case 3:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE, payload: userData });
+        //             break;
+        //         case 4:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR, payload: userData });
+        //             break;
+        //         default:
+        //             break;
+        //     };
+        // });
+
+        // socket.on(`player_position`, async (player: any) => {
+        //     console.log(player, playerState, "Player Position?")
+        //     dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: player });
+        // });
+
+        // socket.on(`requesting_player_data`, async () => {
+        //     console.log('Requesting Player Data');
+        //     await socket.emit(`player_data_responding`);
+        // });
+
+        // socket.on(`new_player_data_response`, async (data: any) => {
+        //     console.log(data, 'Data Response from other Player');
+        //     switch (data.player) {
+        //         case 1:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE, payload: data });
+        //             break;
+        //         case 2:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO, payload: data });
+        //             break;
+        //         case 3:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE, payload: data });
+        //             break;
+        //         case 4:
+        //             playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR, payload: data });
+        //             break;
+        //         default:
+        //             break;
+        //     };
+        // });
+
+        // socket.on(`update_ascean`, async (asceanData: any) => {
+        //     console.log(asceanData, 'Did the opponent make it?');
+        //     await setOpponentAscean(asceanData.ascean);
+        //     setEnemyPlayer(asceanData.user);
+        // });
+
+        
+        // socket.on(`combat_response`, (response: any) => {
+        //     console.log(response, 'Combat Response!');
+        //     // TODO:FIXME: DISPATCH
+        //     // statusUpdate(response);
+        // });
+        
+        // socket.on(`duel_ready_response`, async (data: any) => {
+        // // TODO:FIXME: DISPATCH
+        //     // setCombatData(data);
+        // });
+    // }, []);
+
+    useEffect(() => {
+        // const setupUserCallback = () => socket.emit("setup", user);
+        // handleSocketEvent('setup', setupUserCallback);
+        if (socket) socket.emit("setup", user);
+        
+        const socketConnectedCallback = () => setSocketConnected(true);
+        handleSocketEvent('Connected', socketConnectedCallback);
+        
+        // socket.on("Connected", () => setSocketConnected(true));
+
+        const typingCallback = () => setIsTyping(true);
+        handleSocketEvent('typing', typingCallback);
+
+        const stopTypingCallback = () => setIsTyping(false);
+        handleSocketEvent('stop_typing', stopTypingCallback);
+
+        // socket.on('typing', () => setIsTyping(true));
+
+        // socket.on('stop_typing', () => setIsTyping(false));
+
+        const playerDataCallback = (player: any) => {
+          console.log(player, "Receiving Player Data");
+          dispatch({ type: ACTIONS.SET_PLAYER, payload: player });
+        };
+        handleSocketEvent('player_data', playerDataCallback);
+    
+        const newUserCallback = async (userData: any) => {
             if (userData.user._id === user._id && userData.player !== 1) {
+                console.log("Requesting New Player")
                 await socket.emit(`request_new_player`);
             };
             console.log(userData, 'New User');
             switch (userData.player) {
                 case 1:
                     playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE, payload: userData });
+                    if (userData.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: userData.player });
                     break;
                 case 2:
                     playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO, payload: userData });
+                    if (userData.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: userData.player })
                     break;
                 case 3:
                     playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE, payload: userData });
+                    if (userData.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: userData.player })
                     break;
                 case 4:
                     playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR, payload: userData });
+                    if (userData.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: userData.player })
                     break;
                 default:
                     break;
             };
-        });
+        };
+        handleSocketEvent('new_user', newUserCallback);
 
-        socket.on(`player_position`, async (player: any) => {
-            dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: player });
-        });
+        // const playerStateCallback = (playerStateData: any) => {
+        //     console.log(playerStateData, "Newest Player State Data");
+        //     playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_STATE, payload: playerStateData });
+        // };
+        // handleSocketEvent('player_state', playerStateCallback);
 
-        socket.on(`requesting_player_data`, async () => {
+        // const playerPositionCallback = async (player: any) => {
+        //     console.log(player.player, playerState, "Player Position, Player State in playerPositionCallback");
+        //     if (player.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER_POSITION, payload: player.player });
+        // };
+        // handleSocketEvent('player_position', playerPositionCallback);
+
+        const requestPlayerDataCallback = async () => {
+            console.log('Requesting Player Data');
             await socket.emit(`player_data_responding`);
-        });
-        socket.on(`new_player_data_response`, async (data: any) => {
+        };
+        handleSocketEvent('requesting_player_data', requestPlayerDataCallback);
+
+        const newPlayerDataResponseCallback = async (data: any) => {
             console.log(data, 'Data Response from other Player');
             switch (data.player) {
                 case 1:
@@ -95,26 +237,33 @@ const GamePvPLobby = ({ user }: Props) => {
                 default:
                     break;
             };
-        });
+        };
+        handleSocketEvent('new_player_data_response', newPlayerDataResponseCallback);
 
-        // socket.on(`update_ascean`, async (asceanData: any) => {
-        //     console.log(asceanData, 'Did the opponent make it?');
-        //     await setOpponentAscean(asceanData.ascean);
-        //     setEnemyPlayer(asceanData.user);
-        // });
-
-        
-        socket.on(`combat_response`, (response: any) => {
+        const combatResponseCallback = (response: any) => {
             console.log(response, 'Combat Response!');
-            // TODO:FIXME: DISPATCH
-            // statusUpdate(response);
-        });
-        
-        socket.on(`duel_ready_response`, async (data: any) => {
-        // TODO:FIXME: DISPATCH
-        //         setCombatData(data);
-        });
-    }, []);
+        };
+        handleSocketEvent('combat_response', combatResponseCallback);
+
+        const duelReadyResponseCallback = async (data: any) => {
+            console.log(data, 'Duel Ready Response');
+        };
+    
+        // Add more callbacks here as needed
+    
+        return () => {
+          // Clean up event listeners
+          if (socket) {
+              socket.off('player_data', playerDataCallback);
+              socket.off('new_user', newUserCallback);
+            //   socket.off('player_position', playerPositionCallback);
+              socket.off('requesting_player_data', requestPlayerDataCallback);
+              socket.off('new_player_data_response', newPlayerDataResponseCallback);
+              socket.off('combat_response', combatResponseCallback);
+              socket.off('duel_ready_response', duelReadyResponseCallback);
+            };
+        };
+      }, [handleSocketEvent, socket, playerState]);
 
     useEffect(() => {
         getUserAscean();
@@ -188,12 +337,12 @@ const GamePvPLobby = ({ user }: Props) => {
                 combatData: state
             };
             socket.emit("join_room", asceanData);
-            socket.on("room_full", () => {
-                console.log('Room is full!');
-            });
-            socket.on("join_room", () => {
-                console.log('Socket working on the Front-End inside room: ' + room);
-            });
+            // socket.on("room_full", () => {
+            //     console.log('Room is full!');
+            // });
+            // socket.on("join_room", () => {
+            //     console.log('Socket working on the Front-End inside room: ' + room);
+            // });
             await socket.emit(`ascean`, asceanData);
             setShowChat(true);
         };
@@ -265,11 +414,11 @@ const GamePvPLobby = ({ user }: Props) => {
                 </div>
             <button className='btn btn-outline-info my-2' onClick={joinRoom}> Join Room </button>
             </Container>
-            : 
+        :
             <GameChat 
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} gameState={gameState} gameDispatch={gameDispatch} 
                 user={user} ascean={gameState.player} spectator={spectator} opponent={gameState.opponent} enemyPlayer={enemyPlayer} 
-                handleRoomReset={handleRoomReset} room={room} setShowChat={setShowChat} socket={socket} 
+                handleRoomReset={handleRoomReset} room={room} setShowChat={setShowChat} socket={socket} handleSocketEvent={handleSocketEvent}
             />
         }
         </>

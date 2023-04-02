@@ -69,6 +69,7 @@ export const MapStore = (map: MapData, action: Action) => {
                 ...action.payload,
             };
         case 'SET_MAP_COORDS':
+            console.log(action.payload, "Setting Map Coords")
             return {
                 ...map,
                 currentTile: action.payload,
@@ -76,6 +77,7 @@ export const MapStore = (map: MapData, action: Action) => {
                 lastTile: action.payload,
             };
         case 'SET_NEW_MAP_COORDS':
+            console.log(action.payload, "Setting New Map Coords")
             const newCoords = action.payload.newTile;
             // const visitedTiles = cloneDeep(map.visitedTiles);
             const visitedTiles = {...action.payload.map.visitedTiles};

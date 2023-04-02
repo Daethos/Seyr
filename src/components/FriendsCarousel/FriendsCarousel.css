@@ -2,7 +2,6 @@
     border-radius: 5px;
     height: 100px;
 }
-
 #ascean-banner {
     border-radius: 10px;
     display: flex;
@@ -18,7 +17,6 @@
 
 #banner-ascean-profile {
     float: right;
-    
 }
 
 #ascean-name {
@@ -42,7 +40,6 @@
 }
 
 @media screen and (max-width: 675px) {
-
     #banner-profile-pic {
         margin-left: auto;
         margin-right: auto;
@@ -50,16 +47,13 @@
         height: 80px; 
         display: flex;
     }
-    
     #banner-ascean-profile {
         margin-left: auto;
         margin-right: auto;
         width: 80px; 
         height: 80px;
         display: flex;
-        
     }
-
     #ascean-banner {
         border-radius: 5px;
         margin-right: auto;
@@ -67,7 +61,6 @@
         height: 95px;
         margin-top: 0.1%;
     }
-
     #ascean-name {
         font-size: 16px;
     }

@@ -1,4 +1,5 @@
 import DialogNodes from "./DialogNodes.json";
+import EnemyDialogNodes from './EnemyDialogNodes.json';
 import { useState, useEffect, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Ascean, Enemy, NPC } from "./GameStore";
@@ -33,6 +34,23 @@ export const npcIds: NpcIds = {
     "Merchant-Smith": 6,
     "Merchant-Mystic": 7,
     "Merchant-Tailor": 8,
+};
+
+// This is for enemy dialog nodes
+// May make 2, 1 for named, 1 for unnamed
+export function getNodesForEnemy(enemy: Enemy): DialogNode[] {
+    const matchingNodes: DialogNode[] = [];
+    for (const node of EnemyDialogNodes.nodes) {
+        if (node.options.length === 0) {
+            continue;
+        };
+        const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(enemy.name))
+        if (npcOptions.length > 0) {
+            const updatedNode = { ...node, options: npcOptions };
+            matchingNodes.push(updatedNode);
+        };
+    };
+    return matchingNodes;
 };
 
 export function getNodesForNPC(npcId: number): DialogNode[] {
