@@ -184,18 +184,6 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
             console.log(err.message, 'Error With Player Ready') };
     };
 
-    const revealAscean = async () => {
-        if (!ascean) return;
-        const asceanData = {
-            room: room,
-            author: user.username,
-            message: `My character is ${ascean.name}, using their ${ascean.weapon_one.name}.`,
-            time: Date.now()
-        };
-        await socket.emit("send_ascean", asceanData);
-        setMessageList((list: any) => [...list, asceanData]);
-    };
-
     function checkPlayer () {
         if (playerState.playerOne && playerState.playerTwo && playerState.playerThree && playerState.playerFour) {
             return true;

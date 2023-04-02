@@ -5,6 +5,7 @@ import CombatSettingModal from './CombatSettingModal';
 import { ACTIONS } from './CombatStore';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
+import useTimers, { Timer } from './useTimers';
 
 interface Props {
     handleAction: (action: any) => void;
@@ -29,10 +30,7 @@ interface Props {
 const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
-  const { actionStatus } = state;
-  const { dodgeStatus } = state;
   const { combatInitiated } = state;
-  const { instantStatus } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
@@ -70,14 +68,22 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
   }, [combatInitiated]);
 
   useEffect(() => {
+    // const instantTimerEnd = Date.now() + 10000;
     const instantTimer = setTimeout(() => {
       dispatch({
         type: ACTIONS.SET_INSTANT_STATUS,
         payload: false,
       });
     }, 30000);
-    return () => clearTimeout(instantTimer);
-  }, [instantStatus, dispatch]);
+    // const interval = setInterval(() => {
+    //   const timeLeft = Math.round((instantTimerEnd - Date.now()) / 1000);
+    //   console.log(`Time left in instant timer: ${timeLeft} seconds`);
+    // }, 1000);
+    return () => {
+      clearTimeout(instantTimer);
+      // clearInterval(interval);
+    };
+  }, [state.instantStatus, dispatch]);
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {
@@ -87,7 +93,7 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
       });
     }, (state?.weapons?.[0]?.dodge * 1000));
     return () => clearTimeout(dodgeTimer);
-  }, [dodgeStatus, dispatch]);
+  }, [state.dodgeStatus, dispatch]);
 
   useEffect(() => {
     const initiateTimer = setTimeout(() => {
@@ -97,54 +103,7 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
       })
     }, 3000);
     return () => clearTimeout(initiateTimer);
-  }, [actionStatus, dispatch]);
-
-  // const [timers, setTimers] = useState<{ [key: string]: number | undefined }>({});
-
-
-// useEffect(() => {
-//   const instantTimer = setTimeout(() => {
-//     dispatch({
-//       type: ACTIONS.SET_INSTANT_STATUS,
-//       payload: false,
-//     });
-//     setTimers((prevTimers) => ({ ...prevTimers, instant: null }));
-//   }, 30000);
-//   setTimers((prevTimers) => ({ ...prevTimers, instant: instantTimer }));
-// }, [dispatch]);
-
-// useEffect(() => {
-//   const initiateTimer = setTimeout(() => {
-//     dispatch({
-//       type: ACTIONS.SET_ACTION_STATUS,
-//       payload: false,
-//     });
-//     setTimers((prevTimers) => ({ ...prevTimers, action: null }));
-//   }, 3000);
-//   setTimers((prevTimers) => ({ ...prevTimers, action: initiateTimer }));
-// }, [dispatch]);
-
-// useEffect(() => {
-//   const dodgeTimer = setTimeout(() => {
-//     dispatch({
-//       type: ACTIONS.SET_DODGE_STATUS,
-//       payload: false,
-//     });
-//     setTimers((prevTimers) => ({ ...prevTimers, dodge: null }));
-//   }, (state?.weapons?.[0]?.dodge * 1000));
-//   setTimers((prevTimers) => ({ ...prevTimers, dodge: dodgeTimer }));
-// }, [state?.weapons?.[0]?.dodge, dispatch]);
-
-// useEffect(() => {
-//   return () => {
-//     Object.values(timers).forEach((timer) => {
-//       if (timer) {
-//         clearTimeout(timer as number);
-//       }
-//     });    
-//   };
-// }, [timers]);
-
+  }, [state.actionStatus, dispatch]);
 
   useEffect(() => {
     console.log(state.prayerSacrifice, "Pre-Check Prayer")
