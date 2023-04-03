@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import LootDrop from '../components/GameCompiler/LootDrop';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
-import { ACTIONS } from '../components/GameCompiler/CombatStore';
+import { ACTIONS } from '../components/GameCompiler/PvPStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
 import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
@@ -92,7 +90,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
+const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const location = useLocation();
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<Traits | null>(null);
@@ -126,7 +124,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
-        console.log(ascean.quests, "Ascean");
+        console.log(state, "State")
         let enemyQuests = getQuests(enemy?.name);
         setLocalWhispers(enemyQuests);
         setShowQuest(true);
@@ -152,7 +150,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     }, [localWhispers]);
 
     const getDialogTree = () => {
-        console.log(enemy, "New Enemy")
         if (!enemy.dialogId) return;
         let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
         setDialogTree(dialogTree);
@@ -290,6 +287,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     };
 
     const checkePersuasion = async () => {
+        console.log(gameState, "Game State")
         const traits = {
             primary: gameState?.primary,
             secondary: gameState?.secondary,
@@ -301,6 +299,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             setPersuasion(false);
             return;
         };
+        console.log(matchingTraits, "Matching Traits");
         setPersuasion(true);
         setPersuasionTraits(matchingTraits);
     };
@@ -815,4 +814,4 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     );
 };
 
-export default DialogBox;
+export default PvPDialogBox;

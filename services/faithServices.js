@@ -776,4 +776,6 @@ class StatusEffect {
     };
 };
 
-module.exports = StatusEffect 
+module.exports = StatusEffect;
+
+//TODO:FIXME: Need to make status effect concept for pvp unfortunately

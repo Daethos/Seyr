@@ -542,8 +542,8 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                     ref={provided.innerRef}
                     style={{
                         ...provided.draggableProps.style,
-                        width: `${100.5}px`,
-                        height: `${100.5}px`,
+                        width: `${gameState.canvasWidth}px`,
+                        height: `${gameState.canvasHeight}px`,
                     }}
                     >
                         

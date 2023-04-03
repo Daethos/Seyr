@@ -39,10 +39,10 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-const pvpService = require('./services/pvpServices')
-const asceanService = require('./services/asceanServices')
-const questService = require('./services/questServices')
-const WorldMap = require('./services/worldServices')
+const pvpService = require('./services/pvpServices');
+const asceanService = require('./services/asceanServices');
+const questService = require('./services/questServices');
+const WorldMap = require('./services/worldServices');
 const port = process.env.PORT || 3001;
 
 const server = app.listen(port, function() {
@@ -140,7 +140,6 @@ io.on("connection", (socket) => {
     io.to(data.room).emit(`player_state`, playerStateData);
 
     let combatData = {
-
       room: data.room,
 
       player: response.data.ascean,
@@ -241,35 +240,39 @@ io.on("connection", (socket) => {
 
     let newMap = {};
  
-    socket.on(`createMap`, async (mapData) => {
+    socket.on('createMap', async (mapData) => {
       const map = new WorldMap(mapData.name, mapData.ascean);
       newMap = map;
-      io.to(newUser.room).emit(`mapCreated`, map);
+      io.to(newUser.room).emit('mapCreated', map);
     });
 
-    io.to(data.room).emit(`new_user`, newUser)
+    io.to(data.room).emit('new_user', newUser)
 
     const helloMessage = {
       room: data.room,
-      author: `The Seyr`,
+      author: 'The Seyr',
       message: `Welcome to the Ascea, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
       time: Date.now()
     };
 
-    io.to(data.room).emit(`receive_message`, helloMessage);
+    io.to(data.room).emit('receive_message', helloMessage);
 
-    socket.on(`playerDirectionChange`, async (directionData) => {
+    socket.on('playerDirectionChange', async (directionData) => {
       // console.log('Player Direction Change');
       const newDirection = directionData;
-      io.to(data.room).emit(`playerDirectionChanged`, newDirection);
+      io.to(data.room).emit('playerDirectionChanged', newDirection);
     });
 
-    socket.on(`ascean`, async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
+    socket.on('commenceGame', async () => {
+      io.to(newUser.room).emit('Game Commencing');
+    });
+
+    socket.on('ascean', async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
       console.log('Did the Ascean Update start?');
-      socket.to(asceanData.room).emit(`update_ascean`, asceanData);
+      socket.to(asceanData.room).emit('update_ascean', asceanData);
     });
 
-    socket.on(`combatData_update`, async () => {
+    socket.on('combatData_update', async () => {
       console.log('Updating Combat Data')
       let newData = {
         user: newUser.user,
@@ -279,10 +282,10 @@ io.on("connection", (socket) => {
       };
       // newData = combatData
       // console.log(newData, 'Updated Data?')
-      io.to(newData.room).emit(`updated_combatData`, newData)
+      io.to(newData.room).emit('updated_combatData', newData)
     });
 
-    socket.on(`share_combatdata`, async (data) => { // THis was to share combatData but now I have it passing via the entire newUser object
+    socket.on('share_combatdata', async (data) => { // THis was to share combatData but now I have it passing via the entire newUser object
       console.log('Sharing Combat Data')
       let newData = {
         user: newUser.user,
@@ -290,30 +293,30 @@ io.on("connection", (socket) => {
         combatData: data,
         player: newUser.player
       };
-      socket.to(newUser.room).emit(`sharing_combatdata`, newData)
+      socket.to(newUser.room).emit('sharing_combatdata', newData)
     })
 
-    socket.on(`request_new_player`, async () => {
-      console.log(`Requesting Data`)
-      socket.to(newUser.room).emit(`requesting_player_data`);
+    socket.on('request_new_player', async () => {
+      console.log('Requesting Data')
+      socket.to(newUser.room).emit('requesting_player_data');
     });
 
-    socket.on(`player_data_responding`, async () => {
-      console.log(`Responding Data`)
-      socket.to(newUser.room).emit(`new_player_data_response`, newUser)
+    socket.on('player_data_responding', async () => {
+      console.log('Responding Data')
+      socket.to(newUser.room).emit('new_player_data_response', newUser)
     });
 
-    socket.on(`player_game_ready`, async (data) => { // user
+    socket.on('player_game_ready', async (data) => { // user
       let newData = data;
-      io.to(newData.room).emit(`player_ready`, newData);
+      io.to(newData.room).emit('player_ready', newData);
     });
 
-    socket.on(`duel_ready`, async (data) => {
+    socket.on('duel_ready', async (data) => {
       let newData = data;
       let duelMessage = {
         room: data.room,
-        author: `The Seyr`,
-        message: ``,
+        author: 'The Seyr',
+        message: '',
         time: Date.now()
       }
       if (newUser.player === 1) {
@@ -326,14 +329,29 @@ io.on("connection", (socket) => {
         io.to(duelMessage.room).emit(`receive_message`, duelMessage)
       };
       if (newData.player_one_ready === true && newData.player_two_ready === true) {
-        io.to(newUser.room).emit(`Game Commencing`);
+        io.to(newUser.room).emit('Game Commencing');
       } else {
         console.log(newUser.room, 'New User Room?')
-        io.to(newUser.room).emit(`duel_ready_response`, newData)
+        io.to(newUser.room).emit('duel_ready_response', newData)
       };
     });
+    // TODO:FIXME: Refer here for the Computer Combat
+    socket.on('computer_combat_initiated', async (combatData) => {
+      const response = await pvpService.actionCompiler(combatData);
+      io.to(newUser.room).emit('combat_response', response);
+    });
 
-    socket.on(`initiated`, async (data) => {
+    socket.on('instant_action', async (instantData) => {
+      const response = await pvpService.instantActionCompiler(instantData);
+      io.to(newUser.room).emit('instant_response', response);
+    });
+
+    socket.on('consume_prayer', async (prayerData) => {
+      const response = await pvpService.consumePrayer(prayerData);
+      io.to(newUser.room).emit('consume_prayer_response', response);
+    });
+
+    socket.on('pvp_initiated', async (data) => {
       let newData = data;
       // console.log(newData, 'Did the New Data transcribe?')
       if (newUser.playerPosition === 1) {
@@ -345,13 +363,13 @@ io.on("connection", (socket) => {
       if (newData.player_one_initiated === true && newData.player_two_initiated === true) {
         const response = await pvpService.actionCompiler(data)
         console.log(response, 'Is This Null?')
-        io.to(newUser.room).emit(`combat_response`, response);
+        io.to(newUser.room).emit('combat_response', response);
       } else {
-        io.to(newUser.room).emit(`soft_response`, newData);
+        io.to(newUser.room).emit('soft_response', newData);
       };
     });
 
-    socket.on(`request_reduel`, async (data) => {
+    socket.on('request_reduel', async (data) => {
       let newData = data;
       if (newUser.player === 1) {
         newData.player_one_reduel = true;
@@ -361,17 +379,17 @@ io.on("connection", (socket) => {
       // console.log(newData, 'Did the New Data transcribe?')
       if (newData.player_one_reduel === true && newData.player_two_reduel === true) {
         // const response = await pvpService.actionCompiler(data)
-        io.to(newUser.room).emit(`reset_duel`);
+        io.to(newUser.room).emit('reset_duel');
       } else {
-        io.to(newUser.room).emit(`reduel_requested`, newData);
+        io.to(newUser.room).emit('reduel_requested', newData);
       }
 
     })
     
-    socket.on(`auto_engage`, async (combatData) => {
+    socket.on('auto_engage', async (combatData) => {
       const response = await pvpService.actionCompiler(combatData)
       // console.log(response, 'Is this Null?')
-      io.to(combatData.room).emit(`combat_response`, response)
+      io.to(combatData.room).emit('combat_response', response)
     })
 
   })

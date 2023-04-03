@@ -1,1525 +1,1688 @@
-const faithFinder = async (combatData, player_one_action, player_two_action) => { // The influence will add a chance to have a special effect occur
-    let player_one_faith_number = Math.floor(Math.random() * 101);
-    let player_one_faith_number_two = Math.floor(Math.random() * 101);
-    let faith_check = Math.floor(Math.random() * 101);
-    let player_two_faith_number = Math.floor(Math.random() * 101);
-    let player_two_faith_number_two = Math.floor(Math.random() * 101);
+const StatusEffect = require('./faithServices.js');
 
-    //TODO:FIXME: Need a metric for healing. Based off a specific attribute * (10 / player level)
-
-    combatData.player_one_weapons[0].critical_chance = Number(combatData.player_one_weapons[0].critical_chance)
-    combatData.player_one_weapons[0].critical_damage = Number(combatData.player_one_weapons[0].critical_damage)
-
-    combatData.player_one_weapons[1].critical_chance = Number(combatData.player_one_weapons[1].critical_chance)
-    combatData.player_one_weapons[1].critical_damage = Number(combatData.player_one_weapons[1].critical_damage)
-
-    combatData.player_two_weapons[0].critical_chance = Number(combatData.player_two_weapons[0].critical_chance)
-    combatData.player_two_weapons[0].critical_damage = Number(combatData.player_two_weapons[0].critical_damage)
-
-    combatData.player_two_weapons[1].critical_chance = Number(combatData.player_two_weapons[1].critical_chance)
-    combatData.player_two_weapons[1].critical_damage = Number(combatData.player_two_weapons[1].critical_damage)
-
-    if (combatData.player_one.faith === 'devoted' && combatData.player_one_weapons[0].influences[0] === 'Daethos') {
-        player_one_faith_number += 5;
-        player_one_faith_number_two += 5;
-    }
-    if (combatData.player_one.faith === 'adherent' && combatData.player_one_weapons[0].influences[0] !== 'Daethos') {
-        player_one_faith_number += 5;
-        player_one_faith_number_two += 5;
-    }
-
-    if (combatData.player_two.faith === 'devoted' && combatData.player_two_weapons[0].influences[0] === 'Daethos') {
-        player_two_faith_number += 5;
-        player_two_faith_number_two += 5;
-    }
-    if (combatData.player_two.faith === 'adherent' && combatData.player_two_weapons[0].influences[0] !== 'Daethos') {
-        player_two_faith_number += 5;
-        player_two_faith_number_two += 5;
-    }
-    console.log(combatData.player_one_weapons[0].influences[0], combatData.player_one_weapons[1].influences[0])
-    console.log(combatData.player_one.name, `'s Faith #`, player_one_faith_number, `Faith #2`, player_one_faith_number_two, `Dual Wielding?`, combatData.player_one_dual_wielding)
-
-    console.log(combatData.player_two_weapons[0].influences[0], combatData.player_two_weapons[1].influences[0])
-    console.log(combatData.player_two.name, `'s Faith #`, player_two_faith_number, `Faith #2`, player_two_faith_number_two, `Dual Wielding?`, combatData.player_two_dual_wielding)
-    if (player_one_faith_number > 85) {
-        combatData.player_one_religious_success = true;
-        if (combatData.player_one_weapons[0].influences[0] === 'Daethos') { // God
-            console.log('Daethos!')
-            let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren);
-            daethos = Math.round(daethos * (combatData.player_one.level));
-            combatData.new_player_one_health += combatData.realized_player_one_damage;
-            combatData.player_one_influence_description = 
-                `Daethos wraps through ${combatData.player_one.name}'s Caer, ${combatData.player_one_weapons[0].name} healing them for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-            combatData.new_player_one_health += daethos;
-            combatData.new_player_two_health -= daethos;
-            combatData.current_player_one_health += daethos;
-            combatData.current_player_two_health -= daethos;
-    }
-        if (combatData.player_one_weapons[0].influences[0] === 'Achreo') { // Wild
-            console.log('Achreo!')
-            let achreo = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
-            achreo = Math.round(achreo * (combatData.player_one.level));
-            combatData.new_player_one_health += achreo;
-            combatData.current_player_one_health += achreo;
-            
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
-            combatData.player_one_weapons[0].physical_damage += 2;
-            combatData.player_one_weapons[0].magical_damage += 2;
-            combatData.player_one_weapons[0].critical_chance += 2;
-            combatData.player_one_weapons[0].critical_damage += 0.2;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Ahn've") { // Wind
-            let ahnve = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren)
-            ahnve = Math.round(ahnve * combatData.player_one.level / 10);
-            combatData.new_player_one_health += ahnve
-            combatData.current_player_one_health += ahnve
-            console.log("Ahnve!")
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
-            if (combatData.realized_player_one_damage < 0) {
-                combatData.realized_player_one_damage = 0;
+const statusEffectCheck = async (combatData) => {
+    combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        // console.log(effect.name, effect.tick.end, combatData.combatRound, combatData.player_win, combatData.enemy_win, 'Player Effect in statusCheck, Checking: End Tick, Combat Round, Player Win, enemy Win');
+        const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+        const matchingDebuffTarget = combatData.enemy_weapons.find(weapon => weapon.name === effect.debuffTarget);
+        const matchingDebuffTargetIndex = combatData.enemy_weapons.indexOf(matchingDebuffTarget);
+        if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.enemy_win === true) { // The Effect Expires
+            if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                // console.log('Player Buff Effect Expires');
+                for (let key in effect.effect) {
+                    if (key in combatData.weapons[matchingWeaponIndex]) {
+                        if (key !== 'dodge') {
+                            // console.log(effect.effect, key, 'Buff Effect Expires in Weapon Loop');
+                            combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                        }
+                    }
+                    if (key in combatData.player_defense) {
+                        // console.log(effect.effect, key, 'Buff Effect Expires in Defense Loop');
+                        combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                    }
+                }
             }
-            combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-            combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
+            if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                // console.log(effect.name, 'The Effect Expiring Against the Debuff Target', effect.debuffTarget, matchingDebuffTarget, matchingDebuffTargetIndex);
+                for (let key in effect.effect) {
 
-        }
-        if (combatData.player_one_weapons[0].influences[0] === 'Astra') { // Lightning
-            let astra = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
-            astra = Math.round(astra * combatData.player_one.level / 10);
-            combatData.new_player_one_health += astra;
-            combatData.current_player_one_health += astra;
-            console.log("Astra!")
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-            combatData.player_one_weapons[0].critical_chance += 4;
-            combatData.player_one_weapons[0].roll += 2;
-            combatData.player_one_weapons[0].critical_damage += 0.1;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === 'Cambire') { // Potential
-            console.log("Cambire!")
-            let cambire = combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren;
-            cambire = Math.round(cambire * combatData.player_one.level / 10);
-            combatData.new_player_one_health += cambire;
-            combatData.current_player_one_health += cambire;
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage, gifting ${cambire}.`
-            if (combatData.realized_player_one_damage < 0) {
-                combatData.realized_player_one_damage = 0;
+                    if (key in combatData.enemy_weapons[matchingDebuffTargetIndex]) {
+                        if (key !== 'dodge') {
+                            // console.log(effect.effect, key, 'Debuff Effect Expires in Weapon Loop');
+                            combatData.enemy_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.enemy_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        }
+                    }
+                    if (key in combatData.enemy_defense) {
+                        // console.log(effect.effect, key, 'Debuff Effect Expires in Defense Loop');
+                        combatData.enemy_defense[key] += effect.effect[key] * effect.activeStacks;
+                    }
+                }
             }
-            combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-            combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
+            // console.log(effect.name, effect.prayer, 'Player Effect Expiring');
+            return false;
+        } else { // The Effect Persists
+            switch (effect.prayer) {
+                case 'Buff': { // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
+                    if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                            } else {
+                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.player_defense) {
+                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                        }
+                    }
+                    // console.log(effect.name, effect.prayer, 'Player Buff Ticking');
+                    break;
+                }
+                case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+                    if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
+                        effect.debuffTarget = combatData.enemy_weapons[0].name;
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.enemy_weapons[0][key] -= effect.effect[key];
+                            } else {
+                                combatData.enemy_weapons[0][key] += effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.enemy_defense) { // Buff
+                            if (effect.effect[key]) {
+                                combatData.enemy_defense[key] -= effect.effect[key];
+                            }
+                        }
+                    }
+                    // console.log(effect.name, effect.prayer, 'enemy Debuff Ticking');
+                    break;
+                }
+                case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                    combatData.new_enemy_health -= effect.effect.damage * 0.33;
+                    combatData.current_enemy_health -= effect.effect.damage * 0.33;
+
+                    // console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
+
+                    if (combatData.current_enemy_health < 0 || combatData.new_enemy_health < 0) {
+                        combatData.new_enemy_health = 0;
+                        combatData.current_enemy_health = 0;
+                        combatData.enemy_win = false;
+                        combatData.player_win = true;
+                    }
+                    break;
+                }
+                case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                    combatData.new_player_health += effect.effect.healing * 0.33;
+                    combatData.current_player_health += effect.effect.healing * 0.33;
+
+                    if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                        combatData.enemy_win = false;
+                    }
+                    // console.log(effect.name, effect.prayer, 'Heal Ticking');
+                    break;
+                }
+
+            }
+            return true;
+        }
+    });
+
+    combatData.enemyEffects = combatData.enemyEffects.filter(effect => {
+        // console.log(effect.name, effect.tick.end, combatData.combatRound, combatData.player_win, combatData.enemy_win, 'enemy Effect in statusCheck, Checking: End Tick, Combat Round, Player Win, enemy Win')
+        const matchingWeapon = combatData.enemy_weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.enemy_weapons.indexOf(matchingWeapon);
+        const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
+        const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
+        if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.enemy_win === true) { // The Effect Expires
+            if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                // console.log('enemy Buff Effect Expires');
+                for (let key in effect.effect) {
+                    if (effect.effect[key] && key !== 'dodge') {
+                        // console.log(combatData.enemy_weapons[matchingWeaponIndex], effect.effect, key, 'Buff Effect Expires in Effect Loop');
+                        combatData.enemy_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                    } else {
+                        combatData.enemy_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                    }
+                }
+                for (let key in combatData.enemy_defense) {
+                    if (effect.effect[key]) combatData.enemy_defense[key] -= effect.effect[key] * effect.activeStacks;
+                }
+            }
+            if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                for (let key in effect.effect) {
+                    if (effect.effect[key] && key !== 'dodge') {
+                        combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+                    } else {
+                        combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
+                    }
+                }
+                for (let key in combatData.player_defense) {
+                    if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                }
+            }
+            // console.log(effect.name, effect.prayer, 'enemy Effect Expiring')
+            return false;
+        } else { // The Effect Persists
+            switch (effect.prayer) {
+                case 'Buff': { // Buffs are applied
+                    if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.enemy_weapons[matchingWeaponIndex][key] += effect.effect[key];
+                            } else {
+                                combatData.enemy_weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.enemy_defense) {
+                            if (effect.effect[key]) combatData.enemy_defense[key] += effect.effect[key];
+                        }
+                    }
+                    // console.log(effect.name, effect.prayer, 'enemy Buff Ticking');
+                    break;
+                }
+                case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+                    if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
+                        effect.debuffTarget = combatData.weapons[0].name;
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[0][key] -= effect.effect[key];
+                            } else {
+                                combatData.weapons[0][key] += effect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.player_defense) { // Buff
+                            if (effect.effect[key]) {
+                                combatData.player_defense[key] -= effect.effect[key];
+                            }
+                        }
+                    }
+                    // console.log(effect.name, effect.prayer, 'enemy Debuff Ticking');
+                    break;
+                }
+                case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                    combatData.new_player_health -= effect.effect.damage * 0.33;
+                    combatData.current_player_health -= effect.effect.damage * 0.33;
+
+                    // console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
+
+                    if (combatData.current_player_health < 0 || combatData.new_player_health < 0) {
+                        combatData.new_player_health = 0;
+                        combatData.current_player_health = 0;
+                        combatData.player_win = false;
+                        combatData.enemy_win = true;
+                    }
+                    break;
+                }
+                case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                    combatData.new_enemy_health += effect.effect.healing * 0.33;
+                    combatData.current_enemy_health += effect.effect.healing * 0.33;
+
+                    if (combatData.current_enemy_health > 0 || combatData.new_enemy_health > 0) {
+                        combatData.player_win = false;
+                    }
+                    // console.log(effect.name, effect.prayer, 'Heal Ticking');
+                    break;
+                }
+            }
+        }
+        return true;
+    });
+
+    if (combatData.new_player_health > 0) {
+        combatData.enemy_win = false;
+    }
+    if (combatData.new_enemy_health > 0) {
+        combatData.player_win = false;
+    }
+    return combatData;
+}
+
+const faithFinder = async (combatData, player_action, enemy_action) => { // The influence will add a chance to have a special effect occur
+    if (combatData.player_win === true || combatData.enemy_win === true) {
+        return
+    }
     
+    let faith_number = Math.floor(Math.random() * 101);
+    let faith_number_two = Math.floor(Math.random() * 101);
+    let faith_check = Math.floor(Math.random() * 101);
+    let enemy_faith_number = Math.floor(Math.random() * 101);
+    let enemy_faith_number_two = Math.floor(Math.random() * 101);
+    let faith_mod_one = 0;
+    let faith_mod_two = 0;
+    let enemy_faith_mod_one = 0;
+    let enemy_faith_mod_two = 0;
+
+    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
+    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
+
+    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
+    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+
+    combatData.enemy_weapons[0].critical_chance = Number(combatData.enemy_weapons[0].critical_chance)
+    combatData.enemy_weapons[0].critical_damage = Number(combatData.enemy_weapons[0].critical_damage)
+
+    combatData.enemy_weapons[1].critical_chance = Number(combatData.enemy_weapons[1].critical_chance)
+    combatData.enemy_weapons[1].critical_damage = Number(combatData.enemy_weapons[1].critical_damage)
+
+    if (combatData.player.faith === 'devoted' && combatData.weapons[0].influences[0] === 'Daethos') {
+        faith_number += 5;
+        faith_number_two += 5;
+        faith_mod_one += 5;
+        faith_mod_two += 5;
+    }
+    if (combatData.player.faith === 'adherent' && combatData.weapons[0].influences[0] !== 'Daethos') {
+        faith_number += 5;
+        faith_number_two += 5;
+        faith_mod_one += 5;
+        faith_mod_two += 5;
+    }
+
+    switch (combatData.weapons[0].rarity) {
+        case 'Common': {
+            faith_number += 1;
+            faith_mod_one += 1;
+            break;
         }
-        if (combatData.player_one_weapons[0].influences[0] === 'Chiomyr') { // Humor
-            let chiomyr = (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[0].kyosir);
-            chiomyr = Math.round(chiomyr * combatData.player_one.level / 10);
-            combatData.new_player_one_health += chiomyr;
-            combatData.current_player_one_health += chiomyr;
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer causes a faint cackle to fade through the battle.`
-            console.log("Chiomyr!")
-            combatData.player_one_weapons[0].physical_penetration += 3;
-            combatData.player_one_weapons[0].magical_penetration += 3;
+        case 'Uncommon': {
+            faith_number += 2;
+            faith_mod_one += 2;
+            break;
         }
-        if (combatData.player_one_weapons[0].influences[0] === 'Fyer') { // Fire
-            let fyer = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren)
-            fyer = Math.round(fyer * combatData.player_one.level / 10);
-            combatData.new_player_one_health += fyer;
-            combatData.current_player_one_health += fyer;
-            console.log("Fyer!")
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s Caer ushers forth the favor of Fyer igniting through them.`
-            combatData.player_one_weapons[0].critical_damage += 0.9;
-            combatData.player_one_weapons[0].critical_chance += 1;
+        case 'Rare': {
+            faith_number += 3;
+            faith_mod_one += 3;
+            break;
         }
-        if (combatData.player_one_weapons[0].influences[0] === 'Ilios') { // Sun
-            let ilios = combatData.realized_player_one_damage;
-            combatData.new_player_one_health += ilios;
-            combatData.current_player_one_health += ilios;
-            console.log("Ilios!")
-            combatData.player_one_influence_description = 
-                `The Hush of Ilios bursts into them through ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
-            player_one_action = 'attack';   
-            combatData.player_one_weapons[0].magical_penetration += 2;
-            combatData.player_one_weapons[0].physical_penetration += 2;
-            combatData.player_one_defense.physicalDefenseModifier += 1;
-            combatData.player_one_defense.magicalDefenseModifier += 1;
-            combatData.player_one_defense.physicalPosture += 1;
-            combatData.player_one_defense.magicalPosture += 1;
+        case 'Epic': {
+            faith_number += 5;
+            faith_mod_one += 5;
+            break;
         }
-        if (combatData.player_one_weapons[0].influences[0] === "Kyn'gi") { // Hunt
-            console.log("Kyn'gi!")
-            let kyngi = (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility)
-            kyngi = Math.round(kyngi * combatData.player_one.level / 10);
-            combatData.new_player_one_health += kyngi;
-            combatData.current_player_one_health += kyngi;
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s keening Caer shrieks into Kyn'gi, his blessing emboldening the Hunt.`
-            combatData.player_one_weapons[0].roll += 3;
-            combatData.player_one_weapons[0].critical_chance += 3;
+        case 'Legendary': {
+            faith_number += 10;
+            faith_mod_one += 10;
         }
-        if (combatData.player_one_weapons[0].influences[0] === "Kyrisos") { // Gold
-            let kyrisos = (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[0].kyosir)
-            kyrisos = Math.round(kyrisos * combatData.player_one.level / 10);
-            combatData.new_player_one_health += kyrisos;
-            combatData.current_player_one_health += kyrisos;
-            console.log("Kyrisos!")
-            combatData.player_one_influence_description = 
-                `The Caer of Kyrisos imbues them with Kyosir!`
-            combatData.player_one_attributes.kyosirMod += 4;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Kyr'na") { // Time
-            console.log("Kyr'na!")
-            let kyrna = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre);
-            kyrna = Math.round(kyrna * combatData.player_one.level / 5);
-            combatData.player_one_influence_description = 
-                `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
-            combatData.new_player_two_health -= kyrna;
-            combatData.current_player_two_health -= kyrna;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Lilos") { // Life
-            console.log("Lilos!")
-            let lilos = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren);
-            lilos = Math.round(lilos * combatData.player_one.level / 5);
-            combatData.player_one_influence_description = 
-                `Lilos breathes her Cear into ${combatData.player_one.name}, healing them for ${lilos}.`
-            combatData.new_player_one_health += lilos;
-            combatData.current_player_one_health += lilos;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Ma'anre") { // Moon
-            let maanre = combatData.realized_player_one_damage;
-            combatData.new_player_one_health += maanre;
-            combatData.current_player_one_health += maanre;
-            console.log("Ma'anre!")
-            combatData.player_one_influence_description = 
-                `Ma'anre wraps her tendrils about ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, changing ${combatData.player_one.name}'s perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-            combatData.player_one_weapons[0].roll += 2;
-            combatData.player_one_weapons[0].dodge -= 2;
-            combatData.player_one_weapons[0].critical_chance += 2;
-            combatData.player_one_weapons[0].critical_damage += 0.2;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Nyrolus") { // Water
-            console.log("Nyrolus!")
-            let nyrolus = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren)
-            nyrolus = Math.round(nyrolus * combatData.player_one.level / 10);
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-            combatData.player_one_defense.physicalDefenseModifier += 2;
-            combatData.player_one_defense.magicalDefenseModifier += 2;
-            combatData.player_one_defense.physicalPosture += 2;
-            combatData.player_one_defense.magicalPosture += 2;
-            combatData.new_player_one_health += nyrolus
-            combatData.current_player_one_health += nyrolus
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Quor'ei") { // Earth
-            console.log("Quor'ei!")
-            let quorei = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre)
-            quorei = Math.round(quorei * combatData.player_one.level / 10);
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s resolve beckons with the favor of ${combatData.player_one.name}'s Quor'ei, steeling them in their Caer for ${quorei}.`
-            combatData.player_one_defense.physicalDefenseModifier += 2;
-            combatData.player_one_defense.magicalDefenseModifier += 2;
-            combatData.player_one_defense.physicalPosture += 2;
-            combatData.player_one_defense.magicalPosture += 2;
-            combatData.new_player_one_health += quorei
-            combatData.current_player_one_health += quorei
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Rahvre") { // Dreams
-            let rahvre = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren)
-            rahvre = Math.round(rahvre * combatData.player_one.level / 10);
-            combatData.new_player_one_health += rahvre
-            combatData.current_player_one_health += rahvre
-            console.log("Rahvre!")
-            combatData.player_one_influence_description = 
-            `${combatData.player_one.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-        combatData.player_one_weapons[0].magical_damage += 5;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Senari") { // Wisdom
-            console.log("Senari!")
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
-            combatData.player_one_weapons[0].roll += 3;
-            combatData.player_one_weapons[0].dodge -= 3;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Se'dyro") { // Iron
-            let sedyro = (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility)
-            sedyro = Math.round(sedyro * combatData.player_one.level / 10);
-            combatData.new_player_one_health += sedyro
-            combatData.current_player_one_health += sedyro
-            console.log("Se'dyro!")
-            combatData.player_one_influence_description = 
-                `The Caer of Se'dyro sings into ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
-            player_one_action = 'attack';
-            if (combatData.realized_player_one_damage < 0) {
-                combatData.realized_player_one_damage = 0;
-            }
-            combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-            combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Se'vas") { // War
-            let sevas = (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength)
-            sevas = Math.round(sevas * combatData.player_one.level / 10);
-            combatData.new_player_one_health += sevas
-            combatData.current_player_one_health += sevas
-            console.log("Se'vas!")
-            combatData.player_one_influence_description = 
-                `The Caer of Se'vas scorns ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, scarring it with the beauty of war.` 
-            combatData.player_one_weapons[0].critical_chance += 3;
-            combatData.player_one_weapons[0].critical_damage += 0.3;
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Shrygei") { // Song
-            let shrygei = combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_attributes.totalConstitution;
-            shrygei = Math.round(shrygei * combatData.player_one.level / 10);
-            combatData.player_one_influence_description =
-                `The Song of Shry'gei shrieks itself through ${combatData.player_one.name}'s ${combatData.player_one_weapons[0].name}, the resplendence renews them for ${shrygei}`
-            combatData.player_one_weapons[0].magical_penetration += 2
-            combatData.player_one_weapons[0].physical_penetration += 2
-            combatData.new_player_one_health += shrygei
-            combatData.current_player_one_health += shrygei
-        }
-        if (combatData.player_one_weapons[0].influences[0] === "Tshaer") { // Animal
-            let tshaer = (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength)
-            tshaer = Math.round(tshaer * combatData.player_one.level / 10);
-            combatData.new_player_one_health += tshaer
-            combatData.current_player_one_health += tshaer
-            console.log("Tshaer!")
-            combatData.player_one_influence_description = 
-                `${combatData.player_one.name}'s fervor unleashes the bestial nature of Tshaer within them.`
-            combatData.player_one_weapons[0].physical_damage += 5;
+        default: {
+            faith_number += 0;
+            faith_mod_one += 0;
+            break;
         }
     }
-    if (combatData.player_one_dual_wielding === true) {
-        if (player_one_faith_number_two > 85) {
-            combatData.player_one_religious_success = true;
-            if (combatData.player_one_weapons[1].influences[0] === 'Daethos') { // God
-                console.log("Daethos!")
-                let daethos = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren);
-                daethos = Math.round(daethos * (combatData.player_one.level));
-                combatData.new_player_one_health += combatData.realized_player_one_damage;
-                combatData.current_player_one_health += combatData.realized_player_one_damage;
-                combatData.player_one_influence_description_two = 
-                    `Daethos wraps through ${combatData.player_one.name}'s Caer, ${combatData.player_one_weapons[1].name} healing them for ${Math.round(combatData.realized_player_one_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-                combatData.new_player_one_health += daethos;
-                combatData.new_player_two_health -= daethos;
-                combatData.current_player_one_health += daethos;
-                combatData.current_player_two_health -= daethos;
-
-            }
-            if (combatData.player_one_weapons[1].influences[0] === 'Achreo') { // Wild
-                console.log("Achreo!")
-                let achreo = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
-                achreo = Math.round(achreo * (combatData.player_one.level));
-                combatData.new_player_one_health += achreo
-                combatData.current_player_one_health += achreo
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer stirs Achreo, to his own surprise and soft as whispers he grants renewal of ${achreo}.`
-                combatData.player_one_weapons[1].physical_damage += 2;
-                combatData.player_one_weapons[1].magical_damage += 2;
-                combatData.player_one_weapons[1].critical_chance += 2;
-                combatData.player_one_weapons[1].critical_damage += 0.2;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Ahn've") { // Wind
-                let ahnve = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren)
-                ahnve = Math.round(ahnve * combatData.player_one.level / 10);
-                combatData.new_player_one_health += ahnve
-                combatData.current_player_one_health += ahnve
-                console.log("Ahn've!")
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer ushers forth Ahn've, a devastating storm posseses them to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage.`
-                player_one_action = 'attack';
-                if (combatData.realized_player_one_damage < 0) {
-                    combatData.realized_player_one_damage = 0;
-                }
-                combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-                combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
-
-            }
-            if (combatData.player_one_weapons[1].influences[0] === 'Astra') { // Lightning
-                let astra = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
-                astra = Math.round(astra * combatData.player_one.level / 10);
-                combatData.new_player_one_health += astra;
-                combatData.current_player_one_health += astra;
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-                combatData.player_one_weapons[1].critical_chance += 4;
-                combatData.player_one_weapons[1].roll += 2;
-                combatData.player_one_weapons[1].critical_damage += 0.1;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === 'Cambire') { // Potential
-                let cambire = combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren;
-                cambire = Math.round(cambire * combatData.player_one.level / 10);
-                combatData.new_player_one_health += cambire;
-                combatData.current_player_one_health += cambire;
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer ushers forth the Chance of Cambire, warping back to attack ${combatData.player_two.name} for ${Math.round(combatData.realized_player_one_damage)} more damage, gifting ${cambire}.`
-                if (combatData.realized_player_one_damage < 0) {
-                    combatData.realized_player_one_damage = 0;
-                }
-                combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-                combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
-
-            }
-            if (combatData.player_one_weapons[1].influences[0] === 'Chiomyr') { // Humor
-                let chiomyr = (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[1].kyosir);
-                chiomyr = Math.round(chiomyr * combatData.player_one.level / 10);
-                combatData.new_player_one_health += chiomyr;
-                combatData.current_player_one_health += chiomyr;
-                combatData.player_one_weapons[1].physical_penetration += 3;
-                combatData.player_one_weapons[1].magical_penetration += 3;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === 'Fyer') { // Fire
-                let fyer = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren)
-                fyer = Math.round(fyer * combatData.player_one.level / 10);
-                combatData.new_player_one_health += fyer;
-                combatData.current_player_one_health += fyer;
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer ushers forth the favor of Fyer igniting through them.`
-                combatData.player_one_weapons[1].critical_damage += 0.9;
-                combatData.player_one_weapons[1].critical_chance += 1;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === 'Ilios') { // Sun
-                let ilios = combatData.realized_player_one_damage;
-                combatData.new_player_one_health += ilios;
-                combatData.current_player_one_health += ilios;
-                combatData.player_one_influence_description_two = 
-                    `The Hush of Ilios bursts into them through ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
-                player_one_action = 'attack';   
-                combatData.player_one_weapons[1].magical_penetration += 2;
-                combatData.player_one_weapons[1].physical_penetration += 2;
-                combatData.player_one_defense.physicalDefenseModifier += 1;
-                combatData.player_one_defense.magicalDefenseModifier += 1;
-                combatData.player_one_defense.physicalPosture += 1;
-                combatData.player_one_defense.magicalPosture += 1;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Kyn'gi") { // Hunt
-                let kyngi = (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[1].agility)
-                kyngi = Math.round(kyngi * combatData.player_one.level / 10);
-                combatData.new_player_one_health += kyngi;
-                combatData.current_player_one_health += kyngi;
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
-                combatData.player_one_weapons[1].roll += 3;
-                combatData.player_one_weapons[1].critical_chance += 3;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Kyrisos") { // Gold
-                let kyrisos = (combatData.player_one_attributes.totalKyosir + combatData.player_one_weapons[1].kyosir)
-                kyrisos = Math.round(kyrisos * combatData.player_one.level / 10);
-                combatData.new_player_one_health += kyrisos;
-                combatData.current_player_one_health += kyrisos;
-                combatData.player_one_influence_description_two = 
-                    `The Caer of Kyrisos imbues them with Kyosir!`
-                combatData.player_one_attributes.kyosirMod += 4;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Kyr'na") { // Time
-                let kyrna = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre);
-                kyrna = Math.round(kyrna * combatData.player_one.level / 5);
-                combatData.player_one_influence_description_two = 
-                    `Kyr'na withers ${combatData.player_two.name}, brittling their Caer for ${kyrna} Damage.`
-                combatData.new_player_two_health -= kyrna;
-                combatData.current_player_two_health -= kyrna;
-
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren);
-                lilos = Math.round(lilos * combatData.player_one.level / 5);
-                combatData.player_one_influence_description_two = 
-                    `Lilos breathes her Caer into ${combatData.player_one.name}, healing them for ${lilos}.`
-                combatData.new_player_one_health += lilos;
-                combatData.current_player_one_health += lilos;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Ma'anre") { // Moon
-                let maanre = combatData.realized_player_one_damage;
-                combatData.new_player_one_health += maanre;
-                combatData.current_player_one_health += maanre;
-                combatData.player_one_influence_description_two = 
-                    `Ma'anre wraps her tendrils about ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, changing ${combatData.player_one.name}'s perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-                combatData.player_one_weapons[1].roll += 2;
-                combatData.player_one_weapons[1].dodge -= 2;
-                combatData.player_one_weapons[1].critical_chance += 2;
-                combatData.player_one_weapons[1].critical_damage += 0.2;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren)
-                nyrolus = Math.round(nyrolus * combatData.player_one.level / 10);
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-                combatData.player_one_defense.physicalDefenseModifier += 2;
-                combatData.player_one_defense.magicalDefenseModifier += 2;
-                combatData.player_one_defense.physicalPosture += 2;
-                combatData.player_one_defense.magicalPosture += 2;
-                combatData.new_player_one_health += nyrolus
-                combatData.current_player_one_health += nyrolus
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Quor'ei") { // Earth
-                let quorei = (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre)
-                quorei = Math.round(quorei * combatData.player_one.level / 10);
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s resolve beckons with the favor of ${combatData.player_one.name}'s Quor'ei, steeling them in their Caer for ${quorei}.`
-                combatData.player_one_defense.physicalDefenseModifier += 2;
-                combatData.player_one_defense.magicalDefenseModifier += 2;
-                combatData.player_one_defense.physicalPosture += 2;
-                combatData.player_one_defense.magicalPosture += 2;
-                combatData.new_player_one_health += quorei
-                combatData.current_player_one_health += quorei
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Rahvre") { // Dreams
-                let rahvre = (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren)
-                rahvre = Math.round(rahvre * combatData.player_one.level / 10);
-                combatData.new_player_one_health += rahvre
-                combatData.current_player_one_health += rahvre
-                combatData.player_one_influence_description_two = 
-                `${combatData.player_one.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-                combatData.player_one_weapons[1].magical_damage += 5;   
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Senari") { // Wisdom
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
-                combatData.player_one_weapons[1].roll += 3;
-                combatData.player_one_weapons[1].dodge -= 3;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Se'dyro") { // Iron
-                let sedyro = (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[1].agility)
-                sedyro = Math.round(sedyro * combatData.player_one.level / 10);
-                combatData.new_player_one_health += sedyro
-                combatData.current_player_one_health += sedyro
-                combatData.player_one_influence_description_two = 
-                    `The Caer of Se'dyro sings into ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_one_damage)} more damage!`    
-                player_one_action = 'attack';
-                if (combatData.realized_player_one_damage < 0) {
-                    combatData.realized_player_one_damage = 0;
-                }
-                combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-                combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
-
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Se'vas") { // War
-                let sevas = (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[1].strength);
-                sevas = Math.round(sevas * combatData.player_one.level / 10);
-                combatData.new_player_one_health += sevas
-                combatData.current_player_one_health += sevas
-                combatData.player_one_influence_description_two = 
-                    `The Caer of Se'vas scorns ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, scarring it with the beauty of war.` 
-                combatData.player_one_weapons[1].critical_chance += 3;
-                combatData.player_one_weapons[1].critical_damage += 0.3;
-            }
-            if (combatData.player_one_weapons[1].influences[0] === "Shrygei") { // Song
-                let shrygei = combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[1].achre + combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[1].caeren + combatData.player_one_attributes.totalConstitution;
-                shrygei = Math.round(shrygei * combatData.player_one.level / 10);
-                combatData.player_one_influence_description_two =
-                `The Song of Shry'gei shrieks itself through ${combatData.player_one.name}'s ${combatData.player_one_weapons[1].name}, the resplendence renews them for ${shrygei}`
-                    combatData.player_one_weapons[1].magical_penetration += 2
-                    combatData.player_one_weapons[1].physical_penetration += 2
-                    combatData.new_player_one_health += shrygei
-                    combatData.current_player_one_health += shrygei
-                }
-            if (combatData.player_one_weapons[1].influences[0] === "Tshaer") { // Animal
-                let tshaer = (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[1].strength)
-                tshaer = Math.round(tshaer * combatData.player_one.level / 10);
-                combatData.new_player_one_health += tshaer
-                combatData.current_player_one_health += tshaer
-                combatData.player_one_influence_description_two = 
-                    `${combatData.player_one.name}'s Caer unleashes the bestial nature of Tshaer within them.`
-                combatData.player_one_weapons[1].physical_damage += 5;
-            }
+    switch (combatData.weapons[1].rarity) {
+        case 'Common': {
+            faith_number_two += 1;
+            faith_mod_two += 1;
+            break;
+        }
+        case 'Uncommon': {
+            faith_number_two += 2;
+            faith_mod_two += 2;
+            break;
+        }
+        case 'Rare': {
+            faith_number_two += 3;
+            faith_mod_two += 3;
+            break;
+        }
+        case 'Epic': {
+            faith_number_two += 5;
+            faith_mod_two += 5;
+            break;
+        }
+        case 'Legendary': {
+            faith_number_two += 10;
+            faith_mod_two += 10;
+        }
+        default: {
+            faith_number_two += 0;
+            faith_mod_two += 0;
+            break;
+        }
+    }
+    switch (combatData.enemy_weapons[0].rarity) {
+        case 'Common': {
+            enemy_faith_number += 1;
+            enemy_faith_mod_one += 1;
+            break;
+        }
+        case 'Uncommon': {
+            enemy_faith_number += 2;
+            enemy_faith_mod_one += 2;
+            break;
+        }
+        case 'Rare': {
+            enemy_faith_number += 3;
+            enemy_faith_mod_one += 3;
+            break;
+        }
+        case 'Epic': {
+            enemy_faith_number += 5;
+            enemy_faith_mod_one += 5;
+            break;
+        }
+        case 'Legendary': {
+            enemy_faith_number += 10;
+            enemy_faith_mod_one += 10;
+        }
+        default: {
+            enemy_faith_number += 0;
+            enemy_faith_mod_one += 0;
+            break;
+        }
+    }
+    switch (combatData.enemy_weapons[1].rarity) {
+        case 'Common': {
+            enemy_faith_number_two += 1;
+            enemy_faith_mod_two += 1;
+            break;
+        }
+        case 'Uncommon': {
+            enemy_faith_number_two += 2;
+            enemy_faith_mod_two += 2;
+            break;
+        }
+        case 'Rare': {
+            enemy_faith_number_two += 3;
+            enemy_faith_mod_two += 3;
+            break;
+        }
+        case 'Epic': {
+            enemy_faith_number_two += 5;
+            enemy_faith_mod_two += 5;
+            break;
+        }
+        case 'Legendary': {
+            enemy_faith_number_two += 10;
+            enemy_faith_mod_two += 10;
+        }
+        default: {
+            enemy_faith_number_two += 0;
+            enemy_faith_mod_two += 0;
+            break;
         }
     }
 
-    if (player_two_faith_number > 85) {
-        combatData.player_two_religious_success = true;
-        if (combatData.player_two_weapons[0].influences[0] === 'Daethos') { // God
-            console.log('Daethos!')
-            let daethos = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre + combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren);
-            daethos = Math.round(daethos * combatData.player_two.level / 10);
-            combatData.new_player_two_health += combatData.realized_player_two_damage;
-            combatData.current_player_two_health += combatData.realized_player_two_damage;
-            combatData.player_two_influence_description = 
-                `Daethos wraps through ${combatData.player_two.name}'s Caer, ${combatData.player_two_weapons[0].name} healing them for ${Math.round(combatData.realized_player_two_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-            combatData.new_player_two_health += daethos;
-            combatData.new_player_one_health -= daethos;
-            combatData.current_player_two_health += daethos;
-            combatData.current_player_one_health -= daethos;
-
-    }
-        if (combatData.player_two_weapons[0].influences[0] === 'Achreo') { // Wild
-            console.log('Achreo!')
-            // combatData.player_two_weapons[0].critical_chance = Number(combatData.player_two_weapons[0].critical_chance + 1);
-            let achreo = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre)
-            achreo = Math.round(achreo * combatData.player_two.level / 10);
-            combatData.new_player_two_health += achreo
-            combatData.current_player_two_health += achreo
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s Caer stirs Achreo, much to his own surprise.`
-            combatData.player_two_weapons[0].physical_damage += 2;
-            combatData.player_two_weapons[0].magical_damage += 2;
-            combatData.player_two_weapons[0].critical_chance += 2;
-            combatData.player_two_weapons[0].critical_damage += 0.2;
+    if (combatData.weapons[0].influences[0] === combatData.player.amulet.influences[0]) {
+        if (combatData.player.amulet.rarity === 'Common') {
+            faith_number += 1;
+            faith_mod_one += 1;
+        } else if (combatData.player.amulet.rarity === 'Uncommon') {
+            faith_number += 2;
+            faith_mod_one += 2;
+        } else if (combatData.player.amulet.rarity === 'Rare') {
+            faith_number += 3;
+            faith_mod_one += 3;
+        } else if (combatData.player.amulet.rarity === 'Epic') {
+            faith_number += 5;
+            faith_mod_one +=5;
         }
-        if (combatData.player_two_weapons[0].influences[0] === "Ahn've") { // Wind
-            let ahnve = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren)
-            ahnve = Math.round(ahnve * combatData.player_two.level / 10);
-            combatData.new_player_two_health += ahnve
-            combatData.current_player_two_health += ahnve
-            console.log("Achreo!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_player_two_damage)} more damage.`
-            player_one_action = 'attack';
-            // await attackCompiler(combatData, player_one_action)
-            if (combatData.realized_player_two_damage < 0) {
-                    combatData.realized_player_two_damage = 0;
+    }
+    if (combatData.weapons[1].influences[0] === combatData.player.amulet.influences[0]) {
+        if (combatData.player.amulet.rarity === 'Common') {
+            faith_number_two += 1;
+            faith_mod_two += 1;
+        } else if (combatData.player.amulet.rarity === 'Uncommon') {
+            faith_number_two += 2;
+            faith_mod_two += 2;
+        } else if (combatData.player.amulet.rarity === 'Rare') {
+            faith_number_two += 3;
+            faith_mod_two += 3;
+        } else if (combatData.player.amulet.rarity === 'Epic') {
+            faith_number_two += 5;
+            faith_mod_two +=5;
+        }
+    }
+    if (combatData.enemy_weapons[0].influences[0] === combatData.enemy.amulet.influences[0]) {
+        if (combatData.enemy.amulet.rarity === 'Common') {
+            enemy_faith_number += 1;
+            enemy_faith_mod_one += 1;
+        } else if (combatData.enemy.amulet.rarity === 'Uncommon') {
+            enemy_faith_number += 2;
+            enemy_faith_mod_one += 2;
+        } else if (combatData.enemy.amulet.rarity === 'Rare') {
+            enemy_faith_number += 3;
+            enemy_faith_mod_one += 3;
+        } else if (combatData.enemy.amulet.rarity === 'Epic') {
+            enemy_faith_number += 5;
+            enemy_faith_mod_one +=5;
+        }
+    }
+    if (combatData.enemy_weapons[1].influences[0] === combatData.enemy.amulet.influences[0]) {
+        if (combatData.enemy.amulet.rarity === 'Common') {
+            enemy_faith_number_two += 1;
+            enemy_faith_mod_two += 1;
+        } else if (combatData.enemy.amulet.rarity === 'Uncommon') {
+            enemy_faith_number_two += 2;
+            enemy_faith_mod_two += 2;
+        } else if (combatData.enemy.amulet.rarity === 'Rare') {
+            enemy_faith_number_two += 3;
+            enemy_faith_mod_two += 3;
+        } else if (combatData.enemy.amulet.rarity === 'Epic') {
+            enemy_faith_number_two += 5;
+            enemy_faith_mod_two +=5;
+        }
+    }
+    if (combatData.weapons[0].influences[0] === combatData.player.trinket.influences[0]) {
+        if (combatData.player.amulet.rarity === 'Common') {
+            faith_number += 1;
+            faith_mod_one += 1;
+        } else if (combatData.player.amulet.rarity === 'Uncommon') {
+            faith_number += 2;
+            faith_mod_one += 2;
+        } else if (combatData.player.amulet.rarity === 'Rare') {
+            faith_number += 3;
+            faith_mod_one += 3;
+        } else if (combatData.player.amulet.rarity === 'Epic') {
+            faith_number += 5;
+            faith_mod_one +=5;
+        }
+    }
+    if (combatData.weapons[1].influences[0] === combatData.player.trinket.influences[0]) {
+        if (combatData.player.amulet.rarity === 'Common') {
+            faith_number_two += 1;
+            faith_mod_two += 1;
+        } else if (combatData.player.amulet.rarity === 'Uncommon') {
+            faith_number_two += 2;
+            faith_mod_two += 2;
+        } else if (combatData.player.amulet.rarity === 'Rare') {
+            faith_number_two += 3;
+            faith_mod_two += 3;
+        } else if (combatData.player.amulet.rarity === 'Epic') {
+            faith_number_two += 5;
+            faith_mod_two +=5;
+        }
+    }
+    if (combatData.enemy_weapons[0].influences[0] === combatData.enemy.trinket.influences[0]) {
+        if (combatData.enemy.amulet.rarity === 'Common') {
+            enemy_faith_number += 1;
+            enemy_faith_mod_one += 1;
+        } else if (combatData.enemy.amulet.rarity === 'Uncommon') {
+            enemy_faith_number += 2;
+            enemy_faith_mod_one += 2;
+        } else if (combatData.enemy.amulet.rarity === 'Rare') {
+            enemy_faith_number += 3;
+            enemy_faith_mod_one += 3;
+        } else if (combatData.enemy.amulet.rarity === 'Epic') {
+            enemy_faith_number += 5;
+            enemy_faith_mod_one +=5;
+        }
+    }
+    if (combatData.enemy_weapons[1].influences[0] === combatData.enemy.trinket.influences[0]) {
+        if (combatData.enemy.amulet.rarity === 'Common') {
+            enemy_faith_number_two += 1;
+            enemy_faith_mod_two += 1;
+        } else if (combatData.enemy.amulet.rarity === 'Uncommon') {
+            enemy_faith_number_two += 2;
+            enemy_faith_mod_two += 2;
+        } else if (combatData.enemy.amulet.rarity === 'Rare') {
+            enemy_faith_number_two += 3;
+            enemy_faith_mod_two += 3;
+        } else if (combatData.enemy.amulet.rarity === 'Epic') {
+            enemy_faith_number_two += 5;
+            enemy_faith_mod_two +=5;
+        }
+    }
+
+
+    if (combatData.enemy.faith === 'devoted' && combatData.enemy_weapons[0].influences[0] === 'Daethos') {
+        enemy_faith_number += 5;
+        enemy_faith_number_two += 5;
+        enemy_faith_mod_one += 5;
+        enemy_faith_mod_two += 5;
+    }
+    if (combatData.enemy.faith === 'adherent' && combatData.enemy_weapons[0].influences[0] !== 'Daethos') {
+        enemy_faith_number += 5;
+        enemy_faith_number_two += 5;
+        enemy_faith_mod_one += 5;
+        enemy_faith_mod_two += 5;
+    }
+    // console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0]);
+    // console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
+    // console.log(combatData.player.name, `'s Faith Mod #`, faith_mod_one, `Faith Mod #2`, faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
+
+    // console.log(combatData.enemy_weapons[0].influences[0], combatData.enemy_weapons[1].influences[0]);
+    // console.log(combatData.enemy.name, `'s Faith #`, enemy_faith_number, `Faith #2`, enemy_faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
+    // console.log(combatData.enemy.name, `'s Faith Mod #`, enemy_faith_mod_one, `Faith Mod #2`, enemy_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
+
+
+    //TODO:FIXME: START OF CODE TESTING
+
+    if (faith_number > 90) {
+        combatData.religious_success = true;
+        let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+        // Handles the creation of a new Status Effect if it doesn't already exist
+        if (!existingEffect) {
+            existingEffect = new StatusEffect(combatData, combatData.player, combatData.enemy, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+            combatData.playerEffects.push(existingEffect);
+            combatData.player_influence_description = existingEffect.description;
+            // console.log(existingEffect, 'New Status Effect in Game Services');
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+            existingEffect.tick.end += 2;
+            existingEffect.activeStacks += 1;
+            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+            combatData.player_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+            switch (existingEffect.prayer) {
+                case 'Buff': {
+                    for (let key in existingEffect.effect) {
+                        if (existingEffect.effect[key] && key !== 'dodge') {
+                            combatData.weapons[0][key] += existingEffect.effect[key];
+                        } else {
+                            combatData.weapons[0][key] -= existingEffect.effect[key];
+                        }
+                    }
+                    for (let key in combatData.player_defense) {
+                        if (existingEffect.effect[key]) {
+                            combatData.player_defense[key] += existingEffect.effect[key];
+                        }
+                    }
+                    break;
                 }
-                combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-                combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-
-        }
-        if (combatData.player_two_weapons[0].influences[0] === 'Astra') { // Lightning
-            let astra = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre)
-            astra = Math.round(astra * combatData.player_two.level / 10);
-            combatData.new_player_two_health += astra;
-            combatData.current_player_two_health += astra;
-            console.log("Astra!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-            combatData.player_two_weapons[0].critical_chance += 4;
-            combatData.player_two_weapons[0].roll += 2;
-            combatData.player_two_weapons[0].critical_damage += 0.1;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === 'Cambire') { // Potential
-            console.log("Cambire!")
-            let cambire = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren);
-            cambire = Math.round(cambire * combatData.player_two.level / 10);
-            combatData.new_player_two_health += cambire;
-            combatData.current_player_two_health += cambire;
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player_one.name} for ${Math.round(combatData.realized_player_two_damage)}, gifting ${cambire}.`
-            if (combatData.realized_player_two_damage < 0) {
-                    combatData.realized_player_two_damage = 0;
+                case 'Damage': {
+                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                    break;
                 }
-                combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-                combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-        }
-        if (combatData.player_two_weapons[0].influences[0] === 'Chiomyr') { // Humor
-            let chiomyr = (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[0].kyosir);
-            chiomyr = Math.round(chiomyr * combatData.player_two.level / 10);
-            combatData.new_player_two_health += chiomyr;
-            combatData.current_player_two_health += chiomyr;
-            console.log("Chiomyr!")
-            combatData.player_two_weapons[0].physical_penetration += 3;
-            combatData.player_two_weapons[0].magical_penetration += 3;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === 'Fyer') { // Fire
-            let fyer = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren)
-            fyer = Math.round(fyer * combatData.player_two.level / 10);
-            combatData.new_player_two_health += fyer;
-            combatData.current_player_two_health += fyer;
-            console.log("Fyer!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s Caer ushers forth the favor of Fyer igniting through them.`
-            combatData.player_two_weapons[0].critical_damage += 0.9;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === 'Ilios') { // Sun
-            let ilios = combatData.realized_player_two_damage;
-            combatData.new_player_two_health += ilios;
-            combatData.current_player_two_health += ilios;
-            console.log("Ilios!")
-            combatData.player_two_influence_description = 
-                `The Hush of Ilios bursts into ${combatData.player_two.name} through their ${combatData.player_two_weapons[0].name}, his brilliance radiating for ${Math.round(ilios)}.`
-            player_one_action = 'attack';   
-            combatData.player_two_weapons[0].magical_penetration += 2;
-            combatData.player_two_weapons[0].physical_penetration += 2;
-            combatData.player_two_defense.physicalDefenseModifier += 1;
-            combatData.player_two_defense.magicalDefenseModifier += 1;
-            combatData.player_two_defense.physicalPosture += 1;
-            combatData.player_two_defense.magicalPosture += 1;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Kyn'gi") { // Hunt
-            let kyngi = (combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[0].agility)
-            kyngi = Math.round(kyngi * combatData.player_two.level / 10);
-            combatData.new_player_two_health += kyngi;
-            combatData.current_player_two_health += kyngi;
-            console.log("Kyn'gi!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s keening Caer shrieks into Kyn'gi, emboldening the Hunt.`
-            combatData.player_two_weapons[0].roll += 3;
-            combatData.player_two_weapons[0].critical_chance += 3;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Kyrisos") { // Gold
-            let kyrisos = (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[0].kyosir)
-            kyrisos = Math.round(kyrisos * combatData.player_two.level / 10);
-            combatData.new_player_two_health += kyrisos;
-            combatData.current_player_two_health += kyrisos;
-            console.log("Kyrisos!")
-            combatData.player_two_influence_description = 
-                `The Caer of Kyrisos imbues ${combatData.player_two.name}'s with Kyosir!`
-            combatData.player_two_attributes.kyosirMod += 3;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Kyr'na") { // Time
-            console.log("Kyr'na!")
-            let kyrna = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre);
-            kyrna = Math.round(kyrna * combatData.player_two.level / 5);
-            combatData.player_two_influence_description = 
-                `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
-            combatData.new_player_one_health -= kyrna;
-            combatData.current_player_one_health -= kyrna;
-
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Lilos") { // Life
-            console.log("Lilos!")
-            let lilos = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren);
-            lilos = Math.round(lilos * combatData.player_two.level / 5);
-            combatData.player_two_influence_description = 
-                `Lilos breathes her Cear into ${combatData.player_two.name}, healing ${combatData.player_two.name} for ${lilos}.`
-            combatData.new_player_two_health += lilos;
-            combatData.current_player_two_health += lilos;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Ma'anre") { // Moon
-            let maanre = combatData.realized_player_two_damage;
-            combatData.new_player_two_health += maanre;
-            combatData.current_player_two_health += maanre;
-            console.log("Ma'anre!")
-            combatData.player_two_influence_description = 
-                `Ma'anre wraps her tendrils about ${combatData.player_two.name}'s ${combatData.player_two_weapons[0].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-            combatData.player_two_weapons[0].roll += 2;
-            combatData.player_two_weapons[0].dodge -= 2;
-            combatData.player_two_weapons[0].critical_chance += 2;
-            combatData.player_two_weapons[0].critical_damage += 0.2;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Nyrolus") { // Water
-            console.log("Nyrolus!")
-            let nyrolus = ((combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren))
-            nyrolus = Math.round(nyrolus * combatData.player_two.level / 10);
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-            combatData.player_two_defense.physicalDefenseModifier += 2;
-            combatData.player_two_defense.magicalDefenseModifier += 2;
-            combatData.player_two_defense.physicalPosture += 2;
-            combatData.player_two_defense.magicalPosture += 2;
-            combatData.new_player_two_health += nyrolus
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Quor'ei") { // Earth
-            console.log("Quor'ei!")
-            let quorei = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre)
-            quorei = Math.round(quorei * combatData.player_two.level / 10);
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
-            combatData.player_two_defense.physicalDefenseModifier += 2;
-            combatData.player_two_defense.magicalDefenseModifier += 2;
-            combatData.player_two_defense.physicalPosture += 2;
-            combatData.player_two_defense.magicalPosture += 2;
-            combatData.new_player_two_health += quorei     }
-        if (combatData.player_two_weapons[0].influences[0] === "Rahvre") { // Dreams
-            let rahvre = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren)
-            rahvre = Math.round(rahvre * combatData.player_two.level / 10);
-            combatData.new_player_two_health += rahvre
-            combatData.current_player_two_health += rahvre
-            console.log("Rahvre!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-            combatData.player_two_weapons[0].magical_damage += 5;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Senari") { // Wisdom
-            console.log("Senari!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
-            combatData.player_two_weapons[0].roll += 3;
-            combatData.player_two_weapons[0].dodge -= 3;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Se'dyro") { // Iron
-            let sedyro = (combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[0].agility)
-            sedyro = Math.round(sedyro * combatData.player_two.level / 10);
-            combatData.new_player_two_health += sedyro
-            combatData.current_player_two_health += sedyro
-            console.log("Se'dyro!")
-            combatData.player_two_influence_description = 
-                `The Caer of Se'dyro sings into their ${combatData.player_two_weapons[0].name}, causing it to frenzy for ${Math.round(combatData.realized_player_two_damage)} more damage!`    
-            player_one_action = 'attack';
-            if (combatData.realized_player_two_damage < 0) {
-                combatData.realized_player_two_damage = 0;
             }
-            combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-            combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Se'vas") { // War
-            let sevas = (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength)
-            sevas = Math.round(sevas * combatData.player_two.level / 10);
-            combatData.new_player_two_health += sevas
-            combatData.current_player_two_health += sevas
-            console.log("Se'vas!")
-            combatData.player_two_influence_description = 
-                `The Caer of Se'vas scorns their ${combatData.player_two_weapons[0].name}, scarring it with the beauty of war.` 
-            combatData.player_two_weapons[0].critical_chance += 3;
-            combatData.player_two_weapons[0].critical_damage += 0.3;
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Shrygei") { // Song
-            let shrygei = combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre + combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren + combatData.player_two_attributes.totalConstitution;
-            shrygei = Math.round(shrygei * combatData.player_two.level / 10);
-            combatData.player_two_influence_description =
-            `The Song of Shry'gei shrieks itself through ${combatData.player_two.name}'s ${combatData.player_two_weapons[0].name}, the resplendence renews them for ${shrygei}`
-                combatData.player_two_weapons[0].magical_penetration += 2
-                combatData.player_two_weapons[0].physical_penetration += 2
-                combatData.new_player_two_health += shrygei
-                combatData.current_player_two_health += shrygei
-        }
-        if (combatData.player_two_weapons[0].influences[0] === "Tshaer") { // Animal
-            let tshaer = (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength)
-            tshaer = Math.round(tshaer * combatData.player_two.level / 10);
-            combatData.new_player_two_health += tshaer
-            combatData.current_player_two_health += tshaer
-            console.log("Tshaer!")
-            combatData.player_two_influence_description = 
-                `${combatData.player_two.name}'s fervor unleashes the bestial nature of Tshaer within them.`
-            combatData.player_two_weapons[0].physical_damage += 5;
-        }
+        } else if (existingEffect.refreshes) {
+            existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+            existingEffect.tick.end += existingEffect.duration + 1;
+            existingEffect.activeRefreshes += 1;
+            combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+        }    
     }
-    if (combatData.player_two_dual_wielding === true) {
-        if (player_two_faith_number_two > 85) {
-            combatData.player_two_religious_success = true;
-            if (combatData.player_two_weapons[1].influences[0] === 'Daethos') { // God
-                console.log("Daethos!")
-                let daethos = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre + combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren);
-                daethos = Math.round(daethos * combatData.player_two.level / 10);
-                combatData.new_player_two_health += combatData.realized_player_two_damage;
-                combatData.current_player_two_health += combatData.realized_player_two_damage;
-                combatData.player_two_influence_description_two = 
-                    `Daethos wraps through ${combatData.player_two.name}'s Caer, ${combatData.player_two_weapons[1].name} healing them for ${Math.round(combatData.realized_player_two_damage)}. A faint echo of Caeren lingers for ${daethos} Righteously Spooky Damage.`    
-                combatData.new_player_two_health += daethos;
-                combatData.new_player_one_health -= daethos;
-                combatData.current_player_two_health += daethos;
-                combatData.current_player_one_health -= daethos;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === 'Achreo') { // Wild
-                console.log("Achreo!")
-                let achreo = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre)
-                achreo = Math.round(achreo * combatData.player_two.level / 10);
-                combatData.new_player_two_health += achreo
-                combatData.current_player_two_health += achreo
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s Caer stirs Achreo, much to his own surprise.`
-                combatData.player_two_weapons[1].physical_damage += 2;
-                combatData.player_two_weapons[1].magical_damage += 2;
-                combatData.player_two_weapons[1].critical_chance += 2;
-                combatData.player_two_weapons[1].critical_damage += 0.2;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Ahn've") { // Wind
-                let ahnve = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren)
-                ahnve = Math.round(ahnve * combatData.player_two.level / 10);
-                combatData.new_player_two_health += ahnve
-                combatData.current_player_two_health += ahnve
-                console.log("Ahn've!")
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s Caer ushers forth Ahn've, a devastating storm posseses them for ${Math.round(combatData.realized_player_two_damage)} more damage.`
-                player_one_action = 'attack';
-                if (combatData.realized_player_two_damage < 0) {
-                    combatData.realized_player_two_damage = 0;
+    if (combatData.dual_wielding === true) {
+        if (faith_number_two > 90) {
+            combatData.religious_success = true;
+            let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+            // Handles the creation of a new Status Effect if it doesn't already exist
+            if (!existingEffect) {
+                existingEffect = new StatusEffect(combatData, combatData.player, combatData.enemy, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
+                combatData.playerEffects.push(existingEffect);
+                combatData.player_influence_description_two = existingEffect.description;
+                // console.log(existingEffect, 'New Status Effect in Game Services');
+            } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+                existingEffect.tick.end += 2;
+                existingEffect.activeStacks += 1;
+                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
+                combatData.player_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+                switch (existingEffect.prayer) {
+                    case 'Buff': {
+                        for (let key in existingEffect.effect) {
+                            if (existingEffect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[1][key] += existingEffect.effect[key];
+                            } else {
+                                combatData.weapons[1][key] -= existingEffect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.player_defense) {
+                            if (existingEffect.effect[key]) {
+                                combatData.player_defense[key] += existingEffect.effect[key];
+                            }
+                        }
+                        break;
+                    }
+                    case 'Damage': {
+                        existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                        break;
+                    }
                 }
-                combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-                combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-
-            }
-            if (combatData.player_two_weapons[1].influences[0] === 'Astra') { // Lightning
-                let astra = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre)
-                astra = Math.round(astra * combatData.player_two.level / 10);
-                combatData.new_player_two_health += astra;
-                combatData.current_player_two_health += astra;
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s Caer ushers forth the favor of Astra's Lightning, quickening them.`
-                combatData.player_two_weapons[1].critical_chance += 4;
-                combatData.player_two_weapons[1].roll += 2;
-                combatData.player_two_weapons[1].critical_damage += 0.1;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === 'Cambire') { // Potential
-                let cambire = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren);
-                cambire = Math.round(cambire * combatData.player_two.level / 10);
-                combatData.new_player_two_health += cambire;
-                combatData.current_player_two_health += cambire;
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s Caer ushers forth the Chance of Cambire, warping back to damage ${combatData.player_one.name} for ${Math.round(combatData.realized_player_two_damage)}, gifting ${cambire}.`
-                if (combatData.realized_player_two_damage < 0) {
-                    combatData.realized_player_two_damage = 0;
-                }
-                combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-                combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-   
-            }
-            if (combatData.player_two_weapons[1].influences[0] === 'Chiomyr') { // Humor
-                let chiomyr = (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[1].kyosir);
-                chiomyr = Math.round(chiomyr * combatData.player_two.level / 10);
-                combatData.new_player_two_health += chiomyr;
-                combatData.current_player_two_health += chiomyr;
-                combatData.player_two_weapons[1].physical_penetration += 3;
-                combatData.player_two_weapons[1].magical_penetration += 3;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === 'Fyer') { // Fire
-                let fyer = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren)
-                fyer = Math.round(fyer * combatData.player_two.level / 10);
-                combatData.new_player_two_health += fyer;
-                combatData.current_player_two_health += fyer;
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s Caer ushers forth the favor of Fyer igniting through them.`
-                combatData.player_two_weapons[1].critical_damage += 0.9;
-                combatData.player_two_weapons[1].critical_chance += 1;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === 'Ilios') { // Sun
-                let ilios = combatData.realized_player_two_damage;
-                combatData.new_player_two_health += ilios;
-                combatData.current_player_two_health += ilios;
-                combatData.player_two_influence_description_two = 
-                    `The Hush of Ilios bursts into ${combatData.player_two.name} through their ${combatData.player_two_weapons[1].name}, his brilliance radiating for ${Math.round(ilios)}.`
-                player_one_action = 'attack';   
-                combatData.player_two_weapons[1].magical_penetration += 2;
-                combatData.player_two_weapons[1].physical_penetration += 2;
-                combatData.player_two_defense.physicalDefenseModifier += 1;
-                combatData.player_two_defense.magicalDefenseModifier += 1;
-                combatData.player_two_defense.physicalPosture += 1;
-                combatData.player_two_defense.magicalPosture += 1;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Kyn'gi") { // Hunt
-                let kyngi = (combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[1].agility)
-                kyngi = Math.round(kyngi * combatData.player_two.level / 10);
-                combatData.new_player_two_health += kyngi;
-                combatData.current_player_two_health += kyngi;
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s keen Caer shrieks into Kyn'gi, emboldening the Hunt.`
-                combatData.player_two_weapons[1].roll += 3;
-                combatData.player_two_weapons[1].critical_chance += 3;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Kyrisos") { // Gold
-                let kyrisos = (combatData.player_two_attributes.totalKyosir + combatData.player_two_weapons[1].kyosir)
-                kyrisos = Math.round(kyrisos * combatData.player_two.level / 10);
-                combatData.new_player_two_health += kyrisos;
-                combatData.current_player_two_health += kyrisos;
-                combatData.player_two_influence_description_two = 
-                    `The Caer of Kyrisos imbues ${combatData.player_two.name}'s with Kyosir!`
-                combatData.player_two_attributes.kyosirMod += 3;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Kyr'na") { // Time
-                let kyrna = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre);
-                kyrna = Math.round(kyrna * combatData.player_two.level / 5);
-                combatData.player_two_influence_description_two = 
-                    `Kyr'na withers you, brittling your Caer for ${kyrna} Damage.`
-                combatData.new_player_one_health -= kyrna;
-                combatData.current_player_one_health -= kyrna;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Lilos") { // Life
-                let lilos = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren);
-                lilos = Math.round(lilos * combatData.player_two.level / 5);
-                combatData.player_two_influence_description_two = 
-                    `Lilos breathes her Caer into ${combatData.player_two.name}, healing them for ${lilos}.`
-                combatData.new_player_two_health += lilos;
-                combatData.current_player_two_health += lilos;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Ma'anre") { // Moon
-                let maanre = combatData.realized_player_two_damage;
-                combatData.new_player_two_health += maanre;
-                combatData.current_player_two_health += maanre;
-                combatData.player_two_influence_description_two = 
-                    `Ma'anre wraps her tendrils about ${combatData.player_two.name}'s ${combatData.player_two_weapons[1].name}, changing their perception of this world, its peculiarity resonating for ${Math.round(maanre)}.` 
-                combatData.player_two_weapons[1].roll += 2;
-                combatData.player_two_weapons[1].dodge -= 2;
-                combatData.player_two_weapons[1].critical_chance += 2;
-                combatData.player_two_weapons[1].critical_damage += 0.2;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Nyrolus") { // Water
-                let nyrolus = ((combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren))
-                nyrolus = Math.round(nyrolus * combatData.player_two.level / 10);
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s mercurial weapon intrigues Nyrolus, swarming them in their Caer for ${nyrolus}.`
-                combatData.player_two_defense.physicalDefenseModifier += 2;
-                combatData.player_two_defense.magicalDefenseModifier += 2;
-                combatData.player_two_defense.physicalPosture += 2;
-                combatData.player_two_defense.magicalPosture += 2;
-                combatData.new_player_two_health += nyrolus
-                combatData.current_player_two_health += nyrolus
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Quor'ei") { // Earth
-                let quorei = (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre)
-                quorei = Math.round(quorei * combatData.player_two.level / 10);
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s resolve beckons with the favor of your Quor'ei, steeling them in their Caer for ${quorei}.`
-                combatData.player_two_defense.physicalDefenseModifier += 2;
-                combatData.player_two_defense.magicalDefenseModifier += 2;
-                combatData.player_two_defense.physicalPosture += 2;
-                combatData.player_two_defense.magicalPosture += 2;
-                combatData.new_player_two_health += quorei
-                combatData.current_player_two_health += quorei
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Rahvre") { // Dreams
-                let rahvre = (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren)
-                rahvre = Math.round(rahvre * combatData.player_two.level / 10);
-                combatData.new_player_two_health += rahvre
-                combatData.current_player_two_health += rahvre
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s calming Caer reaches its tendrils to Rahvre, intertwining them.`
-                combatData.player_two_weapons[1].magical_damage += 5;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Senari") { // Wisdom
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s calm swirls with the favor of Senari, holding them in her Caer.`
-                combatData.player_two_weapons[1].roll += 3;
-                combatData.player_two_weapons[1].dodge -= 3;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Se'dyro") { // Iron
-                let sedyro = (combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[1].agility)
-                sedyro = Math.round(sedyro * combatData.player_two.level / 10);
-                combatData.new_player_two_health += sedyro
-                combatData.current_player_two_health += sedyro
-                combatData.player_two_influence_description_two = 
-                    `The Caer of Se'dyro sings into their ${combatData.player_two_weapons[1].name}, causing it to frenzy for ${Math.round(combatData.realized_player_two_damage)} more damage!`    
-                player_one_action = 'attack';
-                if (combatData.realized_player_two_damage < 0) {
-                    combatData.realized_player_two_damage = 0;
-                }
-                combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-                combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Se'vas") { // War
-                let sevas = (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[1].strength)
-                sevas = Math.round(sevas * combatData.player_two.level / 10);
-                combatData.new_player_two_health += sevas
-                combatData.current_player_two_health += sevas
-                combatData.player_two_influence_description_two = 
-                    `The Caer of Se'vas scorns their ${combatData.player_two_weapons[1].name}, scarring it with the beauty of war.` 
-                combatData.player_two_weapons[1].critical_chance += 3;
-                combatData.player_two_weapons[1].critical_damage += 0.3;
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Shrygei") { // Song
-                let shrygei = combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[1].achre + combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[1].caeren + combatData.player_two_attributes.totalConstitution;
-                shrygei = Math.round(shrygei * combatData.player_two.level / 10);
-                combatData.player_two_influence_description_two =
-                `The Song of Shry'gei shrieks itself through ${combatData.player_two.name}'s ${combatData.player_two_weapons[1].name}, the resplendence renews them for ${shrygei}`
-                    combatData.player_two_weapons[1].magical_penetration += 2
-                    combatData.player_two_weapons[1].physical_penetration += 2
-                    combatData.new_player_two_health += shrygei
-                    combatData.current_player_two_health += shrygei
-            }
-            if (combatData.player_two_weapons[1].influences[0] === "Tshaer") { // Animal
-                let tshaer = (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[1].strength)
-                tshaer = Math.round(tshaer * combatData.player_two.level / 10);
-                combatData.new_player_two_health += tshaer
-                combatData.current_player_two_health += tshaer
-                combatData.player_two_influence_description_two = 
-                    `${combatData.player_two.name}'s Caer unleashes the bestial nature of Tshaer within them.`
-                combatData.player_two_weapons[1].physical_damage += 5;
-            }
+            } else if (existingEffect.refreshes) {
+                existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+                existingEffect.tick.end += existingEffect.duration + 1;
+                existingEffect.activeRefreshes += 1;
+                combatData.player_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+            }    
         }
     }
-
-    combatData.player_one_weapons[0].critical_chance = combatData.player_one_weapons[0].critical_chance.toFixed(2)
-    combatData.player_one_weapons[0].critical_damage = combatData.player_one_weapons[0].critical_damage.toFixed(2)
-    combatData.player_one_weapons[1].critical_chance = combatData.player_one_weapons[1].critical_chance.toFixed(2)
-    combatData.player_one_weapons[1].critical_damage = combatData.player_one_weapons[1].critical_damage.toFixed(2)
-    combatData.player_two_weapons[0].critical_chance = combatData.player_two_weapons[0].critical_chance.toFixed(2)
-    combatData.player_two_weapons[0].critical_damage = combatData.player_two_weapons[0].critical_damage.toFixed(2)
-    combatData.player_two_weapons[1].critical_chance = combatData.player_two_weapons[1].critical_chance.toFixed(2)
-    combatData.player_two_weapons[1].critical_damage = combatData.player_two_weapons[1].critical_damage.toFixed(2)
-
-    combatData.player_one_weapons[0].critical_chance = Number(combatData.player_one_weapons[0].critical_chance)
-    combatData.player_one_weapons[0].critical_damage = Number(combatData.player_one_weapons[0].critical_damage)
-    combatData.player_one_weapons[1].critical_chance = Number(combatData.player_one_weapons[1].critical_chance)
-    combatData.player_one_weapons[1].critical_damage = Number(combatData.player_one_weapons[1].critical_damage)
-    combatData.player_two_weapons[0].critical_chance = Number(combatData.player_two_weapons[0].critical_chance)
-    combatData.player_two_weapons[0].critical_damage = Number(combatData.player_two_weapons[0].critical_damage)
-    combatData.player_two_weapons[1].critical_chance = Number(combatData.player_two_weapons[1].critical_chance)
-    combatData.player_two_weapons[1].critical_damage = Number(combatData.player_two_weapons[1].critical_damage)
-
-    if (combatData.new_player_one_health <= 0 || combatData.current_player_one_health <= 0) {
-        combatData.new_player_one_health = 0;
-        combatData.current_player_one_health = 0;
-        combatData.player_two_win = true;
+    if (enemy_faith_number > 90) {
+        combatData.enemy_religious_success = true;
+        let existingEffect = combatData.enemyEffects.find(effect => effect.name === `Gift of ${combatData.enemy_weapons[0].influences[0]}` && effect.prayer === combatData.enemyBlessing);   
+        // Handles the creation of a new Status Effect if it doesn't already exist
+        if (!existingEffect) {
+            existingEffect = new StatusEffect(combatData, combatData.enemy, combatData.player, combatData.enemy_weapons[0], combatData.enemy_attributes, combatData.enemyBlessing);
+            combatData.enemyEffects.push(existingEffect);
+            combatData.enemy_influence_description = existingEffect.description;
+            // console.log(existingEffect, 'New Status Effect in Game Services');
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+            existingEffect.tick.end += 2;
+            existingEffect.activeStacks += 1;
+            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.enemy, combatData.enemy_weapons[0], combatData.enemy_attributes, combatData.enemyBlessing);
+            combatData.enemy_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+            switch (existingEffect.prayer) {
+                case 'Buff': {
+                    for (let key in existingEffect.effect) {
+                        if (existingEffect.effect[key] && key !== 'dodge') {
+                            combatData.enemy_weapons[0][key] += existingEffect.effect[key];
+                        } else {
+                            combatData.enemy_weapons[0][key] -= existingEffect.effect[key];
+                        }
+                    }
+                    for (let key in combatData.enemy_defense) {
+                        if (existingEffect.effect[key]) {
+                            combatData.enemy_defense[key] += existingEffect.effect[key];
+                        }
+                    }
+                    break;
+                }
+                case 'Damage': {
+                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                    break;
+                }
+            }
+        } else if (existingEffect.refreshes) {
+            existingEffect.duration = Math.floor(combatData.enemy.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.enemy.level / 3 + 1);
+            existingEffect.tick.end += existingEffect.duration + 1;
+            existingEffect.activeRefreshes += 1;
+            combatData.enemy_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+        }    
     }
-    if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-        combatData.new_player_two_health = 0;
-        combatData.current_player_two_health = 0;
-        combatData.player_one_win = true;
-    }
-    if (combatData.new_player_one_health > 0 || combatData.current_player_one_health > 0) {
-        combatData.player_two_win = false;
-    }
-    if (combatData.new_player_two_health > 0 || combatData.current_player_two_health > 0) {
-        combatData.player_one_win = false;
+    if (combatData.enemy_dual_wielding === true) {
+        if (enemy_faith_number_two > 90) {
+            combatData.enemy_religious_success = true;
+            let existingEffect = combatData.enemyEffects.find(effect => effect.name === `Gift of ${combatData.enemy_weapons[1].influences[0]}` && effect.prayer === combatData.enemyBlessing);   
+            // Handles the creation of a new Status Effect if it doesn't already exist
+            if (!existingEffect) {
+                existingEffect = new StatusEffect(combatData, combatData.enemy, combatData.player, combatData.enemy_weapons[1], combatData.enemy_attributes, combatData.enemyBlessing);
+                combatData.enemyEffects.push(existingEffect);
+                combatData.enemy_influence_description_two = existingEffect.description;
+                // console.log(existingEffect, 'New Status Effect in Game Services');
+            } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+                existingEffect.tick.end += 2;
+                existingEffect.activeStacks += 1;
+                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.enemy, combatData.enemy_weapons[1], combatData.enemy_attributes, combatData.enemyBlessing);
+                combatData.enemy_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+                switch (existingEffect.prayer) {
+                    case 'Buff': {
+                        for (let key in existingEffect.effect) {
+                            if (existingEffect.effect[key] && key !== 'dodge') {
+                                combatData.enemy_weapons[1][key] += existingEffect.effect[key];
+                            } else {
+                                combatData.enemy_weapons[1][key] -= existingEffect.effect[key];
+                            }
+                        }
+                        for (let key in combatData.enemy_defense) {
+                            if (existingEffect.effect[key]) {
+                                combatData.enemy_defense[key] += existingEffect.effect[key];
+                            }
+                        }
+                        break;
+                    }
+                    case 'Damage': {
+                        existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                        break;
+                    }
+                }
+            } else if (existingEffect.refreshes) {
+                existingEffect.duration = Math.floor(combatData.enemy.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.enemy.level / 3 + 1);
+                existingEffect.tick.end += existingEffect.duration + 1;
+                existingEffect.activeRefreshes += 1;
+                combatData.enemy_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+            }    
+        }
     }
 
     return combatData
 }
 
-// ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
+// ================================= enemy COMPILER FUNCTIONS ================================== \\
 
-const p2DualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
-    console.log('Computer Dual Wield Firing')
+const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_counter) => {
+
+    if (newData.sessionRound > 50) {
+        newData.sessionRound = 0;
+        newData.attack_weight = 0;
+        newData.counter_weight = 0;
+        newData.dodge_weight = 0;
+        newData.posture_weight = 0;
+        newData.roll_weight = 0;
+        newData.counter_attack_weight = 0;
+        newData.counter_counter_weight = 0;
+        newData.counter_dodge_weight = 0;
+        newData.counter_posture_weight = 0;
+        newData.counter_roll_weight = 0;
+    }
+    
+    const enemyActions = {
+        attack: 50 + newData.attack_weight,
+        counter: 10 + newData.counter_weight,
+        dodge: 10 + newData.dodge_weight,
+        posture: 15 + newData.posture_weight,
+        roll: 15 + newData.roll_weight,
+        counter_attack: 20 + newData.counter_attack_weight,
+        counter_counter: 20 + newData.counter_counter_weight,
+        counter_dodge: 20 + newData.counter_dodge_weight,
+        counter_posture: 20 + newData.counter_posture_weight,
+        counter_roll: 20 + newData.counter_roll_weight,
+        roll_rating: newData.enemy_weapons[0].roll,
+        armor_rating: (newData.enemy_defense.physicalPosture + newData.enemy_defense.magicalPosture)  /  4,
+    }
+
+    if (player_action === 'attack') { 
+        if (enemyActions.roll_rating > enemyActions.armor_rating) {
+            newData.roll_weight += 1.5;
+            newData.posture_weight += 0.5;
+        } else {
+            newData.posture_weight += 1.5;
+            newData.roll_weight += 0.5;
+        }
+        // newData.roll_weight += 1;
+        // newData.posture_weight += 1;
+        newData.counter_weight += 1;
+        newData.attack_weight -= 3;
+        newData.counter_attack_weight += 4;
+        newData.counter_counter_weight -= 1;
+        newData.counter_dodge_weight -= 1;
+        newData.counter_posture_weight -= 1;
+        newData.counter_roll_weight -= 1;
+    }
+    if (player_action === 'counter') { 
+        newData.counter_weight += 3;
+        // newData.dodge_weight += 2;
+        newData.attack_weight -= 1;
+        newData.posture_weight -= 1;
+        newData.roll_weight -= 1;
+        newData.counter_counter_weight += 2;
+        newData.counter_attack_weight -= 1;
+        newData.counter_dodge_weight -= 1;
+    }
+    if (player_action === 'dodge') { 
+        // newData.counter_weight += 2;
+        // newData.dodge_weight -= 2;
+        newData.counter_dodge_weight += 4;
+        newData.counter_attack_weight -= 1;
+        newData.counter_counter_weight -= 1;
+        newData.counter_posture_weight -= 1;
+        newData.counter_roll_weight -= 1;
+    }
+    if (player_action === 'posture') { 
+        newData.attack_weight += 2;  
+        newData.posture_weight -= 3;
+        newData.counter_weight += 1;
+        newData.counter_posture_weight += 3;
+        newData.counter_roll_weight -= 2;
+        newData.counter_attack_weight -= 1;
+    }
+
+    if (player_action === 'roll') { 
+        newData.attack_weight += 2;  
+        newData.roll_weight -= 3;
+        newData.counter_weight += 1;
+        newData.counter_roll_weight += 3;
+        newData.counter_posture_weight -= 2;
+        newData.counter_attack_weight -= 1;
+    }
+
+    // const enemyAction = async (enemyActions) => {
+
+    let actionNumber = Math.floor(Math.random() * 101);
+    if (actionNumber > (100 - enemyActions.attack)) {
+        enemy_action = 'attack';
+    } else if (actionNumber > (100 - enemyActions.attack - enemyActions.counter)) {
+        enemy_action = 'counter';
+    } else if (actionNumber > (100 - enemyActions.attack - enemyActions.counter - enemyActions.dodge)) {
+        enemy_action = 'dodge';
+    } else if (actionNumber > (100 - enemyActions.attack - enemyActions.counter - enemyActions.dodge - enemyActions.posture)) {
+        enemy_action = 'posture';
+    } else {
+        enemy_action = 'roll';
+    }
+
+    if (enemy_action === 'counter') {
+        let counterNumber = Math.floor(Math.random() * 101);
+        if (counterNumber > (100 - enemyActions.counter_attack)) {
+            enemy_counter = 'attack';
+        } else if (counterNumber > (100 - enemyActions.counter_attack - enemyActions.counter_counter)) {
+            enemy_counter = 'counter';
+        } else if (counterNumber > (100 - enemyActions.counter_attack - enemyActions.counter_counter - enemyActions.counter_dodge)) {
+            enemy_counter = 'dodge';
+        } else if (counterNumber > (100 - enemyActions.counter_attack - enemyActions.counter_counter - enemyActions.counter_dodge - enemyActions.counter_posture)) {
+            enemy_counter = 'posture';
+        } else {
+            enemy_counter = 'roll';
+        }
+        newData.counter_weight -= 3;
+        newData.attack_weight += 1;  
+        newData.posture_weight += 1;
+        newData.roll_weight += 1;
+    }
+    newData.enemy_action = enemy_action;
+    newData.enemy_counter_guess = enemy_counter;
+    // console.log(newData.enemy_action, newData.enemy_counter_guess, 'New enemy Action')
+
+    return (
+        newData
+    )
+}
+
+const enemyDualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const player = combatData.player;
-    const computer = combatData.player_two;
-    const weapons = combatData.player_two_weapons;
+    const enemy = combatData.enemy;
+    const weapons = combatData.enemy_weapons;
 
-    let player_two_weapon_one_physical_damage = weapons[0].physical_damage;
-    let player_two_weapon_one_magical_damage = weapons[0].magical_damage;
-    let player_two_weapon_two_physical_damage = weapons[1].physical_damage;
-    let player_two_weapon_two_magical_damage = weapons[1].magical_damage;
-    let player_two_weapon_one_total_damage;
-    let player_two_weapon_two_total_damage;
+    let enemy_weapon_one_physical_damage = weapons[0].physical_damage;
+    let enemy_weapon_one_magical_damage = weapons[0].magical_damage;
+    let enemy_weapon_two_physical_damage = weapons[1].physical_damage;
+    let enemy_weapon_two_magical_damage = weapons[1].magical_damage;
+    let enemy_weapon_one_total_damage;
+    let enemy_weapon_two_total_damage;
     let firstWeaponCrit = false;
     let secondWeaponCrit = false;
-    
-    console.log(player_physical_defense_multiplier, player_magical_defense_multiplier, 'Player Defenses in Computer Dual Wield')
-    // console.log(weapons, 'Computer Weapons in Dual Wield Compiler')
 
-    const weapOneCritClear = Math.floor(Math.random() * 101);
-    const weapOneCrit = weapons[0].critical_chance;
-    const weapOneResult = await criticalCompiler(combatData, 'player_two', weapOneCrit, weapOneCritClear, weapons[0], player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage);
-    combatData = weapOneResult.combatData;
-    player_two_weapon_one_physical_damage = weapOneResult.player_physical_damage;
-    player_two_weapon_one_magical_damage = weapOneResult.player_magical_damage;
-    if (weapOneCrit >= weapOneCritClear) {
+    const weapOneClearance = Math.floor(Math.random() * 101);
+    const weapTwoClearance = Math.floor(Math.random() * 101);
+    let weapOneCrit = combatData.enemy_weapons[0].critical_chance;
+    let weapTwoCrit = combatData.enemy_weapons[1].critical_chance;
+    weapOneCrit -= combatData.player_attributes.kyosirMod;
+    weapTwoCrit -= combatData.player_attributes.kyosirMod;
+    const resultOne = await enemyCriticalCompiler(combatData, weapOneCrit, weapOneClearance, combatData.enemy_weapons[0], enemy_weapon_one_physical_damage, enemy_weapon_one_magical_damage);
+    combatData = resultOne.combatData;
+    enemy_weapon_one_physical_damage = resultOne.enemy_physical_damage;
+    enemy_weapon_one_magical_damage = resultOne.enemy_magical_damage;
+    if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
     }
-
-    const weapTwoCritClear = Math.floor(Math.random() * 101);
-    const weapTwoCrit = weapons[1].critical_chance;
-    const weapTwoResult = await criticalCompiler(combatData, 'player_two', weapTwoCrit, weapTwoCritClear, weapons[1], player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage);
-    combatData = weapTwoResult.combatData;
-    player_two_weapon_two_physical_damage = weapTwoResult.player_physical_damage;
-    player_two_weapon_two_magical_damage = weapTwoResult.player_magical_damage;
-    if (weapTwoCrit >= weapTwoCritClear) {
+    const resultTwo = await enemyCriticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.enemy_weapons[1], enemy_weapon_two_physical_damage, enemy_weapon_two_magical_damage);
+    combatData = resultTwo.combatData;
+    enemy_weapon_two_physical_damage = resultTwo.enemy_physical_damage;
+    enemy_weapon_two_magical_damage = resultTwo.enemy_magical_damage;
+    if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
     }
+
     
+    // console.log(firstWeaponCrit, secondWeaponCrit)
+    enemy_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
+    enemy_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
 
-    player_two_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
-    player_two_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
+    enemy_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
+    enemy_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
-    player_two_weapon_two_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100 )));
-    player_two_weapon_two_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100 )));
+    const damageType = await enemyDamageTypeCompiter(combatData, weapons[0], enemy_weapon_one_physical_damage, enemy_weapon_one_magical_damage);
+    enemy_weapon_one_physical_damage = damageType.enemy_physical_damage;
+    enemy_weapon_one_magical_damage = damageType.enemy_magical_damage;
 
-    const damageType = await damageTypeCompiler(weapons[0], combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_one_physical_damage, player_two_weapon_one_magical_damage);
-    player_two_weapon_one_physical_damage = damageType.player_physical_damage;
-    player_two_weapon_one_magical_damage = damageType.player_magical_damage;
+    const damageTypeTwo = await enemyDamageTypeCompiter(combatData, weapons[1], enemy_weapon_two_physical_damage, enemy_weapon_two_magical_damage);
+    enemy_weapon_two_physical_damage = damageTypeTwo.enemy_physical_damage;
+    enemy_weapon_two_magical_damage = damageTypeTwo.enemy_magical_damage;
 
-    const damageTypeTwo = await damageTypeCompiler(weapons[1], combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, player_two_weapon_two_physical_damage, player_two_weapon_two_magical_damage);
-    player_two_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
-    player_two_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
+    enemy_weapon_one_total_damage = enemy_weapon_one_physical_damage + enemy_weapon_one_magical_damage;
+    enemy_weapon_two_total_damage = enemy_weapon_two_physical_damage + enemy_weapon_two_magical_damage;
 
-    player_two_weapon_one_total_damage = player_two_weapon_one_physical_damage + player_two_weapon_one_magical_damage;
-    player_two_weapon_two_total_damage = player_two_weapon_two_physical_damage + player_two_weapon_two_magical_damage;
+    // console.log(enemy_weapon_one_total_damage, enemy_weapon_two_total_damage);
 
-    console.log(player_two_weapon_one_total_damage, player_two_weapon_two_total_damage);
-
-    combatData.realized_player_two_damage = player_two_weapon_one_total_damage + player_two_weapon_two_total_damage;
-    if (combatData.realized_player_two_damage < 0) {
-        combatData.realized_player_two_damage = 0;
+    combatData.realized_enemy_damage = enemy_weapon_one_total_damage + enemy_weapon_two_total_damage;
+    if (combatData.realized_enemy_damage < 0) {
+        combatData.realized_enemy_damage = 0;
     }
 
-    let strength = combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength  + combatData.player_two_weapons[1].strength;
-    let agility = combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[0].agility  + combatData.player_two_weapons[1].agility;
-    let achre = combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre  + combatData.player_two_weapons[1].achre;
-    let caeren = combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren  + combatData.player_two_weapons[1].caeren;
+    let strength = combatData.enemy_attributes.totalStrength + combatData.enemy_weapons[0].strength  + combatData.enemy_weapons[1].strength;
+    let agility = combatData.enemy_attributes.totalAgility + combatData.enemy_weapons[0].agility  + combatData.enemy_weapons[1].agility;
+    let achre = combatData.enemy_attributes.totalAchre + combatData.enemy_weapons[0].achre  + combatData.enemy_weapons[1].achre;
+    let caeren = combatData.enemy_attributes.totalCaeren + combatData.enemy_weapons[0].caeren  + combatData.enemy_weapons[1].caeren;
 
-    if (combatData.player_two_weapons[0].grip === 'One Hand') {
-        if (combatData.player_two_weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_two_damage *= (agility / 75)
+    if (combatData.enemy_weapons[0].grip === 'One Hand') {
+        if (combatData.enemy_weapons[0].attack_type === 'Physical') {
+            combatData.realized_enemy_damage *= (agility / 100)
         } else {
-            combatData.realized_player_two_damage *= (achre / 75)
+            combatData.realized_enemy_damage *= (achre / 100)
         }
     }
 
-    if (combatData.player_two_weapons[0].grip === 'Two Hand') {
-        if (combatData.player_two_weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_two_damage *= (strength / 100) 
+    if (combatData.enemy_weapons[0].grip === 'Two Hand') {
+        if (combatData.enemy_weapons[0].attack_type === 'Physical') {
+            combatData.realized_enemy_damage *= (strength / 150) 
         } else {
-            combatData.realized_player_two_damage *= (caeren / 100)
+            combatData.realized_enemy_damage *= (caeren / 150)
         }
     }
 
-    combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-    combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
+    if (combatData.action === 'attack') {
+        combatData.realized_enemy_damage *= 1.1;
+    };
+    if (combatData.action === 'posture') {
+        combatData.realized_enemy_damage *= 0.95;
+    };
 
-    if (combatData.new_player_one_health <= 0 || combatData.current_player_one_health <= 0) {
-        combatData.current_player_one_health = 0;
-        combatData.new_player_one_health = 0;
-        combatData.player_two_win = true;
+    combatData.new_player_health = combatData.current_player_health - combatData.realized_enemy_damage;
+    combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+        combatData.new_player_health = 0;
+        combatData.enemy_win = true;
     }
     
-    combatData.player_two_action_description = 
-        `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_two_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.player_two_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+    combatData.enemy_action_description = 
+        `${enemy.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_enemy_damage)} ${combatData.enemy_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.enemy_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
     )
 }
 
-const p2AttackCompiler = async (combatData, player_two_action) => {
-    if (combatData.player_one_win === true) { return };
-    console.log('Computer Attack Compiler Firing')
-    let computer_physical_damage = combatData.player_two_weapons[0].physical_damage;
-    let computer_magical_damage = combatData.player_two_weapons[0].magical_damage;
-    let computer_total_damage;
+const enemyAttackCompiler = async (combatData, enemy_action) => {
+    if (combatData.player_win === true) { return }
+    let enemy_physical_damage = combatData.enemy_weapons[0].physical_damage;
+    let enemy_magical_damage = combatData.enemy_weapons[0].magical_damage;
+    let enemy_total_damage;
 
-    let player_physical_defense_multiplier = 1 - (combatData.player_one_defense.physicalDefenseModifier / 100);
-    let player_magical_defense_multiplier = 1 - (combatData.player_one_defense.magicalDefenseModifier / 100);
+    let player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalDefenseModifier / 100);
+    let player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalDefenseModifier / 100);
 
     // This is for Players's who are Posturing
-    if (combatData.action === 'posture' && combatData.player_two_counter_success !== true && combatData.player_two_roll_success !== true) {
-        player_physical_defense_multiplier = 1 - (combatData.player_one_defense.physicalPosture / 100);
-        player_magical_defense_multiplier = 1 - (combatData.player_one_defense.magicalPosture / 100);
+    if (combatData.action === 'posture' && combatData.enemy_counter_success !== true && combatData.enemy_roll_success !== true) {
+        player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
+        player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
     }
 
-    if (combatData.player_two_action === 'attack') {
-        if (combatData.player_two_weapons[0].grip === 'One Hand') {
-            if (combatData.player_two_weapons[0].attack_type === 'Physical') {
-                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Constitution') {
-                    if (combatData.player_two_attributes.totalAgility + combatData.player_two_weapons[0].agility + combatData.player_two_weapons[1].agility >= 25) {
-                            if (combatData.player_two_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
-                               combatData.player_two_dual_wielding = true;
-                                await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                                return combatData
-                            } else {
-                                computer_physical_damage *= 1.3;
-                                computer_magical_damage *= 1.15;
-                            }
+    if (combatData.enemy_action === 'attack') {
+        if (combatData.enemy_weapons[0].grip === 'One Hand') {
+            if (combatData.enemy_weapons[0].attack_type === 'Physical') {
+                if (combatData.enemy.mastery === 'Agility' || combatData.enemy.mastery === 'Constitution') {
+                    if (combatData.enemy_attributes.totalAgility + combatData.enemy_weapons[0].agility + combatData.enemy_weapons[1].agility >= 50) {
+                        if (combatData.enemy_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                           combatData.enemy_dual_wielding = true;
+                            await enemyDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+                            return combatData
                         } else {
-                            computer_physical_damage *= 1.3;
-                            computer_magical_damage *= 1.15;
+                            enemy_physical_damage *= 1.3;
+                            enemy_magical_damage *= 1.15;
                         }
+                    } else {
+                        enemy_physical_damage *= 1.3;
+                        enemy_magical_damage *= 1.15;
+                    }
                 } else {
-                    computer_physical_damage *= 1.1;
-                    computer_magical_damage *= 1.1;
+                    enemy_physical_damage *= 1.1;
+                    enemy_magical_damage *= 1.1;
                 }
             } 
-            if (combatData.player_two_weapons[0].attack_type === 'Magic') {
-                if (combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir') {
-                    if (combatData.player_two_attributes.totalAchre + combatData.player_two_weapons[0].achre + combatData.player_two_weapons[1].achre >= 25) {
-                        if (combatData.player_two_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
-                            combatData.player_two_dual_wielding = true;
-                            await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+            if (combatData.enemy_weapons[0].attack_type === 'Magic') {
+                if (combatData.enemy.mastery === 'Achre' || combatData.enemy.mastery === 'Kyosir') {
+                    if (combatData.enemy_attributes.totalAchre + combatData.enemy_weapons[0].achre + combatData.enemy_weapons[1].achre >= 50) {
+                        if (combatData.enemy_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                            combatData.enemy_dual_wielding = true;
+                            await enemyDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else {
-                            computer_physical_damage *= 1.15;
-                            computer_magical_damage *= 1.3;
-                        } 
+                            enemy_physical_damage *= 1.15;
+                            enemy_magical_damage *= 1.3;
+                        }
                     } else {
-                        computer_physical_damage *= 1.15;
-                        computer_magical_damage *= 1.3;
-                    } 
+                        enemy_physical_damage *= 1.15;
+                        enemy_magical_damage *= 1.3;
+                    }
                 } else {
-                    computer_physical_damage *= 1.1;
-                    computer_magical_damage *= 1.1;
+                    enemy_physical_damage *= 1.1;
+                    enemy_magical_damage *= 1.1;
                 }
-            }
-        } 
-        if (combatData.player_two_weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
-            if (combatData.player_two_weapons[0].attack_type === 'Physical' && combatData.player_two_weapons[0].type !== 'Bow') {
-                if (combatData.player_two.mastery === 'Strength' || combatData.player_two.mastery === 'Constitution') {
-                    if (combatData.player_two_attributes.totalStrength + combatData.player_two_weapons[0].strength + combatData.player_two_weapons[1].strength >= 33) { // Might be a dual-wield compiler instead to take the rest of it
-                        if (combatData.player_two_weapons[1].type !== 'Bow') {
-                            combatData.player_two_dual_wielding = true;
-                            await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+            } 
+        }
+        if (combatData.enemy_weapons[0].grip === 'Two Hand') {
+            if (combatData.enemy_weapons[0].attack_type === 'Physical' && combatData.enemy_weapons[0].type !== 'Bow') {
+                if (combatData.enemy.mastery === 'Strength' || combatData.enemy.mastery === 'Constitution') {
+                    if (combatData.enemy_attributes.totalStrength + combatData.enemy_weapons[0].strength + combatData.enemy_weapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
+                        if (combatData.enemy_weapons[1].type !== 'Bow') {
+                            combatData.enemy_dual_wielding = true;
+                            await enemyDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else { // Less than 50 Srength 
-                            computer_physical_damage *= 1.3;
-                            computer_magical_damage *= 1.15;
+                            enemy_physical_damage *= 1.3;
+                            enemy_magical_damage *= 1.15;
                         }
                     } else { // Less than 50 Srength 
-                        computer_physical_damage *= 1.3;
-                        computer_magical_damage *= 1.15;
+                        enemy_physical_damage *= 1.3;
+                        enemy_magical_damage *= 1.15;
                     }
                 } else {
-                    computer_physical_damage *= 1.1;
-                    computer_magical_damage *= 1.1;
+                    enemy_physical_damage *= 1.1;
+                    enemy_magical_damage *= 1.1;
                 }
             }
-            if (combatData.player_two_weapons[0].attack_type === 'Magic') {
-                if (combatData.player_two.mastery === 'Caeren' || combatData.player_two.mastery === 'Kyosir') {
-                    if (combatData.player_two_attributes.totalCaeren + combatData.player_two_weapons[0].caeren + combatData.player_two_weapons[1].caeren >= 33) {
-                        if (combatData.player_two_weapons[1].type !== 'Bow') {
-                            combatData.player_two_dual_wielding = true;
-                            await p2DualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
+            if (combatData.enemy_weapons[0].attack_type === 'Magic') {
+                if (combatData.enemy.mastery === 'Caeren' || combatData.enemy.mastery === 'Kyosir') {
+                    if (combatData.enemy_attributes.totalCaeren + combatData.enemy_weapons[0].caeren + combatData.enemy_weapons[1].caeren >= 75) {
+                        if (combatData.enemy_weapons[1].type !== 'Bow') {
+                            combatData.enemy_dual_wielding = true;
+                            await enemyDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
                             return combatData
                         } else {
-                            computer_physical_damage *= 1.15;
-                            computer_magical_damage *= 1.3;
+                            enemy_physical_damage *= 1.15;
+                            enemy_magical_damage *= 1.3;
                         }
                     } else {
-                        computer_physical_damage *= 1.15;
-                        computer_magical_damage *= 1.3;
+                        enemy_physical_damage *= 1.15;
+                        enemy_magical_damage *= 1.3;
                     }
                 } else {
-                    computer_physical_damage *= 1.1;
-                    computer_magical_damage *= 1.1;
+                    enemy_physical_damage *= 1.1;
+                    enemy_magical_damage *= 1.1;
                 }
             }
-            if (combatData.player_two_weapons[0].type === 'Bow') {
-                if (combatData.player_two.mastery === 'Agility' || combatData.player_two.mastery === 'Achre' || combatData.player_two.mastery === 'Kyosir' || combatData.player_two.mastery === 'Constitution') {
-                    computer_physical_damage *= 1.4;
-                    computer_magical_damage *= 1.4;
+            if (combatData.enemy_weapons[0].type === 'Bow') {
+                if (combatData.enemy.mastery === 'Agility' || combatData.enemy.mastery === 'Achre' || combatData.enemy.mastery === 'Kyosir' || combatData.enemy.mastery === 'Constitution') {
+                    enemy_physical_damage *= 1.4;
+                    enemy_magical_damage *= 1.4;
                 } else {
-                    computer_physical_damage *= 1.1;
-                    computer_magical_damage *= 1.1;
+                    enemy_physical_damage *= 1.1;
+                    enemy_magical_damage *= 1.1;
                 }
             }
         }
-    }
+    } 
 
-    // Checking For Player Actions
-    if (player_two_action === 'counter') {
-        if (combatData.player_two_counter_success === true) {
-            computer_physical_damage *= 3;
-            computer_magical_damage *= 3;    
+    if (enemy_action === 'counter') {
+        if (combatData.enemy_counter_success === true) {
+            enemy_physical_damage *= 3;
+            enemy_magical_damage *= 3;    
         } else {
-            computer_physical_damage *= 0.9;
-            computer_magical_damage *= 0.9;
+            enemy_physical_damage *= 0.9;
+            enemy_magical_damage *= 0.9;
         }
     }
 
-    if (player_two_action === 'dodge') {
-        computer_physical_damage *= 0.9;
-        computer_magical_damage *= 0.9;
+    if (enemy_action === 'dodge') {
+        enemy_physical_damage *= 0.9;
+        enemy_magical_damage *= 0.9;
     }
 
-    // if (player_two_action === 'posture') {
-        // computer_physical_damage *= 0.95;
-        // computer_magical_damage *= 0.95;
+    // if (enemy_action === 'posture') {
+    //     enemy_physical_damage *= 0.95;
+    //     enemy_magical_damage *= 0.95;
     // }
 
-    if (player_two_action === 'roll' ) {
-        if (combatData.player_two_roll_success === true) {
-            computer_physical_damage *= 1.15;
-            computer_magical_damage *= 1.15;
+    if (enemy_action === 'roll' ) {
+        if (combatData.enemy_roll_success === true) {
+            enemy_physical_damage *= 1.15;
+            enemy_magical_damage *= 1.15;
         } else {
-            computer_physical_damage *= 0.95;
-            computer_magical_damage *= 0.95;
+            enemy_physical_damage *= 0.95;
+            enemy_magical_damage *= 0.95;
         }
     }
 
-    const critClearance = Math.floor(Math.random() * 101);
-    const critChance = combatData.player_two_weapons[0].critical_chance;
-    const criticalResult = await criticalCompiler(combatData, 'player_two', critChance, critClearance, combatData.player_two_weapons[0], computer_physical_damage, computer_magical_damage);
+    const criticalClearance = Math.floor(Math.random() * 101);
+    let criticalChance = combatData.enemy_weapons[0].critical_chance;
+    criticalChance -= combatData.player_attributes.kyosirMod;
+    if (combatData.weather === 'Astralands') criticalChance += 10;
+    const criticalResult = await enemyCriticalCompiler(combatData, criticalChance, criticalClearance, combatData.enemy_weapons[0], enemy_physical_damage, enemy_magical_damage)
     combatData = criticalResult.combatData;
-    computer_physical_damage = criticalResult.player_physical_damage;
-    computer_magical_damage = criticalResult.player_magical_damage;
+    enemy_physical_damage = criticalResult.enemy_physical_damage;
+    enemy_magical_damage = criticalResult.enemy_magical_damage;
+    // console.log('Results for enemy [Crit] [Glancing] [Phys Dam] [Mag Dam]', 
+    //     criticalResult.combatData.enemy_critical_success, criticalResult.combatData.enemy_glancing_blow, 
+    //     criticalResult.enemy_physical_damage, criticalResult.enemy_magical_damage)
 
     // If you made it here, your basic attack now resolves itself
-    computer_physical_damage *= 1 - (( 1 - player_physical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].physical_penetration / 100)));
-    computer_magical_damage *= 1 - (( 1 - player_magical_defense_multiplier) * (1 - (combatData.player_two_weapons[0].magical_penetration / 100)));
+    enemy_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (combatData.enemy_weapons[0].physical_penetration / 100)));
+    enemy_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (combatData.enemy_weapons[0].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(combatData.player_two_weapons[0], combatData.player_two_damage_type, combatData.player_one.helmet.type, combatData.player_one.chest.type, combatData.player_one.legs.type, computer_physical_damage, computer_magical_damage);
-    computer_physical_damage = damageType.player_physical_damage;
-    computer_magical_damage = damageType.player_magical_damage;
+    const damageType = await enemyDamageTypeCompiter(combatData, combatData.enemy_weapons[0], enemy_physical_damage, enemy_magical_damage);
+    enemy_physical_damage = damageType.enemy_physical_damage;
+    enemy_magical_damage = damageType.enemy_magical_damage;
 
-    computer_total_damage = computer_physical_damage + computer_magical_damage;
-    if (computer_total_damage < 0) {
-        computer_total_damage = 0;
+    enemy_total_damage = enemy_physical_damage + enemy_magical_damage;
+    if (enemy_total_damage < 0) {
+        enemy_total_damage = 0;
     }
-    combatData.realized_player_two_damage = computer_total_damage;
-    combatData.new_player_one_health = combatData.current_player_one_health - combatData.realized_player_two_damage;
-    combatData.current_player_one_health = combatData.new_player_one_health; // Added to persist health totals?
+    combatData.realized_enemy_damage = enemy_total_damage;
 
-    combatData.player_two_action_description = 
-        `${combatData.player_two.name} attacks ${combatData.player_one.name} with their ${combatData.player_two_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.player_two_weapons[0].damage_type[0] ? combatData.player_two_weapons[0].damage_type[0] : ''}${combatData.player_two_weapons[0].damage_type[1] ? ' / ' + combatData.player_two_weapons[0].damage_type[1] : ''} ${combatData.player_two_critical_success === true ? 'Critical Strike Damage' : combatData.player_two_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+    if (combatData.action === 'attack') {
+        combatData.realized_enemy_damage *= 1.1;
+    };
+    if (combatData.action === 'posture') {
+        combatData.realized_enemy_damage *= 0.95;
+    };
 
-    if (combatData.new_player_one_health <= 0 || combatData.current_player_one_health <= 0) {
-        combatData.new_player_one_health = 0;
-        combatData.current_player_one_health = 0;
-        combatData.player_two_win = true;
+    combatData.new_player_health = combatData.current_player_health - combatData.realized_enemy_damage;
+    combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
+
+    combatData.enemy_action_description = 
+        `${combatData.enemy.name} attacks you with their ${combatData.enemy_weapons[0].name} for ${Math.round(enemy_total_damage)} ${combatData.enemy_damage_type} ${combatData.enemy_critical_success === true ? 'Critical Strike Damage' : combatData.enemy_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+
+    if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
+        combatData.new_player_health = 0;
+        combatData.enemy_win = true;
     }
 
-    console.log(computer_total_damage, 'Total Computer Damage')
+    if (combatData.new_player_health > 0) {
+        combatData.enemy_win = false;
+    }
+
+    if (combatData.new_enemy_health > 0) {
+        combatData.player_win = false;
+    }
+
+    // console.log(enemy_total_damage, 'Total enemy Damage')
 
     return (
         combatData
     )
 }
 
-const computerCriticalCompiler = async (combatData, weapon, computer_physical_damage, computer_magical_damage) => {
-    console.log('Computer Critical Firing', computer_physical_damage, computer_magical_damage);
-    computer_physical_damage *= weapon.critical_damage;
-    computer_magical_damage *= weapon.critical_damage;
-    console.log('Computer Post-Crit Multiplier', computer_physical_damage, computer_magical_damage);
-
-    return combatData;
+const enemyDamageTypeCompiter = async (combatData, weapon, enemy_physical_damage, enemy_magical_damage) => {
+    if (combatData.enemy_damage_type === 'Blunt' || combatData.enemy_damage_type === 'Fire' || combatData.enemy_damage_type === 'Earth' || combatData.enemy_damage_type === 'Spooky') {
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                enemy_physical_damage *= 1.15;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                enemy_physical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                enemy_physical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 0.85;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                enemy_physical_damage *= 1.1;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                enemy_physical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                enemy_physical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 0.9;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                enemy_physical_damage *= 1.05;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                enemy_physical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                enemy_physical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 0.95;
+            }
+        }
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                enemy_magical_damage *= 1.15;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                enemy_magical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                enemy_magical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 0.85;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                enemy_magical_damage *= 1.1;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                enemy_magical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                enemy_magical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 0.9;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                enemy_magical_damage *= 1.05;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                enemy_magical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                enemy_magical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 0.95;
+            }
+        }
+    }
+    if (combatData.enemy_damage_type === 'Pierce' || combatData.enemy_damage_type === 'Lightning' || combatData.enemy_damage_type === 'Frost' || combatData.enemy_damage_type === 'Righteous') {
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                enemy_physical_damage *= 0.85;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                enemy_physical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                enemy_physical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 1.15;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                enemy_physical_damage *= 0.9;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                enemy_physical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                enemy_physical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 1.1;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                enemy_physical_damage *= 0.95;
+            }   
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                enemy_physical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                enemy_physical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 1.05;
+            }
+        }
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                enemy_magical_damage *= 0.85;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                enemy_magical_damage *= 0.92;
+            }
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                enemy_magical_damage *= 1.08;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 1.15;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                enemy_magical_damage *= 0.9;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                enemy_magical_damage *= 0.95;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                enemy_magical_damage *= 1.05;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 1.1;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                enemy_magical_damage *= 0.95;
+            }   
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                enemy_magical_damage *= 0.97;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                enemy_magical_damage *= 1.03;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 1.05;
+            }
+        }
+    }
+    if (combatData.enemy_damage_type === 'Slash' || combatData.enemy_damage_type === 'Wind' || combatData.enemy_damage_type === 'Sorcery' || combatData.enemy_damage_type === 'Wild') {
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }   
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+    
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+    
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                enemy_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+        }
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.player.helmet.type === 'Plate-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.helmet.type === 'Chain-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }   
+            if (combatData.player.helmet.type === 'Leather-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.helmet.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Plate-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Chain-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Leather-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.chest.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Plate-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Chain-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Leather-Mail') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.player.legs.type === 'Leather-Cloth') {
+                enemy_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+        }
+    }
+    return {
+        combatData,
+        enemy_physical_damage,
+        enemy_magical_damage
+    }
 }
 
-const computerCounterCompiler = async (combatData, player_one_action, player_two_action) => {
-    console.log('Computer Counter Firing');
-    await attackCompiler(combatData, player_two_action);
-    return combatData;
-    
+const enemyCriticalCompiler = async (combatData, critChance, critClearance, weapon, enemy_physical_damage, enemy_magical_damage) => {
+    if (critChance >= critClearance) {
+        enemy_physical_damage *= weapon.critical_damage;
+        enemy_magical_damage *= weapon.critical_damage;
+        combatData.enemy_critical_success = true;
+    }
+    if (critClearance > critChance + combatData.enemy.level + 80) {
+        enemy_physical_damage *= 0.1;
+        enemy_magical_damage *= 0.1;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 75) {
+        enemy_physical_damage *= 0.15;
+        enemy_magical_damage *= 0.15;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 70) {
+        enemy_physical_damage *= 0.2;
+        enemy_magical_damage *= 0.2;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 65) {
+        enemy_physical_damage *= 0.25;
+        enemy_magical_damage *= 0.25;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 60) {
+        enemy_physical_damage *= 0.3;
+        enemy_magical_damage *= 0.3;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 55) {
+        enemy_physical_damage *= 0.35;
+        enemy_magical_damage *= 0.35;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 50) {
+        enemy_physical_damage *= 0.4;
+        enemy_magical_damage *= 0.4;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 45) {
+        enemy_physical_damage *= 0.45;
+        enemy_magical_damage *= 0.45;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 40) {
+        enemy_physical_damage *= 0.5;
+        enemy_magical_damage *= 0.5;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 35) {
+        enemy_physical_damage *= 0.55;
+        enemy_magical_damage *= 0.55;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 30) {
+        enemy_physical_damage *= 0.6;
+        enemy_magical_damage *= 0.6;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 25) {
+        enemy_physical_damage *= 0.65;
+        enemy_magical_damage *= 0.65;
+        combatData.enemy_glancing_blow = true;
+    } else if (critClearance > critChance + combatData.enemy.level + 20) {
+        enemy_physical_damage *= 0.7;
+        enemy_magical_damage *= 0.7;
+        combatData.enemy_glancing_blow = true;
+    } 
+    // else if (critClearance > critChance + 20) {
+    //     enemy_physical_damage *= 0.8;
+    //     enemy_magical_damage *= 0.8;
+    //     combatData.enemy_glancing_blow = true;
+    // } 
+    // else if (critClearance > critChance + 10) {
+    //     enemy_physical_damage *= 0.9;
+    //     enemy_magical_damage *= 0.9;
+    //     combatData.enemy_glancing_blow = true;
+    // }
+    return {
+        combatData,
+        enemy_physical_damage,
+        enemy_magical_damage
+    }
+}
+
+const enemyCounterCompiler = async (combatData, player_action, enemy_action) => {
+    enemy_action = 'attack';
+    await attackCompiler(combatData, enemy_action);
+    return {
+        combatData,
+        enemy_action
+    }
 }
     
-const p2RollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
-    console.log(player_two_action, 'Computer Roll Firing');
-    const computer_roll = combatData.player_two_weapons[0].roll;
-    let roll_catch = Math.floor(Math.random() * 101) + combatData.player_one_attributes.kyosirMod;
-    console.log(computer_roll, 'Computer Roll %', roll_catch, 'Roll # To Beat');
-    if (computer_roll > roll_catch) {
-        combatData.player_two_roll_success = true;
-        combatData.player_two_special_description = 
-                `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-        await p2AttackCompiler(combatData, player_two_action);
+const enemyRollCompiler = async (combatData, player_initiative, enemy_initiative, player_action, enemy_action) => {
+    const enemy_roll = combatData.enemy_weapons[0].roll;
+    let roll_catch = Math.floor(Math.random() * 101) + combatData.player_attributes.kyosirMod;
+    // console.log(enemy_roll, 'enemy Roll %', roll_catch, 'Roll # To Beat')
+    if (enemy_roll > roll_catch) {
+        combatData.enemy_roll_success = true;
+        combatData.enemy_special_description = 
+                `${combatData.enemy.name} successfully rolls against you, avoiding your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
+        await enemyAttackCompiler(combatData, enemy_action)
     } else {
-        combatData.player_two_special_description = 
-            `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-        return combatData;
-        // if (player_one_initiative > player_two_initiative) {
-        //     await p2AttackCompiler(combatData, player_two_action)
-        //     await attackCompiler(combatData, player_one_action)
-        // } else {
-        //     console.log('Computer failed yet had higher initiative')
-        //     combatData.player_two_special_description = 
-        //         `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${  player_one_action === 'attack' ? 'Focused' : player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1) } Attack.`
-        //     await attackCompiler(combatData, player_one_action)
-        //     await p2AttackCompiler(combatData, player_two_action)
-        // }
+        combatData.enemy_special_description = 
+            `${combatData.enemy.name} fails to roll against your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
+        return combatData
     }
     return (
         combatData
     )
 }
-
 
 // ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
 const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
-    console.log('Dual Wielding')
-    const player = combatData.player;
-    const computer = combatData.player_two;
-    const weapons = combatData.player_one_weapons;
+    const enemy = combatData.enemy;
+    const weapons = combatData.weapons;
 
-    let player_weapon_one_physical_damage = combatData.player_one_weapons[0].physical_damage;
-    let player_weapon_one_magical_damage = combatData.player_one_weapons[0].magical_damage;
-    let player_weapon_two_physical_damage = combatData.player_one_weapons[1].physical_damage;
-    let player_weapon_two_magical_damage = combatData.player_one_weapons[1].magical_damage;
+    let player_weapon_one_physical_damage = combatData.weapons[0].physical_damage;
+    let player_weapon_one_magical_damage = combatData.weapons[0].magical_damage;
+    let player_weapon_two_physical_damage = combatData.weapons[1].physical_damage;
+    let player_weapon_two_magical_damage = combatData.weapons[1].magical_damage;
     let player_weapon_one_total_damage;
     let player_weapon_two_total_damage;
     let firstWeaponCrit = false;
     let secondWeaponCrit = false;
     
-    let computer_physical_defense_multiplier = 1 - (combatData.player_two_defense.physicalDefenseModifier / 100);
-    let computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalDefenseModifier / 100);
+    let enemy_physical_defense_multiplier = 1 - (combatData.enemy_defense.physicalDefenseModifier / 100);
+    let enemy_magical_defense_multiplier = 1 - (combatData.enemy_defense.magicalDefenseModifier / 100);
 
-    // This is for Critical Strikes
-   
-    const weapOneCritClear = Math.floor(Math.random() * 101);
-    const weapOneCrit = combatData.player_one_weapons[0].critical_chance;
-    const weapOneResult = await criticalCompiler(combatData, 'player_one', weapOneCrit, weapOneCritClear, combatData.player_one_weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage);
-    combatData = weapOneResult.combatData;
-    player_weapon_one_physical_damage = weapOneResult.player_physical_damage;
-    player_weapon_one_magical_damage = weapOneResult.player_magical_damage;
-    if (weapOneCrit >= weapOneCritClear) {
+    const weapOneClearance = Math.floor(Math.random() * 10100) / 100;
+    const weapTwoClearance = Math.floor(Math.random() * 10100) / 100;
+    let weapOneCrit = combatData.weapons[0].critical_chance;
+    let weapTwoCrit = combatData.weapons[1].critical_chance;
+    weapOneCrit -= combatData.enemy_attributes.kyosirMod;
+    weapTwoCrit -= combatData.enemy_attributes.kyosirMod;
+    const resultOne = await criticalCompiler(combatData, weapOneCrit, weapOneClearance, combatData.weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    combatData = resultOne.combatData;
+    player_weapon_one_physical_damage = resultOne.player_physical_damage;
+    player_weapon_one_magical_damage = resultOne.player_magical_damage;
+    if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
     }
-
-    const weapTwoCritClear = Math.floor(Math.random() * 101);
-    const weapTwoCrit = combatData.player_one_weapons[1].critical_chance;
-    const weapTwoResult = await criticalCompiler(combatData, 'player_one', weapTwoCrit, weapTwoCritClear, combatData.player_one_weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
-    combatData = weapTwoResult.combatData;
-    player_weapon_two_physical_damage = weapTwoResult.player_physical_damage;
-    player_weapon_two_magical_damage = weapTwoResult.player_magical_damage;
-    if (weapTwoCrit >= weapTwoCritClear) {
+    const resultTwo = await criticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    combatData = resultTwo.combatData;
+    player_weapon_two_physical_damage = resultTwo.player_physical_damage;
+    player_weapon_two_magical_damage = resultTwo.player_magical_damage;
+    if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
     }
 
-    player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
-    player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration / 100)));
+    player_weapon_one_physical_damage *= 1 - ((1 - enemy_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
+    player_weapon_one_magical_damage *= 1 - ((1 - enemy_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration / 100)));
 
-    player_weapon_two_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
-    player_weapon_two_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
+    player_weapon_two_physical_damage *= 1 - ((1 - enemy_physical_defense_multiplier) * (1 - (weapons[1].physical_penetration / 100)));
+    player_weapon_two_magical_damage *= 1 - ((1 - enemy_magical_defense_multiplier) * (1 - (weapons[1].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(weapons[0], combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_one_physical_damage, player_weapon_one_magical_damage);
+    // console.log('Attack Compiler Pre-Damage Type Multiplier', player_weapon_one_physical_damage, player_weapon_one_magical_damage)
+
+    const damageType = await damageTypeCompiler(combatData, weapons[0], player_weapon_one_physical_damage, player_weapon_one_magical_damage);
     player_weapon_one_physical_damage = damageType.player_physical_damage;
     player_weapon_one_magical_damage = damageType.player_magical_damage;
 
-    const damageTypeTwo = await damageTypeCompiler(weapons[1], combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_weapon_two_physical_damage, player_weapon_two_magical_damage);
+    const damageTypeTwo = await damageTypeCompiler(combatData, weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
     player_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
     player_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
+
+    // console.log('Attack Compiler Post-Damage Type Multiplier', player_weapon_one_physical_damage, player_weapon_one_magical_damage)
 
     player_weapon_one_total_damage = player_weapon_one_physical_damage + player_weapon_one_magical_damage;
     player_weapon_two_total_damage = player_weapon_two_physical_damage + player_weapon_two_magical_damage;
 
-    combatData.realized_player_one_damage = player_weapon_one_total_damage + player_weapon_two_total_damage;
-    if (combatData.realized_player_one_damage < 0) {
-        combatData.realized_player_one_damage = 0;
+    combatData.realized_player_damage = player_weapon_one_total_damage + player_weapon_two_total_damage;
+    if (combatData.realized_player_damage < 0) {
+        combatData.realized_player_damage = 0;
     }
 
-    let strength = combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength;
-    let agility = combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility  + combatData.player_one_weapons[1].agility;
-    let achre = combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre  + combatData.player_one_weapons[1].achre;
-    let caeren = combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren  + combatData.player_one_weapons[1].caeren;
+    let strength = combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength;
+    let agility = combatData.player_attributes.totalAgility + combatData.weapons[0].agility  + combatData.weapons[1].agility;
+    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[1].achre;
+    let caeren = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren  + combatData.weapons[1].caeren;
 
-    if (combatData.player_one_weapons[0].grip === 'One Hand') {
-        if (combatData.player_one_weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_one_damage *= (agility / 75)
+    if (combatData.weapons[0].grip === 'One Hand') {
+        if (combatData.weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_damage *= (agility / 100)
         } else {
-            combatData.realized_player_one_damage *= (achre / 75)
+            combatData.realized_player_damage *= (achre / 100)
         }
     }
 
-    if (combatData.player_one_weapons[0].grip === 'Two Hand') {
-        if (combatData.player_one_weapons[0].attack_type === 'Physical') {
-            combatData.realized_player_one_damage *= (strength / 100) 
+    if (combatData.weapons[0].grip === 'Two Hand') {
+        if (combatData.weapons[0].attack_type === 'Physical') {
+            combatData.realized_player_damage *= (strength / 150) 
         } else {
-            combatData.realized_player_one_damage *= (caeren / 100)
+            combatData.realized_player_damage *= (caeren / 150)
         }
     }
 
-    
-    combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-    combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
+    if (combatData.enemy_action === 'attack') {
+        combatData.realized_player_damage *= 1.1;
+    };
+    if (combatData.enemy_action === 'posture') {
+        combatData.realized_player_damage *= 0.95;
+    };
 
-    if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-        combatData.new_player_two_health = 0;
-        combatData.current_player_two_health = 0;
-        combatData.player_one_win = true;
+    combatData.new_enemy_health = combatData.current_enemy_health - combatData.realized_player_damage;
+    combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
+
+    if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+        combatData.new_enemy_health = 0;
+        combatData.player_win = true;
     }
     
-    combatData.player_one_action_description = 
-        `${combatData.player_one.name} attacks ${computer.name} with both ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_one_damage)} ${weapons[0].damage_type[0] ? weapons[0].damage_type[0] : ''}${weapons[0].damage_type[1] ? ' / ' + weapons[0].damage_type[1] : ''} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.player_one_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
-    console.log(combatData.realized_player_one_damage)
+    combatData.player_action_description = 
+        `You dual-wield attack ${enemy.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${combatData.player_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
     )
 }
     
-const attackCompiler = async (combatData, player_one_action) => {
-    if (combatData.player_two_win === true) { return }
-    let player_physical_damage = combatData.player_one_weapons[0].physical_damage;
-    let player_magical_damage = combatData.player_one_weapons[0].magical_damage;
+const attackCompiler = async (combatData, player_action) => {
+    if (combatData.enemy_win === true) { return }
+    let player_physical_damage = combatData.weapons[0].physical_damage;
+    let player_magical_damage = combatData.weapons[0].magical_damage;
     let player_total_damage;
 
-    let computer_physical_defense_multiplier = 1 - (combatData.player_two_defense.physicalDefenseModifier / 100);
-    let computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalDefenseModifier / 100);
+    let enemy_physical_defense_multiplier = 1 - (combatData.enemy_defense.physicalDefenseModifier / 100);
+    let enemy_magical_defense_multiplier = 1 - (combatData.enemy_defense.magicalDefenseModifier / 100);
     
     // This is for Opponent's who are Posturing
-    if (combatData.player_two_action === 'posture' && combatData.player_one_counter_success !== true && combatData.player_one_roll_success !== true) {
-        computer_physical_defense_multiplier = 1 - (combatData.player_two_defense.physicalPosture / 100);
-        computer_magical_defense_multiplier = 1 - (combatData.player_two_defense.magicalPosture / 100);
-    }
+    if (combatData.enemy_action === 'posture' && combatData.counter_success !== true && combatData.roll_success !== true) {
+        enemy_physical_defense_multiplier = 1 - (combatData.enemy_defense.physicalPosture / 100);
+        enemy_magical_defense_multiplier = 1 - (combatData.enemy_defense.magicalPosture / 100);
+    };
 
     // This is for the Focused Attack Action i.e. you chose to Attack over adding a defensive component
     if (combatData.action === 'attack') {
-        if (combatData.player_one_weapons[0].grip === 'One Hand') {
-            if (combatData.player_one_weapons[0].attack_type === 'Physical') {
-                if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Constitution') {
-                    if (combatData.player_one_attributes.totalAgility + combatData.player_one_weapons[0].agility  + combatData.player_one_weapons[1].agility >= 25) {
-                        if (combatData.player_one_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
-                            combatData.player_one_dual_wielding = true;
+        if (combatData.weapons[0].grip === 'One Hand') {
+            if (combatData.weapons[0].attack_type === 'Physical') {
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Constitution') {
+                    if (combatData.player_attributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 50) {
+                        if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
+                            combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData);
                             return combatData
                         } else {
                             player_physical_damage *= 1.3;
                             player_magical_damage *= 1.15;
-                        }
+                        };
                     } else {
                         player_physical_damage *= 1.3;
                         player_magical_damage *= 1.15;
-                    }
+                    };
                 } else {
                     player_physical_damage *= 1.1;
                     player_magical_damage *= 1.1;
-                }
-            } 
-            if (combatData.player_one_weapons[0].attack_type === 'Magic') {
-                if (combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir') {
-                    if (combatData.player_one_attributes.totalAchre + combatData.player_one_weapons[0].achre + combatData.player_one_weapons[1].achre >= 25) {
-                        if (combatData.player_one_weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
-                            combatData.player_one_dual_wielding = true;
+                };
+            };
+            if (combatData.weapons[0].attack_type === 'Magic') {
+                if (combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir') {
+                    if (combatData.player_attributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 50) {
+                        if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else {
+                            player_physical_damage *= 1.15;
+                            player_magical_damage *= 1.3;
+                        };
+                    } else {
+                        player_physical_damage *= 1.15;
+                        player_magical_damage *= 1.3;
+                    };
+                } else {
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
+                };
+            };
+        };
+        if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
+            if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow') {
+                if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Constitution') {
+                    if (combatData.player_attributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
+                        if (combatData.weapons[1].type !== 'Bow') {
+                            combatData.dual_wielding = true;
+                            await dualWieldCompiler(combatData)
+                            return combatData
+                        } else { // Less than 40 Srength 
+                            player_physical_damage *= 1.3;
+                            player_magical_damage *= 1.15;
+                        };
+                    } else { // Less than 40 Srength 
+                        player_physical_damage *= 1.3;
+                        player_magical_damage *= 1.15;
+                    };
+                } else {
+                    player_physical_damage *= 1.1;
+                    player_magical_damage *= 1.1;
+                };
+            };
+            if (combatData.weapons[0].attack_type === 'Magic') {
+                if (combatData.player.mastery === 'Caeren' || combatData.player.mastery === 'Kyosir') {
+                    if (combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 75) {
+                        if (combatData.weapons[1].type !== 'Bow') {
+                            combatData.dual_wielding = true;
                             await dualWieldCompiler(combatData)
                             return combatData
                         } else {
@@ -1529,451 +1692,379 @@ const attackCompiler = async (combatData, player_one_action) => {
                     } else {
                         player_physical_damage *= 1.15;
                         player_magical_damage *= 1.3;
-                    }
+                    };
                 } else {
                     player_physical_damage *= 1.1;
                     player_magical_damage *= 1.1;
-                }
-            }
-        }
-        if (combatData.player_one_weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
-            if (combatData.player_one_weapons[0].attack_type === 'Physical' && combatData.player_one_weapons[0].type !== 'Bow') {
-                if (combatData.player_one.mastery === 'Strength'  || combatData.player_one.mastery === 'Constitution') {
-                    if (combatData.player_one_attributes.totalStrength + combatData.player_one_weapons[0].strength  + combatData.player_one_weapons[1].strength >= 33) { // Might be a dual-wield compiler instead to take the rest of it
-                        if (combatData.player_one_weapons[1].type !== 'Bow') {
-                            combatData.player_one_dual_wielding = true;
-                            await dualWieldCompiler(combatData);
-                            return combatData
-                        } else {
-                            player_physical_damage *= 1.3;
-                            player_magical_damage *= 1.15;
-                        }
-                    } else {
-                        player_physical_damage *= 1.3;
-                        player_magical_damage *= 1.15;
-                    }
+                };
+            };
+            if (combatData.weapons[0].type === 'Bow') {
+                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir' || combatData.player.mastery === 'Constitution') {
+                    player_physical_damage *= 1.4;
+                    player_magical_damage *= 1.4;
                 } else {
                     player_physical_damage *= 1.1;
                     player_magical_damage *= 1.1;
-                }
-            }
-            if (combatData.player_one_weapons[0].attack_type === 'Magic') {
-                if (combatData.player_one.mastery === 'Caeren' || combatData.player_one.mastery === 'Kyosir') {
-                    if (combatData.player_one_attributes.totalCaeren + combatData.player_one_weapons[0].caeren + combatData.player_one_weapons[1].caeren >= 33) {
-                        if (combatData.player_one_weapons[1].type !== 'Bow') {
-                            combatData.player_one_dual_wielding = true;
-                            await dualWieldCompiler(combatData);
-                                return combatData
-                        } else {
-                            player_physical_damage *= 1.15;
-                            player_magical_damage *= 1.3;
-                        }
-                    } else {
-                        player_physical_damage *= 1.15;
-                        player_magical_damage *= 1.3;
-                    }
-                } else {
-                    player_physical_damage *= 1.1;
-                    player_magical_damage *= 1.1;
-                }
-            }
-                if (combatData.player_one_weapons[0].type === 'Bow') {
-                    if (combatData.player_one.mastery === 'Agility' || combatData.player_one.mastery === 'Achre' || combatData.player_one.mastery === 'Kyosir' || combatData.player_one.mastery === 'Constitution') {
-                        player_physical_damage *= 1.4;
-                        player_magical_damage *= 1.4;
-                    } else {
-                        player_physical_damage *= 1.1;
-                        player_magical_damage *= 1.1;
-                    }
-                }
-        } 
-    }
+                };
+            };
+        }; 
+    };
 
     // Checking For Player Actions
-    if (player_one_action === 'counter') {
-        if (combatData.player_one_counter_success === true) {
+    if (player_action === 'counter') {
+        if (combatData.counter_success === true) {
             player_physical_damage *= 3;
             player_magical_damage *= 3;
         } else {
             player_physical_damage *= 0.9;
             player_magical_damage *= 0.9;
-        }
-    }
+        };
+    };
 
-    if (player_one_action === 'dodge') {
+    if (player_action === 'dodge') {
         player_physical_damage *= 0.9;
         player_magical_damage *= 0.9;
-    }
+    };
 
-    // if (player_one_action === 'posture') {
-    //     player_physical_damage *= 0.95;
-    //     player_magical_damage *= 0.95;
-    // }
-
-    if (player_one_action === 'roll' ) {
-        if (combatData.player_one_roll_success === true) {
+    if (player_action === 'roll' ) {
+        if (combatData.roll_success === true) {
             player_physical_damage *= 1.15;
             player_magical_damage *= 1.15;
         } else {
             player_physical_damage *= 0.95;
             player_magical_damage *= 0.95;
-        }
-    }
+        };
+    };
 
-    const critClearance = Math.floor(Math.random() * 101);
-    const critChance = combatData.player_one_weapons[0].critical_chance;
-    const criticalResult = await criticalCompiler(combatData, 'player_one', critChance, critClearance, combatData.player_one_weapons[0], player_physical_damage, player_magical_damage);
+    // This is for Critical Strikes
+    const criticalClearance = Math.floor(Math.random() * 10100) / 100;
+    let criticalChance = combatData.weapons[0].critical_chance;
+    criticalChance -= combatData.enemy_attributes.kyosirMod;
+    if (combatData.weather === 'Astralands') criticalChance += 10;
+    if (combatData.weather === 'Astralands' && combatData.weapons[0].influences[0] === 'Astra') criticalChance += 10;
+    // console.log('Critical Chance', criticalChance, 'Critical Clearance', criticalClearance)
+    const criticalResult = await criticalCompiler(combatData, criticalChance, criticalClearance, combatData.weapons[0], player_physical_damage, player_magical_damage);
+    // console.log('Results for [Crit] [Glancing] [Phys Dam] [Mag Dam]', criticalResult.combatData.critical_success, criticalResult.combatData.glancing_blow, criticalResult.player_physical_damage, criticalResult.player_magical_damage)
+
     combatData = criticalResult.combatData;
     player_physical_damage = criticalResult.player_physical_damage;
     player_magical_damage = criticalResult.player_magical_damage;
 
     // If you made it here, your basic attack now resolves itself
-    player_physical_damage *= 1 - (( 1 - computer_physical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].physical_penetration / 100)));
-    player_magical_damage *= 1 - (( 1 - computer_magical_defense_multiplier) * (1 - (combatData.player_one_weapons[0].magical_penetration / 100)));
+    player_physical_damage *= 1 - ((1 - enemy_physical_defense_multiplier) * (1 - (combatData.weapons[0].physical_penetration / 100)));
+    player_magical_damage *=1 - ((1 - enemy_magical_defense_multiplier) * (1 - (combatData.weapons[0].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(combatData.player_one_weapons[0], combatData.player_one_damage_type, combatData.player_two.helmet.type, combatData.player_two.chest.type, combatData.player_two.legs.type, player_physical_damage, player_magical_damage);
+    // console.log('Attack Compiler Pre-Damage Type Multiplier', player_physical_damage, player_magical_damage)
+    const damageType = await damageTypeCompiler(combatData, combatData.weapons[0], player_physical_damage, player_magical_damage);
     player_physical_damage = damageType.player_physical_damage;
     player_magical_damage = damageType.player_magical_damage;
+
+    // if (combatData.weather === 'Firelands') {
+    //     player_physical_damage *= 1.1;
+    // }
+    // if (combatData.weather === 'Astralands' || combatData.weather === 'Firelands' || combatData.weather === 'Soverains') {
+    //     player_magical_damage *= 1.1;
+    // }
+    // if (combatData.weather === 'Soverains') {
+    //     player_physical_damage *= 0.9;
+    // }
+
+    // console.log('Attack Compiler Post-Damage Type Multiplier', player_physical_damage, player_magical_damage)
+
+    // console.log(1 - ((1 - enemy_physical_defense_multiplier) * (1 - (combatData.weapons[0].physical_penetration / 100))), 
+    // 1 - enemy_physical_defense_multiplier, 1 - (combatData.weapons[0].physical_penetration / 100), 
+    // 'Combined Physical Defense Mitigation, enemy Physical Defense, Player Weapon Physical Penetration')
 
     player_total_damage = player_physical_damage + player_magical_damage;
     if (player_total_damage < 0) {
         player_total_damage = 0;
     }
-    combatData.realized_player_one_damage = player_total_damage;
-    combatData.new_player_two_health = combatData.current_player_two_health - combatData.realized_player_one_damage;
-    combatData.current_player_two_health = combatData.new_player_two_health; // Added to persist health totals?
+    combatData.realized_player_damage = player_total_damage;
 
-    combatData.player_one_action_description = 
-        `${combatData.player_one.name} attacks ${combatData.player_two.name} with their ${combatData.player_one_weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_one_weapons[0].damage_type[0] ? combatData.player_one_weapons[0].damage_type[0] : ''}${combatData.player_one_weapons[0].damage_type[1] ? ' / ' + combatData.player_one_weapons[0].damage_type[1] : ''} ${combatData.player_one_critical_success === true ? 'Critical Strike Damage' : combatData.player_one_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+    let strength = combatData.player_attributes.totalStrength + combatData.weapons[0].strength;
+    let agility = combatData.player_attributes.totalAgility + combatData.weapons[0].agility;
+    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre;
+    let caeren = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
 
-    if (combatData.new_player_two_health <= 0 || combatData.current_player_two_health <= 0) {
-        combatData.current_player_two_health = 0;
-        combatData.new_player_two_health = 0;
-        combatData.player_one_win = true;
-    }
+    // if (combatData.weapons[0].grip === 'One Hand') {
+    //     if (combatData.weapons[0].attack_type === 'Physical') {
+    //         combatData.realized_player_damage *= (agility / 67)
+    //     } else {
+    //         combatData.realized_player_damage *= (achre / 67)
+    //     }
+    // }
 
-    console.log(player_total_damage, 'Total Player Damage');
+    // if (combatData.weapons[0].grip === 'Two Hand') {
+    //     if (combatData.weapons[0].attack_type === 'Physical') {
+    //         combatData.realized_player_damage *= (strength / 100) 
+    //     } else {
+    //         combatData.realized_player_damage *= (caeren / 100)
+    //     }
+    // }
+
+    if (combatData.enemy_action === 'attack') {
+        combatData.realized_player_damage *= 1.1;
+    };
+
+    combatData.new_enemy_health = combatData.current_enemy_health - combatData.realized_player_damage;
+    combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
+
+    combatData.player_action_description = 
+        `You attack ${combatData.enemy.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_damage_type} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+
+    if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+        combatData.new_enemy_health = 0;
+        combatData.player_win = true;
+    };
+
+    // console.log(player_total_damage, 'Total Player Damage');
 
     return combatData
 }
 
-const damageTypeCompiler = async (weapon, damage_type, helmet, chest, legs, player_physical_damage, player_magical_damage) => {
-    console.log('Damage Type Compiler Firing', player_physical_damage, player_magical_damage);
-    if (damage_type === 'Blunt' || damage_type === 'Fire' || damage_type === 'Earth' || damage_type === 'Spooky') {
+const damageTypeCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
+    // console.log('Damage Type Compiler Firing', player_physical_damage, player_magical_damage);
+    if (combatData.player_damage_type === 'Blunt' || combatData.player_damage_type === 'Fire' || combatData.player_damage_type === 'Earth' || combatData.player_damage_type === 'Spooky') {
         if (weapon.attack_type === 'Physical') {
-            if (helmet === 'Plate-Mail') {
+            if (combatData.enemy.helmet.type === 'Plate-Mail') {
                 player_physical_damage *= 1.15;
             }
-            if (helmet === 'Chain-Mail') {
+            if (combatData.enemy.helmet.type === 'Chain-Mail') {
                 player_physical_damage *= 1.08;
             }
-            if (helmet === 'Leather-Mail') {
+            if (combatData.enemy.helmet.type === 'Leather-Mail') {
                 player_physical_damage *= 0.92;
             }
-            if (helmet === 'Leather-Cloth') {
+            if (combatData.enemy.helmet.type === 'Leather-Cloth') {
                 player_physical_damage *= 0.85;
             }
-            if (chest === 'Plate-Mail') {
+            if (combatData.enemy.chest.type === 'Plate-Mail') {
                 player_physical_damage *= 1.1;
             }
-            if (chest === 'Chain-Mail') {
+            if (combatData.enemy.chest.type === 'Chain-Mail') {
                 player_physical_damage *= 1.05;
             }
-            if (chest === 'Leather-Mail') {
+            if (combatData.enemy.chest.type === 'Leather-Mail') {
                 player_physical_damage *= 0.95;
             }
-            if (chest === 'Leather-Cloth') {
+            if (combatData.enemy.chest.type === 'Leather-Cloth') {
                 player_physical_damage *= 0.9;
             }
-            if (legs === 'Plate-Mail') {
+            if (combatData.enemy.legs.type === 'Plate-Mail') {
                 player_physical_damage *= 1.05;
             }
-            if (legs === 'Chain-Mail') {
+            if (combatData.enemy.legs.type === 'Chain-Mail') {
                 player_physical_damage *= 1.03;
             }
-            if (legs === 'Leather-Mail') {
+            if (combatData.enemy.legs.type === 'Leather-Mail') {
                 player_physical_damage *= 0.97;
             }
-            if (legs === 'Leather-Cloth') {
+            if (combatData.enemy.legs.type === 'Leather-Cloth') {
                 player_physical_damage *= 0.95;
             }
         }
         if (weapon.attack_type === 'Magic') {
-            if (helmet === 'Plate-Mail') {
+            if (combatData.enemy.helmet.type === 'Plate-Mail') {
                 player_magical_damage *= 1.15;
             }
-            if (helmet === 'Chain-Mail') {
+            if (combatData.enemy.helmet.type === 'Chain-Mail') {
                 player_magical_damage *= 1.08;
             }
-            if (helmet === 'Leather-Mail') {
+            if (combatData.enemy.helmet.type === 'Leather-Mail') {
                 player_magical_damage *= 0.92;
             }
-            if (helmet === 'Leather-Cloth') {
+            if (combatData.enemy.helmet.type === 'Leather-Cloth') {
                 player_magical_damage *= 0.85;
             }
-            if (chest === 'Plate-Mail') {
+            if (combatData.enemy.chest.type === 'Plate-Mail') {
                 player_magical_damage *= 1.1;
             }
-            if (chest === 'Chain-Mail') {
+            if (combatData.enemy.chest.type === 'Chain-Mail') {
                 player_magical_damage *= 1.05;
             }
-            if (chest === 'Leather-Mail') {
+            if (combatData.enemy.chest.type === 'Leather-Mail') {
                 player_magical_damage *= 0.95;
             }
-            if (chest === 'Leather-Cloth') {
+            if (combatData.enemy.chest.type === 'Leather-Cloth') {
                 player_magical_damage *= 0.9;
             }
-            if (legs === 'Plate-Mail') {
+            if (combatData.enemy.legs.type === 'Plate-Mail') {
                 player_magical_damage *= 1.05;
             }
-            if (legs === 'Chain-Mail') {
+            if (combatData.enemy.legs.type === 'Chain-Mail') {
                 player_magical_damage *= 1.03;
             }
-            if (legs === 'Leather-Mail') {
+            if (combatData.enemy.legs.type === 'Leather-Mail') {
                 player_magical_damage *= 0.97;
             }
-            if (legs === 'Leather-Cloth') {
+            if (combatData.enemy.legs.type === 'Leather-Cloth') {
                 player_magical_damage *= 0.95;
             }
         }
     }
-    if (damage_type === 'Pierce' || damage_type === 'Lightning' || damage_type === 'Frost' || damage_type === 'Sorcery') {
+    if (combatData.player_damage_type === 'Pierce' || combatData.player_damage_type === 'Lightning' || combatData.player_damage_type === 'Frost' || combatData.player_damage_type === 'Righteous') {
         if (weapon.attack_type === 'Physical') {
-            if (helmet === 'Plate-Mail') {
+            if (combatData.enemy.helmet.type === 'Plate-Mail') {
                 player_physical_damage *= 0.85;
             }
-            if (helmet === 'Chain-Mail') {
+            if (combatData.enemy.helmet.type === 'Chain-Mail') {
                 player_physical_damage *= 0.92;
             }
-            if (helmet === 'Leather-Mail') {
+            if (combatData.enemy.helmet.type === 'Leather-Mail') {
                 player_physical_damage *= 1.08;
             }
-            if (helmet === 'Leather-Cloth') {
+            if (combatData.enemy.helmet.type === 'Leather-Cloth') {
                 player_physical_damage *= 1.15;
             }
-            if (chest === 'Plate-Mail') {
+            if (combatData.enemy.chest.type === 'Plate-Mail') {
                 player_physical_damage *= 0.9;
             }
-            if (chest === 'Chain-Mail') {
+            if (combatData.enemy.chest.type === 'Chain-Mail') {
                 player_physical_damage *= 0.95;
             }
-            if (chest === 'Leather-Mail') {
+            if (combatData.enemy.chest.type === 'Leather-Mail') {
                 player_physical_damage *= 1.05;
             }
-            if (chest === 'Leather-Cloth') {
+            if (combatData.enemy.chest.type === 'Leather-Cloth') {
                 player_physical_damage *= 1.1;
             }
-            if (legs === 'Plate-Mail') {
+            if (combatData.enemy.legs.type === 'Plate-Mail') {
                 player_physical_damage *= 0.95;
             }   
-            if (legs === 'Chain-Mail') {
+            if (combatData.enemy.legs.type === 'Chain-Mail') {
                 player_physical_damage *= 0.97;
             }
-            if (legs === 'Leather-Mail') {
+            if (combatData.enemy.legs.type === 'Leather-Mail') {
                 player_physical_damage *= 1.03;
             }
-            if (legs === 'Leather-Cloth') {
+            if (combatData.enemy.legs.type === 'Leather-Cloth') {
                 player_physical_damage *= 1.05;
             }
         }
         if (weapon.attack_type === 'Magic') {
-            if (helmet === 'Plate-Mail') {
+            if (combatData.enemy.helmet.type === 'Plate-Mail') {
                 player_magical_damage *= 0.85;
             }
-            if (helmet === 'Chain-Mail') {
+            if (combatData.enemy.helmet.type === 'Chain-Mail') {
                 player_magical_damage *= 0.92;
             }
-            if (helmet === 'Leather-Mail') {
+            if (combatData.enemy.helmet.type === 'Leather-Mail') {
                 player_magical_damage *= 1.08;
             }
-            if (helmet === 'Leather-Cloth') {
+            if (combatData.enemy.helmet.type === 'Leather-Cloth') {
                 player_magical_damage *= 1.15;
             }
-            if (chest === 'Plate-Mail') {
+            if (combatData.enemy.chest.type === 'Plate-Mail') {
                 player_magical_damage *= 0.9;
             }
-            if (chest === 'Chain-Mail') {
+            if (combatData.enemy.chest.type === 'Chain-Mail') {
                 player_magical_damage *= 0.95;
             }
-            if (chest === 'Leather-Mail') {
+            if (combatData.enemy.chest.type === 'Leather-Mail') {
                 player_magical_damage *= 1.05;
             }
-            if (chest === 'Leather-Cloth') {
+            if (combatData.enemy.chest.type === 'Leather-Cloth') {
                 player_magical_damage *= 1.1;
             }
-            if (legs === 'Plate-Mail') {
+            if (combatData.enemy.legs.type === 'Plate-Mail') {
                 player_magical_damage *= 0.95;
             }   
-            if (legs === 'Chain-Mail') {
+            if (combatData.enemy.legs.type === 'Chain-Mail') {
                 player_magical_damage *= 0.97;
             }
-            if (legs === 'Leather-Mail') {
+            if (combatData.enemy.legs.type === 'Leather-Mail') {
                 player_magical_damage *= 1.03;
             }
-            if (legs === 'Leather-Cloth') {
+            if (combatData.enemy.legs.type === 'Leather-Cloth') {
                 player_magical_damage *= 1.05;
             }
         }
+        
     }
-    if (damage_type === 'Slash' || damage_type === 'Wind' || damage_type === 'Righteous' || damage_type === 'Wild') {
-        if (weapon.attack_type === 'Physical') {
-            if (helmet === 'Plate-Mail') {
-                player_physical_damage *= 0.92;
-            }
-            if (helmet === 'Chain-Mail') {
-                player_physical_damage *= 0.92;
-            }   
-            if (helmet === 'Leather-Mail') {
-                player_physical_damage *= 1.08;
-            }
-            if (helmet === 'Leather-Cloth') {
-                player_physical_damage *= 1.08;
-            }
-            if (chest === 'Plate-Mail') {
-                player_physical_damage *= 0.95;
-            }
-            if (chest === 'Chain-Mail') {
-                player_physical_damage *= 0.95;
-            }
-            if (chest === 'Leather-Mail') {
-                player_physical_damage *= 1.05;
-            }
-            if (chest === 'Leather-Cloth') {
-                player_physical_damage *= 1.05;
-            }
-            if (legs === 'Plate-Mail') {
-                player_physical_damage *= 0.97;
-            }
-            if (legs === 'Chain-Mail') {
-                player_physical_damage *= 0.97;
-            }
-            if (legs === 'Leather-Mail') {
-                player_physical_damage *= 1.03;
-            }
-            if (legs === 'Leather-Cloth') {
-                player_physical_damage *= 1.03;
-            }
-        }
-        if (weapon.attack_type === 'Magic') {
-            if (helmet === 'Plate-Mail') {
-                player_magical_damage *= 0.92;
-            }
-            if (helmet === 'Chain-Mail') {
-                player_magical_damage *= 0.92;
-            }   
-            if (helmet === 'Leather-Mail') {
-                player_magical_damage *= 1.08;
-            }
-            if (helmet === 'Leather-Cloth') {
-                player_magical_damage *= 1.08;
-            }
-            if (chest === 'Plate-Mail') {
-                player_magical_damage *= 0.95;
-            }
-            if (chest === 'Chain-Mail') {
-                player_magical_damage *= 0.95;
-            }
-            if (chest === 'Leather-Mail') {
-                player_magical_damage *= 1.05;
-            }
-            if (chest === 'Leather-Cloth') {
-                player_magical_damage *= 1.05;
-            }
-            if (legs === 'Plate-Mail') {
-                player_magical_damage *= 0.97;
-            }
-            if (legs === 'Chain-Mail') {
-                player_magical_damage *= 0.97;
-            }
-            if (legs === 'Leather-Mail') {
-                player_magical_damage *= 1.03;
-            }
-            if (legs === 'Leather-Cloth') {
-                player_magical_damage *= 1.03;
-            }
-        }
-    }
-    console.log('Player Post-Damage Type Multiplier', player_physical_damage, player_magical_damage);
-    return {
-        player_physical_damage,
-        player_magical_damage
-    }
-}
+    if (combatData.player_damage_type === 'Slash' || combatData.player_damage_type === 'Wind' || combatData.player_damage_type === 'Sorcery' || combatData.player_damage_type === 'Wild') {
 
-const criticalCompiler = async (combatData, player, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
-    if (player === 'player_one') {
-        if (critChance >= critClearance) {
-            player_physical_damage *= weapon.critical_damage;
-            player_magical_damage *= weapon.critical_damage;
-            combatData.player_one_critical_success = true;
-        }
-        if (critClearance > critChance + 90) {
-            player_physical_damage *= 0.1;
-            player_magical_damage *= 0.1;
-            combatData.player_one_glancing_blow = true;
-        } else if (critClearance > critChance + 80) {
-            player_physical_damage *= 0.2;
-            player_magical_damage *= 0.2;
-            combatData.player_one_glancing_blow = true;
-        } else if (critClearance > critChance + 70) {
-            player_physical_damage *= 0.3;
-            player_magical_damage *= 0.3;
-            combatData.player_one_glancing_blow = true;
-        } else if (critClearance > critChance + 60) {
-            player_physical_damage *= 0.4;
-            player_magical_damage *= 0.4;
-            combatData.player_one_glancing_blow = true;
-        } else if (critClearance > critChance + 50) {
-            player_physical_damage *= 0.5;
-            player_magical_damage *= 0.5;
-            combatData.player_one_glancing_blow = true;
-        } else if (critClearance > critChance + 40) {
-            player_physical_damage *= 0.6;
-            player_magical_damage *= 0.6;
-            combatData.player_one_glancing_blow = true;
-        } else if (critClearance > critChance + 30) {
-            player_physical_damage *= 0.7;
-            player_magical_damage *= 0.7;
-            combatData.player_one_glancing_blow = true;
-        } 
-    }
-    if (player === 'player_two') {
-        if (critChance >= critClearance) {
-            player_physical_damage *= weapon.critical_damage;
-            player_magical_damage *= weapon.critical_damage;
-            combatData.player_two_critical_success = true;
-        }
-        if (critClearance > critChance + 90) {
-            player_physical_damage *= 0.1;
-            player_magical_damage *= 0.1;
-            combatData.player_two_glancing_blow = true;
-        } else if (critClearance > critChance + 80) {
-            player_physical_damage *= 0.2;
-            player_magical_damage *= 0.2;
-            combatData.player_two_glancing_blow = true;
-        } else if (critClearance > critChance + 70) {
-            player_physical_damage *= 0.3;
-            player_magical_damage *= 0.3;
-            combatData.player_two_glancing_blow = true;
-        } else if (critClearance > critChance + 60) {
-            player_physical_damage *= 0.4;
-            player_magical_damage *= 0.4;
-            combatData.player_two_glancing_blow = true;
-        } else if (critClearance > critChance + 50) {
-            player_physical_damage *= 0.5;
-            player_magical_damage *= 0.5;
-            combatData.player_two_glancing_blow = true;
-        } else if (critClearance > critChance + 40) {
-            player_physical_damage *= 0.6;
-            player_magical_damage *= 0.6;
-            combatData.player_two_glancing_blow = true;
-        } else if (critClearance > critChance + 30) {
-            player_physical_damage *= 0.7;
-            player_magical_damage *= 0.7;
-            combatData.player_two_glancing_blow = true;
-        } 
-    }
+        if (weapon.attack_type === 'Physical') {
+            if (combatData.enemy.helmet.type === 'Plate-Mail') {
+                player_physical_damage *= 0.9 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.helmet.type === 'Chain-Mail') {
+                player_physical_damage *= 0.925 + Math.random() * 0.15;
+            }   
+            if (combatData.enemy.helmet.type === 'Leather-Mail') {
+                player_physical_damage *= 0.95 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.helmet.type === 'Leather-Cloth') {
+                player_physical_damage *= 0.975 + Math.random() * 0.15;
+            }
     
+            if (combatData.enemy.chest.type === 'Plate-Mail') {
+                player_physical_damage *= 0.9 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Chain-Mail') {
+                player_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Leather-Mail') {
+                player_physical_damage *= 0.95 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Leather-Cloth') {
+                player_physical_damage *= 0.975 + Math.random() * 0.15;
+            }
+    
+            if (combatData.enemy.legs.type === 'Plate-Mail') {
+                player_physical_damage *= 0.9 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Chain-Mail') {
+                player_physical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Leather-Mail') {
+                player_physical_damage *= 0.95 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Leather-Cloth') {
+                player_physical_damage *= 0.975 + Math.random() * 0.15;
+            }
+        }
+        if (weapon.attack_type === 'Magic') {
+            if (combatData.enemy.helmet.type === 'Plate-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.helmet.type === 'Chain-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }   
+            if (combatData.enemy.helmet.type === 'Leather-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.helmet.type === 'Leather-Cloth') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Plate-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Chain-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Leather-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.chest.type === 'Leather-Cloth') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Plate-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Chain-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Leather-Mail') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+            if (combatData.enemy.legs.type === 'Leather-Cloth') {
+                player_magical_damage *= 0.925 + Math.random() * 0.15;
+            }
+        }
+
+        
+    }
+    // console.log('Player Post-Damage Type Multiplier', player_physical_damage, player_magical_damage);
     return {
         combatData,
         player_physical_damage,
@@ -1981,95 +2072,164 @@ const criticalCompiler = async (combatData, player, critChance, critClearance, w
     }
 }
 
-const counterCompiler = async (combatData, player_one_action, player_two_action) => {
-    console.log('Player Counter Firing')
-    player_one_action = 'attack';
-    await attackCompiler(combatData, player_one_action)
-    // if (player_two_action === 'attack') {
-    //     combatData.action = 'attack';
-    //     await attackCompiler(combatData)
+const criticalCompiler = async (combatData, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
+    let num = critClearance;
+    num = (critClearance * 100) / 100; 
+    console.log(critChance, critClearance, 'Crit Chance and Clearance');
+    if (critChance >= critClearance) {
+        player_physical_damage *= weapon.critical_damage;
+        player_magical_damage *= weapon.critical_damage;
+        combatData.critical_success = true;
+    }
+
+    if (critClearance > critChance + combatData.player.level + 80) {
+        player_physical_damage *= 0.1;
+        player_magical_damage *= 0.1;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 75) {
+        player_physical_damage *= 0.15;
+        player_magical_damage *= 0.15;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 70) {
+        player_physical_damage *= 0.2;
+        player_magical_damage *= 0.2;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 65) {
+        player_physical_damage *= 0.25;
+        player_magical_damage *= 0.25;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 60) {
+        player_physical_damage *= 0.3;
+        player_magical_damage *= 0.3;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 55) {
+        player_physical_damage *= 0.35;
+        player_magical_damage *= 0.35;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 50) {
+        player_physical_damage *= 0.4;
+        player_magical_damage *= 0.4;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 45) {
+        player_physical_damage *= 0.45;
+        player_magical_damage *= 0.45;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 40) {
+        player_physical_damage *= 0.5;
+        player_magical_damage *= 0.5;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 35) {
+        player_physical_damage *= 0.55;
+        player_magical_damage *= 0.55;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 30) {
+        player_physical_damage *= 0.6;
+        player_magical_damage *= 0.6;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 25) {
+        player_physical_damage *= 0.65;
+        player_magical_damage *= 0.65;
+        combatData.glancing_blow = true;
+    } else if (critClearance > critChance + combatData.player.level + 20) {
+        player_physical_damage *= 0.7;
+        player_magical_damage *= 0.7;
+        combatData.glancing_blow = true;
+    } 
+    // else if (critClearance > critChance + 20) {
+    //     player_physical_damage *= 0.8;
+    //     player_magical_damage *= 0.8;
+    //     combatData.glancing_blow = true;
+    // } else if (critClearance > critChance + 10) {
+    //     player_physical_damage *= 0.9;
+    //     player_magical_damage *= 0.9;
+    //     combatData.glancing_blow = true;
     // }
-    // if (player_two_action === 'counter') {
-        
-    // }
-    // if (player_two_action === 'dodge') {
-        
-    // }
-    // if (player_two_action === 'posture') {
-        
-    // }
-    // if (player_two_action === 'roll') {
-        
-    // }
+    return {
+        combatData,
+        player_physical_damage,
+        player_magical_damage
+    }
+}
+
+const counterCompiler = async (combatData, player_action, enemy_action) => {
+    player_action = 'attack';
+    await attackCompiler(combatData, player_action)
     return (
         combatData
     )
 }
 
-const p1RollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
-    console.log('Player Roll Firing')
-    const player_roll = combatData.player_one_weapons[0].roll;
-    let roll_catch = Math.floor(Math.random() * 101) + combatData.player_two_attributes.kyosirMod;
-    console.log(player_roll, 'Player Roll %', roll_catch, 'Roll # To Beat')
+const playerRollCompiler = async (combatData, player_initiative, enemy_initiative, player_action, enemy_action) => {
+    const player_roll = combatData.weapons[0].roll;
+    let roll_catch = Math.floor(Math.random() * 101) + combatData.enemy_attributes.kyosirMod;
+    // console.log(player_roll, 'Player Roll %', roll_catch, 'Roll # To Beat')
     if (player_roll > roll_catch) {
-        combatData.player_one_roll_success = true;
-        combatData.player_one_special_description = 
-                `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
-        await attackCompiler(combatData, player_one_action)
+        combatData.roll_success = true;
+        combatData.player_special_description = 
+                `You successfully roll against ${combatData.enemy.name}, avoiding their ${ combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
+        await attackCompiler(combatData, player_action)
     } else {
-        combatData.player_one_special_description =
-            `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${  combatData.player_two_action === 'attack' ? 'Focused' : combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1) } Attack.`
+        // if (player_initiative > enemy_initiative) {
+        combatData.player_special_description =
+        `You failed to roll against ${combatData.enemy.name}'s ${ combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
         return combatData
+            //     await attackCompiler(combatData, player_action)
+        //     await enemyAttackCompiler(combatData, enemy_action)
+        // } else {
+        //     combatData.player_special_description =
+        //     `You failed to roll against ${combatData.enemy.name}'s ${  combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
+        //     await enemyAttackCompiler(combatData, enemy_action)
+        //     await attackCompiler(combatData, player_action)
+        // }
     }
     return (
         combatData
     )
 }
 
-// Resolves both Player and Computer Rolling
-const doubleRollCompiler = async (combatData, player_one_initiative, player_two_initiative, player_one_action, player_two_action) => {
-    console.log('Double Roll Firing')
-    const player_roll = combatData.player_one_weapons[0].roll;
-    const computer_roll = combatData.player_two_weapons[0].roll;
-    let roll_catch = Math.floor(Math.random() * 101) + combatData.player_two_attributes.kyosirMod;
-    console.log(player_roll, 'Player Roll %', computer_roll, 'Computer Roll %', roll_catch, 'Number to Beat')
-    if (player_one_initiative > player_two_initiative) { // You have Higher Initiative
+// Resolves both Player and enemy Rolling
+const doubleRollCompiler = async (combatData, player_initiative, enemy_initiative, player_action, enemy_action) => {
+    const player_roll = combatData.weapons[0].roll;
+    const enemy_roll = combatData.enemy_weapons[0].roll;
+    let roll_catch = Math.floor(Math.random() * 101) + combatData.enemy_attributes.kyosirMod;
+    // console.log(player_roll, 'Player Roll %', enemy_roll, 'enemy Roll %', roll_catch, 'Number to Beat')
+    if (player_initiative > enemy_initiative) { // You have Higher Initiative
         if (player_roll > roll_catch) { // The Player Succeeds the Roll
-            combatData.player_one_special_description = 
-                `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_one_action)
-        } else if (computer_roll > roll_catch) { // The Player Fails the Roll and the Computer Succeeds
-            combatData.player_one_special_description = 
-                `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            await p2AttackCompiler(combatData, player_two_action)
-        } else { // Neither Player nor Computer Succeed
-            combatData.player_one_special_description = 
-                `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_one_action)
-            await p2AttackCompiler(combatData, player_two_action)
+            combatData.player_special_description = 
+                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+            await attackCompiler(combatData, player_action)
+        } else if (enemy_roll > roll_catch) { // The Player Fails the Roll and the enemy Succeeds
+            combatData.player_special_description = 
+                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+            combatData.enemy_special_description = 
+                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+            await enemyAttackCompiler(combatData, enemy_action)
+        } else { // Neither Player nor enemy Succeed
+            combatData.player_special_description = 
+                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+            combatData.enemy_special_description = 
+                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+            await attackCompiler(combatData, player_action)
+            await enemyAttackCompiler(combatData, enemy_action)
         }
-    } else { // The Computer has Higher Initiative
-        if (computer_roll > roll_catch) { // The Computer Succeeds the Roll
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} successfully rolls against ${combatData.player_one.name}, avoiding their ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            await p2AttackCompiler(combatData, player_two_action)
-        } else if (player_roll > roll_catch) { // The Computer Fails the Roll and the Player Succeeds
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            combatData.player_one_special_description = 
-                `${combatData.player_one.name} successfully rolls against ${combatData.player_two.name}, avoiding their ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_one_action)
-        } else { // Neither Computer nor Player Succeed
-            combatData.player_two_special_description = 
-                `${combatData.player_two.name} fails to roll against ${combatData.player_one.name}'s ${combatData.player_one_action.charAt(0).toUpperCase() + combatData.player_one_action.slice(1)} Attack`
-            combatData.player_one_special_description = 
-                `${combatData.player_one.name} fails to roll against ${combatData.player_two.name}'s ${combatData.player_two_action.charAt(0).toUpperCase() + combatData.player_two_action.slice(1)} Attack`
-            await p2AttackCompiler(combatData, player_two_action)
-            await attackCompiler(combatData, player_one_action)
+    } else { // The enemy has Higher Initiative
+        if (enemy_roll > roll_catch) { // The enemy Succeeds the Roll
+            combatData.enemy_special_description = 
+                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+            await enemyAttackCompiler(combatData, enemy_action)
+        } else if (player_roll > roll_catch) { // The enemy Fails the Roll and the Player Succeeds
+            combatData.enemy_special_description = 
+                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+            combatData.player_special_description = 
+                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+            await attackCompiler(combatData, player_action)
+        } else { // Neither enemy nor Player Succeed
+            combatData.enemy_special_description = 
+                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+            combatData.player_special_description = 
+                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+            await enemyAttackCompiler(combatData, enemy_action)
+            await attackCompiler(combatData, player_action)
         }
     }
     return (
@@ -2077,327 +2237,667 @@ const doubleRollCompiler = async (combatData, player_one_initiative, player_two_
     )
 }
 
-// Action Splitter Determines the Action Payload and Sorts the Resolution of the Action Round player_one.name
+// Action Splitter Determines the Action Payload and Sorts the Resolution of the Action Round
 const actionSplitter = async (combatData) => {
     //TODO:FIXME: Work on proper rendering of current health and new health totals post-damage TODO:FIXME:
     const newData = {
         room: combatData.room,
-        player_one: combatData.player_one, // The player's Ascean
+        playerPosition: combatData.playerPosition,
+        enemyPosition: combatData.enemyPosition,
+        
+        player: combatData.player, // The player's Ascean
         action: combatData.action, // The player's action
-        player_one_action: combatData.action,
-        player_one_counter_guess: combatData.player_one_counter_guess, // The action chosen believed to be 
-        player_one_health: combatData.player_one_health, // Current Player Health
-        player_one_weapon_one: combatData.player_one_weapon_one,
-        player_one_weapon_two: combatData.player_one_weapon_two,
-        player_one_weapon_three: combatData.player_one_weapon_three,
-        player_one_weapons: combatData.player_one_weapons, // All 3 Weapons
-        player_one_defense: combatData.player_one_defense, // Posseses Base + Postured Defenses
-        player_one_attributes: combatData.player_one_attributes, // Possesses compiled Attributes, Initiative
-        player_one_damage_type: combatData.player_one_damage_type, // Damage Type of the Weapon
+        player_action: combatData.action,
+        counter_guess: combatData.counter_guess, // The action chosen believed to be 
+        player_health: combatData.player_health, // Current Player Health
+        weapon_one: combatData.weapon_one,
+        weapon_two: combatData.weapon_two,
+        weapon_three: combatData.weapon_three,
+        weapons: combatData.weapons, // All 3 Weapons
+        player_damage_type: combatData.player_damage_type,
+        player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
+        player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
+        player_defense_default: combatData.player_defense_default, // Possesses Base Defenses
 
-        player_two: combatData.player_two, // Computer Enemy
-        player_two_attributes: combatData.player_two_attributes, // Possesses compiled Attributes, Initiative
-        player_two_defense: combatData.player_two_defense, // Posseses Base + Postured Defenses
-        action_two: combatData.action_two,
-        player_two_action: combatData.action_two, // Action Chosen By Computer
-        player_two_counter_guess: combatData.player_two_counter_guess, // Comp's Counter Guess if Action === 'Counter'
-        player_two_weapons: combatData.player_two_weapons,  // All 3 Weapons
-        player_two_damage_type: combatData.player_two_damage_type, // Damage Type of the Weapon
+        enemy: combatData.enemy, // enemy Enemy
+        enemy_health: combatData.enemy_health,
+        enemy_attributes: combatData.enemy_attributes, // Possesses compiled Attributes, Initiative
+        enemy_defense: combatData.enemy_defense, // Posseses Base + Postured Defenses
+        enemy_defense_default: combatData.enemy_defense_default, // Possesses Base Defenses
+        enemy_action: '', // Action Chosen By enemy
+        enemy_counter_guess: '', // Comp's Counter Guess if Action === 'Counter'
+        enemy_weapons: combatData.enemy_weapons,  // All 3 Weapons
+        enemy_damage_type: combatData.enemy_damage_type,
 
-        potential_player_one_damage: 0, // All the Damage that is possible on hit for a player
-        potential_player_two_damage: 0, // All the Damage that is possible on hit for a computer
+        potential_player_damage: 0, // All the Damage that is possible on hit for a player
+        potential_enemy_damage: 0, // All the Damage that is possible on hit for a enemy
+        realized_player_damage: 0, // Player Damage - enemy Defenses
+        realized_enemy_damage: 0, // enemy Damage - Player Defenses
 
-        realized_player_one_damage: 0, // Player Damage - Computer Defenses
-        realized_player_two_damage: 0, // Computer Damage - Player Defenses
+        playerDamaged: false,
+        enemyDamaged: false,
 
-        player_one_start_description: '',
-        player_one_special_description: '',
-        player_one_action_description: '', // The combat text to inject from the player
-        player_one_influence_description: '',
-        player_one_influence_description_two: '',
-        player_one_death_description: '',
+        player_start_description: '',
+        enemy_start_description: '',
+        player_special_description: '',
+        enemy_special_description: '',
+        player_action_description: '', // The combat text to inject from the player
+        enemy_action_description: '', // The combat text to inject from the enemy
+        player_influence_description: '',
+        enemy_influence_description: '',
+        player_influence_description_two: '',
+        enemy_influence_description_two: '',
+        player_death_description: '',
+        enemy_death_description: '',
 
-        player_two_start_description: '',
-        player_two_special_description: '',
-        player_two_action_description: '', // The combat text to inject from the computer
-        player_two_influence_description: '',
-        player_two_influence_description_two: '',
-        player_two_death_description: '',
-        
-        current_player_one_health: combatData.new_player_one_health, // New player health post-combat action
-        current_player_two_health: combatData.new_player_two_health, // New computer health post-combat action
-        new_player_one_health: combatData.new_player_one_health, // New player health post-combat action
-        new_player_two_health: combatData.new_player_two_health, // New computer health post-combat action
+        current_player_health: combatData.new_player_health, // New player health post-combat action
+        current_enemy_health: combatData.new_enemy_health, // New enemy health post-combat action
+        new_player_health: combatData.new_player_health, // New player health post-combat action
+        new_enemy_health: combatData.new_enemy_health, // New enemy health post-combat action
 
-        player_one_religious_success: false,
-        
-        player_one_dual_wielding: false,
-        player_one_roll_success: false,
-        player_one_win: false,
-        player_one_critical_success: false,
-        player_one_glancing_blow: false,
-        player_one_counter_success: false,
-        player_one_initiated: false,
-        player_one_reduel: false,
+        attack_weight: combatData.attack_weight,
+        counter_weight: combatData.counter_weight,
+        dodge_weight: combatData.dodge_weight,
+        posture_weight: combatData.posture_weight,
+        roll_weight: combatData.roll_weight,
 
-        player_two_reduel: false,
-        player_two_initiated: false,
-        player_two_dual_wielding: false,
-        player_two_roll_success: false,
-        player_two_counter_success: false,
-        player_two_win: false,
-        player_two_critical_success: false,
-        player_two_glancing_blow: false,
-    }
-    console.log(newData, 'Combat Data in the Action Splitter')
-    const player_one_initiative = newData.player_one_attributes.initiative;
-    const player_two_initiative = newData.player_two_attributes.initiative;
-    let player_one_action = newData.action;
-    let player_one_counter = newData.player_one_counter_guess;
-    let player_two_counter = newData.player_two_counter_guess;
-    let player_two_action = newData.action_two;
-    let player_one_possible_choices = ['attack', 'posture', 'roll']
-    let player_two_possible_choices = ['attack', 'posture', 'roll']
+        counter_attack_weight: combatData.counter_attack_weight,
+        counter_counter_weight: combatData.counter_counter_weight,
+        counter_dodge_weight: combatData.counter_dodge_weight,
+        counter_posture_weight: combatData.counter_posture_weight,
+        counter_roll_weight: combatData.counter_roll_weight,
 
-    let playerOnePostureRating = ((combatData.player_one_defense.physicalPosture + combatData.player_one_defense.magicalPosture) / 4) + 5;
-    let playerOneRollRating = combatData.player_one_weapons[0].roll;
+        religious_success: false,
+        enemy_religious_success: false,
+        dual_wielding: false,
+        enemy_dual_wielding: false,
+        roll_success: false,
+        counter_success: false,
+        enemy_roll_success: false,
+        enemy_counter_success: false,
+        player_win: false,
+        player_luckout: false,
+        playerTrait: combatData.playerTrait,
+        enemyPersuaded: false,
+        enemy_win: false,
 
-    let playerTwoPostureRating = ((combatData.player_two_defense.physicalPosture + combatData.player_two_defense.magicalPosture) / 4) + 5;
-    let playerTwoRollRating = combatData.player_two_weapons[0].roll;
+        critical_success: false,
+        enemy_critical_success: false,
+        glancing_blow: false,
+        enemy_glancing_blow: false,
 
+        combatRound: combatData.combatRound,
+        sessionRound: combatData.sessionRound,
+
+        playerEffects: combatData.playerEffects,
+        enemyEffects: combatData.enemyEffects,
+        playerBlessing: combatData.playerBlessing,
+        enemyBlessing: combatData.enemyBlessing,
+        prayerSacrifice: combatData.prayerSacrifice,
+
+        combatInitiated: combatData.combatInitiated,
+        actionStatus: combatData.actionStatus,
+        gameIsLive: combatData.gameIsLive,
+        combatEngaged: combatData.combatEngaged,
+        dodgeStatus: combatData.dodgeStatus,
+        instantStatus: combatData.instantStatus,
+
+        highScore: combatData.highScore,
+        winStreak: combatData.winStreak,
+        loseStreak: combatData.loseStreak,
+
+        weather: combatData.weather,
+    };
+    const player_initiative = newData.player_attributes.initiative;
+    const enemy_initiative = newData.enemy_attributes.initiative;
+    let player_action = newData.action;
+    const player_counter = newData.counter_guess;
+    let enemy_counter = newData.enemy_counter_guess;
+    let enemy_action = newData.enemy_action;
+    let possible_choices = ['attack', 'posture', 'roll']
+    let postureRating = ((combatData.player_defense.physicalPosture + combatData.player_defense.magicalPosture) / 4) + 5;
+    let rollRating = combatData.weapons[0].roll;
     let posture = 'posture';
     let roll = 'roll';
-
-    // Keeping This Off For Now to Facilliate More Auto Focus Attacks
-
-    // if (playerOneRollRating >= 100) {
-    //     player_one_possible_choices.push(roll)
-    // } else  if (playerOnePostureRating >= 100) {
-    //     player_one_possible_choices.push(posture)
-    // } else if (playerOnePostureRating >= playerOneRollRating) { 
-    //     player_one_possible_choices.push(posture)
-    // } else { 
-    //     player_one_possible_choices.push(roll) 
-    // } 
-
-    // if (playerTwoRollRating >= 100) {
-    //     player_two_possible_choices.push(roll)
-    // } else  if (playerTwoPostureRating >= 100) {
-    //     player_two_possible_choices.push(posture)
-    // } else if (playerTwoPostureRating >= playerTwoRollRating) { 
-    //     player_two_possible_choices.push(posture)
-    // } else { 
-    //     player_two_possible_choices.push(roll) 
-    // } 
-
-
-    if (player_one_action === '') {
-        let player_one_new_choice = Math.floor(Math.random() * player_one_possible_choices.length)
-        console.log(player_one_new_choice, 'New Choice Number')
-        newData.action = player_one_possible_choices[player_one_new_choice];
-        newData.player_one_action = player_one_possible_choices[player_one_new_choice];
-        player_one_action = player_one_possible_choices[player_one_new_choice];
-        console.log(player_one_action, 'New Choice')
+    if (rollRating >= 100) {
+        possible_choices.push(roll)
+    } else  if (postureRating >= 100) {
+        possible_choices.push(posture)
+    } else if (postureRating >= rollRating) { 
+        possible_choices.push(posture)
+    } else { 
+        possible_choices.push(roll) 
+    } 
+    let new_choice = Math.floor(Math.random() * possible_choices.length)
+    if (player_action === '') {
+        newData.action = possible_choices[new_choice];
+        newData.player_action = possible_choices[new_choice];
+        player_action = possible_choices[new_choice];
     }
+    let newEnemyWeaponOrder = newData.enemy_weapons.sort(function() {
+        return Math.random() - 0.5;
+    })
+    newData.enemy_weapons = newEnemyWeaponOrder;
 
-    if (player_two_action === '') {
-        let player_two_new_choice = Math.floor(Math.random() * player_two_possible_choices.length)
-        console.log(player_two_new_choice, 'New Choice Number')
-        newData.action_two = player_two_possible_choices[player_two_new_choice];
-        newData.player_two_action = player_two_possible_choices[player_two_new_choice];
-        player_two_action = player_two_possible_choices[player_two_new_choice];
-        console.log(player_two_action, 'New Choice')
-    }
-    player_one_counter = newData.player_one_counter_guess;
-    player_one_action = newData.player_one_action;
+    let new_damage_type = Math.floor(Math.random() * newData.enemy_weapons[0].damage_type.length);
+    newData.enemy_damage_type = newData.enemy_weapons[0].damage_type[new_damage_type];
+
+    // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
+    await enemyActionCompiler(newData, player_action, enemy_action, enemy_counter)
+    // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
+    enemy_counter = newData.enemy_counter_guess;
+    enemy_action = newData.enemy_action;
+
+    let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
+    let new_prayer = Math.floor(Math.random() * prayers.length);
+    newData.enemyBlessing = prayers[new_prayer];
+
+    newData.enemy_start_description = 
+        `${newData.enemy.name} sets to ${enemy_action.charAt(0).toUpperCase() + enemy_action.slice(1)}${enemy_counter ? '-' + enemy_counter.charAt(0).toUpperCase() + enemy_counter.slice(1) : ''} against you.`
+
+    newData.player_start_description = 
+        `You attempt to ${player_action.charAt(0).toUpperCase() + player_action.slice(1)}${player_counter ? '-' + player_counter.charAt(0).toUpperCase() + player_counter.slice(1) : ''} against ${newData.enemy.name}.`
     
-    player_two_counter = newData.player_two_counter_guess;
-    player_two_action = newData.player_two_action;
+    // If both Player and enemy Counter -> Counter [Fastest Resolution]
+    if (player_action === 'counter' && enemy_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
+        if (player_counter === enemy_counter && player_counter === 'counter') {
+            if (player_initiative > enemy_initiative) {
+                newData.counter_success = true;
+                newData.player_special_description = 
+                    `You successfully Countered ${newData.enemy.name}'s Counter-Counter! Absolutely Brutal`;
+                await attackCompiler(newData, player_action);
+                await faithFinder(newData, player_action, enemy_action);
 
-    newData.player_two_start_description = 
-        `${combatData.player_two.name} sets to ${player_two_action.charAt(0).toUpperCase() + player_two_action.slice(1)}${player_two_counter ? '-' + player_two_counter.charAt(0).toUpperCase() + player_two_counter.slice(1) : ''} against ${combatData.player_one.name}.`
-
-    newData.player_one_start_description = 
-        `${combatData.player_one.name} attempt to ${player_one_action.charAt(0).toUpperCase() + player_one_action.slice(1)}${player_one_counter ? '-' + player_one_counter.charAt(0).toUpperCase() + player_one_counter.slice(1) : ''} against ${combatData.player_two.name}.`
-    
-    // If both Player and Computer Counter -> Counter [Fastest Resolution]
-    if (player_one_action === 'counter' && player_two_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
-        if (player_one_counter === player_two_counter && player_one_counter === 'counter') {
-            if (player_one_initiative > player_two_initiative) {
-                newData.player_one_counter_success = true;
-                newData.player_one_special_description = 
-                    `${newData.player_one.name} successfully Countered ${newData.player_two.name}'s Counter-Counter! Absolutely Brutal`
-                await attackCompiler(newData, player_one_action)
-                await faithFinder(newData, player_one_action, player_two_action);
+                await statusEffectCheck(newData);
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
                 return newData
             } else {
-                newData.player_two_counter_success = true;
-                newData.player_two_special_description = 
-                    `${newData.player_two.name} successfully Countered ${newData.player_one.name}'s Counter-Counter! Absolutely Brutal`
-                await p2AttackCompiler(newData, player_two_action);
-                await faithFinder(newData, player_one_action, player_two_action);
+                newData.enemy_counter_success = true;
+                newData.enemy_special_description = 
+                    `${newData.enemy.name} successfully Countered your Counter-Counter! Absolutely Brutal`
+                await enemyAttackCompiler(newData, enemy_action);
+                await faithFinder(newData, player_action, enemy_action);
+
+                await statusEffectCheck(newData);
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
                 return newData
             }    
         }
-        // If the Player Guesses Right and the Computer Guesses Wrong
-        if (player_one_counter === player_two_action && player_two_counter !== player_one_action) {
-            newData.player_one_counter_success = true;
-            newData.player_one_special_description = 
-                `${newData.player_one.name} successfully Counters ${newData.player_two.name}'s Counter-${player_two_counter.charAt(0).toUpperCase() + player_two_counter.slice(1)}! Absolutely Brutal`
-            await attackCompiler(newData, player_one_action)
-            await faithFinder(newData, player_one_action, player_two_action);
+        // If the Player Guesses Right and the enemy Guesses Wrong
+        if (player_counter === enemy_action && enemy_counter !== player_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `You successfully Countered ${newData.enemy.name}'s Counter-${enemy_counter.charAt(0).toUpperCase() + enemy_counter.slice(1)}! Absolutely Brutal`
+            await attackCompiler(newData, player_action)
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         }
     
-        // If the Computer Guesses Right and the Player Guesses Wrong
-        if (player_two_counter === player_one_action && player_one_counter !== player_two_action) {
-            newData.player_two_counter_success = true;
-            newData.player_two_special_description = 
-                `${newData.player_two.name} successfully Counters ${newData.player_one.name}'s Counter-${player_one_counter.charAt(0).toUpperCase() + player_one_counter.slice(1)}! Absolutely Brutal`
-            await p2AttackCompiler(newData, player_two_action);
-            await faithFinder(newData, player_one_action, player_two_action);
+        // If the enemy Guesses Right and the Player Guesses Wrong
+        if (enemy_counter === player_action && player_counter !== enemy_action) {
+            newData.enemy_counter_success = true;
+            newData.enemy_special_description = 
+                `${newData.enemy.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`
+            await enemyAttackCompiler(newData, enemy_action);
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         } 
     
-        if (player_one_counter !== player_two_action && player_two_counter !== player_one_action) {
-            newData.player_one_special_description = 
-                `${newData.player_one.name} fails to Counter ${newData.player_two.name}'s Counter! Heartbreaking`
-            newData.player_two_special_description = 
-                `${newData.player_two.name} fails to Counter ${newData.player_one.name}'s Counter! Heartbreaking`
-                if (player_one_initiative > player_two_initiative) {
-                    await attackCompiler(newData, player_one_action);
-                    await p2AttackCompiler(newData, player_two_action);
+        if (player_counter !== enemy_action && enemy_counter !== player_action) {
+            newData.player_special_description = 
+                `You failed to Counter ${newData.enemy.name}'s Counter! Heartbreaking`
+            newData.enemy_special_description = 
+                `${newData.enemy.name} fails to Counter your Counter! Heartbreaking`
+                if (player_initiative > enemy_initiative) {
+                    await attackCompiler(newData, player_action);
+                    await enemyAttackCompiler(newData, enemy_action);
                 } else {
-                    await p2AttackCompiler(newData, player_two_action);
-                    await attackCompiler(newData, player_one_action);
+                    await enemyAttackCompiler(newData, enemy_action);
+                    await attackCompiler(newData, player_action);
                 }
         }
     } 
 
 
-    // Partially Resolves Player: Counter + Countering the Computer
-        // If Player Counters the Computer w/o the Enemy Countering
-    if (player_one_action === 'counter' && player_two_action !== 'counter') {
-        if (player_one_counter === player_two_action) {
-            newData.player_one_counter_success = true;
-            newData.player_one_special_description = 
-                `${newData.player_one.name} successfully Counters ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack.`
-            await attackCompiler(newData, player_one_action)
-            await faithFinder(newData, player_one_action, player_two_action);
+    // Partially Resolves Player: Counter + Countering the enemy
+        // If Player Counters the enemy w/o the Enemy Countering
+    if (player_action === 'counter' && enemy_action !== 'counter') {
+        if (player_counter === enemy_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `You successfully Countered ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack.`
+            await attackCompiler(newData, player_action)
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         } else {
-            newData.player_one_special_description = 
-                `${newData.player_one.name} fail to Counter ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack. Heartbreaking!`
+            newData.player_special_description = 
+                `You failed to Counter ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
-    if (player_two_action === 'counter' && player_one_action !== 'counter') {
-        if (player_two_counter === player_one_action) {
-            newData.player_two_counter_success = true;
-            newData.player_two_special_description = 
-                `${newData.player_two.name} successfully Counters ${newData.player_one.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
-            await p2AttackCompiler(newData, player_two_action)
-            await faithFinder(newData, player_one_action, player_two_action);
+    if (enemy_action === 'counter' && player_action !== 'counter') {
+        if (enemy_counter === player_action) {
+            newData.enemy_counter_success = true;
+            newData.enemy_special_description = 
+                `${newData.enemy.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
+            await enemyAttackCompiler(newData, enemy_action)
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         } else {
-            newData.player_two_special_description = 
-                `${newData.player_two.name} fails to Counter ${newData.player_one.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
+            newData.enemy_special_description = 
+                `${newData.enemy.name} fails to Counter your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
 
     
-    if (player_one_action === 'dodge' && player_two_action === 'dodge') { // If both choose Dodge
-        if (player_one_initiative > player_two_initiative) {
-            newData.player_one_special_description = 
-                `${newData.player_one.name} successfully Dodge ${newData.player_two.name}'s ${  newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack`
-            await attackCompiler(newData, player_one_action)
+    if (player_action === 'dodge' && enemy_action === 'dodge') { // If both choose Dodge
+        if (player_initiative > enemy_initiative) {
+            newData.player_special_description = 
+                `You successfully Dodge ${newData.enemy.name}'s ${  newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack`
+            await attackCompiler(newData, player_action);
         } else {
-            `${newData.player_two.name} successfully Dodges ${newData.player_one.name}'s ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
-            await p2AttackCompiler(newData, player_two_action)
+            `${newData.enemy.name} successfully Dodges your ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
+            await enemyAttackCompiler(newData, enemy_action);
         }
     }
 
-    // If the Player Dodges and the Computer does not *Counter or Dodge  *Checked for success
-    if (player_one_action === 'dodge' && player_two_action !== 'dodge') {
-        newData.player_one_special_description = 
-            `${newData.player_one.name} successfully Dodge ${newData.player_two.name}'s ${ newData.player_two_action === 'attack' ? 'Focused' : newData.player_two_action.charAt(0).toUpperCase() + newData.player_two_action.slice(1) } Attack`
-        await attackCompiler(newData, player_one_action)
-        await faithFinder(newData, player_one_action, player_two_action);
+    // If the Player Dodges and the enemy does not *Counter or Dodge  *Checked for success
+    if (player_action === 'dodge' && enemy_action !== 'dodge') {
+        newData.player_special_description = 
+            `You successfully Dodge ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack`
+        await attackCompiler(newData, player_action);
+        await faithFinder(newData, player_action, enemy_action);
+        await statusEffectCheck(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
         return newData
     }
 
-    // If the Computer Dodges and the Player does not *Counter or Dodge *Checked for success
-    if (player_two_action === 'dodge' && player_one_action !== 'dodge') {
-        `${newData.player_two.name} successfully Dodges ${newData.player_one.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
-        await p2AttackCompiler(newData, player_two_action)
-        await faithFinder(newData, player_one_action, player_two_action);
+    // If the enemy Dodges and the Player does not *Counter or Dodge *Checked for success
+    if (enemy_action === 'dodge' && player_action !== 'dodge') {
+        `${newData.enemy.name} successfully Dodges your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
+        await enemyAttackCompiler(newData, enemy_action);
+        await faithFinder(newData, player_action, enemy_action);
+        await statusEffectCheck(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
         return newData
     }
 
-    if (player_one_action === 'roll' && player_two_action === 'roll') { // If both choose Roll
-        await doubleRollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
+    if (player_action === 'roll' && enemy_action === 'roll') { // If both choose Roll
+        await doubleRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action);
     }
 
-    if (player_one_action === 'roll' && player_two_action !== 'roll') {
-        await p1RollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
-        if (newData.player_one_roll_success === true) {
-            await faithFinder(newData, player_one_action, player_two_action);
+    if (player_action === 'roll' && enemy_action !== 'roll') {
+        await playerRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action);
+        if (newData.roll_success === true) {
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         }
     }
 
-    if (player_two_action === 'roll' && player_one_action !== 'roll') {
-        await p2RollCompiler(newData, player_one_initiative, player_two_initiative, player_one_action, player_two_action)
-        if (newData.player_two_roll_success === true) {
-            await faithFinder(newData, player_one_action, player_two_action);
+    if (enemy_action === 'roll' && player_action !== 'roll') {
+        await enemyRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action)
+        if (newData.enemy_roll_success === true) {
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
             return newData
         }
     }
 
-    if (player_one_action === 'attack' || player_one_action === 'posture' || player_two_action === 'attack' || player_two_action === 'posture') { // If both choose Attack
-        if (player_one_initiative > player_two_initiative) {
-            await attackCompiler(newData, player_one_action)
-            // if (player_two_action === 'attack' || player_two_action === 'posture') {
-                await p2AttackCompiler(newData, player_two_action)
+    if (player_action === 'attack' || player_action === 'posture' || enemy_action === 'attack' || enemy_action === 'posture') { // If both choose Attack
+        if (player_initiative > enemy_initiative) {
+            await attackCompiler(newData, player_action);
+            // if (enemy_action === 'attack' || enemy_action === 'posture') {
+                await enemyAttackCompiler(newData, enemy_action);
             // }
         } else {
-            // if (player_two_action === 'attack' || player_two_action === 'posture') {
-                await p2AttackCompiler(newData, player_two_action)
+            // if (enemy_action === 'attack' || enemy_action === 'posture') {
+                await enemyAttackCompiler(newData, enemy_action);
             // }
-            await attackCompiler(newData, player_one_action)
+            await attackCompiler(newData, player_action);
         }
     }
 
-    await faithFinder(newData, player_one_action, player_two_action);
+    await faithFinder(newData, player_action, enemy_action);
+    await statusEffectCheck(newData);
     
-    if (newData.player_one_win === true) {
-        newData.player_two_death_description = 
-            `${newData.player_two.name} has been defeated. Hail ${newData.player_one.name}, the new va'Esai!`
-    }
-    if (newData.player_two_win === true) {
-        newData.player_one_death_description = 
-            `${newData.player_one.name} has been defeated. Hail ${newData.player_two.name}, the new va'Esai!`
-    }
-    
-    console.log(newData.player_one_damage_type, newData.player_two_damage_type, 'Damage Types')
-    return newData
-}
+    if (newData.player_win === true) {
+        newData.enemy_death_description = 
+        `${newData.enemy.name} has been defeated. Hail ${newData.player.name}, you have won the duel!`;
+    };
+    if (newData.enemy_win === true) {
+        newData.player_death_description = 
+        `You have been defeated. Hail ${newData.enemy.name}, they have won the duel!`;
+    };
+    if (newData.player_win === true || newData.enemy_win === true) {
+        // To Remove Effects
+        await statusEffectCheck(newData);
+    };
+
+    newData.combatRound += 1;
+    newData.sessionRound += 1;
+
+    return newData;
+};
+
+const prayerSplitter = async (combatData, prayer) => {
+    let originalPrayer = combatData.playerBlessing;
+    combatData.playerBlessing = prayer;
+    let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+    // Handles the creation of a new Status Effect if it doesn't already exist
+    if (!existingEffect) {
+        existingEffect = new StatusEffect(combatData, combatData.player, combatData.enemy, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+        combatData.playerEffects.push(existingEffect);
+        combatData.player_influence_description = existingEffect.description;
+        // console.log(existingEffect, 'New Status Effect in Game Services');
+    } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+        existingEffect.tick.end += 2;
+        existingEffect.activeStacks += 1;
+        existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
+        combatData.player_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+        switch (existingEffect.prayer) {
+            case 'Buff': {
+                for (let key in existingEffect.effect) {
+                    if (existingEffect.effect[key] && key !== 'dodge') {
+                        combatData.weapons[0][key] += existingEffect.effect[key];
+                    } else {
+                        combatData.weapons[0][key] -= existingEffect.effect[key];
+                    }
+                }
+                for (let key in combatData.player_defense) {
+                    if (existingEffect.effect[key]) {
+                        combatData.player_defense[key] += existingEffect.effect[key];
+                    }
+                }
+                break;
+            }
+            case 'Damage': {
+                existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                break;
+            }
+        }
+    } else if (existingEffect.refreshes) {
+        existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+        existingEffect.tick.end += existingEffect.duration + 1;
+        existingEffect.activeRefreshes += 1;
+        combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+    };
+    combatData.playerBlessing = originalPrayer;
+    return combatData;
+};
+
+const instantDamageSplitter = async (combatData, mastery) => {
+    let damage = combatData.player[mastery] * 0.5 + combatData.player.level;
+    console.log(damage, 'Damage');
+    combatData.realized_player_damage = damage;
+    combatData.new_enemy_health = combatData.current_enemy_health - combatData.realized_player_damage;
+    combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
+    combatData.enemyDamaged = true;
+    combatData.player_action_description = 
+        `You instantly attack ${combatData.enemy.name}'s Caeren with your Conviction for ${Math.round(damage)} Pure Damage.`    
+
+    if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+        combatData.new_enemy_health = 0;
+        combatData.player_win = true;
+    };
+};
+
+const instantActionSplitter = async (combatData) => {
+    switch (combatData.player.mastery) {
+        case 'Constitution':
+            await prayerSplitter(combatData, 'Heal');
+            await prayerSplitter(combatData, 'Buff');
+            break;
+        case 'Strength':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'strength');
+            break;
+        case 'Agility':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'agility');
+            break;
+        case 'Achre':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'achre');
+            break;
+        case 'Caeren':
+            await prayerSplitter(combatData, 'Buff');
+            await instantDamageSplitter(combatData, 'caeren');
+            break;
+        case 'Kyosir':
+            await prayerSplitter(combatData, 'Damage');
+            await prayerSplitter(combatData, 'Debuff');
+            break;
+    };
+    //TODO:FIXME: Change the statusEffect Check into a personalized variant for the insant action
+    await instantEffectCheck(combatData);
+    return combatData;
+};
+
+const instantEffectCheck = async (combatData) => {
+    combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        if (effect.tick.start !== combatData.combatRound) return true;
+        const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+            switch (effect.prayer) {
+                case 'Buff': { // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
+                    if (effect.activeStacks === 1) {
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                            } else {
+                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            };
+                        };
+                        for (let key in combatData.player_defense) {
+                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                        };
+                    };
+                    break;
+                };
+                case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+                    if (effect.activeRefreshes === 0) {
+                        effect.debuffTarget = combatData.enemy_weapons[0].name;
+                        for (let key in effect.effect) {
+                            if (effect.effect[key] && key !== 'dodge') {
+                                combatData.enemy_weapons[0][key] -= effect.effect[key];
+                            } else {
+                                combatData.enemy_weapons[0][key] += effect.effect[key];
+                            };
+                        };
+                        for (let key in combatData.enemy_defense) { // Buff
+                            if (effect.effect[key]) {
+                                combatData.enemy_defense[key] -= effect.effect[key];
+                            };
+                        };
+                    };
+                    break;
+                };
+                case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                    combatData.new_enemy_health -= effect.effect.damage * 0.33;
+                    combatData.current_enemy_health -= effect.effect.damage * 0.33;
+
+                    if (combatData.current_enemy_health < 0 || combatData.new_enemy_health < 0) {
+                        combatData.new_enemy_health = 0;
+                        combatData.current_enemy_health = 0;
+                        combatData.enemy_win = false;
+                        combatData.player_win = true;
+                    };
+                    break;
+                };
+                case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                    combatData.new_player_health += effect.effect.healing * 0.33;
+                    combatData.current_player_health += effect.effect.healing * 0.33;
+
+                    if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                        combatData.enemy_win = false;
+                    };
+                    break;
+                };
+            };
+        return true;
+    });
+};
+
+const consumePrayerSplitter = async (combatData) => {
+    console.log("Consuming Prayer: ", combatData.new_player_health, combatData.current_player_health, "Player Health Before");
+    combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+        const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+        const matchingDebuffTarget = combatData.enemy_weapons.find(weapon => weapon.name === effect.debuffTarget);
+        const matchingDebuffTargetIndex = combatData.enemy_weapons.indexOf(matchingDebuffTarget);
+        if (effect.prayer !== combatData.prayerSacrifice) return true;
+        switch (combatData.prayerSacrifice) {
+            case 'Heal':
+                console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")
+                console.log("Healing for :", effect.effect.healing * 0.165);
+                combatData.new_player_health += effect.effect.healing * 0.165;
+                combatData.current_player_health += effect.effect.healing * 0.165;
+                console.log(combatData.new_player_health, combatData.current_player_health, "Player Health After")
+                if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                    combatData.enemy_win = false;
+                };
+                break;
+            case 'Buff':
+                combatData.new_enemy_health = combatData.current_enemy_health - (combatData.realized_player_damage * 0.5);
+                combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
+            
+                combatData.player_action_description = 
+                    `${combatData.weapons[0].influences[0]}'s Tendrils serenade ${combatData.enemy.name}, echoing ${Math.round(combatData.realized_player_damage * 0.5)} more damage.`    
+            
+                if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+                    combatData.new_enemy_health = 0;
+                    combatData.player_win = true;
+                };
+                for (let key in effect.effect) {
+                    if (key in combatData.weapons[matchingWeaponIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                        };
+                    };
+                    if (key in combatData.player_defense) {
+                        combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                    };
+                };
+                break;
+            case 'Damage':
+                combatData.new_enemy_health -= effect.effect.damage * 0.165;
+                combatData.current_enemy_health -= effect.effect.damage * 0.165;
+
+                if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+                    combatData.new_enemy_health = 0;
+                    combatData.player_win = true;
+                };
+
+                break;
+            case 'Debuff':
+                
+                combatData.new_enemy_health = combatData.current_enemy_health - (combatData.realized_enemy_damage * 0.5);
+                combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
+            
+                combatData.player_action_description = 
+                    `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.enemy.name}, wearing for ${Math.round(combatData.realized_enemy_damage * 0.5)} more damage.`    
+            
+                if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+                    combatData.new_enemy_health = 0;
+                    combatData.player_win = true;
+                };
+
+                for (let key in effect.effect) {
+                    if (key in combatData.enemy_weapons[matchingDebuffTargetIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.enemy_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                        } else {
+                            combatData.enemy_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        };
+                    };
+                    if (key in combatData.enemy_defense) {
+                        combatData.enemy_defense[key] += effect.effect[key] * effect.activeStacks;
+                    };
+                };
+                break;
+            default: break;
+        };
+        return false;
+    });
+    if (combatData.prayerSacrifice !== 'Heal') {
+        if (combatData.realized_player_damage > 0) {
+            combatData.enemyDamaged = true;
+        };
+    };
+    combatData.prayerSacrifice = '';
+    return combatData;
+};
 
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
 const actionCompiler = async (combatData) => {
-    // console.log(combatData, 'Combat Data in the Action Compiler of Game Services')
     try {
-        const result = await actionSplitter(combatData)
-        // console.log(result, 'Combat Result')
+        let result = await actionSplitter(combatData);
+        if (result.realized_enemy_damage > 0) result.playerDamaged = true;
+        if (result.realized_player_damage > 0) result.enemyDamaged = true;
+        console.log(result.realized_enemy_damage, result.realized_player_damage, 'Comp-Player Damage Dealt', result.playerDamaged, result.enemyDamaged, 'Comp-Player Damaged')
+        if (result.player_win === true || result.enemy_win === true) {
+            await statusEffectCheck(result);
+        };
         return result
     } catch (err) {
-        // res.status(400).json({ err })
-        console.log(err, 'Error in PvP!')
-    }
-}
+        console.log(err, 'Error in the Action Compiler of Game Services');
+        res.status(400).json({ err })
+    };
+};
+
+const instantActionCompiler = async (combatData) => {
+    try {
+        let result = await instantActionSplitter(combatData);
+        if (result.player_win === true || result.enemy_win === true) {
+            await statusEffectCheck(result);
+        };
+        return result;
+    } catch (err) {
+        console.log(err, 'Error in the Instant Action Compiler of Game Services');
+        res.status(400).json({ err })
+    };
+};
+
+const consumePrayer = async (combatData) => {
+    try {
+        let result = await consumePrayerSplitter(combatData);
+        if (result.player_win === true || result.enemy_win === true) {
+            await statusEffectCheck(result);
+        };
+        return result;
+    } catch (err) {
+        console.log(err, 'Error in the Consume Prayer of Game Services');
+        res.status(400).json({ err })
+    };
+};
 
 module.exports = {
-    actionCompiler
-}
+    actionCompiler,
+    instantActionCompiler,
+    consumePrayer
+};

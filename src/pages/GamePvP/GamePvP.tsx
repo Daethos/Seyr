@@ -23,6 +23,7 @@ import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { getMerchantDialog, getNpcDialog } from '../../components/GameCompiler/Dialog';
 import LevelUpModal from '../../game/LevelUpModal';
 import DialogBox from '../../game/DialogBox';
+import PvPDialogBox from '../../game/PvPDialogBox';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameActions from '../../components/GameCompiler/GameActions';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
@@ -56,18 +57,16 @@ interface GameProps {
     gameDispatch: any;
     user: any;
     ascean: any;
-    opponent: any;
     room: any;
     socket: any;
     setModalShow: any;
-    enemyPlayer: any;
     spectator: boolean;
     getAsceanCoords: (x: number, y: number, map: any) => Promise<any>;
     generateWorld: (mapName: string) => Promise<void>;
     handleSocketEvent: (event: string, callback: Function) => void;
 };
 
-const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, getAsceanCoords, generateWorld, user, ascean, opponent, spectator, room, socket, setModalShow, enemyPlayer }: GameProps) => {
+const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, getAsceanCoords, generateWorld, user, ascean, spectator, room, socket, setModalShow }: GameProps) => {
     const [loading, setLoading] = useState(false);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
     const [emergencyText, setEmergencyText] = useState<any[]>([])
@@ -181,13 +180,21 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     };
 
     function handleAction(action: any) {
-        console.log(action.target.value, '<- Action being handled');
-        setTimeLeft(10);
+        playActionButton();
+        dispatch({
+            type: ACTIONS.SET_COMBAT_ACTION,
+            payload: action.target.value
+        });
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
     function handleCounter(counter: any) {
-        console.log(counter.target.value, 'New Counter');
-        setTimeLeft(10);
+        playActionButton();
+        dispatch({
+            type: ACTIONS.SET_COMBAT_COUNTER,
+            payload: counter.target.value
+        });
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
     async function setWeaponOrder(weapon: any) {
@@ -202,7 +209,11 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             );
         });
         const response = await newWeaponOrder();
-        setTimeLeft(10);
+        dispatch({
+            type: ACTIONS.SET_WEAPON_ORDER,
+            payload: response
+        });
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         playWO();
     }
 
@@ -306,7 +317,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         ...asceanState,
                         'opponent': wolf.level,
                     });
-                    dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: response.data.data });
+                    dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
                     setTimeout(() => {
                         dispatch({
                             type: ACTIONS.SET_DUEL,
@@ -327,7 +338,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         ...asceanState,
                         'opponent': wolf.level,
                     });
-                    dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: response.data.data });
+                    dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
                     setTimeout(() => {
                         dispatch({
                             type: ACTIONS.SET_DUEL,
@@ -352,7 +363,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                             ...asceanState,
                             'opponent': bear.level,
                         });
-                        dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: response.data.data });
+                        dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
                         setTimeout(() => {
                             dispatch({
                                 type: ACTIONS.SET_DUEL,
@@ -373,7 +384,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                             ...asceanState,
                             'opponent': bear.level,
                         });
-                        dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: response.data.data });
+                        dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
                         setTimeout(() => {
                             dispatch({
                                 type: ACTIONS.SET_DUEL,
@@ -422,10 +433,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 ...asceanState,
                 'opponent': selectedOpponent.data.level,
             });
-            dispatch({
-                type: ACTIONS.SET_NEW_ENEMY,
-                payload: response.data.data
-            });
+            dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
             playOpponent();
             await getOpponentDialog(selectedOpponent.data.name);
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
@@ -516,7 +524,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     const gainExperience = async () => {
         try {
-            let opponentExp: number = Math.round(state.enemy.level * 100 * (state.enemy.level / state.player.level) + state.player.kyosir);
+            let opponentExp: number = Math.round(gameState.opponent.level * 100 * (gameState.opponent.level / state.player.level) + state.player.kyosir);
             if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
                     ...asceanState,
@@ -687,10 +695,10 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     type: ACTIONS.PLAYER_WIN,
                     payload: combatData
                 });
-                if (mapState?.currentTile?.content !== 'city' && gameState.opponent.name !== "Wolf" && gameState.opponent.name !== "Bear") {
+                if (mapState?.currentTile?.content !== 'city' && gameState?.opponent?.name !== "Wolf" && gameState?.opponent?.name !== "Bear") {
                     gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 };
-                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
+                if (gameState?.opponent?.name === "Wolf" || gameState?.opponent?.name === "Bear") {
                     clearOpponent();
                     mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
                 };
@@ -701,7 +709,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    async function handleComputerWin(combatData: PvPData) {
+    async function handleEnemyWin(combatData: PvPData) {
         try {
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
@@ -722,15 +730,17 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    async function handleInitiate(e: { preventDefault: () => void; }) {
-        e.preventDefault();
-       
+    async function handleInitiate(pvpState: PvPData) {
         try {
-            setEmergencyText([``]);
-            setTimeLeft(10);
-            await socket.emit(`initiated`, state);
+            setEmergencyText(['']);
+            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            if (pvpState.enemyPosition === -1) {
+                await socket.emit('computer_combat_initiated', pvpState);
+                return;
+            };
+            await socket.emit('initiated', pvpState);
             dispatch({ type: ACTIONS.SET_PLAYER_READY, payload: true });
-            console.log(state, 'Socket Emit Combat Data');
+            console.log(pvpState, 'Socket Emit Combat Data');
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action');
         };
@@ -741,19 +751,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         try {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            //TODO:FIXME: Socket.Emit
-            const response = await gameAPI.instantAction(state);
+            await socket.emit('instant_action', state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            dispatch({
-                type: ACTIONS.INSTANT_COMBAT,
-                payload: response.data
-            });
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
             playReligion();
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
@@ -769,19 +768,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             };
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            //TODO:FIXME: Socket.Emit 
-            const response = await gameAPI.consumePrayer(state);
+            await socket.emit('consume_prayer', state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response.data
-            });
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
             playReligion();
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -798,64 +786,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     // TODO:FIXME: Send it via like an auto-engage to update both peoples combatData to check for both player's initiation of actions
 
-    // useEffect(() => {
-    //     socket.on(`combat_response`, (response: any) => {
-    //         console.log('Combat Response!')
-    //         statusUpdate(response)
-    //     });
-    // }, []);
-
     const [reduelRequest, setReduelRequest] = useState<boolean>(false);
-
-    // useEffect(() => {
-    //     socket.on(`reduel_requested`, async (newData: any) => {
-    //     });
-    // });
-
-    // useEffect(() => {
-    //     socket.on(`reset_duel`, async () => {
-    //         console.log('Duel Resetting');
-    //         await resetCombat();
-    //     });
-    // }, []);
-
-    // const resetCombat = async () => {
-    //     try {
-    //         setLoading(true);
-    //         setTimeout(() => setLoading(false), 3000);
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Resetting Combat');
-    //     };
-    // };
-
-    // useEffect(() => {
-    //     socket.on(`soft_response`, (response: any) => {
-    //         console.log(`Soft Response`);
-    //         softUpdate(response);
-    //     });
-    // });
-
-    const softUpdate = async (response: any) => {
-        try {
-            setLoading(true);
-            setTimeLeft(10);
-            setLoading(false);
-        } catch (err: any) {
-            console.log(err.message, 'Error Performing Soft Update');
-        };
-    };
-    
-    const statusUpdate = async (response: any) => {
-        try {
-            setLoading(true);
-            console.log(response, 'Response Auto Engaging');
-            
-            setLoading(false);
-        } catch (err: any) {
-            console.log(err.message, 'Error Updating Status')
-        };
-    };
-
 
     const chanceEncounter = async (content: string) => {
         try {
@@ -1277,6 +1208,50 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         // };
     };
 
+    const instantUpdate = async (response: any) => {
+        try {
+            dispatch({
+                type: ACTIONS.INSTANT_COMBAT,
+                payload: response
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Performing Instant Update');
+        };
+    };
+
+    const softUpdate = async (response: any) => {
+        try {
+            dispatch({
+                type: ACTIONS.INITIATE_COMBAT,
+                payload: response
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Performing Soft Update');
+        };
+    };
+    
+    const statusUpdate = async (response: any) => {
+        try {
+            await soundEffects(response.data);
+            dispatch({
+                type: ACTIONS.INITIATE_COMBAT,
+                payload: response
+            });
+            if (response.player_win === true) {
+                await handlePlayerWin(response);
+            };
+            if (response.computer_win === true) {
+                await handleEnemyWin(response);
+            };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating Status');
+        };
+    };
+
+
     useEffect(() => {
 
         const playerDirectionChangedCallback = (data: any) => {
@@ -1285,22 +1260,33 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         handleSocketEvent('playerDirectionChanged', playerDirectionChangedCallback);
 
         const combatResponseCallback = async (response: any) => {
-            console.log('Combat Response!')
-            await statusUpdate(response);
+            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
         };
         handleSocketEvent('combat_response', combatResponseCallback);
 
         const softResponseCallback = async (response: any) => {
             console.log(`Soft Response`);
-            await softUpdate(response);
+            if (response.playerPosition === state.playerPosition) await softUpdate(response);
         };
         handleSocketEvent('soft_response', softResponseCallback);
+
+        const instantResponseCallback = async (response: any) => {
+            if (response.playerPosition === state.playerPosition) await instantUpdate(response);
+        };
+        handleSocketEvent('instant_response', instantResponseCallback);
+
+        const consumePrayerResponseCallback = async (response: any) => {
+            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
+        };
+        handleSocketEvent('consume_prayer_response', consumePrayerResponseCallback);
 
         return () => {
             if (socket) {
                 socket.off('playerDirectionChanged');
                 socket.off('combat_response');
                 socket.off('soft_response');
+                socket.off('instant_response');
+                socket.off('prayer_response');
             };
         };
     }, [socket]);
@@ -1331,9 +1317,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
 
-        // socket.on(`playerDirectionChanged`, async (data: any) => {
-        //     mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data })
-        // });
 
     }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
@@ -1494,7 +1477,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     rollSuccess={state.roll_success} computerRollSuccess={state.enemy_roll_success} combatRound={state.combatRound}
                     counterSuccess={state.counter_success} computerCounterSuccess={state.enemy_counter_success} combatEngaged={state.combatEngaged}
                 />
-                <GameActions 
+                <PvPActions 
                     setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                     setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                     handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
@@ -1514,7 +1497,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             <>
                     <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                 { gameState.showDialog ?    
-                    <DialogBox 
+                    <PvPDialogBox 
                         npc={gameState.opponent.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
                         playerWin={state.player_win} computerWin={state.enemy_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
                         winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}

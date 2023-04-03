@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container'
 import Loading from '../../components/Loading/Loading'
 import GameChat from '../../components/GameCompiler/GameChat';
 import { ACTIONS, initialPvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore } from '../../components/GameCompiler/PvPStore';
-import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 
 // let socket: any;
 
@@ -240,14 +240,15 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent('new_player_data_response', newPlayerDataResponseCallback);
 
-        const combatResponseCallback = (response: any) => {
-            console.log(response, 'Combat Response!');
-        };
-        handleSocketEvent('combat_response', combatResponseCallback);
+        // const combatResponseCallback = (response: any) => {
+        //     console.log(response, 'Combat Response!');
+        // };
+        // handleSocketEvent('combat_response', combatResponseCallback);
 
         const duelReadyResponseCallback = async (data: any) => {
             console.log(data, 'Duel Ready Response');
         };
+        handleSocketEvent('duel_ready_response', duelReadyResponseCallback);
     
         // Add more callbacks here as needed
     
@@ -259,7 +260,7 @@ const GamePvPLobby = ({ user }: Props) => {
             //   socket.off('player_position', playerPositionCallback);
               socket.off('requesting_player_data', requestPlayerDataCallback);
               socket.off('new_player_data_response', newPlayerDataResponseCallback);
-              socket.off('combat_response', combatResponseCallback);
+            //   socket.off('combat_response', combatResponseCallback);
               socket.off('duel_ready_response', duelReadyResponseCallback);
             };
         };
@@ -312,7 +313,11 @@ const GamePvPLobby = ({ user }: Props) => {
         const response = findAscean;
         console.log(response[0], 'Response in Filtering Ascean');
         gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: response[0] });
-        //TODO:FIXME: DISPATCH
+        const getTraits = async (player: any) => {
+            const traitResponse = await getAsceanTraits(player);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_TRAITS, payload: traitResponse });
+        };
+        getTraits(response[0]);
     }, [username]);
 
     const getUserAscean = async () => {

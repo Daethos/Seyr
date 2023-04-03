@@ -69,6 +69,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
             await socket.emit("send_message", messageData);
             setMessageList((list: any) => [...list, messageData]);
             await setCoordinates(playerState, response);
+            await socket.emit('commenceGame');
         };
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
@@ -201,12 +202,12 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
 
     return (
         <>
-        { !liveGameplay ?
+        { liveGameplay ?
             <>
             <GamePvP 
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} mapState={mapState} mapDispatch={mapDispatch} 
-                gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} opponent={opponent} 
-                enemyPlayer={enemyPlayer} room={room} socket={socket} setModalShow={setModalShow} getAsceanCoords={getAsceanCoords} generateWorld={generateWorld}
+                gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} 
+                room={room} socket={socket} setModalShow={setModalShow} getAsceanCoords={getAsceanCoords} generateWorld={generateWorld}
                 handleSocketEvent={handleSocketEvent}
             />
             <Modal 
