@@ -27,7 +27,9 @@ class StatusEffect {
             magnitude: statusEffect.intensity.magnitude,
         };
         let playerIntensity = intensity.value * intensity.magnitude;
-        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
+        // TODO:FIXME: This is a fix for enemy/computer variables
+        let enemyFaith = combatData.computer === undefined ? combatData.enemy : combatData.computer;
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : enemyFaith.faith;
         if (weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') {
             playerIntensity *= 1.15;
         };
@@ -61,7 +63,9 @@ class StatusEffect {
         let potentialModifiers = {};
         let realizedModifiers = {};
 
-        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
+        // TODO:FIXME: This is a fix for enemy/computer variables
+        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realized_computer_damage;
+        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : enemyDamage;
         if (playerDamage < effectModifiers.damage) {
             playerDamage = effectModifiers.damage;
         };
@@ -365,10 +369,12 @@ class StatusEffect {
     setName(deity) {
         return this.name = `Gift of ${deity}`;
     };
+    // TODO:FIXME: Another Computer/Enemy Fix
     setDebuffTarget(data, player, prayer) {
         if (prayer !== 'Debuff') return null;
+        let enemyWeapon = data.computer_weapons === undefined ? data.enemy_weapons[0].name : data.computer_weapons[0].name;
         if (player.name === data.player.name) {
-            return this.debuffTarget = data.computer_weapons[0].name;
+            return this.debuffTarget = enemyWeapon;
         } else {
             return this.debuffTarget = data.weapons[0].name;
         };
@@ -455,7 +461,9 @@ class StatusEffect {
         intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player)
         let playerIntensity = intensity.value * intensity.magnitude;
 
-        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : combatData.computer.faith;
+        // TODO:FIXME: Another Computer/Enemy Check
+        let enemyFaith = combatData.computer === undefined ? combatData.enemy : combatData.computer;
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : enemyFaith.faith;
         if (weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') {
             playerIntensity *= 1.15;
         };
@@ -490,7 +498,9 @@ class StatusEffect {
         let potentialModifiers = {};
         let realizedModifiers = {};
 
-        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : combatData.realized_computer_damage;
+        // TODO:FIXME: Another Computer/Enemy Check
+        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realized_computer_damage;
+        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : enemyDamage;
         if (playerDamage < effectModifiers.damage) {
             playerDamage = effectModifiers.damage;
         };

@@ -56,9 +56,9 @@ interface Props {
     enemy: any;
     npc: any;
     dialog: [];
-    getOpponent: () => Promise<void>;
+    getOpponent: (player: any) => Promise<void>;
     playerWin: boolean;
-    computerWin: boolean;
+    enemyWin: boolean;
     resetAscean: () => Promise<void>;
     winStreak: number;
     loseStreak: number;
@@ -90,7 +90,7 @@ interface Region {
 };
 
 
-const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
+const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, enemyWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const location = useLocation();
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<Traits | null>(null);
@@ -210,7 +210,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
 
     const checkOpponent = async () => {
         await checkingLoot();
-        await getOpponent();
+        await getOpponent(ascean);
     };
 
     const getLoot = async (type: string) => {
@@ -594,7 +594,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                             </p>
                         : ''  }
                         </div> 
-                    : computerWin ? 
+                    : enemyWin ? 
                         <div>
                             { namedEnemy ? (
                                 <>
@@ -682,7 +682,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         : '' }
                             <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pitious nature.</Button>
                         </>
-                    : computerWin ?
+                    : enemyWin ?
                         <>
                         "If you weren't entertaining in defeat I'd have a mind to simply snuff you out here and now. Seek refuge {ascean.name}, your frailty wears on my caer."<br />
                         <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide your shame and wounds. There's always another chance, perhaps.</Button>
@@ -792,7 +792,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                             "{regionInformation?.[province]}"
                         </div>
                         </>
-                        : computerWin ?
+                        : enemyWin ?
                         <>"I guess those whipspers must wait another day."</>
                         : <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
                     }

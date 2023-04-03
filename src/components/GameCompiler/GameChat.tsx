@@ -1,17 +1,16 @@
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ScrollToBottom from 'react-scroll-to-bottom'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import './GameCompiler.css'
-import Loading from '../Loading/Loading';
 import GamePvP from '../../pages/GamePvP/GamePvP';
 import Modal from 'react-bootstrap/Modal';
 import PvPChatModal from './PvPChatModal';
-import { ACTIONS, initialPvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
-import * as mapAPI from '../../utils/mapApi';
+import { PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
+import { MapData } from '../../components/GameCompiler/WorldStore';
+import { Enemy, GAME_ACTIONS, NPC, Player } from '../../components/GameCompiler/GameStore';
 
 interface Props {
     state: PvPData;
@@ -22,143 +21,47 @@ interface Props {
     gameDispatch: any;
     user: any;
     room: any;
-    ascean: any;
-    opponent: any;
+    ascean: Player;
+    enemy: Enemy;
     socket: any;
     setShowChat: React.Dispatch<React.SetStateAction<boolean>>;
-    enemyPlayer: any;
     spectator: boolean;
     handleRoomReset: () => void;
     handleSocketEvent: (event: string, callback: Function) => void;
-}
+    handlePlayerWin: (combatData: PvPData) => Promise<void>;
+    handleEnemyWin: (combatData: PvPData) => Promise<void>;
+    mapState: MapData;
+    mapDispatch: any;
+    currentMessage: string;
+    setCurrentMessage: React.Dispatch<React.SetStateAction<string>>;
+    messageList: any;
+    setMessageList: React.Dispatch<React.SetStateAction<any>>;
+    liveGameplay: boolean;
+    setLiveGameplay: React.Dispatch<React.SetStateAction<boolean>>;
+    instantUpdate: (response: any) => Promise<void>;
+    statusUpdate: (response: any) => Promise<void>;
+    softUpdate: (response: any) => Promise<void>;
+    handleInitiate: (pvpState: PvPData) => Promise<void>;
+    handleInstant: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
+    clearOpponent: () => Promise<void>;
+    getAsceanCoords: (x: number, y: number, map: any) => Promise<any>;
+    generateWorld: (mapName: string) => Promise<void>;
+    emergencyText: any[];
+    setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
+    timeLeft: number;
+    setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
+    moveTimer: number;
+    setMoveTimer: React.Dispatch<React.SetStateAction<number>>;
+    asceanState: any;
+    setAsceanState: React.Dispatch<React.SetStateAction<any>>;
+    getOpponent: (player: Player) => Promise<void>;
+    getNPCDialog: (enemy: string) => Promise<void>;
+};
 
-const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, user, ascean, opponent, spectator, room, socket, setShowChat, enemyPlayer, handleRoomReset, handleSocketEvent }: Props) => {
-    const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
+const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, asceanState, setAsceanState, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
     const [modalShow, setModalShow] = useState(false);
-    const [currentMessage, setCurrentMessage] = useState("");
-    const [messageList, setMessageList] = useState<any>([]);
-    const [liveGameplay, setLiveGameplay] = useState<boolean>(false);
     const [duelReady, setDuelReady] = useState<boolean>(false);
-
-    // useEffect(() => {
-    //     // if (playerState.playerOne && playerState.playerTwo && playerState.playerThree && playerState.playerFour) {
-    //     if (playerState.playerOne) {
-    //         generateWorld(`${playerState.playerOne.ascean.name}'s PvP World`);
-    //     };
-    // }, [playerState]);
-
-    useEffect(() => {
-        console.log(state, "State in GameChat")
-    }, [state]);
-
-    useEffect(() => { console.log(mapState, "Map in GameChat") }, [mapState]);
-
-    // TODO:FIXME: state.playerPosition doesn't work as it updates to the number of the last joined player, so it'll go from 1 to 4 eventually  TODO:FIXME:
-    useEffect(() => {
-        const mapCreatedCallback = async (response: any) => {
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_DATA,
-                payload: response
-            });
-            const messageData = {
-                room: room,
-                author: user.username,
-                message: `Received created map with variables: City: ${response.contentCounts.city}, Enemy: ${response.contentCounts.enemy}, Treasure: ${response.contentCounts.treasure}.`,
-                time: Date.now()
-            };
-            await socket.emit("send_message", messageData);
-            setMessageList((list: any) => [...list, messageData]);
-            await setCoordinates(playerState, response);
-            await socket.emit('commenceGame');
-        };
-        handleSocketEvent("mapCreated", mapCreatedCallback);
-
-        const playerReadyCallback = async (data: any) => {
-            console.log(data, 'Player Ready');
-            //TODO:FIXME: This is the switch to show everyone that a player is ready.
-            if (data._id === playerState?.playerOne?.user?._id) {
-                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE_READY, payload: true });
-            } else if (data._id === playerState?.playerTwo?.user?._id) {
-                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO_READY, payload: true });
-            } else if (data._id === playerState?.playerThree?.user?._id) {
-                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE_READY, payload: true });
-            } else if (data._id === playerState?.playerFour?.user?._id) {
-                playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR_READY, payload: true });
-            };
-        };
-        handleSocketEvent("player_ready", playerReadyCallback);
-
-        const gameCommencingCallback = async () => {
-            console.log('Setting Gameplay to Live')
-            const messageData = {
-                room: room,
-                author: `The Seyr`,
-                message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
-                time: Date.now()
-            };
-            await socket.emit(`send_message`, messageData);
-            setTimeout(() => setLiveGameplay(true), 10000);
-        };
-        handleSocketEvent(`Game Commencing`, gameCommencingCallback);
-
-        const receiveMessageCallback = async (data: any) => {
-            setMessageList((list: any) => [...list, data]);
-        };
-        handleSocketEvent(`receive_message`, receiveMessageCallback);
-
-        return () => {
-            if (socket) {
-                socket.off("mapCreated");
-                socket.off(`player_ready`);
-                socket.off(`Game Commencing`);
-                socket.off(`receive_message`);
-            };
-        };
-    }, [socket, playerState]);
-    
-    // May make this a server side function to limit issues with client side data
-    const generateWorld = async (mapName: string) => {
-        try {
-            socket.emit("createMap", { name: mapName, ascean: ascean });
-        } catch (err: any) {
-            console.log(err.message, 'Error Generating World Environment.');
-        };
-    };
-
-    const setCoordinates = async (players: any, map: any) => {
-        try {
-            console.log(players, "Players ?")
-            let playerCoords = { x: 0, y: 0 };
-            console.log(players?.playerOne?.ascean, ascean?._id, "Player One ?");
-            console.log(players?.playerTwo?.ascean, ascean?._id, "Player Two ?");
-            console.log(players?.playerThree?.ascean, ascean?._id, "Player Three ?");
-            console.log(players?.playerFour?.ascean, ascean?._id, "Player Four ?");
-            if (players?.playerOne?.ascean._id === ascean._id) {
-                playerCoords = { x: -75, y: 75 };
-            } else if (players?.playerTwo?.ascean?._id === ascean?._id) {
-                playerCoords = { x: 75, y: 75 };
-            } else if (players?.playerThree?.ascean?._id === ascean?._id) {
-                playerCoords = { x: -75, y: -75 };
-            } else if (players?.playerFour?.ascean?._id === ascean?._id) {
-                playerCoords = { x: 75, y: -75 };
-            };
-            console.log(mapState, "Map State in Set Coordinates");
-            const coords = await getAsceanCoords(playerCoords.x, playerCoords.y, map.map);
-            console.log(coords, "Coords in Set Coordinates");
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_COORDS,
-                payload: coords,
-            });
-        } catch (err: any) {
-            console.log(err.message, 'Error Setting Coordinates');
-        };
-    };
-
-    async function getAsceanCoords(x: number, y: number, map: any) {
-        console.log(x, y, map, "X, Y, Map");
-        const tile = map?.[x + 100]?.[y + 100];
-        return tile ?? null;
-    };
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -173,7 +76,6 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
             setCurrentMessage("");
         };
     };
-
     
     // TODO:FIXME: This is the button to commit you as a player to be 'ready'
 
@@ -191,14 +93,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
         } else {
             return false;
         };
-    }
-
-    useEffect(() => {
-        socket.on("receive_message", (data: any) => {
-            setMessageList((list: any) => [...list, data]);
-        });
-    }, [socket]);
-
+    };
 
     return (
         <>
@@ -206,9 +101,12 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
             <>
             <GamePvP 
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} mapState={mapState} mapDispatch={mapDispatch} 
-                gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} 
-                room={room} socket={socket} setModalShow={setModalShow} getAsceanCoords={getAsceanCoords} generateWorld={generateWorld}
-                handleSocketEvent={handleSocketEvent}
+                gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} enemy={enemy}
+                room={room} socket={socket} setModalShow={setModalShow} getAsceanCoords={getAsceanCoords} generateWorld={generateWorld} instantUpdate={instantUpdate}
+                handleSocketEvent={handleSocketEvent} handlePlayerWin={handlePlayerWin} handleEnemyWin={handleEnemyWin} statusUpdate={statusUpdate} softUpdate={softUpdate}
+                handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
+                emergencyText={emergencyText} setEmergencyText={setEmergencyText} asceanState={asceanState} setAsceanState={setAsceanState}
+                timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer}  getOpponent={getOpponent} getNPCDialog={getNPCDialog}
             />
             <Modal 
                 show={modalShow}

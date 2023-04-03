@@ -18,9 +18,10 @@ interface Props {
     gameDispatch: React.Dispatch<any>;
     gameState: any;
     mapState: any;
+    multiplayer?: boolean;
 };
 
-const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, saveAsceanCoords, gameState, mapState }: Props) => {
+const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, saveAsceanCoords, gameState, mapState, multiplayer }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState<boolean>(false);
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -98,12 +99,16 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         <Modal show={settingsModalShow} onHide={() => setSettingsModalShow(false)} centered>
         <Modal.Header>
         <h3 style={{ fontSize: '24px' }}>Gameplay Settings</h3>
-        <Button variant='' onClick={saveGameSettings}>
-        <span style={{ float: "right", color: "gold", fontSize: "20px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
-        </Button>
+        { multiplayer ? ( '' ) : (
+            <Button variant='' onClick={saveGameSettings}>
+                <span style={{ float: "right", color: "gold", fontSize: "20px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
+            </Button>
+        ) }
         </Modal.Header>
         <Modal.Body style={settingsStyle}>
-        <Button variant='' className='mb-3' style={{ color: '#fdf6d8', fontSize: "16px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Map: {mapState.name}</Button>
+            { multiplayer ? ( '' ) : (
+                    <Button variant='' className='mb-3' style={{ color: '#fdf6d8', fontSize: "16px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Map: {mapState.name}</Button>
+            ) }
         <Button variant='outline' className='mb-3' style={{ color: '#fdf6d8', fontSize: '16px' }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button><br />
         { showInventory ?
             <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} gameState={gameState} mapState={mapState} />

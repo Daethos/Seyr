@@ -616,6 +616,7 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 tertiary: action.payload.tertiary,
             };
         case 'SET_OPPONENT':
+            console.log(action.payload, "Setting Opponent in useReducer");
             return {
                 ...game,
                 opponent: action.payload,

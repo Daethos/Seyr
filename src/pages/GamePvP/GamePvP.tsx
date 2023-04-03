@@ -1,9 +1,7 @@
-import { useEffect, useReducer, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button';
-import useSound from 'use-sound'
-import GameAscean from '../../components/GameCompiler/GameAscean';
 import PvPConditions from '../../components/GameCompiler/PvPConditions';
 import PvPCombatText from '../../components/GameCompiler/PvPCombatText';
 import PvPActions from '../../components/GameCompiler/PvPActions';
@@ -16,20 +14,14 @@ import GameMap from '../../components/GameCompiler/GameMap';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
-import * as gameAPI from '../../utils/gameApi';
 import * as mapAPI from '../../utils/mapApi';
-import userService from '../../utils/userService';
-import { Bear, Wolf } from '../../components/GameCompiler/Animals';
-import { getMerchantDialog, getNpcDialog } from '../../components/GameCompiler/Dialog';
 import LevelUpModal from '../../game/LevelUpModal';
-import DialogBox from '../../game/DialogBox';
 import PvPDialogBox from '../../game/PvPDialogBox';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
-import GameActions from '../../components/GameCompiler/GameActions';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import StoryBox from '../../components/GameCompiler/StoryBox';
-import CityBox from '../../components/GameCompiler/CityBox';
+import PvPCityBox from '../../components/GameCompiler/PvPCityBox';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
 import Content from '../../components/GameCompiler/Content';
@@ -56,7 +48,8 @@ interface GameProps {
     gameState: any;
     gameDispatch: any;
     user: any;
-    ascean: any;
+    ascean: Player;
+    enemy: Enemy;
     room: any;
     socket: any;
     setModalShow: any;
@@ -64,35 +57,33 @@ interface GameProps {
     getAsceanCoords: (x: number, y: number, map: any) => Promise<any>;
     generateWorld: (mapName: string) => Promise<void>;
     handleSocketEvent: (event: string, callback: Function) => void;
+    instantUpdate: (response: any) => Promise<void>;
+    statusUpdate: (response: any) => Promise<void>;
+    softUpdate: (response: any) => Promise<void>;
+    handlePlayerWin: (combatData: PvPData) => Promise<void>;
+    handleEnemyWin: (combatData: PvPData) => Promise<void>;
+    handleInitiate: (pvpState: PvPData) => Promise<void>;
+    handleInstant: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
+    clearOpponent: () => Promise<void>;
+    emergencyText: any[];
+    setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
+    timeLeft: number;
+    setTimeLeft: React.Dispatch<React.SetStateAction<number>>;
+    moveTimer: number;
+    setMoveTimer: React.Dispatch<React.SetStateAction<number>>;
+    asceanState: any;
+    setAsceanState: React.Dispatch<React.SetStateAction<any>>;
+    getOpponent: (player: Player) => Promise<void>;
+    getNPCDialog: (enemy: string) => Promise<void>;
 };
 
-const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, getAsceanCoords, generateWorld, user, ascean, spectator, room, socket, setModalShow }: GameProps) => {
-    const [loading, setLoading] = useState(false);
-    const [loadingAscean, setLoadingAscean] = useState<boolean>(false)
-    const [emergencyText, setEmergencyText] = useState<any[]>([])
-    const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [moveTimer, setMoveTimer] = useState<number>(6)
+const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, asceanState, setAsceanState, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handleInstant, handlePrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
+    const { playWO, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
     const [background, setBackground] = useState<any | null>({
         background: ''
-    });
-    const [asceanState, setAsceanState] = useState({
-        ascean: gameState.player,
-        constitution: 0,
-        strength: 0,
-        agility: 0,
-        achre: 0,
-        caeren: 0,
-        kyosir: 0,
-        level: gameState.player.level,
-        opponent: 0,
-        opponentExp: 0,
-        experience: gameState.player.experience,
-        experienceNeeded: gameState.player.level * 1000,
-        mastery: gameState.player.mastery,
-        faith: gameState.player.faith,
     });
 
     const [moveTimerDisplay, setMoveTimerDisplay] = useState<number>(moveTimer);
@@ -110,10 +101,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     }, [moveTimer]);
 
     useEffect(() => {
-        if (mapState.currentTile.content === 'enemy') {
-            console.log("Fighting An Enemy, Not Triggering Move Timer Content")
-            return;
-        }
+        if (mapState.currentTile.content === 'enemy') return;
         const timer = setTimeout(() => {
             if (moveTimer === 0 && mapState?.steps > 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
@@ -123,33 +111,14 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         return () => clearTimeout(timer);
     }, [moveTimer, mapState]);
 
-    const loadMap = async (ascean: Player, map: MapData) => {
-        console.log(map, "Loading Map");
-        const article = ['a', 'e', 'i', 'o', 'u'].includes(map.currentTile.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-        try {
-            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            mapDispatch({ type: MAP_ACTIONS.SET_MAP_DATA, payload: map }); 
-            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Loading ${map.name}. \n\n Currently, your coordinates are X: ${map.currentTile?.x}, Y: ${map.currentTile?.y}, experiencing ${map.currentTile?.content === 'nothing' || map.currentTile?.content === 'weather' ? map.currentTile?.content : `${article} ${map.currentTile?.content}`}. \n\n Enjoy your journey, ${ascean.name}.` });
-            const coords = await getAsceanCoords(map.currentTile.x, map.currentTile.y, map.map);
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_COORDS,
-                payload: coords,
-            });
-            setTimeout(() => { gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }); }, 4000);
-        } catch (err: any) {
-            console.log(err.message, "Error loading Map");
-        };
-    };
-
     const saveWorld = async () => {
         try {
             const response = await mapAPI.saveNewMap(mapState);
-            console.log(response);
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
             });
-            gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${gameState.player.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
+            gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${ascean.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.WORLD_SAVED, payload: true });
             }, 60000);
@@ -161,7 +130,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     const saveAsceanCoords = async (x: number, y: number) => {
         try {
             const data = {
-                ascean: gameState.player._id, 
+                ascean: ascean._id, 
                 coordinates: { x: x, y: y },
                 map: mapState
             };
@@ -173,7 +142,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
             }, 2000);
-            console.log(response, 'Response Saving Ascean Coordinates');
         } catch (err: any) {
             console.log(err.message, 'Error Saving Ascean Coordinates');
         };
@@ -218,7 +186,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     }
 
     async function setDamageType(damageType: any) {
-        console.log(damageType.target.value, '<- Damage Type')
         dispatch({
             type: ACTIONS.SET_DAMAGE_TYPE,
             payload: damageType.target.value
@@ -237,211 +204,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
-        };
-    };
-      
-    async function soundEffects(effects: PvPData) {
-        try {
-            if (effects.critical_success === true) {
-                const soundEffectMap = {
-                    Spooky: playDaethic,
-                    Righteous: playDaethic,
-                    Wild: playWild,
-                    Earth: playEarth,
-                    Fire: playFire,
-                    Frost: playFrost,
-                    Lightning: playLightning,
-                    Sorcery: playSorcery,
-                    Wind: playWind,
-                    Pierce: (weapons: any[]) =>
-                      weapons[0].type === "Bow" ? playBow() : playPierce(),
-                    Slash: playSlash,
-                    Blunt: playBlunt,
-                  };
-            
-                const { player_damage_type, weapons } = effects;
-                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
-                if (soundEffectFn) {
-                    soundEffectFn(weapons);
-                };
-            };
-            if (effects.religious_success === true) {
-                playReligion();
-            };
-            if (effects.roll_success === true || effects.enemy_roll_success === true) {
-                playRoll();
-            };
-            if (effects.counter_success === true || effects.enemy_counter_success === true) {
-                playCounter();
-            };
-            setTimeout(() => {
-                if (effects.player_win !== true && effects.enemy_win !== true) {
-                    playCombatRound();
-                };
-            }, 500);
-        } catch (err: any) {
-            console.log(err.message, 'Error Setting Sound Effects')
-        };
-    };
-
-    const getOpponentDialog = async (enemy: string) => {
-        try {
-            const response = getNpcDialog(enemy);
-            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        };
-    };
-
-    const getNPCDialog = async (enemy: string) => {
-        try {
-            const response = getMerchantDialog(enemy);
-            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        };
-    };
-
-    const getOpponent = async () => {
-        gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
-        try {
-            let minLevel: number = 0;
-            let maxLevel: number = 0;
-            const chance = Math.random();
-            if (gameState.player.level === 1) {
-                if (chance > 0.5) {
-                    const wolf: Enemy = Object.assign({}, Wolf);
-                    gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
-                    const response = await asceanAPI.getAnimalStats(wolf);
-                    setAsceanState({
-                        ...asceanState,
-                        'opponent': wolf.level,
-                    });
-                    dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
-                    setTimeout(() => {
-                        dispatch({
-                            type: ACTIONS.SET_DUEL,
-                            payload: ''
-                        });
-                        playOpponent();
-                        gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
-                    }, 2000);
-                    return;
-                }
-            }
-            if (gameState.player.level === 2) {
-                if (chance > 0.67) {
-                    const wolf: Enemy = Object.assign({}, Wolf);
-                    gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
-                    const response = await asceanAPI.getAnimalStats(wolf);
-                    setAsceanState({
-                        ...asceanState,
-                        'opponent': wolf.level,
-                    });
-                    dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
-                    setTimeout(() => {
-                        dispatch({
-                            type: ACTIONS.SET_DUEL,
-                            payload: ''
-                        });
-                        playOpponent();
-                        gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
-                    }, 2000);
-                    return;
-                }
-            }
-            if (gameState.player.level < 3) {
-                minLevel = 1;
-                maxLevel = 2;
-            } else  if (gameState.player.level <= 4) { // 3-4
-                if (gameState.player.level === 3) {
-                    if (chance > 0.5) {
-                        const bear: Enemy = Object.assign({}, Bear);
-                        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: bear });
-                        const response = await asceanAPI.getAnimalStats(bear);
-                        setAsceanState({
-                            ...asceanState,
-                            'opponent': bear.level,
-                        });
-                        dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
-                        setTimeout(() => {
-                            dispatch({
-                                type: ACTIONS.SET_DUEL,
-                                payload: ''
-                            });
-                            playOpponent();
-                            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
-                        }, 2000);
-                        return;
-                    };
-                };
-                if (gameState.player.level === 4) {
-                    if (chance > 0.67) {
-                        const bear: Enemy = Object.assign({}, Bear);
-                        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: bear });
-                        const response = await asceanAPI.getAnimalStats(bear);
-                        setAsceanState({
-                            ...asceanState,
-                            'opponent': bear.level,
-                        });
-                        dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
-                        setTimeout(() => {
-                            dispatch({
-                                type: ACTIONS.SET_DUEL,
-                                payload: ''
-                            });
-                            playOpponent();
-                            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
-                        }, 2000);
-                        return;
-                    };
-                };
-                minLevel = 2;
-                maxLevel = 4;
-            } else if (gameState.player.level === 5) { // 5
-                minLevel = 4;
-                maxLevel = 6;
-            } else if (gameState.player.level === 6) { // 6
-                minLevel = 4;
-                maxLevel = 8;
-            } else if (gameState.player.level <= 8) { // 7-8
-                minLevel = 6;
-                maxLevel = 10;
-            } else if (gameState.player.level <= 10) { // 9-10
-                minLevel = 6;
-                maxLevel = 12;
-            } else if (gameState.player.level <= 14) { // 11-14
-                minLevel = 8;
-                maxLevel = 16;
-            } else if (gameState.player.level <= 18) { // 15-18
-                minLevel = 12;
-                maxLevel = 18;
-            } else if (gameState.player.level <= 20) {
-                minLevel = 16;
-                maxLevel = 20;
-            }
-            const enemyData = {
-                username: 'mirio',
-                minLevel: minLevel,
-                maxLevel: maxLevel
-            };
-            const secondResponse = await userService.getRandomEnemy(enemyData);
-            const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
-            const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
-            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data })
-            setAsceanState({
-                ...asceanState,
-                'opponent': selectedOpponent.data.level,
-            });
-            dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
-            playOpponent();
-            await getOpponentDialog(selectedOpponent.data.name);
-            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
-            if (!gameState?.showDialog && mapState?.currentTile?.content !== 'city') {
-                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
-            };
-        } catch (err: any) {
-            console.log(err.message, 'Error retrieving Enemies')
         };
     };
 
@@ -471,7 +233,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.saveExp === false) return;
-        console.log(asceanState, 'Ascean State');
         saveExperience();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
@@ -483,7 +244,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             return;
         };
         try {
-            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${enemy.name} as you count your pouch of winnings.` });
             const response = await asceanAPI.saveExperience(asceanState);
             if (response.data.gold > 0 && response.data.silver > 0) {
                 gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`] });
@@ -510,7 +271,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 'caeren': 0,
                 'kyosir': 0,
                 'level': cleanRes.data.level,
-                'opponent': gameState.opponent.level,
+                'opponent': enemy.level,
                 'experience': 0,
                 'experienceNeeded': cleanRes.data.level * 1000,
                 'mastery': cleanRes.data.mastery,
@@ -522,33 +283,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    const gainExperience = async () => {
-        try {
-            let opponentExp: number = Math.round(gameState.opponent.level * 100 * (gameState.opponent.level / state.player.level) + state.player.kyosir);
-            if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
-                setAsceanState({
-                    ...asceanState,
-                    'opponentExp': opponentExp,
-                    'experience': asceanState.experienceNeeded,
-                });
-                gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
-            };
-            if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
-                setAsceanState({
-                    ...asceanState,
-                    'opponentExp': opponentExp,
-                    'experience': Math.round(asceanState.experience + opponentExp),
-                });
-                gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
-            };
-        } catch (err: any) {
-            console.log(err.message, 'Error Gaining Experience')
-        };
-    };
-
     useEffect(() => {
         if (gameState.itemSaved === false) return;
-        console.log("Saving Item", gameState.itemSaved)
         getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
@@ -557,7 +293,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.eqpSwap === false) return;
-        console.log("Swapping Equipment", gameState.eqpSwap)
         getAsceanAndInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
@@ -566,7 +301,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.removeItem === false) return;
-        console.log("Removing Item", gameState.removeItem)
         getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
@@ -575,7 +309,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.purchasingItem === false) return;
-        console.log("Purchasing Item", gameState.purchasingItem)
         getAsceanInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
@@ -593,10 +326,9 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     const deleteEquipment = async (eqp: any) => {
         try {
-            const response = await eqpAPI.deleteEquipment(eqp);
-            console.log(response, 'Delete Response!');
+            await eqpAPI.deleteEquipment(eqp);
         } catch (err) {
-            console.log(err, 'Error!')
+            console.log(err, 'Error!');
         };
     };
 
@@ -617,7 +349,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     const getAsceanQuests = async () => {
         try {
             const firstResponse = await asceanAPI.getAsceanQuests(ascean._id);
-            console.log(firstResponse, "Ascean Inventory ?")
             gameDispatch({ type: GAME_ACTIONS.SET_QUESTS, payload: firstResponse });
             const response = await asceanAPI.getAsceanStats(ascean._id);
             dispatch({
@@ -633,7 +364,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     const getAsceanInventory = async () => {
         try {
             const firstResponse = await asceanAPI.getAsceanInventory(ascean._id);
-            console.log(firstResponse, "Ascean Inventory ?")
             gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             const response = await asceanAPI.getAsceanStats(ascean._id);
             dispatch({
@@ -648,7 +378,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     const getAsceanAndInventory = async () => {
         try {
-            console.log("Getting Ascean and Inventory");
             const firstResponse = await asceanAPI.getAsceanAndInventory(ascean._id);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(ascean._id);
@@ -659,120 +388,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
-        };
-    };
-
-    const clearOpponent = async () => {
-        try {
-            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
-            dispatch({
-                type: ACTIONS.CLEAR_DUEL,
-                payload: null
-            });
-            if (gameState.showDialog) {
-                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            };
-            if (mapState.currentTile.content !== 'city' && mapState.currentTile.content !== 'weather' && state.new_enemy_health <= 0) {
-                mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
-            };
-        } catch (err: any) {
-            console.log(err.message, 'Error Clearing Duel');
-        };
-    };
-
-    async function handlePlayerWin(combatData: PvPData) {
-        try {
-            if (mapState?.currentTile?.content === 'city') {
-                playWin();
-            } else {
-                playReligion();
-            };
-            await gainExperience();
-            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
-            setTimeout(() => {
-                setTimeLeft(0);
-                dispatch({
-                    type: ACTIONS.PLAYER_WIN,
-                    payload: combatData
-                });
-                if (mapState?.currentTile?.content !== 'city' && gameState?.opponent?.name !== "Wolf" && gameState?.opponent?.name !== "Bear") {
-                    gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
-                };
-                if (gameState?.opponent?.name === "Wolf" || gameState?.opponent?.name === "Bear") {
-                    clearOpponent();
-                    mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
-                };
-                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
-            }, 6000);
-        } catch (err: any) {
-            console.log("Error Handling Player Win");
-        };
-    };
-
-    async function handleEnemyWin(combatData: PvPData) {
-        try {
-            playDeath();
-            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
-            setTimeout(() => {
-                setTimeLeft(0);
-                dispatch({
-                    type: ACTIONS.ENEMY_WIN,
-                    payload: combatData
-                });
-                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
-                    clearOpponent();
-                };
-                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
-            }, 6000);
-        } catch (err: any) {
-            console.log("Error Handling Player Win");
-        };
-    };
-
-    async function handleInitiate(pvpState: PvPData) {
-        try {
-            setEmergencyText(['']);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            if (pvpState.enemyPosition === -1) {
-                await socket.emit('computer_combat_initiated', pvpState);
-                return;
-            };
-            await socket.emit('initiated', pvpState);
-            dispatch({ type: ACTIONS.SET_PLAYER_READY, payload: true });
-            console.log(pvpState, 'Socket Emit Combat Data');
-        } catch (err: any) {
-            console.log(err.message, 'Error Initiating Action');
-        };
-    };
-
-    async function handleInstant(e: { preventDefault: () => void; }) {
-        e.preventDefault();
-        try {
-            setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            await socket.emit('instant_action', state);
-            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            playReligion();
-        } catch (err: any) {
-            console.log(err.message, 'Error Initiating Insant Action')
-        };
-    };
-
-    async function handlePrayer(e: { preventDefault: () => void; }) {
-        e.preventDefault();
-        try {
-            if (state.prayerSacrifice === '') {
-                setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose A Prayer to Sacrifice!\n`]);
-                return;
-            };
-            setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            await socket.emit('consume_prayer', state);
-            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            playReligion();
-        } catch (err: any) {
-            console.log(err.message, 'Error Initiating Action')
         };
     };
 
@@ -807,7 +422,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 3000);
@@ -820,7 +435,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 3000);
@@ -833,7 +448,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 3000);
@@ -862,7 +477,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 3000);
@@ -1047,9 +662,9 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_EVENT, payload: {
             title: "Treasure!",
-            description: `${gameState.player.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
+            description: `${ascean.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
         } });
-        await getOneLootDrop(gameState.player.level + 4);
+        await getOneLootDrop(ascean.level + 4);
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: true });
     };
 
@@ -1124,7 +739,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger whose reaction appears defensive.` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger to your presence. They appear to be approaching you now. \n\n May you be sure, ${gameState?.player?.name}.` });
-                    await getOpponent();
+                    await getOpponent(ascean);
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                     }, 3000);
@@ -1200,96 +815,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             };
         } catch (err: any) {
             console.log(err.message, 'Error Handling Tile Content');
-        } 
-        // finally {
-        //     if (mapState.steps % 1 === 0 && mapState.steps !== 0) {
-        //         mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-        //     };
-        // };
-    };
-
-    const instantUpdate = async (response: any) => {
-        try {
-            dispatch({
-                type: ACTIONS.INSTANT_COMBAT,
-                payload: response
-            });
-        } catch (err: any) {
-            console.log(err.message, 'Error Performing Instant Update');
         };
     };
-
-    const softUpdate = async (response: any) => {
-        try {
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response
-            });
-        } catch (err: any) {
-            console.log(err.message, 'Error Performing Soft Update');
-        };
-    };
-    
-    const statusUpdate = async (response: any) => {
-        try {
-            await soundEffects(response.data);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response
-            });
-            if (response.player_win === true) {
-                await handlePlayerWin(response);
-            };
-            if (response.computer_win === true) {
-                await handleEnemyWin(response);
-            };
-            setTimeout(() => {
-                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
-            }, 1500);
-        } catch (err: any) {
-            console.log(err.message, 'Error Updating Status');
-        };
-    };
-
-
-    useEffect(() => {
-
-        const playerDirectionChangedCallback = (data: any) => {
-            mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data });
-        }; 
-        handleSocketEvent('playerDirectionChanged', playerDirectionChangedCallback);
-
-        const combatResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
-        };
-        handleSocketEvent('combat_response', combatResponseCallback);
-
-        const softResponseCallback = async (response: any) => {
-            console.log(`Soft Response`);
-            if (response.playerPosition === state.playerPosition) await softUpdate(response);
-        };
-        handleSocketEvent('soft_response', softResponseCallback);
-
-        const instantResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await instantUpdate(response);
-        };
-        handleSocketEvent('instant_response', instantResponseCallback);
-
-        const consumePrayerResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
-        };
-        handleSocketEvent('consume_prayer_response', consumePrayerResponseCallback);
-
-        return () => {
-            if (socket) {
-                socket.off('playerDirectionChanged');
-                socket.off('combat_response');
-                socket.off('soft_response');
-                socket.off('instant_response');
-                socket.off('prayer_response');
-            };
-        };
-    }, [socket]);
 
     useEffect(() => {
         if (mapState?.currentTile?.content === 'nothing') {
@@ -1437,21 +964,15 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    if (loadingAscean || loading) {
-        return (
-            <Loading Combat={true} />
-        );
-    };
-
     return (
         <Container fluid id="game-container" style={background}>
-        { gameState.opponent ? (
+        { enemy ? (
             <>
             <PvPAscean 
-                state={state} ascean={gameState.opponent} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
+                state={state} ascean={enemy} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
             /> 
             <CombatOverlay 
-                ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.enemy_win} playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
+                ascean={ascean} enemy={enemy} playerWin={state.player_win} computerWin={state.enemy_win} playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
                 playerAction={state.player_action} computerAction={state.enemy_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_enemy_damage} 
                 rollSuccess={state.roll_success} computerRollSuccess={state.enemy_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.enemy_counter_success}
                 loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
@@ -1460,14 +981,14 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             </>
         ) : ( '' )}
             <Settings 
-                inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
-                gameDispatch={gameDispatch}gameState={gameState} mapState={mapState}
+                inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
+                gameDispatch={gameDispatch}gameState={gameState} mapState={mapState} multiplayer={true}
             />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
             {/* TODO:FIXME:      Use playerState to determine order which player is which for splitting concepts!     TODO:FIXME: */}
-            <PvPAscean state={state} ascean={gameState.player} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <PvPAscean state={state} ascean={ascean} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
         { state.combatEngaged ? (
             <>
                 <GameAnimations 
@@ -1498,29 +1019,29 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                 { gameState.showDialog ?    
                     <PvPDialogBox 
-                        npc={gameState.opponent.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
-                        playerWin={state.player_win} computerWin={state.enemy_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
+                        npc={enemy.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
+                        playerWin={state.player_win} enemyWin={state.enemy_win} ascean={ascean} enemy={enemy} itemSaved={gameState.itemSaved}
                         winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}
                         resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
                         gameDispatch={gameDispatch} gameState={gameState}
                     />
                 : '' }
                 { gameState.showInventory ?
-                        <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />
+                        <InventoryBag inventory={ascean.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={ascean} dispatch={dispatch} mapState={mapState}  />
                     : ""}
-                    { gameState.opponent && mapState?.currentTile?.content !== 'city' ?
+                    { enemy && mapState?.currentTile?.content !== 'city' ?
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
                         : 
                         <>
-                        <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
+                        <StoryBox ascean={ascean} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
                         <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
                         <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>
                     }
                     { gameState.showCity ?
-                        <CityBox 
-                            state={state} dispatch={dispatch} ascean={gameState.player} mapState={mapState} enemy={gameState.opponent} merchantEquipment={gameState.merchantEquipment}
-                            inventory={gameState.player.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
+                        <PvPCityBox 
+                            state={state} dispatch={dispatch} ascean={ascean} mapState={mapState} enemy={enemy} merchantEquipment={gameState.merchantEquipment}
+                            inventory={ascean.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
                             cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch} gameState={gameState}
                         />
                         : ''
@@ -1555,12 +1076,12 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 : ''
             }
             <GameplayOverlay 
-                ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
+                ascean={ascean} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}
                 loadingContent={gameState.loadingContent} gameDispatch={gameDispatch} getAsceanCoords={getAsceanCoords}
             />
             <GameplayEventModal 
-                ascean={gameState.player} show={gameState.gameplayModal} gameplayEvent={gameState.gameplayEvent} deleteEquipment={deleteEquipment} gameDispatch={gameDispatch}
+                ascean={ascean} show={gameState.gameplayModal} gameplayEvent={gameState.gameplayEvent} deleteEquipment={deleteEquipment} gameDispatch={gameDispatch}
                 lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved} mapDispatch={mapDispatch} mapState={mapState}
              />
         </Container>
