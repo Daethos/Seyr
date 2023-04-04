@@ -52,6 +52,8 @@ export interface PvPData {
     player_luckout: boolean;
     enemyPersuaded: boolean;
     playerTrait: string;
+    playerDamaged: boolean;
+    enemyDamaged: boolean;
 
     enemy: any;
     enemy_action: string;
@@ -160,6 +162,8 @@ export const initialPvPData: PvPData = {
     player_luckout: false,
     enemyPersuaded: false,
     playerTrait: '',
+    playerDamaged: false,
+    enemyDamaged: false,
     enemy: {},
     enemy_action: '',
     enemy_counter_guess: '',
@@ -478,7 +482,7 @@ export const PvPStore = (state: PvPData, action: Action) => {
             return {
                 ...state,
                 playerDamaged: action.payload,
-                computerDamaged: action.payload,
+                enemyDamaged: action.payload,
             };
         case 'PLAYER_WIN':
             return {
@@ -494,7 +498,8 @@ export const PvPStore = (state: PvPData, action: Action) => {
         case 'ENEMY_PERSUADED':
             return {
                 ...state,
-                enemyPersuaded: action.payload,
+                enemyPersuaded: action.payload.enemyPersuaded,
+                playerTrait: action.payload.playerTrait,
             };
         case 'RESET_LUCKOUT':
             return {

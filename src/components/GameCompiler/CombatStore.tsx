@@ -357,7 +357,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 action: 'counter',
                 counter_guess: action.payload,
-
             };
         case 'SET_DAMAGE_TYPE':
             return {

@@ -57,9 +57,10 @@ interface Props {
     setAsceanState: React.Dispatch<React.SetStateAction<any>>;
     getOpponent: (player: Player) => Promise<void>;
     getNPCDialog: (enemy: string) => Promise<void>;
+    autoAttack: (combatData: PvPData) => Promise<void>;
 };
 
-const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, asceanState, setAsceanState, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
+const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
     const [modalShow, setModalShow] = useState(false);
     const [duelReady, setDuelReady] = useState<boolean>(false);
 
@@ -101,7 +102,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
             <>
             <GamePvP 
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} mapState={mapState} mapDispatch={mapDispatch} 
-                gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} enemy={enemy}
+                gameState={gameState} gameDispatch={gameDispatch} user={user} spectator={spectator} ascean={ascean} enemy={enemy} autoAttack={autoAttack}
                 room={room} socket={socket} setModalShow={setModalShow} getAsceanCoords={getAsceanCoords} generateWorld={generateWorld} instantUpdate={instantUpdate}
                 handleSocketEvent={handleSocketEvent} handlePlayerWin={handlePlayerWin} handleEnemyWin={handleEnemyWin} statusUpdate={statusUpdate} softUpdate={softUpdate}
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}

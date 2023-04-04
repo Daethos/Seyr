@@ -12,9 +12,10 @@ interface Props {
   loading: boolean;
   totalPlayerHealth: number;
   state: any;
+  damage?: boolean;
 };
 
-const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading }: Props) => {
+const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
 
   const getBlockStyle = {
     marginTop: state.playerEffects.length > 0 ? '-16%' : '6%',
@@ -53,6 +54,7 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
             gameDisplay={true}
             loading={loading}
             key={ascean._id}
+            damage={damage}
         />
       <div className="actions">
       <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} />
@@ -79,6 +81,7 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
           gameDisplay={true}
           loading={loading}
           key={ascean._id}
+          damage={damage}
       />
     <div className="actions">
     </div>

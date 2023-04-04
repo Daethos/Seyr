@@ -387,10 +387,9 @@ io.on("connection", (socket) => {
     })
     
     socket.on('auto_engage', async (combatData) => {
-      const response = await pvpService.actionCompiler(combatData)
-      // console.log(response, 'Is this Null?')
-      io.to(combatData.room).emit('combat_response', response)
-    })
+      const response = await pvpService.actionCompiler(combatData);
+      io.to(newUser.room).emit('combat_response', response);
+    });
 
   })
 

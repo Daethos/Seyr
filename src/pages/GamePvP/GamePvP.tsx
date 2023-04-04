@@ -76,9 +76,10 @@ interface GameProps {
     setAsceanState: React.Dispatch<React.SetStateAction<any>>;
     getOpponent: (player: Player) => Promise<void>;
     getNPCDialog: (enemy: string) => Promise<void>;
+    autoAttack: (combatData: PvPData) => Promise<void>;
 };
 
-const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, asceanState, setAsceanState, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handleInstant, handlePrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
+const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handleInstant, handlePrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const { playWO, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
@@ -964,12 +965,21 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
+    const chatStyle = {
+        borderRadius: "50%",
+        marginTop: "-25%",
+        marginLeft: "50%",
+        zIndex: 100,
+        gridColumnStart: 2,
+        gridRowStart: 7,
+    }
+
     return (
         <Container fluid id="game-container" style={background}>
         { enemy ? (
             <>
             <PvPAscean 
-                state={state} ascean={enemy} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
+                state={state} ascean={enemy} damage={state.enemyDamaged} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
             /> 
             <CombatOverlay 
                 ascean={ascean} enemy={enemy} playerWin={state.player_win} computerWin={state.enemy_win} playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
@@ -980,6 +990,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             />
             </>
         ) : ( '' )}
+            <PvPConditions setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} playerState={playerState} timeLeft={timeLeft} setTimeLeft={setTimeLeft} autoAttack={autoAttack} />
             <Settings 
                 inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch}gameState={gameState} mapState={mapState} multiplayer={true}
@@ -988,7 +999,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
             {/* TODO:FIXME:      Use playerState to determine order which player is which for splitting concepts!     TODO:FIXME: */}
-            <PvPAscean state={state} ascean={ascean} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <PvPAscean state={state} ascean={ascean} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
         { state.combatEngaged ? (
             <>
                 <GameAnimations 
@@ -1053,20 +1064,16 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             </>
         )}
 
-            <span style={{ }} >
-                <Button variant='' style={{ color: '#fdf6d8', borderRadius: 50 + '%', marginTop: 54 + 'vh', marginLeft: "8.5vw" }} 
-                    onClick={() => setModalShow(true)}
-                    >
-                    { spectator ?
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-smile-upside-down" viewBox="0 0 16 16">
-                            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0-1a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"/>
-                            <path d="M4.285 6.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 4.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 3.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 9.5C7 8.672 6.552 8 6 8s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5zm4 0c0-.828-.448-1.5-1-1.5s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5z"/>
-                        </svg>
-                    : 
-                        <img src={process.env.PUBLIC_URL + `/images/` + ascean.origin + '-' + ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                    }
+                <Button variant='' style={chatStyle} onClick={() => setModalShow(true)}>
+                { spectator ?
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-smile-upside-down" viewBox="0 0 16 16">
+                        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0-1a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"/>
+                        <path d="M4.285 6.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 4.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 3.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 9.5C7 8.672 6.552 8 6 8s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5zm4 0c0-.828-.448-1.5-1-1.5s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5z"/>
+                    </svg>
+                : 
+                    <img src={process.env.PUBLIC_URL + `/images/` + ascean.origin + '-' + ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "10vw", borderRadius: "50%", border: "2px solid purple" }} />
+                }
                 </Button>
-            </span>
             {
                 mapState?.currentTile ?
                 <>

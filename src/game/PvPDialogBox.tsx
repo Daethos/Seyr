@@ -364,7 +364,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         if (namedEnemy) { enemyPersuasion *= 1.25; } else { enemyPersuasion *= 1.1; };
         console.log(playerPersuasion, enemyPersuasion, "Persuasion");
         if (playerPersuasion >= enemyPersuasion) {
-            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: true });        
+            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: true, playerTrait: persuasion } });       
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -403,20 +403,27 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
             default:
                 break;
         };
+        const luckoutTrait = luckoutTraits?.find((trait: { name: string; }) => trait.name === luck);
         if (namedEnemy) { enemyLuck *= 1.5; } else { enemyLuck *= 1.25; };
         console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
-            dispatch({
-                type: ACTIONS.PLAYER_LUCKOUT,
-                payload: {
-                    playerLuckout: true,
-                    playerTrait: luck
-                }
-            });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Success. Your ${luck} nature was irresistible to ${namedEnemy ? '' : ` ${article}`} ${enemy.name}. What is it they say, ${luckoutTrait.luckout.description} \n\n Congratulations, ${ascean.name}, your words ensured you needn't a single strike to win the day.` });
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
+                dispatch({
+                    type: ACTIONS.PLAYER_LUCKOUT,
+                    payload: {
+                        playerLuckout: true,
+                        playerTrait: luck
+                    }
+                });
+            }, 4000);
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Failure. Despite your ${luck} nature,${namedEnemy ? '' : ` ${article}`} ${enemy.name} managed to resist. \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Failure. Despite your ${luck} nature,${namedEnemy ? '' : ` ${article}`} ${enemy.name} managed to resist its temptation having some affectation of it themself. \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
@@ -443,6 +450,43 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         };
         setLuckout(true);
         setLuckoutTraits(matchingTraits);
+    };
+
+    const traitStyle = (trait: string) => {
+        switch (trait) {
+            case 'Arbituous':
+                return 'green';
+            case 'Chiomic':
+                return 'gold';
+            case 'Kyr\'naic':
+                return 'purple';
+            case 'Lilosian':
+                return '#fdf6d8';
+            case 'Ilian':
+                return 'white';
+            case 'Kyn\'gian':
+                return 'brown';
+            case 'Se\'van':
+                return 'red';
+            case 'Shrygeian':
+                return 'orange';
+            case 'Fyeran':
+                return 'orangered';
+            case 'Tshaeral':
+                return 'darkblue';
+            case 'Astralism':
+                return 'yellow';
+            case 'Shaorahi':
+                return 'blue';
+            case 'Cambiren':
+                return 'darkgreen';
+            case 'Sedyrist':
+                return 'silver';
+            case 'Ma\'anreic':
+                return 'darkgoldenrod';
+            default:
+                break;
+        };
     };
 
     if (loading) {
@@ -646,11 +690,11 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         ) }
                         { luckout ?
                             ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
                                 {luckoutTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' onClick={() => attemptLuckout(trait.name)}>{trait.name} - {trait.description}</Button>
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
                                     </div>
                                     )
                         })} 
@@ -768,11 +812,11 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         (This currently only affects non-named enemies, as named enemies start neutral).<br /><br />
                         { persuasion ?
                             ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
                                 {persuasionTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' onClick={() => attemptPersuasion(trait.name)}>{trait.name} - {trait.description}</Button>
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
                                     </div>
                                     )
                         })} 
@@ -780,6 +824,53 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         ) : ('') }
                         { state.enemyPersuaded ?
                             <>
+                            { namedEnemy ? (
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                {enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in {enemy.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            ) }
+                            </>
+                        ) : ( 
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                The {enemy.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in the {enemy.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            ) }         
+                            </>
+                        ) }
                             You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                             </>
@@ -787,7 +878,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                     </>
                 : currentIntent === 'services' ?
                     <>
-                        {/* <DialogTree ascean={ascean} enemy={enemy} dialogNodes={dialogTree} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} /> */}
                         "Greetings, chance meeting you here. I've been traveling these lands for some time now, and it's good to see those with a mind for wander. I have some items you have find of you here on your adventures, if it interests you."
                         <br /><br />
                         <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}

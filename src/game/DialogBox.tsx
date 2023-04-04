@@ -403,7 +403,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     }
                 });
             }, 4000);
-
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -674,11 +673,11 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         ) }
                         { luckout ?
                             ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
                                 {luckoutTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>{trait.name} - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
                                     </div>
                                     )
                         })} 
@@ -796,7 +795,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         (This currently only affects non-named enemies, as named enemies start neutral).<br /><br />
                         { persuasion ?
                             ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "gold" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
                                 {persuasionTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
@@ -862,7 +861,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     </>
                 : currentIntent === 'services' ?
                     <>
-                        {/* <DialogTree ascean={ascean} enemy={enemy} dialogNodes={dialogTree} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} /> */}
                         "Greetings, chance meeting you here. I've been traveling these lands for some time now, and it's good to see those with a mind for wander. I have some items you have find of you here on your adventures, if it interests you."
                         <br /><br />
                         <img src={process.env.PUBLIC_URL + '/images/gold-full.png'} alt="Gold Stack" /> {ascean.currency.gold} <img src={process.env.PUBLIC_URL + '/images/silver-full.png'} alt="Silver Stack" /> {ascean.currency.silver}

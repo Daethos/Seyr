@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useReducer } from 'react'
+import { useNavigate } from 'react-router-dom';
 import * as asceanAPI from '../../utils/asceanApi';
 import userService from '../../utils/userService';
 import * as io from 'socket.io-client'
@@ -44,7 +45,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const { playOpponent, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
-
+    const navigate = useNavigate();
     const [asceanState, setAsceanState] = useState({
         ascean: ascean,
         constitution: 0,
@@ -200,6 +201,8 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('duel_ready_response', duelReadyResponseCallback);
 
         const combatResponseCallback = async (response: any) => {
+            console.log(response.playerPosition, state.playerPosition, "Positions To Determine Response");
+
             if (response.playerPosition === state.playerPosition) await statusUpdate(response);
         };
         handleSocketEvent('combat_response', combatResponseCallback);
@@ -542,6 +545,10 @@ const GamePvPLobby = ({ user }: Props) => {
     };
 
     async function handleEnemyWin(combatData: PvPData) {
+        if (combatData.player.hardcore === true) {
+            await handleHardcoreDeath(combatData);
+            return;
+        };
         try {
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
@@ -554,6 +561,32 @@ const GamePvPLobby = ({ user }: Props) => {
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
+        };
+    };
+
+    async function handleHardcoreDeath(data: PvPData) {
+        try {
+            playDeath();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have died in battle to ${data.enemy.name}, yet there is another way for those with the fortitude.` });
+            const response = await asceanAPI.kill(data.player._id);
+            setTimeout(() => {
+                setTimeLeft(0);
+                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: response });
+                dispatch({
+                    type: ACTIONS.ENEMY_WIN,
+                    payload: data
+                });
+                clearOpponent();
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+                if (data.player.level > 3) {
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                } else {
+                    navigate('/');
+                };
+            }, 6000);
+        } catch (err: any) {
+            console.log(err, "Error Handling Hardcore Death");
         };
     };
 
@@ -601,6 +634,20 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(err.message, 'Error Initiating Action')
         };
     };
+    async function autoAttack(combatData: PvPData) {
+        if (combatData.enemyPosition !== -1 && playerState.playerOne.ascean._id !== state.player._id) {
+            setTimeLeft(gameState.timeLeft);
+            return;
+        };
+        try {
+            setTimeLeft(gameState.timeLeft);
+            setEmergencyText([`Auto Engagement Response`]);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            await socket.emit(`auto_engage`, combatData);
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Action');
+        };
+    };
 
     const instantUpdate = async (response: any) => {
         try {
@@ -632,9 +679,11 @@ const GamePvPLobby = ({ user }: Props) => {
                 payload: response
             });
             if (response.player_win === true) {
+                if (response.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
                 await handlePlayerWin(response);
             };
             if (response.enemy_win === true) {
+                if (response.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
                 await handleEnemyWin(response);
             };
             setTimeout(() => {
@@ -684,6 +733,11 @@ const GamePvPLobby = ({ user }: Props) => {
             mastery: response[0].mastery,
             faith: response[0].faith,
         });
+        const getInventory = async (player: any) => {
+            const inventoryResponse = await asceanAPI.getAsceanInventory(player);
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: inventoryResponse });
+        }; 
+        getInventory(response[0]._id);
     }, [username]);
 
     const getUserAscean = async () => {
@@ -773,7 +827,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} gameState={gameState} gameDispatch={gameDispatch} 
                 user={user} ascean={gameState.player} spectator={spectator} enemy={gameState.opponent}  getOpponent={getOpponent} getNPCDialog={getNPCDialog}
                 handleRoomReset={handleRoomReset} room={room} setShowChat={setShowChat} socket={socket} handleSocketEvent={handleSocketEvent}
-                handlePlayerWin={handlePlayerWin} handleEnemyWin={handleEnemyWin} mapState={mapState} mapDispatch={mapDispatch}
+                handlePlayerWin={handlePlayerWin} handleEnemyWin={handleEnemyWin} mapState={mapState} mapDispatch={mapDispatch} autoAttack={autoAttack}
                 currentMessage={currentMessage} setCurrentMessage={setCurrentMessage} messageList={messageList} setMessageList={setMessageList}
                 liveGameplay={liveGameplay} setLiveGameplay={setLiveGameplay} statusUpdate={statusUpdate} softUpdate={softUpdate} instantUpdate={instantUpdate}
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
