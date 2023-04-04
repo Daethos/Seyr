@@ -622,20 +622,11 @@ const GameSolo = ({ user }: GameProps) => {
 
     const clearOpponent = async () => {
         try {
+            if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
             gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
-            dispatch({
-                type: ACTIONS.CLEAR_DUEL,
-                payload: null
-            });
-            if (gameState.showDialog) {
-                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            };
-            if (mapState.currentTile.content === 'enemy' && state.new_computer_health <= 0) {
-                mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
-            };
-            if (mapState.currentTile.content !== 'city') {
-                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true })
-            }
+            if (mapState.currentTile.content === 'enemy' && state.new_computer_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+            if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
         };
@@ -1358,8 +1349,8 @@ const GameSolo = ({ user }: GameProps) => {
 
     async function handlePlayerLuckout() {
         try {
-            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            // gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             if (mapState?.currentTile?.content === 'city') {
                 playWin();
             } else {

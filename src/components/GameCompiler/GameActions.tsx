@@ -76,8 +76,8 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
           type: ACTIONS.SET_INSTANT_STATUS,
           payload: false,
         });
-      }, 10000);
-      const endTime = instantTimer ? new Date().getTime() + 10000 : 0;
+      }, 30000);
+      const endTime = instantTimer ? new Date().getTime() + 30000 : 0;
       const interval = setInterval(() => {
         const remainingTime = Math.round((endTime - new Date().getTime()) / 1000);
         console.log(`Instant status will expire in ${remainingTime} seconds`);
@@ -214,8 +214,8 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
         </div>
       : '' }
     <>
-      <p style={instantStyle} className={`invoke${state.instantStatus ? '-instant' : ''}`}>Invoke</p>
-      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={state.instantStatus ? true : false}>
+      <p style={instantStyle} className={`invoke${instantTimerId ? '-instant' : ''}`}>Invoke</p>
+      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={instantTimerId ? true : false}>
         <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
       </button>
     </>

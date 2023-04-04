@@ -46,9 +46,27 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
 };
 
 interface Traits {
-    primary: { name: string, description: string };
-    secondary: { name: string, description: string };
-    tertiary: { name: string, description: string };
+    primary: { 
+        name: string, 
+        description: string,
+        action: string,
+        success: string,
+        failure: string
+     };
+    secondary: { 
+        name: string, 
+        description: string,
+        action: string,
+        success: string,
+        failure: string
+     };
+    tertiary: { 
+        name: string, 
+        description: string,
+        action: string,
+        success: string,
+        failure: string
+     };
 }
 
 interface Props {
@@ -93,7 +111,7 @@ interface Region {
 const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, enemyWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const location = useLocation();
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
-    const [traits, setTraits] = useState<Traits | null>(null);
+    const [traits, setTraits] = useState<any | null>(null);
     const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});

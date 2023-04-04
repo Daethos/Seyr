@@ -300,21 +300,9 @@ export const getQuests = (name: string) => {
 
 export const getAsceanTraits = async (ascean: Player) => {
     let traits = {
-        primary: {
-            name: "",
-            description: "",
-            type: '',
-        },
-        secondary: {
-            name: "",
-            description: "",
-            type: '',
-        },
-        tertiary: {
-            name: "",
-            description: "",
-            type: '',
-        },
+        primary: { name: '' },
+        secondary: { name: '' },
+        tertiary: { name: '' },
     };
 
 
@@ -370,32 +358,245 @@ export const getAsceanTraits = async (ascean: Player) => {
     traits.tertiary.name = topThree[2][1];
 
     const TRAIT_DESCRIPTIONS = {
-        "Ilian": "Persuasion (Autoritas), Heroism  (Can Change Encounters)",
-        "Kyn'gian": "Avoidance (Can Shirk Encounters), Endurance (Health Regeneration)",
-        "Arbituous": "Persuasion (Ethos), Luckout (Rhetoric)",
-        "Lilosian": "Persuasion (Pathos), Luckout (Peace)",
-        "Kyr'naic": "Persuasion (Apathy), Luckout (Aenservaesai)",
-        "Se'van": "Mini-Game (Grappling), Combat Ability (Berserk)",
-        "Sedyrist": "Investigative (Analysis), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
-        "Ma'anreic": "Combat Ability (Negation), Thievery (NPCs)",
-        "Cambiren": "Combat Ability (Caerenicism), Mini-Game (Hush and Tendril)",
-        "Shrygeian": "Mini-Game (Dueling), Knavery (Exploration Boosts)",
-        "Fyeran": "Combat Abiilty (Seer), Persuasion (Seer)",
-        "Shaorahi": "Combat Ability (Conviction), Persuasion (Awe)",
-        "Tshaeral": "Mini-Game (Fear), Persuasion (Fear)",
-        "Chiomic": "Persuasion (Humor), Luckout (Shatter)",
-        "Astralism": "Combat Ability (Impermanence), Pursuit (Can Force Encounters)",
+        "Ilian": {
+            persuasion: {
+                description: "Persuasion (Autoritas)",
+                action: "You have a strong sense of right and wrong, and are able to convince others of your point of view.",
+                success: "You have a strong sense of right and wrong, and are able to convince others of your point of view.",
+                failure: "You have a strong sense of right and wrong, and are able to convince others of your point of view.",
+            },
+            heroism: {
+                description: "Heroism (Can Change Encounters)",
+                action: "You evoke a sense of heroism in others, and can change the outcome of encounters.",
+                success: "You evoke a sense of heroism in others, and can change the outcome of encounters.",
+                failure: "You evoke a sense of heroism in others, and can change the outcome of encounters.",
+            }
+        },
+        "Kyn'gian": {
+            avoidance: {
+                description: "Avoidance (Can Shirk Encounters)",
+                action: "You remain at the edges of sight and sound, and before {enemy.name} can react, you attempt to flee.",
+                success: "You can't even be sure they caught sight of you as you slip away.",
+                failure: "You are unable to escape {enemy.name}'s grasp despite your stride.",
+            },
+            endurance: {
+                description: "Endurance (Health Regeneration)",
+                action: "You are able to regenerate health over time.",
+                success: "You regenerate health over time.",
+                failure: "You regenerate health over time.",
+            }
+        },
+        "Arbituous": {
+            persuasion: {
+                description: "you can use your knowledge of ley law to deter enemies from attacking you.",
+                action: "Attempt to convince {enemy.name} of the current ley law as it stands, and their attempt to break it with murder will not stand before a trial by Arbiter, and the precedent set says that's not a very good action, if only for becoming cross with the arbiters if anything, rather than the whole business of murdering, which while they have their merits in a merciless world isn't the angle you're going with.",
+                success: "Success! There shall be no need of murder.",
+                failure: "{enemy.name} seems more convinced of that whole murder thing."
+            },
+            luckout: {
+                description: "Can convince the enemy through rhetoric to cease hostility",
+                action: "Unleash a dizzying array of syllables and concatenated and contracted words to upend the attempted assault.",
+                greaterSuccess: "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}.",
+                success: "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}.",
+                failure: "Failure!"
+            }
+        },
+        "Lilosian": {
+            persuasion: {
+                description: "Description",
+                action: "Speak on the virtues of {ascean.weapon_one.influences[0]} to {enemy.name}.",
+                success: "Tears well up in the {enemy.name}'s eyes. 'All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}.'",
+                failure: "Failure!"
+            },
+            luckout: {
+                description: "you can convince the enemy to profess their follies and willow ",
+                action: "Show {enemy.name} the way of peace through {ascean.weapon_one.influences[0]}",
+                success: "Tears well up in {enemy.name}'s eyes. 'I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry.'",
+                failure: "Failure!"
+            }
+        },
+        "Kyr'naic": {
+            persuasion: {
+                description: "you can persuade the enemy to cease the pitiless attempt to invoke meaning and purpose in themselves by base and petty means, and to instead embrace the hush and tendril of things.",
+                action: "Shame ${enemy.name} for their attempt to invoke meaning and purpose in themselves by base and petty means.",
+                success: "{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.",
+                failure: "Failure!"
+            },
+            luckout: {
+                description: "you can convince the enemy to acquiesce and die, giving up their life to the Aenservaesai.",
+                action: "Offer a glimpse of the aenservaesai in its totality.",
+                success: "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here.",
+                failure: "Failure!"
+            }
+        },
+        "Se'van": {
+            berserk: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            miniGame: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Sedyrist": {
+            investigative: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            tinkerer: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Ma'anreic": {
+            negation: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            thievery: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Cambiren": {
+            caerenicism: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            miniGame: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Shrygeian": {
+            knavery: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            miniGame: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Fyeran": {
+            persuasion: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            seer: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Shaorahi": {
+            conviction: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            persuasion: {
+                description: "you can put the enemy in awe of your power, and have them cease their assault.",
+                action: `Speak to {enemy.name} in the language of the Shaorahi.`,
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Tshaeral": {
+            miniGame: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            persuasion: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+        "Chiomic": {
+            persuasion: {
+                description: "you can cause bouts of confusion and disorientation in the enemy, reducing their conviction in attacking you.",
+                action: "Speak a chiomic riddle to befuddle ${enemy.name}.",
+                success: "The {enemy.name} contorts and swirls with designs of ancient artifice and delight.",
+                failure: "Failure!"
+            },
+            luckout: {
+                description: "you can invoke the Ancient Chiomyr, reducing the enemy to a broken mind of mockery.",
+                action: "Lash {enemy.name} with chiomic bliss.",
+                success: "{enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. 'I don't understand, {ascean.name}. What is happening to me, what have you brought back?'",
+                failure: "Failure!"
+            }
+        },
+        "Astralism": {
+            impermanence: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            },
+            pursuit: {
+                description: "Description",
+                action: "Action",
+                success: "Success!",
+                failure: "Failure!"
+            }
+        },
+
+        // "Kyn'gian": "Avoidance (Can Shirk Encounters), Endurance (Health Regeneration)",
+        // "Arbituous": "Persuasion (Ethos), Luckout (Rhetoric)",
+        // "Lilosian": "Persuasion (Pathos), Luckout (Peace)",
+        // "Kyr'naic": "Persuasion (Apathy), Luckout (Aenservaesai)",
+        // "Se'van": "Mini-Game (Grappling), Combat Ability (Berserk)",
+        // "Sedyrist": "Investigative (Analysis), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)",
+        // "Ma'anreic": "Combat Ability (Negation), Thievery (NPCs)",
+        // "Cambiren": "Combat Ability (Caerenicism), Mini-Game (Hush and Tendril)",
+        // "Shrygeian": "Mini-Game (Dueling), Knavery (Exploration Boosts)",
+        // "Fyeran": "Combat Abiilty (Seer), Persuasion (Seer)",
+        // "Shaorahi": "Combat Ability (Conviction), Persuasion (Awe)",
+        // "Tshaeral": "Mini-Game (Fear), Persuasion (Fear)",
+        // "Chiomic": "Persuasion (Humor), Luckout (Shatter)",
+        // "Astralism": "Combat Ability (Impermanence), Pursuit (Can Force Encounters)",
     };
 
     let first = TRAIT_DESCRIPTIONS[traits.primary.name as keyof typeof TRAIT_DESCRIPTIONS];
     let second = TRAIT_DESCRIPTIONS[traits.secondary.name as keyof typeof TRAIT_DESCRIPTIONS];
     let third = TRAIT_DESCRIPTIONS[traits.tertiary.name as keyof typeof TRAIT_DESCRIPTIONS];
 
-    traits.primary.description = first;
-    traits.secondary.description = second;
-    traits.tertiary.description = third;
-
-    return traits;
+    let newTraits = {
+        primary: { ...traits.primary, ...first},
+        secondary: { ...traits.secondary, ...second },
+        tertiary: { ...traits.tertiary, ...third } ,
+    };
+    console.log(newTraits, "New Traits");
+    return newTraits;
 };
 
 export interface GameData {

@@ -30,6 +30,7 @@ interface Props {
 const PvPActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
+  const [instantTimerId, setInstantTimerId] = useState<any>(null);
   const { combatInitiated } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
@@ -68,14 +69,25 @@ const PvPActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTyp
   }, [combatInitiated]);
 
   useEffect(() => {
-    const instantTimer = setTimeout(() => {
-      dispatch({
-        type: ACTIONS.SET_INSTANT_STATUS,
-        payload: false,
-      });
-    }, 30000);
+    if (!state.instantStatus) return;
+    let instantTimer: string | number | NodeJS.Timeout | undefined;
+      instantTimer = setTimeout(() => {
+        dispatch({
+          type: ACTIONS.SET_INSTANT_STATUS,
+          payload: false,
+        });
+      }, 30000);
+      const endTime = instantTimer ? new Date().getTime() + 30000 : 0;
+      const interval = setInterval(() => {
+        const remainingTime = Math.round((endTime - new Date().getTime()) / 1000);
+        console.log(`Instant status will expire in ${remainingTime} seconds`);
+      }, 1000);
+      setInstantTimerId(instantTimer);
+
     return () => {
-      clearTimeout(instantTimer);
+      clearTimeout(instantTimerId);
+      clearInterval(interval);
+      setInstantTimerId(null);
     };
   }, [state.instantStatus, dispatch]);
 
@@ -202,8 +214,8 @@ const PvPActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTyp
         </div>
       : '' }
     <>
-      <p style={instantStyle} className={`invoke${state?.instantStatus ? '-instant' : ''}`}>Invoke</p>
-      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={state.instantStatus ? true : false}>
+      <p style={instantStyle} className={`invoke${instantTimerId ? '-instant' : ''}`}>Invoke</p>
+      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={instantTimerId ? true : false}>
         <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
       </button>
     </>

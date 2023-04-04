@@ -450,7 +450,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'ENEMY_PERSUADED':
             return {
                 ...state,
-                enemyPersuaded: action.payload,
+                enemyPersuaded: action.payload.enemyPersuaded,
+                playerTrait: action.payload.playerTrait,
             };
         case 'RESET_LUCKOUT':
             return {
