@@ -14021,7 +14021,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },},
-    "Relien": {
+    "Relien Myelle": {
         conditions: {
             respect: ["lesser", "neutral", "greater"],
             familiarity: ["unfamiliar", "familiar", "intimate"]

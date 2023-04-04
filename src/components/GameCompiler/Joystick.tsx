@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-
+import { debounce, throttle } from 'lodash';
 type Direction = "up" | "down" | "left" | "right" | "upLeft" | "upRight" | "downLeft" | "downRight";
 
 interface Props {
@@ -18,6 +18,7 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
     });
     const timerRef = useRef<any>(null);
     const lastDirectionRef = useRef<string>("");
+    const throttledSetPosition = throttle(setPosition, 150);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -86,16 +87,9 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [onDirectionChange]);
-      
-    
-    const handleKeyUp = () => {
-        lastDirectionRef.current = "";
-    };
-
 
     const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
         event.preventDefault();
-        // console.log(event.touches[0].clientX, event.touches[0].clientY, "start")
         setTouchStart({ x: event.touches[0].clientX, y: event.touches[0].clientY });
     };
 
@@ -108,7 +102,8 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
         const distance = Math.min(Math.sqrt(dx * dx + dy * dy), 50);
         const x = distance * Math.cos(angle);
         const y = distance * Math.sin(angle);
-        setPosition({ x, y });
+        throttledSetPosition({ x, y });
+        // setPosition({ x, y });
         let direction: string = "";
 
         const angleDegrees = angle * 180 / Math.PI;
@@ -137,23 +132,28 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange }: Props) 
             debouncedHandleDirectionChange("upRight");
             direction = "upRight";  
         }
-
         if (lastDirectionRef.current !== direction) {
             lastDirectionRef.current = direction;
         };
-
+        // if (isTouching) {
+        //     debouncedHandleDirectionChange(direction);
+        //     if (lastDirectionRef.current !== direction) {
+        //         lastDirectionRef.current = direction;
+        //     };
+        // };
     };
     
     const handleTouchEnd = () => {
-        clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(() => {
-            setPosition({ x: 0, y: 0 });
-        }, 250);
+        throttledSetPosition.cancel();
+        // clearTimeout(timerRef.current);
+        // timerRef.current = setTimeout(() => {
+        //     setPosition({ x: 0, y: 0 });
+        // }, 1000);
+        setPosition({ x: 0, y: 0 });
     };
 
 return (
     <div
-        // onKeyUp={handleKeyUp}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -181,6 +181,6 @@ return (
       ></div>
     </div>
   );
-}
+};
 
 export default Joystick;

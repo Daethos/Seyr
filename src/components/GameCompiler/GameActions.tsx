@@ -30,6 +30,7 @@ interface Props {
 const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
+  const [instantTimerId, setInstantTimerId] = useState<any>(null);
   const { combatInitiated } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
@@ -68,20 +69,25 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
   }, [combatInitiated]);
 
   useEffect(() => {
-    // const instantTimerEnd = Date.now() + 10000;
-    const instantTimer = setTimeout(() => {
-      dispatch({
-        type: ACTIONS.SET_INSTANT_STATUS,
-        payload: false,
-      });
-    }, 30000);
-    // const interval = setInterval(() => {
-    //   const timeLeft = Math.round((instantTimerEnd - Date.now()) / 1000);
-    //   console.log(`Time left in instant timer: ${timeLeft} seconds`);
-    // }, 1000);
+    if (!state.instantStatus) return;
+    let instantTimer: string | number | NodeJS.Timeout | undefined;
+      instantTimer = setTimeout(() => {
+        dispatch({
+          type: ACTIONS.SET_INSTANT_STATUS,
+          payload: false,
+        });
+      }, 10000);
+      const endTime = instantTimer ? new Date().getTime() + 10000 : 0;
+      const interval = setInterval(() => {
+        const remainingTime = Math.round((endTime - new Date().getTime()) / 1000);
+        console.log(`Instant status will expire in ${remainingTime} seconds`);
+      }, 1000);
+      setInstantTimerId(instantTimer);
+
     return () => {
-      clearTimeout(instantTimer);
-      // clearInterval(interval);
+      clearTimeout(instantTimerId);
+      clearInterval(interval);
+      setInstantTimerId(null);
     };
   }, [state.instantStatus, dispatch]);
 
@@ -208,7 +214,7 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
         </div>
       : '' }
     <>
-      <p style={instantStyle} className={`invoke${state?.instantStatus ? '-instant' : ''}`}>Invoke</p>
+      <p style={instantStyle} className={`invoke${state.instantStatus ? '-instant' : ''}`}>Invoke</p>
       <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={state.instantStatus ? true : false}>
         <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
       </button>

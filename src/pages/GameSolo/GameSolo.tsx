@@ -84,24 +84,6 @@ const GameSolo = ({ user }: GameProps) => {
         faith: gameState.player.faith,
     });
 
-    // useEffect(() => {
-    //     socket = io.connect("http://localhost:3001");
-    //     socket.emit("setup", user);
-        // socket.on('map-generated', (data: any) => {
-        //     console.log(data, 'Data Generated');
-        //     mapDispatch({
-        //         type: MAP_ACTIONS.SET_MAP_DATA,
-        //         payload: data
-        //     });
-        //     const coords = getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, data.map);
-        //     mapDispatch({
-        //         type: MAP_ACTIONS.SET_MAP_COORDS,
-        //         payload: coords,
-        //     });
-        //     mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
-        // });
-    // }, [])
-
     useEffect(() => {
         const fetchData = async () => {
             try {
