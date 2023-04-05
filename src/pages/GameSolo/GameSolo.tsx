@@ -623,10 +623,12 @@ const GameSolo = ({ user }: GameProps) => {
     const clearOpponent = async () => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
-            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
             if (mapState.currentTile.content === 'enemy' && state.new_computer_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
+                gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
+            }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
         };
