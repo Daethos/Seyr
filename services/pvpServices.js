@@ -2244,7 +2244,7 @@ const actionSplitter = async (combatData) => {
         room: combatData.room,
         playerPosition: combatData.playerPosition,
         enemyPosition: combatData.enemyPosition,
-        
+
         player: combatData.player, // The player's Ascean
         action: combatData.action, // The player's action
         player_action: combatData.action,
@@ -2289,6 +2289,7 @@ const actionSplitter = async (combatData) => {
         enemy_influence_description_two: '',
         player_death_description: '',
         enemy_death_description: '',
+        deaths: combatData.deaths,
 
         current_player_health: combatData.new_player_health, // New player health post-combat action
         current_enemy_health: combatData.new_enemy_health, // New enemy health post-combat action

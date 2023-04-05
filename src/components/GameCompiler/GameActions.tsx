@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import './GameCompiler.css';
 import CombatSettingModal from './CombatSettingModal';
 import { ACTIONS } from './CombatStore';
+import { GameData, GAME_ACTIONS } from './GameStore';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
 import useTimers, { Timer } from './useTimers';
@@ -10,6 +11,8 @@ import useTimers, { Timer } from './useTimers';
 interface Props {
     handleAction: (action: any) => void;
     handleCounter: (action: any) => void;
+    gameState: GameData;
+    gameDispatch: any;
     // handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
     handleInitiate: (state: any) => void;
     currentAction: string;
@@ -27,7 +30,7 @@ interface Props {
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
 };
 
-const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const [instantTimerId, setInstantTimerId] = useState<any>(null);
@@ -72,8 +75,8 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
     if (!state.instantStatus) return;
     let instantTimer: string | number | NodeJS.Timeout | undefined;
       instantTimer = setTimeout(() => {
-        dispatch({
-          type: ACTIONS.SET_INSTANT_STATUS,
+        gameDispatch({
+          type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
       }, 30000);
@@ -89,7 +92,7 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
       clearInterval(interval);
       setInstantTimerId(null);
     };
-  }, [state.instantStatus, dispatch]);
+  }, [gameState.instantStatus, gameDispatch]);
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {
@@ -214,8 +217,8 @@ const GameActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTy
         </div>
       : '' }
     <>
-      <p style={instantStyle} className={`invoke${instantTimerId ? '-instant' : ''}`}>Invoke</p>
-      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={instantTimerId ? true : false}>
+      <p style={instantStyle} className={`invoke${gameState.instantStatus ? '-instant' : ''}`}>Invoke</p>
+      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={gameState.instantStatus ? true : false}>
         <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
       </button>
     </>

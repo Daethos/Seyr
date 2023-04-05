@@ -618,6 +618,7 @@ export interface GameData {
     gameplayEvent: object;
 
     combatResolved: boolean;
+    instantStatus: boolean;
 
     showMap: boolean;
     showCity: boolean;
@@ -676,6 +677,7 @@ export const GAME_ACTIONS = {
 
     SET_PURCHASING_ITEM: 'SET_PURCHASING_ITEM',
 
+    INSTANT_COMBAT: 'INSTANT_COMBAT',
     LOOT_ROLL: 'LOOT_ROLL',
     ITEM_SAVED: 'ITEM_SAVED',
     EQP_SWAP: 'EQP_SWAP',
@@ -758,6 +760,7 @@ export const initialGameData: GameData = {
     gameplayModal: false,
     gameplayEvent: { title: "", description: "" },
     combatResolved: false,
+    instantStatus: false,
     showCity: false,
     showDialog: false,
     showInventory: false,
@@ -903,6 +906,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     ...game.player,
                     quests: action.payload,
                 },
+            };
+        case 'INSTANT_COMBAT':
+            return {
+                ...game,
+                instantStatus: action.payload,
             };
         case 'LOOT_ROLL':
             return {

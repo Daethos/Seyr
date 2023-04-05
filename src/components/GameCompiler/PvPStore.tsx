@@ -41,6 +41,7 @@ export interface PvPData {
     player_influence_description: string;
     player_influence_description_two: string;
     player_death_description: string;
+    deaths: number;
 
     critical_success: boolean;
     counter_success: boolean;
@@ -152,6 +153,7 @@ export const initialPvPData: PvPData = {
     player_influence_description: '',
     player_influence_description_two: '',
     player_death_description: '',
+    deaths: 0,
     critical_success: false,
     counter_success: false,
     dual_wielding: false,
@@ -516,7 +518,7 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 current_computer_health: 0,
                 player_luckout: true,
             };
-        case 'COMPUTER_WIN':
+        case 'ENEMY_WIN':
             return {
                 ...state,
                 loseStreak: state.loseStreak + 1,
@@ -525,6 +527,7 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 combatEngaged: false,
                 dodgeStatus: false,
                 instantStatus: false,
+                deaths: state.deaths + 1,
             }
         case 'CLEAR_DUEL':
             return {
@@ -605,10 +608,10 @@ export const PvPStore = (state: PvPData, action: Action) => {
 };
 
 export interface PlayerData {
-    playerOne: { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
-    playerTwo:  { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
-    playerThree:  { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
-    playerFour:  { ascean: Player, user: UserData, room: '', player: 0, ready: false } | null;
+    playerOne: { ascean: Player, user: UserData, room: '', player: 0, ready: false, deaths: 0 } | null;
+    playerTwo:  { ascean: Player, user: UserData, room: '', player: 0, ready: false, deaths: 0 } | null;
+    playerThree:  { ascean: Player, user: UserData, room: '', player: 0, ready: false, deaths: 0 } | null;
+    playerFour:  { ascean: Player, user: UserData, room: '', player: 0, ready: false, deaths: 0 } | null;
 };
 
 export const initialPlayerData: PlayerData = {
@@ -633,6 +636,10 @@ export const PLAYER_ACTIONS = {
     SET_PLAYER_TWO_READY: 'SET_PLAYER_TWO_READY',
     SET_PLAYER_THREE_READY: 'SET_PLAYER_THREE_READY',
     SET_PLAYER_FOUR_READY: 'SET_PLAYER_FOUR_READY',
+    SET_PLAYER_ONE_DEATH: 'SET_PLAYER_ONE_DEATH',
+    SET_PLAYER_TWO_DEATH: 'SET_PLAYER_TWO_DEATH',
+    SET_PLAYER_THREE_DEATH: 'SET_PLAYER_THREE_DEATH',
+    SET_PLAYER_FOUR_DEATH: 'SET_PLAYER_FOUR_DEATH',
 };
 
 export const PlayerStore = (playerState: PlayerData, playerAction: PlayerAction) => {
@@ -692,6 +699,38 @@ export const PlayerStore = (playerState: PlayerData, playerAction: PlayerAction)
                 playerFour: {
                     ...playerState.playerFour,
                     ready: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_ONE_DEATH':
+            return {
+                ...playerState,
+                playerOne: {
+                    ...playerState.playerOne,
+                    deaths: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_TWO_DEATH':
+            return {
+                ...playerState,
+                playerTwo: {
+                    ...playerState.playerTwo,
+                    deaths: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_THREE_DEATH':
+            return {
+                ...playerState,
+                playerThree: {
+                    ...playerState.playerThree,
+                    deaths: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_FOUR_DEATH':
+            return {
+                ...playerState,
+                playerFour: {
+                    ...playerState.playerFour,
+                    deaths: playerAction.payload,
                 },
             };
         default:

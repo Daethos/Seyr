@@ -12,6 +12,7 @@ import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import Button from 'react-bootstrap/Button';
+import { GameData, initialGameData, GameStore } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 
@@ -22,6 +23,7 @@ interface Props {
 
 const GuestGame = ({ guest, handleLogout }: Props) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
+    const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [ascean, setAscean] = useState<any>({});
     const [opponent, setOpponent] = useState<any>({});
     const [loading, setLoading] = useState(true);
@@ -570,10 +572,6 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         );
     };
 
-    const gameState = {
-        timeLeft: 10,
-    }
-
     return (
         <Container fluid id="game-container" style={ background }>
 
@@ -619,7 +617,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             <GameActions 
                 setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                 setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
-                handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
+                handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} gameState={gameState} gameDispatch={gameDispatch}
                 currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
             /> : <Loading Combat={true} />
             }

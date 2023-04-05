@@ -6,11 +6,14 @@ import { ACTIONS } from './PvPStore';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
 import useTimers, { Timer } from './useTimers';
+import { GameData, GAME_ACTIONS } from './GameStore';
 
 interface Props {
     handleAction: (action: any) => void;
     handleCounter: (action: any) => void;
     // handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
+    gameState: GameData;
+    gameDispatch: any;
     handleInitiate: (state: any) => Promise<void>;
     currentAction: string;
     currentCounter: string;
@@ -27,7 +30,7 @@ interface Props {
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
 };
 
-const PvPActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const [instantTimerId, setInstantTimerId] = useState<any>(null);
@@ -72,8 +75,8 @@ const PvPActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTyp
     if (!state.instantStatus) return;
     let instantTimer: string | number | NodeJS.Timeout | undefined;
       instantTimer = setTimeout(() => {
-        dispatch({
-          type: ACTIONS.SET_INSTANT_STATUS,
+        gameDispatch({
+          type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
       }, 30000);
@@ -89,7 +92,7 @@ const PvPActions = ({ state, dispatch, handleInstant, handlePrayer, setDamageTyp
       clearInterval(interval);
       setInstantTimerId(null);
     };
-  }, [state.instantStatus, dispatch]);
+  }, [gameState.instantStatus, gameDispatch]);
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {

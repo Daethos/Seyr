@@ -515,6 +515,12 @@ const GamePvPLobby = ({ user }: Props) => {
         };
     };
 
+    useEffect(() => {
+        if (state.deaths === 5) {
+            handleHardcoreDeath(state);
+        };
+    }, [state.deaths]);
+
     const clearOpponent = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
@@ -545,11 +551,23 @@ const GamePvPLobby = ({ user }: Props) => {
     };
 
     async function handleEnemyWin(combatData: PvPData) {
-        if (combatData.player.hardcore === true) {
-            await handleHardcoreDeath(combatData);
-            return;
-        };
         try {
+            switch (combatData.playerPosition) {
+                case 1:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE_DEATH, payload: true });
+                    break;
+                case 2:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO_DEATH, payload: true });
+                    break;
+                case 3:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE_DEATH, payload: true });
+                    break;
+                case 4:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR_DEATH, payload: true });
+                    break;
+                default:
+                    break;
+            };
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${combatData.enemy.name}, yet still there is always Achre for you to gain.` })
@@ -608,6 +626,7 @@ const GamePvPLobby = ({ user }: Props) => {
     async function handleInstant(e: { preventDefault: () => void; }) {
         e.preventDefault();
         try {
+            gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             await socket.emit('instant_action', state);
@@ -651,10 +670,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const instantUpdate = async (response: any) => {
         try {
-            dispatch({
-                type: ACTIONS.INSTANT_COMBAT,
-                payload: response
-            });
+            dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response });
         } catch (err: any) {
             console.log(err.message, 'Error Performing Instant Update');
         };

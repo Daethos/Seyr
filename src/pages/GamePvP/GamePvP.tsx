@@ -1012,7 +1012,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 <PvPActions 
                     setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                     setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
-                    handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} 
+                    handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} gameState={gameState} gameDispatch={gameDispatch}
                     currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess}
                 /> 
                 <GameCombatText 
