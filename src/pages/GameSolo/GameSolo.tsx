@@ -21,7 +21,7 @@ import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
@@ -37,6 +37,7 @@ import { Merchant } from '../../components/GameCompiler/NPCs';
 import Journal from '../../components/GameCompiler/Journal';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import * as io from 'socket.io-client'
+type HandleDirectionChangeFn = (direction: string) => void;
 
 let socket: any;
 
@@ -141,7 +142,7 @@ const GameSolo = ({ user }: GameProps) => {
     }, [moveTimer]);
 
     useEffect(() => {
-        if (mapState.currentTile.content === 'enemy') {
+        if (mapState.currentTile.content === 'enemy' || gameState?.opponent) {
             console.log("Fighting An Enemy, Not Triggering Move Timer Content")
             return;
         }
@@ -628,6 +629,7 @@ const GameSolo = ({ user }: GameProps) => {
             setTimeout(() => {
                 dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
                 gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
+                mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: false });
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
@@ -812,13 +814,44 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+
+
+
+    useEffect(() => {
+        if (mapState?.lastCurrentTileContent === 'enemy' || mapState?.lastCurrentTileContent === 'treasure' || gameState?.opponent) return;
+        if (mapState?.currentTile?.content !== 'nothing') {
+            handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
+            return;
+        };
+        if (gameState.cityButton) {
+            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+            setBackground({
+                ...background,
+                'background': getPlayerBackground.background
+            });
+        };
+        if (mapState.steps !== 2 && !mapState.contentMoved) {
+            mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+        };
+        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+        mapDispatch({
+            type: MAP_ACTIONS.SET_MAP_CONTEXT,
+            payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+        });
+        return () => {
+            mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
+        };
+    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
+
     const handleDirectionChange = async (direction: Direction) => {
+        if (mapState.joystickDisabled) return;
         const offset = DIRECTIONS[direction];
         if (offset) {
             const newX = mapState.currentTile.x + offset.x;
             const newY = mapState.currentTile.y + offset.y;
             if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
                 const newTile = await getAsceanCoords(newX, newY, mapState.map);
+                if (newTile.content === 'enemy' || newTile.content === 'npc') mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: true });
                 const newTiles = await getAsceanGroupCoords(newX, newY, mapState.map);
                 const data = {
                     newTile: newTile,
@@ -827,8 +860,8 @@ const GameSolo = ({ user }: GameProps) => {
                     map: mapState,
                 };
                 mapDispatch({
-                type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
-                payload: data,
+                    type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
+                    payload: data,
                 });
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
@@ -837,36 +870,8 @@ const GameSolo = ({ user }: GameProps) => {
             };
         };
     };
-      
-    function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
-        let timer: ReturnType<typeof setTimeout>;
-        return function (this: T, ...args: any[]) {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
-    }; 
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
-
-    async function getAsceanCoords(x: number, y: number, map: any) {
-        const tile = map?.[x + 100]?.[y + 100];
-        return tile ?? null;
-    };
-
-    async function getAsceanGroupCoords(x: number, y: number, map: any) {
-        let tiles = [];
-        for (let i = -4; i < 5; i++) {
-            for (let j = -4; j < 5; j++) {
-                const tileX = x + 100 + i;
-                const tileY = y + 100 + j;
-                const tile = map?.[tileX]?.[tileY];
-                if (tile) {
-                    tiles.push(tile);
-                };
-            };
-        };      
-        return tiles;
-    }; 
 
     const getPhenomena = async () => {
         if (gameState.cityButton) {
@@ -1075,7 +1080,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
         };
         if (content === 'city' && lastContent === 'city') {
-            if (mapState.steps !== 0) {
+            if (mapState.steps % 10) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             };
             return;
@@ -1166,31 +1171,6 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    useEffect(() => {
-        if (mapState?.currentTile?.content === 'nothing') {
-            if (gameState.cityButton) {
-                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                setBackground({
-                    ...background,
-                    'background': getPlayerBackground.background
-                });
-            };
-            if (mapState.steps !== 2 && !mapState.contentMoved) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            };
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-            });
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_MOVED,
-                payload: false
-            });
-            return;
-        };
-        handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
-    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
@@ -1587,7 +1567,7 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     return (
-        <Container fluid id="game-container" style={ background }>
+        <Container fluid id="game-container" style={background}>
             { gameState.opponent ?
                 <>
                 <GameAscean state={state} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
@@ -1653,9 +1633,9 @@ const GameSolo = ({ user }: GameProps) => {
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
                     : '' }
                     {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
-                    { gameState.showDialog ?    
+                    { gameState.showDialog && gameState.opponent ?    
                         <DialogBox 
-                            npc={gameState.opponent.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
+                            npc={gameState?.opponent?.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
                             playerWin={state.player_win} computerWin={state.computer_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
                             winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}
                             resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
@@ -1667,10 +1647,10 @@ const GameSolo = ({ user }: GameProps) => {
                     : ""}
                     { gameState.opponent && mapState?.currentTile?.content !== 'city' ?
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
-                        : 
+                    : 
                         <>
                         <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
-                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
+                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
                         <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>
                     }
@@ -1689,14 +1669,12 @@ const GameSolo = ({ user }: GameProps) => {
                 </>
             }
 
-            {
-                mapState?.currentTile ?
-                <>
+            { mapState?.currentTile ?
+            <>
                 <Coordinates mapState={mapState} />
                 <Content mapState={mapState} />
-                </>
-                : ''
-            }
+            </>
+            : '' }
             <GameplayOverlay 
                 ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}

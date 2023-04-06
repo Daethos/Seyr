@@ -106,6 +106,10 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         ) }
         </Modal.Header>
         <Modal.Body style={settingsStyle}>
+        <p style={{ color: 'gold', fontSize: "20px" }}>
+            [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ]
+            [ Content: {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)} ]
+        </p>
             { multiplayer ? ( '' ) : (
                     <Button variant='' className='mb-3' style={{ color: '#fdf6d8', fontSize: "16px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Map: {mapState.name}</Button>
             ) }

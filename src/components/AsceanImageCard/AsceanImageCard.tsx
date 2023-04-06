@@ -27,12 +27,10 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     const [damaged, setDamaged] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log(damage, "Damage Boolean");
         if (damage) setDamaged(true);
     }, [damage]);
 
     useEffect(() => {
-        console.log("Damaged: ", damaged);
         if (damaged) {
             setTimeout(() => {
                 setDamaged(false);

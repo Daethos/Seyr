@@ -197,10 +197,10 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
         { activeTab === 'gear' && dndInventory?.length > 0 ?
             dndInventory.map((item: any, index: number) => {
               return (
-                <Droppable key={item._id} droppableId={item._id}>
+                <Droppable key={index} droppableId={item._id}>
                   {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps} >
-              <Inventory gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} key={index} index={index} />
+              <Inventory gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} index={index} />
               {provided.placeholder}
             </div>
                   )}

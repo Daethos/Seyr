@@ -8,6 +8,7 @@ export interface MapData {
     contentCount: object;
     map: {[key: string]: any};
     currentTile: { x: number; y: number; content: string };
+    lastCurrentTileContent: string;
     initialPosition: { x: number; y: number; content: string };
     lastTile: { x: number; y: number; content: string };
     visitedTiles: {[key: string]: { color: string; content: string }}; 
@@ -15,6 +16,7 @@ export interface MapData {
     generatingWorld: boolean;
     steps: number;
     contentMoved: boolean;
+    joystickDisabled: boolean;
     player1Tile: null | { x: number; y: number; content: string; color: string };
     player2Tile: null | { x: number; y: number; content: string; color: string };
     player3Tile: null | { x: number; y: number; content: string; color: string };
@@ -44,6 +46,7 @@ export const MAP_ACTIONS = {
     SET_MAP_MOVED: 'SET_MAP_MOVED',
     SET_MULTIPLAYER_PLAYER: 'SET_MULTIPLAYER_PLAYER',
     SET_MAP_DATA_SYNC: 'SET_MAP_DATA_SYNC',
+    SET_JOYSTICK_DISABLED: 'SET_JOYSTICK_DISABLED',
 };
 
 export const initialMapData: MapData = {
@@ -56,6 +59,7 @@ export const initialMapData: MapData = {
     contentCount: {},
     map: {},
     currentTile: { x: 0, y: 0, content: '' },
+    lastCurrentTileContent: '',
     initialPosition: { x: 0, y: 0, content: '' },
     lastTile: { x: 0, y: 0, content: '' },
     visitedTiles: {},
@@ -63,6 +67,7 @@ export const initialMapData: MapData = {
     generatingWorld: false,
     steps: 0,
     contentMoved: false,
+    joystickDisabled: false,
     player1Tile:  null,
     player2Tile:  null,
     player3Tile:  null,
@@ -86,6 +91,7 @@ export const MapStore = (map: MapData, action: Action) => {
                 currentTile: action.payload,
                 initialPosition: action.payload,
                 lastTile: action.payload,
+                lastCurrentTileContent: '',
             };
         case 'SET_NEW_MAP_COORDS':
             const newCoords = action.payload.newTile;
@@ -100,12 +106,15 @@ export const MapStore = (map: MapData, action: Action) => {
                     content: tile.content, 
                 };
             };
+            const disableJoystick = action.payload.newTile.content === 'enemy' || action.payload.newTile.content === 'npc' ? true : false;
             return {
                 ...map,
                 currentTile: action.payload.newTile,
                 lastTile: action.payload.oldTile,
                 visitedTiles: visitedTiles,
                 steps: map.steps + 1,
+                lastCurrentTileContent: '',
+                joystickDisabled: disableJoystick,
             };
         case 'SET_MULTIPLAYER_PLAYER':
             const player = action.payload.player;
@@ -143,9 +152,11 @@ export const MapStore = (map: MapData, action: Action) => {
             if (newTile.content !== action.payload.currentTile.content) {
                 map.currentTile = newTile;      
             };
+            // const joystick = newTile.content === 'enemy' || newTile.content === 'npc' ? true : false;
             return {
                     ...map,
                     contentMoved: true,
+                    // joystickDisabled: joystick,
             };
         case 'SET_MAP_NAME':
             return {
@@ -163,16 +174,25 @@ export const MapStore = (map: MapData, action: Action) => {
                 generatingWorld: action.payload,
             };
         case 'SET_NEW_ENVIRONMENT':
+            const newLastCurrentTileContent = action.payload.currentTile.content;
             setEnvironmentTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
             sliceContentCluster(action.payload.currentTile.x, action.payload.currentTile.y, action.payload.currentTile.content, action.payload.contentClusters);
             setVisitedTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
+            // const newJoystick = map.currentTile.content === 'enemy' || map.currentTile.content === 'npc' ? true : false;
             return {
                 ...map,
+                lastCurrentTileContent: newLastCurrentTileContent,
+                // joystickDisabled: newJoystick,
             };
         case 'SET_MAP_MOVED':
             return {
                 ...map,
                 contentMoved: action.payload,
+            };
+        case 'SET_JOYSTICK_DISABLED':
+            return {
+                ...map,
+                joystickDisabled: action.payload,
             };
         default: return map;
     }
@@ -381,4 +401,32 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
         };
     };
     return mapState;
+};
+
+export function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
+    let timer: ReturnType<typeof setTimeout>;
+    return function (this: T, ...args: any[]) {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+};
+
+export async function getAsceanCoords(x: number, y: number, map: any) {
+    const tile = map?.[x + 100]?.[y + 100];
+    return tile ?? null;
+};
+
+export async function getAsceanGroupCoords(x: number, y: number, map: any) {
+    let tiles = [];
+    for (let i = -4; i < 5; i++) {
+        for (let j = -4; j < 5; j++) {
+            const tileX = x + 100 + i;
+            const tileY = y + 100 + j;
+            const tile = map?.[tileX]?.[tileY];
+            if (tile) {
+                tiles.push(tile);
+            };
+        };
+    };      
+    return tiles;
 };

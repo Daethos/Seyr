@@ -1048,7 +1048,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         : 
                         <>
                         <StoryBox ascean={ascean} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
-                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
+                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
                         <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>
                     }

@@ -170,8 +170,8 @@ const HardCoreAscea = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
                     }, 2000);
                     return;
-                }
-            }
+                };
+            };
             if (gameState.player.level === 2) {
                 if (chance > 0.67) {
                     const wolf: Enemy = Object.assign({}, Wolf);
@@ -262,7 +262,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             } else if (gameState.player.level <= 20) {
                 minLevel = 16;
                 maxLevel = 30;
-            }
+            };
             const enemyData = {
                 username: 'mirio',
                 minLevel: minLevel,
@@ -1224,7 +1224,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                         <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />
                     : ""}
                     <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
-                    <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} />
+                    <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
                     <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                 </>
             }

@@ -74,22 +74,21 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   useEffect(() => {
     if (!gameState.instantStatus) return;
     let instantTimer: string | number | NodeJS.Timeout | undefined;
-      instantTimer = setTimeout(() => {
+    instantTimer = setTimeout(() => {
         gameDispatch({
           type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
-      }, 30000);
-      const endTime = instantTimer ? new Date().getTime() + 30000 : 0;
-      const interval = setInterval(() => {
-        const remainingTime = Math.round((endTime - new Date().getTime()) / 1000);
-        console.log(`Instant status will expire in ${remainingTime} seconds`);
-      }, 1000);
-      setInstantTimerId(instantTimer);
-
+    }, 30000);
+    // const endTime = instantTimer ? new Date().getTime() + 30000 : 0;
+      // const interval = setInterval(() => {
+      //   const remainingTime = Math.round((endTime - new Date().getTime()) / 1000);
+      //   console.log(`Instant status will expire in ${remainingTime} seconds`);
+      // }, 1000);
+    setInstantTimerId(instantTimer);
     return () => {
       clearTimeout(instantTimerId);
-      clearInterval(interval);
+      // clearInterval(interval);
       setInstantTimerId(null);
     };
   }, [gameState.instantStatus, gameDispatch]);
@@ -115,15 +114,11 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   }, [state.actionStatus, dispatch]);
 
   useEffect(() => {
-    console.log(state.prayerSacrifice, "Pre-Check Prayer")
     if (state.prayerSacrifice === '') return;
-    console.log(state.prayerSacrifice, "Sacrifing Prayer")
     handlePrayer({ preventDefault: () => {} });
-
   }, [state.prayerSacrifice]);
 
   const handlePrayerMiddleware = async (prayer: string) => {
-    console.log("Setting Prayer to Sacrifice: ", prayer);
     dispatch({
       type: ACTIONS.SET_PRAYER_SACRIFICE,
       payload: prayer,

@@ -11,11 +11,13 @@ const mapSchema = new Schema({
     contentCounts: { type: Object, default: {} },
     map: { type: Object, default: {} },
     currentTile: { type: Object, default: {} },
+    lastCurrentTileContent: { type: String, default: '' },
     initialPosition: { type: Object, default: {} },
     visitedTiles: { type: Object, default: {} },
     context: { type: String, default: '' },
     steps: { type: Number, default: 0 },
     contentMoved: { type: Boolean, default: false },
+    joystickDisabled: { type: Boolean, default: false },
     }, {
     timestamps: true
 });
