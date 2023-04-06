@@ -43,6 +43,7 @@ export const MAP_ACTIONS = {
     SET_NEW_ENVIRONMENT: 'SET_NEW_ENVIRONMENT',
     SET_MAP_MOVED: 'SET_MAP_MOVED',
     SET_MULTIPLAYER_PLAYER: 'SET_MULTIPLAYER_PLAYER',
+    SET_MAP_DATA_SYNC: 'SET_MAP_DATA_SYNC',
 };
 
 export const initialMapData: MapData = {
@@ -71,12 +72,15 @@ export const initialMapData: MapData = {
 export const MapStore = (map: MapData, action: Action) => {
     switch (action.type) {
         case 'SET_MAP_DATA':
-            console.log(action.payload, "Setting Map")
             return {
                 ...action.payload,
             };
+        case 'SET_MAP_DATA_SYNC':
+            return {
+                ...map,
+                map: action.payload.map
+            };
         case 'SET_MAP_COORDS':
-            console.log(action.payload, "Setting Map Coords")
             return {
                 ...map,
                 currentTile: action.payload,
@@ -84,7 +88,6 @@ export const MapStore = (map: MapData, action: Action) => {
                 lastTile: action.payload,
             };
         case 'SET_NEW_MAP_COORDS':
-            console.log(action.payload, "Setting New Map Coords")
             const newCoords = action.payload.newTile;
             const visitedTiles = {...action.payload.map.visitedTiles};
             visitedTiles[`${newCoords.x},${newCoords.y}`] = { 
@@ -105,7 +108,6 @@ export const MapStore = (map: MapData, action: Action) => {
                 steps: map.steps + 1,
             };
         case 'SET_MULTIPLAYER_PLAYER':
-            console.log(action.payload, "Setting Multiplayer Player");
             const player = action.payload.player;
             const newerTile = action.payload.newTile;
             if (player === 1) {
@@ -219,6 +221,7 @@ function sliceContentCluster(oldX: number, oldY: number, contentType: string, co
     if (oldClusterIndex !== -1) {
       contentClusters[contentType].splice(oldClusterIndex, 1);
     };
+    
 };
   
 export function moveContent(mapState: MapData, contentClusters: any, visitedTiles: any) {
@@ -342,6 +345,7 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
                 };
 
                 if (oldContent !== 'nothing') {
+
                     // console.log(mapState.map[oldMapX][oldMapY], "Old Tile?");
                     // mapState.visitedTiles[`${x},${y}`].content = 'nothing';
                     // mapState.visitedTiles[`${x},${y}`].color = 'green';

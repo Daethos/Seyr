@@ -14,9 +14,10 @@ interface Props {
     handleComputerWin: (combatData: any) => Promise<void>;
     vibrationTime: number;
     gameState: any;
+    hardcore?: boolean;
 };
 
-const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, setEmergencyText, handlePlayerWin, handleComputerWin, vibrationTime, gameState }: Props) => {
+const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, setEmergencyText, handlePlayerWin, handleComputerWin, vibrationTime, gameState, hardcore }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [timeLeftDisplay, setTimeLeftDisplay] = useState<number>(timeLeft);
 
@@ -89,7 +90,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
 
     return (
         <>            
-        { state.player_win || state.computer_win || !state.combatEngaged ? '' : 
+        { state.player_win || state.computer_win || !state.combatEngaged || hardcore ? '' : 
             <button className="btn" id='auto-engage' onClick={autoEngage}>
                 {!state.gameIsLive ? `Auto Engage` : `Disengage`}
             </button>

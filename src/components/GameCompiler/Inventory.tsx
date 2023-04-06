@@ -194,7 +194,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
         try {
             setIsLoading(true);
             setLoadingContent(`Forging A Greater ${inventory?.name}`);
-            const matches = bag.filter((item: { name: string; rarity: string; }) => item.name === inventory.name && item.rarity === inventory.rarity);
+            const matches = bag.filter((item: { name: string; rarity: string; }) => item.name === inventory?.name && item?.rarity === inventory?.rarity);
             console.log(matches, '<- What are the matches?');
             const data = {
                 asceanID: ascean._id,

@@ -14,12 +14,12 @@ import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
 import LevelUpModal from '../../game/LevelUpModal';
-import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/Dialog';
+import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
-import { GAME_ACTIONS, GameStore, initialGameData, Ascean, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Enemy } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
@@ -125,50 +125,19 @@ const HardCoreAscea = ({ user }: GameProps) => {
     }, [moveTimer]);
 
     useEffect(() => {
-        if (mapState.currentTile.content === 'enemy') {
-            console.log("Fighting An Enemy, Not Triggering Move Timer Content")
-            return;
-        }
+        if (mapState.currentTile.content === 'enemy') return;
         const timer = setTimeout(() => {
             if (moveTimer === 0 && mapState?.steps > 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                setMoveTimer(6);
+                setMoveTimer(gameState.moveTimer);
             }
         }, moveTimer);
         return () => clearTimeout(timer);
     }, [moveTimer, mapState]);
-    
-
-    const loadMap = async (ascean: Player, map: MapData) => {
-        console.log(map, "Loading Map");
-        const article = ['a', 'e', 'i', 'o', 'u'].includes(map.currentTile.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-        try {
-            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            mapDispatch({ type: MAP_ACTIONS.SET_MAP_DATA, payload: map }); 
-            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Loading ${map.name}. \n\n Currently, your coordinates are X: ${map.currentTile?.x}, Y: ${map.currentTile?.y}, experiencing ${map.currentTile?.content === 'nothing' || map.currentTile?.content === 'weather' ? map.currentTile?.content : `${article} ${map.currentTile?.content}`}. \n\n Enjoy your journey, ${ascean.name}.` });
-            const coords = await getAsceanCoords(map.currentTile.x, map.currentTile.y, map.map);
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_COORDS,
-                payload: coords,
-            });
-            setTimeout(() => { gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }); }, 4000);
-        } catch (err: any) {
-            console.log(err.message, "Error loading Map");
-        };
-    };
 
     const getOpponentDialog = async (enemy: string) => {
         try {
             const response = getNpcDialog(enemy);
-            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        };
-    };
-
-    const getNPCDialog = async (enemy: string) => {
-        try {
-            const response = getMerchantDialog(enemy);
             gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
@@ -181,6 +150,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             let minLevel: number = 0;
             let maxLevel: number = 0;
             const chance = Math.random();
+            setTimeout(() => { dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: !state.gameIsLive }); }, 4000);
             if (gameState.player.level === 1) {
                 if (chance > 0.5) {
                     const wolf: Enemy = Object.assign({}, Wolf);
@@ -285,13 +255,13 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 maxLevel = 12;
             } else if (gameState.player.level <= 14) { // 11-14
                 minLevel = 8;
-                maxLevel = 16;
+                maxLevel = 20;
             } else if (gameState.player.level <= 18) { // 15-18
                 minLevel = 12;
-                maxLevel = 18;
+                maxLevel = 25;
             } else if (gameState.player.level <= 20) {
                 minLevel = 16;
-                maxLevel = 20;
+                maxLevel = 30;
             }
             const enemyData = {
                 username: 'mirio',
@@ -426,7 +396,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
     useEffect(() => {
         if (gameState.itemSaved === false) return;
         console.log("Saving Item", gameState.itemSaved)
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         };
@@ -444,7 +414,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
     useEffect(() => {
         if (gameState.removeItem === false) return;
         console.log("Removing Item", gameState.removeItem)
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
         };
@@ -527,17 +497,13 @@ const HardCoreAscea = ({ user }: GameProps) => {
 
     const clearOpponent = async () => {
         try {
-            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
-            dispatch({
-                type: ACTIONS.CLEAR_DUEL,
-                payload: null
-            });
-            if (gameState.showDialog) {
-                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            };
-            if (mapState.currentTile.content !== 'city' && mapState.currentTile.content !== 'weather' && state.new_computer_health <= 0) {
+            if (mapState.currentTile.content === 'enemy' && state.new_computer_health <= 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
+                gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
+            }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
         };
@@ -853,10 +819,17 @@ const HardCoreAscea = ({ user }: GameProps) => {
 
     useEffect(() => {
         if (mapState?.currentTile?.content === 'nothing') {
-            if (mapState.steps !== 0 && !mapState.contentMoved) {
+            if (gameState.cityButton) {
+                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+                setBackground({
+                    ...background,
+                    'background': getPlayerBackground.background
+                });
+            };
+            if (mapState.steps !== 2 && !mapState.contentMoved) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             };
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
+            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_CONTEXT,
                 payload: "You continue moving through the arena and find nothing of interest in your path, yet the combatants seem to be watching you despite their attention toward the other."
@@ -1071,21 +1044,18 @@ const HardCoreAscea = ({ user }: GameProps) => {
         };
     };
 
-    async function handleInitiate(e: { preventDefault: () => void; }) {
-        e.preventDefault();
+    async function handleInitiate(combatData: CombatData) {
         try {
-            if (state.action === '') {
+            if (combatData.action === '') {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose An Action!\n`]);
                 return;
             };
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            const response = await gameAPI.initiateAction(state);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
+            const response = await gameAPI.initiateAction(combatData);
+            console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response.data
-            });
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
@@ -1105,6 +1075,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
         e.preventDefault();
         try {
             setEmergencyText([``]);
+            gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);

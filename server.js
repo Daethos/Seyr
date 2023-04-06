@@ -60,12 +60,11 @@ const io = require('socket.io')(server, {
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
-
   socket.on("generate-map", async (data) => {
     console.log("Map Generating At: " + Date.now())
     const map = new WorldMap(data.name, data.ascean);
     socket.emit("map-generated", map);
-    console.log("Map Generated At: " + Date.now())
+    console.log("Map Generated At: " + Date.now());
   });
 
   socket.on("setup", (userData) => {
@@ -75,20 +74,20 @@ io.on("connection", (socket) => {
   })
 
    socket.on("join_chat", (room) => {
-      socket.join(room)
-      console.log("User Joined Room: " + room)
+      socket.join(room);
+      console.log("User Joined Room: " + room);
    });
 
-   socket.on('typing', (room) => socket.in(room).emit('typing'))
-   socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'))
+   socket.on('typing', (room) => socket.in(room).emit('typing'));
+   socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'));
 
    socket.on("new_message", (newMessageReceived) => {
     let chat = newMessageReceived.chat;
 
-    if (!chat.users) return console.log('Chat.Users is not defined')
+    if (!chat.users) return console.log('Chat.Users is not defined');
 
     chat.users.forEach(user => {
-      if (user._id === newMessageReceived.sender._id) return
+      if (user._id === newMessageReceived.sender._id) return;
 
       socket.in(user._id).emit("message_received", newMessageReceived);
     })
@@ -99,11 +98,15 @@ io.on("connection", (socket) => {
   // THIS IS FOR NON SAVEABLE CHAT
   socket.on("join_room", async (data) => {
     socket.join(data.room);
+    socket.data.user = {
+      user: data.user,
+      room: data.room,
+    };
 
-    console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`)
+    console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
     
-    let connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size
-    console.log(connectedUsersCount, 'Number of Users in Room ', data.room)
+    let connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
+    console.log(connectedUsersCount, 'Number of Users in Room ', data.room);
 
     let newUser = {
       room: data.room,
@@ -243,19 +246,32 @@ io.on("connection", (socket) => {
     socket.on('createMap', async (mapData) => {
       const map = new WorldMap(mapData.name, mapData.ascean);
       newMap = map;
-      io.to(newUser.room).emit('mapCreated', map);
+      // io.to(newUser.room).emit('mapCreated', map);
+      // socket.emit('mapCreated', map);
+      const roomSockets = await io.of('/').in(newUser.room).fetchSockets();
+      for (const clientSocket of roomSockets) {
+        clientSocket.emit('mapCreated', map);
+      };
     });
 
     io.to(data.room).emit('new_user', newUser)
 
     const helloMessage = {
       room: data.room,
-      author: 'The Seyr',
+      author: 'The Ascea',
       message: `Welcome to the Ascea, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
       time: Date.now()
     };
-
-    io.to(data.room).emit('receive_message', helloMessage);
+    const userUpdateMessage = {
+      room: data.room,
+      author: 'The Ascea',
+      message: `${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)} has joined the game.`,
+      time: Date.now()
+    };
+    // Changed from io to socket. Hopefully this will message specifically to the user who joined. Does it work? 
+    // io.to(data.room).emit('receive_message', helloMessage);
+    socket.to(data.room).emit('receive_message', userUpdateMessage);
+    socket.emit('receive_message', helloMessage);
 
     socket.on('playerDirectionChange', async (directionData) => {
       // console.log('Player Direction Change');
@@ -264,8 +280,31 @@ io.on("connection", (socket) => {
     });
 
     socket.on('commenceGame', async () => {
-      io.to(newUser.room).emit('Game Commencing');
-    });
+      const messageData = {
+        room: newUser.room,
+        author: 'The Ascea',
+        message: `Welcome, ${newUser?.user?.username.charAt(0).toUpperCase() + newUser?.user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
+        time: Date.now()
+    };
+      // socket.emit('Game Commencing', messageData);
+      const roomSockets = await io.of('/').in(newUser.room).fetchSockets();
+      for (const clientSocket of roomSockets) {
+        const username = clientSocket.data.user.user.username;
+        const messageData = {
+          room: newUser.room,
+          author: 'The Ascea',
+          message: `Welcome, ${username.charAt(0).toUpperCase() + username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
+          time: Date.now(),
+        };
+        clientSocket.emit('Game Commencing', messageData);
+      }
+  });
+
+  // syncMapContent
+  socket.on('syncMapContent', async (mapData) => {
+    const newMap = mapData;
+    io.to(data.room).emit('mapContentSynced', newMap);
+  });
 
     socket.on('ascean', async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
       console.log('Did the Ascean Update start?');
@@ -315,7 +354,7 @@ io.on("connection", (socket) => {
       let newData = data;
       let duelMessage = {
         room: data.room,
-        author: 'The Seyr',
+        author: 'The Ascea',
         message: '',
         time: Date.now()
       }

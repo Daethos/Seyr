@@ -1175,18 +1175,18 @@ const GameSolo = ({ user }: GameProps) => {
                     'background': getPlayerBackground.background
                 });
             };
-                if (mapState.steps !== 0 && !mapState.contentMoved) {
-                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                };
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-                });
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_MAP_MOVED,
-                    payload: false
-                })
+            if (mapState.steps !== 2 && !mapState.contentMoved) {
+                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+            };
+            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_CONTEXT,
+                payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+            });
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_MOVED,
+                payload: false
+            });
             return;
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
@@ -1386,6 +1386,7 @@ const GameSolo = ({ user }: GameProps) => {
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
                 };
+                if (gameState.instantStatus) gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1411,6 +1412,7 @@ const GameSolo = ({ user }: GameProps) => {
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
                 };
+                if (gameState.instantStatus) gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1451,7 +1453,6 @@ const GameSolo = ({ user }: GameProps) => {
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
             });
-            // shakeScreen();
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
@@ -1483,9 +1484,6 @@ const GameSolo = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
             shakeScreen();
             playReligion();
             setTimeout(() => {
@@ -1514,9 +1512,6 @@ const GameSolo = ({ user }: GameProps) => {
             });
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
             };
             shakeScreen();
             playReligion();

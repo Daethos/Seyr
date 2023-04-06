@@ -120,12 +120,14 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             <span style={{ float: "right" }}></span>
         </h6>
         <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={12} step={1} /><br />
-        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+        { multiplayer ? ( '' ) : (
+        <><h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Movement Timer: ({gameState.moveTimer})
             <span style={{ float: "right" }}></span>
         </h6>
-        <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={12} step={1} /><br />
+        <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={12} step={1} /><br /></>
+        ) }
         <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Joystick Delay ({gameState.joystickSpeed})

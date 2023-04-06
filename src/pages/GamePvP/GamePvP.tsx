@@ -102,15 +102,48 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     }, [moveTimer]);
 
     useEffect(() => {
-        if (mapState.currentTile.content === 'enemy') return;
+        // if (mapState.currentTile.content === 'enemy') return;
+        if (mapState.contentMoved === true) return;
         const timer = setTimeout(() => {
-            if (moveTimer === 0 && mapState?.steps > 0) {
+            if (moveTimer === 0 && mapState.steps > 0 && playerState.playerOne?.user?._id === user._id) {
+                console.log("Am I here?", playerState.playerOne?.user, user, playerState.playerOne?.user?._id === user._id);
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                setMoveTimer(6);
-            }
+                setMoveTimer(gameState.moveTimer);
+            };
         }, moveTimer);
         return () => clearTimeout(timer);
     }, [moveTimer, mapState]);
+
+    useEffect(() => {
+        if (mapState.contentMoved) {
+            const movedContent = async (map: MapData) => {
+                await socket.emit('syncMapContent', map);
+            };
+            movedContent(mapState);
+            return () => {
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
+            };
+        };
+    }, [mapState.contentMoved, mapState]);
+
+    useEffect(() => {
+        if (mapState?.currentTile?.content === 'nothing') {
+            if (gameState.cityButton) {
+                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+                setBackground({
+                    ...background,
+                    'background': getPlayerBackground.background
+                });
+            };
+            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_CONTEXT,
+                payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+            });
+            return;
+        };
+        handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
+    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
     const saveWorld = async () => {
         try {
@@ -728,9 +761,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             });
         };
         if (content === 'city' && lastContent === 'city') {
-            if (mapState.steps !== 0) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            };
             return;
         };
         if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -819,34 +849,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    useEffect(() => {
-        if (mapState?.currentTile?.content === 'nothing') {
-            if (gameState.cityButton) {
-                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                setBackground({
-                    ...background,
-                    'background': getPlayerBackground.background
-                });
-            };
-                if (mapState.steps !== 0 && !mapState.contentMoved) {
-                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                };
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `` });
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-                });
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_MAP_MOVED,
-                    payload: false
-                })
-            // };
-            return;
-        };
-        handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
 
-
-    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;

@@ -778,12 +778,12 @@ export const initialGameData: GameData = {
     combatOverlayText: '',
     mapMode: 'FULL_MAP',
     timeLeft: 12,
-    moveTimer: 12,
+    moveTimer: 6,
     vibrationTime: 150,
-    canvasPosition: { x: 0.5, y: 1.5 },
+    canvasPosition: { x: 0.75, y: 1.5 },
     canvasWidth: 300,
     canvasHeight: 300,
-    joystickSpeed: 150,
+    joystickSpeed: 1000,
     soundEffectVolume: 0.3,
 };
 

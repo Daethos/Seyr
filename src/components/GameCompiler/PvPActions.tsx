@@ -72,7 +72,7 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
   }, [combatInitiated]);
 
   useEffect(() => {
-    if (!state.instantStatus) return;
+    if (!gameState.instantStatus) return;
     let instantTimer: string | number | NodeJS.Timeout | undefined;
       instantTimer = setTimeout(() => {
         gameDispatch({
@@ -217,8 +217,8 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
         </div>
       : '' }
     <>
-      <p style={instantStyle} className={`invoke${instantTimerId ? '-instant' : ''}`}>Invoke</p>
-      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={instantTimerId ? true : false}>
+      <p style={instantStyle} className={`invoke${gameState.instantStatus ? '-instant' : ''}`}>Invoke</p>
+      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={gameState.instantStatus ? true : false}>
         <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
       </button>
     </>

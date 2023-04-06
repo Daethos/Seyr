@@ -149,6 +149,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
 
   
   const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
     const { destination, source, draggableId } = result;
     if (!destination) return;
     if (destination.index === source.index) return;
@@ -158,7 +159,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       const [reorderedItem] = itemsCopy.splice(source.index, 1);
       itemsCopy.splice(destination.index, 0, reorderedItem);
       setDndInventory(itemsCopy);
-    }
+    };
   };
 
   const modalStyle = {

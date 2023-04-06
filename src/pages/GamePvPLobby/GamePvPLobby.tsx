@@ -166,6 +166,15 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
+        const mapContentSyncedCallback = async (response: any) => {
+            console.log(response, "Map Content Moved Response");
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_DATA_SYNC,
+                payload: response
+            });
+        };
+        handleSocketEvent("mapContentSynced", mapContentSyncedCallback);
+
         const playerReadyCallback = async (data: any) => {
             if (data._id === playerState?.playerOne?.user?._id) {
                 playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE_READY, payload: true });
@@ -179,22 +188,23 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent("player_ready", playerReadyCallback);
 
-        const gameCommencingCallback = async () => {
-            const messageData = {
-                room: room,
-                author: `The Seyr`,
-                message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
-                time: Date.now()
-            };
-            await socket.emit(`send_message`, messageData);
+        const gameCommencingCallback = async (data: any) => {
+            // const messageData = {
+            //     room: room,
+            //     author: 'The Ascea',
+            //     message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
+            //     time: Date.now()
+            // };
+            // await socket.emit('send_message', messageData);
+            setMessageList((list: any) => [...list, data]);
             setTimeout(() => setLiveGameplay(true), 10000);
         };
-        handleSocketEvent(`Game Commencing`, gameCommencingCallback);
+        handleSocketEvent('Game Commencing', gameCommencingCallback);
 
         const receiveMessageCallback = async (data: any) => {
             setMessageList((list: any) => [...list, data]);
         };
-        handleSocketEvent(`receive_message`, receiveMessageCallback);
+        handleSocketEvent('receive_message', receiveMessageCallback);
 
         const duelReadyResponseCallback = async (data: any) => {
         };
@@ -234,6 +244,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('requesting_player_data', requestPlayerDataCallback);
                 socket.off('new_player_data_response', newPlayerDataResponseCallback);
                 socket.off('mapCreated', mapCreatedCallback);
+                socket.off('mapContentSynced', mapContentSyncedCallback);
                 socket.off('player_ready', playerReadyCallback);
                 socket.off('Game Commencing', gameCommencingCallback);
                 socket.off('receive_message', receiveMessageCallback);
@@ -253,23 +264,34 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const generateWorld = async (mapName: string) => {
         try {
-            socket.emit("createMap", { name: mapName, ascean: ascean });
+            await socket.emit("createMap", { name: mapName, ascean: ascean });
         } catch (err: any) {
             console.log(err.message, 'Error Generating World Environment.');
         };
     };
 
+    function getRandomCoordinates(coordinate: number) {
+        const random = Math.floor(Math.random() * 26);
+        const chance = Math.floor(Math.random() * 2);
+        if (chance === 0) {
+            return coordinate + random;
+        } else {
+            return coordinate - random;
+        };
+    };
+
     const setCoordinates = async (players: any, map: any) => {
+        console.log(players, map, "Players and Map (Set Coordinates)");
         try {
             let playerCoords = { x: 0, y: 0 };
             if (players?.playerOne?.ascean._id === gameState?.player?._id) {
-                playerCoords = { x: -75, y: 75 };
+                playerCoords = { x: getRandomCoordinates(-75), y: getRandomCoordinates(75) };
             } else if (players?.playerTwo?.ascean?._id === gameState?.player?._id) {
-                playerCoords = { x: 75, y: 75 };
+                playerCoords = { x: getRandomCoordinates(75), y: getRandomCoordinates(75) };
             } else if (players?.playerThree?.ascean?._id === gameState?.player?._id) {
-                playerCoords = { x: -75, y: -75 };
+                playerCoords = { x: getRandomCoordinates(-75), y: getRandomCoordinates(-75) };
             } else if (players?.playerFour?.ascean?._id === gameState?.player?._id) {
-                playerCoords = { x: 75, y: -75 };
+                playerCoords = { x: getRandomCoordinates(75), y: getRandomCoordinates(-75) };
             };
             const coords = await getAsceanCoords(playerCoords.x, playerCoords.y, map.map);
             mapDispatch({
@@ -523,11 +545,13 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const clearOpponent = async () => {
         try {
-            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
-            dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             if (mapState.currentTile.content === 'enemy' && state.new_enemy_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
+                dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
+            }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
         };
@@ -543,6 +567,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
                 if (mapState?.currentTile?.content === 'enemy' && combatData.enemy.name !== "Wolf" && combatData.enemy.name !== "Bear") gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 if (combatData.enemy.name === "Wolf" || combatData.enemy.name === "Bear") clearOpponent();
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -575,6 +600,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setTimeLeft(0);
                 dispatch({ type: ACTIONS.ENEMY_WIN, payload: combatData });
                 if (combatData.enemy.name === "Wolf" || combatData.enemy.name === "Bear") clearOpponent();
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -653,6 +679,7 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(err.message, 'Error Initiating Action')
         };
     };
+
     async function autoAttack(combatData: PvPData) {
         if (combatData.enemyPosition !== -1 && playerState.playerOne.ascean._id !== state.player._id) {
             setTimeLeft(gameState.timeLeft);

@@ -72,7 +72,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   }, [combatInitiated]);
 
   useEffect(() => {
-    if (!state.instantStatus) return;
+    if (!gameState.instantStatus) return;
     let instantTimer: string | number | NodeJS.Timeout | undefined;
       instantTimer = setTimeout(() => {
         gameDispatch({

@@ -117,11 +117,14 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const [questModalShow, setQuestModalShow] = useState<boolean>(false);
     const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
     const [persuasionModalShow, setPersuasionModalShow] = useState<boolean>(false);
+    const [miniGameModalShow, setMiniGameModalShow] = useState<boolean>(false);
     const [dialogTree, setDialogTree] = useState<any>([]);
     const [luckout, setLuckout] = useState<boolean>(false);
     const [luckoutTraits, setLuckoutTraits] = useState<any>([]);
     const [persuasion, setPersuasion] = useState<boolean>(false);
     const [persuasionTraits, setPersuasionTraits] = useState<any>([]);
+    const [miniGame, setMiniGame] = useState<boolean>(false);
+    const [miniGameTraits, setMiniGameTraits] = useState<any>([]);
     const [enemyPersuaded, setEnemyPersuaded] = useState<boolean>(false);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
@@ -132,7 +135,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         setShowQuest(true);
         getDialogTree();
         checkLuckout();
-        checkePersuasion();
+        checkPersuasion();
         setNamedEnemy(nameCheck(enemy?.name));
         return () => {
             
@@ -289,7 +292,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         setTraits(response);
     };
 
-    const checkePersuasion = async () => {
+    const checkPersuasion = async () => {
         const traits = {
             primary: gameState?.primary,
             secondary: gameState?.secondary,
@@ -303,6 +306,22 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         };
         setPersuasion(true);
         setPersuasionTraits(matchingTraits);
+    };
+
+    const checkMiniGame = async () => {
+        const traits = {
+            primary: gameState?.primary,
+            secondary: gameState?.secondary,
+            tertiary: gameState?.tertiary,
+        };
+        const miniGameTraits = ['Cambiren', "Se'van", 'Shrygeian', 'Tashaeral'];
+        const matchingTraits = Object.values(traits).filter(trait => miniGameTraits.includes(trait.name));
+        if (matchingTraits.length === 0) {
+            setMiniGame(false);
+            return;
+        };
+        setMiniGame(true);
+        setMiniGameTraits(matchingTraits);
     };
 
     const attemptPersuasion = async (persuasion: string) => {
@@ -532,8 +551,8 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         <div className='dialog-box'>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
-            <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
-            {' '}{enemy.name} (Level {enemy.level})<br />
+            <img src={process.env.PUBLIC_URL + `/images/` + enemy?.origin + '-' + enemy?.sex + '.jpg'} alt={enemy?.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
+            {' '}{enemy?.name} (Level {enemy?.level})<br />
                 { currentIntent === 'combat' ?
                     <>
                         <CombatDialogButtons options={dialog[currentIntent]} handleCombatAction={handleCombatAction}  />
@@ -552,7 +571,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
-                                {enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                                {enemy?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
                                 </>
                             ) : state.playerTrait === "Kyr'naic" ? (
                                 <>
@@ -560,7 +579,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 </>
                             ) : state.playerTrait === 'Lilosian' ? (
                                 <>
-                                Tears well up in {enemy.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                Tears well up in {enemy?.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
                                 </>
                             ) : (
                                 <>
@@ -575,15 +594,15 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
-                                The {enemy.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                The {enemy?.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
                                 </>
                             ) : state.playerTrait === "Kyr'naic" ? (
                                 <>
-                                "{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                "{ascean.name}, all my life as {article} {enemy?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
                                 </>
                             ) : state.playerTrait === 'Lilosian' ? (
                                 <>
-                                Tears well up in the {enemy.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                                Tears well up in the {enemy?.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
                                 </>
                             ) : (
                                 <>
@@ -662,12 +681,12 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         <div>
                         { namedEnemy ? ( 
                             <>
-                            "Greetings, I am {enemy.name}. {ascean.name}, is it? How can I be of some help?"<br />
+                            "Greetings, I am {enemy?.name}. {ascean.name}, is it? How can I be of some help?"<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise atack {npc}?</Button>
                             </> 
                         ) : ( 
                             <>
-                            {article.charAt(0).toUpperCase()} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            {article.charAt(0).toUpperCase()} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities {npc}?</Button>
                             </> 
                         ) }
@@ -815,7 +834,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
-                                {enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                                {enemy?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
                                 </>
                             ) : state.playerTrait === "Kyr'naic" ? (
                                 <>
@@ -823,7 +842,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 </>
                             ) : state.playerTrait === 'Lilosian' ? (
                                 <>
-                                Tears well up in {enemy.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                Tears well up in {enemy?.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
                                 </>
                             ) : (
                                 <>
@@ -838,15 +857,15 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
-                                The {enemy.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                The {enemy?.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
                                 </>
                             ) : state.playerTrait === "Kyr'naic" ? (
                                 <>
-                                "{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                "{ascean.name}, all my life as {article} {enemy?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
                                 </>
                             ) : state.playerTrait === 'Lilosian' ? (
                                 <>
-                                Tears well up in the {enemy.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                                Tears well up in the {enemy?.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
                                 </>
                             ) : (
                                 <>
