@@ -35,7 +35,7 @@ const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHea
           (state.playerEffects.map((effect: any, index: number) => {
             return ( <StatusEffects effect={effect} player={true} key={index} /> )
         })) : '' }
-      <div className="">
+      <div className="game-block-top">
       <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
@@ -62,7 +62,7 @@ const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHea
       </div>
     : 
     <div className="game-block" id='opponent-block'>
-    <div className="">
+    <div className="opponent-block-top">
     <GamePlayerStats attributes={state.computer_attributes} player={state.computer} magicalDefense={state.computer_defense.magicalDefenseModifier} magicalPosture={state.computer_defense.magicalPosture} physicalDefense={state.computer_defense.physicalDefenseModifier} physicalPosture={state.computer_defense.physicalPosture} />
     <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
     </div>

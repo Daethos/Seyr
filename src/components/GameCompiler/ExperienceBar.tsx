@@ -28,7 +28,6 @@ const ExperienceBar = ({ totalExperience, currentExperience, story }: GameProps)
         };
     };
     
-    
     if (loading) {
         return (
             <Loading NavBar={true} />

@@ -47,7 +47,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
             </Modal.Body>
         </Modal>
         <Button variant='outline' style={{ }} id='level-up' onClick={() => setLevelUpModalShow(true)}>
-            <h3 style={{ fontSize: 12.5 + 'px', textAlign: 'center', color: '' }} className=''>Level++!!</h3>
+            <h3 className='level-up'>Level++!!</h3>
         </Button>
         </>
   )

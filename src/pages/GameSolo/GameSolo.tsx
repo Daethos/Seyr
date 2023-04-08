@@ -814,9 +814,6 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-
-
-
     useEffect(() => {
         if (mapState?.lastCurrentTileContent === 'enemy' || mapState?.lastCurrentTileContent === 'treasure' || gameState?.opponent) return;
         if (mapState?.currentTile?.content !== 'nothing') {
@@ -1363,10 +1360,10 @@ const GameSolo = ({ user }: GameProps) => {
                 if (mapState?.currentTile?.content !== 'city' && gameState.opponent.name !== "Wolf" && gameState.opponent.name !== "Bear") {
                     gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 };
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
                 };
-                if (gameState.instantStatus) gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1389,10 +1386,10 @@ const GameSolo = ({ user }: GameProps) => {
                     type: ACTIONS.COMPUTER_WIN,
                     payload: combatData
                 });
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
                     clearOpponent();
                 };
-                if (gameState.instantStatus) gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {

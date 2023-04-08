@@ -50,7 +50,7 @@ const StatusEffects = ({ effect, player }: Props) => {
     };
 
     const getEffectStyle = {
-        marginTop: player ? '-10%' : 0,
+        marginTop: player ? '-10%' : '',
         border: 2 + 'px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
     };

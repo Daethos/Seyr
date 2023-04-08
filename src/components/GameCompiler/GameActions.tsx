@@ -72,26 +72,20 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   }, [combatInitiated]);
 
   useEffect(() => {
-    if (!gameState.instantStatus) return;
-    let instantTimer: string | number | NodeJS.Timeout | undefined;
-    instantTimer = setTimeout(() => {
+    let instantTimer: ReturnType<typeof setTimeout>;
+    if (gameState.instantStatus) {
+      instantTimer = setTimeout(() => {
         gameDispatch({
           type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
-    }, 30000);
-    // const endTime = instantTimer ? new Date().getTime() + 30000 : 0;
-      // const interval = setInterval(() => {
-      //   const remainingTime = Math.round((endTime - new Date().getTime()) / 1000);
-      //   console.log(`Instant status will expire in ${remainingTime} seconds`);
-      // }, 1000);
-    setInstantTimerId(instantTimer);
+      }, 30000);
+    }
     return () => {
-      clearTimeout(instantTimerId);
-      // clearInterval(interval);
-      setInstantTimerId(null);
+      clearTimeout(instantTimer);
     };
   }, [gameState.instantStatus, gameDispatch]);
+  
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {

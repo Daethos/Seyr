@@ -128,7 +128,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
         <div>
         This appears to be {article} {lootDrop?.name}. <br />
         <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={lootDropPopover}>
-            <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></Button>
+            <Button variant=""  className="m-4 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></Button>
         </OverlayTrigger>
         </div>
     );

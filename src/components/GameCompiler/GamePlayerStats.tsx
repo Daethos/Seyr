@@ -87,14 +87,11 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
             <div>Kyosir: {attributes.totalKyosir} [ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</div>
             </Modal.Body>
         </Modal>
-        <div style={{ textAlign: 'center' }}>
-        {/* <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={playerPopover}> */}
-        <Button variant="" onClick={() => setModalShow(true)}>
-            <h3 style={{ color: '#fdf6d8', textDecoration: 'none', textShadow: "2px 2px 2px black" }} className='gameplayername'>
-            {player.name}</h3>
-        </Button>
-        {/* </OverlayTrigger> */}
-        </div>
+        {/* <div className='game-player-button'  style={{ textAlign: 'center' }}> */}
+            <Button variant="" onClick={() => setModalShow(true)} className='game-player-button'>
+                <h3 className='gameplayername'>{player.name}</h3>
+            </Button>
+        {/* </div> */}
         </>
     );
 };

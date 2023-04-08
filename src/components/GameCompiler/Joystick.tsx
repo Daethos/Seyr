@@ -184,7 +184,6 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickD
 const withJoystickBlocker = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
     return class extends React.Component<P & Props> {
       shouldJoystickBeBlocked = () => {
-        console.log("this.props.joystickDisabled", this.props.joystickDisabled);
         if (this.props.joystickDisabled) {
             return true;
         } else {
