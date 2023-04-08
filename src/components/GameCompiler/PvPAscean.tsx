@@ -18,7 +18,7 @@ interface Props {
 const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
 
   const getBlockStyle = {
-    marginTop: state.playerEffects.length > 0 ? '-16%' : '6%',
+    marginTop: state.playerEffects.length > 0 ? '-19%' : '6%',
   };
 
   if (loading) {
@@ -35,7 +35,7 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
           (state.playerEffects.map((effect: any, index: number) => {
             return ( <StatusEffects effect={effect} player={true} key={index} /> )
         })) : '' }
-      <div className="">
+      <div className="game-block-top">
       <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
@@ -62,7 +62,7 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
       </div>
     : 
     <div className="game-block" id='opponent-block'>
-    <div className="">
+    <div className="opponent-block-top">
     <GamePlayerStats attributes={state.enemy_attributes} player={state.enemy} magicalDefense={state.enemy_defense.magicalDefenseModifier} magicalPosture={state.enemy_defense.magicalPosture} physicalDefense={state.enemy_defense.physicalDefenseModifier} physicalPosture={state.enemy_defense.physicalPosture} />
     <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
     </div>

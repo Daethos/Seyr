@@ -9,7 +9,7 @@ import PVPAnimations from '../../components/GameCompiler/PvPAnimations';
 import { ACTIONS, PLAYER_ACTIONS, PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
 import { Enemy, GAME_ACTIONS, NPC, Player } from '../../components/GameCompiler/GameStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
-import { MAP_ACTIONS, DIRECTIONS, MapData } from '../../components/GameCompiler/WorldStore';
+import { MAP_ACTIONS, DIRECTIONS, MapData, debounce, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
 import GameMap from '../../components/GameCompiler/GameMap';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 import * as asceanAPI from '../../utils/asceanApi';
@@ -224,7 +224,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             type: ACTIONS.SET_DAMAGE_TYPE,
             payload: damageType.target.value
         });
-        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         playWO();
     };
 
@@ -235,7 +235,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 type: ACTIONS.SET_PRAYER_BLESSING,
                 payload: prayer.target.value
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
         };
@@ -670,7 +670,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             const npc: NPC = Object.assign({}, Merchant);
             gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: npc });
             const response = await asceanAPI.getAnimalStats(npc);
-            dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: response.data.data });
+            dispatch({ type: ACTIONS.SET_NEW_ENEMY, payload: { enemy: response.data.data, playerState: playerState } });
             await getNPCDialog(npc.name);
             gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: 'services' });
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
@@ -760,9 +760,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 'background': getPlayerBackground.background
             });
         };
-        if (content === 'city' && lastContent === 'city') {
-            return;
-        };
+        if (content === 'city' && lastContent === 'city') return;
         if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
         try {
             switch (content) {
@@ -896,6 +894,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     newTiles: newTiles,
                     player: state.playerPosition
                 };
+                if (newTile.content === 'enemy' || newTile.content === 'npc') mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: true });
                 await socket.emit(`playerDirectionChange`, socketData);
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_MAP_COORDS, payload: data });
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
@@ -906,30 +905,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
       
-    function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
-        let timer: ReturnType<typeof setTimeout>;
-        return function (this: T, ...args: any[]) {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
-    }; 
-    
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
-
-    async function getAsceanGroupCoords(x: number, y: number, map: any) {
-        let tiles = [];
-        for (let i = -4; i < 5; i++) {
-            for (let j = -4; j < 5; j++) {
-                const tileX = x + 100 + i;
-                const tileY = y + 100 + j;
-                const tile = map?.[tileX]?.[tileY];
-                if (tile) {
-                    tiles.push(tile);
-                };
-            };
-        };      
-        return tiles;
-    }; 
 
     useEffect(() => {
         if (gameState?.player?.origin && background.background === '') {

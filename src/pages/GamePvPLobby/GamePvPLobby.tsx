@@ -189,13 +189,6 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent("player_ready", playerReadyCallback);
 
         const gameCommencingCallback = async (data: any) => {
-            // const messageData = {
-            //     room: room,
-            //     author: 'The Ascea',
-            //     message: `Welcome, ${user?.username.charAt(0).toUpperCase() + user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
-            //     time: Date.now()
-            // };
-            // await socket.emit('send_message', messageData);
             setMessageList((list: any) => [...list, data]);
             setTimeout(() => setLiveGameplay(true), 10000);
         };
@@ -551,6 +544,7 @@ const GamePvPLobby = ({ user }: Props) => {
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
                 dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
+                mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: false });
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
@@ -637,7 +631,7 @@ const GamePvPLobby = ({ user }: Props) => {
     async function handleInitiate(pvpState: PvPData) {
         try {
             setEmergencyText(['']);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             if (pvpState.enemyPosition === -1) {
                 await socket.emit('computer_combat_initiated', pvpState);
                 return;
@@ -654,7 +648,7 @@ const GamePvPLobby = ({ user }: Props) => {
         try {
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             await socket.emit('instant_action', state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
@@ -671,7 +665,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 return;
             };
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             await socket.emit('consume_prayer', state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
@@ -698,6 +692,17 @@ const GamePvPLobby = ({ user }: Props) => {
     const instantUpdate = async (response: any) => {
         try {
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response });
+            if (response.player_win === true) {
+                if (response.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
+                await handlePlayerWin(response);
+            };
+            if (response.enemy_win === true) {
+                if (response.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
+                await handleEnemyWin(response);
+            };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Performing Instant Update');
         };

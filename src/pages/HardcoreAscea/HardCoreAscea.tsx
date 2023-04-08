@@ -19,7 +19,7 @@ import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Enemy } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS } from '../../components/GameCompiler/WorldStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
@@ -552,7 +552,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
             });
-            const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
+            const coords = await getAsceanCoords(0, 0, response.map);
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_COORDS,
                 payload: coords,
@@ -632,36 +632,8 @@ const HardCoreAscea = ({ user }: GameProps) => {
             };
         };
     };
-      
-    function debounce<T>(func: (this: T, ...args: any[]) => void, delay: number): (this: T, ...args: any[]) => void {
-        let timer: ReturnType<typeof setTimeout>;
-        return function (this: T, ...args: any[]) {
-            clearTimeout(timer);
-            timer = setTimeout(() => func.apply(this, args), delay);
-        };
-    }; 
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
-
-    async function getAsceanCoords(x: number, y: number, map: any) {
-        const tile = map?.[x + 100]?.[y + 100];
-        return tile ?? null;
-    };
-
-    async function getAsceanGroupCoords(x: number, y: number, map: any) {
-        let tiles = [];
-        for (let i = -4; i < 5; i++) {
-            for (let j = -4; j < 5; j++) {
-                const tileX = x + 100 + i;
-                const tileY = y + 100 + j;
-                const tile = map?.[tileX]?.[tileY];
-                if (tile) {
-                    tiles.push(tile);
-                };
-            };
-        };      
-        return tiles;
-    }; 
 
     const getPhenomena = async () => {
         if (gameState.cityButton) {

@@ -2634,15 +2634,11 @@ const instantDamageSplitter = async (combatData, mastery) => {
     console.log(damage, 'Damage');
     combatData.realized_player_damage = damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
-    combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+    combatData.current_computer_health = combatData.new_computer_health; 
     combatData.computerDamaged = true;
+    combatData.player_action = 'instant';
     combatData.player_action_description = 
-        `You instantly attack ${combatData.computer.name}'s Caeren with your Conviction for ${Math.round(damage)} Pure Damage.`    
-
-    if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
-        combatData.new_computer_health = 0;
-        combatData.player_win = true;
-    };
+        `You instantly attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Conviction for ${Math.round(damage)} Pure Damage.`;    
 };
 
 const instantActionSplitter = async (combatData) => {
@@ -2674,6 +2670,10 @@ const instantActionSplitter = async (combatData) => {
     };
     //TODO:FIXME: Change the statusEffect Check into a personalized variant for the insant action
     await instantEffectCheck(combatData);
+    if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
+        combatData.new_computer_health = 0;
+        combatData.player_win = true;
+    };
     return combatData;
 };
 
@@ -2788,7 +2788,6 @@ const consumePrayerSplitter = async (combatData) => {
             case 'Damage':
                 combatData.new_computer_health -= effect.effect.damage * 0.165;
                 combatData.current_computer_health -= effect.effect.damage * 0.165;
-
                 if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
                     combatData.new_computer_health = 0;
                     combatData.player_win = true;
@@ -2799,7 +2798,6 @@ const consumePrayerSplitter = async (combatData) => {
                 
                 combatData.new_computer_health = combatData.current_computer_health - (combatData.realized_computer_damage * 0.5);
                 combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
-            
                 combatData.player_action_description = 
                     `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.computer.name}, wearing for ${Math.round(combatData.realized_computer_damage * 0.5)} more damage.`    
             
@@ -2830,6 +2828,7 @@ const consumePrayerSplitter = async (combatData) => {
             combatData.computerDamaged = true;
         };
     };
+    combatData.player_action = 'prayer';
     combatData.prayerSacrifice = '';
     return combatData;
 };

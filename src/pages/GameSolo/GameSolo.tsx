@@ -1353,17 +1353,10 @@ const GameSolo = ({ user }: GameProps) => {
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
                 setTimeLeft(0);
-                dispatch({
-                    type: ACTIONS.PLAYER_WIN,
-                    payload: combatData
-                });
-                if (mapState?.currentTile?.content !== 'city' && gameState.opponent.name !== "Wolf" && gameState.opponent.name !== "Bear") {
-                    gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
-                };
+                dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
+                if (mapState?.currentTile?.content !== 'city' && gameState.opponent.name !== "Wolf" && gameState.opponent.name !== "Bear") gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
-                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
-                    clearOpponent();
-                };
+                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent();
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1382,14 +1375,9 @@ const GameSolo = ({ user }: GameProps) => {
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
             setTimeout(() => {
                 setTimeLeft(0);
-                dispatch({
-                    type: ACTIONS.COMPUTER_WIN,
-                    payload: combatData
-                });
+                dispatch({ type: ACTIONS.COMPUTER_WIN, payload: combatData });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
-                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") {
-                    clearOpponent();
-                };
+                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent();
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1408,23 +1396,6 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
-            // // gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
-
-            // setTimeout(() => { 
-            //     dispatch({
-            //         type: ACTIONS.INITIATE_COMBAT,
-            //         payload: response.data
-            //     });
-            //     soundEffects(response.data);
-            //     if (response.data.player_win === true) {
-            //         handlePlayerWin(response.data);
-            //     };
-            //     if (response.data.computer_win === true) {
-            //         handleComputerWin(response.data);
-            //     };
-            //     gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
-            // }, 2000);
 
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,

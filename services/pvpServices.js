@@ -2537,12 +2537,12 @@ const actionSplitter = async (combatData) => {
         await statusEffectCheck(newData);
         newData.combatRound += 1;
         newData.sessionRound += 1;
-        return newData
-    }
+        return newData;
+    };
 
     if (player_action === 'roll' && enemy_action === 'roll') { // If both choose Roll
         await doubleRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action);
-    }
+    };
 
     if (player_action === 'roll' && enemy_action !== 'roll') {
         await playerRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action);
@@ -2551,9 +2551,9 @@ const actionSplitter = async (combatData) => {
             await statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
-            return newData
-        }
-    }
+            return newData;
+        };
+    };
 
     if (enemy_action === 'roll' && player_action !== 'roll') {
         await enemyRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action)
@@ -2562,23 +2562,19 @@ const actionSplitter = async (combatData) => {
             await statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
-            return newData
-        }
-    }
+            return newData;
+        };
+    };
 
     if (player_action === 'attack' || player_action === 'posture' || enemy_action === 'attack' || enemy_action === 'posture') { // If both choose Attack
         if (player_initiative > enemy_initiative) {
             await attackCompiler(newData, player_action);
-            // if (enemy_action === 'attack' || enemy_action === 'posture') {
-                await enemyAttackCompiler(newData, enemy_action);
-            // }
+            await enemyAttackCompiler(newData, enemy_action);
         } else {
-            // if (enemy_action === 'attack' || enemy_action === 'posture') {
-                await enemyAttackCompiler(newData, enemy_action);
-            // }
+            await enemyAttackCompiler(newData, enemy_action);
             await attackCompiler(newData, player_action);
-        }
-    }
+        };
+    };
 
     await faithFinder(newData, player_action, enemy_action);
     await statusEffectCheck(newData);
@@ -2592,7 +2588,6 @@ const actionSplitter = async (combatData) => {
         `You have been defeated. Hail ${newData.enemy.name}, they have won the duel!`;
     };
     if (newData.player_win === true || newData.enemy_win === true) {
-        // To Remove Effects
         await statusEffectCheck(newData);
     };
 
@@ -2624,20 +2619,20 @@ const prayerSplitter = async (combatData, prayer) => {
                         combatData.weapons[0][key] += existingEffect.effect[key];
                     } else {
                         combatData.weapons[0][key] -= existingEffect.effect[key];
-                    }
-                }
+                    };
+                };
                 for (let key in combatData.player_defense) {
                     if (existingEffect.effect[key]) {
                         combatData.player_defense[key] += existingEffect.effect[key];
-                    }
-                }
+                    };
+                };
                 break;
-            }
+            };
             case 'Damage': {
                 existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                 break;
-            }
-        }
+            };
+        };
     } else if (existingEffect.refreshes) {
         existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
         existingEffect.tick.end += existingEffect.duration + 1;
@@ -2653,15 +2648,11 @@ const instantDamageSplitter = async (combatData, mastery) => {
     console.log(damage, 'Damage');
     combatData.realized_player_damage = damage;
     combatData.new_enemy_health = combatData.current_enemy_health - combatData.realized_player_damage;
-    combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
+    combatData.current_enemy_health = combatData.new_enemy_health; 
     combatData.enemyDamaged = true;
+    combatData.player_action = 'instant';
     combatData.player_action_description = 
-        `You instantly attack ${combatData.enemy.name}'s Caeren with your Conviction for ${Math.round(damage)} Pure Damage.`    
-
-    if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
-        combatData.new_enemy_health = 0;
-        combatData.player_win = true;
-    };
+        `You instantly attack ${combatData.enemy.name}'s Caeren with your ${combatData.player.mastery}'s Conviction for ${Math.round(damage)} Pure Damage.`;
 };
 
 const instantActionSplitter = async (combatData) => {
@@ -2693,6 +2684,10 @@ const instantActionSplitter = async (combatData) => {
     };
     //TODO:FIXME: Change the statusEffect Check into a personalized variant for the insant action
     await instantEffectCheck(combatData);
+    if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
+        combatData.new_enemy_health = 0;
+        combatData.player_win = true;
+    };
     return combatData;
 };
 

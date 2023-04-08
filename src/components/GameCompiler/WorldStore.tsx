@@ -358,7 +358,7 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
                 mapState.map[newMapX][newMapY].color = setColor(cluster);
                 setEnvironmentTile(x, y, mapState);
                 updateContentClusters(x, y, newX, newY, cluster);
-                const visitedTile = visitedTiles[`${x},${y}`];
+                const visitedTile = visitedTiles?.[`${x},${y}`];
 
                 if (visitedTile) {
                     setVisitedTile(x, y, newX, newY, mapState);
