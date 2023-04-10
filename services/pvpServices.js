@@ -2810,18 +2810,14 @@ const consumePrayerSplitter = async (combatData) => {
 
                 break;
             case 'Debuff':
-                
                 combatData.new_enemy_health = combatData.current_enemy_health - (combatData.realized_enemy_damage * 0.5);
                 combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
-            
                 combatData.player_action_description = 
-                    `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.enemy.name}, wearing for ${Math.round(combatData.realized_enemy_damage * 0.5)} more damage.`    
-            
+                    `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.enemy.name}, wearing for ${Math.round(combatData.realized_enemy_damage * 0.5)} more damage.`;  
                 if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
                     combatData.new_enemy_health = 0;
                     combatData.player_win = true;
                 };
-
                 for (let key in effect.effect) {
                     if (key in combatData.enemy_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
@@ -2844,6 +2840,7 @@ const consumePrayerSplitter = async (combatData) => {
             combatData.enemyDamaged = true;
         };
     };
+    combatData.player_action = 'prayer';
     combatData.prayerSacrifice = '';
     return combatData;
 };

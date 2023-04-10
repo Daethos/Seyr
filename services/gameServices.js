@@ -2795,7 +2795,6 @@ const consumePrayerSplitter = async (combatData) => {
 
                 break;
             case 'Debuff':
-                
                 combatData.new_computer_health = combatData.current_computer_health - (combatData.realized_computer_damage * 0.5);
                 combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
                 combatData.player_action_description = 

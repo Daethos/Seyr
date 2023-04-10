@@ -152,11 +152,9 @@ export const MapStore = (map: MapData, action: Action) => {
             if (newTile.content !== action.payload.currentTile.content) {
                 map.currentTile = newTile;      
             };
-            // const joystick = newTile.content === 'enemy' || newTile.content === 'npc' ? true : false;
             return {
                     ...map,
                     contentMoved: true,
-                    // joystickDisabled: joystick,
             };
         case 'SET_MAP_NAME':
             return {
@@ -174,15 +172,16 @@ export const MapStore = (map: MapData, action: Action) => {
                 generatingWorld: action.payload,
             };
         case 'SET_NEW_ENVIRONMENT':
+            console.log(action.payload.currentTile, action.payload.contentClusters[action.payload.currentTile.content], "NEW ENVIRONMENT");
             const newLastCurrentTileContent = action.payload.currentTile.content;
+            console.log(newLastCurrentTileContent, action.payload.currentTile.content, "NEW LAST CURRENT TILE CONTENT");
             setEnvironmentTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
-            sliceContentCluster(action.payload.currentTile.x, action.payload.currentTile.y, action.payload.currentTile.content, action.payload.contentClusters);
+            console.log(action.payload.currentTile, action.payload.contentClusters[action.payload.currentTile.content], "NEW ENVIRONMENT AFTER SET ENVIRONMENT TILE");
+            sliceContentCluster(action.payload.currentTile.x, action.payload.currentTile.y, newLastCurrentTileContent, action.payload.contentClusters);
             setVisitedTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
-            // const newJoystick = map.currentTile.content === 'enemy' || map.currentTile.content === 'npc' ? true : false;
             return {
                 ...map,
                 lastCurrentTileContent: newLastCurrentTileContent,
-                // joystickDisabled: newJoystick,
             };
         case 'SET_MAP_MOVED':
             return {
@@ -213,7 +212,7 @@ function setEnvironmentTile(x: number, y: number, map: MapData) {
     const mapX = x + 100;
     const mapY = y + 100;
     
-    if (mapX >= 0 && mapX < map.map.length && mapY >= 0 && mapY < map.map[0].length) {
+    if (mapX >= 0 && mapX < map.map.length && mapY >= 0 && mapY < map.map.length) {
         map.map[mapX][mapY].content = 'nothing';
         map.map[mapX][mapY].color = 'green';
     };
@@ -235,8 +234,11 @@ function setVisitedTile(x: number, y: number, newX: number, newY: number, map: M
 
 function sliceContentCluster(oldX: number, oldY: number, contentType: string, contentClusters: any) {
     // Get the index of the old coordinate in the corresponding array in contentClusters
+    console.log(contentType, "Content Type in Slice Function")
     const oldClusterIndex = contentClusters[contentType].findIndex((coord: number[]) => coord[0] === oldX && coord[1] === oldY);
-  
+    if (contentType === 'enemy') {
+        console.log(contentClusters.enemy, "Enemy Clusters in Slicing Function")
+    };
     // Remove the old coordinate from the array
     if (oldClusterIndex !== -1) {
       contentClusters[contentType].splice(oldClusterIndex, 1);
@@ -315,7 +317,7 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
         // Add the new coordinate to the array for the new content value
         contentClusters[contentType].push([newX, newY]);
     };
-  
+    console.log(contentClusters.enemy, "Enemy Cluster");
     // Loop through each content cluster
     for (const cluster in contentClusters) {
         // If the cluster is 'nothing', skip it
@@ -324,14 +326,14 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
         // Loop through each coordinate in the cluster
         for (const coord of contentClusters[cluster]) {
             const [x, y] = coord;
-            const oldMapX = x + 100;
-            const oldMapY = y + 100;
+            const oldMapX: number = x + 100;
+            const oldMapY: number = y + 100;
 
             // Get the adjacent tiles
-            const adjacentTiles = getAdjacentTiles(x, y);
+            const adjacentTiles: [number, number][] = getAdjacentTiles(x, y);
             
             // Filter the adjacent tiles to find the ones that are 'nothing'
-            const eligibleTiles = adjacentTiles.filter((tile) => {
+            const eligibleTiles: [number, number][] = adjacentTiles.filter((tile) => {
                 const [tileX, tileY] = tile;
                 const mapX = tileX + 100;
                 const mapY = tileY + 100;
@@ -339,18 +341,17 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
                     mapX >= 0 &&
                     mapX < mapState.map.length &&
                     mapY >= 0 &&
-                    mapY < mapState.map[0].length &&
+                    mapY < mapState.map.length &&
                     mapState.map[mapX][mapY].content === 'nothing'
                 );
             });
     
             // If there are eligible tiles, choose one at random and move the content
             if (eligibleTiles.length > 0) {
-                const randomIndex = Math.floor(Math.random() * eligibleTiles.length);
+                const randomIndex: number = Math.floor(Math.random() * eligibleTiles.length);
                 const [newX, newY] = eligibleTiles[randomIndex];
-                const newMapX = newX + 100;
-                const newMapY = newY + 100;
-
+                const newMapX: number = newX + 100;
+                const newMapY: number = newY + 100;
 
                 // Update the content property of the new tile
                 const oldContent = mapState.map[oldMapX][oldMapY].content;
@@ -359,44 +360,9 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
                 setEnvironmentTile(x, y, mapState);
                 updateContentClusters(x, y, newX, newY, cluster);
                 const visitedTile = visitedTiles?.[`${x},${y}`];
-
                 if (visitedTile) {
                     setVisitedTile(x, y, newX, newY, mapState);
                 };
-
-                if (oldContent !== 'nothing') {
-
-                    // console.log(mapState.map[oldMapX][oldMapY], "Old Tile?");
-                    // mapState.visitedTiles[`${x},${y}`].content = 'nothing';
-                    // mapState.visitedTiles[`${x},${y}`].color = 'green';
-                    // console.log(mapState.map[oldMapX][oldMapY], "New Tile?");
-                    // if (mapState.visitedTiles[`${x},${y}`]) {
-                    //     console.log(mapState.visitedTiles[`${x},${y}`], mapState.map[oldMapX][oldMapY], "Visited Tile, Map Tile Pre-Func");
-                    //     setVisitedTile(x, y, mapState);
-                    //     console.log(mapState.visitedTiles[`${x},${y}`], mapState.map[oldMapX][oldMapY], "Visited Tile, Map Tile Post-Func");
-                    // };
-                };
-
-
-
-                // Loop through each visited tile
-                // for (const tileCoord in visitedTiles) {
-                //     let visitedTile = visitedTiles[tileCoord];
-                //     const [tileX, tileY] = tileCoord.split(",").map(Number);
-                //     const newMapX = tileX + 100;
-                //     const newMapY = tileY + 100;
-
-                //     // console.log(visitedTile, visitedTiles[`${tileX},${tileY}`], "Visited Tile & visitedTiles pre for loop");
-                //     // If the visited tile's content matches the current cluster being moved, update the visited tile with the new cluster information
-                //     visitedTile.content = mapState.map[newMapX][newMapY].content;
-                //     visitedTile.color = mapState.map[newMapX][newMapY].color;
-                //     visitedTiles[`${tileX},${tileY}`] = visitedTile;
-                //     // console.log(visitedTile, visitedTiles[`${tileX},${tileY}`], "Visited Tile & visitedTiles post for loop");
-                //     // visitedTiles[`${tileX},${tileY}`].content = mapState.map[newMapX][newMapY].content;
-                //     // visitedTiles[`${tileX},${tileY}`].color = mapState.map[newMapX][newMapY].color;
-                //     // setVisitedTile(tileX, tileY, mapState);
-                // };
-                // mapState.visitedTiles = visitedTiles;
             };
         };
     };
@@ -430,3 +396,37 @@ export async function getAsceanGroupCoords(x: number, y: number, map: any) {
     };      
     return tiles;
 };
+
+// if (oldContent !== 'nothing') {
+
+                    // console.log(mapState.map[oldMapX][oldMapY], "Old Tile?");
+                    // mapState.visitedTiles[`${x},${y}`].content = 'nothing';
+                    // mapState.visitedTiles[`${x},${y}`].color = 'green';
+                    // console.log(mapState.map[oldMapX][oldMapY], "New Tile?");
+                    // if (mapState.visitedTiles[`${x},${y}`]) {
+                    //     console.log(mapState.visitedTiles[`${x},${y}`], mapState.map[oldMapX][oldMapY], "Visited Tile, Map Tile Pre-Func");
+                    //     setVisitedTile(x, y, mapState);
+                    //     console.log(mapState.visitedTiles[`${x},${y}`], mapState.map[oldMapX][oldMapY], "Visited Tile, Map Tile Post-Func");
+                    // };
+                // };
+
+
+
+                // Loop through each visited tile
+                // for (const tileCoord in visitedTiles) {
+                //     let visitedTile = visitedTiles[tileCoord];
+                //     const [tileX, tileY] = tileCoord.split(",").map(Number);
+                //     const newMapX = tileX + 100;
+                //     const newMapY = tileY + 100;
+
+                //     // console.log(visitedTile, visitedTiles[`${tileX},${tileY}`], "Visited Tile & visitedTiles pre for loop");
+                //     // If the visited tile's content matches the current cluster being moved, update the visited tile with the new cluster information
+                //     visitedTile.content = mapState.map[newMapX][newMapY].content;
+                //     visitedTile.color = mapState.map[newMapX][newMapY].color;
+                //     visitedTiles[`${tileX},${tileY}`] = visitedTile;
+                //     // console.log(visitedTile, visitedTiles[`${tileX},${tileY}`], "Visited Tile & visitedTiles post for loop");
+                //     // visitedTiles[`${tileX},${tileY}`].content = mapState.map[newMapX][newMapY].content;
+                //     // visitedTiles[`${tileX},${tileY}`].color = mapState.map[newMapX][newMapY].color;
+                //     // setVisitedTile(tileX, tileY, mapState);
+                // };
+                // mapState.visitedTiles = visitedTiles;

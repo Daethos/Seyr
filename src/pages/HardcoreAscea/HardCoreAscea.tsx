@@ -19,7 +19,7 @@ import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import { GAME_ACTIONS, GameStore, initialGameData, Enemy } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
+import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, debounce, getAsceanCoords, getAsceanGroupCoords, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
 import Coordinates from '../../components/GameCompiler/Coordinates';
@@ -283,10 +283,8 @@ const HardCoreAscea = ({ user }: GameProps) => {
             playOpponent();
             await getOpponentDialog(selectedOpponent.data.name);
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
-            dispatch({
-                type: ACTIONS.SET_DUEL,
-                payload: ''
-            });
+            setTimeLeft(gameState.timeLeft);
+            dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         };
@@ -503,6 +501,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             setTimeout(() => {
                 dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
                 gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
+                mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: false });
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
@@ -607,23 +606,61 @@ const HardCoreAscea = ({ user }: GameProps) => {
         };
     };
 
-    const handleDirectionChange = async (direction: Direction) => {
+    const useMoveContentEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (mapState.currentTile.content !== 'nothing') {
+                handleTileContent(mapState.currentTile.content);
+            };
+            return () => {
+                console.log("Cleaning Up Move Content Effect");
+            };
+        }, [mapState.currentTile, mapState.currentTile.content]);
+    };
+    useMoveContentEffect(mapState);
+
+    const usePlayerMovementEffect = (mapState: MapData, mapDispatch: (arg0: { type: string; payload: string | boolean | MapData; }) => void) => {
+        useEffect(() => {
+            if (mapState?.currentTile?.content === 'nothing') {
+                if (gameState.cityButton) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+                    setBackground({
+                        ...background,
+                        'background': getPlayerBackground.background
+                    });
+                };
+                if (mapState.steps !== 3 && !mapState.contentMoved) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                };
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
+                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+                });
+                return () => {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
+                };
+            };
+        }, [mapState.steps]);
+    };
+    usePlayerMovementEffect(mapState, mapDispatch);
+
+    const handleDirectionChange = async (direction: Direction, mapData: MapData) => {
         const offset = DIRECTIONS[direction];
         if (offset) {
-            const newX = mapState.currentTile.x + offset.x;
-            const newY = mapState.currentTile.y + offset.y;
+            const newX = mapData.currentTile.x + offset.x;
+            const newY = mapData.currentTile.y + offset.y;
             if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
-                const newTile = await getAsceanCoords(newX, newY, mapState.map);
-                const newTiles = await getAsceanGroupCoords(newX, newY, mapState.map);
+                const newTile = await getAsceanCoords(newX, newY, mapData.map);
+                const newTiles = await getAsceanGroupCoords(newX, newY, mapData.map);
                 const data = {
                     newTile: newTile,
-                    oldTile: mapState.currentTile,
+                    oldTile: mapData.currentTile,
                     newTiles: newTiles,
-                    map: mapState,
+                    map: mapData,
                 };
                 mapDispatch({
-                type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
-                payload: data,
+                    type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
+                    payload: data,
                 });
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);
@@ -788,32 +825,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
             console.log(err.message, 'Error Handling Tile Content');
         }
     };
-
-    useEffect(() => {
-        if (mapState?.currentTile?.content === 'nothing') {
-            if (gameState.cityButton) {
-                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                setBackground({
-                    ...background,
-                    'background': getPlayerBackground.background
-                });
-            };
-            if (mapState.steps !== 2 && !mapState.contentMoved) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-            };
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                payload: "You continue moving through the arena and find nothing of interest in your path, yet the combatants seem to be watching you despite their attention toward the other."
-            });
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_MOVED,
-                payload: false
-            })
-            return;
-        };
-        handleTileContent(mapState?.currentTile?.content);
-    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
@@ -999,7 +1010,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             await gainExperience();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
-                setTimeLeft(0);
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 dispatch({
                     type: ACTIONS.PLAYER_WIN,
                     payload: combatData
@@ -1048,7 +1059,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
         try {
             setEmergencyText([``]);
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
@@ -1076,7 +1087,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 return;
             };
             setEmergencyText([``]);
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({
@@ -1196,7 +1207,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                         <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />
                     : ""}
                     <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
-                    <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
+                    <Joystick mapState={mapState} onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
                     <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                 </>
             }

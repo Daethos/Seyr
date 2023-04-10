@@ -154,6 +154,74 @@ const GameSolo = ({ user }: GameProps) => {
         }, moveTimer);
         return () => clearTimeout(timer);
     }, [moveTimer, mapState]);
+
+    const useMoveContentEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (mapState.currentTile.content !== 'nothing') {
+                handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
+            };
+            return () => {
+                console.log("Cleaning Up Move Content Effect");
+            };
+        }, [mapState.currentTile, mapState.currentTile.content]);
+    };
+    useMoveContentEffect(mapState);
+
+    const usePlayerMovementEffect = (mapState: MapData, mapDispatch: (arg0: { type: string; payload: string | boolean | MapData; }) => void) => {
+        useEffect(() => {
+            if (mapState?.currentTile?.content === 'nothing') {
+                if (gameState.cityButton) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+                    setBackground({
+                        ...background,
+                        'background': getPlayerBackground.background
+                    });
+                };
+                if (mapState.steps !== 3 && !mapState.contentMoved) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                };
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
+                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
+                });
+                return () => {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
+                };
+            };
+        }, [mapState.steps]);
+    };
+    usePlayerMovementEffect(mapState, mapDispatch);
+
+    const handleDirectionChange = async (direction: Direction, mapData: MapData) => {
+        if (mapData.joystickDisabled) return;
+        const offset = DIRECTIONS[direction];
+        if (offset) {
+            const newX = mapData.currentTile.x + offset.x;
+            const newY = mapData.currentTile.y + offset.y;
+            if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
+                const newTile = await getAsceanCoords(newX, newY, mapData.map);
+                if (newTile.content === 'enemy' || newTile.content === 'npc') mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: true });
+                const newTiles = await getAsceanGroupCoords(newX, newY, mapData.map);
+                const data = {
+                    newTile: newTile,
+                    oldTile: mapData.currentTile,
+                    newTiles: newTiles,
+                    map: mapData,
+                };
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
+                    payload: data,
+                });
+                const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
+                const random = Math.floor(Math.random() * options.length);
+                options[random]();
+                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            };
+        };
+    };
+    
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
     
 
     const loadMap = async (ascean: Player, map: MapData) => {
@@ -483,8 +551,7 @@ const GameSolo = ({ user }: GameProps) => {
             dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
           }, 6000);
         }
-    }, [state.player_luckout]);
-      
+    }, [state.player_luckout]);   
 
     useEffect(() => {
         if (gameState.itemSaved === false) return;
@@ -621,11 +688,12 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    const clearOpponent = async () => {
+    const clearOpponent = async (data: CombatData) => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            if (mapState.currentTile.content === 'enemy' && state.new_computer_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+            if (mapState.currentTile.content === 'enemy' && data.new_computer_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
+            setMoveTimer(gameState.moveTimer);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
                 gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
@@ -814,61 +882,6 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-    useEffect(() => {
-        if (mapState?.lastCurrentTileContent === 'enemy' || mapState?.lastCurrentTileContent === 'treasure' || gameState?.opponent) return;
-        if (mapState?.currentTile?.content !== 'nothing') {
-            handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
-            return;
-        };
-        if (gameState.cityButton) {
-            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-            setBackground({
-                ...background,
-                'background': getPlayerBackground.background
-            });
-        };
-        if (mapState.steps !== 2 && !mapState.contentMoved) {
-            mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-        };
-        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-        mapDispatch({
-            type: MAP_ACTIONS.SET_MAP_CONTEXT,
-            payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-        });
-        return () => {
-            mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
-        };
-    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
-
-    const handleDirectionChange = async (direction: Direction) => {
-        if (mapState.joystickDisabled) return;
-        const offset = DIRECTIONS[direction];
-        if (offset) {
-            const newX = mapState.currentTile.x + offset.x;
-            const newY = mapState.currentTile.y + offset.y;
-            if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
-                const newTile = await getAsceanCoords(newX, newY, mapState.map);
-                if (newTile.content === 'enemy' || newTile.content === 'npc') mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: true });
-                const newTiles = await getAsceanGroupCoords(newX, newY, mapState.map);
-                const data = {
-                    newTile: newTile,
-                    oldTile: mapState.currentTile,
-                    newTiles: newTiles,
-                    map: mapState,
-                };
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
-                    payload: data,
-                });
-                const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
-                const random = Math.floor(Math.random() * options.length);
-                options[random]();
-                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            };
-        };
-    };
-    
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
 
     const getPhenomena = async () => {
         if (gameState.cityButton) {
@@ -1066,7 +1079,7 @@ const GameSolo = ({ user }: GameProps) => {
         gameDispatch({ type: GAME_ACTIONS.SET_ENTER_CITY, payload: `You're now in a local city of the province. Using the City button, you can access the city's services and shops.`});
         setTimeout(() => {
             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-        }, 4000);
+        }, 3000);
     };
 
     const handleTileContent = async (content: string, lastContent: string) => {
@@ -1077,7 +1090,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
         };
         if (content === 'city' && lastContent === 'city') {
-            if (mapState.steps % 10) {
+            if (mapState.steps % 3) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             };
             return;
@@ -1313,7 +1326,7 @@ const GameSolo = ({ user }: GameProps) => {
                     type: ACTIONS.COMPUTER_WIN,
                     payload: data
                 });
-                clearOpponent();
+                clearOpponent(data);
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
                 if (gameState?.player?.level > 3) {
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -1356,7 +1369,7 @@ const GameSolo = ({ user }: GameProps) => {
                 dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
                 if (mapState?.currentTile?.content !== 'city' && gameState.opponent.name !== "Wolf" && gameState.opponent.name !== "Bear") gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
-                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent();
+                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent(combatData);
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1377,7 +1390,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setTimeLeft(0);
                 dispatch({ type: ACTIONS.COMPUTER_WIN, payload: combatData });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
-                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent();
+                if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent(combatData);
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
@@ -1618,7 +1631,7 @@ const GameSolo = ({ user }: GameProps) => {
                     : 
                         <>
                         <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
-                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
+                        <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} mapState={mapState} />
                         <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                         </>
                     }

@@ -4,13 +4,14 @@ import { throttle } from 'lodash';
 type Direction = "up" | "down" | "left" | "right" | "upLeft" | "upRight" | "downLeft" | "downRight";
 
 interface Props {
+    mapState: MapData;
     onDirectionChange: (...args: any[]) => void;
     debouncedHandleDirectionChange: (...args: any[]) => void;
     joystickDisabled: boolean;
     isBlocked?: boolean;
 };
 
-const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickDisabled, isBlocked }: Props) => {
+const Joystick = ({ mapState, onDirectionChange, debouncedHandleDirectionChange, joystickDisabled, isBlocked }: Props) => {
     const [mobileDisabled, setMobileDisabled] = useState<boolean>(false);
     const [touchStart, setTouchStart] = useState<{ x: number; y: number }>({
         x: 0,
@@ -25,7 +26,7 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickD
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (joystickDisabled || isBlocked) return;
+            if (joystickDisabled || isBlocked || mapState.joystickDisabled) return;
             const keyDirectionMap: Record<string, Direction> = {
                 ArrowUp: "up",
                 ArrowDown: "down",
@@ -72,11 +73,11 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickD
                         diagonalDirection = "upLeft";
                     };
                     if (diagonalDirection) {
-                        onDirectionChange(diagonalDirection);
+                        onDirectionChange(diagonalDirection, mapState);
                         lastDirectionRef.current = diagonalDirection;
                     };
                 } else {
-                    onDirectionChange(direction);
+                    onDirectionChange(direction, mapState);
                     lastDirectionRef.current = direction;
                 };
             };
@@ -84,7 +85,7 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickD
       
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [onDirectionChange]);
+    }, [onDirectionChange, mapState]);
 
     const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
         if (joystickDisabled || isBlocked) return;
@@ -110,28 +111,28 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickD
 
         const angleDegrees = angle * 180 / Math.PI;
         if (angleDegrees >= -22.5 && angleDegrees < 22.5) {
-            debouncedHandleDirectionChange("right");
+            debouncedHandleDirectionChange("right", mapState);
             direction = "right";
         } else if (angleDegrees >= 22.5 && angleDegrees < 67.5) {
-            debouncedHandleDirectionChange("downRight");
+            debouncedHandleDirectionChange("downRight", mapState);
             direction = "downRight";
         } else if (angleDegrees >= 67.5 && angleDegrees < 112.5) {
-            debouncedHandleDirectionChange("down");
+            debouncedHandleDirectionChange("down", mapState);
             direction = "down";
         } else if (angleDegrees >= 112.5 && angleDegrees < 157.5) {
-            debouncedHandleDirectionChange("downLeft");
+            debouncedHandleDirectionChange("downLeft", mapState);
             direction = "downLeft";
         } else if (angleDegrees >= 157.5 || angleDegrees < -157.5) {
-            debouncedHandleDirectionChange("left");
+            debouncedHandleDirectionChange("left", mapState);
             direction = "left";
         } else if (angleDegrees >= -157.5 && angleDegrees < -112.5) {
-            debouncedHandleDirectionChange("upLeft");
+            debouncedHandleDirectionChange("upLeft", mapState);
             direction = "upLeft";
         } else if (angleDegrees >= -112.5 && angleDegrees < -67.5) {
-            debouncedHandleDirectionChange("up");
+            debouncedHandleDirectionChange("up", mapState);
             direction = "up";
         } else {
-            debouncedHandleDirectionChange("upRight");
+            debouncedHandleDirectionChange("upRight", mapState);
             direction = "upRight";  
         }
         if (lastDirectionRef.current !== direction && !joystickDisabled && !isBlocked) {
@@ -184,6 +185,7 @@ const Joystick = ({ onDirectionChange, debouncedHandleDirectionChange, joystickD
 const withJoystickBlocker = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
     return class extends React.Component<P & Props> {
       shouldJoystickBeBlocked = () => {
+        // console.log(this.props.joystickDisabled, "joystickDisabled")
         if (this.props.joystickDisabled) {
             return true;
         } else {

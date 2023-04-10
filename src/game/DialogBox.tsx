@@ -8,7 +8,7 @@ import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
 import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
-import { ACTIONS } from '../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatData } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
 import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
@@ -75,7 +75,7 @@ interface Props {
     mapState: any;
     mapDispatch: any;
     currentIntent: any;
-    clearOpponent: () => Promise<void>;
+    clearOpponent: (data: CombatData) => Promise<void>;
     gameDispatch: React.Dispatch<any>;
     gameState: GameData;
 };
@@ -202,7 +202,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const clearDuel = async () => {
         try {
             await checkingLoot();
-            await clearOpponent();
+            await clearOpponent(state);
 
         } catch (err: any) {
             console.log(err.message, "Error Clearing Duel");

@@ -6,7 +6,7 @@ import ToastAlert from '../ToastAlert/ToastAlert'
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import MerchantTable from './MerchantTable';
-import { ACTIONS } from './CombatStore';
+import { ACTIONS, CombatData } from './CombatStore';
 import { GAME_ACTIONS } from './GameStore';
 import Inventory from './Inventory';
 import DialogTree, { getNodesForNPC, npcIds } from '../GameCompiler/DialogNode';
@@ -58,7 +58,7 @@ interface CityProps {
     getOpponent: () => Promise<void>;
     resetAscean: () => Promise<void>;
     deleteEquipment: (eqp: any) => Promise<void>;
-    clearOpponent: () => Promise<void>;
+    clearOpponent: (data: CombatData) => Promise<void>;
     gameDispatch: React.Dispatch<any>;
     gameState: any;
 }
@@ -88,7 +88,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         const itemGroups: Record<string, any[]> = {};
       
         inventory.forEach(item => {
-            const key = `${item.name}-${item.rarity}`;
+            const key = `${item?.name}-${item?.rarity}`;
             itemGroups[key] = itemGroups[key] || [];
             itemGroups[key].push(item);
         });
@@ -110,7 +110,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
     const handleCityOption = async (option: string) => {
         console.log(option, 'Option Clicked');
         await checkingLoot();
-        if (enemy) await clearOpponent();
+        if (enemy) await clearOpponent(state);
         gameDispatch({ type: GAME_ACTIONS.SET_CITY_OPTION, payload: option });
         setCurrentNodeIndex(0);
     };
