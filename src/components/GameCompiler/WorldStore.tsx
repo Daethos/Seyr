@@ -47,6 +47,7 @@ export const MAP_ACTIONS = {
     SET_MULTIPLAYER_PLAYER: 'SET_MULTIPLAYER_PLAYER',
     SET_MAP_DATA_SYNC: 'SET_MAP_DATA_SYNC',
     SET_JOYSTICK_DISABLED: 'SET_JOYSTICK_DISABLED',
+    SYNC_NEW_ENVIRONMENT: 'SYNC_NEW_ENVIRONMENT',
 };
 
 export const initialMapData: MapData = {
@@ -172,16 +173,21 @@ export const MapStore = (map: MapData, action: Action) => {
                 generatingWorld: action.payload,
             };
         case 'SET_NEW_ENVIRONMENT':
-            console.log(action.payload.currentTile, action.payload.contentClusters[action.payload.currentTile.content], "NEW ENVIRONMENT");
             const newLastCurrentTileContent = action.payload.currentTile.content;
-            console.log(newLastCurrentTileContent, action.payload.currentTile.content, "NEW LAST CURRENT TILE CONTENT");
             setEnvironmentTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
-            console.log(action.payload.currentTile, action.payload.contentClusters[action.payload.currentTile.content], "NEW ENVIRONMENT AFTER SET ENVIRONMENT TILE");
             sliceContentCluster(action.payload.currentTile.x, action.payload.currentTile.y, newLastCurrentTileContent, action.payload.contentClusters);
             setVisitedTile(action.payload.currentTile.x, action.payload.currentTile.y, action.payload.currentTile.x, action.payload.currentTile.y, action.payload);
             return {
                 ...map,
                 lastCurrentTileContent: newLastCurrentTileContent,
+            };
+        case 'SYNC_NEW_ENVIRONMENT':
+            const preConvertedContent = action.payload.convertedTile.content;
+            setEnvironmentTile(action.payload.convertedTile.x, action.payload.convertedTile.y, action.payload);
+            sliceContentCluster(action.payload.convertedTile.x, action.payload.convertedTile.y, preConvertedContent, action.payload.contentClusters);
+            syncVisitedTile(action.payload.convertedTile.x, action.payload.convertedTile.y, action.payload);
+            return {
+                ...map,
             };
         case 'SET_MAP_MOVED':
             return {
@@ -218,6 +224,13 @@ function setEnvironmentTile(x: number, y: number, map: MapData) {
     };
 };
 
+function syncVisitedTile(x: number, y: number, map: MapData) {
+    if (map?.visitedTiles?.[`${x},${y}`]) {
+        map.visitedTiles[`${x},${y}`].content = 'nothing';
+        map.visitedTiles[`${x},${y}`].color = 'green';
+    };
+};
+
 function setVisitedTile(x: number, y: number, newX: number, newY: number, map: MapData) {
     // console.log(map.visitedTiles[`${x},${y}`], "Visited Tile")
     let oldContent = map.visitedTiles[`${x},${y}`].content;
@@ -234,11 +247,8 @@ function setVisitedTile(x: number, y: number, newX: number, newY: number, map: M
 
 function sliceContentCluster(oldX: number, oldY: number, contentType: string, contentClusters: any) {
     // Get the index of the old coordinate in the corresponding array in contentClusters
-    console.log(contentType, "Content Type in Slice Function")
     const oldClusterIndex = contentClusters[contentType].findIndex((coord: number[]) => coord[0] === oldX && coord[1] === oldY);
-    if (contentType === 'enemy') {
-        console.log(contentClusters.enemy, "Enemy Clusters in Slicing Function")
-    };
+
     // Remove the old coordinate from the array
     if (oldClusterIndex !== -1) {
       contentClusters[contentType].splice(oldClusterIndex, 1);
@@ -317,7 +327,6 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
         // Add the new coordinate to the array for the new content value
         contentClusters[contentType].push([newX, newY]);
     };
-    console.log(contentClusters.enemy, "Enemy Cluster");
     // Loop through each content cluster
     for (const cluster in contentClusters) {
         // If the cluster is 'nothing', skip it

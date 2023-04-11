@@ -806,7 +806,6 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 tertiary: action.payload.tertiary,
             };
         case 'SET_OPPONENT':
-            console.log(action.payload, "Setting Opponent in useReducer");
             return {
                 ...game,
                 opponent: action.payload,
@@ -876,7 +875,6 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 },
             };
         case 'SET_INVENTORY':
-            console.log("Setting Inventory", action.payload)
             return {
                 ...game,
                 player: {
@@ -886,7 +884,6 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 },
             };
         case 'SET_INVENTORY_POSITION':
-            console.log("Setting Inventory Positions", action.payload)
             return {
                 ...game,
                 player: {
@@ -923,7 +920,6 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 itemSaved: action.payload,
             };
         case 'EQP_SWAP':
-            console.log("Swapping Equipment?", action.payload);
             return {
                 ...game,
                 eqpSwap: action.payload,
@@ -1118,7 +1114,6 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 vibrationTime: action.payload.vibrationTime,
             };
         case 'SET_MAP_MODE':
-            console.log(action, "MAP MODE")
             return {
                 ...game,
                 mapMode: action.payload,

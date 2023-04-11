@@ -103,10 +103,9 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         // if (mapState.currentTile.content === 'enemy') return;
-        if (mapState.contentMoved === true) return;
+        if (mapState.contentMoved === true || checkPlayerTiles(mapState)) return;
         const timer = setTimeout(() => {
             if (moveTimer === 0 && mapState.steps > 0 && playerState.playerOne?.user?._id === user._id) {
-                console.log("Am I here?", playerState.playerOne?.user, user, playerState.playerOne?.user?._id === user._id);
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
                 setMoveTimer(gameState.moveTimer);
             };
@@ -144,6 +143,23 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
     }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
+
+    function checkPlayerTiles(mapData: MapData) {
+        const players = [mapData?.player1Tile, mapData?.player2Tile, mapData?.player3Tile, mapData?.player4Tile];
+        let combat = 0;
+        players.forEach((player: any) => {
+            if (checkEnemies(player?.x, player?.y, mapData)) {
+                combat += 1;
+            };
+        });
+        return Boolean(combat);
+    };
+      
+    function checkEnemies(x: number, y: number, map: MapData) {
+        const tile = map?.map?.[x + 100]?.[y + 100];
+        return tile?.content === 'enemy';
+    };
+      
 
     const saveWorld = async () => {
         try {

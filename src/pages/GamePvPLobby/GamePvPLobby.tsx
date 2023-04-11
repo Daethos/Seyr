@@ -6,7 +6,7 @@ import * as io from 'socket.io-client'
 import Container from 'react-bootstrap/Container'
 import Loading from '../../components/Loading/Loading'
 import GameChat from '../../components/GameCompiler/GameChat';
-import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore } from '../../components/GameCompiler/PvPStore';
+import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PlayerData } from '../../components/GameCompiler/PvPStore';
 import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { MAP_ACTIONS, MapStore, initialMapData, MapData } from '../../components/GameCompiler/WorldStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
@@ -167,13 +167,23 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
         const mapContentSyncedCallback = async (response: any) => {
-            console.log(response, "Map Content Moved Response");
+            // console.log(response, "Map Content Moved Response");
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA_SYNC,
                 payload: response
             });
         };
         handleSocketEvent("mapContentSynced", mapContentSyncedCallback);
+
+        const newEnvironmentCallback = async (response: any) => {
+            console.log(response, "New Environment Response");
+            const newMapData = {
+                ...mapState,
+                convertedTile: response
+            };
+            mapDispatch({ type: MAP_ACTIONS.SYNC_NEW_ENVIRONMENT, payload: newMapData });
+        };
+        handleSocketEvent("newEnvironment", newEnvironmentCallback);
 
         const playerReadyCallback = async (data: any) => {
             if (data._id === playerState?.playerOne?.user?._id) {
@@ -238,6 +248,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('new_player_data_response', newPlayerDataResponseCallback);
                 socket.off('mapCreated', mapCreatedCallback);
                 socket.off('mapContentSynced', mapContentSyncedCallback);
+                socket.off('newEnvironment', newEnvironmentCallback);
                 socket.off('player_ready', playerReadyCallback);
                 socket.off('Game Commencing', gameCommencingCallback);
                 socket.off('receive_message', receiveMessageCallback);
@@ -254,6 +265,8 @@ const GamePvPLobby = ({ user }: Props) => {
     useEffect(() => {
         getUserAscean();
     }, []);
+
+
 
     const generateWorld = async (mapName: string) => {
         try {
@@ -539,7 +552,12 @@ const GamePvPLobby = ({ user }: Props) => {
     const clearOpponent = async () => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            if (mapState.currentTile.content === 'enemy' && state.new_enemy_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+            // This would have to become an AWAIT SOCKET.EMIT TODO:FIXME:
+            // Tile to be set to 'nothing' from 'enemy'
+            if (mapState.currentTile.content === 'enemy' && state.new_enemy_health <= 0) {
+                await socket.emit('new-environment', mapState.currentTile);
+                mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+            };
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
@@ -722,10 +740,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const statusUpdate = async (response: any) => {
         try {
             await soundEffects(response);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response
-            });
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response });
             if (response.player_win === true) {
                 if (response.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
                 await handlePlayerWin(response);

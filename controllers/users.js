@@ -256,12 +256,12 @@ function createJWT(user) {
   return jwt.sign(
     {user}, // data payload
     SECRET,
-    {expiresIn: '24h'}
+    {expiresIn: '7d'}
   );
-}
+};
 
 function identifyKeyInMongooseValidationError(err) {
   let key = err.split("dup key: {")[1].trim();
   key = key.slice(0, key.indexOf(":"));
   return key.replace(/^./, (str) => str.toUpperCase());
-}
+};

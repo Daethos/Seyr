@@ -47,12 +47,6 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     return <>{buttons}</>;
 };
 
-interface Traits {
-    primary: { name: string, description: string };
-    secondary: { name: string, description: string };
-    tertiary: { name: string, description: string };
-}
-
 interface Props {
     ascean: any;
     enemy: any;
@@ -129,7 +123,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
-        console.log(ascean.quests, "Ascean");
         let enemyQuests = getQuests(enemy?.name);
         setLocalWhispers(enemyQuests);
         setShowQuest(true);
@@ -137,9 +130,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         checkLuckout();
         checkPersuasion();
         setNamedEnemy(nameCheck(enemy?.name));
-        return () => {
-            
-        }; 
     }, [enemy]);
 
     useEffect(() => {
@@ -193,17 +183,13 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     };
     const engageCombat = async () => {
         await checkingLoot();
-        dispatch({
-            type: ACTIONS.SET_DUEL,
-            payload: ''
-        });
+        dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
     };
 
     const clearDuel = async () => {
         try {
             await checkingLoot();
             await clearOpponent(state);
-
         } catch (err: any) {
             console.log(err.message, "Error Clearing Duel");
         };
@@ -220,11 +206,11 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     };
 
     const getLoot = async (type: string) => {
-        if (merchantEquipment.length > 0) {
-            const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
-            console.log(deleteResponse, 'Delete Response!');
-        }
         try {
+            if (merchantEquipment.length > 0) {
+                const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
+                console.log(deleteResponse, 'Delete Response!');
+            };
             let response: any;
             setLoading(true);
             if (type === 'weapon') {
@@ -237,8 +223,8 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 response = await eqpAPI.getMerchantEquipment(ascean?.level);
             } else if (type === 'cloth') {
                 response = await eqpAPI.getClothEquipment(ascean?.level);
-            }
-            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data })
+            };
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data });
             setLoading(false);
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
@@ -436,7 +422,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             }, 4000);
         };
     };
-
 
     const checkLuckout = async () => {
         const traits = {

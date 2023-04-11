@@ -300,15 +300,20 @@ io.on("connection", (socket) => {
       }
   });
 
-  // syncMapContent
-  socket.on('syncMapContent', async (mapData) => {
-    const newMap = mapData;
-    io.to(data.room).emit('mapContentSynced', newMap);
-  });
+    // syncMapContent
+    socket.on('syncMapContent', async (mapData) => {
+      const newMap = mapData;
+      io.to(data.room).emit('mapContentSynced', newMap);
+    });
 
     socket.on('ascean', async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
       console.log('Did the Ascean Update start?');
       socket.to(asceanData.room).emit('update_ascean', asceanData);
+    });
+
+    socket.on('new-environment', async (tileData) => {
+      console.log('New Environment');
+      socket.to(newUser.room).emit('newEnvironment', tileData);
     });
 
     socket.on('combatData_update', async () => {

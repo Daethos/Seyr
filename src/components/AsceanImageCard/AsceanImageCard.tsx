@@ -395,7 +395,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     return (
         <>
         { gameDisplay ? 
-            <Row className="justify-content-center" style={{ marginTop: -15 + '%', marginBottom: -25 + '%' }} >
+            <Row className="game-ascean">
                 <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
             style={{marginLeft: -62 + 'px', marginRight: 10 + 'px'}}

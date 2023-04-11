@@ -8,7 +8,6 @@
   margin: 0px;
   background-size: auto;
   background-position: center;
-  /* border: 3px solid purple; */
 }
 #game-block {
   margin-left: 7.5%;
@@ -666,6 +665,11 @@
   background: black;
   box-shadow: 2px 2px 2px black;
 }
+.game-ascean {
+  justify-content: center;
+  margin-top: -15%;
+  margin-bottom: -25%;
+}
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
 
@@ -851,7 +855,13 @@
     padding-bottom: 50%;
   }
 
-
+  .game-block-top {
+    top: -10vh;
+  }
+  .game-ascean {
+    margin-top: 0vh;
+  }
+ 
   #game-block .gameplayername {
     font-size: 20px;
     margin-top: 10%;
@@ -862,6 +872,7 @@
   #player-health {
     height: 30%;
     box-shadow: 3px 3px 3px black;
+    /* margin-top: -10%; */
   }
   #player-xp {
     height: 25%;
@@ -872,11 +883,10 @@
     font-size: 16px;
   }
   .progress {
-    box-shadow: 3px 3px 3px black;
+    box-shadow: 1px 1px 1px black;
   }
   #opponent-block .progress-text {
     margin-top: -1%;
-    margin-bottom: 10%;
   }
   #game-block .progress-text  {
     padding-top: 2%;
