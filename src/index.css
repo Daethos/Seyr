@@ -35,18 +35,19 @@ html, body {
   margin-right: 1.5vw;
 }
 .first-combat-button {
-  grid-row-start: 5;
+  grid-row-start: 6;
   grid-column-start: 2;
 }
 .first-combat {
   margin-left: 35%;
   margin-right: auto;
-  margin-top: -15%;
+  /* margin-top: -50%; */
+  font-size: 1.1em;
   width: 150%;
   color: gold;
   box-shadow: 0 0 2.5em #c3af18;
-  border-radius: 1em;
-  border: 1px solid gold;
+  border-radius: 2em;
+  border: 1.5px solid gold;
 }
 
 .stat-block { 

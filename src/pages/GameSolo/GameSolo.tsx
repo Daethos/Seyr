@@ -1341,8 +1341,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     async function handlePlayerLuckout() {
         try {
-            // gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            // gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             if (mapState?.currentTile?.content === 'city') {
                 playWin();
             } else {
@@ -1409,7 +1407,6 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
@@ -1571,15 +1568,10 @@ const GameSolo = ({ user }: GameProps) => {
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch}gameState={gameState} mapState={mapState}
             />
-            
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
             <GameAscean state={state} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
-            
-            {/* TODO:FIXME: EVERYTHING THAT OCCURS SPECIFICALLY INSIDE OR OUTSIDE OF COMBAT NEEDS TO BE REFACTORED INTO THE BELOW */}
-            {/* Enemies will probably automatically trigger combatEngaged, certain NPCs can be coaxed, certain enemies with higher disposition 
-                will not start with combatEngaged, and allow other concepts like quests and overall world lore to occur */}
             { state.combatEngaged ? 
                 <>
                     <GameAnimations 
@@ -1607,9 +1599,7 @@ const GameSolo = ({ user }: GameProps) => {
                 </>
             : 
                 <>
-                    <GameMap 
-                        mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState}
-                    />
+                    <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                     { gameState.player.quests.length > 0 ?
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
                     : '' }
@@ -1641,20 +1631,17 @@ const GameSolo = ({ user }: GameProps) => {
                             inventory={gameState.player.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
                             cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch} gameState={gameState}
                         />
-                        : ''
-                    }
+                    : '' }
                     { gameState.cityButton || mapState?.currentTile?.content === 'city' ?
                         <Button variant='' className='city-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_CITY, payload: !gameState.showCity })}>City</Button>
-                        : ''
-                    }
+                    : '' }
                 </>
             }
-
             { mapState?.currentTile ?
-            <>
+                <>
                 <Coordinates mapState={mapState} />
                 <Content mapState={mapState} />
-            </>
+                </>
             : '' }
             <GameplayOverlay 
                 ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}

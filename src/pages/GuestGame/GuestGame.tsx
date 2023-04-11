@@ -12,9 +12,11 @@ import GameConditions from '../../components/GameCompiler/GameConditions';
 import useSound from 'use-sound'
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import Button from 'react-bootstrap/Button';
-import { GameData, initialGameData, GameStore } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import { GameData, initialGameData, GameStore, GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
+import { ACTIONS, CombatData, CombatStore, initialCombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
+import useGameSounds from '../../components/GameCompiler/Sounds';
+import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 
 interface Props {
     guest: any;
@@ -32,65 +34,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [dialog, setDialog] = useState<any>({});
     const [background, setBackground] = useState<any>(null);
-
-    const opponentSfx = process.env.PUBLIC_URL + `/sounds/opponent.mp3`;
-    const [playOpponent] = useSound(opponentSfx, { volume: 0.3 });
-
-    const weaponOrderSfx = process.env.PUBLIC_URL + `/sounds/weapon-order.mp3`;
-    const [playWO] = useSound(weaponOrderSfx, { volume: 0.3 });
-    const counterSfx = process.env.PUBLIC_URL + `/sounds/counter-success.mp3`;
-    const [playCounter] = useSound(counterSfx, { volume: 0.3 });
-    const rollSfx = process.env.PUBLIC_URL + `/sounds/roll-success.mp3`;
-    const [playRoll] = useSound(rollSfx, { volume: 0.3 });
-
-    const pierceSfx = process.env.PUBLIC_URL + `/sounds/sword-stab.mp3`;
-    const [playPierce] = useSound(pierceSfx, { volume: 0.3 });
-
-    const slashSfx = process.env.PUBLIC_URL + `/sounds/slash-attack.mp3`;
-    const [playSlash] = useSound(slashSfx, { volume: 0.3 });
-
-    const bluntSfx = process.env.PUBLIC_URL + `/sounds/blunt-attack.mp3`;
-    const [playBlunt] = useSound(bluntSfx, { volume: 0.3 });
-
-    const deathSfx = process.env.PUBLIC_URL + `/sounds/death-sound.mp3`;
-    const [playDeath] = useSound(deathSfx, { volume: 0.3 });
-
-    const winSfx = process.env.PUBLIC_URL + `/sounds/win-sound.mp3`;
-    const [playWin] = useSound(winSfx, { volume: 0.3 });
-
-    const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`;
-    const [playReplay] = useSound(replaySfx, { volume: 0.3 });
-
-    const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`;
-    const [playReligion] = useSound(religiousSfx, { volume: 0.3 });
-
-    const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`;
-    const [playDaethic] = useSound(daethicSfx, { volume: 0.3 });
-
-    const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`;
-    const [playWild] = useSound(wildSfx, { volume: 0.3 });
-
-    const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`;
-    const [playEarth] = useSound(earthSfx, { volume: 0.3 });
-
-    const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`;
-    const [playFire] = useSound(fireSfx, { volume: 0.3 });
-
-    const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`;
-    const [playBow] = useSound(bowSfx, { volume: 0.3 });
-
-    const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`;
-    const [playFrost] = useSound(frostSfx, { volume: 0.3 });
-
-    const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`;
-    const [playLightning] = useSound(lightningSfx, { volume: 0.3 });
-
-    const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`;
-    const [playSorcery] = useSound(sorcerySfx, { volume: 0.3 });
-
-    const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`;
-    const [playWind] = useSound(windSfx, { volume: 0.3 });
-
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(0.3);
 
     const getAscean = async () => {
         setLoadingAscean(true);
@@ -162,19 +106,6 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     useEffect(() => {
         getAscean();
     }, []);
-
-    useEffect(() => {
-        getOpponentDialog();
-    }, [opponent]);
-
-    const getOpponentDialog = async () => {
-        try {
-            const response = getNpcDialog(opponent.name);
-            setDialog(response);
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit');
-        };
-    };
 
     const getOpponent = async () => {
         setLoading(true);
@@ -289,66 +220,29 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function soundEffects(effects: any) {
+    async function soundEffects(effects: CombatData) {
         try {
             if (effects.critical_success === true) {
-                switch (effects.player_damage_type) {
-                    case 'Spooky': {
-                        playDaethic();
-                        break;
-                    };
-                    case 'Righteous': {
-                        playDaethic();
-                        break;
-                    };
-                    case 'Wild': {
-                        playWild();
-                        break;
-                    };
-                    case 'Earth': {
-                        playEarth();
-                        break;
-                    };
-                    case 'Fire': {
-                        playFire();
-                        break;
-                    };
-                    case 'Frost': {
-                        playFrost();
-                        break;
-                    };
-                    case 'Lightning': {
-                        playLightning();
-                        break;
-                    };
-                    case 'Sorcery': {
-                        playSorcery();
-                        break;
-                    };
-                    case 'Wind': {
-                        playWind();
-                        break;
-                    };
-                    case 'Pierce': {
-                        if (effects.weapons[0].type === 'Bow') {
-                            playBow();
-                            break;
-                        } else {
-                            playPierce();
-                            break;
-                        }
-                    };
-                    case 'Slash': {
-                        playSlash();
-                        break;
-                    };
-                    case 'Blunt': {
-                        playBlunt();
-                        break;
-                    };
-                    default: {
-                        break;
-                    };
+                const soundEffectMap = {
+                    Spooky: playDaethic,
+                    Righteous: playDaethic,
+                    Wild: playWild,
+                    Earth: playEarth,
+                    Fire: playFire,
+                    Frost: playFrost,
+                    Lightning: playLightning,
+                    Sorcery: playSorcery,
+                    Wind: playWind,
+                    Pierce: (weapons: any[]) =>
+                      weapons[0].type === "Bow" ? playBow() : playPierce(),
+                    Slash: playSlash,
+                    Blunt: playBlunt,
+                };
+            
+                const { player_damage_type, weapons } = effects;
+                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
+                if (soundEffectFn) {
+                    soundEffectFn(weapons);
                 };
             };
             if (effects.religious_success === true) {
@@ -360,6 +254,11 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             if (effects.counter_success === true || effects.computer_counter_success === true) {
                 playCounter();
             };
+            setTimeout(() => {
+                if (effects.player_win !== true && effects.computer_win !== true) {
+                    playCombatRound();
+                };
+            }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         };
@@ -368,13 +267,13 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     async function handlePlayerWin(combatData: any) {
         try {
             playWin();
-            setTimeLeft(0);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
-                dispatch({
-                    type: ACTIONS.PLAYER_WIN,
-                    payload: combatData
-                });
-            }, 3000);
+                setTimeLeft(0);
+                dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
         };
@@ -385,27 +284,25 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             playDeath();
             setTimeLeft(0);
             setTimeout(() => {
-                dispatch({
-                    type: ACTIONS.COMPUTER_WIN,
-                    payload: combatData
-                });
-            }, 3000);
+                dispatch({ type: ACTIONS.COMPUTER_WIN, payload: combatData });
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
         };
     };
 
-    async function handleInitiate(e: { preventDefault: () => void; }) {
-        e.preventDefault();
+    async function handleInitiate(combatData: CombatData) {
         try {
-            if (state.action === '') {
+            if (combatData.action === '') {
                 setEmergencyText([`You Forgot To Choose An Action!\n`]);
                 return;
             };
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
-            const response = await gameAPI.initiateAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(100);
+            const response = await gameAPI.initiateAction(combatData);
+            if ('vibrate' in navigator) navigator.vibrate(150);
             console.log(response.data, 'Response Initiating Combat');
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
@@ -414,22 +311,13 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             await soundEffects(response.data);
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
-                // playWin();
-                // dispatch({
-                //     type: ACTIONS.PLAYER_WIN,
-                //     payload: response.data
-                // });
-                // setTimeLeft(0);
             };
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
-                // playDeath();
-                // dispatch({
-                //     type: ACTIONS.COMPUTER_WIN,
-                //     payload: response.data
-                // });
-                // setTimeLeft(0);
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
@@ -439,20 +327,25 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         e.preventDefault();
         try {
             setEmergencyText([``]);
+            gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
-            if ('vibrate' in navigator) navigator.vibrate(100);
+            if ('vibrate' in navigator) navigator.vibrate(150);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
             });
-            await soundEffects(response.data);
+            shakeScreen();
+            playReligion();
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
         };
@@ -464,18 +357,22 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
-            if ('vibrate' in navigator) navigator.vibrate(100);
+            if ('vibrate' in navigator) navigator.vibrate(150);
             dispatch({
                 type: ACTIONS.INITIATE_COMBAT,
                 payload: response.data
             });
-            await soundEffects(response.data);
+            shakeScreen();
+            playReligion();
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
             if (response.data.computer_win === true) {
                 await handleComputerWin(response.data);
             };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
@@ -559,12 +456,6 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 };
         };
     };
-      
-    function sleep(ms: number) {
-        return new Promise(
-            resolve => setTimeout(resolve, ms)
-        );
-    };
 
     if (loading || loadingAscean) {
         return (
@@ -582,7 +473,14 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} combatRound={state.combatRound}
                 counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combat_engaged}
             />
-            <GameAscean state={state} ascean={opponent} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
+            <GameAscean state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
+            <CombatOverlay 
+                ascean={state.player} enemy={opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
+                playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
+                rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
+                loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
+                playerLuckout={state.player_luckout}
+            />
             <GameConditions 
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={100} gameState={gameState}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin}
@@ -599,19 +497,18 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 <Button  variant='' className='inventory-button' onClick={() => getAscean()}>Re-Roll</Button>
                 <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button>
                 </>
-                : state.computer_win ?
+            : state.computer_win ?
                 <>
                 <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
                 <Button variant='' className='inventory-button' onClick={() => getAscean()}>Re-Roll</Button>
                 <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button>
                 </>
-                :
+            :
                 <>
                 <Button variant='' className='dialog-button' onClick={() => engageCombat()}>Engage</Button>   
-                {/* <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button> */}
                 </>
             : '' }
-            <GameAscean state={state} ascean={ascean} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />
+            <GameAscean state={state} ascean={ascean} damage={state.playerDamaged} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />
             
             { state.player_win || state.computer_win || !state.combatEngaged ? '' : state?.weapons ?
             <GameActions 
