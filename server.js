@@ -350,6 +350,15 @@ io.on("connection", (socket) => {
       socket.to(newUser.room).emit('new_player_data_response', newUser)
     });
 
+    socket.on('update_player_data', async (data) => {
+      console.log('Updating Player Data')
+      let newData = {
+        player: newUser.player,
+        ascean: data,
+      };
+      socket.to(newUser.room).emit('updatePlayerData', newData);
+    });
+
     socket.on('player_game_ready', async (data) => { // user
       let newData = data;
       io.to(newData.room).emit('player_ready', newData);

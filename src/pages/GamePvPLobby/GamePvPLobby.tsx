@@ -148,6 +148,26 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent('new_player_data_response', newPlayerDataResponseCallback);
 
+        const updatePlayerDataCallback = async (data: any) => {
+            switch (data.player) {
+                case 1:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE_ASCEAN, payload: data.ascean });
+                    break;
+                case 2:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO_ASCEAN, payload: data.ascean });
+                    break;
+                case 3:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE_ASCEAN, payload: data.ascean });
+                    break;
+                case 4:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR_ASCEAN, payload: data.ascean });
+                    break;
+                default:
+                    break;
+            };
+        };
+        handleSocketEvent('updatePlayerData', updatePlayerDataCallback);
+
         const mapCreatedCallback = async (response: any) => {
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
@@ -167,7 +187,6 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
         const mapContentSyncedCallback = async (response: any) => {
-            // console.log(response, "Map Content Moved Response");
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA_SYNC,
                 payload: response
@@ -266,7 +285,16 @@ const GamePvPLobby = ({ user }: Props) => {
         getUserAscean();
     }, []);
 
-
+    useEffect(() => {
+        if (state.player_luckout) {
+          handlePlayerLuckout(state);
+          setTimeout(() => {
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
+          }, 6000);
+        }
+    }, [state.player_luckout]);   
 
     const generateWorld = async (mapName: string) => {
         try {
@@ -552,8 +580,6 @@ const GamePvPLobby = ({ user }: Props) => {
     const clearOpponent = async () => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            // This would have to become an AWAIT SOCKET.EMIT TODO:FIXME:
-            // Tile to be set to 'nothing' from 'enemy'
             if (mapState.currentTile.content === 'enemy' && state.new_enemy_health <= 0) {
                 await socket.emit('new-environment', mapState.currentTile);
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
@@ -566,6 +592,20 @@ const GamePvPLobby = ({ user }: Props) => {
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
+        };
+    };
+
+    async function handlePlayerLuckout(combatData: PvPData) {
+        try {
+            if (mapState?.currentTile?.content === 'city') {
+                playWin();
+            } else {
+                playReligion();
+            };
+            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
+            await gainExperience(combatData);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
         };
     };
 
@@ -900,7 +940,7 @@ const GamePvPLobby = ({ user }: Props) => {
         }
         </>
 
-    )
-}
+    );
+};
 
-export default GamePvPLobby
+export default GamePvPLobby;

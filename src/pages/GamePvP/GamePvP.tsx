@@ -103,7 +103,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         // if (mapState.currentTile.content === 'enemy') return;
-        if (mapState.contentMoved === true || checkPlayerTiles(mapState)) return;
+        if (mapState.contentMoved === true || checkPlayerTiles(mapState) || checkPvP(mapState)) return;
         const timer = setTimeout(() => {
             if (moveTimer === 0 && mapState.steps > 0 && playerState.playerOne?.user?._id === user._id) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
@@ -144,6 +144,29 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
     }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
 
+    function checkPvP(mapData: MapData) {
+        const players = [mapData?.player1Tile, mapData?.player2Tile, mapData?.player3Tile, mapData?.player4Tile];
+        return checkPlayerPvP(players[0], players[1], players[2], players[3]);
+    };
+
+    function checkPlayerPvP(player1: any, player2: any, player3: any, player4: any) {
+        if (
+          (player1 && player2 && player1.x === player2.x && player1.y === player2.y) ||
+          (player1 && player3 && player1.x === player3.x && player1.y === player3.y) ||
+          (player1 && player4 && player1.x === player4.x && player1.y === player4.y) ||
+          (player2 && player3 && player2.x === player3.x && player2.y === player3.y) ||
+          (player2 && player4 && player2.x === player4.x && player2.y === player4.y) ||
+          (player3 && player4 && player3.x === player4.x && player3.y === player4.y)
+        ) {
+          console.log("Returning True");
+          return true;
+        } else {
+          console.log("Returning False");
+          return false;
+        };
+      };
+      
+
     function checkPlayerTiles(mapData: MapData) {
         const players = [mapData?.player1Tile, mapData?.player2Tile, mapData?.player3Tile, mapData?.player4Tile];
         let combat = 0;
@@ -159,7 +182,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         const tile = map?.map?.[x + 100]?.[y + 100];
         return tile?.content === 'enemy';
     };
-      
 
     const saveWorld = async () => {
         try {
@@ -335,7 +357,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.itemSaved === false) return;
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
         };
@@ -351,7 +373,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.removeItem === false) return;
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
         };
@@ -359,12 +381,21 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         if (gameState.purchasingItem === false) return;
-        getAsceanInventory();
+        getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
 
         };
     }, [gameState, gameState.purchasingItem]);
+
+    useEffect(() => {
+        if (gameState.repositionInventory === false) return;
+        console.log("Repositioning Inventory", gameState.repositionInventory)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
+        };
+    }, [gameState, gameState.repositionInventory]);
 
     useEffect(() => {
         if (gameState.saveQuest === false) return;
@@ -387,10 +418,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             const firstResponse = await asceanAPI.getCleanAscean(ascean._id);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_LEVEL_UP, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(ascean._id);
-            dispatch({
-                type: ACTIONS.SET_PLAYER_LEVEL_UP,
-                payload: response.data.data
-             });
+            // await socket.emit('update_player_data', response.data.data);
+            dispatch({ type: ACTIONS.SET_PLAYER_LEVEL_UP, payload: response.data.data });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Leveled');
         };
@@ -431,13 +460,22 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             const firstResponse = await asceanAPI.getAsceanAndInventory(ascean._id);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(ascean._id);
-            dispatch({
-                type: ACTIONS.SET_PLAYER_SLICK,
-                payload: response.data.data
-            });
+            // await socket.emit('update_player_data', response.data.data);
+            dispatch({ type: ACTIONS.SET_PLAYER_SLICK, payload: response.data.data });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
+        };
+    };
+
+    const getOnlyInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanInventory(ascean._id);
+            console.log(firstResponse, "Ascean Inventory ?")
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
         };
     };
 
@@ -890,23 +928,23 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    const handleDirectionChange = async (direction: Direction) => {
+    const handleDirectionChange = async (direction: Direction, mapData: MapData) => {
         const offset = DIRECTIONS[direction];
         if (offset) {
-            const newX = mapState.currentTile.x + offset.x;
-            const newY = mapState.currentTile.y + offset.y;
+            const newX = mapData.currentTile.x + offset.x;
+            const newY = mapData.currentTile.y + offset.y;
             if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
-                const newTile = await getAsceanCoords(newX, newY, mapState.map);
-                const newTiles = await getAsceanGroupCoords(newX, newY, mapState.map);
+                const newTile = await getAsceanCoords(newX, newY, mapData.map);
+                const newTiles = await getAsceanGroupCoords(newX, newY, mapData.map);
                 const data = {
                     newTile: newTile,
-                    oldTile: mapState.currentTile,
+                    oldTile: mapData.currentTile,
                     newTiles: newTiles,
-                    map: mapState,
+                    map: mapData,
                 };
                 const socketData = {
                     newTile: newTile,
-                    oldTile: mapState.currentTile,
+                    oldTile: mapData.currentTile,
                     newTiles: newTiles,
                     player: state.playerPosition
                 };
@@ -962,12 +1000,12 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     const chatStyle = {
         borderRadius: "50%",
-        marginTop: "-25%",
-        marginLeft: "50%",
+        marginTop: "-45%",
+        marginLeft: "45%",
         zIndex: 100,
-        gridColumnStart: 2,
-        gridRowStart: 7,
-    }
+        gridColumnStart: 1,
+        gridRowStart: 8,
+    };
 
     return (
         <Container fluid id="game-container" style={background}>
@@ -1022,10 +1060,10 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             </>
         ) : (
             <>
-                    <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
+                <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                 { gameState.showDialog ?    
                     <PvPDialogBox 
-                        npc={enemy.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
+                        npc={enemy?.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
                         playerWin={state.player_win} enemyWin={state.enemy_win} ascean={ascean} enemy={enemy} itemSaved={gameState.itemSaved}
                         winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}
                         resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
@@ -1033,29 +1071,27 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     />
                 : '' }
                 { gameState.showInventory ?
-                        <InventoryBag inventory={ascean.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={ascean} dispatch={dispatch} mapState={mapState}  />
-                    : ""}
-                    { enemy && mapState?.currentTile?.content !== 'city' ?
-                        <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
-                        : 
-                        <>
-                        <StoryBox ascean={ascean} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
-                        <Joystick mapState={mapState} onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
-                        <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
-                        </>
-                    }
-                    { gameState.showCity ?
-                        <PvPCityBox 
-                            state={state} dispatch={dispatch} ascean={ascean} mapState={mapState} enemy={enemy} merchantEquipment={gameState.merchantEquipment}
-                            inventory={ascean.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
-                            cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch} gameState={gameState}
-                        />
-                        : ''
-                    }
-                    { gameState.cityButton || mapState?.currentTile?.content === 'city' ?
-                        <Button variant='' className='city-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_CITY, payload: !gameState.showCity })}>City</Button>
-                        : ''
-                    }
+                    <InventoryBag inventory={ascean.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={ascean} dispatch={dispatch} mapState={mapState}  />
+                : ""}
+                { enemy && mapState?.currentTile?.content !== 'city' ?
+                    <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
+                : 
+                    <>
+                    <StoryBox ascean={ascean} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
+                    <Joystick mapState={mapState} onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
+                    <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
+                    </>
+                }
+                { gameState.showCity ?
+                    <PvPCityBox 
+                        state={state} dispatch={dispatch} ascean={ascean} mapState={mapState} enemy={enemy} merchantEquipment={gameState.merchantEquipment}
+                        inventory={ascean.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
+                        cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch} gameState={gameState}
+                    />
+                : '' }
+                { gameState.cityButton || mapState?.currentTile?.content === 'city' ?
+                    <Button variant='' className='city-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_CITY, payload: !gameState.showCity })}>City</Button>
+                : '' }
             </>
         )}
 

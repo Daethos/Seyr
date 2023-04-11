@@ -514,9 +514,11 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 winStreak: state.winStreak + 1,
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
-                new_computer_health: 0,
-                current_computer_health: 0,
-                player_luckout: true,
+                new_enemy_health: 0,
+                current_enemy_health: 0,
+                player_luckout: action.payload.playerLuckout,
+                playerTrait: action.payload.playerTrait,
+                player_win: true
             };
         case 'ENEMY_WIN':
             return {
@@ -632,6 +634,10 @@ export const PLAYER_ACTIONS = {
     SET_PLAYER_TWO: 'SET_PLAYER_TWO',
     SET_PLAYER_THREE: 'SET_PLAYER_THREE',
     SET_PLAYER_FOUR: 'SET_PLAYER_FOUR',
+    SET_PLAYER_ONE_ASCEAN: 'SET_PLAYER_ONE_ASCEAN',
+    SET_PLAYER_TWO_ASCEAN: 'SET_PLAYER_TWO_ASCEAN',
+    SET_PLAYER_THREE_ASCEAN: 'SET_PLAYER_THREE_ASCEAN',
+    SET_PLAYER_FOUR_ASCEAN: 'SET_PLAYER_FOUR_ASCEAN',
     SET_PLAYER_ONE_READY: 'SET_PLAYER_ONE_READY',
     SET_PLAYER_TWO_READY: 'SET_PLAYER_TWO_READY',
     SET_PLAYER_THREE_READY: 'SET_PLAYER_THREE_READY',
@@ -668,6 +674,38 @@ export const PlayerStore = (playerState: PlayerData, playerAction: PlayerAction)
             return {
                 ...playerState,
                 playerFour: playerAction.payload,
+            };
+        case 'SET_PLAYER_ONE_ASCEAN':
+            return {
+                ...playerState,
+                playerOne: {
+                    ...playerState.playerOne,
+                    ascean: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_TWO_ASCEAN':
+            return {
+                ...playerState,
+                playerTwo: {
+                    ...playerState.playerTwo,
+                    ascean: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_THREE_ASCEAN':
+            return {
+                ...playerState,
+                playerThree: {
+                    ...playerState.playerThree,
+                    ascean: playerAction.payload,
+                },
+            };
+        case 'SET_PLAYER_FOUR_ASCEAN':
+            return {
+                ...playerState,
+                playerFour: {
+                    ...playerState.playerFour,
+                    ascean: playerAction.payload,
+                },
             };
         case 'SET_PLAYER_ONE_READY':
             return {

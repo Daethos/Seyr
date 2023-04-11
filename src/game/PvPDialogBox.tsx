@@ -142,7 +142,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
-        console.log(state, "State")
         let enemyQuests = getQuests(enemy?.name);
         setLocalWhispers(enemyQuests);
         setShowQuest(true);
@@ -150,9 +149,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         checkLuckout();
         checkePersuasion();
         setNamedEnemy(nameCheck(enemy?.name));
-        return () => {
-            
-        }; 
     }, [enemy]);
 
     useEffect(() => {
@@ -235,7 +231,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         if (merchantEquipment.length > 0) {
             const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
             console.log(deleteResponse, 'Delete Response!');
-        }
+        };
         try {
             let response: any;
             setLoading(true);
@@ -549,8 +545,8 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         <div className='dialog-box'>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
-            <img src={process.env.PUBLIC_URL + `/images/` + enemy.origin + '-' + enemy.sex + '.jpg'} alt={enemy.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
-            {' '}{enemy.name} (Level {enemy.level})<br />
+            <img src={process.env.PUBLIC_URL + `/images/` + enemy?.origin + '-' + enemy?.sex + '.jpg'} alt={enemy?.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
+            {' '}{enemy?.name} (Level {enemy?.level})<br />
                 { currentIntent === 'combat' ?
                     <>
                         <CombatDialogButtons options={dialog[currentIntent]} handleCombatAction={handleCombatAction}  />
