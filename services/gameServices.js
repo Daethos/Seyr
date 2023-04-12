@@ -2319,6 +2319,7 @@ const actionSplitter = async (combatData) => {
         playerBlessing: combatData.playerBlessing,
         computerBlessing: combatData.computerBlessing,
         prayerSacrifice: combatData.prayerSacrifice,
+        prayerSacrificeName: combatData.prayerSacrificeName,
         combatInitiated: combatData.combatInitiated,
         actionStatus: combatData.actionStatus,
         gameIsLive: combatData.gameIsLive,
@@ -2636,9 +2637,9 @@ const instantDamageSplitter = async (combatData, mastery) => {
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; 
     combatData.computerDamaged = true;
-    combatData.player_action = 'instant';
+    combatData.player_action = 'invoke';
     combatData.player_action_description = 
-        `You instantly attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Conviction for ${Math.round(damage)} Pure Damage.`;    
+        `You attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;    
 };
 
 const instantActionSplitter = async (combatData) => {
@@ -2749,7 +2750,9 @@ const consumePrayerSplitter = async (combatData) => {
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
-        if (effect.prayer !== combatData.prayerSacrifice) return true;
+        console.log(effect.prayer, combatData.prayerSacrifice, effect.name, combatData.prayerSacrificeName, effect.weapon,  "Prayer Check Before");
+        if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName) return true;
+        console.log(effect.prayer, combatData.prayerSacrifice, effect.name, combatData.prayerSacrificeName, effect.weapon,  "Prayer Check After");
         switch (combatData.prayerSacrifice) {
             case 'Heal':
                 console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")
@@ -2829,6 +2832,8 @@ const consumePrayerSplitter = async (combatData) => {
     };
     combatData.player_action = 'prayer';
     combatData.prayerSacrifice = '';
+    combatData.prayerSacrificeName = '';
+    combatData.action = '';
     return combatData;
 };
 

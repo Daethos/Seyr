@@ -2,8 +2,41 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
+export interface StatusEffect {
+    name: string;
+    prayer: string;
+    description: string;
+    debuffTarget?: string;
+    duration: number;
+    refreshes: boolean;
+    activeRefreshes: number;
+    activeStacks: number;
+    tick: {
+        start: number;
+        end: number;
+    };
+    effect: {
+        physical_damage?: number;
+        magical_damage?: number;
+        physical_penetration?: number;
+        magical_penetration?: number;
+        critical_chance?: number;
+        critical_damage?: number;
+        physicalPosture?: number;
+        magicalPosture?: number;
+        physicalDefenseModifier?: number;
+        magicalDefenseModifier?: number;
+        roll?: number;
+        dodge?: number;
+        healing?: number;
+        damage?: number;
+    };
+    imgURL: string;
+    weapon: string;
+}
+
 interface Props {
-    effect: any;
+    effect: StatusEffect;
     player?: boolean;
 };
 

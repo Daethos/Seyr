@@ -2335,6 +2335,7 @@ const actionSplitter = async (combatData) => {
         playerBlessing: combatData.playerBlessing,
         enemyBlessing: combatData.enemyBlessing,
         prayerSacrifice: combatData.prayerSacrifice,
+        prayerSacrificeName: combatData.prayerSacrificeName,
 
         combatInitiated: combatData.combatInitiated,
         actionStatus: combatData.actionStatus,
@@ -2650,9 +2651,9 @@ const instantDamageSplitter = async (combatData, mastery) => {
     combatData.new_enemy_health = combatData.current_enemy_health - combatData.realized_player_damage;
     combatData.current_enemy_health = combatData.new_enemy_health; 
     combatData.enemyDamaged = true;
-    combatData.player_action = 'instant';
+    combatData.player_action = 'invoke';
     combatData.player_action_description = 
-        `You instantly attack ${combatData.enemy.name}'s Caeren with your ${combatData.player.mastery}'s Conviction for ${Math.round(damage)} Pure Damage.`;
+        `You attack ${combatData.enemy.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;
 };
 
 const instantActionSplitter = async (combatData) => {
@@ -2763,7 +2764,7 @@ const consumePrayerSplitter = async (combatData) => {
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.enemy_weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.enemy_weapons.indexOf(matchingDebuffTarget);
-        if (effect.prayer !== combatData.prayerSacrifice) return true;
+        if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName) return true;
         switch (combatData.prayerSacrifice) {
             case 'Heal':
                 console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")

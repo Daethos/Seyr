@@ -85,7 +85,7 @@ class StatusEffect {
                 potentialModifiers.physical_damage = playerDamage / 18;
                 potentialModifiers.magical_damage = playerDamage / 18;
                 potentialModifiers.critical_chance = playerDamage / 18;
-                potentialModifiers.critical_damage = playerDamage / 18;
+                potentialModifiers.critical_damage = playerDamage / 180;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = playerDamage * 1.25;
@@ -520,7 +520,7 @@ class StatusEffect {
                 potentialModifiers.physical_damage = playerDamage / 18;
                 potentialModifiers.magical_damage = playerDamage / 18;
                 potentialModifiers.critical_chance = playerDamage / 18;
-                potentialModifiers.critical_damage = playerDamage / 18;
+                potentialModifiers.critical_damage = playerDamage / 180;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = playerDamage * 1.25;

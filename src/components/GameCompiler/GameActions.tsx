@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, RefAttributes } from 'react';
 import Form from 'react-bootstrap/Form';
 import './GameCompiler.css';
+import { StatusEffect } from './StatusEffects';
 import CombatSettingModal from './CombatSettingModal';
 import { ACTIONS } from './CombatStore';
 import { GameData, GAME_ACTIONS } from './GameStore';
@@ -79,7 +80,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
           type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
-      }, 30000);
+      }, 3000);
     }
     return () => {
       clearTimeout(instantTimer);
@@ -108,14 +109,14 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   }, [state.actionStatus, dispatch]);
 
   useEffect(() => {
-    if (state.prayerSacrifice === '') return;
+    if (state.prayerSacrifice === '' && state.prayerSacrificeName === '') return;
     handlePrayer({ preventDefault: () => {} });
   }, [state.prayerSacrifice]);
 
-  const handlePrayerMiddleware = async (prayer: string) => {
+  const handlePrayerMiddleware = async (effect: StatusEffect) => {
     dispatch({
       type: ACTIONS.SET_PRAYER_SACRIFICE,
-      payload: prayer,
+      payload: effect,
     });
   };
   
@@ -198,7 +199,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
         <Button variant='' onClick={() => setPrayerModal(true)} style={{ color: "gold", fontSize: "20px", textShadow: "2.5px 2.5px 2.5px black", fontWeight: 600 }}>Consume Prayers </Button><br />
         { state.playerEffects.map((effect: any, index: number) => {
           return (
-            <button key={index} className='prayer-button' style={prayerColor(effect?.prayer, effect?.tick?.end, state?.combatRound)} onClick={() => handlePrayerMiddleware(effect?.prayer)}>
+            <button key={index} className='prayer-button' style={prayerColor(effect?.prayer, effect?.tick?.end, state?.combatRound)} onClick={() => handlePrayerMiddleware(effect)}>
               <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} />
             </button> 
           )

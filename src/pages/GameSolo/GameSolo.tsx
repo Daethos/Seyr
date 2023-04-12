@@ -882,7 +882,6 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-
     const getPhenomena = async () => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
@@ -1181,7 +1180,6 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
-
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
         getOneLootDrop(state.computer.level);
@@ -1407,17 +1405,10 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response.data
-            });
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
             }, 1500);
@@ -1435,13 +1426,8 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await gameAPI.instantAction(state);
             console.log(response.data, "Instant Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            dispatch({
-                type: ACTIONS.INSTANT_COMBAT,
-                payload: response.data
-            });
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
+            dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen();
             playReligion();
             setTimeout(() => {
@@ -1464,13 +1450,8 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await gameAPI.consumePrayer(state);
             console.log(response.data, "Prayer Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            dispatch({
-                type: ACTIONS.CONSUME_PRAYER,
-                payload: response.data
-            });
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
+            dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen();
             playReligion();
             setTimeout(() => {

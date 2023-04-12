@@ -30,6 +30,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     const [opponent, setOpponent] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
+    const [loadingOpponent, setLoadingOpponent] = useState<boolean>(false);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
     const [dialog, setDialog] = useState<any>({});
@@ -49,34 +50,15 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean._id);
             console.log(response.data.data, 'Response');
             setAscean(response.data.data.ascean);
-
-            dispatch({
-                type: ACTIONS.SET_PLAYER,
-                payload: response.data.data
-            });
+            dispatch({ type: ACTIONS.SET_PLAYER, payload: response.data.data });
             let minLevel: number = 0;
             let maxLevel: number = 0;
-            if (firstResponse.data.ascean.level < 3) {
-                minLevel = 1;
-                maxLevel = 3;
-            } else if (firstResponse.data.ascean.level < 5) {
+            if (firstResponse.data.ascean.level === 4) {
                 minLevel = 2;
-                maxLevel = 5;
-            } else if (firstResponse.data.ascean.level < 8) {
+                maxLevel = 6;
+            } else {
                 minLevel = 4;
-                maxLevel = 10;
-            } else if (firstResponse.data.ascean.level < 11) {
-                minLevel = 6;
-                maxLevel = 13;
-            } else if (firstResponse.data.ascean.level < 14) {
-                minLevel = 9;
-                maxLevel = 16;
-            } else if (firstResponse.data.ascean.level < 17) {
-                minLevel = 12;
-                maxLevel = 18;
-            } else if (firstResponse.data.ascean.level <= 20) {
-                minLevel = 15;
-                maxLevel = 20;
+                maxLevel = 8;
             };
             const enemyData = {
                 username: 'mirio',
@@ -90,10 +72,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
             console.log(opponentResponse.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
-            dispatch({
-                type: ACTIONS.SET_COMPUTER,
-                payload: opponentResponse.data.data
-            });
+            dispatch({ type: ACTIONS.SET_COMPUTER, payload: opponentResponse.data.data });
             playOpponent();
             setLoading(false);
             setLoadingAscean(false);
@@ -107,8 +86,29 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         getAscean();
     }, []);
 
+    const getNewAscean = async () => {
+        setLoadingAscean(true);
+        try {
+            const guestData = {
+                username: 'mirio',
+                minLevel: 4,
+                maxLevel: 6,
+            };
+            const firstResponse = await userService.getRandomEnemy(guestData);
+            console.log(firstResponse, 'First Response');
+            const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean._id);
+            console.log(response.data.data, 'Response');
+            setAscean(response.data.data.ascean);
+            dispatch({ type: ACTIONS.SET_PLAYER, payload: response.data.data });
+            setLoadingAscean(false);
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit');
+            setLoading(false);
+        };
+    };
+
     const getOpponent = async () => {
-        setLoading(true);
+        setLoadingOpponent(true);
         try {
             let minLevel: number = 0;
             let maxLevel: number = 0;
@@ -154,7 +154,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 payload: response.data.data
             });
             playOpponent();
-            setLoading(false);
+            setLoadingOpponent(false);
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies');
         };
@@ -165,7 +165,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             type: ACTIONS.SET_COMBAT_ACTION,
             payload: action.target.value
         });
-        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
     function handleCounter(counter: any) {
@@ -173,7 +173,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             type: ACTIONS.SET_COMBAT_COUNTER,
             payload: counter.target.value
         });
-        setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+        setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
     async function setWeaponOrder(weapon: any) {
@@ -188,7 +188,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 type: ACTIONS.SET_WEAPON_ORDER,
                 payload: response
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order');
         };
@@ -201,7 +201,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 type: ACTIONS.SET_DAMAGE_TYPE,
                 payload: damageType.target.value
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type');
         };
@@ -214,7 +214,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 type: ACTIONS.SET_PRAYER_BLESSING,
                 payload: prayer.target.value
             });
-            setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
         };
@@ -238,26 +238,15 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                     Slash: playSlash,
                     Blunt: playBlunt,
                 };
-            
                 const { player_damage_type, weapons } = effects;
                 const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
-                if (soundEffectFn) {
-                    soundEffectFn(weapons);
-                };
+                if (soundEffectFn) soundEffectFn(weapons);
             };
-            if (effects.religious_success === true) {
-                playReligion();
-            };
-            if (effects.roll_success === true || effects.computer_roll_success === true) {
-                playRoll();
-            };
-            if (effects.counter_success === true || effects.computer_counter_success === true) {
-                playCounter();
-            };
+            if (effects.religious_success === true) playReligion();
+            if (effects.roll_success === true || effects.computer_roll_success === true) playRoll();
+            if (effects.counter_success === true || effects.computer_counter_success === true) playCounter();
             setTimeout(() => {
-                if (effects.player_win !== true && effects.computer_win !== true) {
-                    playCombatRound();
-                };
+                if (effects.player_win !== true && effects.computer_win !== true) playCombatRound();
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
@@ -304,19 +293,12 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const response = await gameAPI.initiateAction(combatData);
             if ('vibrate' in navigator) navigator.vibrate(150);
             console.log(response.data, 'Response Initiating Combat');
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response.data
-            });
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
             setTimeout(() => {
-                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
             }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
@@ -331,20 +313,13 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.instantAction(state);
             if ('vibrate' in navigator) navigator.vibrate(150);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response.data
-            });
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             shakeScreen();
             playReligion();
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
             setTimeout(() => {
-                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
             }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
@@ -358,42 +333,29 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             setTimeLeft(timeLeft + 2 > 10 ? 10 : timeLeft + 2);
             const response = await gameAPI.consumePrayer(state);
             if ('vibrate' in navigator) navigator.vibrate(150);
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response.data
-            });
+            dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
             shakeScreen();
             playReligion();
-            if (response.data.player_win === true) {
-                await handlePlayerWin(response.data);
-            };
-            if (response.data.computer_win === true) {
-                await handleComputerWin(response.data);
-            };
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
             setTimeout(() => {
-                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
             }, 1500);
         } catch (err: any) {
-            console.log(err.message, 'Error Initiating Action')
+            console.log(err.message, 'Error Initiating Action');
         };
     };
 
     const engageCombat = () => {
-        dispatch({
-            type: ACTIONS.SET_DUEL,
-            payload: ''
-        });
+        dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
     };
 
     const resetAscean = async () => {
         try {
-            dispatch({
-                type: ACTIONS.RESET_PLAYER,
-                payload: state
-            });
+            dispatch({ type: ACTIONS.RESET_PLAYER, payload: state });
             playReplay();
         } catch (err: any) {
-            console.log(err.message, 'Error Resetting Ascean')
+            console.log(err.message, 'Error Resetting Ascean');
         };
     };
 
@@ -408,9 +370,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     }, [ascean]);
 
-    const num = Math.floor(Math.random() * 3) + 1;
-    const chance = Math.floor(Math.random() * 3) + 1;
     function getBackgroundStyle(origin: string) {
+        const num = Math.floor(Math.random() * 3) + 1;
+        const chance = Math.floor(Math.random() * 3) + 1;
         switch (origin) {
             case 'Ashtre':
                 if (chance >= 2) {
@@ -457,7 +419,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    if (loading || loadingAscean) {
+    if (loading) {
         return (
             <Loading Combat={true} />
         );
@@ -465,7 +427,6 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
 
     return (
         <Container fluid id="game-container" style={ background }>
-
             <GameAnimations 
                 playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                 playerAction={state.player_action} computerAction={state.computer_action} 
@@ -473,9 +434,9 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} combatRound={state.combatRound}
                 counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combat_engaged}
             />
-            <GameAscean state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingAscean} player={false} currentPlayerHealth={state.new_computer_health} />
+            <GameAscean state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
             <CombatOverlay 
-                ascean={state.player} enemy={opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
+                ascean={state.player} enemy={state.computer} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                 playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
                 rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
                 loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
@@ -494,18 +455,20 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 state.player_win ?
                 <>
                 <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
-                <Button  variant='' className='inventory-button' onClick={() => getAscean()}>Re-Roll</Button>
-                <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button>
+                <Button  variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>
+                <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 7}} onClick={() => getOpponent()}>New Opp</Button>
                 </>
             : state.computer_win ?
                 <>
                 <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
-                <Button variant='' className='inventory-button' onClick={() => getAscean()}>Re-Roll</Button>
-                <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 6}} onClick={() => getOpponent()}>New Opp</Button>
+                <Button variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>
+                <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 7}} onClick={() => getOpponent()}>New Opp</Button>
                 </>
             :
                 <>
-                <Button variant='' className='dialog-button' onClick={() => engageCombat()}>Engage</Button>   
+                <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 7}} onClick={() => getOpponent()}>New Opp</Button>
+                <Button variant='' className='dialog-button' onClick={() => engageCombat()}>Engage</Button>
+                <Button variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>   
                 </>
             : '' }
             <GameAscean state={state} ascean={ascean} damage={state.playerDamaged} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />

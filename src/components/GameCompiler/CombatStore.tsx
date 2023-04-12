@@ -7,6 +7,7 @@ export interface CombatData {
     counter_guess: string;
     playerBlessing: string;
     prayerSacrifice: string;
+    prayerSacrificeName: string,
     player_health: number;
     current_player_health: number;
     new_player_health: number;
@@ -151,6 +152,7 @@ export const initialCombatData: CombatData = {
     counter_guess: '',
     playerBlessing: 'Buff',
     prayerSacrifice: '',
+    prayerSacrificeName: '',
     player_health: 0,
     current_player_health: 0,
     new_player_health: 0,
@@ -379,9 +381,11 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 playerBlessing: action.payload,
             };
         case 'SET_PRAYER_SACRIFICE':
+            console.log(action.payload, "Prayer I'm Preparing To Sacrifice");
             return {
                 ...state,
-                prayerSacrifice: action.payload,
+                prayerSacrifice: action.payload.prayer,
+                prayerSacrificeName: action.payload.name,
             };
         case 'SET_WEAPON_ORDER':
             return {
@@ -407,7 +411,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'CONSUME_PRAYER':
             return {
                 ...action.payload,
-                action: '',
                 combatInitiated: true,
             };
         case 'AUTO_COMBAT':
