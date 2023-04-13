@@ -61,6 +61,7 @@ const StoryBox = ({ ascean, mapState, storyContent, moveTimer }: StoryProps) => 
                     : currentTileContent?.content === 'wonder' ?
                         <Button variant='' style={tileStyle}>Inspect Wonder</Button>    
                     : ''  }
+                    <br /><br />
                     </>
                 : mapState?.context !== '' ?
                     mapState?.context

@@ -251,6 +251,15 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const handleInventoryMiddleware = async () => {
+        try {
+            if (gameState?.player?.tutorial?.firstInventory && gameState?.player?.inventory?.length > 0) await checkTutorial('firstInventory', gameState.player);
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory });
+        } catch (err: any) {
+            console.log(err, "Error Handling Dialog Middleware");
+        };
+    };
+
     const loadMap = async (ascean: Player, map: MapData) => {
         console.log(map, "Loading Map");
         const article = ['a', 'e', 'i', 'o', 'u'].includes(map.currentTile.content.charAt(0).toLowerCase()) ? 'an' : 'a';
@@ -602,6 +611,11 @@ const GameSolo = ({ user }: GameProps) => {
                 'faith': cleanRes.data.faith,
             });
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
+            if (cleanRes.data.level === 1 && cleanRes.data.experience === 1000 && cleanRes.data.tutorial.firstLevelUp) {
+                setTimeout(() => {
+                    checkTutorial('firstLevelUp', cleanRes.data);
+                }, 5000);
+            };
         } catch (err: any) {
             console.log(err.message, 'Error Saving Experience');
         };
@@ -1230,6 +1244,7 @@ const GameSolo = ({ user }: GameProps) => {
                 gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
             };
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
+            if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);
         } catch (err: any) {
             console.log(err.message, 'Error Getting Loot Drop');
         };
@@ -1418,6 +1433,7 @@ const GameSolo = ({ user }: GameProps) => {
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 if (gameState.opponent.name === "Wolf" || gameState.opponent.name === "Bear") clearOpponent(combatData);
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+                if (gameState?.player?.tutorial?.firstDeath) checkTutorial('firstDeath', gameState.player);
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -1631,7 +1647,7 @@ const GameSolo = ({ user }: GameProps) => {
                         <>
                         <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
                         <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} mapState={mapState} />
-                        <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
+                        <Button variant='' className='inventory-button' onClick={handleInventoryMiddleware}>Inventory</Button>   
                         </>
                     }
                     { gameState.showCity ?

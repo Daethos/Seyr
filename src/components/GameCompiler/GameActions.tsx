@@ -104,7 +104,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
         type: ACTIONS.SET_ACTION_STATUS,
         payload: false
       })
-    }, 30000);
+    }, 3000);
     return () => clearTimeout(initiateTimer);
   }, [state.actionStatus, dispatch]);
 

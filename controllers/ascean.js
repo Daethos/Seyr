@@ -50,8 +50,7 @@ module.exports = {
 async function firstTutorial(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
-        console.log(req.params.tutorial, "Tutorial");
-        ascean[req.params.tutorial] = false;
+        ascean.tutorial[req.params.tutorial] = false;
         ascean.save();
         res.status(201).json(ascean);
     } catch (err) {
@@ -69,7 +68,7 @@ async function killAscean(req, res) {
     } catch (err) {
         console.log(err.message, "Error Killing Ascean");
         res.status(400).json(err);
-    }
+    };
 };
 
 async function persistAscean(req, res) {

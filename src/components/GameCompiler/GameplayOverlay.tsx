@@ -31,7 +31,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
     };
 
     const saveWorldMiddleware = async () => {
-        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Saving Map: ${mapState?.name} \n\n To \n\n Ascean: ${ascean?.name}` })
+        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Saving Map: ${mapState?.name} \n\n To \n\n Ascean: ${ascean?.name}` });
         await saveWorld();
     };
 
@@ -61,21 +61,20 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
             ) : ascean?.hardcore && location.pathname.startsWith(`/Hardcore`) && overlayContent === '' ? (
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
-                    Welcome to the Ascea, {ascean?.name}!
-                Have you generated an arena, yet? Simply press the button, or input a name you prefer.
-                </h5><br />
-                <input type='text' value={mapName} onChange={(e: any) => setMapName(e.target.value)} />
-                <br />
-                <Button variant='' style={{ color: '#fdf6d8', fontVariant: 'small-caps', outline: 'none' }} onClick={() => generateWorld(mapName)}>Generate Arena Environment: <br /> 
-                <p style={{ color: 'gold' }}>
-                {mapName}
-                </p>
-                </Button>
-                <br />
-                {   mapState?.generatingWorld ?
+                    Welcome to the Ascea, {ascean?.name}!<br /><br />
+                    Have you generated an arena, yet? Simply press the button, or input a name you prefer.
+                    </h5><br />
+                    <input type='text' value={mapName} onChange={(e: any) => setMapName(e.target.value)} />
+                    <br />
+                    <Button variant='' style={{ color: '#fdf6d8', fontVariant: 'small-caps', outline: 'none' }} onClick={() => generateWorld(mapName)}>Generate Arena Environment: <br /> 
+                    <p style={{ color: 'gold' }}>
+                    {mapName}
+                    </p>
+                    </Button>
+                    <br />
+                { mapState?.generatingWorld ?
                     <Loading NavBar={true} />
-                    :
-                    mapState.name !== '' ?
+                : mapState.name !== '' ?
                     <>
                     <p style={{ color: '#fdf6d8', fontSize: "13.5px" }}>
                     Map Name: {mapState?.name}<br />
@@ -97,14 +96,12 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                     <h1 style={{ color: 'gold', textShadow: '2px 2px 2px darkgoldenrod', fontSize: "36px" }}>{ascean.name}</h1>
                     </Button>
                     </>
-                    : ('')    
-                }
+                : ('') }
                 </div>
-            ) :
-            !loadingContent && overlayContent === '' && !location.pathname.startsWith(`/Hardcore`) ?
+            ) : !loadingContent && overlayContent === '' && !location.pathname.startsWith(`/Hardcore`) ? (
                 <div style={{ textAlign: 'center' }}>
                     <h5 style={{ color: 'gold', textShadow: '1.5px 1.5px 1.5px goldenrod' }}>
-                    Welcome to the Ascea, {ascean?.name}!
+                    Welcome to the Ascea, {ascean?.name}!<br /><br />
                     Have you generated a world, yet? Simply press the button, or input a name you prefer.
                     </h5><br />
                     <input type='text' value={mapName} onChange={(e: any) => setMapName(e.target.value)} />
@@ -115,10 +112,9 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                     </p>
                     </Button>
                     <br />
-                    {   mapState?.generatingWorld ?
+                    { mapState?.generatingWorld ?
                         <Loading NavBar={true} />
-                        :
-                        mapState.name !== '' ?
+                    : mapState.name !== '' ?
                         <>
                         <p style={{ color: '#fdf6d8', fontSize: "13.5px" }}>
                         Map Name: {mapState?.name} | Province: {mapState?.province} <br />
@@ -139,20 +135,18 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         This is where you're starting, and as expected, nothing is happening, but that's okay because you can move around and explore this world. 
                         {' '}Let's imagine a chunk of this province is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering adventure in any direction.<br /><br /> 
                         {' '}You may find the world you're in to be lacking, but over time more will occur than last experienced, as this lightweight design is to simulate a Phaser canvas for coherence of gameplay.
-                        {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. It won't save, so each time you generate a world, it'll be different.
-                        Once you're ready, click your name.
+                        {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. Once you're ready, click your name.
                         </p>
                         <Button variant='' onClick={saveWorldMiddleware}>
                         <h1 style={{ color: 'gold', textShadow: '2px 2px 2px darkgoldenrod', fontSize: "36px" }}>{ascean.name}</h1>
                         </Button>
                         </>
-                        : ('')    
-                    }
+                    : ('') }
                 </div>
-            : '' }
+            ) : ( '' ) }
             { overlayContent !== '' && loadingContent ?
                 <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", marginTop: "92.5vh", marginLeft: "90vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
-            : '' }
+            : ( '' ) }
             </div>
         </Overlay>
     )
