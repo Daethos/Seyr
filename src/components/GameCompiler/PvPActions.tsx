@@ -1,17 +1,15 @@
-import { useEffect, useState, useRef, RefAttributes } from 'react';
-import Form from 'react-bootstrap/Form';
+import { useEffect, useState, useRef } from 'react';
 import './GameCompiler.css';
 import CombatSettingModal from './CombatSettingModal';
 import { ACTIONS } from './PvPStore';
+import { StatusEffect } from './StatusEffects';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
-import useTimers, { Timer } from './useTimers';
 import { GameData, GAME_ACTIONS } from './GameStore';
 
 interface Props {
     handleAction: (action: any) => void;
     handleCounter: (action: any) => void;
-    // handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
     gameState: GameData;
     gameDispatch: any;
     handleInitiate: (state: any) => Promise<void>;
@@ -33,7 +31,6 @@ interface Props {
 const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
-  const [instantTimerId, setInstantTimerId] = useState<any>(null);
   const { combatInitiated } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
@@ -114,17 +111,16 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
 
   }, [state.prayerSacrifice]);
 
-  const handlePrayerMiddleware = async (prayer: string) => {
-    console.log("Setting Prayer to Sacrifice: ", prayer);
+  const handlePrayerMiddleware = async (effect: StatusEffect) => {
     dispatch({
       type: ACTIONS.SET_PRAYER_SACRIFICE,
-      payload: prayer,
+      payload: effect,
     });
   };
   
   const borderColor = (mastery: string) => {
     switch (mastery) {
-        case 'Constitution': return 'white';
+        case 'Constitution': return '#fdf6d8';
         case 'Strength': return 'red';
         case 'Agility': return 'green';
         case 'Achre': return 'blue';
@@ -136,7 +132,7 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
 
   const instantStyle = {
     color: borderColor(state?.player?.mastery),
-  }
+  };
 
   const getEffectStyle = {
     border: 3 + 'px solid ' + borderColor(state?.player?.mastery),
@@ -201,7 +197,7 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
         <Button variant='' onClick={() => setPrayerModal(true)} style={{ color: "gold", fontSize: "20px", textShadow: "2.5px 2.5px 2.5px black", fontWeight: 600 }}>Consume Prayers </Button><br />
         { state.playerEffects.map((effect: any, index: number) => {
           return (
-            <button key={index} className='prayer-button' style={prayerColor(effect?.prayer, effect?.tick?.end, state?.combatRound)} onClick={() => handlePrayerMiddleware(effect?.prayer)}>
+            <button key={index} className='prayer-button' style={prayerColor(effect?.prayer, effect?.tick?.end, state?.combatRound)} onClick={() => handlePrayerMiddleware(effect)}>
               <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} />
             </button> 
           )

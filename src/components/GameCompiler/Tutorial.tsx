@@ -1,34 +1,54 @@
-import React, { useState } from 'react';
-import { Modal, Button, Accordion } from 'react-bootstrap';
+import React from 'react'
+import { GAME_ACTIONS, Player } from './GameStore';
+import * as asceanAPI from '../../utils/asceanApi';
+import Button from 'react-bootstrap/Button';
 
-const FirstCombatModal = () => {
-  const [show, setShow] = useState<boolean>(false);
+interface TutorialProps {
+    player: Player;
+    gameDispatch: React.Dispatch<any>;
+    setTutorialContent: React.Dispatch<any>;
+    firstBoot?: boolean;
+    firstCombat?: boolean;
+    firstQuest?: boolean;
+    firstShop?: boolean;
+    firstInventory?: boolean;
+    firstLoot?: boolean;
+    firstMovement?: boolean;
+    firstLevelUp?: boolean;
+    firstDeath?: boolean;
+};
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  return (
-    <>
-      <Button variant="" className='first-combat-button' onClick={handleShow}>
-        <p className='first-combat'>
-        Combat Tips
-        </p>
-      </Button>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton closeVariant='white'>
-          <Modal.Title>First Combat Tutorial</Modal.Title>
-        </Modal.Header>
-        <Modal.Body >
-        <Accordion flush>
-        <Accordion.Item eventKey="0">
-        <Accordion.Header>
-            <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
+const Tutorial = ({ player, gameDispatch, firstBoot, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, setTutorialContent }: TutorialProps) => {
+    console.log(player, "Tutorial Triggering")
+    const completeTutorial = async (tutorial: string, ascean: string) => {
+        const data = { ascean, tutorial };
+        const response = await asceanAPI.saveTutorial(data);
+        console.log(response);
+        setTutorialContent(null);
+        gameDispatch({ type: GAME_ACTIONS.SET_TUTORIAL, payload: response.tutorial });
+    };
+    return (
+        <div className='d-flex align-items-center justify-content-center'
+        style={{
+          position: 'fixed',
+          top: '17.5%',
+          left: 0,
+          width: '100%',
+          height: '45vh',
+          backgroundColor: 'rgba(0, 0, 0, 1)',
+          zIndex: 9999, 
+          border: "0.2em solid purple",
+          color: "#fdf6d8",
+          overflow: 'scroll',
+        }}>
+            { firstCombat ? (
+            <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
+            <br /><br /><br /><br /><br /><br />
+            Welcome to your first combat encounter, {player.name}. Below explains the series of actions in conception and execution.<br /><br />
+            <h5 style={{ color: 'gold' }}>
             Combat Actions
             </h5>
-        </Accordion.Header>
-        <Accordion.Body style={{ fontSize: 14 + 'px' }}>
-        <p style={{ color: '#fdf6d8' }}>
+            <p style={{ color: '#fdf6d8' }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 512 512">
             <path d="M311.313 25.625l-23 10.656-29.532 123.032 60.814-111.968-8.28-21.72zM59.625 50.03c11.448 76.937 48.43 141.423 100.188 195.75 14.133-9.564 28.405-19.384 42.718-29.405-22.156-27.314-37.85-56.204-43.593-86.28-34.214-26.492-67.613-53.376-99.312-80.064zm390.47.032C419.178 76.1 386.64 102.33 353.31 128.22c-10.333 58.234-58.087 112.074-118.218 158.624-65.433 50.654-146.56 92.934-215.28 121.406l-.002 32.78c93.65-34.132 195.55-81.378 276.875-146.592C375.72 231.06 435.014 151.375 450.095 50.063zm-236.158 9.344l-8.5 27.813 40.688 73.06-6.875-85.31-25.313-15.564zm114.688 87.813C223.39 227.47 112.257 302.862 19.812 355.905V388c65.917-27.914 142.58-68.51 203.844-115.938 49.83-38.574 88.822-81.513 104.97-124.843zm-144.563 2.155c7.35 18.89 19.03 37.68 34 56.063 7.03-4.98 14.056-10.03 21.094-15.094-18.444-13.456-36.863-27.12-55.094-40.97zM352.656 269.72c-9.573 9.472-19.58 18.588-29.906 27.405 54.914 37.294 117.228 69.156 171.906 92.156V358.19c-43.86-24.988-92.103-55.13-142-88.47zm-44.906 39.81c-11.65 9.32-23.696 18.253-36.03 26.845C342.046 381.51 421.05 416.15 494.655 442.75v-33.22c-58.858-24.223-127.1-58.727-186.906-100zm-58.625 52.033l-46.188 78.25 7.813 23.593 27.75-11.344 10.625-90.5zm15.844.812L316.343 467l36.47 10.28-3.533-31.967-84.31-82.938z"></path>
             </svg>{' '}
@@ -74,7 +94,7 @@ const FirstCombatModal = () => {
             <path d="M27.026 8.969c0.743-0.896 1.226-2.154 1.226-3.562 0-2.543-1.512-4.65-3.448-4.902-0.129-0.020-0.267 0-0.399 0-0.791 0-1.527 0.305-2.139 0.827l-21.218 1.536 19.521 1.414v0.744c-0.004 0.068-0.007 0.136-0.009 0.205l-19.512 1.413 19.515 1.413v0.949l-19.515 1.413 17.355 1.257v0.262c-0.127 0.324-0.237 0.667-0.333 1.023l-17.023 1.233 16.231 1.175v1.219l-16.231 1.175 16.26 1.177v1.42l-16.26 1.177 18.883 1.367v1.040l-18.883 1.367 19.358 1.402v0.971l-19.358 1.401 19.633 1.422 0.047 0.72h7.096l0.741-9.947h2.793c0-4.765-0.305-11.554-4.332-12.312zM21.202 8.102c0.001 0.002 0.002 0.005 0.004 0.007l-0.064-0.011 0.061 0.004z"></path>
             </svg>{" "}
             Dodge - A high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same move, which comes down to initiative. The attributes affecting dodge timers also dictate whose refreshes faster. Go figure?
-           </p>
+            </p>
             <br />
             <p style={{ color: '#fdf6d8' }}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 511.701 511.701">
@@ -82,12 +102,8 @@ const FirstCombatModal = () => {
             </svg>{' '}
             Initiate - Solidifying your choice of action, this triggers the combat resolution for the respective round, and reset attacks for the next. 
             </p>
-          <p style={{ color: 'gold', fontSize: 25 + 'px' }}>Good luck, and have fun!</p>
-        </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="1">
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Combat Tactics (Settings)</h5></Accordion.Header>
-        <Accordion.Body style={{ fontSize: 14 + 'px' }}>
+            <br /><br />
+            <h5 style={{ marginLeft: 'auto', color: 'gold' }}>Combat Tactics (Settings)</h5>
             <br />
             <p style={{ color: 'gold' }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
@@ -109,19 +125,61 @@ const FirstCombatModal = () => {
             </svg>{' '}
             Prayers - Based on your weapon of choice, in addition to various choices of your character, you may be able to invoke the power of the Ancients or Daethos themself. Prayers are powerful abilities that can be used in combat, to provide powerful blessings and curses, to heal yourself, or to damage your enemies. Myriad concerns weight the effectiveness of a prayer.
             </p>
-        </Accordion.Body>
-        </Accordion.Item>
-        </Accordion>
-         
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="outline-danger" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
-};
+            <p style={{ color: 'gold', fontSize: 25 + 'px' }}>Good luck, and have fun!</p>
+            And don't forget, if you need to refer to this once more, it'll be available in your settings.
+            <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstCombat', player._id)}>X</Button>
+            </h6> 
+            ) : ( '' ) }
 
-export default FirstCombatModal;
+            { firstDeath && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
+                    First Death
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstDeath', player._id)}>X</Button>
+                </h6>
+            }
+
+            { firstInventory &&
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Inventory
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstInventory', player._id)}>X</Button>
+                </h6>
+            }
+
+            { firstLevelUp && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Level Up
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLevelUp', player._id)}>X</Button>
+                </h6>
+            }
+
+            { firstLoot && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Loot
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLoot', player._id)}>X</Button>
+                </h6>
+            }
+
+            { firstMovement && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Move
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstMovement', player._id)}>X</Button>
+                </h6>
+            }
+
+            { firstQuest && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Quest
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstQuest', player._id)}>X</Button>
+                </h6>
+            }
+
+            { firstShop && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Shop
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstShop', player._id)}>X</Button>
+                </h6>
+            }
+            { !firstBoot && !firstCombat && !firstDeath && !firstInventory && !firstLevelUp && !firstLoot && !firstMovement && !firstQuest && !firstShop && 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>Nothing to see here!
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginTop: "40vh", marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('', player._id)}>X</Button>
+                </h6> 
+            }
+        </div>
+    )
+}
+
+export default Tutorial

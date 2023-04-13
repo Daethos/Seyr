@@ -381,7 +381,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 playerBlessing: action.payload,
             };
         case 'SET_PRAYER_SACRIFICE':
-            console.log(action.payload, "Prayer I'm Preparing To Sacrifice");
             return {
                 ...state,
                 prayerSacrifice: action.payload.prayer,
@@ -411,7 +410,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'CONSUME_PRAYER':
             return {
                 ...action.payload,
-                combatInitiated: true,
             };
         case 'AUTO_COMBAT':
             return {
@@ -539,7 +537,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
             let currentHealth = state.new_player_health < 0 ? 0 : state.new_player_health;
             const playerHealthHealed = Math.floor(currentHealth + (state.player_health * (percentage / 100)));
             const playerHealth = playerHealthHealed > state.player_health ? state.player_health : playerHealthHealed;
-            console.log(percentage, playerHealthHealed, playerHealth, "The %, the Health Healed, and the new Player Health");
             return {
                 ...state,
                 current_player_health: playerHealth,

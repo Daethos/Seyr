@@ -36,10 +36,8 @@ import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { Merchant } from '../../components/GameCompiler/NPCs';
 import Journal from '../../components/GameCompiler/Journal';
 import useGameSounds from '../../components/GameCompiler/Sounds';
-import * as io from 'socket.io-client'
-type HandleDirectionChangeFn = (direction: string) => void;
-
-let socket: any;
+import GameplayUnderlay from '../../components/GameCompiler/GameplayUnderlay';
+import Tutorial from '../../components/GameCompiler/Tutorial';
 
 export enum MapMode {
     FULL_MAP,
@@ -67,6 +65,7 @@ const GameSolo = ({ user }: GameProps) => {
     });
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
+    const [tutorialContent, setTutorialContent] = useState<any | null>(null);
 
     const [asceanState, setAsceanState] = useState({
         ascean: gameState.player,
@@ -113,13 +112,17 @@ const GameSolo = ({ user }: GameProps) => {
                     'faith': combatStateResponse.data.data.ascean.faith,
                 });
                 gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse });
-                gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 if (gameStateResponse.data.tutorial.firstBoot === true) {
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                };
+                }; // Extra Code Temporary
                 if (mapStateResponse) {
                     await loadMap(gameStateResponse.data, mapStateResponse);
+                    setTimeout(() => {
+                        gameDispatch({ type: GAME_ACTIONS.SET_UNDERLAY_CONTENT, payload: `${gameStateResponse.data.name}, welcome back! Hope you're enjoying your time in this world and I wish you all the luck. \n\n Level ${gameStateResponse.data.level} with ${gameStateResponse.data.experience} out of ${gameStateResponse.data.level * 1000}. \n\n Current wealth stands at ${gameStateResponse.data.currency.gold}g, ${gameStateResponse.data.currency.silver}s` });
+                        gameDispatch({ type: GAME_ACTIONS.LOADING_UNDERLAY, payload: true });
+                    }, 3000);
                 };
+                gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };
@@ -222,7 +225,31 @@ const GameSolo = ({ user }: GameProps) => {
     };
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
-    
+
+    const checkTutorial = async (tutorial: string, player: Player) => {
+        console.log(tutorial, '<- Tutorial Check');
+        switch (tutorial) {
+            case 'firstCombat':
+                console.log('First Combat Tutorial')
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstCombat={true} />);
+            case 'firstQuest':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstQuest={true} />);
+            case 'firstShop':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstShop={true} />);
+            case 'firstInventory':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstInventory={true} />);
+            case 'firstLoot':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstLoot={true} />);
+            case 'firstMovement':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstMovement={true} />);
+            case 'firstDeath':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstDeath={true} />);
+            case 'firstLevelUp':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstLevelUp={true} />);
+            default:
+                return null;
+        };
+    };
 
     const loadMap = async (ascean: Player, map: MapData) => {
         console.log(map, "Loading Map");
@@ -236,9 +263,68 @@ const GameSolo = ({ user }: GameProps) => {
                 type: MAP_ACTIONS.SET_MAP_COORDS,
                 payload: coords,
             });
-            setTimeout(() => { gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }); }, 4000);
+            setTimeout(() => { gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }); }, 3000);
         } catch (err: any) {
             console.log(err.message, "Error loading Map");
+        };
+    };
+
+    const saveWorld = async () => {
+        try {
+            const response = await mapAPI.saveNewMap(mapState);
+            console.log(response);
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_DATA,
+                payload: response
+            });
+            gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${gameState.player.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.WORLD_SAVED, payload: true });
+            }, 60000);
+        } catch (err: any) {
+            console.log(err.message, 'Error Saving World');
+        };
+    };
+
+    const saveAsceanCoords = async (x: number, y: number) => {
+        try {
+            const data = {
+                ascean: gameState.player._id, 
+                coordinates: { x: x, y: y },
+                map: mapState
+            };
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            gameDispatch({ 
+                type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
+                payload: `Saving Coordinates X: ${data.coordinates.x}, Y: ${data.coordinates.y}. \n\n Saving Map: ${data.map.name}. \n\n Enjoy your journey, ${gameState?.player?.name}` });
+            const response = await asceanAPI.saveCoords(data);
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+            }, 2000);
+            console.log(response, 'Response Saving Ascean Coordinates');
+        } catch (err: any) {
+            console.log(err.message, 'Error Saving Ascean Coordinates');
+        };
+    };
+
+    const generateWorld = async (mapName: string) => {
+        mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: true });
+        try {
+            const data = { name: mapName, ascean: gameState.player };
+            const response = await mapAPI.createMap(data);
+            console.log(response, 'Response Generating World Environment.');
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_DATA,
+                payload: response
+            });
+            const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
+            mapDispatch({
+                type: MAP_ACTIONS.SET_MAP_COORDS,
+                payload: coords,
+            });
+            mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
+        } catch (err: any) {
+            console.log(err.message, 'Error Generating World Environment.');
         };
     };
 
@@ -263,6 +349,9 @@ const GameSolo = ({ user }: GameProps) => {
     const getOpponent = async () => {
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try {
+            if (gameState.player.tutorial.firstCombat === true) {
+                await checkTutorial('firstCombat', gameState.player);
+            };
             let minLevel: number = 0;
             let maxLevel: number = 0;
             const chance = Math.random();
@@ -701,65 +790,6 @@ const GameSolo = ({ user }: GameProps) => {
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Clearing Duel');
-        };
-    };
-
-    const saveWorld = async () => {
-        try {
-            const response = await mapAPI.saveNewMap(mapState);
-            console.log(response);
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_DATA,
-                payload: response
-            });
-            gameDispatch({ type: GAME_ACTIONS.SET_SAVE_WORLD, payload: `Good luck, ${gameState.player.name}, for no Ancient bears witness to it on your journey. Ponder what you wish to do in this world, without guidance but for your hands in arms. \n\n Enemies needn't stay such a way, yet a Good Lorian is a rare sight. Be whom you wish and do what you will, live and yearn for wonder in the ley, or scour cities if you have the coin. Pillage and strip ruins of their refuse, clear caves and dungeons of reclusive mercenaries, knights, druids, occultists, and more. \n\n The world doesn't need you, the world doesn't want you. The world's heroes are long dead since the Ancients fell. Many have sought to join these legends best they could, and in emulation have erected the Ascea, a season's long festival of athletic, intellectual, and poetic competition judged in the manner of the Ancients before; an Ascean, worthy, vying to be crowned the va'Esai and become revered across the land as 'Worthy of the Preservation of Being.' \n\n Whatever you seek in this world, if you wish it so, it starts with the Ascea.`})
-            setTimeout(() => {
-                gameDispatch({ type: GAME_ACTIONS.WORLD_SAVED, payload: true });
-            }, 60000);
-        } catch (err: any) {
-            console.log(err.message, 'Error Saving World');
-        };
-    };
-
-    const saveAsceanCoords = async (x: number, y: number) => {
-        try {
-            const data = {
-                ascean: gameState.player._id, 
-                coordinates: { x: x, y: y },
-                map: mapState
-            };
-            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            gameDispatch({ 
-                type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
-                payload: `Saving Coordinates X: ${data.coordinates.x}, Y: ${data.coordinates.y}. \n\n Saving Map: ${data.map.name}. \n\n Enjoy your journey, ${gameState?.player?.name}` });
-            const response = await asceanAPI.saveCoords(data);
-            setTimeout(() => {
-                gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-            }, 2000);
-            console.log(response, 'Response Saving Ascean Coordinates');
-        } catch (err: any) {
-            console.log(err.message, 'Error Saving Ascean Coordinates');
-        };
-    };
-
-    const generateWorld = async (mapName: string) => {
-        mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: true });
-        try {
-            const data = { name: mapName, ascean: gameState.player };
-            const response = await mapAPI.createMap(data);
-            console.log(response, 'Response Generating World Environment.');
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_DATA,
-                payload: response
-            });
-            const coords = await getAsceanCoords(gameState?.player?.coordinates?.x, gameState?.player?.coordinates?.y, response.map);
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_COORDS,
-                payload: coords,
-            });
-            mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
-        } catch (err: any) {
-            console.log(err.message, 'Error Generating World Environment.');
         };
     };
 
@@ -1539,15 +1569,13 @@ const GameSolo = ({ user }: GameProps) => {
                 />
                 </>
             : '' }
-
             <GameConditions 
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={gameState.vibrationTime}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin} gameState={gameState}
             />
-            
             <Settings 
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
-                gameDispatch={gameDispatch}gameState={gameState} mapState={mapState}
+                gameDispatch={gameDispatch} gameState={gameState} mapState={mapState}
             />
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
@@ -1629,6 +1657,10 @@ const GameSolo = ({ user }: GameProps) => {
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}
                 loadingContent={gameState.loadingContent} gameDispatch={gameDispatch} getAsceanCoords={getAsceanCoords}
             />
+            <GameplayUnderlay 
+                ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} loadingUnderlay={gameState.loadingUnderlay}    
+            />
+            { tutorialContent ? tutorialContent : '' }
             <GameplayEventModal 
                 ascean={gameState.player} show={gameState.gameplayModal} gameplayEvent={gameState.gameplayEvent} deleteEquipment={deleteEquipment} gameDispatch={gameDispatch}
                 lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved} mapDispatch={mapDispatch} mapState={mapState}

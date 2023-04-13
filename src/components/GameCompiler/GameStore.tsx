@@ -599,6 +599,7 @@ export interface GameData {
     loadingAscean: boolean;
     loadingOpponent: boolean;
     loadingOverlay: boolean;
+    loadingUnderlay: boolean;
     loadingContent: boolean;
     loadingCombatOverlay: boolean;
 
@@ -636,6 +637,7 @@ export interface GameData {
     currentQuest: string;
     questData: object;
     overlayContent: string;
+    underlayContent: string;
     storyContent: string;
     combatOverlayText: string;
 
@@ -662,6 +664,7 @@ export const GAME_ACTIONS = {
     SET_OPPONENT: 'SET_OPPONENT',
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_DIALOG: 'SET_DIALOG',
+    SET_TUTORIAL: 'SET_TUTORIAL',
     SAVE_EXP: 'SAVE_EXP',
     SAVE_QUEST: 'SAVE_QUEST',
     SET_SAVE_WORLD: 'SET_SAVE_WORLD',
@@ -689,6 +692,7 @@ export const GAME_ACTIONS = {
     LOADING_ASCEAN: 'LOADING_ASCEAN',
     LOADING_OPPONENT: 'LOADING_OPPONENT',
     LOADING_OVERLAY: 'LOADING_OVERLAY',
+    LOADING_UNDERLAY: 'LOADING_UNDERLAY',
     LOADING_CONTENT: 'LOADING_CONTENT',
     LOADING_COMBAT_OVERLAY: 'LOADING_COMBAT_OVERLAY',
     LOADED_ASCEAN: 'LOADED_ASCEAN',
@@ -699,6 +703,7 @@ export const GAME_ACTIONS = {
     SET_LEAVE_CITY: 'SET_LEAVE_CITY',
 
     CLOSE_OVERLAY: 'CLOSE_OVERLAY',
+    CLOSE_UNDERLAY: 'CLOSE_UNDERLAY',
 
     CLEAR_LOOTDROP: 'CLEAR_LOOTDROP',
 
@@ -718,6 +723,7 @@ export const GAME_ACTIONS = {
     SET_CURRENT_INTENT: 'SET_CURRENT_INTENT',
     SET_CURRENT_QUEST: 'SET_CURRENT_QUEST',
     SET_OVERLAY_CONTENT: 'SET_OVERLAY_CONTENT',
+    SET_UNDERLAY_CONTENT: 'SET_UNDERLAY_CONTENT',
     SET_STORY_CONTENT: 'SET_STORY_CONTENT',
     SET_COMBAT_OVERLAY_TEXT: 'SET_COMBAT_OVERLAY_TEXT',
 
@@ -745,6 +751,7 @@ export const initialGameData: GameData = {
     loadingAscean: false,
     loadingOpponent: false,
     loadingOverlay: false,
+    loadingUnderlay: false,
     loadingContent: false,
     loadingCombatOverlay: false,
     loadedAscean: false,
@@ -774,6 +781,7 @@ export const initialGameData: GameData = {
     currentQuest: '',
     questData: {},
     overlayContent: '',
+    underlayContent: '',
     storyContent: '', 
     combatOverlayText: '',
     mapMode: 'FULL_MAP',
@@ -838,6 +846,14 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 dialog: action.payload,
+            };
+        case 'SET_TUTORIAL':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    tutorial: action.payload,
+                }
             };
         case 'SAVE_EXP':
             return {
@@ -965,6 +981,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 loadingOverlay: action.payload,
             };
+        case 'LOADING_UNDERLAY':
+            return {
+                ...game,
+                loadingUnderlay: action.payload,
+            };
         case 'LOADING_CONTENT':
             return {
                 ...game,
@@ -1052,6 +1073,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 overlayContent: action.payload,
             };
+        case 'SET_UNDERLAY_CONTENT':
+            return {
+                ...game,
+                underlayContent: action.payload,
+            };
         case 'SET_STORY_CONTENT':
             return {
                 ...game,
@@ -1079,6 +1105,13 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 overlayContent: '',
                 loadingOverlay: action.payload,
+                loadingContent: action.payload,
+            };
+        case 'CLOSE_UNDERLAY':
+            return {
+                ...game,
+                underlayContent: '',
+                loadingUnderlay: action.payload,
                 loadingContent: action.payload,
             };
         case 'SET_CURRENT_QUEST': 

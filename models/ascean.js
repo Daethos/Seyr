@@ -210,6 +210,8 @@ const asceanSchema = new Schema(
             firstInventory: { type: Boolean, default: true },
             firstLoot: { type: Boolean, default: true },
             firstMovement: { type: Boolean, default: true },
+            firstDeath: { type: Boolean, default: true },
+            firstLevelUp: { type: Boolean, default: true },
         },
         likes: [likeSchema],
         dislikes: [dislikeSchema],

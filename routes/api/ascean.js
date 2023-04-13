@@ -18,6 +18,7 @@ router.get('/restoreFirewater/:id', protect, asceanCtrl.restoreFirewater);
 router.get('/replenishFirewater/:id', protect, asceanCtrl.replenishFirewater);
 router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
 router.get('/kill/:id', protect, asceanCtrl.killAscean);
+router.get('/tutorial/:id/:tutorial', protect, asceanCtrl.firstTutorial);
 
 router.put('/coords', protect, asceanCtrl.saveCoordinates)
 router.put('/highscore', protect, asceanCtrl.updateHighScore);

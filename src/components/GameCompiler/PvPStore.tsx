@@ -21,6 +21,7 @@ export interface PvPData {
     counter_guess: string;
     playerBlessing: string;
     prayerSacrifice: string;
+    prayerSacrificeName: string,
     player_health: number;
     current_player_health: number;
     new_player_health: number;
@@ -134,6 +135,7 @@ export const initialPvPData: PvPData = {
     counter_guess: '',
     playerBlessing: 'Buff',
     prayerSacrifice: '',
+    prayerSacrificeName: '',
     player_health: 0,
     current_player_health: 0,
     new_player_health: 0,
@@ -244,6 +246,7 @@ export const ACTIONS = {
     SET_PRAYER_BLESSING: 'SET_PRAYER_BLESSING',
     SET_PRAYER_SACRIFICE: 'SET_PRAYER_SACRIFICE',
     SET_WEAPON_ORDER: 'SET_WEAPON_ORDER',
+    CONSUME_PRAYER: 'CONSUME_PRAYER',
     INITIATE_COMBAT: 'INITIATE_COMBAT',
     INSTANT_COMBAT: 'INSTANT_COMBAT',
     AUTO_COMBAT: 'AUTO_COMBAT',
@@ -447,7 +450,8 @@ export const PvPStore = (state: PvPData, action: Action) => {
         case 'SET_PRAYER_SACRIFICE':
             return {
                 ...state,
-                prayerSacrifice: action.payload,
+                prayerSacrifice: action.payload.prayer,
+                prayerSacrificeName: action.payload.name,
             };
         case 'SET_WEAPON_ORDER':
             return {
@@ -471,6 +475,10 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 actionStatus: true,
                 combatInitiated: true,
                 instantStatus: true,
+            };
+        case 'CONSUME_PRAYER':
+            return {
+                ...action.payload,
             };
         case 'AUTO_COMBAT':
             return {

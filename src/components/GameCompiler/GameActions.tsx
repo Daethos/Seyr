@@ -1,5 +1,4 @@
-import { useEffect, useState, useRef, RefAttributes } from 'react';
-import Form from 'react-bootstrap/Form';
+import { useEffect, useState, useRef } from 'react';
 import './GameCompiler.css';
 import { StatusEffect } from './StatusEffects';
 import CombatSettingModal from './CombatSettingModal';
@@ -7,14 +6,12 @@ import { ACTIONS } from './CombatStore';
 import { GameData, GAME_ACTIONS } from './GameStore';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
-import useTimers, { Timer } from './useTimers';
 
 interface Props {
     handleAction: (action: any) => void;
     handleCounter: (action: any) => void;
     gameState: GameData;
     gameDispatch: any;
-    // handleInitiate: (e: { preventDefault: () => void; }) => Promise<void>;
     handleInitiate: (state: any) => void;
     currentAction: string;
     currentCounter: string;
@@ -33,8 +30,11 @@ interface Props {
 
 const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
+  const [invokeTime, setInvokeTime] = useState({
+    instant: 30000,
+    caerenic: 3000
+  });
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
-  const [instantTimerId, setInstantTimerId] = useState<any>(null);
   const { combatInitiated } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
@@ -80,7 +80,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
           type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
-      }, 3000);
+      }, 30000);
     }
     return () => {
       clearTimeout(instantTimer);
@@ -104,7 +104,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
         type: ACTIONS.SET_ACTION_STATUS,
         payload: false
       })
-    }, 3000);
+    }, 30000);
     return () => clearTimeout(initiateTimer);
   }, [state.actionStatus, dispatch]);
 
@@ -114,15 +114,12 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   }, [state.prayerSacrifice]);
 
   const handlePrayerMiddleware = async (effect: StatusEffect) => {
-    dispatch({
-      type: ACTIONS.SET_PRAYER_SACRIFICE,
-      payload: effect,
-    });
+    dispatch({ type: ACTIONS.SET_PRAYER_SACRIFICE, payload: effect });
   };
   
   const borderColor = (mastery: string) => {
     switch (mastery) {
-        case 'Constitution': return 'white';
+        case 'Constitution': return '#fdf6d8';
         case 'Strength': return 'red';
         case 'Agility': return 'green';
         case 'Achre': return 'blue';
@@ -134,7 +131,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
 
   const instantStyle = {
     color: borderColor(state?.player?.mastery),
-  }
+  };
 
   const getEffectStyle = {
     border: 3 + 'px solid ' + borderColor(state?.player?.mastery),
@@ -178,7 +175,8 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
           <Modal.Body style={{ textAlign: "center", fontSize: "14px" }}>
             <p style={{ color: "#fdf6d8" }}>
             Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
-            {' '} to enhance their being, those favored to the Ancients were granted strength in the glow of their beloved Ancient. Some believed this was more than simply a boost to one's disposition.
+            {' '} to enhance themself, those favored to the Ancients were granted strength in the glow of their adherence. Some believe this was nothing more than a boost to one's disposition.
+            {' '} Perhaps they were right, willing themselves inert and ineffectual.
             {' '} Others sought to channel it through their caer into a single burst.<br /><br />
             Consume a prayer to experience a burst of caerenic beauty.
             </p><br />
@@ -204,8 +202,8 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
             </button> 
           )
         })} 
-        </div>
-      : '' }
+      </div>
+    : '' }
     <>
       <p style={instantStyle} className={`invoke${gameState.instantStatus ? '-instant' : ''}`}>Invoke</p>
       <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={gameState.instantStatus ? true : false}>
@@ -213,9 +211,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
       </button>
     </>
     <div className="actionButtons" id='action-buttons'>
-      {/* <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                 */}
           <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
-      {/* </Form> */}
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
         <option>Counter</option>

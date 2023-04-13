@@ -255,8 +255,8 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 32 32">
             <path d="M27.026 8.969c0.743-0.896 1.226-2.154 1.226-3.562 0-2.543-1.512-4.65-3.448-4.902-0.129-0.020-0.267 0-0.399 0-0.791 0-1.527 0.305-2.139 0.827l-21.218 1.536 19.521 1.414v0.744c-0.004 0.068-0.007 0.136-0.009 0.205l-19.512 1.413 19.515 1.413v0.949l-19.515 1.413 17.355 1.257v0.262c-0.127 0.324-0.237 0.667-0.333 1.023l-17.023 1.233 16.231 1.175v1.219l-16.231 1.175 16.26 1.177v1.42l-16.26 1.177 18.883 1.367v1.040l-18.883 1.367 19.358 1.402v0.971l-19.358 1.401 19.633 1.422 0.047 0.72h7.096l0.741-9.947h2.793c0-4.765-0.305-11.554-4.332-12.312zM21.202 8.102c0.001 0.002 0.002 0.005 0.004 0.007l-0.064-0.011 0.061 0.004z"></path>
             </svg>{" "}
-            Dodge - The dirty dodge, a high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same perverse art of the dodge, which comes down to whose refreshes faster as well. Go figure?
-            </p>
+            Dodge - A high priority attack that is effectively a 100% roll, provided you and your opponent are not performing the same move, which comes down to initiative. The attributes affecting dodge timers also dictate whose refreshes faster. Go figure?
+           </p>
             <br />
             <p style={{ color: '#fdf6d8' }}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 511.701 511.701">

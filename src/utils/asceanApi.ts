@@ -386,4 +386,17 @@ export async function saveCoords(data: any) {
             console.log(response, '<- Response in Save Coords Utility Return')
         })
     })
-}
+};
+
+export async function saveTutorial(data: any) {
+    return fetch(BASE_URL + 'tutorial/' + data.ascean + '/' + data.tutorial, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        return res.json().then((response: any) => {
+            console.log(response, '<- Response in Save Tutorial Utility Return')
+        });
+    });
+};
