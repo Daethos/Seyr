@@ -185,6 +185,12 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
     };
 
+    const engageGrappling = async () => {
+        await checkingLoot();
+        gameDispatch({ type: GAME_ACTIONS.LOADING_UNDERLAY, payload: true });
+        gameDispatch({ type: GAME_ACTIONS.SET_MINIGAME_SEVAN, payload: true });
+    };
+
     const clearDuel = async () => {
         try {
             await checkingLoot();
@@ -897,6 +903,8 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         This will entail the world lore of the region you inhabit, 
                         the history of the world from the perspective of the enemy in question, 
                         and hopefully grant more insight into the cultural mindset.
+                        <br /><br />
+                        <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>Test Se'van Grappling</Button>
                     </>
                 : '' }
             </div>

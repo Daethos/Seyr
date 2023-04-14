@@ -292,7 +292,7 @@ export const QUESTS = [
         isBounty: false,
 
     }
-]
+];
 
 export const getQuests = (name: string) => {
     return QUESTS.filter(quest => quest.name.includes(name));
@@ -595,6 +595,11 @@ export interface GameData {
     secondary: { name: string, description: string, style: string };
     tertiary: { name: string, description: string, style: string };
 
+    miniGameCambiren: boolean;
+    miniGameSevan: boolean;
+    miniGameShrygeian: boolean;
+    miniGameTshaeral: boolean;
+
     loading: boolean;
     loadingAscean: boolean;
     loadingOpponent: boolean;
@@ -737,6 +742,11 @@ export const GAME_ACTIONS = {
     SET_CANVAS_HEIGHT: 'SET_CANVAS_HEIGHT',
     SET_JOYSTICK_SPEED: 'SET_JOYSTICK_SPEED',
     SET_VOLUME: 'SET_VOLUME',
+
+    SET_MINIGAME_CAMBIREN: 'SET_MINIGAME_CAMBIREN',
+    SET_MINIGAME_SEVAN: 'SET_MINIGAME_SEVAN',
+    SET_MINIGAME_SHRYGEIAN: 'SET_MINIGAME_SHRYGEIAN',
+    SET_MINIGAME_TSHAERAL: 'SET_MINIGAME_TSHAERAL',
 };
 
 export const initialGameData: GameData = {
@@ -747,6 +757,10 @@ export const initialGameData: GameData = {
     primary: { name: '', description: '', style: '' },
     secondary: { name: '', description: '', style: '' },
     tertiary: { name: '', description: '', style: '' },
+    miniGameCambiren: false,
+    miniGameSevan: false,
+    miniGameShrygeian: false,
+    miniGameTshaeral: false,
     loading: true,
     loadingAscean: false,
     loadingOpponent: false,
@@ -1191,6 +1205,26 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 soundEffectVolume: action.payload,
             };
+        case 'SET_MINIGAME_CAMBIREN':
+            return {
+                ...game,
+                miniGameCambiren: action.payload,
+            };
+        case 'SET_MINIGAME_SEVAN':
+            return {
+                ...game,
+                miniGameSevan: action.payload,
+            };
+        case 'SET_MINIGAME_SHRYGEIAN':
+            return {
+                ...game,
+                miniGameShrygeian: action.payload,
+            };
+        case 'SET_MINIGAME_TSHAERAL':
+            return {
+                ...game,
+                miniGameTshaeral: action.payload,
+            };   
         default:
             return game;
     };

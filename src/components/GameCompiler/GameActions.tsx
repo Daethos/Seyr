@@ -32,13 +32,14 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [invokeTime, setInvokeTime] = useState({
     instant: 30000,
-    caerenic: 3000
+    cambiren: 1000
   });
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const { combatInitiated } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
   const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
+
   useEffect(() => {
     if (currentAction === 'counter') {
       setDisplayedAction(currentAction.charAt(0).toUpperCase() + currentAction.slice(1) + ': ' + currentCounter.charAt(0).toUpperCase() + currentCounter.slice(1));
@@ -80,7 +81,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
           type: GAME_ACTIONS.INSTANT_COMBAT,
           payload: false,
         });
-      }, 30000);
+      }, gameState?.miniGameCambiren ? invokeTime.cambiren : invokeTime.instant);
     }
     return () => {
       clearTimeout(instantTimer);
@@ -115,6 +116,11 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
 
   const handlePrayerMiddleware = async (effect: StatusEffect) => {
     dispatch({ type: ACTIONS.SET_PRAYER_SACRIFICE, payload: effect });
+  };
+
+  const handleTshaeral = async (e: any) => {
+    e.preventDefault();
+    console.log(e.target.value, "Tshaeral");
   };
   
   const borderColor = (mastery: string) => {
@@ -163,7 +169,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
         default: return {};
     };
   };
-
+  console.log(gameState, "GameState")
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>
@@ -210,19 +216,29 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
         <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
       </button>
     </>
-    <div className="actionButtons" id='action-buttons'>
-          <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
-      <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
-      <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
-        <option>Counter</option>
-        {counters.map((counter: string, index: number) => ( 
-          <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
-        ))}
-      </select>
-      <button value='dodge' onClick={handleAction} disabled={state.dodgeStatus ? true : false} className='btn btn-outline' id='dodge-button'>Dodge</button>
-      <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
-      <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
-    </div>
+    { gameState?.miniGameTshaeral ?
+      <div className="actionButtons" id='action-buttons'>
+          {/* <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button> */}
+          <button value='howl' onClick={handleTshaeral} className='btn btn-outline' id='action-button'>Howl</button>
+          <button value='pounce' onClick={handleTshaeral} className='btn btn-outline' id='dodge-button'>Pounce</button>
+          <button value='taunt' onClick={handleTshaeral} className='btn btn-outline' id='action-button'>Taunt</button>
+          <button value='stalk' onClick={handleTshaeral} className='btn btn-outline' id='action-button'>Stalk</button>
+      </div>
+      :
+      <div className="actionButtons" id='action-buttons'>
+        <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
+        <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
+        <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
+          <option>Counter</option>
+          {counters.map((counter: string, index: number) => ( 
+            <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
+          ))}
+        </select>
+        <button value='dodge' onClick={handleAction} disabled={state.dodgeStatus ? true : false} className='btn btn-outline' id='dodge-button'>Dodge</button>
+        <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
+        <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
+      </div>
+    }
     </>
   );
 };
