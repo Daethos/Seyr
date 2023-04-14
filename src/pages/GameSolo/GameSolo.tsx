@@ -118,7 +118,7 @@ const GameSolo = ({ user }: GameProps) => {
                 if (mapStateResponse) {
                     await loadMap(gameStateResponse.data, mapStateResponse);
                     setTimeout(() => {
-                        gameDispatch({ type: GAME_ACTIONS.SET_UNDERLAY_CONTENT, payload: `${gameStateResponse.data.name}, welcome back! Hope you're enjoying your time in this world and I wish you all the luck. \n\n Level ${gameStateResponse.data.level} with ${gameStateResponse.data.experience} out of ${gameStateResponse.data.level * 1000}. \n\n Current wealth stands at ${gameStateResponse.data.currency.gold}g, ${gameStateResponse.data.currency.silver}s` });
+                        gameDispatch({ type: GAME_ACTIONS.SET_UNDERLAY_CONTENT, payload: `${gameStateResponse.data.name}, welcome back! I wish you all the luck in your journey. \n\n You are currently level ${gameStateResponse.data.level} with ${gameStateResponse.data.experience} / ${gameStateResponse.data.level * 1000} experience. \n\n Your current wealth stands: ${gameStateResponse.data.currency.gold}g, ${gameStateResponse.data.currency.silver}s. \n\n The cohesion of your identity is that you are ${traitResponse.primary.name}, ${traitResponse.secondary.name}, and ${traitResponse.tertiary.name}; ${gameStateResponse.data.faith} to ${gameStateResponse.data.weapon_one.influences[0]}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_UNDERLAY, payload: true });
                     }, 3000);
                 };

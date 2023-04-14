@@ -470,7 +470,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                 return 'orangered';
             case 'Tshaeral':
                 return 'darkblue';
-            case 'Astralism':
+            case 'Astral':
                 return 'yellow';
             case 'Shaorahi':
                 return 'blue';

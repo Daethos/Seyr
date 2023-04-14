@@ -7,13 +7,13 @@ import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
 import { GAME_ACTIONS } from './GameStore';
 import Modal from 'react-bootstrap/Modal';
-import { DragDropContext, Draggable, DragStart, Droppable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DragStart, Droppable, DropResult } from 'react-beautiful-dnd';
 import Loading from '../Loading/Loading';
 
 interface Firewater {
   charges: number;
   maxCharges: number;
-}
+};
 
 interface IBProps {
     inventory: any;
@@ -23,7 +23,7 @@ interface IBProps {
     gameDispatch: React.Dispatch<any>;
     gameState: any;
     mapState: any;
-}
+};
 
 interface IOProps {
     drinkFirewater: () => void;
@@ -48,7 +48,7 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
     backgroundColor: "black",
     height: "60px",
     borderRadius: "3px"
-  }
+  };
 
   const firewaterPopover = (
     <Popover id="popover">
@@ -57,7 +57,6 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
         This is a bottle of Fyervas Firewater, associated with Fyer of Fire and Se'vas of War. This elixir strengthens the body and imbues you with a fiery spirit, making you{' '}
         more resilient and able to withstand combat and other challenges. This bottle has {firewater?.charges} charges left.
         <br /><br />
-        
       { firewater?.charges === 0 && mapState?.currentTile?.content !== 'city' ?
           <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
             Inspect
@@ -77,8 +76,8 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
         <img src={process.env.PUBLIC_URL + '/images/firewater.png'} alt="Firewater" style={firewaterStyle} /> 
       </OverlayTrigger>
     </div>
-  )
-}
+  );
+};
 
 const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gameState, mapState }: IBProps) => {
   const [dndInventory, setDndInventory] = useState(inventory);
@@ -145,8 +144,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
 
   const onDragStart = (start: DragStart) => {
     console.log('drag start:', start);
-  }
-
+  };
   
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -169,7 +167,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     fontSize: 18 + 'px',
     height: 47.5 + 'vh',
     overflow: 'auto',
-};
+  };
   
   return (
     <>

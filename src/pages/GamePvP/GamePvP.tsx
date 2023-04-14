@@ -1031,7 +1031,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             { asceanState.ascean.experience === asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
-            {/* TODO:FIXME:      Use playerState to determine order which player is which for splitting concepts!     TODO:FIXME: */}
             <PvPAscean state={state} ascean={ascean} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
         { state.combatEngaged ? (
             <>

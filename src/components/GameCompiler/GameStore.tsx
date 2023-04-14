@@ -340,14 +340,14 @@ export const getAsceanTraits = async (ascean: Player) => {
             strength: "Shaorahi", // Conviction, Persuasion (Awe), 
             agility: "Cambiren", // Transubstantiation, Caerenic Mini-Game
             achre: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
-            kyosir: "Astralism", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
+            kyosir: "Astral", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
         },
         Kyosir: {
             constitution: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
             strength: "Tshaeral", // Persuasion (Fear), Mini-Game (Fear) 
             agility: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
             achre: "Chiomic", // Persuasion (Humor), Luckout (Shatter)
-            caeren: "Astralism", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
+            caeren: "Astral", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
         },
     };
 
@@ -556,7 +556,7 @@ export const getAsceanTraits = async (ascean: Player) => {
                 failure: "Failure!"
             }
         },
-        "Astralism": {
+        "Astral": {
             impermanence: {
                 description: "you can perform combat maneuvers that are impossible to follow, and thus impossible to counter.",
                 action: "Your caeren leads in traces {enemy.name}'s flesh cannot follow.",

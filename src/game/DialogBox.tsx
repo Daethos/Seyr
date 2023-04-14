@@ -119,7 +119,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const [persuasionTraits, setPersuasionTraits] = useState<any>([]);
     const [miniGame, setMiniGame] = useState<boolean>(false);
     const [miniGameTraits, setMiniGameTraits] = useState<any>([]);
-    const [enemyPersuaded, setEnemyPersuaded] = useState<boolean>(false);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
@@ -461,7 +460,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 return 'orangered';
             case 'Tshaeral':
                 return 'darkblue';
-            case 'Astralism':
+            case 'Astral':
                 return 'yellow';
             case 'Shaorahi':
                 return 'blue';
