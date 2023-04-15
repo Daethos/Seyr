@@ -132,116 +132,120 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
     };
 
     function checkGrapplingSequence(move: string, sequence: string[]) {
+        let newSequenceLength = sequence.length;
+        console.log('newSequenceLength: ', newSequenceLength)
+        if (newSequenceLength > 3) newSequenceLength = newSequenceLength % 4;
+        console.log('newSequenceLength: ', newSequenceLength)
         switch (move) {
             case 'right-hand':
-                if (sequence.length === 0) {
-                    return setBackgroundRH('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundRH('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundRH('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundRH('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundRH('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundRH('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundRH('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundRH('rgba(255, 0, 0, 1)');
                 };
             case 'right-arm':
-                if (sequence.length === 0) {
-                    return setBackgroundRA('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundRA('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundRA('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundRA('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundRA('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundRA('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundRA('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundRA('rgba(255, 0, 0, 1)');
                 };
             case 'right-leg':
-                if (sequence.length === 0) {
-                    return setBackgroundRL('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundRL('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundRL('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundRL('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundRL('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundRL('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundRL('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundRL('rgba(255, 0, 0, 1)');
                 };
             case 'right-foot':
-                if (sequence.length === 0) {
-                    return setBackgroundRF('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundRF('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundRF('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundRF('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundRF('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundRF('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundRF('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundRF('rgba(255, 0, 0, 1)');
                 };
             case 'left-hand':
-                if (sequence.length === 0) {
-                    return setBackgroundLH('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundLH('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundLH('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundLH('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundLH('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundLH('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundLH('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundLH('rgba(255, 0, 0, 1)');
                 };
             case 'left-arm':
-                if (sequence.length === 0) {
-                    return setBackgroundLA('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundLA('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundLA('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundLA('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundLA('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundLA('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundLA('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundLA('rgba(255, 0, 0, 1)');
                 };
             case 'left-leg':
-                if (sequence.length === 0) {
-                    return setBackgroundLL('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundLL('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundLL('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundLL('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundLL('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundLL('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundLL('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundLL('rgba(255, 0, 0, 1)');
                 };
             case 'left-foot':
-                if (sequence.length === 0) {
-                    return setBackgroundLF('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundLF('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundLF('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundLF('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundLF('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundLF('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundLF('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundLF('rgba(255, 0, 0, 1)');
                 };
             case 'head':
-                if (sequence.length === 0) {
-                    return setBackgroundH('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundH('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundH('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundH('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundH('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundH('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundH('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundH('rgba(255, 0, 0, 1)');
                 };
             case 'upper-torso':
-                if (sequence.length === 0) {
-                    return setBackgroundC('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundC('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundC('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundC('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundC('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundC('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundC('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundC('rgba(255, 0, 0, 1)');
                 };
             case 'lower-torso':
-                if (sequence.length === 0) {
-                    return setBackgroundL('rgba(128, 0, 128, 0.7)');
-                } else if (sequence.length === 1) {
-                    return setBackgroundL('rgba(255, 215, 0, 0.7)');
-                } else if (sequence.length === 2) {
-                    return setBackgroundL('rgba(0, 0, 255, 0.7)');
+                if (newSequenceLength === 0) {
+                    return setBackgroundL('rgba(128, 0, 128, 1)');
+                } else if (newSequenceLength === 1) {
+                    return setBackgroundL('rgba(255, 215, 0, 1)');
+                } else if (newSequenceLength === 2) {
+                    return setBackgroundL('rgba(0, 0, 255, 1)');
                 } else {
-                    return setBackgroundL('rgba(255, 0, 0, 0.7)');
+                    return setBackgroundL('rgba(255, 0, 0, 1)');
                 };
         };
     };
@@ -480,7 +484,7 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
                 </Button>
             </Col>
 
-            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-3" >
+            <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-2" >
                 <Button variant='' onClick={() => atsMiddleware('head')}>
                 <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getHelmStyle} id={damaged ? 'flicker' : ''} />
                 </Button>

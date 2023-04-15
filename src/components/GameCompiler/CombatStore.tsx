@@ -40,6 +40,7 @@ export interface CombatData {
     player_win: boolean;
     player_luckout: boolean;
     playerTrait: string;
+    playerGrapplingWin: boolean;
 
     computer: any;
     computer_action: string;
@@ -111,6 +112,7 @@ export const ACTIONS = {
     SET_COMPUTER: 'SET_COMPUTER',
     SET_DUEL: 'SET_DUEL',
     RESET_LUCKOUT: 'RESET_LUCKOUT',
+    RESET_GRAPPLING_WIN: 'RESET_GRAPPLING_WIN',
     ENEMY_PERSUADED: 'ENEMY_PERSUADED',
     RESET_PLAYER: 'RESET_PLAYER',
     RESET_COMPUTER: 'RESET_COMPUTER',
@@ -143,6 +145,7 @@ export const ACTIONS = {
     SET_WEATHER: 'SET_WEATHER',
     PLAYER_REST: 'PLAYER_REST',
     TOGGLED_DAMAGED: 'TOGGLED_DAMAGED',
+    SET_GRAPPLING_WIN: 'SET_GRAPPLING_WIN',
 }
 
 export const initialCombatData: CombatData = {
@@ -182,6 +185,7 @@ export const initialCombatData: CombatData = {
     roll_success: false,
     player_win: false,
     player_luckout: false,
+    playerGrapplingWin: false,
     playerTrait: '',
     computer: {},
     computer_action: '',
@@ -447,6 +451,18 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 playerTrait: action.payload.playerTrait,
                 player_win: action.payload,
             };
+        case 'SET_GRAPPLING_WIN':
+            console.log('grappling win')
+            return {
+                ...state,
+                winStrea: state.winStreak + 1,
+                highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
+                loseStreak: 0,
+                new_computer_health: 0,
+                current_computer_health: 0,
+                player_win: action.payload,
+                playerGrapplingWin: action.payload,
+            };
         case 'ENEMY_PERSUADED':
             return {
                 ...state,
@@ -457,6 +473,11 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 player_luckout: action.payload,
+            };
+        case 'RESET_GRAPPLING_WIN':
+            return {
+                ...state,
+                playerGrapplingWin: action.payload,
             };
         case 'COMPUTER_WIN':
             return {

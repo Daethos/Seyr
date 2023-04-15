@@ -128,6 +128,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         getDialogTree();
         checkLuckout();
         checkPersuasion();
+        checkMiniGame();
         setNamedEnemy(nameCheck(enemy?.name));
     }, [enemy]);
 
@@ -692,6 +693,28 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         })} 
                             </div>
                         ) : ('') }
+                        { miniGame ? (
+                            <>
+                            {/* <Button variant='' className='dialog-buttons inner' style={{ color: 'gold' }} onClick={playMiniGame}>Play a game of chance?</Button> */}
+                            {miniGameTraits.map((trait: any, index: number) => {
+                                return (
+                                    <div key={index}>
+                                        {/* <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptMiniGame(trait.name)}>[{trait.name}] - {trait.minigame.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button> */}
+                                        {trait.name === "Se'van" ? (
+                                            <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>Test Se'van Grappling</Button>
+                                        ) : trait.name === "Cambiren" ? (
+                                            <Button variant='' className='dialog-buttons inner' >[WIP] Cambiren Combat</Button>
+                                        ) : trait.name === "Tshaeral" ? (
+                                            <Button variant='' className='dialog-buttons inner' >[WIP] Tshaeral Combat</Button>
+                                        ) : trait.name === "Shrygeian" ? (
+                                            <Button variant='' className='dialog-buttons inner' >[WIP] Shrygeian Combat</Button>
+                                        ) : ('')}
+                                    </div>
+                                )
+                            })}
+                            </>
+                        ) : ('') }
+
                         </div> 
                 : currentIntent === 'conditions' ?
                     <>

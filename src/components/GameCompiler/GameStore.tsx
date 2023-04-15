@@ -352,10 +352,23 @@ export const getAsceanTraits = async (ascean: Player) => {
     };
 
     let asceanTraits = ATTRIBUTE_TRAITS[ascean.mastery as keyof typeof ATTRIBUTE_TRAITS];
-    let topThree = Object.entries(asceanTraits).sort((a, b) => b[1].length - a[1].length).slice(0, 3);
-    traits.primary.name = topThree[0][1];
-    traits.secondary.name = topThree[1][1];
-    traits.tertiary.name = topThree[2][1];
+    console.log(asceanTraits, "Ascean Traits")
+    // asceanTraits[0].push(ascean[asceanTraits[0][0]] as keyof typeof asceanTraits[0]);
+    let topThree = Object.entries(asceanTraits).sort((a, b) => b[0].length - a[0].length)
+    const mappedTraits = topThree.map(trait => {
+        const traitName = trait[0];
+        const traitValue = trait[1];
+        const attributeValue = asceanTraits[traitName as keyof typeof asceanTraits];
+      
+        return [traitName, traitValue, attributeValue];
+      });
+
+    
+    // .slice(0, 3);
+    console.log(mappedTraits, "Top Three Traits")
+    traits.primary.name = mappedTraits[0][1];
+    traits.secondary.name = mappedTraits[1][1];
+    traits.tertiary.name = mappedTraits[2][1];
 
     const TRAIT_DESCRIPTIONS = {
         "Ilian": {

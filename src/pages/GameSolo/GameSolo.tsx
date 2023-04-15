@@ -646,6 +646,17 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
+        if (state.playerGrapplingWin) {
+            handlePlayerGrapplingWin();
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+                dispatch({ type: ACTIONS.RESET_GRAPPLING_WIN, payload: false });
+            }, 6000);
+        }
+    }, [state.playerGrapplingWin]);
+
+    useEffect(() => {
         if (state.player_luckout) {
           handlePlayerLuckout();
           setTimeout(() => {
@@ -1379,6 +1390,20 @@ const GameSolo = ({ user }: GameProps) => {
             }, 6000);
         } catch (err: any) {
             console.log(err, "Error Handling Hardcore Death");
+        };
+    };
+
+    async function handlePlayerGrapplingWin() {
+        try {
+            if (mapState?.currentTile?.content === 'city') {
+                playWin();
+            } else {
+                playReligion();
+            };
+            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
+            await gainExperience();
+        } catch (err: any) {
+            console.log(err, "Error Handling Player Grappling Win");
         };
     };
 
