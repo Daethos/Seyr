@@ -701,7 +701,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                     <div key={index}>
                                         {/* <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptMiniGame(trait.name)}>[{trait.name}] - {trait.minigame.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button> */}
                                         {trait.name === "Se'van" ? (
-                                            <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>Test Se'van Grappling</Button>
+                                            <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Test] Surprise {enemy.name} and initiate Se'van Grappling</Button>
                                         ) : trait.name === "Cambiren" ? (
                                             <Button variant='' className='dialog-buttons inner' >[WIP] Cambiren Combat</Button>
                                         ) : trait.name === "Tshaeral" ? (

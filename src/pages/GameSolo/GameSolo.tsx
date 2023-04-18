@@ -1153,6 +1153,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             switch (content) {
                 case 'enemy': {
+                    shakeScreen();
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger whose reaction appears defensive.` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger to your presence. They appear to be approaching you now. \n\n May you be fyers, ${gameState?.player?.name}.` });
@@ -1173,6 +1174,7 @@ const GameSolo = ({ user }: GameProps) => {
                     break;
                 };
                 case 'phenomena': {
+                    shakeScreen();
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter?` });
                     await getPhenomena();
                     break;
@@ -1217,6 +1219,7 @@ const GameSolo = ({ user }: GameProps) => {
                     break;
                 };
                 case 'dungeon': {
+                    shakeScreen();
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Dungeons may refer to old, abandoned settlements sunk into this world. There may also be another reason` });
                     await getDungeon();
                     break;
@@ -1478,6 +1481,7 @@ const GameSolo = ({ user }: GameProps) => {
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
+            shakeScreen();
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             if (response.data.computer_win === true) await handleComputerWin(response.data);
             setTimeout(() => {
@@ -1699,7 +1703,7 @@ const GameSolo = ({ user }: GameProps) => {
                 loadingContent={gameState.loadingContent} gameDispatch={gameDispatch} getAsceanCoords={getAsceanCoords}
             />
             <GameplayUnderlay 
-                ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} loadingUnderlay={gameState.loadingUnderlay}    
+                ascean={gameState.player} enemy={gameState.opponent} mapState={mapState} mapDispatch={mapDispatch} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} loadingUnderlay={gameState.loadingUnderlay}    
             />
             { tutorialContent ? tutorialContent : '' }
             <GameplayEventModal 

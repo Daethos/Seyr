@@ -2,13 +2,60 @@
 import { useState, useRef, useEffect, JSXElementConstructor, Key, ReactElement, ReactFragment, ReactPortal, CSSProperties } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
-import { GAME_ACTIONS, GameData, Player } from './GameStore';
+import { GAME_ACTIONS, GameData, Player, Enemy } from './GameStore';
 import { MapData } from './WorldStore';
 import { ACTIONS, CombatData } from './CombatStore';
 import AsceanGrapplingCard from './AsceanGrapplingCard';
 import useGameSounds from './Sounds';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+
+interface BodyPart {
+  [x: string]: any;
+  name: string;
+  statValue: number;
+};
+
+type BodyPartStats = {
+  [key: string]: (player: any) => number;
+}
+
+const bodyPartStats: BodyPartStats = {
+  'right-hand': (player) => player.agility,
+  'right-arm': (player) => (player.strength + player.agility) / 2,
+  'right-leg': (player) => (player.strength + player.agility) / 2,
+  'right-foot': (player) => (player.strength + player.agility) / 2,
+  'head': (player) => player.achre,
+  'upper-torso': (player) => (player.strength + (player.caeren * 0.5) + (player.constitution * 0.5)),
+  'lower-torso': (player) => (player.strength + (player.agility * 0.5) + (player.constitution * 0.5)),
+  'left-hand': (player) => player.agility,
+  'left-arm': (player) => (player.strength + player.agility) / 2,
+  'left-leg': (player) => (player.strength + player.agility) / 2,
+  'left-foot': (player) => (player.strength + player.agility) / 2,
+};
+
+function calculateBodyPartStat(player: Player, enemy: Enemy, bodyPart: BodyPart, bodyPartStats: BodyPartStats) {
+  const statFunction = bodyPartStats[bodyPart.name];
+  if (!statFunction) {
+    throw new Error(`No stat function found for body part: ${bodyPart.name}`);
+  };
+
+  const statValue = statFunction(player);
+  const playerBodyPart = {
+    name: bodyPart.name,
+    statValue: statValue,
+  };
+  const enemyStatValue = statFunction(enemy);
+  const enemyBodyPart = {
+    name: bodyPart.name,
+    statValue: enemyStatValue,
+  };
+
+  return {
+    player: playerBodyPart,
+    opponent: enemyBodyPart,
+  };
+};
 
 interface GrapplingProps {
   sequence: any;
@@ -24,7 +71,7 @@ function DisplayGrapplingSequence({ sequence }: GrapplingProps) {
   return (
     <div className="grappling-sequence-container">
       {sequence.map((move: any, index: number) => (
-        <div key={index} className="grappling-move" style={{ animationDelay: `${move.index * 0.75}s`, '--move-index': index + 0.5 } as GrapplingMoveStyle}>
+        <div key={index} className="grappling-move" style={{ animationDelay: `${move.index * 1}s`, '--move-index': index + 0.5 } as GrapplingMoveStyle}>
           {move.move}
         </div>
       ))}
@@ -35,6 +82,7 @@ function DisplayGrapplingSequence({ sequence }: GrapplingProps) {
 
 interface UnderlayProps {
   ascean: Player;
+  enemy: Enemy;
   mapState: MapData;
   mapDispatch: React.Dispatch<any>;
   gameState: GameData;
@@ -44,7 +92,7 @@ interface UnderlayProps {
   loadingUnderlay: boolean;
 };
 
-const GameplayUnderlay = ({ ascean, state, dispatch, gameState, gameDispatch, mapState, mapDispatch, loadingUnderlay }: UnderlayProps) => {
+const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispatch, mapState, mapDispatch, loadingUnderlay }: UnderlayProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [generatedSequence, setGeneratedSequence] = useState<any>([]);
   const [bankedSequence, setBankedSequence] = useState<any>([]);
@@ -56,6 +104,48 @@ const GameplayUnderlay = ({ ascean, state, dispatch, gameState, gameDispatch, ma
   const underlayRef = useRef(null);
   const { playCombatRound } = useGameSounds(gameState.soundEffectVolume);
   const grapplingMoves = ['right-arm', 'left-arm', 'right-leg', 'left-leg', 'right-hand', 'left-hand', 'right-foot', 'left-foot', 'head', 'upper-torso', 'lower-torso'];
+  const [bodyParts, setBodyParts]= useState<BodyPart[]>([
+    { name: 'head', statValue: 0 },
+    { name: 'right-hand', statValue: 0 },
+    { name: 'left-hand', statValue: 0 },
+    { name: 'right-arm', statValue: 0 },
+    { name: 'left-arm', statValue: 0 },
+    { name: 'right-leg', statValue: 0 },
+    { name: 'left-leg', statValue: 0 },
+    { name: 'right-foot', statValue: 0 },
+    { name: 'left-foot', statValue: 0 },
+    { name: 'upper-torso', statValue: 0 },
+    { name: 'lower-torso', statValue: 0 },
+  ]);
+  const [enemyBodyParts, setEnemyBodyParts] = useState([
+    { name: 'head', statValue: 0 },
+    { name: 'right-hand', statValue: 0 },
+    { name: 'left-hand', statValue: 0 },
+    { name: 'right-arm', statValue: 0 },
+    { name: 'left-arm', statValue: 0 },
+    { name: 'right-leg', statValue: 0 },
+    { name: 'left-leg', statValue: 0 },
+    { name: 'right-foot', statValue: 0 },
+    { name: 'left-foot', statValue: 0 },
+    { name: 'upper-torso', statValue: 0 },
+    { name: 'lower-torso', statValue: 0 },
+  ]);
+
+  useEffect(() => {
+    console.log(bodyParts, enemyBodyParts, "Body Parts");
+  }, [bodyParts, enemyBodyParts])
+
+  useEffect(() => {
+    if (!enemy) return;
+    setBodyParts(bodyParts.map((bodyPart) => {
+      const { player, opponent } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);
+      return player;
+    }));
+    setEnemyBodyParts(enemyBodyParts.map((bodyPart) => {
+      const { player, opponent } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);
+      return opponent;
+    }));
+  }, [ascean, enemy])
 
   useEffect(() => {
     console.log(grapplingSequence, 'Grappling Sequence');
@@ -72,13 +162,13 @@ const GameplayUnderlay = ({ ascean, state, dispatch, gameState, gameDispatch, ma
 
   useEffect(() => {
     const winTimer = setTimeout(() => {
+      closeEverything();
       setGeneratedSequence([]);
       setBankedSequence([]);
       setGrapplingSequence([]);
       setGrapplingContent('');
       setPositionsGained(0);
       setGrapplingWin(false);
-      closeEverything();
     }, 1500);
 
     return () => clearTimeout(winTimer);
@@ -195,6 +285,7 @@ const GameplayUnderlay = ({ ascean, state, dispatch, gameState, gameDispatch, ma
               addToSequence={addToSequence}
               newSequence={newSequence}
               setNewSequence={setNewSequence}
+              bankedSequence={bankedSequence}
             />
 
             <Col xs={ 3 } sm={ 3 } md={ 3 } lg={ 3 } xl={ 3 } xxl={ 3 } style={{ color: "gold", marginLeft: "10%" }} className="my-4">
@@ -206,6 +297,7 @@ const GameplayUnderlay = ({ ascean, state, dispatch, gameState, gameDispatch, ma
               ) : ( null ) }
             </Col>
             <DisplayGrapplingSequence sequence={generatedSequence} />
+            <Button variant='' style={{ float: 'right', color: 'red', fontSize: "24px", marginLeft: "40vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
           </Row>
         ) : ( 
           <>

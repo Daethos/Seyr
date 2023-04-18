@@ -21,13 +21,14 @@ interface GrapplingProps {
     loading?: boolean;
     damage?: boolean;
     grapplingSequence: string[];
+    bankedSequence: string[];
     setGrapplingSequence: any;
     addToSequence: (move: string) => void;
     newSequence: boolean;
     setNewSequence: any;
 };
 
-const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, loading, damage, grapplingSequence, setGrapplingSequence, addToSequence, newSequence, setNewSequence }: GrapplingProps) => {
+const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, loading, damage, grapplingSequence, setGrapplingSequence, addToSequence, newSequence, setNewSequence, bankedSequence }: GrapplingProps) => {
    
     const [damaged, setDamaged] = useState<boolean>(false);
     const [backgroundColor, setBackgroundColor] = useState('black');
@@ -54,6 +55,19 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
             }, 500);
         };
     }, [damaged]);
+
+    useEffect(() => {
+        if (bankedSequence.length > 0) {
+            console.log(bankedSequence, "Banked Sequence");
+            bankedSequence.map((move: any, index: number) => {
+                console.log(move, "Move");
+                const reName = move.move.toLowerCase().replace(' ', '-');
+                setTimeout(() => {
+                    replayGrapplingSequence(reName, index);
+                }, 1000 * index);
+            });
+        };
+    }, [bankedSequence]);
 
     useEffect(() => {
         if (newSequence) playGrapplingSequence(grapplingSequence);
@@ -251,6 +265,7 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
     };
 
     function replayGrapplingSequence(move: string, index: number) {
+        console.log('replayGrapplingSequence called with move: ' + move + ' and index: ' + index)
         switch (move) {
             case 'right-hand':
                 if (index === 0) {

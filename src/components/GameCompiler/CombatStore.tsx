@@ -579,24 +579,24 @@ export const useInterval = (callback: () => void, delay: number) => {
         function tick() {
             if (savedCallback.current) {
                 savedCallback.current();
-            }
-        }
+            };
+        };
         if (delay !== null) {
             let id = setInterval(tick, delay);
             return () => clearInterval(id);
-        }   
+        };
     }, [delay]);
 };
 
 export function shakeScreen() {
-    const intensity = 1; // set the intensity of the shake
-    const duration = 200; // set the duration of the shake
+    const intensity = 1 ; // set the intensity of the shake
+    const duration = 300; // set the duration of the shake
     const body = document.querySelector('body')!;
     const initialPosition = body.style.transform;
     let startTime: number | null = null;
   
-function shake(currentTime: number) {
-    if (!startTime) startTime = currentTime;
+    function shake(currentTime: number) {
+        if (!startTime) startTime = currentTime;
         const elapsedTime = currentTime - startTime;
         const progress = Math.min(elapsedTime / duration, 1);
         const randomX = Math.floor(Math.random() * intensity) + 1;
@@ -612,5 +612,3 @@ function shake(currentTime: number) {
     };
     requestAnimationFrame(shake);
 };
-  
-  
