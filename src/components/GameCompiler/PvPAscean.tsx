@@ -4,6 +4,7 @@ import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
 import ExperienceBar from './ExperienceBar';
 import StatusEffects from './StatusEffects';
+import { useEffect } from 'react';
 
 interface Props {
   ascean: any;
@@ -13,13 +14,24 @@ interface Props {
   totalPlayerHealth: number;
   state: any;
   damage?: boolean;
+  style?: boolean;
 };
 
-const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
-
+const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage, style }: Props) => {
+  useEffect(() => {
+    console.log(style, 'PvPAscean Mounted');
+    return () => {
+      console.log(style, 'PvPAscean Unmounted');
+    };
+  }, [style])
   const getBlockStyle = {
+    zIndex: style ? 99999 : 99,
     marginTop: state.playerEffects.length > 0 ? '-19%' : '6%',
   };
+
+  const spectatorStyle ={
+    zIndex: 99999,
+  }
 
   if (loading) {
     return (
@@ -61,11 +73,11 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
       </div>
       </div>
     : 
-    <div className="game-block" id='opponent-block'>
-    <div className="opponent-block-top">
-    <GamePlayerStats attributes={state.enemy_attributes} player={state.enemy} magicalDefense={state.enemy_defense.magicalDefenseModifier} magicalPosture={state.enemy_defense.magicalPosture} physicalDefense={state.enemy_defense.physicalDefenseModifier} physicalPosture={state.enemy_defense.physicalPosture} />
-    <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
-    </div>
+      <div className="game-block" id='opponent-block'>
+      <div className="opponent-block-top">
+      <GamePlayerStats attributes={state.enemy_attributes} player={state.enemy} magicalDefense={state.enemy_defense.magicalDefenseModifier} magicalPosture={state.enemy_defense.magicalPosture} physicalDefense={state.enemy_defense.physicalDefenseModifier} physicalPosture={state.enemy_defense.physicalPosture} />
+      <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
+      </div>
       <AsceanImageCard
           weapon_one={state.enemy_weapons[0]}
           weapon_two={state.enemy_weapons[1]}
@@ -83,12 +95,12 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
           key={ascean._id}
           damage={damage}
       />
-    <div className="actions">
-    </div>
-    {state.enemyEffects.length > 0 ?
-          (state.enemyEffects.map((effect: any, index: number) => {
-            return ( <StatusEffects effect={effect} key={index} /> )
-        })) : '' }
+      <div className="actions">
+      </div>
+      {state.enemyEffects.length > 0 ?
+        (state.enemyEffects.map((effect: any, index: number) => {
+          return ( <StatusEffects effect={effect} key={index} /> )
+      })) : '' }
     </div>
     }
     </>

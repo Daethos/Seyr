@@ -30,6 +30,7 @@ import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal
 import { Merchant } from '../../components/GameCompiler/NPCs';
 import PvPAscean from '../../components/GameCompiler/PvPAscean';
 import Settings from '../../components/GameCompiler/Settings';
+import SpectatorOverlay from '../../components/GameCompiler/SpectatorOverlay';
 
 export enum MapMode {
     FULL_MAP,
@@ -47,6 +48,8 @@ interface GameProps {
     mapDispatch: any;
     gameState: any;
     gameDispatch: any;
+    specState: PvPData;
+    specDispatch: any;
     user: any;
     ascean: Player;
     enemy: Enemy;
@@ -79,7 +82,7 @@ interface GameProps {
     autoAttack: (combatData: PvPData) => Promise<void>;
 };
 
-const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handleInstant, handlePrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
+const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handleInstant, handlePrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const { playWO, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
@@ -1112,6 +1115,10 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 </>
                 : ''
             }
+            <SpectatorOverlay
+                ascean={ascean} mapState={mapState} mapDispatch={mapDispatch} loadingSpectator={gameState.loadingSpectator} gameDispatch={gameDispatch} state={specState} dispatch={specDispatch} 
+                emergencyText={emergencyText} setEmergencyText={setEmergencyText} playerState={playerState} gameState={gameState} setModalShow={setModalShow}
+            />
             <GameplayOverlay 
                 ascean={ascean} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}

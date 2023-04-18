@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import * as gameAPI from '../../utils/gameApi'
 import Loading from '../Loading/Loading';
-import { ACTIONS } from './CombatStore';
+import { ACTIONS, shakeScreen } from './CombatStore';
 
 interface Props {
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
@@ -63,6 +63,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);
             if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
+            shakeScreen();
             console.log(response.data, 'Response Auto Engaging');
             dispatch({ type: ACTIONS.AUTO_COMBAT, payload: response.data });
             await soundEffects(response.data);

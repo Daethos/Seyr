@@ -115,6 +115,8 @@ export interface PvPData {
 
     playerReady: boolean;
     enemyReady: boolean;
+    spectacle: boolean;
+    spectators: any[];
 
     weather: string;
 };
@@ -221,6 +223,8 @@ export const initialPvPData: PvPData = {
     loseStreak: 0,
     playerReady: false,
     enemyReady: false,
+    spectacle: false,
+    spectators: [],
     weather: '',
 };
 
@@ -265,10 +269,65 @@ export const ACTIONS = {
     SET_PLAYER_READY: 'SET_PLAYER_READY',
     SET_ENEMY_READY: 'SET_ENEMY_READY',
     TOGGLED_DAMAGED: 'TOGGLED_DAMAGED',
-}
+    SET_SPECTATOR: 'SET_SPECTATOR',
+    UPDATE_SPECTATOR: 'UPDATE_SPECTATOR',
+    CLEAR_SPECTATOR: 'CLEAR_SPECTATOR',
+    SET_SPECTACLE: 'SET_SPECTACLE',
+};
+
+export const SPECTATOR_ACTIONS = {
+    SET_SPECTATOR: 'SET_SPECTATOR',
+    UPDATE_SPECTATOR: 'UPDATE_SPECTATOR',
+    CLEAR_SPECTATOR: 'CLEAR_SPECTATOR',
+};
+
+export const SpectatorStore = (state: PvPData, action: Action) => {
+    switch (action.type) {
+        case 'SET_SPECTATOR':
+            return {
+                ...action.payload,
+            };
+        case 'UPDATE_SPECTATOR':
+            return {
+                ...action.payload
+            };
+        case 'CLEAR_SPECTATOR':
+            return {
+                ...initialPvPData
+            };
+        default:
+            return state;
+    };
+};
 
 export const PvPStore = (state: PvPData, action: Action) => {
     switch (action.type) {
+        case 'SET_SPECTACLE':
+            return {
+                ...state,
+                spectacle: action.payload,
+            };
+        case 'SET_SPECTATOR':
+            return {
+                ...state,
+                spectators: [...state.spectators, action.payload],
+            };
+        case 'UPDATE_SPECTATOR':
+            return {
+                ...state,
+                spectators: state.spectators.map((spectator: any) => {
+                    if (spectator.id === action.payload.id) {
+                        return action.payload;
+                    } else {
+                        return spectator;
+                    };
+                }),
+            };
+        case 'CLEAR_SPECTATOR':
+            return {
+                ...state,
+                spectators: state.spectators.filter((spectator: any) => spectator.id !== action.payload.id),
+            };
         case 'SET_PLAYER':
             return {
                 ...state,
@@ -557,6 +616,8 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 realized_enemy_damage: 0,
                 combatRound: 0,
                 sessionRound: 0,
+                spectacle: false,
+                spectators: [],
             };
         case 'SET_PLAYER_QUICK':
             return {

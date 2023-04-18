@@ -359,7 +359,24 @@ const GameSolo = ({ user }: GameProps) => {
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try {
             if (gameState.player.tutorial.firstCombat === true) {
-                await checkTutorial('firstCombat', gameState.player);
+                const wolf: Enemy = Object.assign({}, Wolf);
+                    gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: wolf });
+                    const response = await asceanAPI.getAnimalStats(wolf);
+                    setAsceanState({
+                        ...asceanState,
+                        'opponent': wolf.level,
+                    });
+                    dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+                    setTimeout(() => {
+                        dispatch({
+                            type: ACTIONS.SET_DUEL,
+                            payload: ''
+                        });
+                        playOpponent();
+                        gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+                        checkTutorial('firstCombat', gameState.player);
+                    }, 2000);
+                    return;
             };
             let minLevel: number = 0;
             let maxLevel: number = 0;

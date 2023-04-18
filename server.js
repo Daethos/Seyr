@@ -316,6 +316,17 @@ io.on("connection", (socket) => {
       socket.to(newUser.room).emit('newEnvironment', tileData);
     });
 
+    socket.on('spectatePlayer', async (playerData) => {
+      console.log(playerData, newUser.ascean._id, "Spectator, Spectated, Ascean in spectatePlayer");
+      io.to(newUser.room).emit('requestSpectatePlayer', playerData);
+    });
+
+    socket.on('spectatePlayerData', async (playerData) => {
+      const { data, state } = playerData;
+      console.log(data, newUser.ascean._id, "Spectator, Ascean in spectatePlayerResponse")
+      io.to(newUser.room).emit('spectatePlayerResponse', playerData);
+    });
+
     socket.on('combatData_update', async () => {
       console.log('Updating Combat Data')
       let newData = {

@@ -19,6 +19,8 @@ interface Props {
     playerDispatch: any;
     gameState: any;
     gameDispatch: any;
+    specState: PvPData;
+    specDispatch: any;
     user: any;
     room: any;
     ascean: Player;
@@ -60,9 +62,13 @@ interface Props {
     autoAttack: (combatData: PvPData) => Promise<void>;
 };
 
-const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
+const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
     const [modalShow, setModalShow] = useState(false);
     const [duelReady, setDuelReady] = useState<boolean>(false);
+
+    useEffect(() => {
+        console.log(mapState?.player1Tile, mapState?.player2Tile, "Player Tiles");
+    }, [mapState?.player1Tile, mapState?.player2Tile, mapState?.player3Tile]);
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -88,6 +94,14 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
             console.log(err.message, 'Error With Player Ready') };
     };
 
+    const spectatePlayer = async (spectateID: string) => {
+        const data = { spectator: ascean._id, spectate: spectateID };
+        try { 
+            await socket.emit(`spectatePlayer`, data);
+        } catch (err: any) { 
+            console.log(err.message, 'Error With Spectate Player') };
+    };
+
     function checkPlayer () {
         if (playerState.playerOne && playerState.playerTwo && playerState.playerThree && playerState.playerFour) {
             return true;
@@ -108,12 +122,14 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
                 emergencyText={emergencyText} setEmergencyText={setEmergencyText} asceanState={asceanState} setAsceanState={setAsceanState}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer}  getOpponent={getOpponent} getNPCDialog={getNPCDialog}
+                specState={specState} specDispatch={specDispatch}
             />
             <Modal 
                 show={modalShow}
                 onHide={() => setModalShow(false)}
                 centered
                 id="modal-weapon"
+                style={{ zIndex: 99999 }}
             >
             <Modal.Body id="modal-weapon">
             <Container className="Game-Lobby-Chat" style={{ overflow: 'auto' }}>
@@ -163,6 +179,75 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                 </div>
                 </div>
             </Container>
+            { playerState.playerOne ? (
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
+                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
+                    {playerState.playerOne.ascean.name}
+                    </h3>
+                    <p>Level: {playerState.playerOne.ascean.level} | {playerState.playerOne.ascean.mastery}
+                    </p>
+                    { mapState.player1Tile && mapState?.player1Tile?.content === 'enemy' ? (
+                        <span style={{ float: "right", marginTop: "-10%" }}>
+                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerOne?.ascean._id)}>
+                            Spectate</Button>
+                        </span>
+                    ) : ( '' ) }
+                    <span style={{ float: "left", marginTop: "-20%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    </span>
+                </div>
+            ) : ( '' ) }
+            { playerState.playerTwo ? (
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
+                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'purple', fontVariant: 'small-caps' }}>
+                    {playerState.playerTwo.ascean.name}
+                    </h3>
+                    <p>Level: {playerState.playerTwo.ascean.level} | {playerState.playerTwo.ascean.mastery}</p>
+                    { mapState.player2Tile && mapState.player2Tile.content === 'enemy' ? (
+                        <span style={{ float: "right", marginTop: "-10%" }}>
+                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerTwo?.ascean._id)}>
+                            Spectate</Button>
+                        </span>
+                    ) : ( '' ) }
+                    <span style={{ float: "left", marginTop: "-20%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerTwo.ascean.origin + '-' + playerState.playerTwo.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    </span>
+                </div>
+            ) : ( '' ) }
+            { playerState.playerThree ? (
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
+                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'blue', fontVariant: 'small-caps' }}>
+                    {playerState.playerThree.ascean.name}
+                    </h3>
+                    <p>Level: {playerState.playerThree.ascean.level} | {playerState.playerThree.ascean.mastery}</p>
+                    { mapState.player3Tile && mapState.player3Tile.content === 'enemy' ? (
+                        <span style={{ float: "right", marginTop: "-10%" }}>
+                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerThree?.ascean._id)}>
+                            Spectate</Button>
+                        </span>
+                    ) : ( '' ) }
+                    <span style={{ float: "left", marginTop: "-20%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerThree.ascean.origin + '-' + playerState.playerThree.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    </span>
+                </div>
+            ) : ( '' ) }
+            { playerState.playerFour ? (
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
+                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'red', fontVariant: 'small-caps' }}>
+                    {playerState.playerFour.ascean.name}
+                    </h3>
+                    <p>Level: {playerState.playerFour.ascean.level} | {playerState.playerFour.ascean.mastery}</p>
+                    { mapState.player4Tile && mapState.player4Tile.content === 'enemy' ? (
+                        <span style={{ float: "right", marginTop: "-10%" }}>
+                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerFour?.ascean._id)}>
+                            Spectate</Button>
+                        </span>
+                    ) : ( '' ) }
+                    <span style={{ float: "left", marginTop: "-20%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerFour.ascean.origin + '-' + playerState.playerFour.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    </span>
+                </div>
+            ) : ( '' ) }
             </Modal.Body>
             </Modal>
             </>

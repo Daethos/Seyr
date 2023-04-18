@@ -147,13 +147,13 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
     }));
   }, [ascean, enemy])
 
-  useEffect(() => {
-    console.log(grapplingSequence, 'Grappling Sequence');
-    if (grapplingSequence.length > 4) handleGrapple(grapplingSequence);
-  }, [grapplingSequence]);
+  // useEffect(() => {
+  //   console.log(grapplingSequence, 'Grappling Sequence');
+  //   if (grapplingSequence.length > 4) handleGrapple(grapplingSequence);
+  // }, [grapplingSequence]);
 
   useEffect(() => {
-    if (positionsGained === 3) {
+    if (positionsGained === 2) {
       setGrapplingWin(true);
       dispatch({ type: ACTIONS.SET_GRAPPLING_WIN, payload: true });
       gameDispatch({ type: GAME_ACTIONS.SET_MINIGAME_SEVAN, payload: false });
@@ -186,23 +186,32 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
     console.log(sequence, newBankedSequence, "Starting Grappling Sequence!");
     const areArraysEqual = sequence.every((element: any, index: string | number) => element === newBankedSequence[index]);
     if (areArraysEqual) {
-      setGrapplingContent('You have successfully gained position!');
+      if (positionsGained === 0) setGrapplingContent('You have successfully gained position!');
+      if (positionsGained === 1) {
+        setGrapplingContent('You have successfully worned down and submitted your opponent!');
+      }
       setTimeout(() => {
         setPositionsGained((positionsGained: number) => positionsGained + 1);
         setGrapplingSequence([]);
+        setGrapplingContent('');
       }, 1500);
     } else {
       setGrapplingContent('You have failed to gain position!');
       setTimeout(() => {
         setGrapplingSequence([]);
+        setGrapplingContent('');
       }, 1500);
     };
   };
 
   function createGrapplingSequence() {
     console.log('Creating Sequence!');
+    let iterations = 0;
+    if (positionsGained === 0) iterations = 4;
+    if (positionsGained === 1) iterations = 6;
+    if (positionsGained === 2) iterations = 8;
     const sequence = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < iterations; i++) {
       const randomMove = grapplingMoves[Math.floor(Math.random() * grapplingMoves.length)];
       const cleanMove = randomMove.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
       const delayTime = i * 1000; 
@@ -219,8 +228,12 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
   function addToSequence(move: string) {
     playCombatRound();
     const cleanMove = move.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    let moves = 0;
+    if (positionsGained === 0) moves = 4;
+    if (positionsGained === 1) moves = 6;
+    if (positionsGained === 2) moves = 8;
     setGrapplingSequence((grapplingSequence: any) => {
-      if (grapplingSequence.length === 4) {
+      if (grapplingSequence.length === moves) {
         grapplingSequence.shift();
       }
       return [...grapplingSequence, cleanMove];
@@ -254,6 +267,7 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
       }}>
         
         { gameState?.miniGameSevan ? (
+          <>
           <Row>
             <Col xs={ 3 } sm={ 3 } md={ 3 } lg={ 3 } xl={ 3 } xxl={ 3 } className="my-4" style={{ marginLeft: "5%", marginRight: "-2.5%", textAlign: "center" }}>
             <br />Welcome to grappling, {ascean.name}! 
@@ -286,19 +300,43 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
               newSequence={newSequence}
               setNewSequence={setNewSequence}
               bankedSequence={bankedSequence}
-            />
+              />
 
             <Col xs={ 3 } sm={ 3 } md={ 3 } lg={ 3 } xl={ 3 } xxl={ 3 } style={{ color: "gold", marginLeft: "10%" }} className="my-4">
               <br />
               {getGrapplingSequence()}
-              <Button variant='' style={{ color: 'green', fontWeight: 600, zIndex: 9999 }} onClick={createGrapplingSequence}>Get Sequence</Button>
-              { grapplingSequence.length === 4 ? (
-                  <Button variant='' style={{ color: 'red', fontWeight: 600, zIndex: 9999 }} onClick={() => handleGrapple(grapplingSequence)}>Grapple</Button>
-              ) : ( null ) }
+              <Button variant='' style={{ color: 'green', fontWeight: 600, zIndex: 9999 }} onClick={createGrapplingSequence}>Witness Se'vas's Path</Button>
+              { grapplingSequence.length >= 4 ? (
+                <Button variant='' style={{ color: 'red', fontWeight: 600, zIndex: 9999 }} onClick={() => handleGrapple(grapplingSequence)}>Initiate Grapple</Button>
+                ) : ( null ) }
             </Col>
             <DisplayGrapplingSequence sequence={generatedSequence} />
+            <Col xs={ 3 } sm={ 3 } md={ 3 } lg={ 3 } xl={ 3 } xxl={ 3 } className="my-4" style={{ marginLeft: "5%", marginRight: "-2.5%", textAlign: "center" }}>
+              </Col>
+            <AsceanGrapplingCard 
+              weapon_one={enemy.weapon_one}
+              weapon_two={enemy.weapon_two}
+              weapon_three={enemy.weapon_three}
+              shield={enemy.shield}
+              helmet={enemy.helmet}
+              chest={enemy.chest}
+              legs={enemy.legs}
+              amulet={enemy.amulet}
+              ring_one={enemy.ring_one}
+              ring_two={enemy.ring_two}
+              trinket={enemy.trinket}
+              damage={state.computerDamaged} 
+              loading={loading}
+              grapplingSequence={grapplingSequence}
+              setGrapplingSequence={setGrapplingSequence}
+              addToSequence={addToSequence}
+              newSequence={newSequence}
+              setNewSequence={setNewSequence}
+              bankedSequence={bankedSequence}
+              />
             <Button variant='' style={{ float: 'right', color: 'red', fontSize: "24px", marginLeft: "40vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
           </Row>
+          </>
         ) : ( 
           <>
             <h6 className='overlay-content' style={ gameState?.underlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>

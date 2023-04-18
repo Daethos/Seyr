@@ -620,6 +620,7 @@ export interface GameData {
     loadingUnderlay: boolean;
     loadingContent: boolean;
     loadingCombatOverlay: boolean;
+    loadingSpectator: boolean;
 
     loadedAscean: boolean;
 
@@ -713,6 +714,7 @@ export const GAME_ACTIONS = {
     LOADING_UNDERLAY: 'LOADING_UNDERLAY',
     LOADING_CONTENT: 'LOADING_CONTENT',
     LOADING_COMBAT_OVERLAY: 'LOADING_COMBAT_OVERLAY',
+    LOADING_SPECTATOR: 'LOADING_SPECTATOR',
     LOADED_ASCEAN: 'LOADED_ASCEAN',
 
     GET_OPPONENT: 'GET_OPPONENT',
@@ -781,6 +783,7 @@ export const initialGameData: GameData = {
     loadingUnderlay: false,
     loadingContent: false,
     loadingCombatOverlay: false,
+    loadingSpectator: false,
     loadedAscean: false,
     saveExp: false,
     saveQuest: false,
@@ -1022,6 +1025,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 loadingCombatOverlay: action.payload,
+            };
+        case 'LOADING_SPECTATOR':
+            return {
+                ...game,
+                loadingSpectator: action.payload,
             };
         case 'LOADED_ASCEAN':
             return {

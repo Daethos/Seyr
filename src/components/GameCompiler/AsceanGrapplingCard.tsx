@@ -148,115 +148,115 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
     function checkGrapplingSequence(move: string, sequence: string[]) {
         let newSequenceLength = sequence.length;
         console.log('newSequenceLength: ', newSequenceLength)
-        if (newSequenceLength > 3) newSequenceLength = newSequenceLength % 4;
+        // if (newSequenceLength > 3) newSequenceLength = newSequenceLength % 4;
         console.log('newSequenceLength: ', newSequenceLength)
         switch (move) {
             case 'right-hand':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundRH('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundRH('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundRH('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundRH('rgba(255, 0, 0, 1)');
                 };
             case 'right-arm':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundRA('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundRA('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundRA('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundRA('rgba(255, 0, 0, 1)');
                 };
             case 'right-leg':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundRL('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundRL('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundRL('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundRL('rgba(255, 0, 0, 1)');
                 };
             case 'right-foot':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundRF('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundRF('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundRF('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundRF('rgba(255, 0, 0, 1)');
                 };
             case 'left-hand':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundLH('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundLH('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundLH('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundLH('rgba(255, 0, 0, 1)');
                 };
             case 'left-arm':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundLA('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundLA('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundLA('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundLA('rgba(255, 0, 0, 1)');
                 };
             case 'left-leg':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundLL('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundLL('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundLL('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundLL('rgba(255, 0, 0, 1)');
                 };
             case 'left-foot':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundLF('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundLF('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundLF('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundLF('rgba(255, 0, 0, 1)');
                 };
             case 'head':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundH('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundH('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundH('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundH('rgba(255, 0, 0, 1)');
                 };
             case 'upper-torso':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundC('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundC('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundC('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundC('rgba(255, 0, 0, 1)');
                 };
             case 'lower-torso':
-                if (newSequenceLength === 0) {
+                if (newSequenceLength === 0 || newSequenceLength === 4) {
                     return setBackgroundL('rgba(128, 0, 128, 1)');
-                } else if (newSequenceLength === 1) {
+                } else if (newSequenceLength === 1 || newSequenceLength === 5) {
                     return setBackgroundL('rgba(255, 215, 0, 1)');
-                } else if (newSequenceLength === 2) {
+                } else if (newSequenceLength === 2 || newSequenceLength === 6) {
                     return setBackgroundL('rgba(0, 0, 255, 1)');
                 } else {
                     return setBackgroundL('rgba(255, 0, 0, 1)');
@@ -268,111 +268,111 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
         console.log('replayGrapplingSequence called with move: ' + move + ' and index: ' + index)
         switch (move) {
             case 'right-hand':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundRH('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundRH('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundRH('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundRH('rgba(255, 0, 0, 0.7)');
                 };
             case 'right-arm':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundRA('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                  return setBackgroundRA('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundRA('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundRA('rgba(255, 0, 0, 0.7)');
                 };
             case 'right-leg':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundRL('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundRL('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundRL('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundRL('rgba(255, 0, 0, 0.7)');
                 };
             case 'right-foot':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundRF('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundRF('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundRF('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundRF('rgba(255, 0, 0, 0.7)');
                 };
             case 'left-hand':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundLH('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundLH('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundLH('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundLH('rgba(255, 0, 0, 0.7)');
                 };
             case 'left-arm':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundLA('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundLA('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundLA('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundLA('rgba(255, 0, 0, 0.7)');
                 };
             case 'left-leg':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundLL('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundLL('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundLL('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundLL('rgba(255, 0, 0, 0.7)');
                 };
             case 'left-foot':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundLF('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundLF('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundLF('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundLF('rgba(255, 0, 0, 0.7)');
                 };
             case 'head':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundH('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundH('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundH('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundH('rgba(255, 0, 0, 0.7)');
                 };
             case 'upper-torso':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundC('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundC('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundC('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundC('rgba(255, 0, 0, 0.7)');
                 };
             case 'lower-torso':
-                if (index === 0) {
+                if (index === 0 || index === 4) {
                     return setBackgroundL('rgba(128, 0, 128, 0.7)');
-                } else if (index === 1) {
+                } else if (index === 1 || index === 5) {
                     return setBackgroundL('rgba(255, 215, 0, 0.7)');
-                } else if (index === 2) {
+                } else if (index === 2 || index === 6) {
                     return setBackgroundL('rgba(0, 0, 255, 0.7)');
                 } else {
                     return setBackgroundL('rgba(255, 0, 0, 0.7)');

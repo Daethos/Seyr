@@ -6,7 +6,7 @@ import * as io from 'socket.io-client'
 import Container from 'react-bootstrap/Container'
 import Loading from '../../components/Loading/Loading'
 import GameChat from '../../components/GameCompiler/GameChat';
-import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PlayerData } from '../../components/GameCompiler/PvPStore';
+import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PlayerData, SpectatorStore, SPECTATOR_ACTIONS } from '../../components/GameCompiler/PvPStore';
 import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { MAP_ACTIONS, MapStore, initialMapData, MapData } from '../../components/GameCompiler/WorldStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
@@ -23,6 +23,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const [playerState, playerDispatch] = useReducer(PlayerStore, initialPlayerData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
+    const [specState, specDispatch] = useReducer(SpectatorStore, initialPvPData);
 
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState<any>([]);
@@ -258,6 +259,29 @@ const GamePvPLobby = ({ user }: Props) => {
             mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data });
         }; 
         handleSocketEvent('playerDirectionChanged', playerDirectionChangedCallback);
+
+        const spectatePlayerCallback = async (data: any) => {
+            console.log(data, gameState.player._id, "Spectate Player Callback");
+            if (data.spectate === gameState.player._id) {
+                await spectate(data);
+            };
+        };
+        handleSocketEvent('requestSpectatePlayer', spectatePlayerCallback);
+
+        const spectatePlayerResponseCallback = async (data: any) => {
+            console.log(data, gameState.player._id, "Spectate Player Response Callback");
+            if (data.data.spectator === gameState.player._id) {
+                specDispatch({ type: SPECTATOR_ACTIONS.SET_SPECTATOR, payload: data.state });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: true });
+            };
+        };
+        handleSocketEvent('spectatePlayerResponse', spectatePlayerResponseCallback);
+
+        const spectateUpdateCallback = async (data: any) => {
+            console.log(data, "Spectate Update Data");
+            await updateSpecate(data);
+        };
+        handleSocketEvent('spectateUpdate', spectateUpdateCallback);
     
         return () => {
           if (socket) {
@@ -277,6 +301,9 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('consume_prayer_response', consumePrayerResponseCallback);
                 socket.off('duel_ready_response', duelReadyResponseCallback);
                 socket.off('playerDirectionChanged', playerDirectionChangedCallback);
+                socket.off('requestSpectatePlayer', spectatePlayerCallback);
+                socket.off('spectatePlayerResponse', spectatePlayerResponseCallback);
+                socket.off('spectateUpdate', spectateUpdateCallback);
             };
         };
       }, [handleSocketEvent, socket, playerState, mapState, gameState, state]);
@@ -294,7 +321,28 @@ const GamePvPLobby = ({ user }: Props) => {
             dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
           }, 6000);
         }
-    }, [state.player_luckout]);   
+    }, [state.player_luckout]);
+
+    const updateSpecate = async (response: PvPData) => {
+        // 
+        specDispatch({ type: SPECTATOR_ACTIONS.UPDATE_SPECTATOR, payload: response });
+        if (response.player_win === true || response.enemy_win === true) {
+            setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: false });
+                specDispatch({ type: SPECTATOR_ACTIONS.CLEAR_SPECTATOR, payload: response });
+            }, 6000);
+        };
+    };
+    
+    const spectate = async (data: any) => {
+        try {
+            console.log(data, "Spectate Data");
+            const specData = { data, state };
+            await socket.emit('spectatePlayerData', specData);
+        } catch (err: any) { 
+            console.log(err.message, 'Error Spectating Player.'); 
+        };
+    };
 
     const generateWorld = async (mapName: string) => {
         try {
@@ -807,6 +855,13 @@ const GamePvPLobby = ({ user }: Props) => {
         };
     };
 
+    // useEffect(() => { 
+    //     console.log(specState, "Spec State in Lobby");
+    //     if (specState?.player?.ascean) {
+    //         gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: true });
+    //     }
+    // }, [specState]);
+
     useEffect(() => { console.log(gameState, "Game State in Lobby") }, [gameState]);
 
     useEffect(() => { console.log(playerState, "Player State in Lobby") }, [playerState]);
@@ -936,6 +991,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
                 getAsceanCoords={getAsceanCoords} generateWorld={generateWorld} emergencyText={emergencyText} setEmergencyText={setEmergencyText}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer} asceanState={asceanState} setAsceanState={setAsceanState}
+                specState={specState} specDispatch={specDispatch}
             />
         }
         </>

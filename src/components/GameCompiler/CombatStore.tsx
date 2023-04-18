@@ -604,6 +604,8 @@ export function shakeScreen() {
         const offsetX = randomX * Math.sin(progress * 4 * Math.PI);
         const offsetY = randomY * Math.sin(progress * 4 * Math.PI);
         body.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        // Could this also be written as the inverse, so like -offsetX and -offsetY?
+        body.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
         if (progress < 1) {
             requestAnimationFrame(shake);
         } else {
