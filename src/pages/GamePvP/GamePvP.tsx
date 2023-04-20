@@ -68,7 +68,9 @@ interface GameProps {
     handleInitiate: (pvpState: PvPData) => Promise<void>;
     handlePvPInitiate: (pvpState: PvPData) => Promise<void>;
     handleInstant: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePvPInstant: (e: { preventDefault: () => void; }) => Promise<void>;
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePvPPrayer: (e: { preventDefault: () => void; }) => Promise<void>;
     clearOpponent: () => Promise<void>;
     emergencyText: any[];
     setEmergencyText: React.Dispatch<React.SetStateAction<any[]>>;
@@ -83,7 +85,7 @@ interface GameProps {
     autoAttack: (combatData: PvPData) => Promise<void>;
 };
 
-const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handlePvPInitiate, handleInstant, handlePrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
+const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handlePvPInitiate, handleInstant, handlePvPInstant, handlePrayer, handlePvPPrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const { playWO, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
@@ -1050,7 +1052,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                     handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} gameState={gameState} gameDispatch={gameDispatch}
                     currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess}
-                    handlePvPInitiate={handlePvPInitiate}
+                    handlePvPInitiate={handlePvPInitiate} handlePvPInstant={handlePvPInstant} handlePvPPrayer={handlePvPPrayer}
                 /> 
                 <GameCombatText 
                     emergencyText={emergencyText} combatRoundText={state.combatRound}

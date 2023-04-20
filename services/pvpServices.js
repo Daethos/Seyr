@@ -3094,7 +3094,7 @@ const pvpActionCompiler = async (combatData) => {
             enemy_attributes: playerTwo.player_attributes, // Possesses compiled Attributes, Initiative
             enemy_defense: playerTwo.player_defense, // Posseses Base + Postured Defenses
             enemy_defense_default: playerTwo.player_defense_default, // Possesses Base Defenses
-            enemy_action: playerTwo.player_action, // Action Chosen By enemy
+            enemy_action: playerTwo.action, // Action Chosen By enemy
             enemy_counter_guess: playerTwo.counter_guess, // Comp's Counter Guess if Action === 'Counter'
             enemy_weapons: playerTwo.weapons,  // All 3 Weapons
             enemy_damage_type: playerTwo.player_damage_type,
@@ -3151,27 +3151,26 @@ const pvpActionCompiler = async (combatData) => {
     
         };
         let result = await pvpActionSplitter(newData);
+        console.log(result.player_action, result.enemy_action, 'P1-P2 Actions');
         if (result.realized_enemy_damage > 0) result.playerDamaged = true;
         if (result.realized_player_damage > 0) result.enemyDamaged = true;
-        console.log(result.realized_enemy_damage, result.realized_player_damage, 'Comp-Player Damage Dealt', result.playerDamaged, result.enemyDamaged, 'Comp-Player Damaged')
         if (result.player_win === true || result.enemy_win === true) {
             await statusEffectCheck(result);
         };
-        let reverseResult;
-        reverseResult = {
-            weapon_one: result.weapon_one,
-            weapon_two: result.weapon_two,
-            weapon_three: result.weapon_three,
-            weapons: result.weapons, // All 3 Weapons
-            player_damage_type: result.enemy_damage_type,
+        let reverseResult = {
+            weapons: result.enemy_weapons, // All 3 Weapons
+            player_damage_type: result.enemy_damage_type, 
             player_defense: result.enemy_defense, // Posseses Base + Postured Defenses
             player_attributes: result.enemy_attributes, // Possesses compiled Attributes, Initiative
+            action: result.enemy_action,
+            player_action: result.enemy_action,
     
             enemy_attributes: result.player_attributes, // Possesses compiled Attributes, Initiative
             enemy_defense: result.player_defense, // Posseses Base + Postured Defenses
             enemy_weapons: result.weapons,  // All 3 Weapons
             enemy_damage_type: result.player_damage_type,
-    
+            enemy_action: result.action,
+
             potential_player_damage: result.potential_enemy_damage, // All the Damage that is possible on hit for a player
             potential_enemy_damage: result.potential_player_damage, // All the Damage that is possible on hit for a enemy
             realized_player_damage: result.realized_enemy_damage, // Player Damage - enemy Defenses
@@ -3225,11 +3224,17 @@ const pvpActionCompiler = async (combatData) => {
 
         playerOne = {
             ...playerOne,
-            result
+            ...result,
+            playerOneReady: false,
+            playerTwoReady: false,
+            timestamp: 0,
         };
         playerTwo = {
             ...playerTwo,
-            reverseResult
+            ...reverseResult,
+            playerTwoReady: false,
+            playerOneReady: false,
+            timestamp: 0,
         };
         const resultData = { playerOneData: playerOne, playerTwoData: playerTwo };
         return resultData;

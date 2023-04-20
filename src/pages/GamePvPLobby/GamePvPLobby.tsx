@@ -25,7 +25,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [specState, specDispatch] = useReducer(SpectatorStore, initialPvPData);
-
+    const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(0);
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState<any>([]);
     const [liveGameplay, setLiveGameplay] = useState<boolean>(false);
@@ -293,8 +293,10 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('duelDataShared', duelDataSharedCallback);
 
         const pvpInitiateUpdateCallback = async (data: any) => {
+            console.log(data, "PVP Initiate Update Callback");
             const playerOne = data.playerOneData;
             const playerTwo = data.playerTwoData;
+            console.log(playerOne, playerTwo, "Player One and Two Data")
             if (state.playerPosition === playerOne.playerPosition) {
                 await statusUpdate(playerOne);
             } else {
@@ -304,14 +306,14 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('pvpInitiateUpdate', pvpInitiateUpdateCallback);
     
         const pvpInitiateSoftUpdateCallback = async (data: any) => {
-            const playerOne = data.playerOneData;
+            console.log('pvpInitiateSoftUpdateCallback', data);
             const playerTwo = data.playerTwoData;
-            if (state.playerPosition === playerOne.playerPosition) {
-                await softUpdate(playerOne);
-            } else {
-                await softUpdate(playerTwo);
+            if (playerTwo && state.playerPosition === playerTwo.enemyPosition) { // This means it would be p2 relaying info to p1 ? 
+                console.log(playerTwo.timestamp, "Player Two Timestamp");
+                if (playerTwo.timestamp === 1) await softUpdate(playerTwo);
             };
         };
+        handleSocketEvent('pvpInitiateSoftUpdate', pvpInitiateSoftUpdateCallback);
 
         return () => {
           if (socket) {
@@ -336,6 +338,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('spectateUpdate', spectateUpdateCallback);
                 socket.off('duelDataShared', duelDataSharedCallback);
                 socket.off('pvpInitiateUpdate', pvpInitiateUpdateCallback);
+                socket.off('pvpInitiateSoftUpdate', pvpInitiateSoftUpdateCallback);
             };
         };
       }, [handleSocketEvent, socket, playerState, mapState, gameState, state]);
@@ -357,7 +360,18 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const duelData = async (data: any) => {
         if (data.duelDataID === gameState?.player._id) return; // This is you, you don't need to set yourself
+        gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
+        shakeScreen();
         dispatch({ type: ACTIONS.SET_DUEL_DATA, payload: data });
+        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: data.player });
+        setAsceanState({
+            ...asceanState,
+            'opponent': data.player.level,
+        });
+        setTimeout(() => {
+            playOpponent();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+        }, 2000);
     };
 
     const checkPlayerTiles = async (mapData: MapData) => {
@@ -859,7 +873,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setTimeLeft(0);
                 dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
                 if (mapState?.currentTile?.content === 'enemy' && combatData.enemy.name !== "Wolf" && combatData.enemy.name !== "Bear") gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
-                if (combatData.enemy.name === "Wolf" || combatData.enemy.name === "Bear") clearOpponent();
+                if (combatData.enemy.name === "Wolf" || combatData.enemy.name === "Bear" || combatData.enemyPosition !== -1) clearOpponent();
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
@@ -892,7 +906,7 @@ const GamePvPLobby = ({ user }: Props) => {
             setTimeout(() => {
                 setTimeLeft(0);
                 dispatch({ type: ACTIONS.ENEMY_WIN, payload: combatData });
-                if (combatData.enemy.name === "Wolf" || combatData.enemy.name === "Bear") clearOpponent();
+                if (combatData.enemy.name === "Wolf" || combatData.enemy.name === "Bear" || combatData.enemyPosition !== -1) clearOpponent();
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
@@ -936,10 +950,43 @@ const GamePvPLobby = ({ user }: Props) => {
                 player: pvpState.player._id,
                 state: pvpState
             };
-            await socket.emit('pvpInitiated', data);
+            await socket.emit('pvpInitiated', state);
             dispatch({ type: ACTIONS.SET_PLAYER_READY, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action');
+        };
+    };
+
+    async function handlePvPInstant(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            shakeScreen();
+            gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
+            setEmergencyText([``]);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
+            await socket.emit('instant_action', state);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            playReligion();
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Insant Action')
+        };
+    };
+
+    async function handlePvPPrayer(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            if (state.prayerSacrifice === '') {
+                setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose A Prayer to Sacrifice!\n`]);
+                return;
+            };
+            shakeScreen();
+            setEmergencyText([``]);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
+            await socket.emit('consume_prayer', state);
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            playReligion();
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Action')
         };
     };
 
@@ -1035,22 +1082,21 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const softUpdate = async (response: any) => {
         try {
-            dispatch({
-                type: ACTIONS.INITIATE_COMBAT,
-                payload: response
-            });
+            console.log('Player One Doing The Lords Work');
+            await socket.emit('pvpInitiated', response);
+            setLastUpdateTimestamp(response.timestamp);
         } catch (err: any) {
             console.log(err.message, 'Error Performing Soft Update');
         };
     };
     
-    const statusUpdate = async (response: any) => {
+    const statusUpdate = async (response: PvPData) => {
         try {
             console.log(response.spectacle, "Is this a Spectable?");
             if (response.spectacle) {
-                await response.spectators.map((spectator: any) => {
+                response.spectators.map(async (spectator: any) => {
                     console.log(spectator, "Spectator?")
-                    socket.emit('updateSpectatorData', spectator, response);
+                    await socket.emit('updateSpectatorData', spectator, response);
                 });
             };
             await soundEffects(response);
@@ -1081,18 +1127,34 @@ const GamePvPLobby = ({ user }: Props) => {
         };
     };
 
-    // useEffect(() => { 
-    //     console.log(specState, "Spec State in Lobby");
-    //     if (specState?.player?.ascean) {
-    //         gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: true });
-    //     }
-    // }, [specState]);
+
+    const playerSameTileCheck = (mapData: MapData) => {
+        let p1 = mapData?.player1Tile ? mapData.player1Tile : null;
+        let p2 = mapData?.player2Tile ? mapData.player2Tile : null;
+        let p3 = mapData?.player3Tile ? mapData.player3Tile : null;
+        let p4 = mapData?.player4Tile ? mapData.player4Tile : null;
+        if ((p1 && p2 && p1.x === p2.x && p1.y === p2.y) || 
+            (p1 && p3 && p1.x === p3.x && p1.y === p3.y) ||
+            (p1 && p4 && p1.x === p4.x && p1.y === p4.y) ||
+            (p2 && p3 && p2.x === p3.x && p2.y === p3.y) ||
+            (p2 && p4 && p2.x === p4.x && p2.y === p4.y) ||
+            (p3 && p4 && p3.x === p4.x && p3.y === p4.y)) {
+            return true;
+        } else {
+            return false;
+        };
+    };
 
     useEffect(() => { console.log(gameState, "Game State in Lobby") }, [gameState]);
 
     useEffect(() => { console.log(playerState, "Player State in Lobby") }, [playerState]);
 
     useEffect(() => { console.log(state, 'PvP State Lobby') }, [state]);
+
+    useEffect(() => {
+        if (!playerSameTileCheck(mapState)) return;
+        checkPlayerTiles(mapState);
+    }, [mapState?.player1Tile, mapState?.player2Tile, mapState?.player3Tile, mapState?.player4Tile]);
 
     useEffect(() => {
         const findAscean = asceanVaEsai.filter(
@@ -1217,7 +1279,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
                 getAsceanCoords={getAsceanCoords} generateWorld={generateWorld} emergencyText={emergencyText} setEmergencyText={setEmergencyText}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer} asceanState={asceanState} setAsceanState={setAsceanState}
-                specState={specState} specDispatch={specDispatch} handlePvPInitiate={handlePvPInitiate} checkPlayerTiles={checkPlayerTiles}
+                specState={specState} specDispatch={specDispatch} handlePvPInitiate={handlePvPInitiate} handlePvPPrayer={handlePvPPrayer} handlePvPInstant={handlePvPInstant}
             />
         }
         </>

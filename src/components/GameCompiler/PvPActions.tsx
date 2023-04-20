@@ -27,9 +27,11 @@ interface Props {
     dispatch: any;
     handleInstant: (e: { preventDefault: () => void; }) => Promise<void>;
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePvPInstant: (e: { preventDefault: () => void; }) => Promise<void>;
+    handlePvPPrayer: (e: { preventDefault: () => void; }) => Promise<void>;
 };
 
-const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, handlePvPInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePvPInstant, handlePrayer, handlePvPPrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, handlePvPInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const { combatInitiated } = state;
@@ -108,6 +110,10 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
     console.log(state.prayerSacrifice, "Pre-Check Prayer");
     if (state.prayerSacrifice === '') return;
     console.log(state.prayerSacrifice, "Sacrifing Prayer");
+    if (state.playerDuel) {
+      handlePvPPrayer({ preventDefault: () => {} });
+      return;
+    };
     handlePrayer({ preventDefault: () => {} });
 
   }, [state.prayerSacrifice]);
@@ -207,18 +213,22 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
       : '' }
     <>
       <p style={instantStyle} className={`invoke${gameState.instantStatus ? '-instant' : ''}`}>Invoke</p>
-      <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={gameState.instantStatus ? true : false}>
-        <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
-      </button>
+      { state?.playerDuel ?
+        <button className='instant-button' style={getEffectStyle} onClick={handlePvPInstant} disabled={gameState.instantStatus ? true : false}>
+          <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
+        </button>
+      :
+        <button className='instant-button' style={getEffectStyle} onClick={handleInstant} disabled={gameState.instantStatus ? true : false}>
+          <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
+        </button>
+      }
     </>
     <div className="actionButtons" id='action-buttons'>
-      {/* <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                 */}
           { state?.playerDuel ?
             <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handlePvPInitiate(state)}>Initiate</button>  
           :
             <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
           }
-      {/* </Form> */}
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
         <option>Counter</option>

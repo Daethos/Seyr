@@ -225,6 +225,11 @@ io.on("connection", (socket) => {
       enemy_roll_success: false,
       enemy_win: false,
 
+      playerReady: false,
+      enemyReady: false,
+      playerOneReady: false,
+      playerTwoReady: false,
+
       combatInitiated: false,
       actionStatus: false,
       gameIsLive: false,
@@ -274,18 +279,12 @@ io.on("connection", (socket) => {
     socket.emit('receive_message', helloMessage);
 
     socket.on('playerDirectionChange', async (directionData) => {
-      // console.log('Player Direction Change');
       const newDirection = directionData;
       io.to(data.room).emit('playerDirectionChanged', newDirection);
     });
 
     socket.on('commenceGame', async () => {
-      const messageData = {
-        room: newUser.room,
-        author: 'The Ascea',
-        message: `Welcome, ${newUser?.user?.username.charAt(0).toUpperCase() + newUser?.user?.username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
-        time: Date.now()
-    };
+
       // socket.emit('Game Commencing', messageData);
       const roomSockets = await io.of('/').in(newUser.room).fetchSockets();
       for (const clientSocket of roomSockets) {
@@ -296,12 +295,11 @@ io.on("connection", (socket) => {
           message: `Welcome, ${username.charAt(0).toUpperCase() + username.slice(1)}, to the Ascea. Your duel is commencing in 10 seconds against a live opponent. Prepare, and good luck.`,
           time: Date.now(),
         };
-        clientSocket.emit('Game Commencing', messageData);
+        clientSocket.to(data.room).emit('Game Commencing', messageData);
       }
   });
 
   let mapSyncData = {};
-    // syncMapContent
     socket.on('syncMapContent', async (mapData) => {
       const newMap = mapData;
       mapSyncData = newMap;
@@ -313,7 +311,6 @@ io.on("connection", (socket) => {
     });
 
     socket.on('new-environment', async (tileData) => {
-      console.log('New Environment');
       socket.to(newUser.room).emit('newEnvironment', tileData);
     });
 
@@ -322,7 +319,6 @@ io.on("connection", (socket) => {
     });
 
     socket.on('spectatePlayerData', async (playerData) => {
-      const { data, state } = playerData;
       io.to(newUser.room).emit('spectatePlayerResponse', playerData);
     });
 
@@ -331,27 +327,78 @@ io.on("connection", (socket) => {
     });
 
     socket.on('duelDataShare', async (duelData) => {
-      console.log("Duel Data Shared");
       io.to(newUser.room).emit('duelDataShared', duelData);
     });
 
+    // socket.on('pvpInitiated', async (pvpState) => {
+    //   console.log('PvP Initiated: ', pvpState.playerPosition, pvpState.action)
+    //   let combatData = {
+    //     playerOneData: null,
+    //     playerTwoData: null,
+    //   };
+    //   if (pvpState.playerPosition < pvpState.enemyPosition) {
+    //     console.log('Player One Setting');
+    //     combatData.playerOneData = pvpState; 
+    //   } else {
+    //     console.log('Player Two Setting');
+    //     combatData.playerTwoData = pvpState;
+    //   };
+    //   console.log(combatData?.playerOneData?.playerReady, combatData?.playerTwoData?.playerReady, "Are The Players Ready ?")
+    //   if (combatData.playerOneData && combatData.playerTwoData && combatData.playerOneData.playerReady === true && combatData.playerTwoData.playerReady === true) {
+    //     const response = await pvpService.pvpActionCompiler(combatData);
+    //     combatData = response;
+    //     io.to(newUser.room).emit('pvpInitiateUpdate', response);
+    //   };
+    // });
+    let duelData = {
+      playerOneData: null,
+      playerTwoData: null,
+    };
+    // socket.on('pvpInitiated', async (pvpState) => {
+    //   console.log('PvP Initiated: ', pvpState.playerPosition, pvpState.action);
+    //   if (pvpState.playerPosition < pvpState.enemyPosition) {
+    //     pvpState.playerOneReady = true;
+    //   } else {
+    //     pvpState.playerTwoReady = true;
+    //   };
+    //   pvpState.timestamp = Date.now();      
+    //   duelData = {
+    //     ...duelData,
+    //     [pvpState.playerPosition < pvpState.enemyPosition ? 'playerOneData' : 'playerTwoData']: pvpState,
+        
+    //   };
+
+    //   if (duelData.playerOneData && duelData.playerTwoData && duelData.playerOneData.playerOneReady === true && duelData.playerTwoData.playerTwoReady === true) {
+    //     const response = await pvpService.pvpActionCompiler(duelData);
+    //     duelData = response;
+    //     io.to(newUser.room).emit('pvpInitiateUpdate', response);
+    //   } else {
+    //     io.to(newUser.room).emit('pvpInitiateSoftUpdate', duelData);
+    //   };
+    // });
     socket.on('pvpInitiated', async (pvpState) => {
-      let combatData = {
-        playerOneData: null,
-        playerTwoData: null,
-      };
+      const playerKey = pvpState.playerPosition < pvpState.enemyPosition ? 'playerOneData' : 'playerTwoData';
+      console.log('PvP Initiated: ', pvpState.playerPosition, pvpState.action);
       if (pvpState.playerPosition < pvpState.enemyPosition) {
-        combatData.playerOneData = pvpState; 
+        pvpState.playerOneReady = true;
       } else {
-        combatData.playerTwoData = pvpState;
+        pvpState.playerTwoReady = true;
       };
-      if (combatData.playerOneData.playerReady === true && combatData.playerTwoData.playerReady === true) {
-        // TODO:FIXME: Change this to the new compiler that'll clean up the player-enemy dilemma TODO:FIXME:
-        const response = await pvpService.pvpActionCompiler(combatData);
-        combatData = response;
+      pvpState.timestamp = pvpState.timestamp ? pvpState.timestamp + 1 : 1;  
+      duelData[playerKey] = {
+        ...duelData[playerKey],
+        ...pvpState,
+      };
+    
+      if (duelData.playerOneData && duelData.playerTwoData && duelData.playerOneData.playerOneReady === true && duelData.playerTwoData.playerTwoReady === true) {
+        const response = await pvpService.pvpActionCompiler(duelData);
+        duelData = response;
         io.to(newUser.room).emit('pvpInitiateUpdate', response);
+      } else {
+        io.to(newUser.room).emit('pvpInitiateSoftUpdate', duelData);
       };
     });
+    
 
     socket.on('combatData_update', async () => {
       let newData = {
@@ -360,8 +407,6 @@ io.on("connection", (socket) => {
         combatData: combatData,
         player: newUser.player
       };
-      // newData = combatData
-      // console.log(newData, 'Updated Data?')
       io.to(newData.room).emit('updated_combatData', newData)
     });
 
@@ -424,7 +469,6 @@ io.on("connection", (socket) => {
         io.to(newUser.room).emit('duel_ready_response', newData)
       };
     });
-    // TODO:FIXME: Refer here for the Computer Combat
     socket.on('computer_combat_initiated', async (combatData) => {
       const response = await pvpService.actionCompiler(combatData);
       io.to(newUser.room).emit('combat_response', response);
@@ -442,7 +486,6 @@ io.on("connection", (socket) => {
 
     socket.on('pvp_initiated', async (data) => {
       let newData = data;
-      // console.log(newData, 'Did the New Data transcribe?')
       if (newUser.playerPosition === 1) {
         newData.player_one_initiated = true;
       } else {
@@ -451,7 +494,6 @@ io.on("connection", (socket) => {
       
       if (newData.player_one_initiated === true && newData.player_two_initiated === true) {
         const response = await pvpService.actionCompiler(data)
-        console.log(response, 'Is This Null?')
         io.to(newUser.room).emit('combat_response', response);
       } else {
         io.to(newUser.room).emit('soft_response', newData);
@@ -465,9 +507,7 @@ io.on("connection", (socket) => {
       } else {
         newData.player_two_reduel = true;
       }
-      // console.log(newData, 'Did the New Data transcribe?')
       if (newData.player_one_reduel === true && newData.player_two_reduel === true) {
-        // const response = await pvpService.actionCompiler(data)
         io.to(newUser.room).emit('reset_duel');
       } else {
         io.to(newUser.room).emit('reduel_requested', newData);
@@ -480,20 +520,18 @@ io.on("connection", (socket) => {
       io.to(newUser.room).emit('combat_response', response);
     });
 
-  })
+  });
 
   socket.on("send_message", (data) => {
     socket.to(data.room).emit("receive_message", data);
     console.log(data);
-  })
+  });
 
   socket.on("send_ascean", (data) => {
     socket.to(data.room).emit("receive_opponent", data);
-    console.log(players, 'Player(s) in Send Ascean Socket')
   });
 
   socket.off("setup", () => {
-    console.log('User Disonnected');
     socket.leave(userData._id);
   });
 });

@@ -311,20 +311,6 @@ export const SpectatorStore = (state: PvPData, action: Action) => {
 export const PvPStore = (state: PvPData, action: Action) => {
     switch (action.type) {
         case 'SET_DUEL_DATA': 
-        // const duelData = {
-        //     duelDataID:gameState?.player._id,
-        //     playerOne: playerState?.playerOne?.ascean._id,
-        //     playerTwo: playerState?.playerTwo?.ascean._id,
-        //     player: state.player,
-        //     playerPosition: state.playerPosition,
-        //     player_health: state.player_health,
-        //     current_player_health: state.current_player_health,
-        //     new_player_health: state.new_player_health,
-        //     weapons: state.weapons,
-        //     weapon_one: state.weapon_one,
-        //     weapon_two: state.weapon_two,
-        //     weapon_three: state.weapon_three,
-        // };
             return {
                 ...state,
                 enemy: action.payload.player,
@@ -340,9 +326,9 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 enemy_defense: action.payload.player_defense,
                 enemy_attributes: action.payload.player_attributes,
                 enemy_defense_default: action.payload.player_defense_default,
-                gameIsLive: true,
                 combatEngaged: true,
                 combatRound: 1,
+                playerDuel: true,
             };
         case 'UPDATE_DUEL_DATA':
             return {
@@ -413,9 +399,18 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 enemy_damage_type: action.payload.combat_weapon_one.damage_type[0]
             };
         case 'SET_PLAYER_READY':
-            return {
-                ...state,
-                playerReady: true
+            if (state.playerPosition < state.enemyPosition) {
+                return {
+                    ...state,
+                    playerReady: true,
+                    playerOneReady: true,
+                };
+            } else {
+                return {
+                    ...state,
+                    playerReady: true,
+                    playerTwoReady: true,
+                };
             };
         case 'SET_ENEMY_READY':
             return {
@@ -460,26 +455,26 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
                 winStreak: state.player.level > state.enemy.level ? 0: state.winStreak,
             };
-            case 'SET_NEW_COMPUTER_ENEMY':
-                return {
-                    ...state,
-                    current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                    new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
-                    enemy: action.payload.ascean,
-                    enemy_health: action.payload.attributes.healthTotal,
-                    current_enemy_health: action.payload.attributes.healthTotal,
-                    new_enemy_health: action.payload.attributes.healthTotal,
-                    enemy_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                    enemy_weapon_one: action.payload.combat_weapon_one,
-                    enemy_weapon_two: action.payload.combat_weapon_two,
-                    enemy_weapon_three: action.payload.combat_weapon_three,
-                    enemy_defense: action.payload.defense,
-                    enemy_attributes: action.payload.attributes,
-                    player_win: false,
-                    enemy_win: false,
-                    combatRound: 1,
-                    enemyPosition: -1,
-                };
+        case 'SET_NEW_COMPUTER_ENEMY':
+            return {
+                ...state,
+                current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
+                new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
+                enemy: action.payload.ascean,
+                enemy_health: action.payload.attributes.healthTotal,
+                current_enemy_health: action.payload.attributes.healthTotal,
+                new_enemy_health: action.payload.attributes.healthTotal,
+                enemy_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                enemy_weapon_one: action.payload.combat_weapon_one,
+                enemy_weapon_two: action.payload.combat_weapon_two,
+                enemy_weapon_three: action.payload.combat_weapon_three,
+                enemy_defense: action.payload.defense,
+                enemy_attributes: action.payload.attributes,
+                player_win: false,
+                enemy_win: false,
+                combatRound: 1,
+                enemyPosition: -1,
+            };
         case 'SET_NEW_ENEMY':
             let newEnemyPosition = findEnemyPosition(action.payload.enemy.ascean._id, action.payload.playerState);
             return {
