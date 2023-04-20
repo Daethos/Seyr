@@ -22,7 +22,6 @@
   transform: scale(1.1);
   margin-top: -10%;
 }
-
 .overlay-content {
   color: gold;
   text-shadow: 1.5px 1.5px 1.5px darkgoldenrod;
@@ -74,6 +73,25 @@
   width: 25%;
   height: 35%;
 }
+.status-effects.spectator {
+  grid-row-start: 1;
+  height: 140%;
+}
+.status-effects.spectator img {
+  transform: scale(2.25);
+  padding-top: 25%;
+  padding-left: 5%;
+}
+.status-effects.enemy img {
+  transform: scale(1.75);
+  padding-top: 25%;
+}
+.status-effects.enemy {
+  grid-row-start: 5;
+  height: 75%;
+  width: 20%;
+  margin-top: 5%;
+}
 #console {
   margin-top: 30%;
   border-radius: 6px;
@@ -85,8 +103,22 @@
   margin-left: -12.5%;
   height: 100vh;
   display: inline-block;
-  
   z-index: -1;
+}
+#spectator-textarea {
+  padding: 1em;
+  grid-column-start: 2;
+  grid-column-end: 5;
+  grid-row-start: 5;
+  margin-top: -50%;
+  margin-left: 12.5%;
+  height: 100vh;
+  display: inline-block;
+  z-index: -1;
+}
+*::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 .story-box {
   position: absolute;
@@ -269,6 +301,26 @@
   height: 65%;
   bottom: -25%;
   left: 0%;
+}
+.game-block.spectator {
+  display: grid;
+  z-index: 9999;
+}
+#game-spec-block {
+  margin-left: 15%;
+  transform: scale(1.1);
+  height: 30%;
+  /* top: 5%; */
+  grid-row-start: 4;
+  /* position: relative; */
+}
+#opponent-spec-block {
+  grid-row-start: 1;
+  grid-column-start: 2;
+  margin-left: -25%;
+  transform: scale(1.1);
+  margin-top: -50%;
+  height: 50%;
 }
 .actionButtons {
   display: block;
@@ -514,6 +566,12 @@
 #player-animation {
   margin-left: -15%;
 }
+#computer-animation-spec {
+  margin-left: 0%;
+}
+#player-animation-spec {
+  margin-left: 0%;
+}
 .joystick-outer {
   width: 100px;
   height: 100px;
@@ -572,6 +630,10 @@
   /* margin-top: -15%; */
   height: 80%;
   text-align: center;
+}
+.game-block-top.spectator, .opponent-block-top.spectator {
+  height: 60%;
+
 }
 #flicker {
   animation: flicker 1.5s linear;
@@ -669,6 +731,9 @@
   justify-content: center;
   margin-top: -15%;
   margin-bottom: -25%;
+}
+.game-ascean.specator {
+  z-index: 9999;
 }
 
 .grappling-move {

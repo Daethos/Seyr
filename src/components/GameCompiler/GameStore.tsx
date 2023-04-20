@@ -105,7 +105,7 @@ export interface Equipment {
     itemType: string;
     grip: string | null;
     attack_type: string | null;
-    damage_type: [string] | [string, string] | [] | null;
+    damage_type: [string] | [string, string] | [string, string, string] | [] | null;
     physical_damage: number | null;
     magical_damage: number | null;
     physical_penetration: number | null;
@@ -620,6 +620,7 @@ export interface GameData {
     loadingUnderlay: boolean;
     loadingContent: boolean;
     loadingCombatOverlay: boolean;
+    loadingCombatSpectatorOverlay: boolean;
     loadingSpectator: boolean;
 
     loadedAscean: boolean;
@@ -638,6 +639,7 @@ export interface GameData {
     gameplayEvent: object;
 
     combatResolved: boolean;
+    combatSpectatorResolved: boolean;
     instantStatus: boolean;
 
     showMap: boolean;
@@ -659,6 +661,7 @@ export interface GameData {
     underlayContent: string;
     storyContent: string;
     combatOverlayText: string;
+    combatSpectatorOverlayText: string;
 
     mapMode: string;
     timeLeft: number;
@@ -714,6 +717,7 @@ export const GAME_ACTIONS = {
     LOADING_UNDERLAY: 'LOADING_UNDERLAY',
     LOADING_CONTENT: 'LOADING_CONTENT',
     LOADING_COMBAT_OVERLAY: 'LOADING_COMBAT_OVERLAY',
+    LOADING_COMBAT_SPECTATOR_OVERLAY: 'LOADING_COMBAT_SPECTATOR_OVERLAY',
     LOADING_SPECTATOR: 'LOADING_SPECTATOR',
     LOADED_ASCEAN: 'LOADED_ASCEAN',
 
@@ -730,6 +734,7 @@ export const GAME_ACTIONS = {
     SET_GAMEPLAY_MODAL: 'SET_GAMEPLAY_MODAL',
     SET_GAMEPLAY_EVENT: 'SET_GAMEPLAY_EVENT',
     SET_COMBAT_RESOLVED: 'SET_COMBAT_RESOLVED',
+    SET_COMBAT_SPECTATOR_RESOLVED: 'SET_COMBAT_SPECTATOR_RESOLVED',
     SET_SHOW_CITY: 'SET_SHOW_CITY',
     SET_SHOW_DIALOG: 'SET_SHOW_DIALOG',
     SET_SHOW_INVENTORY: 'SET_SHOW_INVENTORY',
@@ -783,6 +788,7 @@ export const initialGameData: GameData = {
     loadingUnderlay: false,
     loadingContent: false,
     loadingCombatOverlay: false,
+    loadingCombatSpectatorOverlay: false,
     loadingSpectator: false,
     loadedAscean: false,
     saveExp: false,
@@ -797,6 +803,7 @@ export const initialGameData: GameData = {
     gameplayModal: false,
     gameplayEvent: { title: "", description: "" },
     combatResolved: false,
+    combatSpectatorResolved: false,
     instantStatus: false,
     showCity: false,
     showDialog: false,
@@ -814,6 +821,7 @@ export const initialGameData: GameData = {
     underlayContent: '',
     storyContent: '', 
     combatOverlayText: '',
+    combatSpectatorOverlayText: '',
     mapMode: 'FULL_MAP',
     timeLeft: 12,
     moveTimer: 6,
@@ -1026,6 +1034,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 loadingCombatOverlay: action.payload,
             };
+        case 'LOADING_COMBAT_SPECTATOR_OVERLAY':
+            return {
+                ...game,
+                loadingCombatSpectatorOverlay: action.payload,
+            };
         case 'LOADING_SPECTATOR':
             return {
                 ...game,
@@ -1052,6 +1065,13 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 combatResolved: action.payload,
                 loadingCombatOverylay: action.payload,
                 combatOverlayText: '',
+            };
+        case 'SET_COMBAT_SPECTATOR_RESOLVED':
+            return {
+                ...game,
+                combatSpectatorResolved: action.payload,
+                loadingCombatSpectatorOverylay: action.payload,
+                combatSpectatorOverlayText: '',
             };
         case 'SET_SHOW_CITY':
             return {

@@ -277,9 +277,9 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent('spectatePlayerResponse', spectatePlayerResponseCallback);
 
-        const spectateUpdateCallback = async (data: any) => {
+        const spectateUpdateCallback = async (spectator: string, data: PvPData) => {
             console.log(data, "Spectate Update Data");
-            await updateSpecate(data);
+            if (spectator === gameState.player._id) await updateSpecate(data);
         };
         handleSocketEvent('spectateUpdate', spectateUpdateCallback);
     
@@ -325,11 +325,14 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const updateSpecate = async (response: PvPData) => {
         // 
+        gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_SPECTATOR_OVERLAY, payload: true });
+        await soundEffects(response);
         specDispatch({ type: SPECTATOR_ACTIONS.UPDATE_SPECTATOR, payload: response });
         if (response.player_win === true || response.enemy_win === true) {
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: false });
                 specDispatch({ type: SPECTATOR_ACTIONS.CLEAR_SPECTATOR, payload: response });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_SPECTATOR_OVERLAY, payload: false });
             }, 6000);
         };
     };
@@ -339,6 +342,7 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(data, "Spectate Data");
             const specData = { data, state };
             await socket.emit('spectatePlayerData', specData);
+            dispatch({ type: ACTIONS.SET_SPECTATOR, payload: data.spectator });
         } catch (err: any) { 
             console.log(err.message, 'Error Spectating Player.'); 
         };
@@ -797,6 +801,12 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const instantUpdate = async (response: any) => {
         try {
+            if (response.spectacle) {
+                await response.spectators.map((spectator: any) => {
+                    console.log(spectator, "Spectator?")
+                    socket.emit('updateSpectatorData', spectator, response);
+                });
+            };
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response });
             if (response.player_win === true) {
                 if (response.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
@@ -827,6 +837,13 @@ const GamePvPLobby = ({ user }: Props) => {
     
     const statusUpdate = async (response: any) => {
         try {
+            console.log(response.spectacle, "Is this a Spectable?")
+            if (response.spectacle) {
+                await response.spectators.map((spectator: any) => {
+                    console.log(spectator, "Spectator?")
+                    socket.emit('updateSpectatorData', spectator, response);
+                });
+            };
             await soundEffects(response);
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response });
             if (response.player_win === true) {

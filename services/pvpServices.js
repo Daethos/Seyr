@@ -2347,6 +2347,8 @@ const actionSplitter = async (combatData) => {
         highScore: combatData.highScore,
         winStreak: combatData.winStreak,
         loseStreak: combatData.loseStreak,
+        spectacle: combatData.spectacle,
+        spectators: combatData.spectators,
 
         weather: combatData.weather,
     };

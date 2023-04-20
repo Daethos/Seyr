@@ -327,6 +327,11 @@ io.on("connection", (socket) => {
       io.to(newUser.room).emit('spectatePlayerResponse', playerData);
     });
 
+    socket.on('updateSpectatorData', async (spectator, data) => {
+      console.log('Updating Spectator Data');
+      io.to(newUser.room).emit('spectateUpdate', spectator, data);
+    })
+
     socket.on('combatData_update', async () => {
       console.log('Updating Combat Data')
       let newData = {

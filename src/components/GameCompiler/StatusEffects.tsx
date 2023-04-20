@@ -35,14 +35,16 @@ export interface StatusEffect {
     weapon: string;
 }
 
-interface Props {
+interface StatusEffectProps {
     effect: StatusEffect;
     player?: boolean;
+    spectator?: boolean;
+    enemy?: boolean;
 };
 
-const StatusEffects = ({ effect, player }: Props) => {
+const StatusEffects = ({ effect, player, spectator, enemy }: StatusEffectProps) => {
     const effectPopover = (
-        <Popover className='text-info' id='popover'>
+        <Popover className='text-info' id='popover' style={ spectator ? { zIndex: 9999 } :  { } }>
             <Popover.Header id='popover-header' as='h2'>{effect?.name}</Popover.Header>
             <Popover.Body id='popover-body'>
                 <p>Prayer: {effect?.prayer} {effect?.refreshes ? `[Refreshes]` : `[Stacks]`}
@@ -95,7 +97,7 @@ const StatusEffects = ({ effect, player }: Props) => {
 
     return (
         <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
-            <Button variant='' style={getEffectStyle} className='status-effects'>
+            <Button variant='' style={getEffectStyle} className={ enemy ? 'status-effects enemy' : spectator ? 'status-effects spectator' : 'status-effects'}>
                 <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/>
             </Button>
         </OverlayTrigger>

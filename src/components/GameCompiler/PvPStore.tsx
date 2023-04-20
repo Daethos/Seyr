@@ -308,9 +308,11 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 spectacle: action.payload,
             };
         case 'SET_SPECTATOR':
+            console.log(action.payload, "Setting Spectator")
             return {
                 ...state,
                 spectators: [...state.spectators, action.payload],
+                spectacle: false ? true : true,
             };
         case 'UPDATE_SPECTATOR':
             return {

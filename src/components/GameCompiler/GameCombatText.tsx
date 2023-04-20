@@ -13,9 +13,10 @@ interface Props {
     computerDeathText: string;
     emergencyText: any[] | (() => any[]);
     combatRoundText: string | number;
+    spectator?: boolean;
 };
 
-const GameCombatText = ({ emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
+const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
     const text = () => {
         let result = "";
         if (emergencyText) result += emergencyText + "\n";
@@ -35,7 +36,7 @@ const GameCombatText = ({ emergencyText, combatRoundText, playerDeathText, compu
         return result;
     };
     return (
-        <div id="textarea">
+        <div id={spectator ? 'spectator-textarea' : "textarea"}>
             <textarea 
                 className="text-box" id="console" 
                 value={text()}

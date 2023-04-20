@@ -11,6 +11,8 @@ import GameCombatText from './GameCombatText';
 import PvPActions from './PvPActions';
 import PvPAscean from './PvPAscean';
 import PvPConditions from './PvPConditions';
+import SpectatorAscean from './SpectatorAscean';
+import CombatSpectatorOverlay from './CombatSpectatorOverlay';
 
 interface Props {
     ascean: any;
@@ -43,30 +45,33 @@ const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loading
     }, [loadingSpectator, state]);
     const chatStyle = {
         borderRadius: "50%",
-        marginTop: "-45%",
-        marginLeft: "45%",
-        zIndex: 100,
-        gridColumnStart: 1,
-        gridRowStart: 8,
+        marginTop: "25%",
+        marginLeft: "25%",
+        gridColumnStart: 2,
+        gridRowStart: 4,
     };
     return (
         <Overlay target={overlayRef} show={loadingSpectator}>
-            <div className='d-flex'
+            <div className='d-grid'
             style={{
-                position: 'relative',
-                // top: 0,
-                // left: 0,
+                position: 'fixed',
                 width: '100%',
                 height: '100%',
                 backgroundColor: 'rgba(0, 0, 0, 1)',
                 zIndex: 9999,
                 border: "0.2em solid purple",
             }}>
-            <PvPAscean style={true} 
+            <SpectatorAscean 
                 state={state} ascean={state.enemy} damage={state.enemyDamaged} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
             />
-            <PvPAscean style={true} state={state} ascean={state.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
-            <GameAnimations 
+            <CombatSpectatorOverlay 
+                ascean={state.player} enemy={state.enemy} playerWin={state.player_win} computerWin={state.enemy_win} playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
+                playerAction={state.player_action} computerAction={state.enemy_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_enemy_damage} 
+                rollSuccess={state.roll_success} computerRollSuccess={state.enemy_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.enemy_counter_success}
+                loadingCombatSpectatorOverlay={gameState.loadingCombatSpectatorOverlay} combatSpectatorResolved={gameState.combatSpectatorResolved} combatSpectatorOverlayText={gameState.combatSpectatorOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
+            /> 
+            <SpectatorAscean state={state} ascean={state.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <GameAnimations spectator={true}
                 playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
                 playerAction={state.player_action} computerAction={state.enemy_action} 
                 playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_enemy_damage} 
@@ -74,7 +79,7 @@ const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loading
                 counterSuccess={state.counter_success} computerCounterSuccess={state.enemy_counter_success} combatEngaged={state.combatEngaged}
             />
             <GameCombatText 
-                emergencyText={emergencyText} combatRoundText={state.combatRound}
+                emergencyText={emergencyText} combatRoundText={state.combatRound} spectator={true}
                 playerCombatText={state.player_action_description} computerCombatText={state.enemy_action_description} 
                 playerActionText={state.player_start_description} computerActionText={state.enemy_start_description}
                 playerDeathText={state.player_death_description} computerDeathText={state.enemy_death_description}

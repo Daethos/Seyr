@@ -7,9 +7,10 @@ interface GameProps {
     totalExperience: number;
     currentExperience: number;
     story?: boolean;
+    spectator?: boolean;
 };
 
-const ExperienceBar = ({ totalExperience, currentExperience, story }: GameProps) => {
+const ExperienceBar = ({ totalExperience, currentExperience, story, spectator }: GameProps) => {
     const [playerXPPercentage, setPlayerXPPercentage] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
@@ -35,7 +36,7 @@ const ExperienceBar = ({ totalExperience, currentExperience, story }: GameProps)
     };
 
     return (
-        <div className='mb-4'>
+        <div className={spectator ? 'my-4' : 'mb-4'}>
 
         <ProgressBar 
             variant="warning" 

@@ -14,24 +14,13 @@ interface Props {
   totalPlayerHealth: number;
   state: any;
   damage?: boolean;
-  style?: boolean;
-  spectator?: boolean;
 };
 
-const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage, style, spectator }: Props) => {
-  useEffect(() => {
-    console.log(style, 'PvPAscean Mounted');
-    return () => {
-      console.log(style, 'PvPAscean Unmounted');
-    };
-  }, [style])
-  const getBlockStyle = {
-    zIndex: style ? 99999 : 99,
-    marginTop: state.playerEffects.length > 0 ? '-19%' : '6%',
-  };
+const SpectatorAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
 
-  const spectatorStyle ={
+  const getBlockStyle = {
     zIndex: 99999,
+    marginTop: state.playerEffects.length > 0 ? '-19%' : '6%',
   };
 
   if (loading) {
@@ -43,13 +32,13 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
   return (
     <>
     { player ?
-      <div id='game-block' className={spectator ? "game-block spectator" : "game-block"} style={getBlockStyle}>
+      <div id='game-spec-block' className="game-block spectator" style={getBlockStyle}>
         {state.playerEffects.length > 0 ?
           (state.playerEffects.map((effect: any, index: number) => {
-            return ( <StatusEffects effect={effect} player={true} key={index} /> )
+            return ( <StatusEffects spectator={true} effect={effect} player={true} key={index} /> )
         })) : '' }
-      <div className="game-block-top">
-      <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
+      <div className="game-block-top spectator">
+      <GamePlayerStats spectator={true} attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
         <AsceanImageCard
@@ -68,16 +57,16 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
             loading={loading}
             key={ascean._id}
             damage={damage}
-            spectator={spectator}
+            spectator={true}
         />
       <div className="actions">
-      <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} />
+      <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} spectator={true} />
       </div>
       </div>
     : 
-      <div className="game-block" id='opponent-block'>
-      <div className="opponent-block-top">
-      <GamePlayerStats attributes={state.enemy_attributes} player={state.enemy} magicalDefense={state.enemy_defense.magicalDefenseModifier} magicalPosture={state.enemy_defense.magicalPosture} physicalDefense={state.enemy_defense.physicalDefenseModifier} physicalPosture={state.enemy_defense.physicalPosture} />
+      <div className="game-block spectator" id='opponent-spec-block'>
+      <div className="opponent-block-top spectator">
+      <GamePlayerStats spectator={true} attributes={state.enemy_attributes} player={state.enemy} magicalDefense={state.enemy_defense.magicalDefenseModifier} magicalPosture={state.enemy_defense.magicalPosture} physicalDefense={state.enemy_defense.physicalDefenseModifier} physicalPosture={state.enemy_defense.physicalPosture} />
       <GameHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} />
       </div>
       <AsceanImageCard
@@ -96,13 +85,13 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
           loading={loading}
           key={ascean._id}
           damage={damage}
-          spectator={spectator}
+          spectator={true}
       />
       <div className="actions">
       </div>
       {state.enemyEffects.length > 0 ?
         (state.enemyEffects.map((effect: any, index: number) => {
-          return ( <StatusEffects effect={effect} key={index} /> )
+          return ( <StatusEffects spectator={true} enemy={true} effect={effect} key={index} /> )
       })) : '' }
     </div>
     }
@@ -110,4 +99,4 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
   );
 };
 
-export default PvPAscean;
+export default SpectatorAscean;
