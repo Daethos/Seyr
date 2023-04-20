@@ -117,6 +117,9 @@ export interface PvPData {
     enemyReady: boolean;
     spectacle: boolean;
     spectators: any[];
+    playerDuel: boolean;
+    playerOneReady: boolean;
+    playerTwoReady: boolean;
 
     weather: string;
 };
@@ -225,6 +228,9 @@ export const initialPvPData: PvPData = {
     enemyReady: false,
     spectacle: false,
     spectators: [],
+    playerDuel: false,
+    playerOneReady: false,
+    playerTwoReady: false,
     weather: '',
 };
 
@@ -273,6 +279,8 @@ export const ACTIONS = {
     UPDATE_SPECTATOR: 'UPDATE_SPECTATOR',
     CLEAR_SPECTATOR: 'CLEAR_SPECTATOR',
     SET_SPECTACLE: 'SET_SPECTACLE',
+    SET_DUEL_DATA: 'SET_DUEL_DATA',
+
 };
 
 export const SPECTATOR_ACTIONS = {
@@ -302,6 +310,44 @@ export const SpectatorStore = (state: PvPData, action: Action) => {
 
 export const PvPStore = (state: PvPData, action: Action) => {
     switch (action.type) {
+        case 'SET_DUEL_DATA': 
+        // const duelData = {
+        //     duelDataID:gameState?.player._id,
+        //     playerOne: playerState?.playerOne?.ascean._id,
+        //     playerTwo: playerState?.playerTwo?.ascean._id,
+        //     player: state.player,
+        //     playerPosition: state.playerPosition,
+        //     player_health: state.player_health,
+        //     current_player_health: state.current_player_health,
+        //     new_player_health: state.new_player_health,
+        //     weapons: state.weapons,
+        //     weapon_one: state.weapon_one,
+        //     weapon_two: state.weapon_two,
+        //     weapon_three: state.weapon_three,
+        // };
+            return {
+                ...state,
+                enemy: action.payload.player,
+                enemyPosition: action.payload.playerPosition,
+                enemy_health: action.payload.player_health,
+                current_enemy_health: action.payload.current_player_health,
+                new_enemy_health: action.payload.new_player_health,
+                enemy_weapons: action.payload.weapons,
+                enemy_weapon_one: action.payload.weapon_one,
+                enemy_weapon_two: action.payload.weapon_two,
+                enemy_weapon_three: action.payload.weapon_three,
+                enemy_damage_type: action.payload.player_damage_type,
+                enemy_defense: action.payload.player_defense,
+                enemy_attributes: action.payload.player_attributes,
+                enemy_defense_default: action.payload.player_defense_default,
+                gameIsLive: true,
+                combatEngaged: true,
+                combatRound: 1,
+            };
+        case 'UPDATE_DUEL_DATA':
+            return {
+                ...action.payload, // Do it in the back-end
+            };
         case 'SET_SPECTACLE':
             return {
                 ...state,

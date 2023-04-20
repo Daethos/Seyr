@@ -305,7 +305,6 @@ io.on("connection", (socket) => {
     socket.on('syncMapContent', async (mapData) => {
       const newMap = mapData;
       mapSyncData = newMap;
-      console.log(mapSyncData, "Map Sync Data");
       io.to(data.room).emit('mapContentSynced', newMap);
     });
 
@@ -329,7 +328,30 @@ io.on("connection", (socket) => {
 
     socket.on('updateSpectatorData', async (spectator, data) => {
       io.to(newUser.room).emit('spectateUpdate', spectator, data);
-    })
+    });
+
+    socket.on('duelDataShare', async (duelData) => {
+      console.log("Duel Data Shared");
+      io.to(newUser.room).emit('duelDataShared', duelData);
+    });
+
+    socket.on('pvpInitiated', async (pvpState) => {
+      let combatData = {
+        playerOneData: null,
+        playerTwoData: null,
+      };
+      if (pvpState.playerPosition < pvpState.enemyPosition) {
+        combatData.playerOneData = pvpState; 
+      } else {
+        combatData.playerTwoData = pvpState;
+      };
+      if (combatData.playerOneData.playerReady === true && combatData.playerTwoData.playerReady === true) {
+        // TODO:FIXME: Change this to the new compiler that'll clean up the player-enemy dilemma TODO:FIXME:
+        const response = await pvpService.pvpActionCompiler(combatData);
+        combatData = response;
+        io.to(newUser.room).emit('pvpInitiateUpdate', response);
+      };
+    });
 
     socket.on('combatData_update', async () => {
       let newData = {
@@ -352,7 +374,7 @@ io.on("connection", (socket) => {
         player: newUser.player
       };
       socket.to(newUser.room).emit('sharing_combatdata', newData)
-    })
+    });
 
     socket.on('request_new_player', async () => {
       console.log('Requesting Data')

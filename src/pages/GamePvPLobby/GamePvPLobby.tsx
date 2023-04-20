@@ -9,6 +9,7 @@ import GameChat from '../../components/GameCompiler/GameChat';
 import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PlayerData, SpectatorStore, SPECTATOR_ACTIONS } from '../../components/GameCompiler/PvPStore';
 import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { MAP_ACTIONS, MapStore, initialMapData, MapData } from '../../components/GameCompiler/WorldStore';
+import { shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { getMerchantDialog, getNpcDialog } from '../../components/GameCompiler/Dialog';
@@ -282,7 +283,36 @@ const GamePvPLobby = ({ user }: Props) => {
             if (spectator === gameState.player._id) await updateSpecate(data);
         };
         handleSocketEvent('spectateUpdate', spectateUpdateCallback);
+
+        const duelDataSharedCallback = async (data: any) => {
+            console.log(data, "Duel Data Callback");
+            if (data.playerOne === gameState.player._id || data.playerTwo === gameState.player._id) {
+                await duelData(data);
+            };
+        };
+        handleSocketEvent('duelDataShared', duelDataSharedCallback);
+
+        const pvpInitiateUpdateCallback = async (data: any) => {
+            const playerOne = data.playerOneData;
+            const playerTwo = data.playerTwoData;
+            if (state.playerPosition === playerOne.playerPosition) {
+                await statusUpdate(playerOne);
+            } else {
+                await statusUpdate(playerTwo);
+            };
+        };
+        handleSocketEvent('pvpInitiateUpdate', pvpInitiateUpdateCallback);
     
+        const pvpInitiateSoftUpdateCallback = async (data: any) => {
+            const playerOne = data.playerOneData;
+            const playerTwo = data.playerTwoData;
+            if (state.playerPosition === playerOne.playerPosition) {
+                await softUpdate(playerOne);
+            } else {
+                await softUpdate(playerTwo);
+            };
+        };
+
         return () => {
           if (socket) {
                 socket.off('player_data', playerDataCallback);
@@ -304,6 +334,8 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('requestSpectatePlayer', spectatePlayerCallback);
                 socket.off('spectatePlayerResponse', spectatePlayerResponseCallback);
                 socket.off('spectateUpdate', spectateUpdateCallback);
+                socket.off('duelDataShared', duelDataSharedCallback);
+                socket.off('pvpInitiateUpdate', pvpInitiateUpdateCallback);
             };
         };
       }, [handleSocketEvent, socket, playerState, mapState, gameState, state]);
@@ -322,6 +354,163 @@ const GamePvPLobby = ({ user }: Props) => {
           }, 6000);
         }
     }, [state.player_luckout]);
+
+    const duelData = async (data: any) => {
+        if (data.duelDataID === gameState?.player._id) return; // This is you, you don't need to set yourself
+        dispatch({ type: ACTIONS.SET_DUEL_DATA, payload: data });
+    };
+
+    const checkPlayerTiles = async (mapData: MapData) => {
+        console.log(mapData, "Map Data Checking Player Tiles")
+        try {
+            if ((mapData?.player1Tile?.x === mapData?.player2Tile?.x) && (mapData?.player1Tile?.y === mapData?.player2Tile?.y)) {
+                console.log(gameState?.player._id, playerState?.playerOne?.ascean._id, playerState?.playerTwo?.ascean._id, "Players are in the same tile");
+                if (gameState?.player._id === playerState?.playerOne?.ascean._id || gameState?.player._id === playerState?.playerTwo?.ascean._id) {  
+                    const duelData = {
+                        duelDataID:gameState?.player._id,
+                        playerOne: playerState?.playerOne?.ascean._id,
+                        playerTwo: playerState?.playerTwo?.ascean._id,
+                        player: state.player,
+                        playerPosition: state.playerPosition,
+                        player_health: state.player_health,
+                        current_player_health: state.current_player_health,
+                        new_player_health: state.new_player_health,
+                        weapons: state.weapons,
+                        weapon_one: state.weapon_one,
+                        weapon_two: state.weapon_two,
+                        weapon_three: state.weapon_three,
+                        player_damage_type: state.player_damage_type,
+                        player_defense: state.player_defense,
+                        player_attributes: state.player_attributes,
+                        player_defense_default: state.player_defense_default,
+                    };
+                    await socket?.emit('duelDataShare', duelData);
+                };
+            };
+
+            if ((mapData?.player1Tile?.x === mapData?.player3Tile?.x) && (mapData?.player1Tile?.y === mapData?.player3Tile?.y)) {
+                if (gameState?.player._id === playerState?.playerOne?.ascean._id || gameState?.player._id === playerState?.playerThree?.ascean._id) {  
+                    const duelData = {
+                        duelDataID:gameState?.player._id,
+                        playerOne: playerState?.playerOne?.ascean._id,
+                        playerTwo: playerState?.playerThree?.ascean._id,
+                        player: state.player,
+                        playerPosition: state.playerPosition,
+                        player_health: state.player_health,
+                        current_player_health: state.current_player_health,
+                        new_player_health: state.new_player_health,
+                        weapons: state.weapons,
+                        weapon_one: state.weapon_one,
+                        weapon_two: state.weapon_two,
+                        weapon_three: state.weapon_three,
+                        player_damage_type: state.player_damage_type,
+                        player_defense: state.player_defense,
+                        player_attributes: state.player_attributes,
+                        player_defense_default: state.player_defense_default,
+                    };
+                    await socket?.emit('duelDataShare', duelData);
+                };
+            };
+
+            if ((mapData?.player1Tile?.x === mapData?.player4Tile?.x) && (mapData?.player1Tile?.y === mapData?.player4Tile?.y)) {
+                if (gameState?.player._id === playerState?.playerOne?.ascean._id || gameState?.player._id === playerState?.playerFour?.ascean._id) {  
+                    const duelData = {
+                        duelDataID:gameState?.player._id,
+                        playerOne: playerState?.playerOne?.ascean._id,
+                        playerTwo: playerState?.playerFour?.ascean._id,
+                        player: state.player,
+                        playerPosition: state.playerPosition,
+                        player_health: state.player_health,
+                        current_player_health: state.current_player_health,
+                        new_player_health: state.new_player_health,
+                        weapons: state.weapons,
+                        weapon_one: state.weapon_one,
+                        weapon_two: state.weapon_two,
+                        weapon_three: state.weapon_three,
+                        player_damage_type: state.player_damage_type,
+                        player_defense: state.player_defense,
+                        player_attributes: state.player_attributes,
+                        player_defense_default: state.player_defense_default,
+                    };
+                    await socket?.emit('duelDataShare', duelData);
+                };
+            };
+
+            if ((mapData?.player2Tile?.x === mapData?.player3Tile?.x) && (mapData?.player2Tile?.y === mapData?.player3Tile?.y)) {
+                if (gameState?.player._id === playerState?.playerTwo?.ascean._id || gameState?.player._id === playerState?.playerThree?.ascean._id) {  
+                    const duelData = {
+                        duelDataID:gameState?.player._id,
+                        playerOne: playerState?.playerTwo?.ascean._id,
+                        playerTwo: playerState?.playerThree?.ascean._id,
+                        player: state.player,
+                        playerPosition: state.playerPosition,
+                        player_health: state.player_health,
+                        current_player_health: state.current_player_health,
+                        new_player_health: state.new_player_health,
+                        weapons: state.weapons,
+                        weapon_one: state.weapon_one,
+                        weapon_two: state.weapon_two,
+                        weapon_three: state.weapon_three,
+                        player_damage_type: state.player_damage_type,
+                        player_defense: state.player_defense,
+                        player_attributes: state.player_attributes,
+                        player_defense_default: state.player_defense_default,
+                    };
+                    await socket?.emit('duelDataShare', duelData);
+                };
+            };
+
+            if ((mapData?.player2Tile?.x === mapData?.player4Tile?.x) && (mapData?.player2Tile?.y === mapData?.player4Tile?.y)) {
+                if (gameState?.player._id === playerState?.playerTwo?.ascean._id || gameState?.player._id === playerState?.playerFour?.ascean._id) {  
+                    const duelData = {
+                        duelDataID:gameState?.player._id,
+                        playerOne: playerState?.playerTwo?.ascean._id,
+                        playerTwo: playerState?.playerFour?.ascean._id,
+                        player: state.player,
+                        playerPosition: state.playerPosition,
+                        player_health: state.player_health,
+                        current_player_health: state.current_player_health,
+                        new_player_health: state.new_player_health,
+                        weapons: state.weapons,
+                        weapon_one: state.weapon_one,
+                        weapon_two: state.weapon_two,
+                        weapon_three: state.weapon_three,
+                        player_damage_type: state.player_damage_type,
+                        player_defense: state.player_defense,
+                        player_attributes: state.player_attributes,
+                        player_defense_default: state.player_defense_default,
+                    };
+                    await socket?.emit('duelDataShare', duelData);
+                };
+            };
+
+            if ((mapData?.player3Tile?.x === mapData?.player4Tile?.x) && (mapData?.player3Tile?.y === mapData?.player4Tile?.y)) {
+                if (gameState?.player._id === playerState?.playerThree?.ascean._id || gameState?.player._id === playerState?.playerFour?.ascean._id) {  
+                    const duelData = {
+                        duelDataID:gameState?.player._id,
+                        playerOne: playerState?.playerThree?.ascean._id,
+                        playerTwo: playerState?.playerFour?.ascean._id,
+                        player: state.player,
+                        playerPosition: state.playerPosition,
+                        player_health: state.player_health,
+                        current_player_health: state.current_player_health,
+                        new_player_health: state.new_player_health,
+                        weapons: state.weapons,
+                        weapon_one: state.weapon_one,
+                        weapon_two: state.weapon_two,
+                        weapon_three: state.weapon_three,
+                        player_damage_type: state.player_damage_type,
+                        player_defense: state.player_defense,
+                        player_attributes: state.player_attributes,
+                        player_defense_default: state.player_defense_default,
+                    };
+                    await socket?.emit('duelDataShare', duelData);
+                };
+            };
+        } catch (err: any) {
+            console.log(err, "Error Checking Player Tiles");
+        }
+    };
 
     const updateSpecate = async (response: PvPData) => {
         // 
@@ -738,8 +927,25 @@ const GamePvPLobby = ({ user }: Props) => {
         };
     };
 
+    async function handlePvPInitiate(pvpState: PvPData) {
+        try {
+            shakeScreen();
+            setEmergencyText(['']);
+            setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
+            const data = {
+                player: pvpState.player._id,
+                state: pvpState
+            };
+            await socket.emit('pvpInitiated', data);
+            dispatch({ type: ACTIONS.SET_PLAYER_READY, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Action');
+        };
+    };
+
     async function handleInitiate(pvpState: PvPData) {
         try {
+            shakeScreen();
             setEmergencyText(['']);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             if (pvpState.enemyPosition === -1) {
@@ -756,6 +962,7 @@ const GamePvPLobby = ({ user }: Props) => {
     async function handleInstant(e: { preventDefault: () => void; }) {
         e.preventDefault();
         try {
+            shakeScreen();
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
@@ -774,6 +981,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose A Prayer to Sacrifice!\n`]);
                 return;
             };
+            shakeScreen();
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             await socket.emit('consume_prayer', state);
@@ -790,6 +998,7 @@ const GamePvPLobby = ({ user }: Props) => {
             return;
         };
         try {
+            shakeScreen();
             setTimeLeft(gameState.timeLeft);
             setEmergencyText([`Auto Engagement Response`]);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -837,7 +1046,7 @@ const GamePvPLobby = ({ user }: Props) => {
     
     const statusUpdate = async (response: any) => {
         try {
-            console.log(response.spectacle, "Is this a Spectable?")
+            console.log(response.spectacle, "Is this a Spectable?");
             if (response.spectacle) {
                 await response.spectators.map((spectator: any) => {
                     console.log(spectator, "Spectator?")
@@ -1008,7 +1217,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
                 getAsceanCoords={getAsceanCoords} generateWorld={generateWorld} emergencyText={emergencyText} setEmergencyText={setEmergencyText}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer} asceanState={asceanState} setAsceanState={setAsceanState}
-                specState={specState} specDispatch={specDispatch}
+                specState={specState} specDispatch={specDispatch} handlePvPInitiate={handlePvPInitiate} checkPlayerTiles={checkPlayerTiles}
             />
         }
         </>

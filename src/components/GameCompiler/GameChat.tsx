@@ -44,6 +44,7 @@ interface Props {
     statusUpdate: (response: any) => Promise<void>;
     softUpdate: (response: any) => Promise<void>;
     handleInitiate: (pvpState: PvPData) => Promise<void>;
+    handlePvPInitiate: (pvpState: PvPData) => Promise<void>;
     handleInstant: (e: { preventDefault: () => void; }) => Promise<void>;
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
     clearOpponent: () => Promise<void>;
@@ -60,15 +61,18 @@ interface Props {
     getOpponent: (player: Player) => Promise<void>;
     getNPCDialog: (enemy: string) => Promise<void>;
     autoAttack: (combatData: PvPData) => Promise<void>;
+    checkPlayerTiles: (mapData: MapData) => Promise<void>;
 };
 
-const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
+const GameChat = ({ checkPlayerTiles, state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handlePvPInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
     const [modalShow, setModalShow] = useState(false);
     const [duelReady, setDuelReady] = useState<boolean>(false);
 
     useEffect(() => {
-        console.log(mapState?.player1Tile, mapState?.player2Tile, "Player Tiles");
-    }, [mapState?.player1Tile, mapState?.player2Tile, mapState?.player3Tile]);
+        if (mapState?.player1Tile === undefined) return;
+        console.log(mapState?.player1Tile, mapState?.player2Tile, mapState?.player3Tile, mapState?.player4Tile, "Player Tiles");
+        checkPlayerTiles(mapState);
+    }, [mapState?.player1Tile, mapState?.player2Tile, mapState?.player3Tile, mapState?.player4Tile]);
 
     const sendMessage = async () => {
         if (currentMessage !== "") {
@@ -122,7 +126,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                 handleInitiate={handleInitiate} handlePrayer={handlePrayer} handleInstant={handleInstant} clearOpponent={clearOpponent}
                 emergencyText={emergencyText} setEmergencyText={setEmergencyText} asceanState={asceanState} setAsceanState={setAsceanState}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer}  getOpponent={getOpponent} getNPCDialog={getNPCDialog}
-                specState={specState} specDispatch={specDispatch}
+                specState={specState} specDispatch={specDispatch} handlePvPInitiate={handlePvPInitiate}
             />
             <Modal 
                 show={modalShow}

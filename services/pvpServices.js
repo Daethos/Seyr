@@ -2196,46 +2196,260 @@ const doubleRollCompiler = async (combatData, player_initiative, enemy_initiativ
     if (player_initiative > enemy_initiative) { // You have Higher Initiative
         if (player_roll > roll_catch) { // The Player Succeeds the Roll
             combatData.player_special_description = 
-                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_action)
+                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+            await attackCompiler(combatData, player_action);
         } else if (enemy_roll > roll_catch) { // The Player Fails the Roll and the enemy Succeeds
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
-            await enemyAttackCompiler(combatData, enemy_action)
+                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+            await enemyAttackCompiler(combatData, enemy_action);
         } else { // Neither Player nor enemy Succeed
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
+                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_action)
-            await enemyAttackCompiler(combatData, enemy_action)
-        }
+                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+            await attackCompiler(combatData, player_action);
+            await enemyAttackCompiler(combatData, enemy_action);
+        };
     } else { // The enemy has Higher Initiative
         if (enemy_roll > roll_catch) { // The enemy Succeeds the Roll
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
-            await enemyAttackCompiler(combatData, enemy_action)
+                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+            await enemyAttackCompiler(combatData, enemy_action);
         } else if (player_roll > roll_catch) { // The enemy Fails the Roll and the Player Succeeds
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             combatData.player_special_description = 
-                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_action)
+                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+            await attackCompiler(combatData, player_action);
         } else { // Neither enemy nor Player Succeed
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`
-            await enemyAttackCompiler(combatData, enemy_action)
-            await attackCompiler(combatData, player_action)
-        }
-    }
+                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+            await enemyAttackCompiler(combatData, enemy_action);
+            await attackCompiler(combatData, player_action);
+        };
+    };
     return (
         combatData
-    )
-}
+    );
+};
+
+const pvpActionSplitter = async (combatData) => {
+    //TODO:FIXME: Work on proper rendering of current health and new health totals post-damage TODO:FIXME:
+    let newData = combatData;
+    const player_initiative = newData.player_attributes.initiative;
+    const enemy_initiative = newData.enemy_attributes.initiative;
+    let player_action = newData.action;
+    const player_counter = newData.counter_guess;
+    let enemy_counter = newData.enemy_counter_guess;
+    let enemy_action = newData.enemy_action;
+    // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
+    newData.enemy_start_description = 
+        `${newData.enemy.name} sets to ${enemy_action.charAt(0).toUpperCase() + enemy_action.slice(1)}${enemy_counter ? '-' + enemy_counter.charAt(0).toUpperCase() + enemy_counter.slice(1) : ''} against ${newData.player.name}.`
+
+    newData.player_start_description = 
+        `${newData.player.name} attempt to ${player_action.charAt(0).toUpperCase() + player_action.slice(1)}${player_counter ? '-' + player_counter.charAt(0).toUpperCase() + player_counter.slice(1) : ''} against ${newData.enemy.name}.`
+    
+    // If both Player and enemy Counter -> Counter [Fastest Resolution]
+    if (player_action === 'counter' && enemy_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
+        if (player_counter === enemy_counter && player_counter === 'counter') {
+            if (player_initiative > enemy_initiative) {
+                newData.counter_success = true;
+                newData.player_special_description = 
+                    `${newData.player.name} successfully Countered ${newData.enemy.name}'s Counter-Counter! Absolutely Brutal`;
+                await attackCompiler(newData, player_action);
+                await faithFinder(newData, player_action, enemy_action);
+
+                await statusEffectCheck(newData);
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
+                return newData
+            } else {
+                newData.enemy_counter_success = true;
+                newData.enemy_special_description = 
+                    `${newData.enemy.name} successfully Countered ${newData.player.name}'s Counter-Counter! Absolutely Brutal`
+                await enemyAttackCompiler(newData, enemy_action);
+                await faithFinder(newData, player_action, enemy_action);
+
+                await statusEffectCheck(newData);
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
+                return newData
+            }    
+        }
+        // If the Player Guesses Right and the enemy Guesses Wrong
+        if (player_counter === enemy_action && enemy_counter !== player_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `${newData.player.name} successfully Countered ${newData.enemy.name}'s Counter-${enemy_counter.charAt(0).toUpperCase() + enemy_counter.slice(1)}! Absolutely Brutal`
+            await attackCompiler(newData, player_action)
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData
+        }
+    
+        // If the enemy Guesses Right and the Player Guesses Wrong
+        if (enemy_counter === player_action && player_counter !== enemy_action) {
+            newData.enemy_counter_success = true;
+            newData.enemy_special_description = 
+                `${newData.enemy.name} successfully Countered ${newData.player.name}'s Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`
+            await enemyAttackCompiler(newData, enemy_action);
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData
+        } 
+    
+        if (player_counter !== enemy_action && enemy_counter !== player_action) {
+            newData.player_special_description = 
+                `${newData.player.name} failed to Counter ${newData.enemy.name}'s Counter! Heartbreaking`
+            newData.enemy_special_description = 
+                `${newData.enemy.name} fails to Counter ${newData.player.name}'s Counter! Heartbreaking`
+                if (player_initiative > enemy_initiative) {
+                    await attackCompiler(newData, player_action);
+                    await enemyAttackCompiler(newData, enemy_action);
+                } else {
+                    await enemyAttackCompiler(newData, enemy_action);
+                    await attackCompiler(newData, player_action);
+                }
+        };
+    };
+
+
+    // Partially Resolves Player: Counter + Countering the enemy
+        // If Player Counters the enemy w/o the Enemy Countering
+    if (player_action === 'counter' && enemy_action !== 'counter') {
+        if (player_counter === enemy_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `${newData.player.name} successfully Countered ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack.`
+            await attackCompiler(newData, player_action)
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData
+        } else {
+            newData.player_special_description = 
+                `${newData.player.name} failed to Counter ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack. Heartbreaking!`
+        }
+    }
+
+    if (enemy_action === 'counter' && player_action !== 'counter') {
+        if (enemy_counter === player_action) {
+            newData.enemy_counter_success = true;
+            newData.enemy_special_description = 
+                `${newData.enemy.name} successfully Countered ${newData.player.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
+            await enemyAttackCompiler(newData, enemy_action)
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData
+        } else {
+            newData.enemy_special_description = 
+                `${newData.enemy.name} fails to Counter ${newData.player.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
+        }
+    }
+
+
+    
+    if (player_action === 'dodge' && enemy_action === 'dodge') { // If both choose Dodge
+        if (player_initiative > enemy_initiative) {
+            newData.player_special_description = 
+                `${newData.player.name} successfully Dodges ${newData.enemy.name}'s ${  newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack`
+            await attackCompiler(newData, player_action);
+        } else {
+            `${newData.enemy.name} successfully Dodges ${newData.player.name}'s ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
+            await enemyAttackCompiler(newData, enemy_action);
+        }
+    }
+
+    // If the Player Dodges and the enemy does not *Counter or Dodge  *Checked for success
+    if (player_action === 'dodge' && enemy_action !== 'dodge') {
+        newData.player_special_description = 
+            `${newData.player.name} successfully Dodges ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack`
+        await attackCompiler(newData, player_action);
+        await faithFinder(newData, player_action, enemy_action);
+        await statusEffectCheck(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
+        return newData
+    }
+
+    // If the enemy Dodges and the Player does not *Counter or Dodge *Checked for success
+    if (enemy_action === 'dodge' && player_action !== 'dodge') {
+        `${newData.enemy.name} successfully Dodges ${newData.player.name}'s ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
+        await enemyAttackCompiler(newData, enemy_action);
+        await faithFinder(newData, player_action, enemy_action);
+        await statusEffectCheck(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
+        return newData;
+    };
+
+    if (player_action === 'roll' && enemy_action === 'roll') { // If both choose Roll
+        await doubleRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action);
+    };
+
+    if (player_action === 'roll' && enemy_action !== 'roll') {
+        await playerRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action);
+        if (newData.roll_success === true) {
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData;
+        };
+    };
+
+    if (enemy_action === 'roll' && player_action !== 'roll') {
+        await enemyRollCompiler(newData, player_initiative, enemy_initiative, player_action, enemy_action)
+        if (newData.enemy_roll_success === true) {
+            await faithFinder(newData, player_action, enemy_action);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData;
+        };
+    };
+
+    if (player_action === 'attack' || player_action === 'posture' || enemy_action === 'attack' || enemy_action === 'posture') { // If both choose Attack
+        if (player_initiative > enemy_initiative) {
+            await attackCompiler(newData, player_action);
+            await enemyAttackCompiler(newData, enemy_action);
+        } else {
+            await enemyAttackCompiler(newData, enemy_action);
+            await attackCompiler(newData, player_action);
+        };
+    };
+
+    await faithFinder(newData, player_action, enemy_action);
+    await statusEffectCheck(newData);
+    
+    if (newData.player_win === true) {
+        newData.enemy_death_description = 
+        `${newData.enemy.name} has been defeated. Hail ${newData.player.name}, ${newData.player.sex === 'Man' ? 'he' : 'she' } has won the duel!`;
+    };
+    if (newData.enemy_win === true) {
+        newData.player_death_description = 
+        `${newData.player.name} have been defeated. Hail ${newData.enemy.name}, ${newData.enemy.sex === 'Man' ? 'he' : 'she' } has won the duel!`;
+    };
+    if (newData.player_win === true || newData.enemy_win === true) {
+        await statusEffectCheck(newData);
+    };
+
+    newData.combatRound += 1;
+    newData.sessionRound += 1;
+
+    return newData;
+};
 
 // Action Splitter Determines the Action Payload and Sorts the Resolution of the Action Round
 const actionSplitter = async (combatData) => {
@@ -2850,6 +3064,181 @@ const consumePrayerSplitter = async (combatData) => {
 
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
+const pvpActionCompiler = async (combatData) => {
+    try {
+        
+        let playerOne = combatData.playerOneData;
+        let playerTwo = combatData.playerTwoData;
+
+        const newData = {
+            room: combatData.room,
+            playerPosition: playerOne.playerPosition,
+            enemyPosition: playerOne.enemyPosition,
+    
+            player: playerOne.player, // The player's Ascean
+            action: playerOne.action, // The player's action
+            player_action: playerOne.action,
+            counter_guess: playerOne.counter_guess, // The action chosen believed to be 
+            player_health: playerOne.player_health, // Current Player Health
+            weapon_one: playerOne.weapon_one,
+            weapon_two: playerOne.weapon_two,
+            weapon_three: playerOne.weapon_three,
+            weapons: playerOne.weapons, // All 3 Weapons
+            player_damage_type: playerOne.player_damage_type,
+            player_defense: playerOne.player_defense, // Posseses Base + Postured Defenses
+            player_attributes: playerOne.player_attributes, // Possesses compiled Attributes, Initiative
+            player_defense_default: playerOne.player_defense_default, // Possesses Base Defenses
+    
+            enemy: playerTwo.player, // enemy Enemy
+            enemy_health: playerTwo.player_health,
+            enemy_attributes: playerTwo.player_attributes, // Possesses compiled Attributes, Initiative
+            enemy_defense: playerTwo.player_defense, // Posseses Base + Postured Defenses
+            enemy_defense_default: playerTwo.player_defense_default, // Possesses Base Defenses
+            enemy_action: playerTwo.player_action, // Action Chosen By enemy
+            enemy_counter_guess: playerTwo.counter_guess, // Comp's Counter Guess if Action === 'Counter'
+            enemy_weapons: playerTwo.weapons,  // All 3 Weapons
+            enemy_damage_type: playerTwo.player_damage_type,
+    
+            potential_player_damage: 0, // All the Damage that is possible on hit for a player
+            potential_enemy_damage: 0, // All the Damage that is possible on hit for a enemy
+            realized_player_damage: 0, // Player Damage - enemy Defenses
+            realized_enemy_damage: 0, // enemy Damage - Player Defenses
+    
+            playerDamaged: false,
+            enemyDamaged: false,
+    
+            player_start_description: '',
+            enemy_start_description: '',
+            player_special_description: '',
+            enemy_special_description: '',
+            player_action_description: '', // The combat text to inject from the player
+            enemy_action_description: '', // The combat text to inject from the enemy
+            player_influence_description: '',
+            enemy_influence_description: '',
+            player_influence_description_two: '',
+            enemy_influence_description_two: '',
+            player_death_description: '',
+            enemy_death_description: '',
+    
+            current_player_health: playerOne.new_player_health, // New player health post-combat action
+            current_enemy_health: playerTwo.new_player_health, // New enemy health post-combat action
+            new_player_health: playerOne.new_player_health, // New player health post-combat action
+            new_enemy_health: playerTwo.new_player_health, // New enemy health post-combat action
+    
+            religious_success: false,
+            enemy_religious_success: false,
+            dual_wielding: false,
+            enemy_dual_wielding: false,
+            roll_success: false,
+            counter_success: false,
+            enemy_roll_success: false,
+            enemy_counter_success: false,
+            player_win: false,
+            enemy_win: false,
+    
+            critical_success: false,
+            enemy_critical_success: false,
+            glancing_blow: false,
+            enemy_glancing_blow: false,
+    
+            combatRound: playerOne.combatRound,
+            sessionRound: playerOne.sessionRound,
+    
+            playerEffects: playerOne.playerEffects,
+            enemyEffects: playerTwo.playerEffects,
+            playerBlessing: playerOne.playerBlessing,
+            enemyBlessing: playerTwo.enemyBlessing,
+    
+        };
+        let result = await pvpActionSplitter(newData);
+        if (result.realized_enemy_damage > 0) result.playerDamaged = true;
+        if (result.realized_player_damage > 0) result.enemyDamaged = true;
+        console.log(result.realized_enemy_damage, result.realized_player_damage, 'Comp-Player Damage Dealt', result.playerDamaged, result.enemyDamaged, 'Comp-Player Damaged')
+        if (result.player_win === true || result.enemy_win === true) {
+            await statusEffectCheck(result);
+        };
+        let reverseResult;
+        reverseResult = {
+            weapon_one: result.weapon_one,
+            weapon_two: result.weapon_two,
+            weapon_three: result.weapon_three,
+            weapons: result.weapons, // All 3 Weapons
+            player_damage_type: result.enemy_damage_type,
+            player_defense: result.enemy_defense, // Posseses Base + Postured Defenses
+            player_attributes: result.enemy_attributes, // Possesses compiled Attributes, Initiative
+    
+            enemy_attributes: result.player_attributes, // Possesses compiled Attributes, Initiative
+            enemy_defense: result.player_defense, // Posseses Base + Postured Defenses
+            enemy_weapons: result.weapons,  // All 3 Weapons
+            enemy_damage_type: result.player_damage_type,
+    
+            potential_player_damage: result.potential_enemy_damage, // All the Damage that is possible on hit for a player
+            potential_enemy_damage: result.potential_player_damage, // All the Damage that is possible on hit for a enemy
+            realized_player_damage: result.realized_enemy_damage, // Player Damage - enemy Defenses
+            realized_enemy_damage: result.realized_player_damage, // enemy Damage - Player Defenses
+    
+            playerDamaged: result.playerDamaged,
+            enemyDamaged: result.enemyDamaged,
+    
+            player_start_description: result.enemy_start_description,
+            enemy_start_description: result.player_start_description,
+            player_special_description: result.enemy_special_description,
+            enemy_special_description: result.player_special_description,
+            player_action_description: result.enemy_action_description, // The combat text to inject from the player
+            enemy_action_description: result.player_action_description, // The combat text to inject from the enemy
+            player_influence_description: result.enemy_influence_description,
+            enemy_influence_description: result.player_influence_description,
+            player_influence_description_two: result.enemy_influence_description_two,
+            enemy_influence_description_two: result.player_influence_description_two,
+            player_death_description: result.enemy_death_description,
+            enemy_death_description: result.player_death_description,
+    
+            current_player_health: result.new_enemy_health, // New player health post-combat action
+            current_enemy_health: result.new_player_health, // New enemy health post-combat action
+            new_player_health: result.new_enemy_health, // New player health post-combat action
+            new_enemy_health: result.new_player_health, // New enemy health post-combat action
+    
+            religious_success: result.enemy_religious_success,
+            enemy_religious_success: result.religious_success,
+            dual_wielding: result.enemy_dual_wielding,
+            enemy_dual_wielding: result.dual_wielding,
+            roll_success: result.enemy_roll_success,
+            counter_success: result.enemy_counter_success,
+            enemy_roll_success: result.roll_success,
+            enemy_counter_success: result.counter_success,
+            player_win: result.enemy_win,
+            enemy_win: result.player_win,
+    
+            critical_success: result.enemy_critical_success,
+            enemy_critical_success: result.critical_success,
+            glancing_blow: result.enemy_glancing_blow,
+            enemy_glancing_blow: result.glancing_blow,
+    
+            combatRound: result.combatRound,
+            sessionRound: result.sessionRound,
+    
+            playerEffects: result.enemyEffects,
+            enemyEffects: result.playerEffects,
+            playerBlessing: result.enemyBlessing,
+            enemyBlessing: result.playerBlessing,
+        };
+
+        playerOne = {
+            ...playerOne,
+            result
+        };
+        playerTwo = {
+            ...playerTwo,
+            reverseResult
+        };
+        const resultData = { playerOneData: playerOne, playerTwoData: playerTwo };
+        return resultData;
+    } catch (err) {
+        console.log(err, 'Error in the PvP Action Compiler of Game Services');
+        res.status(400).json({ err })
+    };
+};
+
 const actionCompiler = async (combatData) => {
     try {
         let result = await actionSplitter(combatData);
@@ -2893,6 +3282,7 @@ const consumePrayer = async (combatData) => {
 };
 
 module.exports = {
+    pvpActionCompiler,
     actionCompiler,
     instantActionCompiler,
     consumePrayer

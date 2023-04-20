@@ -13,6 +13,7 @@ interface Props {
     gameState: GameData;
     gameDispatch: any;
     handleInitiate: (state: any) => Promise<void>;
+    handlePvPInitiate: (state: any) => Promise<void>;
     currentAction: string;
     currentCounter: string;
     currentWeapon: any;
@@ -28,7 +29,7 @@ interface Props {
     handlePrayer: (e: { preventDefault: () => void; }) => Promise<void>;
 };
 
-const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
+const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, handlePrayer, setDamageType, damageType, currentDamageType, setPrayerBlessing, handleAction, handleCounter, handleInitiate, handlePvPInitiate, currentAction, currentCounter, currentWeapon, setWeaponOrder, weapons }: Props) => {
   const [displayedAction, setDisplayedAction] = useState<any>([]);
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const { combatInitiated } = state;
@@ -104,9 +105,9 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
   }, [state.actionStatus, dispatch]);
 
   useEffect(() => {
-    console.log(state.prayerSacrifice, "Pre-Check Prayer")
+    console.log(state.prayerSacrifice, "Pre-Check Prayer");
     if (state.prayerSacrifice === '') return;
-    console.log(state.prayerSacrifice, "Sacrifing Prayer")
+    console.log(state.prayerSacrifice, "Sacrifing Prayer");
     handlePrayer({ preventDefault: () => {} });
 
   }, [state.prayerSacrifice]);
@@ -212,7 +213,11 @@ const PvPActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, h
     </>
     <div className="actionButtons" id='action-buttons'>
       {/* <Form onSubmit={handleInitiate} style={{ float: 'right' }}>                 */}
-          <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
+          { state?.playerDuel ?
+            <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handlePvPInitiate(state)}>Initiate</button>  
+          :
+            <button value='initiate' style={{ float: 'right', padding: "5px" }} className='btn btn-outline' disabled={state.actionStatus ? true : false} id='initiate-button' onClick={() => handleInitiate(state)}>Initiate</button>
+          }
       {/* </Form> */}
       <button value='attack' onClick={handleAction} className='btn btn-outline' id='action-button'>Attack</button>
       <select onChange={handleCounter} className='btn btn-outline' id='action-button' ref={dropdownRef}>
