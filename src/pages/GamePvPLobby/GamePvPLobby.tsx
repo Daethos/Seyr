@@ -325,10 +325,10 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const updateSpecate = async (response: PvPData) => {
         // 
-        gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_SPECTATOR_OVERLAY, payload: true });
         await soundEffects(response);
         specDispatch({ type: SPECTATOR_ACTIONS.UPDATE_SPECTATOR, payload: response });
         if (response.player_win === true || response.enemy_win === true) {
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_SPECTATOR_OVERLAY, payload: true });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: false });
                 specDispatch({ type: SPECTATOR_ACTIONS.CLEAR_SPECTATOR, payload: response });

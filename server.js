@@ -300,14 +300,16 @@ io.on("connection", (socket) => {
       }
   });
 
+  let mapSyncData = {};
     // syncMapContent
     socket.on('syncMapContent', async (mapData) => {
       const newMap = mapData;
+      mapSyncData = newMap;
+      console.log(mapSyncData, "Map Sync Data");
       io.to(data.room).emit('mapContentSynced', newMap);
     });
 
     socket.on('ascean', async (asceanData) => { // Used to update the Ascean Data, may repurpose this for when combat triggers
-      console.log('Did the Ascean Update start?');
       socket.to(asceanData.room).emit('update_ascean', asceanData);
     });
 
@@ -317,23 +319,19 @@ io.on("connection", (socket) => {
     });
 
     socket.on('spectatePlayer', async (playerData) => {
-      console.log(playerData, newUser.ascean._id, "Spectator, Spectated, Ascean in spectatePlayer");
       io.to(newUser.room).emit('requestSpectatePlayer', playerData);
     });
 
     socket.on('spectatePlayerData', async (playerData) => {
       const { data, state } = playerData;
-      console.log(data, newUser.ascean._id, "Spectator, Ascean in spectatePlayerResponse")
       io.to(newUser.room).emit('spectatePlayerResponse', playerData);
     });
 
     socket.on('updateSpectatorData', async (spectator, data) => {
-      console.log('Updating Spectator Data');
       io.to(newUser.room).emit('spectateUpdate', spectator, data);
     })
 
     socket.on('combatData_update', async () => {
-      console.log('Updating Combat Data')
       let newData = {
         user: newUser.user,
         room: newUser.room,

@@ -26,7 +26,7 @@ interface CombatProps {
     combatEngaged: boolean;
 };
 
-const CombatSpectatorOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, computerWin, loadingCombatSpectatorOverlay, combatSpectatorOverlayText, combatSpectatorResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
+const CombatSpectatorOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, loadingCombatSpectatorOverlay, combatSpectatorOverlayText, combatSpectatorResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
     const overlayRef = useRef(null);
     const pArticle = ['a', 'e', 'i', 'o', 'u'].includes(playerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
     const cArticle = ['a', 'e', 'i', 'o', 'u'].includes(computerAction.charAt(0).toLowerCase()) ? 'an' : 'a';

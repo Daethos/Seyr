@@ -22,13 +22,11 @@ const GameAnimations = ({ spectator, rollSuccess, computerRollSuccess, counterSu
     const critStyle = {
         color: 'red',
         fontSize: 32 + 'px',
-        marginLeft: spectator ? `20%` : ''
     };
 
     const rollStyle = {
         color: 'green',
         fontSize: 32 + 'px',
-        marginLeft: spectator ? `20%` : ''
     };
 
     return (

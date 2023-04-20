@@ -188,7 +188,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                     </p>
                     { mapState.player1Tile && mapState?.player1Tile?.content === 'enemy' ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
-                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerOne?.ascean._id)}>
+                            <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerOne?.ascean._id)}>
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
@@ -205,7 +205,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                     <p>Level: {playerState.playerTwo.ascean.level} | {playerState.playerTwo.ascean.mastery}</p>
                     { mapState.player2Tile && mapState.player2Tile.content === 'enemy' ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
-                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerTwo?.ascean._id)}>
+                            <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerTwo?.ascean._id)}>
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
@@ -222,7 +222,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                     <p>Level: {playerState.playerThree.ascean.level} | {playerState.playerThree.ascean.mastery}</p>
                     { mapState.player3Tile && mapState.player3Tile.content === 'enemy' ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
-                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerThree?.ascean._id)}>
+                            <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerThree?.ascean._id)}>
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
@@ -239,7 +239,7 @@ const GameChat = ({ state, dispatch, playerState, playerDispatch, gameState, gam
                     <p>Level: {playerState.playerFour.ascean.level} | {playerState.playerFour.ascean.mastery}</p>
                     { mapState.player4Tile && mapState.player4Tile.content === 'enemy' ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
-                            <Button variant='' style={{ color: "gold" }} onClick={() => spectatePlayer(playerState?.playerFour?.ascean._id)}>
+                            <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerFour?.ascean._id)}>
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }

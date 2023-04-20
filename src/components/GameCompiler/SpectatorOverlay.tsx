@@ -49,6 +49,7 @@ const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loading
         marginLeft: "25%",
         gridColumnStart: 2,
         gridRowStart: 4,
+        zIndex: 99999,
     };
     return (
         <Overlay target={overlayRef} show={loadingSpectator}>
@@ -90,7 +91,7 @@ const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loading
             <Button variant='' style={chatStyle} onClick={() => setModalShow(true)}>
                 <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "10vw", borderRadius: "50%", border: "2px solid purple" }} />
             </Button>
-            {/* <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", zIndex: 9999 }} onClick={closeEverything}>X</Button> */}
+            <Button variant='' style={{ float: 'right', color: 'red', fontSize: "36px", gridColumnStart: 2, gridRowStart: 4, marginLeft: "125%", marginTop: "20%", zIndex: 9999 }} onClick={closeEverything}>X</Button>
             </div>
         </Overlay>
     );
