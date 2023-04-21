@@ -3,18 +3,18 @@ import Form from 'react-bootstrap/Form';
 interface Props {
     asceanState: any;
     setAsceanState: any;
-  }
+};
 
 const Hardcore = ({ asceanState, setAsceanState }: Props) => {
   function handleHardcore(e: { target: { name: any; value: any; }; }) {
-      let { name, value }  = e.target;
-      if (value === 'true') value = true;
-      if (value === 'false') value = false;
-      console.log(value,typeof value, '<- Name and Value in Visibility / Shareable Handler');
-      asceanState[name] =  value;
-      setAsceanState({...asceanState});
-      console.log(asceanState);
-    }
+    let { name, value }  = e.target;
+    if (value === 'true') value = true;
+    if (value === 'false') value = false;
+    console.log(value,typeof value, '<- Name and Value in Visibility / Shareable Handler');
+    asceanState[name] =  value;
+    setAsceanState({...asceanState});
+    console.log(asceanState);
+  };
   return (
     <>
     <div className='actions'>

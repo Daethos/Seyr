@@ -21,25 +21,22 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
   const renderLikesTooltip = (props: JSX.IntrinsicAttributes & TooltipProps & RefAttributes<HTMLDivElement>) => (
     <Tooltip id="button-tooltip" {...props}>
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
-        {
-          likeStat.length > 0 ?
+        { likeStat.length > 0 ?
           likeStat?.map((like: any, index: number) => 
-            <>{index <= 3 
-              ? (likeStat?.length) === (index + 1) 
-              ? likeStat?.length === 1 
-                ? <>{like}</> 
-                : likeStat?.length === 2 
-                  ? <> and {like}</> 
-                  : likeStat?.length === 3 
-                    ? <> and {like}</> 
-                    : likeStat?.length === 4 
-                      ? <>and {like}</> 
-                      : <>and {like}</> 
-                        : <>{like}, {' '}</> 
-                        : index > 3 
-                        ? <>{like} and {likeStat?.length - index} more</> 
-                        : <>and {like}</>
-              }</>
+            <> { index <= 3 ? (likeStat?.length) === (index + 1) ? likeStat?.length === 1 ? 
+                <>{like}</> 
+            : likeStat?.length === 2 ? 
+                <> and {like}</> 
+            : likeStat?.length === 3 ? 
+                <> and {like}</> 
+            : likeStat?.length === 4 ? 
+                <>and {like}</> 
+            : <>and {like}</> 
+            : <>{like}, {' '}</> 
+            : index > 3 ? 
+                <>{like} and {likeStat?.length - index} more</> 
+            : <>and {like}</>
+            }</>
           )
           : 'No Likes Yet!'
         }
@@ -96,8 +93,8 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
         } catch (err: any) {
             setLoading(false)
             console.log(err.message);
-        }
-   }
+        };
+   };
 
   const likeHandler =
     likedIndex > -1
@@ -116,15 +113,15 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   useEffect(() => {
     likesArray();
-  }, [asceanState])
+  }, [asceanState]);
 
   useEffect(() => {
     dislikesArray();
-  }, [asceanState])
+  }, [asceanState]);
 
   useEffect(() => {
     doubleDislikesArray();
-  }, [asceanState])
+  }, [asceanState]);
 
   const likesArray = async () => {
     try {
@@ -134,79 +131,79 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
         newArray = [...newArray, like.username]
         return (
           newArray
-        )
-      })
-      console.log(response, 'Response Finding Likes')
-      setLikeStat(response)
+        );
+      });
+      console.log(response, 'Response Finding Likes');
+      setLikeStat(response);
 
     } catch (err: any) {
-      console.log(err.message, 'Error Retrieving Feelings')
-    }
-  }
+      console.log(err.message, 'Error Retrieving Feelings');
+    };
+  };
 
   const dislikesArray = async () => {
     try {
       const dislikeResponse = await asceanState.dislikes.map((like: { username: string }) => {
-        console.log(like.username, 'Dislike?')
+        console.log(like.username, 'Dislike?');
         let newArray: any[] = [];
-        newArray = [...newArray, like.username]
+        newArray = [...newArray, like.username];
         return (
           newArray
-        )
-      })
-      console.log(dislikeResponse, 'Response Finding Dislikes')
-      setDislikeStat(dislikeResponse)
+        );
+      });
+      console.log(dislikeResponse, 'Response Finding Dislikes');
+      setDislikeStat(dislikeResponse);
     } catch (err: any) {
-      console.log(err.message, 'Error Retrieving Feelings')
-    }
-  }
+      console.log(err.message, 'Error Retrieving Feelings');
+    };
+  };
 
   const doubleDislikesArray = async () => {
     try {
       const doubleDislikeResponse = await asceanState.double_dislikes.map((like: { username: string }) => {
-        console.log(like.username, 'Double Dislike?')
+        console.log(like.username, 'Double Dislike?');
         let newArray: any[] = [];
-        newArray = [...newArray, like.username]
+        newArray = [...newArray, like.username];
         return (
           newArray
-        )
-      })
-      console.log(doubleDislikeResponse, 'Response Finding Double Dislikes')
-      setDoubleDislikeStat(doubleDislikeResponse)
+        );
+      });
+      console.log(doubleDislikeResponse, 'Response Finding Double Dislikes');
+      setDoubleDislikeStat(doubleDislikeResponse);
     } catch (err: any) {
-      console.log(err.message, 'Error Retrieving Feelings')
-    }
-  }
+      console.log(err.message, 'Error Retrieving Feelings');
+    };
+  };
 
   async function addFeeling(asceanID: any, feeling: string) {
-    console.log('Ascean ID: ', asceanID, 'Feeling to Create: ', feeling)
+    console.log('Ascean ID: ', asceanID, 'Feeling to Create: ', feeling);
     try {
         const response = await feelingAPI.createFeeling(asceanID, feeling);
-        console.log(response.data, 'Response in Adding a Feeling')
-        setAsceanFeelings(response.data)
-        getAscean()
+        console.log(response.data, 'Response in Adding a Feeling');
+        setAsceanFeelings(response.data);
+        getAscean();
     } catch (err: any) {
         console.log(err.message, '<- Error adding a feeling!')
-    }
-  }
+    };
+  };
 
   async function removeFeeling(asceanID: any, feeling: string) {
       console.log('Ascean ID: ', asceanID, 'Feeling to Remove: ', feeling)
       try {
           const response = await feelingAPI.removeFeeling(asceanID, feeling);
-          console.log(response.data, 'Response in Removing a Feeling')
-          setAsceanFeelings(response.data)
-          getAscean()
+          console.log(response.data, 'Response in Removing a Feeling');
+          setAsceanFeelings(response.data);
+          getAscean();
       } catch (err: any) {
           console.log(err.message, '<- Error adding a feeling!')
-      }
-  }
+      };
+  };
 
   if (loading) {
     return (
       <Loading NavBar={true} />
-    )
-  }
+    );
+  };
 
   return (
     <div className="actions">
@@ -262,7 +259,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       </h3>
       
   </div>
-  )
-}
+  );
+};
 
-export default FeelingsCard
+export default FeelingsCard;

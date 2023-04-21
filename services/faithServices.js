@@ -449,7 +449,7 @@ class StatusEffect {
         return this.intensity = {
             initial: attribute,
             value: attribute,
-            magnitude: player.level / 100,
+            magnitude: player.level / 120,
             governance: type,
         };
     };

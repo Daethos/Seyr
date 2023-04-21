@@ -1,12 +1,5 @@
-const { create } = require('../models/ascean');
-const Ascean = require('../models/ascean');
-const User = require('../models/user');
-
-// ================================== HELPER CONSTANTS =================================== \\
-
-const attributeStats = {}
-
 // ================================== HELPER FUNCTIONS =================================== \\
+const attributeStats = {}
 
 const attributeCompiler = async (ascean, rarities) => {
 
@@ -61,8 +54,7 @@ const attributeCompiler = async (ascean, rarities) => {
         trinketAch: ascean.trinket.achre * rarities.trinket,
         trinketCae: ascean.trinket.caeren * rarities.trinket,
         trinketKyo: ascean.trinket.kyosir * rarities.trinket,
-    }
-    // console.log(itemRarity, 'Item Rarity Compiling')
+    };
         
     newAttributes.rawConstitution =  Math.round((ascean.constitution + (ascean?.origin === "Notheo" || ascean?.origin === 'Nothos' ? 2 : 0)) * (ascean?.mastery === 'Constitution' ? 1.1 : 1));
     newAttributes.rawStrength =  Math.round(((ascean?.strength + (ascean?.origin === 'Sedyreal' || ascean?.origin === 'Ashtre' ? 2 : 0) + (ascean?.origin === "Li'ivi" ? 1 : 0)) + (ascean?.sex === 'Man' ? 2 : 0)) * (ascean?.mastery === 'Strength' ? 1.15 : 1));
@@ -103,131 +95,127 @@ const attributeCompiler = async (ascean, rarities) => {
     newAttributes.equipKyosir = newAttributes.totalKyosir - newAttributes.rawKyosir;
 
     newAttributes.healthTotal = 15 + ((newAttributes.totalConstitution * ascean.level) + ((newAttributes.constitutionMod + Math.round((newAttributes.caerenMod + newAttributes.strengthMod) / 4)) * ascean.level));
-    newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2)
+    newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2);
 
     return (
         newAttributes
-    )
-}
+    );
+};
   
-async function originCompiler(weapon, ascean) { 
-    if (ascean.origin === "Ashtre") {
-        weapon.critical_chance += 3;
-        weapon.physical_damage *= 1.03;
-        weapon.critical_damage *= 1.03;
-    }
-    if (ascean.origin === "Fyers") {
-        weapon.magical_penetration += 3;
-        weapon.physical_penetration += 3;
-        weapon.roll += 3;
-    }
-    if (ascean.origin === "Li'ivi") {
-        weapon.magical_penetration += 1;
-        weapon.physical_penetration += 1;
-        weapon.magical_damage *= 1.01;
-        weapon.physical_damage *= 1.01;
-        weapon.critical_chance += 1;
-        weapon.critical_damage *= 1.01;
-        weapon.dodge -= 1;
-        weapon.roll += 1;
-    }
-    if (ascean.origin === "Notheo") {
-        weapon.physical_damage *= 1.03;
-        weapon.physical_penetration += 3;
-    }
-    if (ascean.origin === "Nothos") {
-        weapon.magical_penetration += 3;
-        weapon.magical_damage *= 1.03;
-    }
-    if (ascean.origin === "Quor'eite") {
-        weapon.dodge -= 3;
-        weapon.roll += 3;
-        weapon.critical_chance += 3;
-    }
-    if (ascean.origin === "Sedyreal") {
-        weapon.critical_damage *= 1.03;
-    }
-}
+async function originCompiler(weapon, ascean) {
+    switch (ascean.origin) {
+        case "Ashtre":
+            weapon.critical_chance += 3;
+            weapon.physical_damage *= 1.03;
+            weapon.critical_damage *= 1.03;
+            break;
+        case "Fyers":
+            weapon.magical_penetration += 3;
+            weapon.physical_penetration += 3;
+            weapon.roll += 3;
+            break;
+        case "Li'ivi":
+            weapon.magical_penetration += 1;
+            weapon.physical_penetration += 1;
+            weapon.magical_damage *= 1.01;
+            weapon.physical_damage *= 1.01;
+            weapon.critical_chance += 1;
+            weapon.critical_damage *= 1.01;
+            weapon.dodge -= 1;
+            weapon.roll += 1;
+            break;
+        case "Notheo":
+            weapon.physical_damage *= 1.03;
+            weapon.physical_penetration += 3;
+            break;
+        case "Nothos":
+            weapon.magical_penetration += 3;
+            weapon.magical_damage *= 1.03;
+            break;
+        case "Quor'eite":
+            weapon.dodge -= 3;
+            weapon.roll += 3;
+            weapon.critical_chance += 3;
+            break;
+        case "Sedyreal":
+            weapon.critical_damage *= 1.03;
+            break;
+    };
+};
+
 
 async function gripCompiler(weapon, attributes, ascean) {
-    // console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 4) + attributes.strengthMod / 2), 'One Hand Physical Damage');
-    // console.log((weapon.achre / 2) + (weapon.caeren / 4) + attributes.achreMod + (attributes.caerenMod / 2), 'One Hand Magical Damage');
-    // console.log(((weapon.agility / 2) + attributes.agilityMod) + ((weapon.strength / 2) + attributes.strengthMod), 'Bow Physical Damage');
-    // console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Bow Magical Damage');
-    // console.log((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 4) + (attributes.agilityMod / 2), 'Two Hand Physical Damage');
-    // console.log((weapon.achre / 2) + (weapon.caeren / 2) + attributes.achreMod + (attributes.caerenMod), 'Two Hand Magical Damage');
-    
-    // if (weapon.physical_damage === 0) {
-    //     weapon.physical_damage = 1;
-    // }
-    // if (weapon.magical_damage === 0) {
-    //     weapon.magical_damage = 1;
-    // }
+    let physicalMultiplier = 1;
+    let magicalMultiplier = 1;
+
+    if (weapon.attack_type === 'Physical') {
+        physicalMultiplier = 1.1;
+        magicalMultiplier = 0.8;
+    };
+
+    if (weapon.attack_type === 'Magic') {
+        physicalMultiplier = 0.8;
+        magicalMultiplier = 1.1;
+    };
 
     if (weapon.grip === 'One Hand') {
-        weapon.physical_damage += ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 8) + attributes.strengthMod / 3));
-        weapon.magical_damage += ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3));
+        weapon.physical_damage += ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 8) + attributes.strengthMod / 3)) * physicalMultiplier;
+        weapon.magical_damage += ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3)) * magicalMultiplier;
 
         weapon.physical_damage *= 1 + ((((weapon.agility / 2)) + attributes.agilityMod) + ((weapon.strength / 8) + attributes.strengthMod / 3)) / (100 + (20 / ascean.level));
         weapon.magical_damage *= 1 + ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3)) / (100 + (20 / ascean.level));
-    }
+    };
     if (weapon.type === 'Bow') {
-        weapon.physical_damage += ((weapon.agility / 2) + attributes.agilityMod + (weapon.strength / 8) + (attributes.strengthMod / 3));
-        weapon.magical_damage += ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3));
+        weapon.physical_damage += ((weapon.agility / 2) + attributes.agilityMod + (weapon.strength / 8) + (attributes.strengthMod / 3)) * physicalMultiplier;
+        weapon.magical_damage += ((weapon.achre / 2) + (weapon.caeren / 8) + attributes.achreMod + (attributes.caerenMod / 3)) * magicalMultiplier;
 
         weapon.physical_damage *= 1 + ((((weapon.agility / 4)) + attributes.agilityMod) + ((weapon.strength / 12) + attributes.strengthMod)) / (100 + (20 / ascean.level));
         weapon.magical_damage *= 1 + ((weapon.achre / 4) + (weapon.caeren / 12) + attributes.achreMod + (attributes.caerenMod / 3)) / (100 + (20 / ascean.level));
     }  
     if (weapon.grip === 'Two Hand' && weapon.type !== 'Bow') {
-        weapon.physical_damage += ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 8) + (attributes.agilityMod / 3));
-        weapon.magical_damage += ((weapon.achre / 8) + (weapon.caeren / 2) + (attributes.achreMod / 3) + (attributes.caerenMod));
+        weapon.physical_damage += ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 8) + (attributes.agilityMod / 3)) * physicalMultiplier;
+        weapon.magical_damage += ((weapon.achre / 8) + (weapon.caeren / 2) + (attributes.achreMod / 3) + (attributes.caerenMod)) * magicalMultiplier;
 
         weapon.physical_damage *= 1 + ((weapon.strength / 2) + attributes.strengthMod + (weapon.agility / 8) + (attributes.agilityMod / 3)) / (100 + (20 / ascean.level));
         weapon.magical_damage *= 1 + (((weapon.achre / 8) + (weapon.caeren / 2) + (attributes.achreMod / 3)) + attributes.caerenMod) / (100 + (20 / ascean.level));
-    }
-    // console.log(weapon.physical_damage, weapon.magical_damage, 'Damage After Attributes')
-}
+    };
+};
 
 async function penetrationCompiler(weapon, attributes, combatStats) { 
     weapon.magical_penetration += Math.round(combatStats.penetrationMagical + attributes.kyosirMod + (weapon.kyosir / 2));
     weapon.physical_penetration += Math.round(combatStats.penetrationPhysical + attributes.kyosirMod + (weapon.kyosir / 2));
-}
+};
 
 async function critCompiler(weapon, attributes, combatStats) { 
     weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 3);
-    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.constitution + weapon.strength + weapon.caeren) / 2)) / 50);
-    // weapon.critical_chance = weapon.critical_chance.toFixed(2);
-    // weapon.critical_damage = weapon.critical_damage.toFixed(2);
-    // weapon.critical_chance = Number(weapon.critical_chance);
-    // weapon.critical_damage = Number(weapon.critical_damage);
+    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.strength + weapon.caeren) / 2)) / 50);
     weapon.critical_chance = Math.round(weapon.critical_chance * 100) / 100;
     weapon.critical_damage = Math.round(weapon.critical_damage * 100) / 100;
-}
+};
 
 async function faithCompiler(weapon, ascean) { 
     if (ascean.faith === 'adherent') {
         if (weapon.damage_type?.[0] === 'Earth' || weapon.damage_type?.[0] === 'Wild' || weapon.damage_type?.[0] === 'Fire' || weapon.damage_type?.[0] === 'Frost' || weapon.damage_type?.[0] === 'Lightning' || weapon.damage_type?.[0] === 'Wind' || weapon.damage_type?.[0] === 'Sorcery') {
             weapon.magical_damage *= 1.075;
             weapon.critical_chance += 3;
-        }
+        };
         if (weapon.type === 'Bow' || weapon.type === 'Greataxe' || weapon.type === 'Greatmace' || weapon.type === 'Greatbow') {
             weapon.physical_damage *= 1.075;
-        }
+        };
         if (weapon.type === 'Greatsword' || weapon.type === 'Polearm') {
             weapon.physical_damage *= 1.05;
             weapon.magical_damage *= 1.05;
-        }
+        };
         if (weapon.type === 'Axe' || weapon.type === 'Mace' || weapon.type === 'Curved Sword' || weapon.type === 'Dagger' || weapon.type === 'Long Sword') {
             weapon.physical_damage *= 1.05;
             weapon.critical_chance += 3;
-        }
+        };
         if (weapon.grip === 'Two Hand') {
             weapon.physical_damage *= 1.05;
             weapon.magical_damage *= 1.05;
             weapon.critical_chance += 3
-        }
+        };
         weapon.critical_chance *= 1.075;
-        // weapon.critical_chance = weapon.critical_chance.toFixed(2)
         weapon.roll += 3;
     }
     if (ascean.faith === 'devoted') {
@@ -235,27 +223,23 @@ async function faithCompiler(weapon, ascean) {
             weapon.physical_damage *= 1.075;
             weapon.magical_damage *= 1.075;
             weapon.critical_damage *= 1.025;
-        }
+        };
         if (weapon.type === 'Short Sword' || weapon.type === 'Long Sword' || weapon.type === 'Curved Sword' || weapon.type === 'Dagger' || weapon.type === 'Scythe' || weapon.type === 'Polearm') {
             weapon.physical_damage *= 1.05;
             weapon.magical_damage *= 1.05;
             weapon.critical_damage *= 1.05;
-        }
+        };
         if (weapon.grip === 'One Hand' || weapon.type === 'Bow' || weapon.type === 'Greatbow') {
             weapon.physical_damage *= 1.05;
             weapon.magical_damage *= 1.05;
             weapon.critical_damage *= 1.05;
-        }
+        };
         weapon.critical_damage *= 1.075;
-        // weapon.critical_damage = weapon.critical_damage.toFixed(2)
         weapon.dodge -= 3;
-
-    }
+    };
     weapon.critical_chance = Math.round(weapon.critical_chance * 100) / 100;
     weapon.critical_damage = Math.round(weapon.critical_damage * 100) / 100;
-    // weapon.critical_chance = Number(weapon.critical_chance);
-    // weapon.critical_damage = Number(weapon.critical_damage);
-}
+};
 
 // =============================== COMPILER FUNCTIONS ================================== \\
 
@@ -283,44 +267,38 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats, rarity) =
         kyosir: (weapon.kyosir * rarity),
         influences: weapon.influences,
         imgURL: weapon.imgURL,
-    }
-    originCompiler(weaponOne, ascean);
-    gripCompiler(weaponOne, attributes, ascean);
-    penetrationCompiler(weaponOne, attributes, combatStats);
-    critCompiler(weaponOne, attributes, combatStats);
-    faithCompiler(weaponOne, ascean);
+    };
+    await originCompiler(weaponOne, ascean);
+    await gripCompiler(weaponOne, attributes, ascean);
+    await penetrationCompiler(weaponOne, attributes, combatStats);
+    await critCompiler(weaponOne, attributes, combatStats);
+    await faithCompiler(weaponOne, ascean);
     weaponOne.dodge += (60 + (combatStats.dodgeCombat));
     weaponOne.roll += combatStats.rollCombat;
-    // console.log(weaponOne.magical_damage,  weaponOne.physical_damage, 'Damage Before Weapon Multiplier');
-    // console.log(combatStats.damageMagical, combatStats.damagePhysical, 'Damage Multiplier After Compiling');
     weaponOne.physical_damage = Math.round(weaponOne.physical_damage * combatStats.damagePhysical);
     weaponOne.magical_damage = Math.round(weaponOne.magical_damage * combatStats.damageMagical);
-    return weaponOne
-}
+    return weaponOne;
+};
 
 const defenseCompiler = async (ascean, attributes, combatStats, rarities) => { 
     const defense = {
         physicalDefenseModifier: 
             Math.round((ascean.helmet.physical_resistance * rarities.helmet) + (ascean.chest.physical_resistance * rarities.chest) + (ascean.legs.physical_resistance * rarities.legs) + 
             (ascean.ring_one.physical_resistance * rarities.ring_one) + (ascean.ring_two.physical_resistance * rarities.ring_two) + (ascean.amulet.physical_resistance * rarities.amulet) + (ascean.trinket.physical_resistance * rarities.trinket) 
-            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 12)) 
-            + combatStats.originPhysDef), // Need to create these in the backend as well
+            + Math.round(((attributes.constitutionMod + attributes.strengthMod + attributes.kyosirMod) / 12)) + combatStats.originPhysDef), // Need to create these in the backend as well
         
         magicalDefenseModifier: 
             Math.round((ascean.helmet.magical_resistance * rarities.helmet) + (ascean.chest.magical_resistance * rarities.chest) + (ascean.legs.magical_resistance * rarities.legs) + 
            (ascean.ring_one.magical_resistance * rarities.ring_one) + (ascean.ring_two.magical_resistance * rarities.ring_two) + (ascean.amulet.magical_resistance * rarities.amulet) + (ascean.trinket.magical_resistance * rarities.trinket) 
-            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 12)) 
-            + combatStats.originMagDef),
+            + Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 12)) + combatStats.originMagDef),
 
         physicalPosture: combatStats.defensePhysical + Math.round(ascean.shield.physical_resistance * rarities.shield),
         magicalPosture: combatStats.defenseMagical + Math.round(ascean.shield.magical_resistance * rarities.shield),
-    }
-
-    return defense
-}
+    };
+    return defense;
+};
 
 const coefficientCompiler = async (ascean, item) => {
-    // console.log(item, 'Item Rarity In Coefficient Compiler')
     let coefficient = 0;
     switch (item.rarity) {
         case 'Common':
@@ -331,7 +309,7 @@ const coefficientCompiler = async (ascean, item) => {
             break;
         case 'Rare':
             coefficient = 1;
-            // coefficient = ascean.level / 8;
+            // coefficient = ascean.level / 12;
             break;
         case 'Epic':
             coefficient = 1;
@@ -340,7 +318,7 @@ const coefficientCompiler = async (ascean, item) => {
         case 'Legendary':
             coefficient = 1;
             break;
-    }
+    };
     if (coefficient > 1) {
         if (coefficient > 3) {
             coefficient = 2;
@@ -348,15 +326,12 @@ const coefficientCompiler = async (ascean, item) => {
             coefficient = 1.5;
         } else {
             coefficient = 1;
-        }
-    }
-    // coefficient = 1;
-    // console.log(ascean.name, item.name, coefficient, 'coefficient Compiler')
-    return coefficient
-}
+        };
+    };
+    return coefficient;
+};
 
 const rarityCompiler = async (ascean) => {
-    // console.log(ascean.legs, 'Ascean Legs in Rarity Compiler')
     let rarities = {};
     try {
         const helmetCoefficient = await coefficientCompiler(ascean, ascean.helmet);
@@ -383,22 +358,17 @@ const rarityCompiler = async (ascean) => {
             weapon_one: weaponOneCoefficient,
             weapon_two: weaponTwoCoefficient,
             weapon_three: WeaponThreeCoefficient,
-        }
-
-        return rarities
-
+        };
+        return rarities;
     } catch (err) {
         console.log(err, 'Rarity Compiler Error');
-    }
-    
-}
+    };
+};
 
 // ================================== CONTROLLER - SERVICE ================================= \\
 
 
 const asceanCompiler = async (ascean) => {
-    //console.log(ascean,'Ascean in the Service Compiler')
-
     try {
         const rarities = await rarityCompiler(ascean);
         const attributes = await attributeCompiler(ascean, rarities);
@@ -434,8 +404,6 @@ const asceanCompiler = async (ascean) => {
             (ascean.ring_one.magical_resistance * rarities.ring_one) + (ascean.ring_two.magical_resistance * rarities.ring_two) + (ascean.amulet.magical_resistance * rarities.amulet) + (ascean.trinket.magical_resistance * rarities.trinket) + 
             Math.round(((attributes.constitutionMod + attributes.caerenMod + attributes.kyosirMod) / 8)) + originMagDefMod);
     
-        // console.log(critDamageModifier, '<- Crit Damage Modifier w/ Base EQP')
-
         const combatStats = {
             combatAttributes: attributes,
             damagePhysical: physicalDamageModifier,
@@ -450,16 +418,12 @@ const asceanCompiler = async (ascean) => {
             defenseMagical: magicalDefenseModifier,
             originPhysDef: originPhysDefMod,
             originMagDef: originMagDefMod
-
-        }
-        //console.log(combatStats, 'Are the combat stats loaded?')
-        const combat_weapon_one = await weaponCompiler(ascean.weapon_one, ascean, attributes, combatStats, rarities.weapon_one)
-        const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats, rarities.weapon_two)
-        const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats, rarities.weapon_three)
-        const defense = await defenseCompiler(ascean, attributes, combatStats, rarities)
-        // console.log(physicalDamageModifier, magicalDamageModifier, 'Did the weapon compile?')
+        };
+        const combat_weapon_one = await weaponCompiler(ascean.weapon_one, ascean, attributes, combatStats, rarities.weapon_one);
+        const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats, rarities.weapon_two);
+        const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats, rarities.weapon_three);
+        const defense = await defenseCompiler(ascean, attributes, combatStats, rarities);
         return {
-    
             data: {
                 ascean,
                 attributes,
@@ -468,15 +432,12 @@ const asceanCompiler = async (ascean) => {
                 combat_weapon_three,
                 defense,
             }
-        }
-
+        };
     } catch (err) {
         res.status(400).json({ err });
-    }
-
-
-}
+    };
+};
 
 module.exports = {
     asceanCompiler
-}
+};

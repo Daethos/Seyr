@@ -33,7 +33,7 @@ export interface StatusEffect {
     };
     imgURL: string;
     weapon: string;
-}
+};
 
 interface StatusEffectProps {
     effect: StatusEffect;

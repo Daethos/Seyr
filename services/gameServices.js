@@ -17,14 +17,14 @@ const statusEffectCheck = async (combatData) => {
                             combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
                         } else {
                             combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
-                        }
-                    }
+                        };
+                    };
                     if (key in combatData.player_defense) {
                         // console.log(effect.effect, key, 'Buff Effect Expires in Defense Loop');
                         combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
-                    }
-                }
-            }
+                    };
+                };
+            };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
                 // console.log(effect.name, 'The Effect Expiring Against the Debuff Target', effect.debuffTarget, matchingDebuffTarget, matchingDebuffTargetIndex);
                 for (let key in effect.effect) {
@@ -35,14 +35,14 @@ const statusEffectCheck = async (combatData) => {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
                         } else {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
-                        }
-                    }
+                        };
+                    };
                     if (key in combatData.computer_defense) {
                         // console.log(effect.effect, key, 'Debuff Effect Expires in Defense Loop');
                         combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
-                    }
-                }
-            }
+                    };
+                };
+            };
             // console.log(effect.name, effect.prayer, 'Player Effect Expiring');
             return false;
         } else { // The Effect Persists
@@ -54,15 +54,14 @@ const statusEffectCheck = async (combatData) => {
                                 combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
                             } else {
                                 combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.player_defense) {
                             if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
-                        }
-                    }
-                    // console.log(effect.name, effect.prayer, 'Player Buff Ticking');
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
                     if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
                         effect.debuffTarget = combatData.computer_weapons[0].name;
@@ -71,31 +70,28 @@ const statusEffectCheck = async (combatData) => {
                                 combatData.computer_weapons[0][key] -= effect.effect[key];
                             } else {
                                 combatData.computer_weapons[0][key] += effect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.computer_defense) { // Buff
                             if (effect.effect[key]) {
                                 combatData.computer_defense[key] -= effect.effect[key];
-                            }
-                        }
-                    }
-                    // console.log(effect.name, effect.prayer, 'Computer Debuff Ticking');
+                            };
+                        };
+                    };
                     break;
                 }
                 case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
                     combatData.new_computer_health -= effect.effect.damage * 0.33;
                     combatData.current_computer_health -= effect.effect.damage * 0.33;
 
-                    // console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
-
                     if (combatData.current_computer_health < 0 || combatData.new_computer_health < 0) {
                         combatData.new_computer_health = 0;
                         combatData.current_computer_health = 0;
                         combatData.computer_win = false;
                         combatData.player_win = true;
-                    }
+                    };
                     break;
-                }
+                };
                 case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
                     combatData.new_player_health += effect.effect.healing * 0.33;
                     combatData.current_player_health += effect.effect.healing * 0.33;
@@ -105,11 +101,11 @@ const statusEffectCheck = async (combatData) => {
                     }
                     // console.log(effect.name, effect.prayer, 'Heal Ticking');
                     break;
-                }
+                };
 
-            }
+            };
             return true;
-        }
+        };
     });
 
     combatData.computerEffects = combatData.computerEffects.filter(effect => {
@@ -127,24 +123,24 @@ const statusEffectCheck = async (combatData) => {
                         combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
                     } else {
                         combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
-                    }
-                }
+                    };
+                };
                 for (let key in combatData.computer_defense) {
                     if (effect.effect[key]) combatData.computer_defense[key] -= effect.effect[key] * effect.activeStacks;
-                }
-            }
+                };
+            };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
                     } else {
                         combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
-                    }
-                }
+                    };
+                };
                 for (let key in combatData.player_defense) {
                     if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
-                }
-            }
+                };
+            };
             // console.log(effect.name, effect.prayer, 'Computer Effect Expiring')
             return false;
         } else { // The Effect Persists
@@ -156,15 +152,15 @@ const statusEffectCheck = async (combatData) => {
                                 combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key];
                             } else {
                                 combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.computer_defense) {
                             if (effect.effect[key]) combatData.computer_defense[key] += effect.effect[key];
-                        }
-                    }
+                        };
+                    };
                     // console.log(effect.name, effect.prayer, 'Computer Buff Ticking');
                     break;
-                }
+                };
                 case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
                     if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
                         effect.debuffTarget = combatData.weapons[0].name;
@@ -173,17 +169,17 @@ const statusEffectCheck = async (combatData) => {
                                 combatData.weapons[0][key] -= effect.effect[key];
                             } else {
                                 combatData.weapons[0][key] += effect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.player_defense) { // Buff
                             if (effect.effect[key]) {
                                 combatData.player_defense[key] -= effect.effect[key];
-                            }
-                        }
-                    }
+                            };
+                        };
+                    };
                     // console.log(effect.name, effect.prayer, 'Computer Debuff Ticking');
                     break;
-                }
+                };
                 case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
                     combatData.new_player_health -= effect.effect.damage * 0.33;
                     combatData.current_player_health -= effect.effect.damage * 0.33;
@@ -204,28 +200,28 @@ const statusEffectCheck = async (combatData) => {
 
                     if (combatData.current_computer_health > 0 || combatData.new_computer_health > 0) {
                         combatData.player_win = false;
-                    }
+                    };
                     // console.log(effect.name, effect.prayer, 'Heal Ticking');
                     break;
-                }
-            }
-        }
+                };
+            };
+        };
         return true;
     });
 
     if (combatData.new_player_health > 0) {
         combatData.computer_win = false;
-    }
+    };
     if (combatData.new_computer_health > 0) {
         combatData.player_win = false;
-    }
+    };
     return combatData;
-}
+};
 
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.computer_win === true) {
         return
-    }
+    };
     
     let faith_number = Math.floor(Math.random() * 101);
     let faith_number_two = Math.floor(Math.random() * 101);
@@ -2646,6 +2642,7 @@ const instantActionSplitter = async (combatData) => {
     switch (combatData.player.mastery) {
         case 'Constitution':
             await prayerSplitter(combatData, 'Heal');
+            await instantEffectCheck(combatData);
             await prayerSplitter(combatData, 'Buff');
             break;
         case 'Strength':
@@ -2666,11 +2663,11 @@ const instantActionSplitter = async (combatData) => {
             break;
         case 'Kyosir':
             await prayerSplitter(combatData, 'Damage');
+            await instantEffectCheck(combatData);
             await prayerSplitter(combatData, 'Debuff');
             break;
     };
-    //TODO:FIXME: Change the statusEffect Check into a personalized variant for the insant action
-    await instantEffectCheck(combatData);
+    
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
@@ -2744,22 +2741,17 @@ const instantEffectCheck = async (combatData) => {
 };
 
 const consumePrayerSplitter = async (combatData) => {
-    console.log("Consuming Prayer: ", combatData.new_player_health, combatData.current_player_health, "Player Health Before");
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
-        console.log(effect.prayer, combatData.prayerSacrifice, effect.name, combatData.prayerSacrificeName, effect.weapon,  "Prayer Check Before");
         if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName) return true;
-        console.log(effect.prayer, combatData.prayerSacrifice, effect.name, combatData.prayerSacrificeName, effect.weapon,  "Prayer Check After");
         switch (combatData.prayerSacrifice) {
             case 'Heal':
-                console.log(combatData.new_player_health, combatData.current_player_health, "Player Health Before")
                 console.log("Healing for :", effect.effect.healing * 0.165);
                 combatData.new_player_health += effect.effect.healing * 0.165;
                 combatData.current_player_health += effect.effect.healing * 0.165;
-                console.log(combatData.new_player_health, combatData.current_player_health, "Player Health After")
                 if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
                     combatData.computer_win = false;
                 };
@@ -2844,7 +2836,6 @@ const actionCompiler = async (combatData) => {
         let result = await actionSplitter(combatData);
         if (result.realized_computer_damage > 0) result.playerDamaged = true;
         if (result.realized_player_damage > 0) result.computerDamaged = true;
-        console.log(result.realized_computer_damage, result.realized_player_damage, 'Comp-Player Damage Dealt', result.playerDamaged, result.computerDamaged, 'Comp-Player Damaged')
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };

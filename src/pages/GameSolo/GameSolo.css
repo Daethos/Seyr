@@ -9,6 +9,10 @@
   background-size: auto;
   background-position: center;
 }
+*::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
 #game-block {
   margin-left: 7.5%;
   transform: scale(1.1);
@@ -116,10 +120,7 @@
   display: inline-block;
   z-index: -1;
 }
-*::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
-}
+
 .story-box {
   position: absolute;
   top: 0%;

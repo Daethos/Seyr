@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import FaithCard from '../FaithCard/FaithCard';
 
@@ -7,7 +7,7 @@ interface Props {
     setAsceanState: React.Dispatch<any>;
     faithModalShow?: boolean;
     setFaithModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow }: Props) => {
     const [faithState, setFaithState] = useState([
@@ -23,45 +23,39 @@ const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow 
             worshipers: 'devoted',
             iconography: '/images/daethos-forming.png'
         }
-    ])
+    ]);
     function handleFaith(faith: any) {
         console.log(faith.target.value, '<- the faith value being handled?')
         setAsceanState({
             ...asceanState,
             'faith': faith.target.value,
-        })
-    }
+        });
+    };
 
-    
-
-  return (
-    <><div className="actions">
-    <h3>Faith</h3>
-    <div className="edit-eqp-button">
-    {faithState.map((faith: any, index: number) => {
-            return (
-                <FaithCard 
-                    faith={faith} 
-                    key={index} 
-                />
-        )})}
-    </div>
-    <div className="property-block">
-    <Form.Select value={asceanState.faith} onChange={handleFaith}>
-        <option>None</option>
-        {faithState.map((faith: any, index: number) => {
-            return (
-                <option value={faith.worshipers} key={index}>{faith.name}</option>
-            )
-        })}
-    </Form.Select>
-    </div>
-
-
-
-    </div>
-</>
-  )
+    return (
+        <>
+        <div className="actions">
+        <h3>Faith</h3>
+        <div className="edit-eqp-button">
+            {faithState.map((faith: any, index: number) => {
+                return (
+                    <FaithCard faith={faith} key={index} />
+                )
+            })}
+        </div>
+        <div className="property-block">
+        <Form.Select value={asceanState.faith} onChange={handleFaith}>
+            <option>None</option>
+            {faithState.map((faith: any, index: number) => {
+                return (
+                    <option value={faith.worshipers} key={index}>{faith.name}</option>
+                )
+            })}
+        </Form.Select>
+        </div>
+        </div>
+        </>
+    )
 }
 
 export default Faith

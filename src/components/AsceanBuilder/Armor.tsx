@@ -30,8 +30,7 @@ interface Props {
     setRingsModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
     trinketModalShow?: boolean;
     setTrinketModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
-    
-}
+};
 
 const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, rings, trinkets, helmetModalShow, setHelmetModalShow, chestModalShow, setChestModalShow, legsModalShow, setLegsModalShow, amuletModalShow, setAmuletModalShow, ringsModalShow, setRingsModalShow, trinketModalShow, setTrinketModalShow }: Props) => {
     function handleEquipment(equipment: any) {
@@ -88,8 +87,8 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             'trinket': equipment.target.value,
         })
     }
-  return (
-    <>
+    return (
+        <>
         <div className="edit-eqp-button">  
         <Button 
             variant="outline" 
@@ -297,8 +296,8 @@ const Armor = ({ asceanState, setAsceanState, helmets, chests, legs, amulets, ri
             )
         })}
         </Form.Select>
-    </>
-  )
-}
+        </>
+    );
+};
 
-export default Armor
+export default Armor;
