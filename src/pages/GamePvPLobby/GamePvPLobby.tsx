@@ -292,6 +292,18 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent('duelDataShared', duelDataSharedCallback);
 
+        const instantResponsePvPCallback = async (response: any) => {
+            if (response.playerPosition === state.playerPosition) await instantUpdate(response);
+            if (response.playerPosition === state.enemyPosition) await instantUpdateReverse(response);
+        };
+        handleSocketEvent('instantResponsePvP', instantResponsePvPCallback);
+
+        const consumePrayerResponsePvPCallback = async (response: any) => {
+            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
+            if (response.playerPosition === state.enemyPosition) await instantUpdateReverse(response);
+        };
+        handleSocketEvent('consumePrayerResponsePvP', consumePrayerResponsePvPCallback);
+
         const pvpInitiateUpdateCallback = async (data: any) => {
             console.log(data, "PVP Initiate Update Callback");
             const playerOne = data.playerOneData;
@@ -339,6 +351,8 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('duelDataShared', duelDataSharedCallback);
                 socket.off('pvpInitiateUpdate', pvpInitiateUpdateCallback);
                 socket.off('pvpInitiateSoftUpdate', pvpInitiateSoftUpdateCallback);
+                socket.off('instantResponsePvP', instantResponsePvPCallback);
+                socket.off('consumePrayerResponsePvP', consumePrayerResponsePvPCallback);
             };
         };
       }, [handleSocketEvent, socket, playerState, mapState, gameState, state]);
@@ -782,6 +796,15 @@ const GamePvPLobby = ({ user }: Props) => {
         };
     };
 
+    const higherPosition = (playerPosition: number, enemyPosition: number) => {
+        console.log(playerPosition, enemyPosition, 'playerPosition, enemyPosition')
+        if (playerPosition > enemyPosition) {
+            return true;
+        } else {
+            return false;
+        };
+    };
+
     async function soundEffects(effects: PvPData) {
         try {
             if (effects.critical_success === true) {
@@ -964,7 +987,7 @@ const GamePvPLobby = ({ user }: Props) => {
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            await socket.emit('instant_action', state);
+            await socket.emit('instantActionPvP', state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
         } catch (err: any) {
@@ -982,7 +1005,7 @@ const GamePvPLobby = ({ user }: Props) => {
             shakeScreen();
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            await socket.emit('consume_prayer', state);
+            await socket.emit('consumePrayerPvP', state);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
         } catch (err: any) {
@@ -1040,7 +1063,7 @@ const GamePvPLobby = ({ user }: Props) => {
     };
 
     async function autoAttack(combatData: PvPData) {
-        if (combatData.enemyPosition !== -1 && playerState.playerOne.ascean._id !== state.player._id) {
+        if (combatData.enemyPosition !== -1 && !higherPosition(combatData.playerPosition, combatData.enemyPosition)) {
             setTimeLeft(gameState.timeLeft);
             return;
         };
@@ -1052,6 +1075,100 @@ const GamePvPLobby = ({ user }: Props) => {
             await socket.emit(`auto_engage`, combatData);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action');
+        };
+    };
+
+    const instantUpdateReverse = async (response: any) => {
+        // Reverse results ala backend TODO:FIXME:
+        try {
+            let reverseResult = {
+                weapons: response.enemy_weapons, // All 3 Weapons
+                player_damage_type: response.enemy_damage_type, 
+                player_defense: response.enemy_defense, // Posseses Base + Postured Defenses
+                player_attributes: response.enemy_attributes, // Possesses compiled Attributes, Initiative
+                action: response.enemy_action,
+                player_action: response.enemy_action,
+        
+                enemy_attributes: response.player_attributes, // Possesses compiled Attributes, Initiative
+                enemy_defense: response.player_defense, // Posseses Base + Postured Defenses
+                enemy_weapons: response.weapons,  // All 3 Weapons
+                enemy_damage_type: response.player_damage_type,
+                enemy_action: response.action,
+    
+                potential_player_damage: response.potential_enemy_damage, // All the Damage that is possible on hit for a player
+                potential_enemy_damage: response.potential_player_damage, // All the Damage that is possible on hit for a enemy
+                realized_player_damage: response.realized_enemy_damage, // Player Damage - enemy Defenses
+                realized_enemy_damage: response.realized_player_damage, // enemy Damage - Player Defenses
+        
+                playerDamaged: response.playerDamaged,
+                enemyDamaged: response.enemyDamaged,
+        
+                player_start_description: response.enemy_start_description,
+                enemy_start_description: response.player_start_description,
+                player_special_description: response.enemy_special_description,
+                enemy_special_description: response.player_special_description,
+                player_action_description: response.enemy_action_description, // The combat text to inject from the player
+                enemy_action_description: response.player_action_description, // The combat text to inject from the enemy
+                player_influence_description: response.enemy_influence_description,
+                enemy_influence_description: response.player_influence_description,
+                player_influence_description_two: response.enemy_influence_description_two,
+                enemy_influence_description_two: response.player_influence_description_two,
+                player_death_description: response.enemy_death_description,
+                enemy_death_description: response.player_death_description,
+        
+                current_player_health: response.new_enemy_health, // New player health post-combat action
+                current_enemy_health: response.new_player_health, // New enemy health post-combat action
+                new_player_health: response.new_enemy_health, // New player health post-combat action
+                new_enemy_health: response.new_player_health, // New enemy health post-combat action
+        
+                religious_success: response.enemy_religious_success,
+                enemy_religious_success: response.religious_success,
+                dual_wielding: response.enemy_dual_wielding,
+                enemy_dual_wielding: response.dual_wielding,
+                roll_success: response.enemy_roll_success,
+                counter_success: response.enemy_counter_success,
+                enemy_roll_success: response.roll_success,
+                enemy_counter_success: response.counter_success,
+                player_win: response.enemy_win,
+                enemy_win: response.player_win,
+        
+                critical_success: response.enemy_critical_success,
+                enemy_critical_success: response.critical_success,
+                glancing_blow: response.enemy_glancing_blow,
+                enemy_glancing_blow: response.glancing_blow,
+        
+                combatRound: response.combatRound,
+                sessionRound: response.sessionRound,
+        
+                playerEffects: response.enemyEffects,
+                enemyEffects: response.playerEffects,
+                playerBlessing: response.enemyBlessing,
+                enemyBlessing: response.playerBlessing,
+            };
+            const newResponse = {
+                ...state,
+                ...reverseResult
+            }
+            if (newResponse.spectacle) {
+                await newResponse.spectators.map((spectator: any) => {
+                    console.log(spectator, "Spectator?")
+                    socket.emit('updateSpectatorData', spectator, newResponse);
+                });
+            };
+            dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: newResponse });
+            if (newResponse.player_win === true) {
+                if (newResponse.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
+                await handlePlayerWin(newResponse);
+            };
+            if (newResponse.enemy_win === true) {
+                if (newResponse.gameIsLive === true) dispatch({ type: ACTIONS.AUTO_ENGAGE, payload: false });
+                await handleEnemyWin(newResponse);
+            };
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Performing Instant Update');
         };
     };
 

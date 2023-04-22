@@ -46,7 +46,6 @@ const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
                 ascean={ascean}
                 key={ascean._id}
                 loggedUser={loggedUser}
-                setAscean={setAscean}
                 handleAsceanCreate={handleAsceanCreate}
             />
             </Row>

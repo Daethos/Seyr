@@ -724,7 +724,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         newData.counter_dodge_weight = 0;
         newData.counter_posture_weight = 0;
         newData.counter_roll_weight = 0;
-    }
+    };
     
     const enemyActions = {
         attack: 50 + newData.attack_weight,
@@ -739,7 +739,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         counter_roll: 20 + newData.counter_roll_weight,
         roll_rating: newData.enemy_weapons[0].roll,
         armor_rating: (newData.enemy_defense.physicalPosture + newData.enemy_defense.magicalPosture)  /  4,
-    }
+    };
 
     if (player_action === 'attack') { 
         if (enemyActions.roll_rating > enemyActions.armor_rating) {
@@ -748,7 +748,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         } else {
             newData.posture_weight += 1.5;
             newData.roll_weight += 0.5;
-        }
+        };
         // newData.roll_weight += 1;
         // newData.posture_weight += 1;
         newData.counter_weight += 1;
@@ -768,7 +768,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         newData.counter_counter_weight += 2;
         newData.counter_attack_weight -= 1;
         newData.counter_dodge_weight -= 1;
-    }
+    };
     if (player_action === 'dodge') { 
         // newData.counter_weight += 2;
         // newData.dodge_weight -= 2;
@@ -777,7 +777,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         newData.counter_counter_weight -= 1;
         newData.counter_posture_weight -= 1;
         newData.counter_roll_weight -= 1;
-    }
+    };
     if (player_action === 'posture') { 
         newData.attack_weight += 2;  
         newData.posture_weight -= 3;
@@ -785,7 +785,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         newData.counter_posture_weight += 3;
         newData.counter_roll_weight -= 2;
         newData.counter_attack_weight -= 1;
-    }
+    };
 
     if (player_action === 'roll') { 
         newData.attack_weight += 2;  
@@ -794,9 +794,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         newData.counter_roll_weight += 3;
         newData.counter_posture_weight -= 2;
         newData.counter_attack_weight -= 1;
-    }
-
-    // const enemyAction = async (enemyActions) => {
+    };
 
     let actionNumber = Math.floor(Math.random() * 101);
     if (actionNumber > (100 - enemyActions.attack)) {
@@ -809,7 +807,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
         enemy_action = 'posture';
     } else {
         enemy_action = 'roll';
-    }
+    };
 
     if (enemy_action === 'counter') {
         let counterNumber = Math.floor(Math.random() * 101);
@@ -823,7 +821,7 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
             enemy_counter = 'posture';
         } else {
             enemy_counter = 'roll';
-        }
+        };
         newData.counter_weight -= 3;
         newData.attack_weight += 1;  
         newData.posture_weight += 1;
@@ -831,12 +829,11 @@ const enemyActionCompiler = async (newData, player_action, enemy_action, enemy_c
     }
     newData.enemy_action = enemy_action;
     newData.enemy_counter_guess = enemy_counter;
-    // console.log(newData.enemy_action, newData.enemy_counter_guess, 'New enemy Action')
 
     return (
         newData
-    )
-}
+    );
+};
 
 const enemyDualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const player = combatData.player;
@@ -864,17 +861,15 @@ const enemyDualWieldCompiler = async (combatData, player_physical_defense_multip
     enemy_weapon_one_magical_damage = resultOne.enemy_magical_damage;
     if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
-    }
+    };
     const resultTwo = await enemyCriticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.enemy_weapons[1], enemy_weapon_two_physical_damage, enemy_weapon_two_magical_damage);
     combatData = resultTwo.combatData;
     enemy_weapon_two_physical_damage = resultTwo.enemy_physical_damage;
     enemy_weapon_two_magical_damage = resultTwo.enemy_magical_damage;
     if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
-    }
+    };
 
-    
-    // console.log(firstWeaponCrit, secondWeaponCrit)
     enemy_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
     enemy_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
 
@@ -892,7 +887,6 @@ const enemyDualWieldCompiler = async (combatData, player_physical_defense_multip
     enemy_weapon_one_total_damage = enemy_weapon_one_physical_damage + enemy_weapon_one_magical_damage;
     enemy_weapon_two_total_damage = enemy_weapon_two_physical_damage + enemy_weapon_two_magical_damage;
 
-    // console.log(enemy_weapon_one_total_damage, enemy_weapon_two_total_damage);
 
     combatData.realized_enemy_damage = enemy_weapon_one_total_damage + enemy_weapon_two_total_damage;
     if (combatData.realized_enemy_damage < 0) {
@@ -909,16 +903,16 @@ const enemyDualWieldCompiler = async (combatData, player_physical_defense_multip
             combatData.realized_enemy_damage *= (agility / 100)
         } else {
             combatData.realized_enemy_damage *= (achre / 100)
-        }
-    }
+        };
+    };
 
     if (combatData.enemy_weapons[0].grip === 'Two Hand') {
         if (combatData.enemy_weapons[0].attack_type === 'Physical') {
             combatData.realized_enemy_damage *= (strength / 150) 
         } else {
             combatData.realized_enemy_damage *= (caeren / 150)
-        }
-    }
+        };
+    };
 
     if (combatData.action === 'attack') {
         combatData.realized_enemy_damage *= 1.1;
@@ -936,11 +930,11 @@ const enemyDualWieldCompiler = async (combatData, player_physical_defense_multip
     }
     
     combatData.enemy_action_description = 
-        `${enemy.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_enemy_damage)} ${combatData.enemy_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.enemy_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `${enemy.name} dual-wield attacks ${combatData.player.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_enemy_damage)} ${combatData.enemy_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.enemy_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
-    )
-}
+    );
+};
 
 const enemyAttackCompiler = async (combatData, enemy_action) => {
     if (combatData.player_win === true) { return }
@@ -955,7 +949,7 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
     if (combatData.action === 'posture' && combatData.enemy_counter_success !== true && combatData.enemy_roll_success !== true) {
         player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
-    }
+    };
 
     if (combatData.enemy_action === 'attack') {
         if (combatData.enemy_weapons[0].grip === 'One Hand') {
@@ -965,20 +959,20 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
                         if (combatData.enemy_weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                            combatData.enemy_dual_wielding = true;
                             await enemyDualWieldCompiler(combatData, player_physical_defense_multiplier, player_magical_defense_multiplier)
-                            return combatData
+                            return combatData;
                         } else {
                             enemy_physical_damage *= 1.3;
                             enemy_magical_damage *= 1.15;
-                        }
+                        };
                     } else {
                         enemy_physical_damage *= 1.3;
                         enemy_magical_damage *= 1.15;
-                    }
+                    };
                 } else {
                     enemy_physical_damage *= 1.1;
                     enemy_magical_damage *= 1.1;
-                }
-            } 
+                };
+            };
             if (combatData.enemy_weapons[0].attack_type === 'Magic') {
                 if (combatData.enemy.mastery === 'Achre' || combatData.enemy.mastery === 'Kyosir') {
                     if (combatData.enemy_attributes.totalAchre + combatData.enemy_weapons[0].achre + combatData.enemy_weapons[1].achre >= 50) {
@@ -989,17 +983,17 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
                         } else {
                             enemy_physical_damage *= 1.15;
                             enemy_magical_damage *= 1.3;
-                        }
+                        };
                     } else {
                         enemy_physical_damage *= 1.15;
                         enemy_magical_damage *= 1.3;
-                    }
+                    };
                 } else {
                     enemy_physical_damage *= 1.1;
                     enemy_magical_damage *= 1.1;
-                }
-            } 
-        }
+                };
+            };
+        };
         if (combatData.enemy_weapons[0].grip === 'Two Hand') {
             if (combatData.enemy_weapons[0].attack_type === 'Physical' && combatData.enemy_weapons[0].type !== 'Bow') {
                 if (combatData.enemy.mastery === 'Strength' || combatData.enemy.mastery === 'Constitution') {
@@ -1011,16 +1005,16 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
                         } else { // Less than 50 Srength 
                             enemy_physical_damage *= 1.3;
                             enemy_magical_damage *= 1.15;
-                        }
+                        };
                     } else { // Less than 50 Srength 
                         enemy_physical_damage *= 1.3;
                         enemy_magical_damage *= 1.15;
-                    }
+                    };
                 } else {
                     enemy_physical_damage *= 1.1;
                     enemy_magical_damage *= 1.1;
-                }
-            }
+                };
+            };
             if (combatData.enemy_weapons[0].attack_type === 'Magic') {
                 if (combatData.enemy.mastery === 'Caeren' || combatData.enemy.mastery === 'Kyosir') {
                     if (combatData.enemy_attributes.totalCaeren + combatData.enemy_weapons[0].caeren + combatData.enemy_weapons[1].caeren >= 75) {
@@ -1031,16 +1025,16 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
                         } else {
                             enemy_physical_damage *= 1.15;
                             enemy_magical_damage *= 1.3;
-                        }
+                        };
                     } else {
                         enemy_physical_damage *= 1.15;
                         enemy_magical_damage *= 1.3;
-                    }
+                    };
                 } else {
                     enemy_physical_damage *= 1.1;
                     enemy_magical_damage *= 1.1;
-                }
-            }
+                };
+            };
             if (combatData.enemy_weapons[0].type === 'Bow') {
                 if (combatData.enemy.mastery === 'Agility' || combatData.enemy.mastery === 'Achre' || combatData.enemy.mastery === 'Kyosir' || combatData.enemy.mastery === 'Constitution') {
                     enemy_physical_damage *= 1.4;
@@ -1048,10 +1042,10 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
                 } else {
                     enemy_physical_damage *= 1.1;
                     enemy_magical_damage *= 1.1;
-                }
-            }
-        }
-    } 
+                };
+            };
+        };
+    }; 
 
     if (enemy_action === 'counter') {
         if (combatData.enemy_counter_success === true) {
@@ -1060,18 +1054,13 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
         } else {
             enemy_physical_damage *= 0.9;
             enemy_magical_damage *= 0.9;
-        }
-    }
+        };
+    };
 
     if (enemy_action === 'dodge') {
         enemy_physical_damage *= 0.9;
         enemy_magical_damage *= 0.9;
-    }
-
-    // if (enemy_action === 'posture') {
-    //     enemy_physical_damage *= 0.95;
-    //     enemy_magical_damage *= 0.95;
-    // }
+    };
 
     if (enemy_action === 'roll' ) {
         if (combatData.enemy_roll_success === true) {
@@ -1080,8 +1069,8 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
         } else {
             enemy_physical_damage *= 0.95;
             enemy_magical_damage *= 0.95;
-        }
-    }
+        };
+    };
 
     const criticalClearance = Math.floor(Math.random() * 101);
     let criticalChance = combatData.enemy_weapons[0].critical_chance;
@@ -1091,9 +1080,6 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
     combatData = criticalResult.combatData;
     enemy_physical_damage = criticalResult.enemy_physical_damage;
     enemy_magical_damage = criticalResult.enemy_magical_damage;
-    // console.log('Results for enemy [Crit] [Glancing] [Phys Dam] [Mag Dam]', 
-    //     criticalResult.combatData.enemy_critical_success, criticalResult.combatData.enemy_glancing_blow, 
-    //     criticalResult.enemy_physical_damage, criticalResult.enemy_magical_damage)
 
     // If you made it here, your basic attack now resolves itself
     enemy_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (combatData.enemy_weapons[0].physical_penetration / 100)));
@@ -1120,7 +1106,7 @@ const enemyAttackCompiler = async (combatData, enemy_action) => {
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
     combatData.enemy_action_description = 
-        `${combatData.enemy.name} attacks you with their ${combatData.enemy_weapons[0].name} for ${Math.round(enemy_total_damage)} ${combatData.enemy_damage_type} ${combatData.enemy_critical_success === true ? 'Critical Strike Damage' : combatData.enemy_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `${combatData.enemy.name} attacks ${combatData.player.name} with their ${combatData.enemy_weapons[0].name} for ${Math.round(enemy_total_damage)} ${combatData.enemy_damage_type} ${combatData.enemy_critical_success === true ? 'Critical Strike Damage' : combatData.enemy_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
@@ -1592,7 +1578,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     }
     
     combatData.player_action_description = 
-        `You dual-wield attack ${enemy.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${combatData.player_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `${combatData.player.name} dual-wield attacks ${enemy.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${combatData.player_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
     )
@@ -1781,27 +1767,6 @@ const attackCompiler = async (combatData, player_action) => {
     }
     combatData.realized_player_damage = player_total_damage;
 
-    let strength = combatData.player_attributes.totalStrength + combatData.weapons[0].strength;
-    let agility = combatData.player_attributes.totalAgility + combatData.weapons[0].agility;
-    let achre = combatData.player_attributes.totalAchre + combatData.weapons[0].achre;
-    let caeren = combatData.player_attributes.totalCaeren + combatData.weapons[0].caeren;
-
-    // if (combatData.weapons[0].grip === 'One Hand') {
-    //     if (combatData.weapons[0].attack_type === 'Physical') {
-    //         combatData.realized_player_damage *= (agility / 67)
-    //     } else {
-    //         combatData.realized_player_damage *= (achre / 67)
-    //     }
-    // }
-
-    // if (combatData.weapons[0].grip === 'Two Hand') {
-    //     if (combatData.weapons[0].attack_type === 'Physical') {
-    //         combatData.realized_player_damage *= (strength / 100) 
-    //     } else {
-    //         combatData.realized_player_damage *= (caeren / 100)
-    //     }
-    // }
-
     if (combatData.enemy_action === 'attack') {
         combatData.realized_player_damage *= 1.1;
     };
@@ -1810,17 +1775,15 @@ const attackCompiler = async (combatData, player_action) => {
     combatData.current_enemy_health = combatData.new_enemy_health; // Added to persist health totals?
 
     combatData.player_action_description = 
-        `You attack ${combatData.enemy.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_damage_type} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
+        `${combatData.player.name} attacks ${combatData.enemy.name} with their ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_damage_type} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
         combatData.new_enemy_health = 0;
         combatData.player_win = true;
     };
 
-    // console.log(player_total_damage, 'Total Player Damage');
-
-    return combatData
-}
+    return combatData;
+};
 
 const damageTypeCompiler = async (combatData, weapon, player_physical_damage, player_magical_damage) => {
     // console.log('Damage Type Compiler Firing', player_physical_damage, player_magical_damage);
@@ -2064,13 +2027,12 @@ const damageTypeCompiler = async (combatData, weapon, player_physical_damage, pl
 
         
     }
-    // console.log('Player Post-Damage Type Multiplier', player_physical_damage, player_magical_damage);
     return {
         combatData,
         player_physical_damage,
         player_magical_damage
-    }
-}
+    };
+};
 
 const criticalCompiler = async (combatData, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
     let num = critClearance;
@@ -2080,8 +2042,7 @@ const criticalCompiler = async (combatData, critChance, critClearance, weapon, p
         player_physical_damage *= weapon.critical_damage;
         player_magical_damage *= weapon.critical_damage;
         combatData.critical_success = true;
-    }
-
+    };
     if (critClearance > critChance + combatData.player.level + 80) {
         player_physical_damage *= 0.1;
         player_magical_damage *= 0.1;
@@ -2156,8 +2117,8 @@ const counterCompiler = async (combatData, player_action, enemy_action) => {
     await attackCompiler(combatData, player_action)
     return (
         combatData
-    )
-}
+    );
+};
 
 const playerRollCompiler = async (combatData, player_initiative, enemy_initiative, player_action, enemy_action) => {
     const player_roll = combatData.weapons[0].roll;
@@ -2166,68 +2127,58 @@ const playerRollCompiler = async (combatData, player_initiative, enemy_initiativ
     if (player_roll > roll_catch) {
         combatData.roll_success = true;
         combatData.player_special_description = 
-                `You successfully roll against ${combatData.enemy.name}, avoiding their ${ combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
-        await attackCompiler(combatData, player_action)
+            `${combatData.player.name} successfully roll against ${combatData.enemy.name}, avoiding their ${ combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
+        await attackCompiler(combatData, player_action);
     } else {
         // if (player_initiative > enemy_initiative) {
         combatData.player_special_description =
-        `You failed to roll against ${combatData.enemy.name}'s ${ combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
-        return combatData
-            //     await attackCompiler(combatData, player_action)
-        //     await enemyAttackCompiler(combatData, enemy_action)
-        // } else {
-        //     combatData.player_special_description =
-        //     `You failed to roll against ${combatData.enemy.name}'s ${  combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
-        //     await enemyAttackCompiler(combatData, enemy_action)
-        //     await attackCompiler(combatData, player_action)
-        // }
+            `${combatData.player.name} failed to roll against ${combatData.enemy.name}'s ${ combatData.enemy_action === 'attack' ? 'Focused' : combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1) } Attack.`
+        return combatData;
     }
     return (
         combatData
-    )
-}
+    );
+};
 
-// Resolves both Player and enemy Rolling
 const doubleRollCompiler = async (combatData, player_initiative, enemy_initiative, player_action, enemy_action) => {
     const player_roll = combatData.weapons[0].roll;
     const enemy_roll = combatData.enemy_weapons[0].roll;
     let roll_catch = Math.floor(Math.random() * 101) + combatData.enemy_attributes.kyosirMod;
-    // console.log(player_roll, 'Player Roll %', enemy_roll, 'enemy Roll %', roll_catch, 'Number to Beat')
     if (player_initiative > enemy_initiative) { // You have Higher Initiative
         if (player_roll > roll_catch) { // The Player Succeeds the Roll
             combatData.player_special_description = 
-                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+                `${combatData.player.name} successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             await attackCompiler(combatData, player_action);
         } else if (enemy_roll > roll_catch) { // The Player Fails the Roll and the enemy Succeeds
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+                `${combatData.player.name} failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+                `${combatData.enemy.name} successfully rolls against ${combatData.player.name}, avoiding their ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             await enemyAttackCompiler(combatData, enemy_action);
         } else { // Neither Player nor enemy Succeed
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+                `${combatData.player.name} failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+                `${combatData.enemy.name} fails to roll against ${combatData.player.name}'s ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             await attackCompiler(combatData, player_action);
             await enemyAttackCompiler(combatData, enemy_action);
         };
     } else { // The enemy has Higher Initiative
         if (enemy_roll > roll_catch) { // The enemy Succeeds the Roll
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+                `${combatData.enemy.name} successfully rolls against ${combatData.player.name}, avoiding their ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             await enemyAttackCompiler(combatData, enemy_action);
         } else if (player_roll > roll_catch) { // The enemy Fails the Roll and the Player Succeeds
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+                `${combatData.enemy.name} fails to roll against ${combatData.player.name}'s ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             combatData.player_special_description = 
-                `You successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+                `${combatData.player.name} successfully roll against ${combatData.enemy.name}, avoiding their ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             await attackCompiler(combatData, player_action);
         } else { // Neither enemy nor Player Succeed
             combatData.enemy_special_description = 
-                `${combatData.enemy.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+                `${combatData.enemy.name} fails to roll against ${combatData.player.name}'s ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
+                `${combatData.player.name} failed to roll against ${combatData.enemy.name}'s ${combatData.enemy_action.charAt(0).toUpperCase() + combatData.enemy_action.slice(1)} Attack`;
             await enemyAttackCompiler(combatData, enemy_action);
             await attackCompiler(combatData, player_action);
         };
@@ -2251,7 +2202,7 @@ const pvpActionSplitter = async (combatData) => {
         `${newData.enemy.name} sets to ${enemy_action.charAt(0).toUpperCase() + enemy_action.slice(1)}${enemy_counter ? '-' + enemy_counter.charAt(0).toUpperCase() + enemy_counter.slice(1) : ''} against ${newData.player.name}.`
 
     newData.player_start_description = 
-        `${newData.player.name} attempt to ${player_action.charAt(0).toUpperCase() + player_action.slice(1)}${player_counter ? '-' + player_counter.charAt(0).toUpperCase() + player_counter.slice(1) : ''} against ${newData.enemy.name}.`
+        `${newData.player.name} attempts to ${player_action.charAt(0).toUpperCase() + player_action.slice(1)}${player_counter ? '-' + player_counter.charAt(0).toUpperCase() + player_counter.slice(1) : ''} against ${newData.enemy.name}.`
     
     // If both Player and enemy Counter -> Counter [Fastest Resolution]
     if (player_action === 'counter' && enemy_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
@@ -2308,7 +2259,7 @@ const pvpActionSplitter = async (combatData) => {
     
         if (player_counter !== enemy_action && enemy_counter !== player_action) {
             newData.player_special_description = 
-                `${newData.player.name} failed to Counter ${newData.enemy.name}'s Counter! Heartbreaking`
+                `${newData.player.name} fails to Counter ${newData.enemy.name}'s Counter! Heartbreaking`
             newData.enemy_special_description = 
                 `${newData.enemy.name} fails to Counter ${newData.player.name}'s Counter! Heartbreaking`
                 if (player_initiative > enemy_initiative) {
@@ -2337,7 +2288,7 @@ const pvpActionSplitter = async (combatData) => {
             return newData
         } else {
             newData.player_special_description = 
-                `${newData.player.name} failed to Counter ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack. Heartbreaking!`
+                `${newData.player.name} fails to Counter ${newData.enemy.name}'s ${ newData.enemy_action === 'attack' ? 'Focused' : newData.enemy_action.charAt(0).toUpperCase() + newData.enemy_action.slice(1) } Attack. Heartbreaking!`
         }
     }
 
@@ -2876,6 +2827,7 @@ const instantActionSplitter = async (combatData) => {
     switch (combatData.player.mastery) {
         case 'Constitution':
             await prayerSplitter(combatData, 'Heal');
+            await instantEffectCheck(combatData);
             await prayerSplitter(combatData, 'Buff');
             break;
         case 'Strength':
@@ -2896,11 +2848,10 @@ const instantActionSplitter = async (combatData) => {
             break;
         case 'Kyosir':
             await prayerSplitter(combatData, 'Damage');
+            await instantEffectCheck(combatData);
             await prayerSplitter(combatData, 'Debuff');
             break;
     };
-    //TODO:FIXME: Change the statusEffect Check into a personalized variant for the insant action
-    await instantEffectCheck(combatData);
     if (combatData.new_enemy_health <= 0 || combatData.current_enemy_health <= 0) {
         combatData.new_enemy_health = 0;
         combatData.player_win = true;

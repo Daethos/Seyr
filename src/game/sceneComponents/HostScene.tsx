@@ -80,7 +80,6 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     scenes.push(Menu);
     scenes.push(Play);
 
-// console.log(ascean, user, 'Ascean and User')
     const [config, setConfig] = useState({
         type: Phaser.AUTO,
         parent: 'story-game',
@@ -138,13 +137,9 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             gameRef.current = new Phaser.Game(config);
             setGameState(gameRef.current);
             canvasElement = document.querySelector('#story-game');
-            console.log(gameRef.current, 'New Game Created')
-            console.log(canvasElement, 'Canvas Element Created');
-            // Need to make setLoading to false a set timeout for 1 second
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
-            // setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game')
         }
@@ -152,9 +147,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     
     const levelUpAscean = async (vaEsai: any) => {
         try {
-            console.log(vaEsai, 'Va Esai');
             let response = await asceanAPI.levelUp(vaEsai);
-            console.log(response, 'Level Up');
             setLevelUp(true);
             setAsceanState({
                 ...asceanState,
@@ -170,11 +163,11 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                 experienceNeeded: response.data.level * 1000,
                 mastery: response.data.mastery,
                 faith: response.data.faith,
-            })
+            });
         } catch (err: any) {
-            console.log(err.message, 'Error Leveling Up')
-        }
-    }
+            console.log(err.message, 'Error Leveling Up');
+        };
+    };
 
     useEffect(() => {
         setGameData({
@@ -200,7 +193,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             detail: gameData
         });
         window.dispatchEvent(asceanData);
-    }
+    };
 
     const createDialog = async (e: any) => {
         // I need to create a dialog box here
@@ -214,11 +207,11 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
     useEffect(() => {
         window.addEventListener('request-ascean', sendAscean);
         window.addEventListener('dialog-box', createDialog);
-    return () => {
-        window.removeEventListener('request-ascean', sendAscean);
-        window.removeEventListener('dialog-box', createDialog);
-    }
-    }, [ascean])
+        return () => {
+            window.removeEventListener('request-ascean', sendAscean);
+            window.removeEventListener('dialog-box', createDialog);
+        };
+    }, [ascean]);
 
     const resizeGame = () => {
         let game_ratio = 360 / 480;
@@ -231,29 +224,27 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         if (newHeight > window.innerHeight) {
             newHeight = window.innerHeight;
             newWidth = newHeight * game_ratio;
-        }
+        };
 
         canvas.style.width = newWidth + 'px';
         canvas.style.height = newHeight + 'px';
-    }
+    };
 
     useEffect(() => {
         window.addEventListener('resize', resizeGame);
-      return () => {
-        window.removeEventListener('resize', resizeGame);
-      }
-    }, [])
+        return () => {
+            window.removeEventListener('resize', resizeGame);
+        };
+    }, []);
 
     const toggleFullscreen = () => {
         if (document.fullscreenElement) {
             document.exitFullscreen();
-            console.log('Exit Full Screen')
             setFullScreen(false);
-          } else {
-              console.log('Full Screen')
+        } else {
             gameRef.current.scale.startFullscreen();
             setFullScreen(true);
-          }
+        };
     };
 
     const toggleMute = () => {
@@ -261,18 +252,18 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             let scene = gameRef.current.scene.getScene('Play');
             console.log(scene, 'What is this Scene I made?')
             scene.sound.setMute();
-        }
+        };
         const unmute = () => {
             let scene = gameRef.current.scene.getScene('Play');
             scene.sound.setMute(false);
-        }
+        };
         if (!muteState) {
             mute();
             setMuteState(true);
         } else {
             unmute();
             setMuteState(false);
-        }
+        };
     };
 
     const togglePause = () => {
@@ -280,18 +271,18 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             let scene = gameRef.current.scene.getScene('Play');
             console.log(scene, 'What is this Scene I made?')
             scene.pause();
-        }
+        };
         const resume = () => {
             let scene = gameRef.current.scene.getScene('Play');
             scene.resume();
-        }
+        };
         if (!pauseState) {
             pause();
             setPauseState(true);
         } else {
             resume();
             setPauseState(false);
-        }
+        };
     };
 
     return (
@@ -317,29 +308,27 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                 </Modal.Body>
             </Modal>
             <div id='ui-hud' className='mt-3 ui-hud'>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>{ascean.name}</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Inventory</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>World Status</h3>
-            </Button>
-            <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
-                <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Settings</h3>
-            </Button>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>{ascean.name}</h3>
+                </Button>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Inventory</h3>
+                </Button>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>World Status</h3>
+                </Button>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Settings</h3>
+                </Button>
             { showPlayer ?
                 ( <StoryAscean ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean}
-                    currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense}
-                    />
-                ) : ( '' ) }
+                    currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense} />
+            ) : ( '' ) }
             </div>
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
-        </div>
+            </div>
         </>
+    );
+};
 
-  )
-}
-
-export default HostScene
+export default HostScene;

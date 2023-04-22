@@ -7,12 +7,11 @@ import Row from 'react-bootstrap/Row';
 import userService from '../../utils/userService';
 import { useNavigate } from "react-router-dom";
 
-
 interface AuthProps {
     setUser: React.Dispatch<any>;
     handleSignUpOrLogin: () => any;
     handleGuest: () => any;
-}
+};
 
 export default function AuthPage({ setUser, handleSignUpOrLogin, handleGuest }: AuthProps) {
   const [showSignUp, setShowSignUp]  = useState(false);
@@ -49,25 +48,20 @@ export default function AuthPage({ setUser, handleSignUpOrLogin, handleGuest }: 
         </div>
       </h3>
       </Row>
-    <Row className="auth mt-3 justify-content-center" 
-    >
+    <Row className="auth mt-3 justify-content-center">
       <Button variant='' style={{ color: 'gold', fontSize: 25 + 'px' }} onClick={trialVersion} className='btn-lg'>Trial [Demo]</Button>
-      { 
-        showSignUp 
-        ?
-          <>
-            <Button variant="" style={{ color: 'red', fontSize: 25 + 'px', maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
-            <SignUpForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
-          </>
-        :
-          <>
-            <Button variant="" style={{ color: 'red', fontSize: 25 + 'px', maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
-            <LoginForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
-          </>
+      { showSignUp ?
+        <>
+          <Button variant="" style={{ color: 'red', fontSize: 25 + 'px', maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
+          <SignUpForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
+        </>
+      :
+        <>
+          <Button variant="" style={{ color: 'red', fontSize: 25 + 'px', maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
+          <LoginForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
+        </>
       }
-      
     </Row>
-
     </Container>
   );
 };

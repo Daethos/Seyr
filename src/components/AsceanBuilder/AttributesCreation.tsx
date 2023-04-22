@@ -4,7 +4,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 interface Props {
     asceanState: any;
     setAsceanState: React.Dispatch<any>;
-}
+};
 
 const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     const conMinusButton = document.getElementById('con-minus');
@@ -35,63 +35,62 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
             conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
-        }
-    }, [constitutionOutput])
+        };
+    }, [constitutionOutput]);
 
     const strOut = document.getElementById('str-box');
     useEffect(() => {
         console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
             strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
-        }
-    }, [strengthOutput])
+        };
+    }, [strengthOutput]);
 
     const agiOut = document.getElementById('agi-box');
     useEffect(() => {
         console.log(agilityOutput, '<- New Agility Point Total');
         if (agiOut !== null) {
             agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
-        }
-    }, [agilityOutput])
+        };
+    }, [agilityOutput]);
 
     const achOut = document.getElementById('ach-box');
     useEffect(() => {
         console.log(achreOutput, '<- New Achre Point Total');
         if (achOut !== null) {
             achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
-        }
-    }, [achreOutput])
+        };
+    }, [achreOutput]);
 
     const caerOut = document.getElementById('caer-box');
     useEffect(() => {
         console.log(caerenOutput, '<- New Caeren Point Total');
         if (caerOut !== null) {
             caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
-        }
-    }, [caerenOutput])
+        };
+    }, [caerenOutput]);
 
     const kyoOut = document.getElementById('kyo-box');
     useEffect(() => {
         console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
             kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
-        }
-    }, [kyosirOutput])
+        };
+    }, [kyosirOutput]);
 
     useEffect(() => {
-        setPoolTotal(0)
-    }, [])
+        setPoolTotal(0);
+    }, []);
 
     // Pool Total Use Effect
     useEffect(() => {
-        checkPoolTotal()
-        
-    }, [poolTotal])
+        checkPoolTotal();
+    }, [poolTotal]);
 
     async function checkPoolTotal() {
         if (poolOutput != null) {
             poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
-        }
+        };
         if (poolTotal >= 25) {
             conPlusButton!.style.display = 'none';
             strPlusButton!.style.display = 'none';
@@ -105,17 +104,17 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
             achMinusButton!.style.display = 'inline-block';
             caerMinusButton!.style.display = 'inline-block';
             kyoMinusButton!.style.display = 'inline-block';
-        }
+        };
         if (poolTotal < 25 && constitutionOutput >= 18) {
             if (conPlusButton !== null) {
                 conPlusButton!.style.display = 'none';
-            }
-        }
+            };
+        };
         if (poolTotal < 25 && strengthOutput >= 18) {
             if (strPlusButton !== null) {
                 strPlusButton!.style.display = 'none';
-            }
-        }
+            };
+        };
         if (poolTotal < 25 && agilityOutput >= 18) {
             if (agiPlusButton !== null) {
                 agiPlusButton!.style.display = 'none';
@@ -232,140 +231,140 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleConMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setConstitutionOutput(e.target.value)
-        setPoolTotal(poolTotal - 1)
-    }
+        });
+        setConstitutionOutput(e.target.value);
+        setPoolTotal(poolTotal - 1);
+    };
     function handleConPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setConstitutionOutput(e.target.value)
-        setPoolTotal(poolTotal + 1)
-    }
+        });
+        setConstitutionOutput(e.target.value);
+        setPoolTotal(poolTotal + 1);
+    };
 
     function handleStrMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setStrengthOutput(e.target.value)
-        setPoolTotal(poolTotal - 1)
-    }
+        });
+        setStrengthOutput(e.target.value);
+        setPoolTotal(poolTotal - 1);
+    };
     function handleStrPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setStrengthOutput(e.target.value)
-        setPoolTotal(poolTotal + 1)
-    }
+        });
+        setStrengthOutput(e.target.value);
+        setPoolTotal(poolTotal + 1);
+    };
 
     function handleAgiMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setAgilityOutput(e.target.value)
-        setPoolTotal(poolTotal - 1)
-    }
+        });
+        setAgilityOutput(e.target.value);
+        setPoolTotal(poolTotal - 1);
+    };
     function handleAgiPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setAgilityOutput(e.target.value)
-        setPoolTotal(poolTotal + 1)
-    }
+        });
+        setAgilityOutput(e.target.value);
+        setPoolTotal(poolTotal + 1);
+    };
    
     function handleAchreMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setAchreOutput(e.target.value)
-        setPoolTotal(poolTotal - 1)
-    }
+        });
+        setAchreOutput(e.target.value);
+        setPoolTotal(poolTotal - 1);
+    };
     function handleAchrePlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setAchreOutput(e.target.value)
-        setPoolTotal(poolTotal + 1)
-    }
+        });
+        setAchreOutput(e.target.value);
+        setPoolTotal(poolTotal + 1);
+    };
     
     function handleCaerenMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setCaerenOutput(e.target.value)
-        setPoolTotal(poolTotal - 1)
-    }
+        });
+        setCaerenOutput(e.target.value);
+        setPoolTotal(poolTotal - 1);
+    };
     function handleCaerenPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setCaerenOutput(e.target.value)
-        setPoolTotal(poolTotal + 1)
-    }
+        });
+        setCaerenOutput(e.target.value);
+        setPoolTotal(poolTotal + 1);
+    };
 
     function handleKyosirMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value)
+        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setKyosirOutput(e.target.value)
-        setPoolTotal(poolTotal - 1)
-    }
+        });
+        setKyosirOutput(e.target.value);
+        setPoolTotal(poolTotal - 1);
+    };
     function handleKyosirPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value)
+        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-        setKyosirOutput(e.target.value)
-        setPoolTotal(poolTotal + 1)
-    }
+        });
+        setKyosirOutput(e.target.value);
+        setPoolTotal(poolTotal + 1);
+    };
   return (
     <>
     <div className="actions">

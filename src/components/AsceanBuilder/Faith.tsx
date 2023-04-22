@@ -5,11 +5,9 @@ import FaithCard from '../FaithCard/FaithCard';
 interface Props {
     asceanState: any;
     setAsceanState: React.Dispatch<any>;
-    faithModalShow?: boolean;
-    setFaithModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow }: Props) => {
+const Faith = ({ asceanState, setAsceanState }: Props) => {
     const [faithState, setFaithState] = useState([
         {
             name: 'Ancients',
@@ -55,7 +53,7 @@ const Faith = ({ asceanState, setAsceanState, faithModalShow, setFaithModalShow 
         </div>
         </div>
         </>
-    )
-}
+    );
+};
 
-export default Faith
+export default Faith;

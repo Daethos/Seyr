@@ -51,7 +51,7 @@ export interface Ascean {
     likes: any[];
     dislikes: any[];
     double_dislikes: any[];
-}
+};
 
 const asceanTemplate: Ascean = {
     _id: '',
@@ -90,7 +90,7 @@ const asceanTemplate: Ascean = {
     likes: [],
     dislikes: [],
     double_dislikes: [],
-}
+};
 
 export interface GameAdminData {
     loading: boolean;
@@ -103,7 +103,7 @@ export interface GameAdminData {
     generatedAscean: object;
     error: { title: string, content: string };
     setError: Function;
-}
+};
 
 export interface Action {
     type: string;
@@ -133,7 +133,7 @@ const initialGameAdaminData: GameAdminData = {
     generatedAscean: {...asceanTemplate},
     error: { title: '', content: '' },
     setError: () => {},
-}
+};
 
 const GameAdminStore = (state: GameAdminData, action: Action) => {
     switch (action.type) {
@@ -219,14 +219,13 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     useEffect(() => {
         console.log(state, 'The State ~=V');
-
-    }, [state])
+    }, [state]);
 
     useEffect(() => {
         if (user.username !== 'lonely guy') navigate('/');
         return () => {
             console.log('Unmounting');
-        }
+        };
     }, [user]);
     
 
@@ -236,8 +235,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             if (state.equipmentTable.length > 0) {
                 const deleteResponse = await eqpAPI.deleteEquipment(state.equipmentTable);
                 console.log(deleteResponse, 'Delete Response');
-                // dispatch({ type: ACTIONS.DELETE_EQUIPMENT_TABLE, payload: []});
-            }
+            };
             const response = await eqpAPI.getMerchantEquipment(level);
             dispatch({
                 type: ACTIONS.SET_EQUIPMENT_TABLE,
@@ -289,7 +287,6 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const generateAscean = async (id: string) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         try {
-            // const response = await asceanAPI.getOneAscean(id);
             const updatedResponse = await asceanAPI.getAsceanStats(id);
             dispatch({
                 type: ACTIONS.GENERATE_ASCEAN,
@@ -312,61 +309,57 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     return (
         <Container>
             <Row className='mb-5'>
-                <Card style={{ background: 'black', color: 'white' }}>
-                    <Card.Body>
-                        <Card.Title>Test Ascean</Card.Title>
-                        <Card.Text>
-                            Placeholder Test for the Ascean
-                        </Card.Text>
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>Ascean Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Enter Ascean Name"
-                                    onChange={(e) => fetchAscean(e.target.value)}
-                                />
-                            </Form.Group>
-                        </Form>
-                        {state.asceanSearchData.length > 0 ? 
-                            state.asceanSearchData.map((ascean: Ascean, index: number) => {
-                                return (
-                                    <AsceanListItem ascean={ascean} state={state} dispatch={dispatch} key={index} fetch={() => generateAscean(ascean._id)} />
-                                    )})
-                             : '' }
-                        { state.asceanLoaded ?
-                        <AdminAscean ascean={state.generatedAscean} loading={false} />
-                        : ''}
-                        {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontSize: 25 + 'px' }} onClick={() => generateAscean(state.asceanSearched._id)}>Generate Ascean</Button> */}
-                    </Card.Body>
-                </Card>
+            <Card style={{ background: 'black', color: 'white' }}>
+                <Card.Body>
+                    <Card.Title>Test Ascean</Card.Title>
+                    <Card.Text>
+                        Placeholder Test for the Ascean
+                    </Card.Text>
+                    <Form>
+                    <Form.Group>
+                        <Form.Label>Ascean Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Ascean Name" onChange={(e) => fetchAscean(e.target.value)} />
+                    </Form.Group>
+                    </Form>
+                    { state.asceanSearchData.length > 0 ? (
+                        state.asceanSearchData.map((ascean: Ascean, index: number) => {
+                            return (
+                                <AsceanListItem ascean={ascean} state={state} dispatch={dispatch} key={index} fetch={() => generateAscean(ascean._id)} />
+                        )})
+                    ) : ( '' ) }
+                    { state.asceanLoaded ?
+                    <AdminAscean ascean={state.generatedAscean} loading={false} />
+                    : ''}
+                    {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontSize: 25 + 'px' }} onClick={() => generateAscean(state.asceanSearched._id)}>Generate Ascean</Button> */}
+                </Card.Body>
+            </Card>
             </Row>
             <Row className='my-5'>
-                <Card style={{ background: 'black', color: 'white' }}>
-                    <Card.Body>
-                        <Card.Title>Test Equipment</Card.Title>
-                        <Card.Text>Placeholder Test for the Equipment</Card.Text>
-                        {/* <Button variant='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={writeEquipmentFile}>Write Equipment</Button> */}
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>Test Level</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    min="0"
-                                    max="20"
-                                    placeholder="Enter Test Level"
-                                    onChange={(e) => setTestLevel(e)}
-                                />
-                            </Form.Group>
-                        </Form>
-                        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testLevel)}>Get Equipment</Button>
-                            { state.equipmentTable.length > 0 ?
-                            ''
-                            // <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={state.error} setError={state.setError} />
-                            : '' }
-                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={() => deleteEquipment(state.equipmentTable)}>Delete Equipment</Button>
-                        </Card.Body>
-                </Card>
+            <Card style={{ background: 'black', color: 'white' }}>
+                <Card.Body>
+                    <Card.Title>Test Equipment</Card.Title>
+                    <Card.Text>Placeholder Test for the Equipment</Card.Text>
+                    {/* <Button variant='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={writeEquipmentFile}>Write Equipment</Button> */}
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Test Level</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                max="20"
+                                placeholder="Enter Test Level"
+                                onChange={(e) => setTestLevel(e)}
+                            />
+                        </Form.Group>
+                    </Form>
+                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testLevel)}>Get Equipment</Button>
+                    { state.equipmentTable.length > 0 ?
+                        ''
+                        // <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={state.error} setError={state.setError} />
+                    : '' }
+                    <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={() => deleteEquipment(state.equipmentTable)}>Delete Equipment</Button>
+                    </Card.Body>
+            </Card>
             </Row>
         </Container>
     );

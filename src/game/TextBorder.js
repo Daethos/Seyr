@@ -23,4 +23,4 @@ export const addBorderToText = (game, text) => {
     container.add(border);
   
     return container;
-  }
+};

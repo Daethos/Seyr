@@ -35,8 +35,6 @@ interface User {
 function App() {
   const [user, setUser] = useState<User | null>(userService.getUser());
   const [guest, setGuest] = useState(userService.getUser());
-  const [loading, setLoading] = useState<boolean>(false);
-  const [ascean, setAscean] = useState<object[]>([]);
   const [createSuccess, setCreateSuccess] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -56,8 +54,7 @@ function App() {
 
   async function handleAsceanCreate(newAscean: Object) {
     try {
-        const response = await asceanAPI.create(newAscean);
-        setAscean([response.data, ...ascean]);
+        await asceanAPI.create(newAscean);
         setCreateSuccess(true);
         navigate("/");
     } catch (err) {
@@ -67,19 +64,11 @@ function App() {
 
   async function editAscean(vaEsai: Object) {
     try {
-      console.log(vaEsai, '<- Ascean in editAscean start');
-      const response = await asceanAPI.edit(vaEsai);
-      setAscean([response.data, ...ascean]);
+      await asceanAPI.edit(vaEsai);
       setCreateSuccess(true);
     } catch (err: any)  {
       console.log(err.message, '<- You are having an error in editAscean');
     };
-  };
-
-  if (loading) {
-    return (
-        <Loading />
-    );
   };
 
   if (user) {

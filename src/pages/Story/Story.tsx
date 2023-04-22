@@ -6,7 +6,7 @@ import HostScene from '../../game/sceneComponents/HostScene';
 
 interface Props {
     user: any;
-}
+};
 
 const Story = ({ user }: Props) => {
     const { asceanID } = useParams();
@@ -16,7 +16,7 @@ const Story = ({ user }: Props) => {
     const [weaponTwo, setWeaponTwo] = useState<any>({});
     const [weaponThree, setWeaponThree] = useState<any>({});
     const [totalPlayerHealth, setTotalPlayerHealth] = useState<number>(0);
-    const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(-5)
+    const [currentPlayerHealth, setCurrentPlayerHealth] = useState<number>(-5);
     const [attributes, setAttributes] = useState<any>([]);
     const [playerDefense, setPlayerDefense] = useState<any>([]);
     const [levelUp, setLevelUp] = useState<boolean>(false);
@@ -46,29 +46,28 @@ const Story = ({ user }: Props) => {
 
     useEffect(() => {
         getAscean();
-    }, [asceanID, getAscean, levelUp])
+    }, [asceanID, getAscean, levelUp]);
 
     // TODO:FIXME: Use stock models underneath the three frames of armor so they're not invisible, properly
     
     if (loading) {
         return (
             <Loading NavBar={true} />
-        )
-    }
+        );
+    };
         
     return (
         <>
-        { gameChange ? ''
-            :
-            <HostScene 
+        { gameChange ? ( '' )
+        : ( <HostScene 
                 user={user} ascean={ascean} setGameChange={setGameChange} gameChange={gameChange}
                 weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} 
                 totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} 
                 attributes={attributes} playerDefense={playerDefense} levelUp={levelUp} setLevelUp={setLevelUp}
             />
-        }
+        )}
         </>
-    )
-}
+    );
+};
 
-export default Story
+export default Story;

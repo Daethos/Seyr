@@ -399,6 +399,15 @@ io.on("connection", (socket) => {
       };
     });
     
+    socket.on('instantActionPvP', async (instantData) => {
+      const response = await pvpService.instantActionCompiler(instantData);
+      io.to(newUser.room).emit('instantResponsePvP', response);
+    });
+
+    socket.on('consumePrayerPvP', async (prayerData) => {
+      const response = await pvpService.consumePrayer(prayerData);
+      io.to(newUser.room).emit('consumePrayerResponsePvP', response);
+    });
 
     socket.on('combatData_update', async () => {
       let newData = {

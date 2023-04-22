@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 
 interface ProfileProps {
     user: any;
-}
+};
 
 const ProfilePage = ({ user }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
@@ -54,12 +54,8 @@ const ProfilePage = ({ user }: ProfileProps) => {
         } catch (err: any) {
             setFriendRequest(true)
             console.log(err.message, '<- Error handling Friend Request')
-        }
-    }
-
-    // useEffect(() => {
-    //     friends();
-    // }, [username, getProfile])
+        };
+    };
 
     async function friends() {
         setLoading(true);
@@ -70,10 +66,8 @@ const ProfilePage = ({ user }: ProfileProps) => {
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error Fetch Friends in Friend Card')
-        }
-    }
-
-    // useEffect(() => {queryProfile()}, [friends, friendRequest])
+        };
+    };
 
     async function queryProfile() {
         console.log('Querying Profile For Friends / Requests')
@@ -100,8 +94,8 @@ const ProfilePage = ({ user }: ProfileProps) => {
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error querying profile for friends / requests')
-        }
-    }
+        };
+    };
 
     if (loading) {
         return (
@@ -109,73 +103,45 @@ const ProfilePage = ({ user }: ProfileProps) => {
         );
     }
 
-  return (
-    <Container className="my-5">
-        <Row className="justify-content-center">
-        <Col className="stat-block wide">
-        <hr className="orange-border" />
-        
-        <div className="section-left">
-        <div className="creature-heading">
-        <svg height="5" width="100%" className="tapered-rule my-3">
-        <polyline points="0,0 550,2.5 0,5"></polyline>
-        </svg>
-        <img src={profileUser.photoUrl} alt={profileUser.username} id="profile-pic" />
-        </div> 
-        <svg height="5" width="100%" className="tapered-rule my-3">
-        <polyline points="0,0 550,2.5 0,5"></polyline>
-        </svg>
-        </div> 
-        <div className="section-right">
-            <div className="actions">
-                <h3 className='profile-name'>{profileUser.username}
-                </h3>
+    return (
+        <Container className="my-5">
+            <Row className="justify-content-center">
+            <Col className="stat-block wide">
+            <hr className="orange-border" />
+            
+            <div className="section-left">
+            <div className="creature-heading">
+            <svg height="5" width="100%" className="tapered-rule my-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+            <img src={profileUser.photoUrl} alt={profileUser.username} id="profile-pic" />
+            </div> 
+            <svg height="5" width="100%" className="tapered-rule my-3">
+            <polyline points="0,0 550,2.5 0,5"></polyline>
+            </svg>
+            </div> 
+            <div className="section-right">
+                <div className="actions">
+                <h3 className='profile-name'>{profileUser.username}</h3>
                 <div className="property-block">
-                <h4 className="m-4">{profileUser.bio}</h4>
+                    <h4 className="m-4">{profileUser.bio}</h4>
                 </div> 
+                </div>
             </div>
-        </div>
-        {/* {
-            yourFriends > -1
-            ? <h3 
-            className="my-3"
-            style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-            >You are friends with {profileUser.username} !
-            </h3>
-            : yourRequests > -1 
-                ? <h3 
-                    className="my-3"
-                    style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                    >Friend request sent to {profileUser.username} !
-                    </h3>
-                : profileRequests > -1
-                    ? <h3 
-                        className="my-3"
-                        style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                        >{profileUser.username} has sent you a friend request !
-                        </h3>
-                    : <button 
-                        className="btn my-3"
-                        onClick={sendFriendRequest}
-                        style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 20 + 'px' }}
-                        >Send friend request to {profileUser.username} ?
-                        </button>
-        } */}
+            <hr className="orange-border bottom" />
+            </Col>
+            </Row>
+            <SearchCard ascean={ascean} loggedUser={user} key={ascean._id} />
+            {ascean.map((a: any) => {
+                return (
+                    <SolaAscean
+                        ascean={a}
+                        key={a._id}
+                    />
+                )
+            })}
+        </Container>
+    );
+};
 
-        <hr className="orange-border bottom" />
-        </Col>
-        </Row>
-        <SearchCard ascean={ascean} loggedUser={user} key={ascean._id} />
-        {ascean.map((a: any) => {
-            return (
-                <SolaAscean
-                    ascean={a}
-                    key={a._id}
-                />
-            )
-        })}
-    </Container>
-  )
-}
-
-export default ProfilePage
+export default ProfilePage;

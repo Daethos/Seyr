@@ -74,13 +74,11 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
     />
     </InputGroup>
     </Col>
-    {
-        ascean.length > 0
-        ? <>{displayResults()}</>
-        : ''
-    }
+    { ascean.length > 0 ? 
+        <>{displayResults()}</>
+    : '' }
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default SearchCard
+export default SearchCard;

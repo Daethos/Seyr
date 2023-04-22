@@ -4,7 +4,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 interface Props {
     asceanState: any;
     setAsceanState: React.Dispatch<any>;
-}
+};
 
 const Attributes = ({ asceanState, setAsceanState }: Props) => {
     const conMinusButton = document.getElementById('con-minus');
@@ -89,7 +89,6 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
         setPoolTotal(0)
     }, []);
 
-    // Pool Total Use Effect
     useEffect(() => {
         checkPoolTotal();
     }, [poolTotal]);

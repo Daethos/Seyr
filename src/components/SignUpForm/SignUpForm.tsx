@@ -10,12 +10,12 @@ import ToastAlert from "../ToastAlert/ToastAlert";
 
 function isPasswordMatch(passwordOne: string, passwordConf: string) {
   return passwordOne === passwordConf;
-}
+};
 
 interface SignUpProps {
     handleSignUpOrLogin: () => any;
     setUser: React.Dispatch<any>;
-}
+};
 
 export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps) {
   const [show, setShow] = useState<boolean>(false)
@@ -25,7 +25,6 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
     content: '',
     passwordError: false
   });
-  const [signUpError, setSignUpError] = useState<any>({})
 
   const [state, setState] = useState({
     username: "",
@@ -44,20 +43,20 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
       ...state,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
 
   async function handleSubmit(e: { preventDefault: () => void; }) {
     e.preventDefault(); // this stop the browser from submitting the form!
 
     if (!isPasswordMatch(state.password, state.passwordConf)) return setError({title: 'Signup User Error', content: 'The Password and its Confirmation Do Not Match in either Case or Type', passwordError: true});
-    setError({title: '', content: '', passwordError: false})
+    setError({title: '', content: '', passwordError: false});
 
     const formData = new FormData();
     formData.append("photo", selectedFile);
     for (let key in state) {
       formData.append(key, (state as any)[key]);
-    }
+    };
 
     try {
       await userService.signup(formData); 
@@ -66,25 +65,17 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
     } catch (err: any) {
       console.log(err);
       setError({ title: 'Signup User Error', content: err.message, passwordError: false});
-      setSignUpError({
-        title: 'Signup User Error',
-        content: err
-      });
-    }
-  }
+    };
+  };
 
   function handleFileInput(e: any) {
-    console.log(e.target.files, " < - this is e.target.files!");
     setSelectedFile(e.target.files[0]);
-  }
+  };
   const disable = state.password !== state.passwordConf;
-  const handleReveal = () => {
-    setShow(!show)
-  }
-  const handleRevealTwo = () => {
-    setShowTwo(!showTwo)
-  }
-    return (
+  const handleReveal = () => setShow(!show);
+  const handleRevealTwo = () => setShowTwo(!showTwo);
+
+  return (
     <Col className="stat-block wide" id="signup" >
         <Form onSubmit={handleSubmit} className="signup-form">
             <hr className="orange-border" />
@@ -147,16 +138,15 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 </FloatingLabel>
                 </Form.Group>
                 <Button variant='' onClick={handleReveal} style={{ float: 'right', marginTop: -16 + '%', marginRight: -2 + '%', color: 'purple' }}>
-                      {
-                        show ?
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-unlock" viewBox="0 0 16 16">
-                          <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z"/>
-                        </svg>
-                        :
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-lock" viewBox="0 0 16 16">
-                          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
-                        </svg>
-                      }
+                  { show ?
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-unlock" viewBox="0 0 16 16">
+                      <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z"/>
+                    </svg>
+                  :
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-lock" viewBox="0 0 16 16">
+                      <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                    </svg>
+                  }
                     </Button>
                 <div className="property-line last">
                     <h3>Confirmation</h3>
@@ -222,9 +212,8 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
                 </Button>
                 </div> 
             <ToastAlert error={error} setError={setError}  />
-
             <hr className="orange-border bottom" />
         </Form>
     </Col>
-    );
-}
+  );
+};

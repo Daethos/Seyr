@@ -1,23 +1,21 @@
-import React from 'react'
 import Col from 'react-bootstrap/Col';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
-import FeelingsCard from '../FeelingsCard/FeelingsCard'
-import CreateAscean from '../../components/CreateAscean/CreateAscean'
-import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler'
-import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
+import FeelingsCard from '../FeelingsCard/FeelingsCard';
+import CreateAscean from '../../components/CreateAscean/CreateAscean';
+import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler';
+import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
 
 interface Props {
     ascean: any;
-    setAscean: React.Dispatch<any>;
     loggedUser: any;
     handleAsceanCreate: ((newAscean: Object) => Promise<void>);
-}
+};
 
-const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Props) => {
+const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
 
     return (
-        <React.Fragment>
+        <>
         <Col className="stat-block wide">
         <hr className="orange-border" />
         <div className="section-left">
@@ -107,8 +105,8 @@ const FocusAscean = ({ ascean, setAscean, loggedUser, handleAsceanCreate }: Prop
         <CreateAscean ascean={ascean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} />
         <hr className='orange-border bottom' />
         </Col>
-        </React.Fragment>
-    )
-}
+        </>
+    );
+};
 
-export default FocusAscean
+export default FocusAscean;

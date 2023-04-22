@@ -8,8 +8,8 @@ export const storyAscean = async (asceanID: string) => {
         console.log(response, ' Response', stats, ' Stats');
         return (
             { response, stats }
-        )
+        );
     } catch (err: any) {
         console.log(err.message, 'Error Getting Ascean');
-    }
-}
+    };
+};

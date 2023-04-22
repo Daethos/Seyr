@@ -10,10 +10,10 @@ interface Props {
     user: any;
     relayStatus: boolean;
     setRelayStatus: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 const NavBarMessages = ({ user, relayStatus, setRelayStatus }: Props) => {
-    const [friendMessenger, setFriendMessenger] = useState<any>([])
+    const [friendMessenger, setFriendMessenger] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -21,32 +21,26 @@ const NavBarMessages = ({ user, relayStatus, setRelayStatus }: Props) => {
 
     useEffect(() => {
         friends();
-      }, [])
+    }, [relayStatus]);
     
     async function friends() {
         setLoading(true);
         try {
-            const response = await friendAPI.getAllFriends(user._id)
-            setFriendMessenger(response.data.user.friends)
+            const response = await friendAPI.getAllFriends(user._id);
+            setFriendMessenger(response.data.user.friends);
             setRelayStatus(false);
-            setLoading(false)
+            setLoading(false);
         } catch (err: any) {
-            setLoading(false)
-            console.log(err.message, '<- Error Fetch Friends in Friend Card')
-        }
-    }
+            setLoading(false);
+            console.log(err.message, '<- Error Fetch Friends in Friend Card');
+        };
+    };
     
     if (loading) {
         return (
-            <>
-                <Loading NavBar={true} />
-            </>
+            <Loading NavBar={true} />
         );
-    }
-
-    if (relayStatus) {
-        friends();
-    }
+    };
 
     return (
         <>
@@ -77,7 +71,7 @@ const NavBarMessages = ({ user, relayStatus, setRelayStatus }: Props) => {
         </Offcanvas>
         </Nav.Link>
         </>
-    )
-}
+    );
+};
 
-export default NavBarMessages
+export default NavBarMessages;

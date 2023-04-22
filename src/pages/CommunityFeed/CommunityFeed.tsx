@@ -1,11 +1,11 @@
-import './CommunityFeed.css'
-import { useEffect, useState } from 'react'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import './CommunityFeed.css';
+import { useEffect, useState } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Loading from '../../components/Loading/Loading'; 
-import * as communityAPI from '../../utils/communityApi'
-import CommunityAscean from '../../components/CommunityAscean/CommunityAscean'
+import * as communityAPI from '../../utils/communityApi';
+import CommunityAscean from '../../components/CommunityAscean/CommunityAscean';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Table from 'react-bootstrap/Table';

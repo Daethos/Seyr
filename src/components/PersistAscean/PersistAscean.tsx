@@ -23,7 +23,6 @@ interface AsceanProps {
 
 const PersistAscean = ({ lineage }: AsceanProps) => {
     const navigate = useNavigate();
-    const [faithModalShow, setFaithModalShow] = React.useState<boolean>(false);
     const [originModalShow, setOriginModalShow] = React.useState<boolean>(false);
     const [error, setError] = useState<Error>({ title: '', content: '' });
     const [asceanState, setAsceanState] = useState<any>({
@@ -144,7 +143,7 @@ const PersistAscean = ({ lineage }: AsceanProps) => {
             <Origin asceanState={asceanState} setAsceanState={setAsceanState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <Sex asceanState={asceanState} setAsceanState={setAsceanState} />
             <img src={process.env.PUBLIC_URL + '/images/' + asceanState.origin + '-' + asceanState.sex + '.jpg'} id="ascean-pic" /><br />
-            <Faith asceanState={asceanState} setAsceanState={setAsceanState} faithModalShow={faithModalShow} setFaithModalShow={setFaithModalShow} />
+            <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
