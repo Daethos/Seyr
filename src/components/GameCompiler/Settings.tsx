@@ -44,6 +44,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
                 soundEffectVolume: gameState.soundEffectVolume,
                 timeLeft: gameState.timeLeft,
                 moveTimer: gameState.moveTimer,
+                shake: gameState.shake,
                 canvasPosition: gameState.canvasPosition,
                 canvasHeight: gameState.canvasHeight,
                 canvasWidth: gameState.canvasWidth,
@@ -68,24 +69,33 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         gameDispatch({ type: GAME_ACTIONS.SET_MOVE_TIMER, payload: timer });
     };
 
+    function handleShakeDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
+        let duration = parseFloat(e.target.value);
+        console.log(duration, 'New Duration');
+        gameDispatch({ type: GAME_ACTIONS.SET_SHAKE_DURATION, payload: duration });
+    };
+
+    function handleShakeIntensityChange(e: React.ChangeEvent<HTMLInputElement>) {
+        let intensity = parseFloat(e.target.value);
+        console.log(intensity, 'New Intensity');
+        gameDispatch({ type: GAME_ACTIONS.SET_SHAKE_INTENSITY, payload: intensity });
+    }
+
     function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
         let volume = parseFloat(e.target.value);
         console.log(volume, 'New Volume');
-        // setSoundEffectsVolume(volume);
         gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: volume });
     };
 
     function handleJoystickChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
         console.log(speed, 'New Speed');
-        // setJoystickSpeed(speed);
         gameDispatch({ type: GAME_ACTIONS.SET_JOYSTICK_SPEED, payload: speed });
     }
 
     function handleVibrationChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
         console.log(speed, 'New Speed');
-        // setVibrationTime(speed);
         gameDispatch({ type: GAME_ACTIONS.SET_VIBRATION_TIME, payload: speed });
     }
 
@@ -138,6 +148,18 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             <span style={{ float: "right" }}></span>
         </h6>
         <Form.Range value={gameState.joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} /><br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Screen Shake Duration ({gameState.shake.duration})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.shake.duration} onChange={handleShakeDurationChange} min={0} max={1000} step={50} /><br />
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+            <span style={{ float: "left" }}></span>
+            Screen Shake Intensity ({gameState.shake.intensity})
+            <span style={{ float: "right" }}></span>
+        </h6>
+        <Form.Range value={gameState.shake.intensity} onChange={handleShakeIntensityChange} min={0} max={5} step={0.5} /><br />
         <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Sound Volume ({gameState.soundEffectVolume})

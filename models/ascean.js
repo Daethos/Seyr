@@ -83,6 +83,16 @@ const asceanSchema = new Schema(
                 default: 5,
             },
         },
+        health: {
+            current: {
+                type: Number,
+                default: -10,
+            },
+            total: {
+                type: Number,
+                default: 0,
+            }
+        },
         inventory: {
             type: [],
             default: null

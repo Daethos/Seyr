@@ -1069,7 +1069,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
-            shakeScreen();
+            shakeScreen(gameState.shake);
             playReligion();
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
@@ -1097,7 +1097,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             if (response.data.player_win === true) {
                 await handlePlayerWin(response.data);
             };
-            shakeScreen();
+            shakeScreen(gameState.shake);
             playReligion();
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });

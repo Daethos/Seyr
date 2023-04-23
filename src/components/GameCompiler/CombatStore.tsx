@@ -248,9 +248,9 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.attributes.healthTotal,
-                current_player_health: action.payload.attributes.healthTotal,
-                new_player_health: action.payload.attributes.healthTotal,
+                player_health: action.payload.ascean.health.total,
+                current_player_health: action.payload.ascean.health.current,
+                new_player_health: action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weapon_one: action.payload.combat_weapon_one,
                 weapon_two: action.payload.combat_weapon_two,
@@ -588,9 +588,7 @@ export const useInterval = (callback: () => void, delay: number) => {
     }, [delay]);
 };
 
-export function shakeScreen() {
-    const intensity = 1 ; // set the intensity of the shake
-    const duration = 300; // set the duration of the shake
+export function shakeScreen(settings: {duration: number, intensity: number}) {
     const body = document.querySelector('body')!;
     const initialPosition = body.style.transform;
     let startTime: number | null = null;
@@ -598,14 +596,12 @@ export function shakeScreen() {
     function shake(currentTime: number) {
         if (!startTime) startTime = currentTime;
         const elapsedTime = currentTime - startTime;
-        const progress = Math.min(elapsedTime / duration, 1);
-        const randomX = Math.floor(Math.random() * intensity) + 1;
-        const randomY = Math.floor(Math.random() * intensity) + 1;
+        const progress = Math.min(elapsedTime / settings.duration, 1);
+        const randomX = Math.floor(Math.random() * settings.intensity) + 1;
+        const randomY = Math.floor(Math.random() * settings.intensity) + 1;
         const offsetX = randomX * Math.sin(progress * 4 * Math.PI);
         const offsetY = randomY * Math.sin(progress * 4 * Math.PI);
         body.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-        // Could this also be written as the inverse, so like -offsetX and -offsetY?
-        body.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
         if (progress < 1) {
             requestAnimationFrame(shake);
         } else {

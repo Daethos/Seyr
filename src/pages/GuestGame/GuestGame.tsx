@@ -314,7 +314,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const response = await gameAPI.instantAction(state);
             if ('vibrate' in navigator) navigator.vibrate(150);
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
-            shakeScreen();
+            shakeScreen({ duration: 200, intensity: 1 });
             playReligion();
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             if (response.data.computer_win === true) await handleComputerWin(response.data);
@@ -334,7 +334,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const response = await gameAPI.consumePrayer(state);
             if ('vibrate' in navigator) navigator.vibrate(150);
             dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
-            shakeScreen();
+            shakeScreen({ duration: 200, intensity: 1 });
             playReligion();
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             if (response.data.computer_win === true) await handleComputerWin(response.data);

@@ -63,7 +63,7 @@ const GameConditions = ({ state, dispatch, soundEffects, timeLeft, setTimeLeft, 
             setEmergencyText([`Auto Engagement Response`]);
             const response = await gameAPI.initiateAction(combatData);
             if ('vibrate' in navigator) navigator.vibrate(vibrationTime);
-            shakeScreen();
+            shakeScreen(gameState.shake);
             console.log(response.data, 'Response Auto Engaging');
             dispatch({ type: ACTIONS.AUTO_COMBAT, payload: response.data });
             await soundEffects(response.data);

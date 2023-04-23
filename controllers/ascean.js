@@ -337,7 +337,11 @@ async function drinkFirewater(req, res) {
                 "firewater.charges": -1,
             },
         }, { new: true });
-        console.log(ascean.firewater, "Firewater After Saving Drink")
+        console.log(ascean.firewater, ascean.health.current, ascean.health.total, "Drinking Firewater")
+        const healing = ascean.health.total * 0.4;
+        ascean.health.current += healing;
+        ascean.health.current = ascean.health.current > ascean.health.total ? ascean.health.total : ascean.health.current;
+        await ascean.save(); 
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Drinking Firewater!')
@@ -535,6 +539,7 @@ async function saveExperience(req, res) {
         let silver = 0;
         let gold = 0;
         let currencyValue = req.body.opponent;
+        let health = req.body.currentHealth > ascean.health.total ? ascean.health.total : req.body.currentHealth;
         
         if (currencyValue === 1) { // Opponent Level 1, 1-2 Silver
             silver = Math.floor(Math.random() * 2) + 1;
@@ -567,7 +572,6 @@ async function saveExperience(req, res) {
         ascean.currency.silver += silver;
         ascean.currency.gold += gold;
 
-
         console.log(silver, gold, ascean.currency, '<- Currency in the Controller Saving Experience!');
 
         if (ascean.currency.silver > 99) {
@@ -575,7 +579,7 @@ async function saveExperience(req, res) {
             ascean.currency.silver -= 100;
         };
         
-        if (ascean.firewater.charges < 5 && ascean.level >= req.body.opponent) {
+        if (ascean.firewater.charges < 5 && ascean.level <= req.body.opponent) {
             console.log(ascean.level, req.body.opponent, '<- Level and Opponent Level. You should get a charge!');
             ascean.firewater.charges += 1;
         };
@@ -585,6 +589,9 @@ async function saveExperience(req, res) {
         } else {
             ascean.experience += req.body.experience;
         };
+
+        ascean.health.current = health;
+
         await ascean.save();
         res.status(200).json({ data: {ascean, silver, gold} });
     } catch (err) {
@@ -986,7 +993,16 @@ async function getAsceanStats(req, res) {
         populated.forEach((item, index) => {
             ascean[fields[index]] = item;
         });
-        const data = await asceanService.asceanCompiler(ascean);
+        let data = await asceanService.asceanCompiler(ascean);
+        if (data.data.attributes.healthTotal > ascean.health.total) {
+            ascean.health.total = data.data.attributes.healthTotal;
+            data.data.ascean.health.total = data.data.attributes.healthTotal;
+            if (typeof ascean.currency.gold !== 'number') {
+                const currency = { gold: 0, silver: 0 };
+                ascean.currency = currency;
+            };
+            await ascean.save();
+        };
         res.status(200).json({ data });
     } catch (err) {
         console.log(err, `Error retrieving statistics for ascean`);

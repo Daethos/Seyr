@@ -366,9 +366,9 @@ export const PvPStore = (state: PvPData, action: Action) => {
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.attributes.healthTotal,
-                current_player_health: action.payload.attributes.healthTotal,
-                new_player_health: action.payload.attributes.healthTotal,
+                player_health: action.payload.ascean.health.total,
+                current_player_health: action.payload.ascean.health.current,
+                new_player_health: action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weapon_one: action.payload.combat_weapon_one,
                 weapon_two: action.payload.combat_weapon_two,

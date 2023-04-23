@@ -50,6 +50,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const navigate = useNavigate();
     const [asceanState, setAsceanState] = useState({
         ascean: ascean,
+        currentHealth: 0,
         constitution: 0,
         strength: 0,
         agility: 0,
@@ -375,7 +376,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const duelData = async (data: any) => {
         if (data.duelDataID === gameState?.player._id) return; // This is you, you don't need to set yourself
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
-        shakeScreen();
+        shakeScreen(gameState.shake);
         dispatch({ type: ACTIONS.SET_DUEL_DATA, payload: data });
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: data.player });
         setAsceanState({
@@ -779,6 +780,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
+                    'currentHealth': combatData.new_player_health,
                     'experience': asceanState.experienceNeeded,
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
@@ -787,6 +789,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
+                    'currentHealth': combatData.new_player_health,
                     'experience': Math.round(asceanState.experience + opponentExp),
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
@@ -966,7 +969,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
     async function handlePvPInitiate(pvpState: PvPData) {
         try {
-            shakeScreen();
+            shakeScreen(gameState.shake);
             setEmergencyText(['']);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             const data = {
@@ -983,7 +986,7 @@ const GamePvPLobby = ({ user }: Props) => {
     async function handlePvPInstant(e: { preventDefault: () => void; }) {
         e.preventDefault();
         try {
-            shakeScreen();
+            shakeScreen(gameState.shake);
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
@@ -1002,7 +1005,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose A Prayer to Sacrifice!\n`]);
                 return;
             };
-            shakeScreen();
+            shakeScreen(gameState.shake);
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             await socket.emit('consumePrayerPvP', state);
@@ -1015,7 +1018,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
     async function handleInitiate(pvpState: PvPData) {
         try {
-            shakeScreen();
+            shakeScreen(gameState.shake);
             setEmergencyText(['']);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             if (pvpState.enemyPosition === -1) {
@@ -1032,7 +1035,7 @@ const GamePvPLobby = ({ user }: Props) => {
     async function handleInstant(e: { preventDefault: () => void; }) {
         e.preventDefault();
         try {
-            shakeScreen();
+            shakeScreen(gameState.shake);
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
@@ -1051,7 +1054,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 setEmergencyText([`${user.username.charAt(0).toUpperCase() + user.username.slice(1)}, You Forgot To Choose A Prayer to Sacrifice!\n`]);
                 return;
             };
-            shakeScreen();
+            shakeScreen(gameState.shake);
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             await socket.emit('consume_prayer', state);
@@ -1068,7 +1071,7 @@ const GamePvPLobby = ({ user }: Props) => {
             return;
         };
         try {
-            shakeScreen();
+            shakeScreen(gameState.shake);
             setTimeLeft(gameState.timeLeft);
             setEmergencyText([`Auto Engagement Response`]);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -1288,6 +1291,7 @@ const GamePvPLobby = ({ user }: Props) => {
         setAsceanState({
             ...asceanState,
             ascean: response[0],
+            currentHealth: response[0].health.current === -10 ? response[0].health.total : response[0].health.current,
             level: response[0].level,
             opponent: 0,
             opponentExp: 0,

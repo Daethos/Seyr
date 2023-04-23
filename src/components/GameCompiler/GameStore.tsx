@@ -361,14 +361,14 @@ export const getAsceanTraits = async (ascean: Player) => {
         const attributeValue = ascean[traitName as keyof typeof ascean];
       
         return [traitName, traitValue, attributeValue];
-      });
-
+    });
+    const topThreeSorted = mappedTraits.sort((a, b) => b[2] - a[2]);
     
     // .slice(0, 3);
-    console.log(mappedTraits, "Top Three Traits")
-    traits.primary.name = mappedTraits[0][1];
-    traits.secondary.name = mappedTraits[1][1];
-    traits.tertiary.name = mappedTraits[2][1];
+    console.log(topThreeSorted, "Top Three Traits")
+    traits.primary.name = topThreeSorted[0][1];
+    traits.secondary.name = topThreeSorted[1][1];
+    traits.tertiary.name = topThreeSorted[2][1];
 
     const TRAIT_DESCRIPTIONS = {
         "Ilian": {
@@ -666,6 +666,7 @@ export interface GameData {
     mapMode: string;
     timeLeft: number;
     moveTimer: number;
+    shake: { duration: number; intensity: number; };
     vibrationTime: number;
     canvasPosition: { x: number, y: number };
     canvasWidth: number;
@@ -756,6 +757,8 @@ export const GAME_ACTIONS = {
     SET_MAP_MODE: 'SET_MAP_MODE',
     SET_TIME_LEFT: 'SET_TIME_LEFT',
     SET_MOVE_TIMER: 'SET_MOVE_TIMER',
+    SET_SHAKE_DURATION: 'SET_SHAKE_DURATION',
+    SET_SHAKE_INTENSITY: 'SET_SHAKE_INTENSITY',
     SET_VIBRATION_TIME: 'SET_VIBRATION_TIME',
     SET_CANVAS_POSITION: 'SET_CANVAS_POSITION',
     SET_CANVAS_WIDTH: 'SET_CANVAS_WIDTH',
@@ -825,6 +828,7 @@ export const initialGameData: GameData = {
     mapMode: 'FULL_MAP',
     timeLeft: 12,
     moveTimer: 6,
+    shake: { duration: 200, intensity: 1 },
     vibrationTime: 150,
     canvasPosition: { x: 0.75, y: 1.5 },
     canvasWidth: 300,
@@ -1197,6 +1201,7 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 soundEffectVolume: action.payload.soundEffectVolume,
                 timeLeft: action.payload.timeLeft,
                 moveTimer: action.payload.moveTimer,
+                shake: action.payload.shake,
                 canvasPosition: action.payload.canvasPosition,
                 canvasHeight: action.payload.canvasHeight,
                 canvasWidth: action.payload.canvasWidth,
@@ -1216,6 +1221,22 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 moveTimer: action.payload,
+            };
+        case 'SET_SHAKE_DURATION':
+            return {
+                ...game,
+                shake: {
+                    ...game.shake,
+                    duration: action.payload,
+                }
+            };
+        case 'SET_SHAKE_INTENSITY':
+            return {
+                ...game,
+                shake: {
+                    ...game.shake,
+                    intensity: action.payload,
+                }
             };
         case 'SET_CANVAS_POSITION':
             return {

@@ -24,6 +24,7 @@ const gamesettingSchema = new Schema(
         canvasWidth: { type: Number, default: 400 },
         joystickSpeed: { type: Number, default: 150 },
         moveTimer: { type: Number, default: 10 },
+        shake: { duration: { type: Number, default: 200 }, intensity: { type: Number, default: 1 } },
         soundEffectVolume: { type: Number, default: 0.3 },
         timeLeft: { type: Number, default: 10 },
         vibrationTime: { type: Number, default: 100 },
