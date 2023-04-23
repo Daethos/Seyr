@@ -918,6 +918,7 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     ...game.player,
                     experience: action.payload.experience,
                     firewater: action.payload.firewater,
+                    currency: action.payload.currency,
                 },
             };
         case 'SET_FIREWATER':

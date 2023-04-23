@@ -137,20 +137,20 @@ const initialGameAdaminData: GameAdminData = {
 
 const GameAdminStore = (state: GameAdminData, action: Action) => {
     switch (action.type) {
-        case ACTIONS.SET_LOADING: {
+        case 'set-loading': {
             return { 
                 ...state, 
                 loading: action.payload 
             };
         };
-        case ACTIONS.SET_TEST_LEVEL: {
+        case 'set-test-level': {
             return { 
                 ...state,
                 loading: false, 
                 testLevel: action.payload 
             };
         };
-        case ACTIONS.SET_EQUIPMENT_TABLE: {
+        case 'set-equipment-table': {
             return { 
                 ...state,
                 loading: false, 
@@ -158,14 +158,14 @@ const GameAdminStore = (state: GameAdminData, action: Action) => {
             };
 
         };
-        case ACTIONS.SET_ASCEAN: {
+        case 'set-ascean': {
             return { 
                 ...state,
                 loading: false, 
                 asceanSearched: action.payload 
             };
         };
-        case ACTIONS.SET_ASCEAN_DATA: {
+        case 'set-ascean-data': {
             console.log(action.payload, 'Payload in SET_ASCEAN_DATA');
             return {
                 ...state,
@@ -173,13 +173,13 @@ const GameAdminStore = (state: GameAdminData, action: Action) => {
                 asceanSearchData: action.payload,
             };
         };
-        case ACTIONS.SET_SEARCH_QUERY: {
+        case 'set-search-query': {
             return {
                 ...state,
                 searchQuery: action.payload
             };
         };
-        case ACTIONS.GENERATE_ASCEAN: {
+        case 'generate-ascean': {
             console.log(action.payload, 'Payload in GENERATE_ASCEAN');
             return {
                 ...state,
@@ -188,14 +188,14 @@ const GameAdminStore = (state: GameAdminData, action: Action) => {
                 generatedAscean: action.payload
             };
         };
-        case ACTIONS.SET_ERROR: {
+        case 'set-error': {
             return {
                 ...state,
                 loading: false,
                 error: { title: action.payload.title, content: action.payload.content }
             };
         };
-        case ACTIONS.DELETE_EQUIPMENT_TABLE: {
+        case 'delete-equipment-table': {
             return {
                 ...state,
                 loading: false,
@@ -210,7 +210,7 @@ const GameAdminStore = (state: GameAdminData, action: Action) => {
 
 interface GameAdminProps {
     user: { username: string, _id: string };
-}
+};
 
 const GameAdmin = ({ user }: GameAdminProps) => {
     const [state, dispatch] = useReducer(GameAdminStore, initialGameAdaminData);
@@ -262,9 +262,8 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         dispatch({ type: ACTIONS.SET_TEST_LEVEL, payload: e.target.value });
     };
 
-    const searchAsceanName = async (name: string) => {
-        dispatch({ type: ACTIONS.SET_SEARCH_QUERY, payload: name });
-    };
+    const searchAsceanName = async (name: string) => dispatch({ type: ACTIONS.SET_SEARCH_QUERY, payload: name });
+
     
     const fetchAscean = async (id: string) => {
         if (id === '') {

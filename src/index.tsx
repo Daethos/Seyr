@@ -9,7 +9,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <Router>
-      <App />
-    </Router>
+    <App />
+  </Router>
 );
 serviceWorker.unregister();

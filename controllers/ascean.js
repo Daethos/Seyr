@@ -365,7 +365,7 @@ async function restoreFirewater(req, res) {
         let ascean = await Ascean.findByIdAndUpdate(req.params.id, {
             "firewater.charges": 5,
         }, { new: true });
-        console.log(ascean.firewater, "Firewater After Saving Restore")
+        console.log(ascean.firewater, "Firewater After Saving Restore");
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Drinking Firewater!')
@@ -525,8 +525,8 @@ async function updateLevel(req, res) {
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Updating the Level!')
         res.status(400).json({ err });
-    }
-}
+    };
+};
 
 async function saveExperience(req, res) {
     try {
@@ -808,12 +808,10 @@ async function quickIndex(req, res) {
 
 async function getOneAscean(req, res) {
     try {
-        console.log("Getting Ascean")
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .populate('quests')
                                  .exec();
-        console.log(ascean.name, "Ascean Name")
         let fields = [
             'weapon_one',
             'weapon_two',
@@ -834,7 +832,6 @@ async function getOneAscean(req, res) {
         populated.forEach((item, index) => {
             ascean[fields[index]] = item;
         });
-        console.log("Ascean Populated")
 
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = await determineItemType(item);
@@ -845,11 +842,6 @@ async function getOneAscean(req, res) {
         });
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
-        console.log("Inventory Populated");
-
-
-
-
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
@@ -1026,41 +1018,37 @@ async function getModelTypes(ids) {
     };
   
     const itemTypeMap = {};
-    // const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
     for (const itemType of itemTypes) {
       itemTypeMap[itemType] = [];
     }
   
-    // Group the item IDs by their corresponding model type
     for (const id of ids) {
       const itemType = id.itemType;
       itemTypeMap[itemType].push(id);
-    }
+    };
   
-    // Batch the database queries and retrieve all the items for each model type in a single query
     const promises = [];
     for (const itemType of itemTypes) {
       const itemIds = itemTypeMap[itemType];
       if (itemIds.length > 0) {
         const model = models[itemType];
         promises.push(model.find({ _id: { $in: itemIds } }).exec());
-      }
-    }
+      };
+    };
   
     const results = await Promise.all(promises);
   
-    // Map the results back to the item IDs and return the itemType
     const idToItemTypeMap = {};
     for (const itemType of itemTypes) {
       const model = models[itemType];
       for (const item of results[itemType]) {
         idToItemTypeMap[item._id.toString()] = itemType;
-      }
-    }
+      };
+    };
   
     const itemTypes = ids.map(id => idToItemTypeMap[id._id.toString()]);
     return itemTypes;
-  }
+  };
   
 
 async function getModelType(id) {
