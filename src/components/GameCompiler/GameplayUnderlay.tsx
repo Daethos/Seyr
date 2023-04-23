@@ -254,12 +254,13 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
 
   return (
     <Overlay target={underlayRef} show={loadingUnderlay}>
-      <div className='d-flex align-items-center justify-content-center'
+      <div className='game-underlay'
       style={{
+        display: 'flex',
+        alignItems: 'center',
+        // justifyContent: 'center',
         position: 'fixed',
         top: '17.5%',
-        width: '100%',
-        height: '100%%',
         backgroundColor: 'rgba(0, 0, 0, 1)',
         zIndex: 9999,
         border: "0.2em solid purple",
@@ -300,7 +301,7 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
               newSequence={newSequence}
               setNewSequence={setNewSequence}
               bankedSequence={bankedSequence}
-              />
+            />
 
             <Col xs={ 3 } sm={ 3 } md={ 3 } lg={ 3 } xl={ 3 } xxl={ 3 } style={{ color: "gold", marginLeft: "10%" }} className="my-4">
               <br />
@@ -342,7 +343,7 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
             <h6 className='overlay-content' style={ gameState?.underlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
               {gameState?.underlayContent}
             </h6>
-            <Button variant='' style={{ float: 'right', color: 'red', fontSize: "24px", marginTop: "40vh", marginLeft: "90vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
+            <Button variant='' className='exit-button' style={{ float: 'right', color: 'red', marginTop: "40vh", zIndex: 9999 }} onClick={closeEverything}>X</Button>
           </>
         ) }          
         </div>

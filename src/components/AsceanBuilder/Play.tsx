@@ -33,10 +33,11 @@ const Play = ({ ascean }: Props) => {
         <Modal.Header style={{ fontSize: "28px", color: "gold" }}>
            {ascean.name}
            <span style={{ float: "right" }}>
-            <img 
+            <img
+            className='dialog-picture' 
             src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
             alt={ascean.origin + ascean.sex} 
-            style={{ width: '15vw', borderRadius: 50 + '%', border: '2px solid gold', boxShadow: '0 0 10px gold' }}
+            style={{ borderRadius: 50 + '%', border: '2px solid gold', boxShadow: '0 0 10px gold' }}
             /> 
             </span>
         </Modal.Header>

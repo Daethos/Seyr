@@ -358,7 +358,7 @@ export const getAsceanTraits = async (ascean: Player) => {
     const mappedTraits = topThree.map(trait => {
         const traitName = trait[0];
         const traitValue = trait[1];
-        const attributeValue = asceanTraits[traitName as keyof typeof asceanTraits];
+        const attributeValue = ascean[traitName as keyof typeof ascean];
       
         return [traitName, traitValue, attributeValue];
       });

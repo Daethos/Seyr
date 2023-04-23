@@ -541,8 +541,9 @@ html, body {
   margin-left: -5%;
   margin-top: -1%;
   z-index: 50;
-  clip-path: circle(50% at 30% 30%);
+
 }
+.settings-style { color: goldenrod; }
 #story-health {
   background-color: red;
   font-size: 10px;
