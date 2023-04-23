@@ -1708,12 +1708,12 @@ const GameSolo = ({ user }: GameProps) => {
                     : '' }
                 </>
             }
-            { mapState?.currentTile ?
+            {/* { mapState?.currentTile ?
                 <>
                 <Coordinates mapState={mapState} />
                 <Content mapState={mapState} />
                 </>
-            : '' }
+            : '' } */}
             <GameplayOverlay 
                 ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}
