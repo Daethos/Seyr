@@ -59,8 +59,16 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
                 {item?.caeren > 0 ? 'CAER: +' + item?.caeren + ' ' : ''}
                 {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ''}<br />
                 Damage: {item?.physical_damage} Phys | {item?.magical_damage} Magi <br />
-                Defense: {trinket?.physical_resistance} Phys | {trinket?.magical_resistance} Magi <br />
-                Penetration: {item?.physical_penetration} Phys | {item?.magical_penetration} Magi <br />
+                { item?.physical_resistance || item?.magical_resistance ?
+                    <>
+                    Defense: {item?.physical_resistance} Phys | {item?.magical_resistance} Magi <br />
+                    </>
+                : '' }
+                { item?.physical_penetration || item?.magical_penetration ?
+                    <>
+                    Penetration: {item?.physical_penetration} Phys | {item?.magical_penetration} Magi <br />
+                    </>
+                : '' }
                 Crit Chance: {item?.critical_chance}% <br />
                 Crit Damage: {item?.critical_damage}x <br />
                 Dodge Timer: {item?.dodge}s <br />

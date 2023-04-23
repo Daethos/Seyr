@@ -510,24 +510,24 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                         </tr>
                         <tr>
                             <td style={{ color: 'goldenrod' }}>
-                            {
-                                inventory?.grip && inventory?.type ?
+                            { inventory?.grip && inventory?.type ?
                                 <>
-                            {inventory?.type} [{inventory?.grip}] <br />
-                            {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : '' }]  <br />
+                                {inventory?.type} [{inventory?.grip}] <br />
+                                {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : '' }]  <br />
                                 </>
-                                : inventory?.type ? <>{inventory?.type} <br /></> : ''
-                            }  
+                            : inventory?.type ? 
+                                <>{inventory?.type} <br /></> 
+                            : '' }  
                             </td>
                             <td style={{ color: 'goldenrod' }}>
-                            {
-                                ascean[inventoryType as keyof typeof ascean]?.grip && ascean[inventoryType as keyof typeof ascean]?.type ?
+                            { ascean[inventoryType as keyof typeof ascean]?.grip && ascean[inventoryType as keyof typeof ascean]?.type ?
                                 <>
-                            {ascean[inventoryType as keyof typeof ascean]?.type} [{ascean[inventoryType as keyof typeof ascean]?.grip}] <br />
-                            {ascean[inventoryType as keyof typeof ascean]?.attack_type} [{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[0]}{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[1] ? ' / ' + ascean[inventoryType as keyof typeof ascean]?.damage_type[1] : '' }{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[2] ? ' / ' + ascean[inventoryType as keyof typeof ascean]?.damage_type[2] : '' }]  <br />
+                                {ascean[inventoryType as keyof typeof ascean]?.type} [{ascean[inventoryType as keyof typeof ascean]?.grip}] <br />
+                                {ascean[inventoryType as keyof typeof ascean]?.attack_type} [{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[0]}{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[1] ? ' / ' + ascean[inventoryType as keyof typeof ascean]?.damage_type[1] : '' }{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[2] ? ' / ' + ascean[inventoryType as keyof typeof ascean]?.damage_type[2] : '' }]  <br />
                                 </>
-                                : ascean[inventoryType as keyof typeof ascean]?.type ? <>{ascean[inventoryType as keyof typeof ascean]?.type} <br /></> : ''
-                            }
+                            : ascean[inventoryType as keyof typeof ascean]?.type ? 
+                                <>{ascean[inventoryType as keyof typeof ascean]?.type} <br /></> 
+                            : '' }
                             </td>
                         </tr>
                         <tr style={{ color: '#fdf6d8' }}>
@@ -679,11 +679,10 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                     <option value={ascean[inventoryType as keyof typeof editState]?._id}>{ascean[inventoryType as keyof typeof editState]?.name} [Equipped]</option>
                     <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
             </Form.Select>
-            {
-                inventory?.grip && inventory?.type ?
+            { inventory?.grip && inventory?.type ?
                 <><br />
                 <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
-                <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
+                    <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
                     <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
                     <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                 </Form.Select><br />
@@ -693,10 +692,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                     <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                 </Form.Select>
                 </>
-                : ''
-            }
-            {
-                inventoryType === 'ring_one' ?
+            : '' }
+            { inventoryType === 'ring_one' ?
                 <>
                 <br />
                  <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2}>
@@ -705,8 +702,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                     <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                 </Form.Select>
                 </>
-                : ''
-            }
+            : '' }
             <br />
             </>
         : 
