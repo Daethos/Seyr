@@ -8,8 +8,6 @@ module.exports = {
 }
 
 async function create(req, res) {
-    // console.log(req.params.sendID, 'Sender in Create Controller');
-    // console.log(req.params.recID, 'Receiver in Create Controller');
     console.log(req.body, '<- Message being created?')
     try {
         const sender = await User.findById(req.params.sendID);
@@ -23,8 +21,8 @@ async function create(req, res) {
         res.status(201).json({ data: receiver })
     } catch (err) {
         res.status(400).json({ error: err })
-    }
-}
+    };
+};
 
 async function deleteMessage(req, res){
     console.log(req.params._id, 'ID in Delete Message Controller');
@@ -36,8 +34,8 @@ async function deleteMessage(req, res){
         
     } catch(err){
         res.status(400).json({error: err})
-    }
-}
+    };
+};
 
 async function getMessages(req, res) {
     console.log(req.params.id, 'ID in Message Controller');
@@ -47,20 +45,14 @@ async function getMessages(req, res) {
         res.status(200).json({ data: user })
     } catch (err) {
         res.status(400).json({ err });
-    }
-}
+    };
+};
 
 async function getPersonal(req, res) {
     
     try {
-        const user = await User.findById(req.params.userID)
-                                // .populate('messages.userId')    
-
-        const friend = await User.findById(req.params.friendID)
-                                    // .populate('messages')
-
-        // console.log(user, 'User in Personal Controller');
-        // console.log(friend, 'Friend in Personal Controller');
+        const user = await User.findById(req.params.userID);
+        const friend = await User.findById(req.params.friendID);
 
         res.status(200).json(
             { data: {
@@ -68,7 +60,7 @@ async function getPersonal(req, res) {
                 friend
                 }
             }
-        )
+        );
 
     } catch (err) {
         res.status(400).json({ err });

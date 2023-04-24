@@ -14,7 +14,7 @@ interface Tile {
     content: string;
     color: string;
     visited: boolean;
-}
+};
 
 interface MapProps {
     gameState: any;
@@ -24,8 +24,8 @@ interface MapProps {
 };
 
 const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
-    // const [mapVisible, setMapVisible] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [mapModalShow, setMapModalShow] = useState(false);
     const [draggableElements, setDraggingElements] = useState([
         { id: "dz-1" },
         { id: "dz-2" },
@@ -73,8 +73,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
         { id: "dz-44" },
         { id: "dz-45" },
     ]);
-    const [canvasIndex, setCanvasIndex] = useState(draggableElements.length); // assuming canvas is the last element in the array
-
+    const [canvasIndex, setCanvasIndex] = useState(draggableElements.length); 
     useEffect(() => {
         handleMapMode(gameState.mapMode);
     }, [mapData, gameState.showMap, gameState.mapMode]);
@@ -97,7 +96,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             setLoading(false);
         } catch (err: any) {
             console.log(err, "Error Saving Map Settings")
-        }
+        };
     };
     
     function handleMapMode(mode: string) {
@@ -293,12 +292,10 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
       
     function drawSurroundingTiles(mapData: MapData, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, surroundingTiles: {[key: string]: Tile}, playerPosition: {x: number, y: number}): void {
         const tileSize = 2; 
-      
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
-      
         for (const coords in surroundingTiles) {
             const [x, y] = coords.split(',').map(Number);
             const tile = surroundingTiles[coords];
@@ -331,18 +328,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             ctx.fillStyle = color;
             ctx.fillRect(offsetX, offsetY, tileSize, tileSize); 
         };
-
-        // draw the player tile on top of the rest of the tiles
-        
-            // const color = 'gold';
-            // const offsetX = canvasWidth / 2 + (playerPosition.x - playerPosition.x) * tileSize;
-            // const offsetY = canvasHeight / 2 - (playerPosition.y - playerPosition.y) * tileSize;
-            // ctx.fillStyle = color;
-            // ctx.strokeStyle = 'black';
-            // ctx.lineWidth = 0.5;
-            // ctx.strokeRect(offsetX, offsetY, tileSize, tileSize);
-            // ctx.fillRect(offsetX, offsetY, tileSize, tileSize);
-        };
+    };
       
     function renderSurroundingTiles() {
         const canvasWidth = 100;
@@ -392,15 +378,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
         };
         return surroundingTiles;
     };
-    const [mapModalShow, setMapModalShow] = useState(false);
-    const settingsStyle = {
-        color: 'orangered',
-        fontWeight: 400,
-        fontVariant: 'small-caps',
-        fontSize: 18 + 'px',
-        height: 30 + 'vh',
-        overflow: 'auto',
-    };
+
 
     function handleCanvasHeight(e: React.ChangeEvent<HTMLInputElement>) {
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_HEIGHT, payload: Number(e.target.value) });
@@ -415,32 +393,27 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: { x: gameState.canvasPosition.x, y: Number(e.target.value) }})
     };
 
-
     const onDragEnd = (result: DropResult) => {
         const { source, destination } = result;
-        console.log(source, destination, "Drag End")
         if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return;
-      
         const canvas = canvasRef.current;
         if (!canvas) return;
-      
         const rowLength = 4;
         const newIndex = destination.index;
         const dX = newIndex % rowLength;
         const dY = Math.floor(newIndex / rowLength);
-
-        console.log(newIndex, dX, dY, "Drag End")
-
         const canvasPosition = { x: dX, y: dY };
-        // setCanvasPosition(canvasPosition);
         gameDispatch({ type: GAME_ACTIONS.SET_CANVAS_POSITION, payload: canvasPosition });
     };
-        
-    const setMapVisibility = () => {
-        // setMapVisible(!mapVisible);
-        gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: !gameState.showMap });
+    const setMapVisibility = () => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: !gameState.showMap });
+    const settingsStyle = {
+        color: 'orangered',
+        fontWeight: 400,
+        fontVariant: 'small-caps',
+        fontSize: 18 + 'px',
+        height: 30 + 'vh',
+        overflow: 'auto',
     };
-
     return (
         <>
         <Modal show={mapModalShow} onHide={() => setMapModalShow(false)} centered style={{ top: "25%" }}>
@@ -487,20 +460,20 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
             </svg>
         </Button>
         { gameState.showMap ? (
-                <Button variant='' onClick={() => setMapModalShow(true)} className='map-button' style={{ 
-                    color: "goldenrod", 
-                    gridColumnStart: 1, 
-                    gridRowStart: 1,
-                    position: "absolute", 
-                    marginTop: "4.5%",
-                    marginLeft: "3%",
-                    zIndex: 99,
-                    clipPath: "rect(30% at 30% 30%)", 
-                    }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 511.998 511.998">
-                    <path d="M460.596,107.979H51.404C23.06,107.979,0,131.039,0,159.383v43.889c0,28.344,23.06,51.404,51.404,51.404h137.989v140.535    c0,3.327,1.874,6.369,4.845,7.866c2.97,1.496,6.531,1.192,9.204-0.788l25.593-18.958l25.593,18.958    c1.547,1.145,3.389,1.73,5.243,1.73c1.352,0,2.709-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866v-33.752l16.787,12.438    c1.547,1.146,3.39,1.731,5.245,1.731c1.35,0,2.708-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866V254.678h161.078    c28.344,0,51.404-23.06,51.404-51.404v-43.889C512,131.039,488.94,107.979,460.596,107.979z M68.855,232.196    c-7.369-4.451-12.927-11.613-15.224-20.117h30.391C81.727,220.568,76.207,227.743,68.855,232.196z M85.194,194.464H43.66    c-4.864,0-8.807,3.943-8.807,8.807c0,12.808,4.72,24.528,12.497,33.538c-16.726-2.01-29.735-16.279-29.735-33.538v-43.889    c0-18.632,15.158-33.79,33.79-33.79c18.632,0,33.79,15.158,33.79,33.79V194.464z M223.793,365.292l-16.786,12.434V254.677h44.057    v123.049l-16.786-12.434C231.164,362.986,226.909,362.986,223.793,365.292z M266.842,203.272c0,18.632-15.158,33.79-33.79,33.79    H90.093c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79h142.96    c18.632,0,33.79,15.158,33.79,33.79V203.272z M281.902,349.332l-13.223-9.797v-84.858h13.223V349.332z M328.514,203.272    c0,18.632-15.158,33.79-33.79,33.79h-22.982c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79    h22.981c18.633,0,33.791,15.158,33.791,33.79V203.272z M460.596,237.061H333.413c7.908-9.042,12.715-20.862,12.715-33.79v-43.889    c0-12.928-4.808-24.746-12.715-33.79h127.182c18.632,0,33.79,15.158,33.79,33.79v43.889h0.001    C494.385,221.903,479.227,237.061,460.596,237.061z"></path>
-                    </svg>
-                </Button> 
+            <Button variant='' onClick={() => setMapModalShow(true)} className='map-button' style={{ 
+                color: "goldenrod", 
+                gridColumnStart: 1, 
+                gridRowStart: 1,
+                position: "absolute", 
+                marginTop: "4.5%",
+                marginLeft: "3%",
+                zIndex: 99,
+                clipPath: "rect(30% at 30% 30%)", 
+                }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 511.998 511.998">
+                <path d="M460.596,107.979H51.404C23.06,107.979,0,131.039,0,159.383v43.889c0,28.344,23.06,51.404,51.404,51.404h137.989v140.535    c0,3.327,1.874,6.369,4.845,7.866c2.97,1.496,6.531,1.192,9.204-0.788l25.593-18.958l25.593,18.958    c1.547,1.145,3.389,1.73,5.243,1.73c1.352,0,2.709-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866v-33.752l16.787,12.438    c1.547,1.146,3.39,1.731,5.245,1.731c1.35,0,2.708-0.311,3.961-0.942c2.971-1.496,4.845-4.539,4.845-7.866V254.678h161.078    c28.344,0,51.404-23.06,51.404-51.404v-43.889C512,131.039,488.94,107.979,460.596,107.979z M68.855,232.196    c-7.369-4.451-12.927-11.613-15.224-20.117h30.391C81.727,220.568,76.207,227.743,68.855,232.196z M85.194,194.464H43.66    c-4.864,0-8.807,3.943-8.807,8.807c0,12.808,4.72,24.528,12.497,33.538c-16.726-2.01-29.735-16.279-29.735-33.538v-43.889    c0-18.632,15.158-33.79,33.79-33.79c18.632,0,33.79,15.158,33.79,33.79V194.464z M223.793,365.292l-16.786,12.434V254.677h44.057    v123.049l-16.786-12.434C231.164,362.986,226.909,362.986,223.793,365.292z M266.842,203.272c0,18.632-15.158,33.79-33.79,33.79    H90.093c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79h142.96    c18.632,0,33.79,15.158,33.79,33.79V203.272z M281.902,349.332l-13.223-9.797v-84.858h13.223V349.332z M328.514,203.272    c0,18.632-15.158,33.79-33.79,33.79h-22.982c7.908-9.042,12.715-20.862,12.715-33.79v-43.889c0-12.928-4.808-24.746-12.715-33.79    h22.981c18.633,0,33.791,15.158,33.791,33.79V203.272z M460.596,237.061H333.413c7.908-9.042,12.715-20.862,12.715-33.79v-43.889    c0-12.928-4.808-24.746-12.715-33.79h127.182c18.632,0,33.79,15.158,33.79,33.79v43.889h0.001    C494.385,221.903,479.227,237.061,460.596,237.061z"></path>
+                </svg>
+            </Button> 
         ) : ( '' ) }
         { gameState.showMap ? (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -508,9 +481,7 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
         <Droppable droppableId={`droppable-${index + 1}`} key={index}>
             {(provided, snapshot) => (
             <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                
+                ref={provided.innerRef} {...provided.droppableProps}
                 style={{
                     backgroundColor: snapshot.isDraggingOver ? 'lightgreen' : '',
                     border: snapshot.isDraggingOver ? '3px solid gold' : '',
@@ -519,25 +490,16 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                     gridAutoRows: `${100}px`,
                     width: "100%",
                     margin: "0 auto",
-            }}
-            >
-                <Draggable
-                draggableId={draggableElement.id}
-                index={index}
-                isDragDisabled
-                >
+                }}>
+                <Draggable draggableId={draggableElement.id} index={index} isDragDisabled>
                 {(provided) => (
-                    <div
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                <div {...provided.draggableProps} {...provided.dragHandleProps}
                     ref={provided.innerRef}
                     style={{
                         ...provided.draggableProps.style,
                         width: `${gameState.canvasWidth}px`,
                         height: `${gameState.canvasHeight}px`,
-                    }}
-                    >
-                        
+                    }}>
                     </div>
                 )}
                 </Draggable>
@@ -569,15 +531,11 @@ const GameMap = ({ mapData, canvasRef, gameState, gameDispatch }: MapProps) => {
                 }}
             /> )}
             </Draggable>
-
         {provided.placeholder}
         </div> )}
-        
         </Droppable>
         </DragDropContext>
-
-            ) : ( '' )
-        }
+        ) : ( '' ) }
         </>
     );
 };

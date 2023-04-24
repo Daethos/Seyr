@@ -64,11 +64,7 @@ const determineRarityByLevel = (level) => {
     let lScale = level / 10000;
     console.log(level, chance, uScale, rScale, eScale, lScale, 'We have made it to the determineRarityByLevel in the Equipment Controller!');
     if (level < 4) {
-        // if (uScale > chance) {
-            // rarity = 'Uncommon';
-        // } else { 
-            rarity = 'Common';
-        // }
+        rarity = 'Common';
     } else if (level >= 4 && level < 12) {
         if (rScale > chance) {
             rarity = 'Rare';
@@ -104,8 +100,6 @@ const determineRarityByLevel = (level) => {
 
 const determineEquipmentType = () => {
     const roll = Math.floor(Math.random() * 100  + 1);
-    console.log(roll, 'Determining Equipment Type by Roll');
-    
     if (roll <= 32) {
         return 'Weapon';
     } else if (roll < 40) {
@@ -131,7 +125,7 @@ const randomIntFromInterval = (min, max) => {
 
 const randomFloatFromInterval = (min, max) => {
     return parseFloat((Math.random() * (max - min) + min).toFixed(2));
-}
+};
 
 const randomizeStats = (item, rarity) => {
     const stats = {};
@@ -209,7 +203,7 @@ const randomizeStats = (item, rarity) => {
         } else if (item[dam] === 1.01) { // 1.00 +/- 0.01/0 (0.01 Range)
             item[dam] = randomFloatFromInterval(item[dam], item[dam] + 0.01);
         };
-    })
+    });
 
     return stats;
 };
@@ -268,7 +262,6 @@ async function getMerchantEquipment(req, res) {
             await seedDB(equipment, rarity);
             merchantEquipment.push(equipment[0]);
         };
-        // console.log(type, 'Type in Merchant Function')
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
@@ -399,7 +392,6 @@ async function getClothEquipment(req, res) {
             await seedDB(equipment, rarity);
             merchantEquipment.push(equipment[0]);
         };
-        // console.log(type, 'Type in Merchant Function')
         res.status(200).json({ data: merchantEquipment });
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
@@ -459,9 +451,8 @@ async function getArmorEquipment(req, res) {
 
 async function seedDB(equipment, rarity) {
     try {
-        const mondoDBCalls = equipment.map(async item => {
-            let newItem = await mutateEquipment(item, rarity);
-            // console.log(newItem, 'New Item in seedDB function')
+        equipment.map(async item => {
+            await mutateEquipment(item, rarity);
             return await Equipment.insertMany(item);
           });
     } catch (error) {

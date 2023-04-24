@@ -18,7 +18,6 @@ async function fetchMap(req, res) {
         if (ascean.maps.length > 0) {
             console.log("Finding Map")
             map = await Map.findById(ascean.maps[0]);
-            console.log("Found Map")
             const decompressedMap = zlib.inflateSync(map.map.buffer).toString();
             const parsedMap = JSON.parse(decompressedMap);
             map.map = parsedMap;
@@ -26,10 +25,6 @@ async function fetchMap(req, res) {
         } else {
             map = null;
         };
-        console.log("Sending Map");
-        // const decompressedMap = zlib.inflateSync(map.map).toString();
-        // const parsedMap = JSON.parse(decompressedMap);
-        // map.map = parsedMap;
         res.status(200).json(map);
     } catch (err) {
         console.log(err, "Error Fetching Map");
@@ -62,11 +57,9 @@ async function saveMap(req, res) {
         const ascean = await Ascean.findById(req.params.asceanID);
         req.body.map = await compress(req.body.map);
         let map = await Map.create(req.body);
-
         const decompressedMap = zlib.inflateSync(map.map).toString();
         const parsedMap = JSON.parse(decompressedMap);
         map.map = parsedMap;
-        
         ascean.maps.push(map._id);
         if (ascean.tutorial.firstBoot === true) {
             ascean.tutorial.firstBoot = false;

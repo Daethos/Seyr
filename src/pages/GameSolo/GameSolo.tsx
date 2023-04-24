@@ -1486,6 +1486,7 @@ const GameSolo = ({ user }: GameProps) => {
             return;
         };
         try {
+            await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
@@ -1646,6 +1647,15 @@ const GameSolo = ({ user }: GameProps) => {
                     loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
                     playerLuckout={state.player_luckout}
                 />
+                <GameCombatText 
+                    emergencyText={emergencyText} combatRoundText={state.combatRound}
+                    playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
+                    playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
+                    playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
+                    playerSpecialText={state.player_special_description} computerSpecialText={state.computer_special_description}
+                    playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
+                    playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
+                />
                 </>
             : '' }
             <GameConditions 
@@ -1675,15 +1685,7 @@ const GameSolo = ({ user }: GameProps) => {
                         handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} gameState={gameState} gameDispatch={gameDispatch}
                         currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
                     /> 
-                    <GameCombatText 
-                        emergencyText={emergencyText} combatRoundText={state.combatRound}
-                        playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
-                        playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
-                        playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
-                        playerSpecialText={state.player_special_description} computerSpecialText={state.computer_special_description}
-                        playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
-                        playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
-                    />
+
                 </>
             : 
                 <>

@@ -120,6 +120,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const [miniGame, setMiniGame] = useState<boolean>(false);
     const [miniGameTraits, setMiniGameTraits] = useState<any>([]);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
+    const [enemyArticle, setEnemyArticle] = useState<any>('')
 
     useEffect(() => {
         let enemyQuests = getQuests(enemy?.name);
@@ -130,6 +131,12 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         checkPersuasion();
         checkMiniGame();
         setNamedEnemy(nameCheck(enemy?.name));
+        setEnemyArticle(
+            () => {
+                console.log((['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a'), "Enemy Article");
+                return ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
+            }
+        );
     }, [enemy]);
 
     useEffect(() => {
@@ -677,7 +684,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             </> 
                         ) : ( 
                             <>
-                            {article.charAt(0).toUpperCase()} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            {enemyArticle?.charAt(0).toUpperCase()} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities {npc}?</Button>
                             </> 
                         ) }
@@ -695,11 +702,9 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         ) : ('') }
                         { miniGame ? (
                             <>
-                            {/* <Button variant='' className='dialog-buttons inner' style={{ color: 'gold' }} onClick={playMiniGame}>Play a game of chance?</Button> */}
                             {miniGameTraits.map((trait: any, index: number) => {
                                 return (
                                     <div key={index}>
-                                        {/* <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptMiniGame(trait.name)}>[{trait.name}] - {trait.minigame.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button> */}
                                         {trait.name === "Se'van" ? (
                                             <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Test] Surprise {enemy.name} and initiate Se'van Grappling</Button>
                                         ) : trait.name === "Cambiren" ? (
@@ -714,7 +719,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             })}
                             </>
                         ) : ('') }
-
                         </div> 
                 : currentIntent === 'conditions' ?
                     <>
@@ -727,7 +731,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         { traits ?
                             <>
                                 <div style={{ fontSize: '16px', whiteSpace: 'pre-wrap', color: 'gold' }}>
-                                    {traits.primary.name}<br /><br />
+                                    {traits.primary.name} <br /><br />
                                     {traits.secondary.name}<br /><br />
                                     {traits.tertiary.name}<br /><br />
                                 </div>

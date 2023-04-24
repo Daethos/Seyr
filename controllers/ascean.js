@@ -46,6 +46,7 @@ module.exports = {
     persistAscean,
     firstTutorial,
     asceanTax,
+    updateHealth,
 };
 
 async function firstTutorial(req, res) {
@@ -365,6 +366,20 @@ async function replenishFirewater(req, res) {
     }
 };
 
+async function updateHealth(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.params.id);
+        console.log(ascean.health, "Current Health Object");
+        ascean.health.current = req.params.health;
+        console.log(ascean.health, "Updated Health Object");
+        await ascean.save();
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        res.status(400).json(err);
+    };
+};
+
 async function asceanTax(req, res) {
     try {
         let ascean = await Ascean.findById(req.params.id);
@@ -386,14 +401,11 @@ async function asceanTax(req, res) {
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Drinking Firewater!')
         res.status(400).json(err);
-    }
-}
+    };
+};
 
 async function restoreFirewater(req, res) {
     try {
-        // let ascean = await Ascean.findByIdAndUpdate(req.params.id, {
-        //     "firewater.charges": 5,
-        // }, { new: true });
         let ascean = await Ascean.findById(req.params.id);
         const cost = (5 - ascean.firewater.charges) * 10;
         console.log(cost, "Cost of Restoring Firewater")
@@ -614,8 +626,6 @@ async function saveExperience(req, res) {
         ascean.currency.silver += silver;
         ascean.currency.gold += gold;
 
-        console.log(silver, gold, ascean.currency, '<- Currency in the Controller Saving Experience!');
-
         if (ascean.currency.silver > 99) {
             ascean.currency.gold += 1;
             ascean.currency.silver -= 100;
@@ -812,7 +822,6 @@ async function create(req, res) {
 
 async function index(req, res) {
     try {
-        console.log(req.user._id, '<- User ID in Ascean Index Controller')
         let asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
         let fields = [
             'weapon_one',
@@ -827,10 +836,8 @@ async function index(req, res) {
             'amulet',
             'trinket'
         ];
-        // Except this should be the latest 10 characters
         asceanCrew = asceanCrew.slice(-10) // Needs to be the last 10 characters        
         for await (let ascean of asceanCrew) {
-
             const populated = await Promise.all(fields.map(async field => {
                 const item = await determineItemType(ascean[field]);
                 return item ? item : null;
@@ -1061,75 +1068,6 @@ async function animalStats(req, res) {
         console.log(err, 'Error in Animal Stats Controller');
         res.status(400).json(err);
     };
-};
-
-async function getModelTypes(ids) {
-    const models = {
-      Weapon: Weapon,
-      Shield: Shield,
-      Helmet: Helmet,
-      Chest: Chest,
-      Legs: Legs,
-      Ring: Ring,
-      Amulet: Amulet,
-      Trinket: Trinket,
-      Equipment: Equipment,
-    };
-  
-    const itemTypeMap = {};
-    for (const itemType of itemTypes) {
-      itemTypeMap[itemType] = [];
-    }
-  
-    for (const id of ids) {
-      const itemType = id.itemType;
-      itemTypeMap[itemType].push(id);
-    };
-  
-    const promises = [];
-    for (const itemType of itemTypes) {
-      const itemIds = itemTypeMap[itemType];
-      if (itemIds.length > 0) {
-        const model = models[itemType];
-        promises.push(model.find({ _id: { $in: itemIds } }).exec());
-      };
-    };
-  
-    const results = await Promise.all(promises);
-  
-    const idToItemTypeMap = {};
-    for (const itemType of itemTypes) {
-      const model = models[itemType];
-      for (const item of results[itemType]) {
-        idToItemTypeMap[item._id.toString()] = itemType;
-      };
-    };
-  
-    const itemTypes = ids.map(id => idToItemTypeMap[id._id.toString()]);
-    return itemTypes;
-  };
-  
-
-async function getModelType(id) {
-    const models = {
-        Weapon: Weapon,
-        Shield: Shield,
-        Helmet: Helmet,
-        Chest: Chest,
-        Legs: Legs,
-        Ring: Ring,
-        Amulet: Amulet,
-        Trinket: Trinket,
-        Equipment: Equipment,
-    };
-    const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
-    for (const itemType of itemTypes) {
-        const item = await models[itemType].findById(id).exec();
-        if (item) {
-            return item.itemType;
-        };
-    };
-    return null;
 };
 
 async function searchAscean(req, res) {

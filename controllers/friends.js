@@ -23,8 +23,8 @@ async function send(req, res) {
         res.status(201).json({ data: user })
     } catch (err) {
         res.status(400).json({ error: err })
-    }
-}
+    };
+};
 
 async function accept(req, res){
     console.log(req.params.friendId, 'Friend in Friend Controller [Accept Request]');

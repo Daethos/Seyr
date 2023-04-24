@@ -336,6 +336,18 @@ export async function removeItem(vaEsai: any) {
     });
 };
 
+export async function asceanHealth(data: any) {
+    return fetch(BASE_URL + 'health/'  + data.health + '/' + data.id + '/', {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response, "<- Response in Ascean Health Utility Return");
+    });
+};
+
 export async function asceanTax(data: any) {
     return fetch(BASE_URL + data.tax + '/' + data.id + '/', {
         headers: {

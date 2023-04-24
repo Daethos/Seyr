@@ -456,10 +456,11 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 winStreak: state.player.level > state.enemy.level ? 0: state.winStreak,
             };
         case 'SET_NEW_COMPUTER_ENEMY':
+            const newHealth = state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health;
             return {
                 ...state,
-                current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
+                current_player_health: newHealth,
+                new_player_health: newHealth,
                 enemy: action.payload.ascean,
                 enemy_health: action.payload.attributes.healthTotal,
                 current_enemy_health: action.payload.attributes.healthTotal,
@@ -477,10 +478,11 @@ export const PvPStore = (state: PvPData, action: Action) => {
             };
         case 'SET_NEW_ENEMY':
             let newEnemyPosition = findEnemyPosition(action.payload.enemy.ascean._id, action.payload.playerState);
+            const newerHealth = state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health;
             return {
                 ...state,
-                current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
+                current_player_health: newerHealth,
+                new_player_health: newerHealth,
                 enemy: action.payload.enemy.ascean,
                 enemy_health: action.payload.enemy.attributes.healthTotal,
                 current_enemy_health: action.payload.enemy.attributes.healthTotal,

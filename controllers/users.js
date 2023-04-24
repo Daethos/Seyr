@@ -97,11 +97,10 @@ async function profile(req, res) {
   } catch (err) {
     console.log(err.message, " <- profile controller");
     res.status(400).json({ error: "Something went wrong" });
-  }
+  };
 };
 
 async function profileCharacter(req, res) {
-  console.log(req.body, 'Getting Profile Character')
   try {
     const user = await User.findOne({ username: req.body.username });
     const ascean = await Ascean.find({ user: user._id });
@@ -130,8 +129,7 @@ async function deadEnemy(req, res) {
       const asceanInRange = ascean.filter((a) => a.level >= req.body.minLevel && a.level <= req.body.maxLevel);
       randomAscean = asceanInRange[Math.floor(Math.random() * asceanInRange.length)];
     } else {
-      // This needs to profile the community of all ascean and return a random dead one
-     randomAscean = await Ascean.find({ alive: false, level: { $gte: req.body.minLevel, $lte: req.body.maxLevel } });
+      randomAscean = await Ascean.find({ alive: false, level: { $gte: req.body.minLevel, $lte: req.body.maxLevel } });
     };
 
     res.status(200).json({
@@ -147,16 +145,12 @@ async function deadEnemy(req, res) {
 };
 
 async function signup(req, res) {
-  console.log(req.body, " req.body in signup", req.file);
-
   if (!req.file) return res.status(400).json({ error: "Please Submit A Photo! I Know Its Trite, I Apologize" });
   const key = `seyr/${uuidv4()}-${req.file.originalname}`;
   const params = { Bucket: BUCKET_NAME, Key: key, Body: req.file.buffer };
 
   s3.upload(params, async function (err, data) {
-    console.log("========================");
     console.log(err, " <--- err from aws");
-    console.log("========================");
     if (err)
       return res.status(400).json({
         err: "Error from AWS, their server may be experiencing issues.",
@@ -183,33 +177,28 @@ async function signup(req, res) {
           err: err,
           message: "Internal Server Error, Please Try Again",
         });
-      }
-    }
+      };
+    };
   });
-}
+};
 
 async function login(req, res) {
   try {
     const user = await User.findOne({email: req.body.email});
-    console.log(user, ' this user in login')
     if (!user) return res.status(401).json({err: 'This Email Address Is Not Registered With The Seyr'});
     user.comparePassword(req.body.password, (err, isMatch) => {
-        
       if (isMatch) {
         const token = createJWT(user);
         console.log(token, '<- Token from Login')
         res.json({token});
       } else {
         return res.status(401).json({err: 'The Password You Have Provided Does Not Match The Registered Email Address'});
-      }
+      };
     });
   } catch (err) {
-
     return res.status(401).json({err: 'ERROR 401 -- Problem Fetching User, Server May Be Experiencing Issues -- ERROR 401'});
-      
-    
-  }
-}
+  };
+};
 
 async function allUsers(req, res) {
   const keyword = req.query.search ? {
@@ -219,38 +208,31 @@ async function allUsers(req, res) {
     ]
   } : {};
 
-  const users = await User.find(keyword)
-                          .find({ _id: {$ne:req.user._id } });
+  const users = await User.find(keyword).find({ _id: {$ne:req.user._id } });
   res.send(users);
-}
+};
 
 async function updateUser(req, res) {
   const { username } = req.body;
   try {
     const user = await User.findByIdAndUpdate(req.user._id, {
       username}, { new: true })
-    // await user.save();
     res.status(200).json({ data: user })
   } catch (err) {
     res.status(400).json({ err: 'Error Updating User in Controller' })
   }
-}
+};
 
 async function updateUserBio(req, res) {
-  // const { username, email } = req.body;
   const { bio } = req.body;
-
   try {
     const user = await User.findByIdAndUpdate(req.user._id, {
-      bio}, { new: true })
-    // await user.save();
+      bio}, { new: true });
     res.status(200).json({ data: user })
   } catch (err) {
     res.status(400).json({ err: 'Error Updating User in Controller' })
-  }
-}
-
-/*----- Helper Functions -----*/
+  };
+};
 
 function createJWT(user) {
   return jwt.sign(

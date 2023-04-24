@@ -49,7 +49,6 @@ async function getSettings(req, res) {
         let gamesetting = await GameSetting.findOne({ user: req.user._id });
 
         if (!gamesetting) {
-            // Actually We Should Create a New GameSetting If It Doesn't Exist
             gamesetting = await GameSetting.create({
                 user: req.user._id,
                 mapMode: "FULL_MAP",

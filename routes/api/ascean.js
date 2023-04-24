@@ -20,6 +20,7 @@ router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
 router.get('/kill/:id', protect, asceanCtrl.killAscean);
 router.get('/tutorial/:id/:tutorial', protect, asceanCtrl.firstTutorial);
 router.get('/:tax/:id', protect, asceanCtrl.asceanTax);
+router.get('/health/:health/:id', protect, asceanCtrl.updateHealth);
 
 router.put('/coords', protect, asceanCtrl.saveCoordinates)
 router.put('/highscore', protect, asceanCtrl.updateHighScore);

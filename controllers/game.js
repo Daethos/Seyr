@@ -13,7 +13,6 @@ module.exports = {
 }
 
 async function prayer(req, res) {
-    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
     try {
         const data = await gameService.consumePrayer(req.body);
         res.status(200).json({ data });
@@ -23,7 +22,6 @@ async function prayer(req, res) {
 };
 
 async function instant(req, res) {
-    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
     try {
         const data = await gameService.instantActionCompiler(req.body);
         res.status(200).json({ data });
@@ -33,7 +31,6 @@ async function instant(req, res) {
 };
 
 async function initiate(req, res) {
-    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
     try {
         const data = await gameService.actionCompiler(req.body);
         res.status(200).json({ data });
@@ -43,7 +40,6 @@ async function initiate(req, res) {
 };
 
 async function pvpInitiate(req, res) {
-    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
     try {
         const data = await pvpService.actionCompiler(req.body);
         res.status(200).json({ data });
@@ -53,7 +49,6 @@ async function pvpInitiate(req, res) {
 };
 
 async function pvpPrayer(req, res) {
-    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
     try {
         const data = await pvpService.consumePrayer(req.body);
         res.status(200).json({ data });
@@ -63,7 +58,6 @@ async function pvpPrayer(req, res) {
 };
 
 async function pvpInstant(req, res) {
-    // console.log(req.body, 'Combat Data in the Game Controller - Initiate')
     try {
         const data = await pvpService.instantActionCompiler(req.body);
         res.status(200).json({ data });

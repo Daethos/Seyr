@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 interface Props {
     playerCombatText: string;
     computerCombatText: string;
@@ -17,6 +19,14 @@ interface Props {
 };
 
 const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
+    const [combatText, setCombatText] = useState<any>('');
+    const [combatRound, setCombatRound] = useState<number>(0);
+    // useEffect(() => {
+    //     if (Number(combatRoundText) > combatRound) {
+    //         text();
+    //     };
+    // }, [combatRoundText, combatRound]);
+
     const text = () => {
         let result = "";
         if (emergencyText) result += emergencyText + "\n";
@@ -33,6 +43,8 @@ const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeath
         if (playerDeathText) result += playerDeathText + "\n";
         if (computerDeathText) result += computerDeathText + "\n";
         if (combatRoundText) result += `Combat Round: ${combatRoundText} \n`;
+        // setCombatText((prevText: any) => prevText + result + "\n");
+        // setCombatRound(Number(combatRoundText));
         return result;
     };
     return (

@@ -38,7 +38,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const [room, setRoom] = useState<any>("");
     const [showChat, setShowChat] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-    const [socketConnected, setSocketConnected] = useState<boolean>(false);
+    // const [socketConnected, setSocketConnected] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);
 
     const [emergencyText, setEmergencyText] = useState<any[]>([])
@@ -77,17 +77,13 @@ const GamePvPLobby = ({ user }: Props) => {
         // "https://ascea.herokuapp.com" When Deploying
         const newSocket = io.connect('https://ascea.herokuapp.com');
         setSocket(newSocket);
+        newSocket.emit("setup", user);
         return () => {
           newSocket.disconnect();
         };
-      }, []);
+      }, [user]);
 
     useEffect(() => {
-        if (socket) socket.emit("setup", user);
-        
-        const socketConnectedCallback = () => setSocketConnected(true);
-        handleSocketEvent('Connected', socketConnectedCallback);
-        
         const typingCallback = () => setIsTyping(true);
         handleSocketEvent('typing', typingCallback);
 
@@ -97,11 +93,11 @@ const GamePvPLobby = ({ user }: Props) => {
         const playerDataCallback = (player: any) => {
           if (player.user._id === user._id) dispatch({ type: ACTIONS.SET_PLAYER, payload: player.data });
         };
-        handleSocketEvent('player_data', playerDataCallback);
+        handleSocketEvent('playerData', playerDataCallback);
     
         const newUserCallback = async (userData: any) => {
             if (userData.user._id === user._id && userData.player !== 1) {
-                await socket.emit(`request_new_player`);
+                await socket.emit(`requestNewPlayer`);
             };
             switch (userData.player) {
                 case 1:
@@ -124,12 +120,12 @@ const GamePvPLobby = ({ user }: Props) => {
                     break;
             };
         };
-        handleSocketEvent('new_user', newUserCallback);
+        handleSocketEvent('newUser', newUserCallback);
 
         const requestPlayerDataCallback = async () => {
-            await socket.emit(`player_data_responding`);
+            await socket.emit(`playerDataResponding`);
         };
-        handleSocketEvent('requesting_player_data', requestPlayerDataCallback);
+        handleSocketEvent('requestingPlayerData', requestPlayerDataCallback);
 
         const newPlayerDataResponseCallback = async (data: any) => {
             switch (data.player) {
@@ -149,7 +145,7 @@ const GamePvPLobby = ({ user }: Props) => {
                     break;
             };
         };
-        handleSocketEvent('new_player_data_response', newPlayerDataResponseCallback);
+        handleSocketEvent('newPlayerDataResponse', newPlayerDataResponseCallback);
 
         const updatePlayerDataCallback = async (data: any) => {
             switch (data.player) {
@@ -182,10 +178,10 @@ const GamePvPLobby = ({ user }: Props) => {
                 message: `Received created map with variables: City: ${response.contentCounts.city}, Enemy: ${response.contentCounts.enemy}, Treasure: ${response.contentCounts.treasure}.`,
                 time: Date.now()
             };
-            await socket.emit("send_message", messageData);
+            // await socket.emit("send_message", messageData);
             setMessageList((list: any) => [...list, messageData]);
             await setCoordinates(playerState, response);
-            await socket.emit('commenceGame');
+            if (playerState.playerOne.user._id === user._id) await socket.emit('commenceGame');
         };
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
@@ -330,10 +326,10 @@ const GamePvPLobby = ({ user }: Props) => {
 
         return () => {
           if (socket) {
-                socket.off('player_data', playerDataCallback);
-                socket.off('new_user', newUserCallback);
-                socket.off('requesting_player_data', requestPlayerDataCallback);
-                socket.off('new_player_data_response', newPlayerDataResponseCallback);
+                socket.off('playerData', playerDataCallback);
+                socket.off('newUser', newUserCallback);
+                socket.off('requestingPlayerData', requestPlayerDataCallback);
+                socket.off('newPlayerDataResponse', newPlayerDataResponseCallback);
                 socket.off('mapCreated', mapCreatedCallback);
                 socket.off('mapContentSynced', mapContentSyncedCallback);
                 socket.off('newEnvironment', newEnvironmentCallback);
@@ -363,14 +359,16 @@ const GamePvPLobby = ({ user }: Props) => {
     }, []);
 
     useEffect(() => {
+        let timeoutId: any;
         if (state.player_luckout) {
-          handlePlayerLuckout(state);
-          setTimeout(() => {
-            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
-            dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
-          }, 6000);
-        }
+            handlePlayerLuckout(state);
+            timeoutId = setTimeout(() => {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+                dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
+            }, 6000);
+            return () => clearTimeout(timeoutId);
+        };
     }, [state.player_luckout]);
 
     const duelData = async (data: any) => {
@@ -862,7 +860,7 @@ const GamePvPLobby = ({ user }: Props) => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             if (mapState.currentTile.content === 'enemy' && state.new_enemy_health <= 0) {
-                await socket.emit('new-environment', mapState.currentTile);
+                await socket.emit('newEnvironmentTile', mapState.currentTile);
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });

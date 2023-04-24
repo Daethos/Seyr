@@ -54,50 +54,43 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             setLoading(false);
         } catch (err: any) {
             console.log(err, "Error Saving Map Settings")
-        }
+        };
     };
 
     function handleCombatTimer(e: React.ChangeEvent<HTMLInputElement>) {
         let timer = parseFloat(e.target.value);
-        console.log(timer, 'New Time Left');
         gameDispatch({ type: GAME_ACTIONS.SET_TIME_LEFT, payload: timer });
     };
 
     function handleMoveTimer(e: React.ChangeEvent<HTMLInputElement>) {
         let timer = parseFloat(e.target.value);
-        console.log(timer, 'New Move Timer');
         gameDispatch({ type: GAME_ACTIONS.SET_MOVE_TIMER, payload: timer });
     };
 
     function handleShakeDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
         let duration = parseFloat(e.target.value);
-        console.log(duration, 'New Duration');
         gameDispatch({ type: GAME_ACTIONS.SET_SHAKE_DURATION, payload: duration });
     };
 
     function handleShakeIntensityChange(e: React.ChangeEvent<HTMLInputElement>) {
         let intensity = parseFloat(e.target.value);
-        console.log(intensity, 'New Intensity');
         gameDispatch({ type: GAME_ACTIONS.SET_SHAKE_INTENSITY, payload: intensity });
     }
 
     function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
         let volume = parseFloat(e.target.value);
-        console.log(volume, 'New Volume');
         gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: volume });
     };
 
     function handleJoystickChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
-        console.log(speed, 'New Speed');
         gameDispatch({ type: GAME_ACTIONS.SET_JOYSTICK_SPEED, payload: speed });
-    }
+    };
 
     function handleVibrationChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
-        console.log(speed, 'New Speed');
         gameDispatch({ type: GAME_ACTIONS.SET_VIBRATION_TIME, payload: speed });
-    }
+    };
 
     function returnHome() {
         // Clear Potential Loot
@@ -159,7 +152,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             Screen Shake Intensity ({gameState.shake.intensity})
             <span style={{ float: "right" }}></span>
         </h6>
-        <Form.Range value={gameState.shake.intensity} onChange={handleShakeIntensityChange} min={0} max={5} step={0.5} /><br />
+        <Form.Range value={gameState.shake.intensity} onChange={handleShakeIntensityChange} min={0} max={5} step={0.25} /><br />
         <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Sound Volume ({gameState.soundEffectVolume})
@@ -219,8 +212,8 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
 
         <Accordion.Item eventKey="6">
         <Accordion.Header>
-            <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
-            Combat Actions
+            <h5 style={{ marginLeft: 'auto', color: 'gold' }}>
+            Actions (Combat Choices)
             </h5>
         </Accordion.Header>
         <Accordion.Body className='settings-accordion'>
@@ -290,7 +283,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="7">
-        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Combat Tactics (Settings)</h5></Accordion.Header>
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Tactics (Combat Settings)</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <br />
             <p style={{ color: 'gold' }}>
@@ -315,7 +308,30 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             </p>
         </Accordion.Body>
         </Accordion.Item>
+
         <Accordion.Item eventKey="8">
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Inventory Information</h5></Accordion.Header>
+        <Accordion.Body className='settings-accordion'>
+            <p style={{ color: '#fdf6d8' }}>
+            Loot - Equipment and its improvement is paramount to your success as you gain power to combat tougher enemies. No item is unique and can be held and worn in multiplicity. You can also use your gear to craft higher quality items. Common and Uncommon quality scale with leveling, yet Rare and Epic are refined to a degree that even a novice would feel its improvement.
+            </p><br />
+            <p style={{ color: 'gold' }}>
+            Inventory - Here you are able to view item statistics, and inspect for use in various ways. If you are of the mind, you may even be able to find a way to tinker with them.
+            </p><br />
+            <p style={{ color: '#fdf6d8' }}>
+            Remove - This will remove the item from your inventory, and permanently destroy it.
+            </p>
+            <br />
+            <p style={{ color: 'gold' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 512 512">
+            <path d="M29.438 59.375c-3.948.032-7.903.093-11.875.188 4.333 2.772 8.685 5.483 13.062 8.124C126.162 123.92 230.69 151.4 340.5 180.594c.022.006.04.025.063.03.02.006.043-.004.062 0 1.87.498 3.72 1.003 5.594 1.5l.155-.53c.947.078 1.91.125 2.875.125 4.26 0 8.34-.767 12.125-2.19l-12.5 46.595 18.063 4.813L383 170.968c25.828 1.312 50.508 6.867 74.28 15.845-1.065 11.948 2.73 21.82 9.814 23.718 8.71 2.335 19.136-8.313 23.28-23.78 1.27-4.742 1.78-9.366 1.657-13.594l.345-1.28c-.136-.008-.27-.025-.406-.032-.56-8.924-4.116-15.77-9.876-17.313-6.808-1.823-14.666 4.304-19.75 14.44-25.275-3.725-49.624-10.894-72.47-23.69l16.345-60.968-18.033-4.843-12.093 45.155c-3.24-3.908-7.318-7.1-11.938-9.313l.094-.374C250.12 83.98 144.89 58.446 29.437 59.374zm161.25 44.25c55.52-.002 105.272 12.492 159.656 27.03 8.536.55 15.094 7.463 15.094 16.157 0 9.06-7.127 16.22-16.188 16.22-2.4 0-4.653-.5-6.688-1.407-56.172-15.04-109.352-27.786-157.406-57.97 1.85-.027 3.694-.03 5.53-.03zm-46.22 164.25v20.344H55.532c15.996 38.806 51.258 65.428 88.94 74.28v32.97h58.56c-12.115 30.534-33.527 55.682-58.5 77.592h-25.436v18.72h284.344v-18.72H376c-28.728-21.894-50.024-47.016-61.594-77.593h63.656V366.31c19.75-6.995 39.5-19.54 59.25-36.718-19.806-17.518-39.235-27.25-59.25-31.938v-29.78H144.47z"></path>
+            </svg>{' '}- The inventory itself can be changed with dragging and dropping your items to realign them as you see fit. This allows you to save the position of your inventory.
+            </p>
+            <br />
+        </Accordion.Body>
+        </Accordion.Item>
+
+        <Accordion.Item eventKey="9">
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>General Information</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
             <p style={{ color: 'gold' }}>
@@ -357,6 +373,11 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             <path transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)" d="M5037.9-2842.1c-181.2-49.4-352.1-94.7-380.9-100.9c-45.3-10.3-57.7-30.9-78.2-133.9c-24.7-121.5-140-380.9-238.9-535.4c-28.8-47.4-53.5-88.5-53.5-94.7c0-6.2,821.6-741.3,914.2-817.5c37.1-30.9,37.1-37.1,6.2-131.8c-20.6-55.6-35-107.1-35-117.4c0-8.2,115.3-16.5,255.3-16.5h257.4l-49.4,144.2c-47.4,135.9-70,166.8-444.8,570.4L4797-3647.2l57.7,41.2c123.5,84.4,313,294.4,383,422.1c65.9,115.3,160.6,364.5,160.6,415.9C5398.3-2745.3,5412.7-2743.2,5037.9-2842.1z"></path>
             </svg>{' '}
             Leveling - As you are able to defeat opponents of various qualities, you invariably gain experience, which allows you to level. Leveling has several consequences, gaining strength in yourself and the utilization of your equipment's quality. You also gain 4 points to add to your attributes at every even level.
+            <br /><br />
+            Common - Scales to level 4.<br /><br />
+            Uncommon - Scales to level 8. (Req. Level 4)<br /><br />
+            Rare - No Scaling ATM. (Req. Level 6)<br /><br />
+            Epic - No Scaling. (Req. Level 12)
             </p>
             <br />
             <p style={{ color: '#fdf6d8' }}>
