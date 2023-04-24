@@ -336,6 +336,18 @@ export async function removeItem(vaEsai: any) {
     });
 };
 
+export async function asceanTax(data: any) {
+    return fetch(BASE_URL + data.tax + '/' + data.id + '/', {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response, "<- Response in Ascean Tax Utility Return");
+    });
+};
+
 export async function drinkFirewater(ascean: string) {
     return fetch(BASE_URL + 'firewater/' + ascean, {
         headers: {
@@ -345,8 +357,8 @@ export async function drinkFirewater(ascean: string) {
         if (res.ok) return res.json();
         const response = await res.json();
         console.log(response, "<- Response in Drink Firewater Utility Return");
-    })
-}
+    });
+};
 
 export async function restoreFirewater(ascean: string) {
     return fetch(BASE_URL + 'restoreFirewater/' + ascean, {

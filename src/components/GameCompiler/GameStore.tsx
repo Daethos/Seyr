@@ -694,6 +694,7 @@ export const GAME_ACTIONS = {
     WORLD_SAVED: 'WORLD_SAVED',
 
     SET_PLAYER_LEVEL_UP: 'SET_PLAYER_LEVEL_UP',
+    SET_PLAYER_CURRENCY: 'SET_PLAYER_CURRENCY',
     SET_EXPERIENCE: 'SET_EXPERIENCE',
     SET_FIREWATER: 'SET_FIREWATER',
     SET_QUESTS: 'SET_QUESTS',
@@ -913,6 +914,14 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 player: {
                     ...action.payload, // update all properties except inventory
                     inventory: game.player.inventory // keep the existing inventory
+                }
+            };
+        case 'SET_PLAYER_CURRENCY':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    currency: action.payload,
                 }
             };
         case 'SET_EXPERIENCE':

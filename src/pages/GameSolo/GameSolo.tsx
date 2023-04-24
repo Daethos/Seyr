@@ -160,9 +160,14 @@ const GameSolo = ({ user }: GameProps) => {
         return () => clearTimeout(timer);
     }, [moveTimer, mapState]);
 
+    const checkPlayerTrait = (trait: string) => {
+        if (gameState.primary.name.includes(trait) || gameState.secondary.name.includes(trait) || gameState.tertiary.name.includes(trait)) return true;
+        return false;
+    };
+
     const useMoveContentEffect = (mapState: MapData) => {
         useEffect(() => {
-            if (mapState.currentTile.content !== 'nothing') {
+            if (mapState.currentTile.content !== 'nothing' && mapState?.lastTile) {
                 handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
             };
             return () => {
@@ -193,6 +198,10 @@ const GameSolo = ({ user }: GameProps) => {
                 return () => {
                     mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
                 };
+            };
+            if (checkPlayerTrait("Kyn'gian") && mapState.steps % 10 === 0) {
+                console.log("I'm Walking!");
+                dispatch({ type: ACTIONS.PLAYER_REST, payload: 0.5 });
             };
         }, [mapState.steps]);
     };
@@ -227,6 +236,8 @@ const GameSolo = ({ user }: GameProps) => {
     };
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
+
+
 
     const checkTutorial = async (tutorial: string, player: Player) => {
         console.log(tutorial, '<- Tutorial Check');

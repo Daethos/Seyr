@@ -45,6 +45,7 @@ module.exports = {
     killAscean,
     persistAscean,
     firstTutorial,
+    asceanTax,
 };
 
 async function firstTutorial(req, res) {
@@ -362,14 +363,55 @@ async function replenishFirewater(req, res) {
         console.log(err.message, '<- Error in the Controller Drinking Firewater!')
         res.status(400).json(err);
     }
+};
+
+async function asceanTax(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.params.id);
+        const tax = req.params.tax;
+        let goldTax;
+        let silverTax;
+        if (tax >= 100) {
+            goldTax = Math.floor(tax / 100);
+            silverTax = tax % 100;
+        } else {
+            goldTax = 0;
+            silverTax = tax;
+        };
+        ascean.currency.gold -= goldTax;
+        ascean.currency.silver -= silverTax;
+        await rebalanceCurrency(ascean);
+        await ascean.save();
+        res.status(201).json(ascean.currency);
+    } catch (err) {
+        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        res.status(400).json(err);
+    }
 }
 
 async function restoreFirewater(req, res) {
     try {
-        let ascean = await Ascean.findByIdAndUpdate(req.params.id, {
-            "firewater.charges": 5,
-        }, { new: true });
-        console.log(ascean.firewater, "Firewater After Saving Restore");
+        // let ascean = await Ascean.findByIdAndUpdate(req.params.id, {
+        //     "firewater.charges": 5,
+        // }, { new: true });
+        let ascean = await Ascean.findById(req.params.id);
+        const cost = (5 - ascean.firewater.charges) * 10;
+        console.log(cost, "Cost of Restoring Firewater")
+        ascean.firewater.charges = 5;
+        if (ascean.currency.silver > cost) {
+            ascean.currency.silver -= cost;
+            console.log("You had the silver for it")
+        } else if (ascean.currency.gold > 0) {
+            ascean.currency.gold -= 1;
+            ascean.currency.silver += 100;
+            ascean.currency.silver -= cost;
+            console.log("You had to pay gold for it")
+        } else {
+            ascean.experience -= (cost * 10) < 0 ? ascean.experience : (cost * 10);
+            console.log("You had to pay experience for it")
+        };
+        await ascean.save();
+        console.log(ascean.firewater, ascean.currency, "Firewater After Saving Restore");
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Drinking Firewater!')

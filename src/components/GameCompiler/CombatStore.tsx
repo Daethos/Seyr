@@ -109,6 +109,8 @@ interface Action {
 
 export const ACTIONS = {
     SET_PLAYER: 'SET_PLAYER',
+    SET_EXPERIENCE: 'SET_EXPERIENCE',
+    SET_CURRENCY: 'SET_CURRENCY',
     SET_COMPUTER: 'SET_COMPUTER',
     SET_DUEL: 'SET_DUEL',
     RESET_LUCKOUT: 'RESET_LUCKOUT',
@@ -249,8 +251,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player: action.payload.ascean,
                 player_health: action.payload.ascean.health.total,
-                current_player_health: action.payload.ascean.health.current,
-                new_player_health: action.payload.ascean.health.current,
+                current_player_health: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
+                new_player_health: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weapon_one: action.payload.combat_weapon_one,
                 weapon_two: action.payload.combat_weapon_two,
@@ -259,6 +261,24 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_attributes: action.payload.attributes,
                 player_damage_type: action.payload.combat_weapon_one.damage_type[0],
                 highScore: action.payload.ascean.high_score,
+            };
+        case 'SET_EXPERIENCE':
+            return {
+                ...state,
+                player: {
+                    ...state.player,
+                    experience: action.payload.experience,
+                    firewater: action.payload.firewater,
+                    currency: action.payload.currency,
+                },
+            };
+        case 'SET_CURRENCY':
+            return {
+                ...state,
+                player: {
+                    ...state.player,
+                    currency: action.payload,
+                },
             };
         case 'SET_COMPUTER':
             return {
@@ -273,7 +293,9 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_weapon_three: action.payload.combat_weapon_three,
                 computer_defense: action.payload.defense,
                 computer_attributes: action.payload.attributes,
-                computer_damage_type: action.payload.combat_weapon_one.damage_type[0]
+                computer_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                current_player_health: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
+                new_player_health: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
             };
         case 'SET_DUEL':
             return {
@@ -314,10 +336,11 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 winStreak: state.player.level > state.computer.level ? 0: state.winStreak,
             };
         case 'SET_NEW_COMPUTER':
+            const newHealth = state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health;
             return {
                 ...state,
-                current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                new_player_health: state.new_player_health === 0 || state.new_player_health > state.player_health ? state.player_health : state.new_player_health,
+                current_player_health: newHealth,
+                new_player_health: newHealth,
                 computer: action.payload.ascean,
                 computer_health: action.payload.attributes.healthTotal,
                 current_computer_health: action.payload.attributes.healthTotal,
@@ -554,10 +577,12 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 weather: action.payload,
             };
         case 'PLAYER_REST':
+            console.log('Dispatching Player Rest')
             const percentage = action.payload;
             let currentHealth = state.new_player_health < 0 ? 0 : state.new_player_health;
             const playerHealthHealed = Math.floor(currentHealth + (state.player_health * (percentage / 100)));
             const playerHealth = playerHealthHealed > state.player_health ? state.player_health : playerHealthHealed;
+            console.log('Player Health: ', currentHealth, 'Player Health Healed: ', playerHealthHealed, 'Player Health: ', playerHealth);
             return {
                 ...state,
                 current_player_health: playerHealth,

@@ -19,6 +19,7 @@ router.get('/replenishFirewater/:id', protect, asceanCtrl.replenishFirewater);
 router.get('/stats/:id', protect, asceanCtrl.getAsceanStats);
 router.get('/kill/:id', protect, asceanCtrl.killAscean);
 router.get('/tutorial/:id/:tutorial', protect, asceanCtrl.firstTutorial);
+router.get('/:tax/:id', protect, asceanCtrl.asceanTax);
 
 router.put('/coords', protect, asceanCtrl.saveCoordinates)
 router.put('/highscore', protect, asceanCtrl.updateHighScore);

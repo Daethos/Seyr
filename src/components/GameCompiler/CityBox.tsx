@@ -137,14 +137,21 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
         try {
             const response = await asceanAPI.restoreFirewater(ascean._id);
             console.log(response, 'Response Refilling Flask');
-            gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+            dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
+            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
         } catch (err: any) {
             console.log(err, "Error Refilling Flask");
         };
     };
 
-    const handleRest = async () => {
+    const handleRest = async (cost: number) => {
         dispatch ({ type: ACTIONS.PLAYER_REST, payload: 100 });
+        if (cost > 0) {
+            const response = await asceanAPI.asceanTax({ tax: cost, id: ascean._id });
+            console.log(response, 'Response Resting');
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_CURRENCY, payload: response });
+            dispatch({ type: ACTIONS.SET_CURRENCY, payload: response });
+        };
     };
 
     const checkingLoot = async () => {
@@ -208,7 +215,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                         <>
                         "Hmm." The Alchemist's eyes scatter about your presence, eyeing {ascean?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, 
                         its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.<br /><br />
-                        "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, I'll need you alive for patronage."
+                        "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, 10s a fifth what you say? I'll need you alive for patronage."
                         <br /><br />
                         <Button variant='' className='dialog-buttons inner' style={{ color: 'blueviolet' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
                         </>
@@ -262,10 +269,10 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Innkeeper
                     <br />
-                    "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 20s a night (Free at the moment)."
+                    "Welcome to the inn, you can rest here for a small fee if you feel you need the downtime. Simply 30s a night."
                     <br /><br />
                     <Currency ascean={ascean} />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => handleRest()}>Rest for 1 Night.</Button>
+                    <Button variant='' className='dialog-buttons inner' onClick={() => handleRest(30)}>Rest for 1 Night.</Button>
                 </>
             : cityOption === 'Jeweler' ?
                 <>
@@ -392,7 +399,9 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     "Daeth's are smaller, local temples that are often built in most cities of Licivitas, though some newer ones have been seen in the outer reaches of this world. 
                     These sources of faith for the devoted find themselves burgeoning during prayer and service, spreading their influence to many who have lost guidance from their Ancient's teachings."
                     <br /><br />
-                    <Button variant='' className='dialog-buttons inner' onClick={() => handleRest()}>Rest for 1 Night.</Button>
+                    { ascean?.faith === 'devoted' ? 
+                    <Button variant='' className='dialog-buttons inner' onClick={() => handleRest(0)}>Rest for 1 Night.</Button>
+                    : '' }
         
                 </>
             : '' }
