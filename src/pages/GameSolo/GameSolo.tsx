@@ -1187,7 +1187,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             switch (content) {
                 case 'enemy': {
-                    shakeScreen({ duration: 1000, intensity: 2 });
+                    shakeScreen({ duration: 750, intensity: 1.5 });
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger whose reaction appears defensive.` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a stranger to your presence. They appear to be approaching you now. \n\n May you be fyers, ${gameState?.player?.name}.` });

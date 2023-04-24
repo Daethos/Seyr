@@ -454,10 +454,9 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                     </div>
                     <div className="property-line last">
                         <h4>Caeren: </h4>
-                        <p> Of Cambiren, the Ancient Potential.
-                                <br />An idealized person or thing. A specter or phantom. Inspired from Eidolon..<br />
-                                <br /> The Caer: synonymous to 'the will.'
-
+                        <p> Of Cambire, the Ancient of Potential.
+                                <br />An idealized person or thing. A specter or phantom. Root: Eidolon.<br />
+                                <br /> The Caer: synonymous to 'the Will.'
                             <br />Increases Crit Damage, Defense, Health, Spell Damage</p>
                         <InputGroup className="mb-1">
                         <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>

@@ -62,6 +62,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
 
     const [asceanState, setAsceanState] = useState({
         ascean: gameState.player,
+        currentHealth: 0,
         constitution: 0,
         strength: 0,
         agility: 0,
@@ -93,6 +94,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 setAsceanState({
                     ...asceanState,
                     'ascean': combatStateResponse.data.data.ascean,
+                    'currentHealth': combatStateResponse.data.data.ascean.health.current === -10 ? combatStateResponse.data.data.attributes.healthTotal : combatStateResponse.data.data.ascean.health.current,
                     'level': combatStateResponse.data.data.ascean.level,
                     'opponent': 0,
                     'experience': 0,
@@ -296,6 +298,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             setAsceanState({
                 ...asceanState,
                 ascean: response.data,
+                currentHealth: response.data.health.current,
                 constitution: 0,
                 strength: 0,
                 agility: 0,
@@ -348,6 +351,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             setAsceanState({
                 ...asceanState,
                 'ascean': cleanRes.data,
+                'currentHealth': cleanRes.data.health.current,
                 'constitution': 0,
                 'strength': 0,
                 'agility': 0,
@@ -374,6 +378,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
+                    'currentHealth': state.new_player_health,
                     'experience': asceanState.experienceNeeded,
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
@@ -382,6 +387,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
+                    'currentHealth': state.new_player_health,
                     'experience': Math.round(asceanState.experience + opponentExp),
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
@@ -628,7 +634,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                         'background': getPlayerBackground.background
                     });
                 };
-                if (mapState.steps !== 3 && !mapState.contentMoved) {
+                if (mapState.steps % 3 !== 0 && !mapState.contentMoved) {
                     mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
                 };
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
@@ -788,6 +794,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
         try {
             switch (content) {
                 case 'enemy': {
+                    shakeScreen(gameState.shake);
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted a combatant whose reaction appears defensive.` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted a combatant to your presence. They appear to be approaching you now. \n\n May you be sure, ${gameState?.player?.name}.` });
@@ -798,6 +805,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                     break;
                 };
                 case 'phenomena': {
+                    shakeScreen(gameState.shake);
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter?` });
                     await getPhenomena();
                     break;
@@ -807,6 +815,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                     break;
                 };
                 case 'treasure': {
+                    shakeScreen(gameState.shake);
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
@@ -1038,6 +1047,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            shakeScreen(gameState.shake);
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
             if (response.data.player_win === true) {
@@ -1160,7 +1170,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
                 />
                 </>
             : '' }
-
             <GameConditions 
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={gameState.vibrationTime}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleHardcoreDeath} gameState={gameState}
@@ -1211,12 +1220,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
                     <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                 </>
             }
-            { mapState?.currentTile ?
-                <>
-                <Coordinates mapState={mapState} />
-                <Content mapState={mapState} />
-                </>
-            : '' }
             <GameplayOverlay 
                 ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}

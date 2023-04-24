@@ -621,7 +621,7 @@ async function saveExperience(req, res) {
             ascean.currency.silver -= 100;
         };
         
-        if (ascean.firewater.charges < 5 && ascean.level <= req.body.opponent) {
+        if (ascean.firewater.charges < 5 && (ascean.level <= req.body.opponent)) {
             console.log(ascean.level, req.body.opponent, '<- Level and Opponent Level. You should get a charge!');
             ascean.firewater.charges += 1;
         };
