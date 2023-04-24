@@ -813,7 +813,7 @@ async function create(req, res) {
 async function index(req, res) {
     try {
         console.log(req.user._id, '<- User ID in Ascean Index Controller')
-        const asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
+        let asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
         let fields = [
             'weapon_one',
             'weapon_two',
@@ -827,7 +827,8 @@ async function index(req, res) {
             'amulet',
             'trinket'
         ];
-
+        // Except this should be the latest 10 characters
+        asceanCrew = asceanCrew.slice(-10) // Needs to be the last 10 characters        
         for await (let ascean of asceanCrew) {
 
             const populated = await Promise.all(fields.map(async field => {
@@ -837,7 +838,6 @@ async function index(req, res) {
             populated.forEach((item, index) => {
                 ascean[fields[index]] = item;
             });
-
             await Ascean.populate(ascean, { path: 'user' });
         };
         res.status(200).json({ data: asceanCrew });

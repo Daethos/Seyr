@@ -27,6 +27,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
     setLoading(true);
     try {
       const response = await asceanAPI.getAllAscean();
+      console.log(response, "Response Getting Ascean")
       if (response.data.length === 0) navigate('/Ascean');
       setAsceanVaEsai([...response.data.reverse()]);
       setLoading(false);
