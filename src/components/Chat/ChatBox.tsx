@@ -16,7 +16,7 @@ const ChatBox = ({ user, selectedChat, setSelectedChat, fetchAgain, setFetchAgai
         <>
             <SingleChat notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
         </>  
-    )
-}
+    );
+};
 
-export default ChatBox
+export default ChatBox;

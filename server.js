@@ -49,7 +49,7 @@ const server = app.listen(port, function() {
 const io = require('socket.io')(server, {
   maxHttpBufferSize: 1e8,
   cors:  {
-    origin: "https://ascea.herokuapp.com",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -73,6 +73,7 @@ io.on("connection", (socket) => {
     console.log("Setting Up");
     socket.join(userData._id);
     console.log(userData.username, userData._id);
+    socket.emit("Connected");
   };
 
   async function joinRoom(data) {
@@ -241,6 +242,11 @@ io.on("connection", (socket) => {
   socket.on('typing', (room) => socket.in(room).emit('typing'));
   socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'));
   socket.on('createMap', createMap);
+
+  socket.on("join_chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+ });
 
   socket.on("new_message", (newMessageReceived) => {
     let chat = newMessageReceived.chat;
