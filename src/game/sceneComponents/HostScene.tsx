@@ -19,6 +19,13 @@ import Attributes from '../LevelUp/Attributes';
 import Mastery from '../../components/AsceanBuilder/Mastery';
 import Faith from '../../components/AsceanBuilder/Faith';
 
+export const useDocumentEvent = (event: string, callback: any) => {
+    useEffect(() => {
+        document.addEventListener(event, callback);
+        return () => document.removeEventListener(event, callback);
+    }, [event, callback]);
+};
+
 interface Props {
     user: any;
     ascean: any;
@@ -33,7 +40,7 @@ interface Props {
     setLevelUp: any;
     gameChange: boolean;
     setGameChange: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense, levelUp, setLevelUp, gameChange, setGameChange }: Props) => {
     const [gameState, setGameState] = useState<any>({});
@@ -133,7 +140,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                 canvasElement.removeChild(canvasElement.children[canvasElement.children.length - 1]);
                 gameRef.current = null;
                 console.log(canvasElement, 'Canvas Element Before')
-            }
+            };
             gameRef.current = new Phaser.Game(config);
             setGameState(gameRef.current);
             canvasElement = document.querySelector('#story-game');
@@ -142,8 +149,8 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             }, 1000);
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game')
-        }
-    }, [ascean])
+        };
+    }, [ascean]);
     
     const levelUpAscean = async (vaEsai: any) => {
         try {

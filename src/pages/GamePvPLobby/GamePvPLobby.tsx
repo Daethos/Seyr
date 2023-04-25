@@ -75,7 +75,7 @@ const GamePvPLobby = ({ user }: Props) => {
       useEffect(() => {
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
-        const newSocket = io.connect('https://ascea.herokuapp.com');
+        const newSocket = io.connect('https://ascea.herokuapp.com', { transports: ['websocket'] });
         setSocket(newSocket);
         newSocket.emit("setup", user);
         return () => {
@@ -178,10 +178,9 @@ const GamePvPLobby = ({ user }: Props) => {
                 message: `Received created map with variables: City: ${response.contentCounts.city}, Enemy: ${response.contentCounts.enemy}, Treasure: ${response.contentCounts.treasure}.`,
                 time: Date.now()
             };
-            // await socket.emit("send_message", messageData);
             setMessageList((list: any) => [...list, messageData]);
             await setCoordinates(playerState, response);
-            if (playerState.playerOne.user._id === user._id) await socket.emit('commenceGame');
+            await socket.emit('commenceGame');
         };
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
@@ -232,8 +231,6 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('duel_ready_response', duelReadyResponseCallback);
 
         const combatResponseCallback = async (response: any) => {
-            console.log(response.playerPosition, state.playerPosition, "Positions To Determine Response");
-
             if (response.playerPosition === state.playerPosition) await statusUpdate(response);
         };
         handleSocketEvent('combat_response', combatResponseCallback);

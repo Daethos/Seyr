@@ -52,12 +52,16 @@ const io = require('socket.io')(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+  transports: ['websocket'],
 });
-
+io.engine.pingInterval = 30000;
+io.engine.pingTimeout = 5000;
 io.on("connection", (socket) => {
+  
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
-  let newUser;
+  let personalUser = { user: null, ascean: null };
+  let newUser = { user: null, room: null, ascean: null, player: null, ready: false };
   let mapSyncData = {};
   let combatData = {};
   let newMap = {};
@@ -69,8 +73,9 @@ io.on("connection", (socket) => {
     playerFour: null,
   };
 
-  function onSetup(userData) {
+  async function onSetup(userData) {
     console.log("Setting Up");
+    personalUser.user = userData;
     socket.join(userData._id);
     console.log(userData.username, userData._id);
     socket.emit("Connected");
@@ -80,6 +85,7 @@ io.on("connection", (socket) => {
     socket.join(data.room);
     console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
     connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
+    if (data.user._id === personalUser.user._id) personalUser.ascean = data.ascean;
     newUser = {
       room: data.room,
       ascean: data.ascean,
@@ -87,7 +93,6 @@ io.on("connection", (socket) => {
       player: connectedUsersCount,
       ready: false,
     };
-
     if (newUser.player === 1) {
       playerStateData.playerOne = newUser;
     } else if (newUser.player === 2) {
@@ -237,11 +242,44 @@ io.on("connection", (socket) => {
     };
   };
 
+  async function playerDirection(directionData) {
+    const newDirection = directionData;
+    io.to(newUser.room).emit('playerDirectionChanged', newDirection);
+  };
+
+  async function commenceGame() {
+    console.log('Commencing Game', personalUser.username);
+    const username = personalUser.user.username;
+      const messageData = {
+        room: newUser.room,
+        author: 'The Ascea',
+        message: `Welcome, ${username.charAt(0).toUpperCase() + username.slice(1)}, to the Ascea. Your game is commencing in 10 seconds. Prepare, and good luck with ${personalUser.ascean.name}.`,
+        time: Date.now(),
+      };
+    socket.emit('Game Commencing', messageData);
+  };
+
+  async function syncMap(mapData) {
+    console.log('Syncing Map Content');
+    const newMap = mapData;
+    mapSyncData = newMap;
+    io.to(newUser.room).emit('mapContentSynced', newMap);
+  };
+
+  async function newEnvironmentTile(tileData) {
+    console.log("New Environment");
+    socket.to(newUser.room).emit('newEnvironment', tileData);
+  };
+
   socket.on("setup", onSetup);
   socket.on("join_room", joinRoom);
   socket.on('typing', (room) => socket.in(room).emit('typing'));
   socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'));
   socket.on('createMap', createMap);
+  socket.on('playerDirectionChange', playerDirection);
+  socket.on('commenceGame', commenceGame);
+  socket.on('syncMapContent', syncMap);
+  socket.on('newEnvironmentTile', newEnvironmentTile);
 
   socket.on("join_chat", (room) => {
     socket.join(room);
@@ -257,40 +295,8 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('playerDirectionChange', async (directionData) => {
-      const newDirection = directionData;
-      io.to(newUser.room).emit('playerDirectionChanged', newDirection);
-  });
-
-  socket.on('commenceGame', async () => {
-      console.log('Commencing Game');
-      const roomSockets = await io.of('/').in(newUser.room).fetchSockets();
-      for (const clientSocket of roomSockets) {
-        const username = newUser.user.username;
-        const messageData = {
-          room: newUser.room,
-          author: 'The Ascea',
-          message: `Welcome, ${username.charAt(0).toUpperCase() + username.slice(1)}, to the Ascea. Your game is commencing in 10 seconds. Prepare, and good luck.`,
-          time: Date.now(),
-        };
-        clientSocket.emit('Game Commencing', messageData);
-      };
-  });
-
-  socket.on('syncMapContent', async (mapData) => {
-    console.log('Syncing Map Content');
-    const newMap = mapData;
-    mapSyncData = newMap;
-    io.to(newUser.room).emit('mapContentSynced', newMap);
-  });
-
   socket.on('ascean', async (asceanData) => {
     socket.to(asceanData.room).emit('update_ascean', asceanData);
-  });
-
-  socket.on('newEnvironmentTile', async (tileData) => {
-    console.log("New Environment");
-    socket.to(newUser.room).emit('newEnvironment', tileData);
   });
 
   socket.on('spectatePlayer', async (playerData) => {
@@ -306,6 +312,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on('duelDataShare', async (duelData) => {
+    console.log("Sharing Duel Data")
     io.to(newUser.room).emit('duelDataShared', duelData);
   });
 

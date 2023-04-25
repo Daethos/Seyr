@@ -1111,14 +1111,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     <img src={process.env.PUBLIC_URL + `/images/` + ascean.origin + '-' + ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "10vw", borderRadius: "50%", border: "2px solid purple" }} />
                 }
                 </Button>
-            {
-                mapState?.currentTile ?
-                <>
-                <Coordinates mapState={mapState} />
-                <Content mapState={mapState} />
-                </>
-                : ''
-            }
             <SpectatorOverlay
                 ascean={ascean} mapState={mapState} mapDispatch={mapDispatch} loadingSpectator={gameState.loadingSpectator} gameDispatch={gameDispatch} state={specState} dispatch={specDispatch} 
                 emergencyText={emergencyText} setEmergencyText={setEmergencyText} playerState={playerState} gameState={gameState} setModalShow={setModalShow}
