@@ -14,9 +14,10 @@ interface StoryProps {
     mapState: any;
     storyContent: string;
     moveTimer: number;
+    interactPhenomena: () => Promise<void>;
 };
 
-const StoryBox = ({ ascean, mapState, storyContent, moveTimer }: StoryProps) => {
+const StoryBox = ({ ascean, mapState, storyContent, moveTimer, interactPhenomena }: StoryProps) => {
     const [currentTileContent, setCurrentTileContent] = useState<Tile>({
         x: 0,
         y: 0,
@@ -55,7 +56,7 @@ const StoryBox = ({ ascean, mapState, storyContent, moveTimer }: StoryProps) => 
                     : currentTileContent?.content === 'landmark' ?
                         <Button variant='' style={tileStyle}>Enjoy Landmark</Button>
                     : currentTileContent?.content === 'phenomena' ?
-                        <Button variant='' style={tileStyle}>Peer Into Phenomena</Button>
+                        <Button variant='' style={tileStyle} onClick={interactPhenomena}>Peer Into Phenomena</Button>
                     : currentTileContent?.content === 'ruins' ?
                         <Button variant='' style={tileStyle}>Scour Ruins</Button>
                     : currentTileContent?.content === 'wonder' ?

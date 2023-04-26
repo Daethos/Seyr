@@ -156,7 +156,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         if (!enemy.dialogId) return;
         let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
         setDialogTree(dialogTree);
-    }
+    };
 
     const handleCurrentQuest = (currentQuest: any) => {
         let quest = {
@@ -550,7 +550,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
             <img src={process.env.PUBLIC_URL + `/images/` + enemy?.origin + '-' + enemy?.sex + '.jpg'} alt={enemy?.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
-            {' '}{enemy?.name} (Level {enemy?.level})<br />
+            {' '}{enemy?.name} (Level {enemy?.level}) {!enemy?.alive ? '[Deceased]' : ''}<br />
                 { currentIntent === 'combat' ?
                     <>
                         <CombatDialogButtons options={dialog[currentIntent]} handleCombatAction={handleCombatAction}  />
@@ -684,7 +684,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             </> 
                         ) : ( 
                             <>
-                            {enemyArticle?.charAt(0).toUpperCase()} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            {enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities {npc}?</Button>
                             </> 
                         ) }

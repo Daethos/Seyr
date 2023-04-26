@@ -228,8 +228,8 @@ export async function edit(vaEsai: any) {
         if (res.ok) return res.json();
         const response = await res.json();
         console.log(response, '<- Response in Edit Utility Return');
-    })
-}
+    });
+};
 
 export async function highScore(vaEsai: any) {
     console.log(vaEsai, 'Are We Updating the High Score?')
@@ -244,8 +244,36 @@ export async function highScore(vaEsai: any) {
         if (res.ok) return res.json();
         const response = await res.json();
         console.log(response, '<- Response in High Score Utility Return');
-    })
-}
+    });
+};
+
+export async function setCurrency(vaEsai: any) {
+    return fetch(BASE_URL + 'setCurrency', {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+    }}).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response, '<- Response in Save Experience Utility Return');
+    });
+};
+
+export async function setExperience(vaEsai: any) {
+    return fetch(BASE_URL + 'setExp', {
+        method: 'PUT',
+        body: JSON.stringify(vaEsai),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+    }}).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response, '<- Response in Save Experience Utility Return');
+    });
+};
 
 export async function saveExperience(vaEsai: any) {
     return fetch(BASE_URL + 'exp', {
@@ -259,7 +287,7 @@ export async function saveExperience(vaEsai: any) {
         const response = await res.json();
         console.log(response, '<- Response in Save Experience Utility Return');
     });
-}
+};
 
 export async function levelUp(vaEsai: any) {
     return fetch(BASE_URL + 'levelup', {
@@ -274,7 +302,7 @@ export async function levelUp(vaEsai: any) {
         const response = await res.json();
         console.log(response, '<- Response in Level Up Utility Return');
     });
-}
+};
 
 export async function saveToInventory(vaEsai: any) {
     return fetch(BASE_URL + 'inventory', {

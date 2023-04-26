@@ -154,10 +154,10 @@
   white-space: pre-wrap;
 }
 .dialog-box, .city-box {
-  position: absolute; /* add this */
-  top: 42.5%; /* position the dialog box in the center vertically */
-  left: 50%; /* position the dialog box in the center horizontally */
-  transform: translate(-50%, -50%); /* adjust the position of the dialog box to account for its own width and height */
+  position: absolute; 
+  top: 42.5%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
   height: 325px;
   width: 100%;
   border: 2px solid purple;

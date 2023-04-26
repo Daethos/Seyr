@@ -47,6 +47,33 @@ module.exports = {
     firstTutorial,
     asceanTax,
     updateHealth,
+    setCurrency,
+    setExperience,
+};
+
+async function setCurrency(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.body.asceanID);
+        ascean.currency.silver -= req.body.currency;
+        await rebalanceCurrency(ascean);
+        await ascean.save();
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, "Error Setting Currency");
+        res.status(400).json(err);
+    };
+};
+
+async function setExperience(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.body.asceanID);
+        ascean.experience -= req.body.experience;
+        await ascean.save();
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err, "Error Setting Experience");
+        res.status(400).json(err);
+    };
 };
 
 async function firstTutorial(req, res) {

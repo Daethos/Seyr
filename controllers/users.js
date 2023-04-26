@@ -122,8 +122,8 @@ async function profileCharacter(req, res) {
 async function deadEnemy(req, res) {
   console.log(req.body, 'Getting Profile Character')
   try {
-    const user = await User.findOne({ username: req.body.username, alive: false });
-    const ascean = await Ascean.find({ user: user._id });
+    const user = await User.findOne({ username: req.body.username });
+    const ascean = await Ascean.find({ user: user._id, alive: false });
     let randomAscean;
     if (ascean) {
       const asceanInRange = ascean.filter((a) => a.level >= req.body.minLevel && a.level <= req.body.maxLevel);

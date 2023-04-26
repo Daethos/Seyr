@@ -171,9 +171,6 @@ const GameSolo = ({ user }: GameProps) => {
             if (mapState.currentTile.content !== 'nothing' && mapState?.lastTile) {
                 handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
             };
-            return () => {
-                console.log("Cleaning Up Move Content Effect");
-            };
         }, [mapState.currentTile, mapState.currentTile.content]);
     };
     useMoveContentEffect(mapState);
@@ -202,7 +199,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
             if (checkPlayerTrait("Kyn'gian") && mapState.steps % 10 === 0) {
                 console.log("I'm Walking!");
-                dispatch({ type: ACTIONS.PLAYER_REST, payload: 0.5 });
+                dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
             };
         }, [mapState.steps]);
     };
@@ -549,7 +546,7 @@ const GameSolo = ({ user }: GameProps) => {
             const secondResponse = await userService.getRandomDeadEnemy(enemyData);
             const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
             const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
-            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data })
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data });
             setAsceanState({
                 ...asceanState,
                 'opponent': selectedOpponent.data.level,
@@ -973,10 +970,103 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getPhenomena = async () => {
-        if (gameState.cityButton) {
-            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
+        try {
+            if (gameState.cityButton) {
+                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
+            };
+            playPhenomena();
+        } catch (err: any) {
+            console.log(err.message, 'Error Encountering Phenomena');
         };
-        playPhenomena();
+    };
+
+    const interactPhenomena = async () => {
+        try {
+            const caeren = state?.player_attributes?.totalCaeren;
+            const level = gameState?.player?.level;
+            const initialIntensity = level * caeren / 10;
+            const maxIntensity = level * caeren;
+            const healCurse = async () => {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance > 33) {
+                    dispatch({ type: ACTIONS.PLAYER_REST, payload: initialIntensity });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You heal for ${Math.round(initialIntensity * 0.01 * state?.player_health)}, a small respite from the harsh tones of your surroundings.` });
+                } else {
+                    dispatch({ type: ACTIONS.PLAYER_REST, payload: -initialIntensity });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You snap back in pain, its sensation coursing through you for ${Math.round(initialIntensity * 0.01 * state?.player_health)}.` });
+                };
+            };
+
+            const trickster = async (ascean: Player) => {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance + level > 75) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A light pool of caeren juts out into you, increasing your experience by ${maxIntensity + ascean.kyosir}.` });
+                    const response = await asceanAPI.setExperience({ asceanID, experience: (maxIntensity + ascean.kyosir) });
+                    dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
+                    gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
+                } else if (chance + level > 50) {
+                    await getTreasure();
+                } else if (chance + level > 25) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `The faint stain of Kyosir billows from its writhing tendrils and you suddenly feel lighter to the tune of ${maxIntensity}s.` });
+                    const response = await asceanAPI.setCurrency({ asceanID, currency: maxIntensity });
+                    dispatch({ type: ACTIONS.SET_CURRENCY, payload: response.currency });
+                    gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_CURRENCY, payload: response.currency });
+                } else {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A murky pool of caeren juts out to leech you, decreasing your experience by ${maxIntensity - ascean.kyosir}.` });
+                    const response = await asceanAPI.setExperience({ asceanID, experience: -(maxIntensity - ascean.kyosir) });
+                    dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
+                    gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
+                };
+            };
+
+            const returnPhenomena = async () => {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance - level > 66) {
+                    await healCurse();
+                } else if (chance - level > 33) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter? \n\n Chance To: Heal, Damage, Gain Exp, Lose Exp, Gain Treasure, Wealth, Encounter Dead Ascean` });
+                    await trickster(gameState.player);
+                } else {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter? \n\n Chance To: Heal, Damage, Gain Exp, Lose Exp, Gain Treasure, Wealth, Encounter Dead Ascean` });
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You're unsure of what you're witnessing materialize yet its form becomes unmistakeningly clear, instintively you reach for your ${state?.weapons[0].name}. \n\n Luck be to you, ${gameState?.player?.name}.` });
+                    await getDeadAscean();
+                    setTimeout(() => {
+                        gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                    }, 3000);
+                };
+            };
+            
+            switch (caeren) {
+                case caeren < 20:
+                    await returnPhenomena();
+                    break;
+                case caeren < 30:
+                    await healCurse();
+                    await returnPhenomena();
+                    break;
+                case caeren < 40:
+                    await healCurse();
+                    await returnPhenomena();
+                    break;
+                case caeren < 50:
+                    await returnPhenomena();
+                    break;
+                case caeren < 60:
+                    await returnPhenomena();
+                    break;
+                case caeren < 70:
+                    await returnPhenomena();
+                    break;
+                default:
+                    await returnPhenomena();
+                    break;
+            };
+
+            mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+        } catch (err: any) {
+            console.log(err, "Error Interacting With Phenomena");
+        };
     };
 
     const getWeather = async (province: string) => {
@@ -1210,22 +1300,22 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 case 'phenomena': {
                     shakeScreen(gameState.shake);
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter?` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter? \n\n Chance To: Heal, Damage, Gain Exp, Lose Exp, Gain Treasure, Wealth, Encounter Dead Ascean` });
                     await getPhenomena();
                     break;
                 };
                 case 'wonder': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Natural wonders of the world environment, may grant boons or blessings when encountered, or perhaps be where enemies or npc's congregate` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Natural wonders of the world environment, may grant boons or blessings when encountered, or perhaps be where enemies or npc's congregate \n\n [Note: This currently does not exist.]` });
                     await getWonder(); 
                     break;
                 };
                 case 'ruins': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Decay of civilizations from the past, may have scavengers or treasure probabilistically determined` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Decay of civilizations from the past, may have scavengers or treasure probabilistically determined \n\n [Note: This currently does not exist.]` });
                     await getRuins();
                     break;
                 };
                 case 'cave': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Caves appear abundant, with many adventurers seeking untold stories that lay waiting to be discovered. Curious why there aren't more folk interested` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Caves appear abundant, with many adventurers seeking untold stories that lay waiting to be discovered. Curious why there aren't more folk interested \n\n [Note: This currently does not exist.]` });
                     await getCave();
                     break;
                 };
@@ -1244,18 +1334,18 @@ const GameSolo = ({ user }: GameProps) => {
                     break;
                 };
                 case 'landmark': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Man-made landmarks, may have treasure, enemies, or npc's congregating` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Man-made landmarks, may have treasure, enemies, or npc's congregating \n\n [Note: This currently does not exist.]` });
                     await getLandmark();
                     break;
                 };
                 case 'hazard': {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Natural hazards of the environment that when encountered, cause harmful effects akin to curses` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Natural hazards of the environment that when encountered, cause harmful effects akin to curses \n\n [Note: This currently does not exist.]` });
                     await getHazard();
                     break;
                 };
                 case 'dungeon': {
                     shakeScreen(gameState.shake);
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Dungeons may refer to old, abandoned settlements sunk into this world. There may also be another reason` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Dungeons may refer to old, abandoned settlements sunk into this world. There may also be another reason \n\n [Note: This currently does not exist.]` });
                     await getDungeon();
                     break;
                 };
@@ -1667,7 +1757,7 @@ const GameSolo = ({ user }: GameProps) => {
                 inventory={gameState.player.inventory} ascean={gameState.player} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch} gameState={gameState} mapState={mapState}
             />
-            { asceanState.ascean.experience === asceanState.experienceNeeded ?
+            { asceanState.ascean.experience >= asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
             <GameAscean state={state} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
@@ -1711,7 +1801,7 @@ const GameSolo = ({ user }: GameProps) => {
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
                     : 
                         <>
-                        <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
+                        <StoryBox ascean={gameState.player} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} interactPhenomena={interactPhenomena} />
                         <Joystick onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} mapState={mapState} />
                         <Button variant='' className='inventory-button' onClick={handleInventoryMiddleware}>Inventory</Button>   
                         </>

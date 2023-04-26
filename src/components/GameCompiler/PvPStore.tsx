@@ -32,7 +32,38 @@ export interface PvPData {
     playerEffects: any[];
     player_damage_type: string;
     player_defense: object;
-    player_attributes: object;
+    player_attributes: {
+        rawConstitution: number;
+        rawStrength:  number;
+        rawAgility:  number;
+        rawAchre:   number;
+        rawCaeren: number;
+        rawKyosir:  number;
+
+        totalStrength: number;
+        totalAgility: number;
+        totalConstitution: number;
+        totalAchre: number;
+        totalCaeren: number;
+        totalKyosir: number;
+
+        strengthMod:  number;
+        agilityMod:  number;
+        constitutionMod: number;
+        achreMod:  number;
+        caerenMod:  number;
+        kyosirMod:  number;
+        
+        equipStrength: number;
+        equipConstitution: number;
+        equipAgility: number;
+        equipAchre: number;
+        equipCaeren: number;
+        equipKyosir: number;
+
+        healthTotal: number;
+        initiative: number;    
+    };
     player_defense_default: object;
     realized_player_damage: number;
 
@@ -151,7 +182,38 @@ export const initialPvPData: PvPData = {
     playerEffects: [],
     player_damage_type: '',
     player_defense: {},
-    player_attributes: {},
+    player_attributes: {
+        rawConstitution: 0,
+        rawStrength:  0,
+        rawAgility:  0,
+        rawAchre:   0,
+        rawCaeren: 0,
+        rawKyosir:  0,
+
+        totalStrength: 0,
+        totalAgility: 0,
+        totalConstitution: 0,
+        totalAchre: 0,
+        totalCaeren: 0,
+        totalKyosir: 0,
+
+        strengthMod:  0,
+        agilityMod:  0,
+        constitutionMod: 0,
+        achreMod:  0,
+        caerenMod:  0,
+        kyosirMod:  0,
+        
+        equipStrength: 0,
+        equipConstitution: 0,
+        equipAgility: 0,
+        equipAchre: 0,
+        equipCaeren: 0,
+        equipKyosir: 0,
+
+        healthTotal: 0,
+        initiative: 0
+    },
     player_defense_default: {},
     realized_player_damage: 0,
     player_start_description: '',
@@ -236,6 +298,8 @@ export const initialPvPData: PvPData = {
 
 export const ACTIONS = {
     SET_PLAYER: 'SET_PLAYER',
+    SET_EXPERIENCE: 'SET_EXPERIENCE',
+    SET_CURRENCY: 'SET_CURRENCY',
     SET_PLAYER_POSITION: 'SET_PLAYER_POSITION',
     SET_ENEMY: 'SET_ENEMY',
     SET_DUEL: 'SET_DUEL',
@@ -382,6 +446,24 @@ export const PvPStore = (state: PvPData, action: Action) => {
             return {
                 ...state,
                 playerPosition: action.payload
+            };
+        case 'SET_EXPERIENCE':
+            return {
+                ...state,
+                player: {
+                    ...state.player,
+                    experience: action.payload.experience,
+                    firewater: action.payload.firewater,
+                    currency: action.payload.currency,
+                },
+            };
+        case 'SET_CURRENCY':
+            return {
+                ...state,
+                player: {
+                    ...state.player,
+                    currency: action.payload,
+                },
             };
         case 'SET_ENEMY':
             return {

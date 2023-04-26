@@ -31,6 +31,10 @@ import { Merchant } from '../../components/GameCompiler/NPCs';
 import PvPAscean from '../../components/GameCompiler/PvPAscean';
 import Settings from '../../components/GameCompiler/Settings';
 import SpectatorOverlay from '../../components/GameCompiler/SpectatorOverlay';
+import userService from '../../utils/userService';
+import { shakeScreen } from '../../components/GameCompiler/CombatStore';
+import { getNpcDialog } from '../../components/GameCompiler/Dialog';
+
 
 export enum MapMode {
     FULL_MAP,
@@ -87,12 +91,11 @@ interface GameProps {
 
 const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispatch, mapState, mapDispatch, gameState, gameDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, clearOpponent, handleInitiate, handlePvPInitiate, handleInstant, handlePvPInstant, handlePrayer, handlePvPPrayer, instantUpdate, statusUpdate, softUpdate, handleEnemyWin, handlePlayerWin, getAsceanCoords, generateWorld, user, ascean, enemy, spectator, room, socket, setModalShow }: GameProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const { playWO, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton } = useGameSounds(gameState.soundEffectVolume);
+    const { playWO, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playOpponent } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
     const [background, setBackground] = useState<any | null>({
         background: ''
     });
-
     const [moveTimerDisplay, setMoveTimerDisplay] = useState<number>(moveTimer);
 
     useEffect(() => {
@@ -617,6 +620,103 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
+    const getDeadAscean = async () => {
+        gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
+        try {
+            const enemyData = {
+                username: user.username,
+                minLevel: 4,
+                maxLevel: 20
+            };
+            const secondResponse = await userService.getRandomDeadEnemy(enemyData);
+            const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
+            const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data });
+            setAsceanState({
+                ...asceanState,
+                'opponent': selectedOpponent.data.level,
+            });
+            dispatch({
+                type: ACTIONS.SET_NEW_ENEMY,
+                payload: response.data.data
+            });
+            shakeScreen(gameState.shake);
+            playOpponent();
+            await getOpponentDialog(selectedOpponent.data.name);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+            if (!gameState?.showDialog && mapState?.currentTile?.content !== 'city') {
+                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error retrieving Enemies')
+        };
+    };
+    
+    const interactPhenomena = async () => {
+        try {
+            const caeren = state?.player_attributes?.totalCaeren;
+            const level = gameState?.player?.level;
+            const initialIntensity = level * caeren / 10;
+            const maxIntensity = level * caeren;
+            const healCurse = async () => {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance > 33) {
+                    dispatch({ type: ACTIONS.PLAYER_REST, payload: initialIntensity });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You heal for ${Math.round(initialIntensity * 0.01 * state?.player_health)}, a small respite from the harsh tones of your surroundings.` });
+                } else {
+                    dispatch({ type: ACTIONS.PLAYER_REST, payload: -initialIntensity });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You snap back in pain, its sensation coursing through you for ${Math.round(initialIntensity * 0.01 * state?.player_health)}.` });
+                };
+            };
+
+            const trickster = async (ascean: Player) => {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance + level > 75) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A light pool of caeren juts out into you, increasing your experience by ${maxIntensity + ascean.kyosir}.` });
+                    const response = await asceanAPI.setExperience({ asceanID: ascean._id, experience: (maxIntensity + ascean.kyosir) });
+                    dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
+                    gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
+                } else if (chance + level > 50) {
+                    await getTreasure();
+                } else if (chance + level > 25) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `The faint stain of Kyosir billows from its writhing tendrils and you suddenly feel lighter to the tune of ${maxIntensity}s.` });
+                    const response = await asceanAPI.setCurrency({ asceanID: ascean._id, currency: maxIntensity });
+                    dispatch({ type: ACTIONS.SET_CURRENCY, payload: response.currency });
+                    gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_CURRENCY, payload: response.currency });
+                } else {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A murky pool of caeren juts out to leech you, decreasing your experience by ${maxIntensity - ascean.kyosir}.` });
+                    const response = await asceanAPI.setExperience({ asceanID: ascean._id, experience: -(maxIntensity - ascean.kyosir) });
+                    dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
+                    gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
+                };
+            };
+
+            const returnPhenomena = async () => {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance - level > 66) {
+                    await healCurse();
+                } else if (chance - level > 33) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter? \n\n Chance To: Heal, Damage, Gain Exp, Lose Exp, Gain Treasure, Wealth, Encounter Dead Ascean` });
+                    await trickster(gameState.player);
+                } else {
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter? \n\n Chance To: Heal, Damage, Gain Exp, Lose Exp, Gain Treasure, Wealth, Encounter Dead Ascean` });
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You're unsure of what you're witnessing materialize yet its form becomes unmistakeningly clear, instintively you reach for your ${state?.weapons[0].name}. \n\n Luck be to you, ${gameState?.player?.name}.` });
+                    await getDeadAscean();
+                    setTimeout(() => {
+                        gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                    }, 3000);
+                };
+            };
+            
+            await returnPhenomena();
+            mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+            await socket.emit('newEnvironmentTile', mapState.currentTile);
+        } catch (err: any) {
+            console.log(err, "Error Interacting With Phenomena");
+        };
+    };
+
     const getPhenomena = async () => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
@@ -908,7 +1008,14 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-
+    const getOpponentDialog = async (enemy: string) => {
+        try {
+            const response = getNpcDialog(enemy);
+            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+        };
+    };
 
     useEffect(() => {
         if (gameState.lootRoll === false || state.player_win === false) return;
@@ -1121,7 +1228,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} currentTile={mapState.currentTile} saveAsceanCoords={saveAsceanCoords} 
                 gameDispatch={gameDispatch}gameState={gameState} mapState={mapState} multiplayer={true}
             />
-            { asceanState.ascean.experience === asceanState.experienceNeeded ?
+            { asceanState.ascean.experience >= asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
             <PvPAscean state={state} ascean={ascean} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
@@ -1170,7 +1277,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
                 : 
                     <>
-                    <StoryBox ascean={ascean} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} />
+                    <StoryBox ascean={ascean} mapState={mapState} storyContent={gameState.storyContent} moveTimer={moveTimer} interactPhenomena={interactPhenomena} />
                     <Joystick mapState={mapState} onDirectionChange={handleDirectionChange} debouncedHandleDirectionChange={debouncedHandleDirectionChange} joystickDisabled={mapState.joystickDisabled} />
                     <Button variant='' className='inventory-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory })}>Inventory</Button>   
                     </>
