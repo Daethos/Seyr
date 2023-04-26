@@ -10,15 +10,9 @@ interface Props {
     physicalDefense: number;
     physicalPosture: number;
     player: any;
-}
+};
 
 const StoryPlayerStats = ({ attributes, weaponAttributes, magicalDefense, magicalPosture, physicalDefense, physicalPosture, player }: Props) => {
-    let totalConstitution: number = attributes.totalConstitution + weaponAttributes?.constitution;
-    let totalStrength: number = attributes.totalStrength + weaponAttributes?.strength;
-    let totalAgility: number = attributes.totalAgility + weaponAttributes?.agility;
-    let totalAchre: number = attributes.totalAchre + weaponAttributes?.achre;
-    let totalCaeren: number = attributes.totalCaeren + weaponAttributes?.caeren;
-    let totalKyosir: number = attributes.totalKyosir + weaponAttributes?.kyosir;
 
     const playerPopover = (
         <Popover id="popover">
@@ -46,37 +40,18 @@ const StoryPlayerStats = ({ attributes, weaponAttributes, magicalDefense, magica
             <div>Kyosir: {attributes.totalKyosir} [ {attributes.totalKyosir < 10 ? '- ' + attributes.kyosirMod : '+ ' + attributes.kyosirMod} ]</div>
             </Popover.Body>
         </Popover>
-      );
-      const attributePopover = (
-        <Popover id="popover">
-            <Popover.Header id="popover-header" as="h2">Player Statistics</Popover.Header>
-            <Popover.Body id="popover-body">
-                <div className="" >
-                Health:  {attributes.healthTotal}
-                </div>
-                <div className="">
-                Magical Defense:  {magicalDefense}% / [{magicalPosture}%]
-                </div>
-                <div className="">
-                Physical Defense:  {physicalDefense}% / [{physicalPosture}%]
-                </div>
-                <div className="">
-                Initiative:  {attributes.initiative}
-                </div>
-            </Popover.Body>
-        </Popover>
-      );
-  return (
-    <div style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
-    <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
-        <Button variant=""  id='ascean-stats'>
-        <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mt-3 mb-5'>
-        <span id="story-popover-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="story-pic" /></span>{' '}
-            {player.name}</h3>
-        </Button>
-    </OverlayTrigger>
-  </div>
-  )
-}
+    );
+    return (
+        <div style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={playerPopover}>
+            <Button variant=""  id='ascean-stats'>
+            <h3 style={{ fontSize: 16 + 'px', color: '#fdf6d8' }} className='mt-3 mb-5'>
+            <span id="story-popover-image"><img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" id="story-pic" /></span>{' '}
+                {player.name}</h3>
+            </Button>
+        </OverlayTrigger>
+    </div>
+    );
+};
 
-export default StoryPlayerStats
+export default StoryPlayerStats;

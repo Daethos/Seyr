@@ -109,6 +109,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     useEffect(() => {
         // if (mapState.currentTile.content === 'enemy') return;
+        if (moveTimer !== 0 || moveTimer === gameState.moveTimer) return;
         if (mapState.contentMoved === true || checkPlayerTiles(mapState) || checkPvP(mapState)) return;
         const timer = setTimeout(() => {
             if (moveTimer === 0 && mapState.steps > 0 && playerState.playerOne?.user?._id === user._id) {
@@ -170,7 +171,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
           console.log("Returning False");
           return false;
         };
-      };
+    };
       
 
     function checkPlayerTiles(mapData: MapData) {
@@ -1004,13 +1005,99 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
+    const getMarginTop = () => {
+        const height = window.innerHeight;
+        switch (true) {
+          case height < 700:
+            return "-95%";
+          case height < 800:
+            return "-90%";
+          case height < 851:
+            return "-42.5%";
+          case height < 900:
+            return "-45%";
+          case height < 992:
+            return "-45%";
+          case height < 1200:
+            return "-45%";
+          case height < 1400:
+            return "-45%";
+          case height < 1600:
+            return "-45%";
+          case height < 1800:
+            return "-45%";
+          case height < 2000:
+            return "-45%";
+          case height >= 2000:
+            return "-45%";
+          default:
+            return 1;
+        };
+    };
+
+    const getMarginLeft = () => {
+        const width = window.innerWidth;
+        switch (true) {
+          case width < 416:
+            return "50%";
+          case width < 468:
+            return "45%";
+          case width < 500:
+            return "45%";
+          case width < 592:
+            return "45%";
+          case width < 700:
+            return "45%";
+          case width < 800:
+            return "45%";
+          case width < 900:
+            return "45%";
+          case width < 1000:
+            return "45%";
+          case width < 1200:
+            return "45%";
+          case width >= 1400:
+            return "45%";
+          default:
+            return 1;
+        };
+    }
+
+    const getRow = () => {
+        const height = window.innerHeight;
+        switch (true) {
+          case height < 700:
+            return 8;
+          case height < 800:
+            return 8;
+          case height < 900:
+            return 8;
+          case height < 992:
+            return 8;
+          case height < 1200:
+            return 8;
+          case height < 1400:
+            return 8;
+          case height < 1600:
+            return 8;
+          case height < 1800:
+            return 8;
+          case height < 2000:
+            return 8;
+          case height >= 2000:
+            return 8;
+          default:
+            return 1;
+        };
+    }
+
     const chatStyle = {
         borderRadius: "50%",
-        marginTop: "-45%",
-        marginLeft: "45%",
+        marginTop: getMarginTop(),
+        marginLeft: getMarginLeft(),
         zIndex: 100,
         gridColumnStart: 1,
-        gridRowStart: 8,
+        gridRowStart: getRow(),
     };
 
     return (

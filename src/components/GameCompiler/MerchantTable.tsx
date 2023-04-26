@@ -1,7 +1,5 @@
-import React, { useState } from 'react'
-import MerchantLoot from './MerchantLoot'
+import MerchantLoot from './MerchantLoot';
 import Row from 'react-bootstrap/Row';
-
 
 interface Props {
     table: any;
@@ -9,7 +7,7 @@ interface Props {
     error: any;
     setError: any;
     gameDispatch: React.Dispatch<any>;
-}
+};
 
 const MerchantTable = ({ table, ascean, error, setError, gameDispatch }: Props) => {
     return (

@@ -114,14 +114,21 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             [ Content: {mapState?.currentTile?.content?.charAt(0).toUpperCase() + mapState?.currentTile?.content?.slice(1)} ]
         </p>
             { multiplayer ? ( '' ) : (
-                    <Button variant='' className='mb-3' style={{ color: '#fdf6d8', fontSize: "16px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Map: {mapState.name}</Button>
+                    <Button variant='' className='mb-3' style={{ color: '#fdf6d8', fontSize: "20px" }} onClick={() => saveAsceanCoords(currentTile.x, currentTile.y)}>Save Map: {mapState.name}</Button>
             ) }
-        <Button variant='outline' className='mb-3' style={{ color: '#fdf6d8', fontSize: '16px' }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button><br />
+        <Button variant='outline' className='mb-3' style={{ color: '#fdf6d8', fontSize: '20px' }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button><br />
         { showInventory ?
             <InventoryBag settings={true} gameDispatch={gameDispatch} inventory={ascean.inventory} ascean={ascean} dispatch={dispatch} gameState={gameState} mapState={mapState} />
         : ""}
-        <br />
-        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+        <Accordion flush >
+        <Accordion.Item eventKey="0">
+            <Accordion.Header>
+                <h5 style={{ marginLeft: 'auto', color: 'gold' }}>
+                Gameplay Controls
+                </h5>
+            </Accordion.Header>
+            <Accordion.Body className='settings-accordion'>
+            <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Combat Timer: ({gameState.timeLeft})
             <span style={{ float: "right" }}></span>
@@ -165,8 +172,8 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             <span style={{ float: "right" }}></span>
         </h6>
         <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
-
-        <Accordion flush >
+                </Accordion.Body>
+        </Accordion.Item>
         <Accordion.Item eventKey="5">
         <Accordion.Header>
             <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>

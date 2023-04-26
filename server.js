@@ -40,22 +40,43 @@ const asceanService = require('./services/asceanServices');
 const questService = require('./services/questServices');
 const WorldMap = require('./services/worldServices');
 const port = process.env.PORT || 3001;
-
+const URL = process.env.DATABASE_URL || 'mongodb://localhost:3000';
 const server = app.listen(port, function() {
   console.log(`Express app listening on port ${port}`);
 });
 // https://ascea.herokuapp.com
 // http://localhost:3000
 const io = require('socket.io')(server, {
+  transports: ['websocket'],
   maxHttpBufferSize: 1e8,
   cors:  {
     origin: "*",
     methods: ["GET", "POST"],
   },
-  transports: ['websocket'],
 });
 io.engine.pingInterval = 30000;
 io.engine.pingTimeout = 5000;
+// const { MongoClient } = require('mongodb');
+// const mongoAdapter = require('@socket.io/mongo-adapter');
+// console.log(mongoAdapter, "mongoAdapter")
+// const mongoClient = new MongoClient(URL, { useUnifiedTopology: true });
+// const adapter = mongoAdapter.createAdapter({ mongoClient, collectionName: 'socket_io' });
+// mongoClient.connect(err => {
+//   if (err) {
+//     console.log('Error connecting to MongoDB:', err);
+//   } else {
+//     const db = mongoClient.db('mydb');
+//     const ioWithMongoAdapter = io.adapter(adapter);
+
+//     ioWithMongoAdapter.on('connection', socket => {
+//       // Handle socket events
+//     });
+
+//     server.listen(3000, () => {
+//       console.log('Server started on port 3000');
+//     });
+//   }
+// });
 io.on("connection", (socket) => {
   
   console.log(`User Connected: ${socket.id}`);
@@ -248,7 +269,6 @@ io.on("connection", (socket) => {
   };
 
   async function commenceGame() {
-    console.log('Commencing Game', personalUser.username);
     const username = personalUser.user.username;
       const messageData = {
         room: newUser.room,

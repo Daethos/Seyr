@@ -1,5 +1,4 @@
-import React from 'react'
-import './GameCompiler.css'
+import './GameCompiler.css';
 
 interface Props {
     playerAction: string;
@@ -12,19 +11,19 @@ interface Props {
     computer_roll_success: boolean;
     counterSuccess: boolean;
     computerCounterSuccess: boolean;
-}
+};
 
 const PVPAnimations = ({ roll_success, computer_roll_success, counterSuccess, computerCounterSuccess, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical }: Props) => {
 
     const critStyle = {
         backgroundColor: 'red',
         fontSize: 32 + 'px',
-    }
+    };
 
     const rollStyle = {
         backgroundColor: 'green',
         fontSize: 28 + 'px',
-    }
+    };
 
     return (
         <>
@@ -72,7 +71,7 @@ const PVPAnimations = ({ roll_success, computer_roll_success, counterSuccess, co
                 </div>
         }
         </>
-    )
-}
+    );
+};
 
-export default PVPAnimations
+export default PVPAnimations;

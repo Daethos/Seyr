@@ -20,7 +20,7 @@ interface Props {
   asceanState: any;
   setAsceanState: any;
   levelUpAscean: any;
-}
+};
 
 const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerHealth, totalPlayerHealth, loading, attributes, playerDefense, asceanState, setAsceanState, levelUpAscean }: Props) => {
     const [showPlayer, setShowPlayer] = useState<boolean>(false)
@@ -68,7 +68,7 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
         
         </div>
         </>
-    )
-}
+    );
+};
 
-export default StoryAscean
+export default StoryAscean;

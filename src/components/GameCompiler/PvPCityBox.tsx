@@ -44,7 +44,7 @@ const CITY_OPTIONS = {
 
 const merchant = {
     name: 'Merchant'
-}
+};
 
 interface CityProps {
     state: any;
@@ -61,7 +61,7 @@ interface CityProps {
     clearOpponent: () => Promise<void>;
     gameDispatch: React.Dispatch<any>;
     gameState: any;
-}
+};
 
 const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clearOpponent, cityOption, merchantEquipment, inventory, getOpponent, resetAscean, deleteEquipment, gameState }: CityProps) => {
     const [error, setError] = useState<any>({ title: '', content: '' });

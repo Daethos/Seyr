@@ -147,6 +147,7 @@ const GameSolo = ({ user }: GameProps) => {
     }, [moveTimer]);
 
     useEffect(() => {
+        if (moveTimer !== 0 || moveTimer === gameState.moveTimer) return;
         if (mapState.currentTile.content === 'enemy' || gameState?.opponent) {
             console.log("Fighting An Enemy, Not Triggering Move Timer Content")
             return;

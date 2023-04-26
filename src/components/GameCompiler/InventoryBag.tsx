@@ -61,7 +61,11 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
           <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
             Inspect
           </Button>
-      : 
+      : firewater?.charges === 0 && mapState?.currentTile?.content === 'city' ?
+          <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
+            Empty
+          </Button>
+      :
           <Button variant='' onClick={drinkFirewater} style={{ color: "gold", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
             Take a Drink?
         </Button> 
@@ -130,7 +134,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     setShowBleed(false);
     try {
       const response = await asceanAPI.replenishFirewater(ascean?._id);
-      gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+      gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
       const cleanRes = await asceanAPI.getCleanAscean(ascean?._id);
       dispatch({
         type: ACTIONS.SAVE_EXPERIENCE,
@@ -139,7 +143,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
     } catch (err: any) {
       console.log(err, "Error Replenishing Firewater");
-    }
+    };
   };
 
   const onDragStart = (start: DragStart) => {
@@ -183,9 +187,20 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
         Do you wish to set camp and let it bleed?
         </p>
         <br />
-        { showBleed ?
+        { ascean?.firewater.charges === 0 && mapState?.currentTile?.content === 'city' ?
+          <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }}>
+          In a City
+          </Button>
+        : 
+          <>
+          { showBleed ?
+            <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }} onClick={replenishFirewater}>Bleed</Button>
+          : '' }
+          </> 
+        }
+        {/* { showBleed ?
           <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }} onClick={replenishFirewater}>Bleed</Button>
-        : '' }
+        : '' } */}
         <Button onClick={() => setShowFirewaterModal(false)} variant='' style={{ float: "right", color: "gold", fontSize: "24px" }}>Resist</Button>
     </Modal.Body>
     </Modal>

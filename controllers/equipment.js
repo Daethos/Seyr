@@ -461,7 +461,7 @@ async function seedDB(equipment, rarity) {
 };
 
 const mutateEquipment = async (item, rarity) => {
-    item._id = new mongodb.ObjectID();
+    item._id = new mongodb.ObjectId();
     item.itemType = 'Equipment';
     let stats = randomizeStats(item, rarity);
     item = Object.assign(item, stats);

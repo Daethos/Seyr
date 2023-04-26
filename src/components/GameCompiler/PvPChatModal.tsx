@@ -14,7 +14,7 @@ interface Props {
     setCurrentMessage: any;
     currentMessage: string;
     sendMessage: () => Promise<void>;
-}
+};
 
 const PvPChatModal = ({ messageList, user, setShowChat, room, currentMessage, setCurrentMessage, sendMessage }: Props) => {
     const [modalShow, setModalShow] = useState(false)
@@ -53,25 +53,21 @@ const PvPChatModal = ({ messageList, user, setShowChat, room, currentMessage, se
             </div>
             <div className='Chat-Body'>
             <ScrollToBottom className="message-container">
-            {
-                messageList.map((message: any, index: number) => {
-                    // console.log(messageList)
-                    return (
-                        <div className="message" key={index} id={user.username === message.author ? "you" : "other"}>
-                            <div>
-                            <div className='message-content'>
-                                <p>{message.message}</p>
-                                {/* <p>{}</p> */}
-                            </div>
-                            <div className='message-meta'>
-                                <p id=''>{message.author.charAt(0).toUpperCase() + message.author.slice(1)} [{formatDistanceToNow(new Date(message.time), { addSuffix: true })}]</p>
-                            </div>
-                            </div>
-
+            { messageList.map((message: any, index: number) => {
+                return (
+                    <div className="message" key={index} id={user.username === message.author ? "you" : "other"}>
+                        <div>
+                        <div className='message-content'>
+                            <p>{message.message}</p>
                         </div>
-                    )
-                })
-            }
+                        <div className='message-meta'>
+                            <p id=''>{message.author.charAt(0).toUpperCase() + message.author.slice(1)} [{formatDistanceToNow(new Date(message.time), { addSuffix: true })}]</p>
+                        </div>
+                        </div>
+
+                    </div>
+                )
+            }) }
             </ScrollToBottom>
             </div>
             <div>

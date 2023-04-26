@@ -198,7 +198,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
     };
 
     return (
-        <div className='dialog-box'>
+        <div className='city-box'>
             <div className='dialog-text'>
                 <ToastAlert error={error} setError={setError} />
             { cityOption === 'Alchemist' ?

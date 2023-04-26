@@ -13,7 +13,7 @@ interface Props {
     setError: React.Dispatch<React.SetStateAction<object>>;
     table?: any;
     gameDispatch: React.Dispatch<any>;
-}
+};
 
 const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch }: Props) => {
     const [purchaseSetting, setPurchaseSetting] = useState({
