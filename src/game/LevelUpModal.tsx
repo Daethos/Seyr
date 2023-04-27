@@ -17,7 +17,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
     const finishLevelUp = () => {
         setLevelUpModalShow(false);
         levelUpAscean(asceanState);
-    }
+    };
 
     return (
         <>            
@@ -25,11 +25,9 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
             <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', height: 65 + 'vh', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!!</h3>
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
-            {
-                asceanState.level % 2 !== 0 ? (
+            { asceanState.level % 2 !== 0 ? (
                     <Attributes asceanState={asceanState} setAsceanState={setAsceanState} />
-                ) : ( '' )
-            }
+            ) : ( '' ) }
             <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
             <Button variant='outline-warning' 
             onClick={finishLevelUp}
@@ -50,7 +48,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
             <h3 className='level-up'>Level++!!</h3>
         </Button>
         </>
-  )
-}
+    );
+};
 
-export default LevelUpModal
+export default LevelUpModal;

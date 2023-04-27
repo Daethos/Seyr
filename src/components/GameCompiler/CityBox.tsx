@@ -229,7 +229,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Armor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch}  ascean={ascean} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState}  ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
             : cityOption === 'Bank' ?
@@ -282,7 +282,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Jewelry"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
             : cityOption === 'Merchant' ?
@@ -293,7 +293,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-General"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
             : cityOption === 'Tailor' ?
@@ -304,7 +304,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Tailor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
             : cityOption === 'Dueling Grounds' ?
@@ -357,7 +357,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Mystic"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
             : cityOption === 'Weapons Gallery' ?
@@ -368,7 +368,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                     <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Weapon"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
-                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                        <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                     : '' }
                 </>
             : cityOption === 'Guild Hall' ?

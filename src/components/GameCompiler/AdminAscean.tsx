@@ -14,8 +14,8 @@ interface AdminAsceanProps {
 const AdminAscean = ({ ascean, loading }: AdminAsceanProps) => {
     
     return (
-        <div  style={{ marginTop: 0 + '%' }}>
-            <div>
+        <div  style={{ marginTop: 0 + '%' }} >
+            <div className="game-block-top">
                 <GamePlayerStats attributes={ascean.attributes} player={ascean.ascean} magicalDefense={ascean.defense.magicalDefenseModifier} magicalPosture={ascean.defense.magicalPosture} physicalDefense={ascean.defense.physicalDefenseModifier} physicalPosture={ascean.defense.physicalPosture} />
                 {/* <GameHealthBar totalPlayerHealth={ascean.attributes.healthTotal} currentPlayerHealth={ascean.attributes.healthTotal} /> */}
             </div>

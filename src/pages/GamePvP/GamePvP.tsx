@@ -497,17 +497,13 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         };
     };
 
-    // TODO:FIXME: Send it via like an auto-engage to update both peoples combatData to check for both player's initiation of actions
-
-    const [reduelRequest, setReduelRequest] = useState<boolean>(false);
-
     const chanceEncounter = async (content: string) => {
         try {
             const chance = Math.floor(Math.random() * 100) + 1;
             console.log(chance, 'Chance Encounter');
             switch (content) {
                 case 'cave': {
-                    if (chance > 99) {
+                    if (chance > 98) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
@@ -515,11 +511,10 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 3000)
-                    } else if (chance > 98) {
+                    } else if (chance > 96) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
-        
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -532,7 +527,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
-        
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -545,7 +539,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
-        
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -569,12 +562,11 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000)
+                        }, 3000);
                     } else if (chance > 98) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
-        
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
@@ -588,9 +580,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 3000);
                     } else {
-                        if (gameState.storyContent !== '') {
-                            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-                        }
+                        if (gameState.storyContent !== '') gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' }); 
                         mapDispatch({
                             type: MAP_ACTIONS.SET_MAP_CONTEXT,
                             payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
@@ -606,7 +596,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000)
+                        }, 3000);
                     };
                     break;
                 };
@@ -614,7 +604,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     break;
                 };
             };
-
         } catch (err: any) {
             console.log(err.message, 'Error Encountering Chance Encounter');
         };
@@ -884,17 +873,13 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     };
 
     const getRuins = async () => {
-        if (gameState.cityButton) {
-            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
-        };
+        if (gameState.cityButton) gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         await chanceEncounter('ruins');
     };
 
     const getDungeon = async () => {
         playDungeon();
-        if (gameState.cityButton) {
-            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
-        };
+        if (gameState.cityButton) gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         await chanceEncounter('dungeon');
         // This will be a probabilistic roll of random dungeons that affect gameplay, similar to environmental effects. May last for some time.
     };

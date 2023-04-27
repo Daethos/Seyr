@@ -185,22 +185,22 @@ const GameSolo = ({ user }: GameProps) => {
                         'background': getPlayerBackground.background
                     });
                 };
-                if (mapState.steps % 3 === 0 && !mapState.contentMoved) {
-                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                };
+                if (mapState.steps % 3 === 0 && !mapState.contentMoved) mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState }); 
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-                });
-                return () => {
-                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
-                };
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you." });
+                return () => mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false }); 
             };
             if (checkPlayerTrait("Kyn'gian") && mapState.steps % 10 === 0) {
                 console.log("I'm Walking!");
                 dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
             };
+            if (checkPlayerTrait("Shrygeian") && mapState.steps % 10 === 0) {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance <= 10) {
+                    getTreasure();
+                };                
+            };
+
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -1247,7 +1247,6 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getCity = async () => {
-        // setBackground(getCityBackground);
         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You walk up to the edges of an open city, some structure of wall exists but is overall porous. Here, you may find services to aid and replenish your journey.` });
                 
@@ -1269,7 +1268,7 @@ const GameSolo = ({ user }: GameProps) => {
             });
         };
         if (content === 'city' && lastContent === 'city') {
-            if (mapState.steps % 3) {
+            if (mapState.steps % 3 === 0) {
                 mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
             };
             return;

@@ -258,7 +258,6 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
       style={{
         display: 'flex',
         alignItems: 'center',
-        // justifyContent: 'center',
         position: 'fixed',
         top: '17.5%',
         backgroundColor: 'rgba(0, 0, 0, 1)',

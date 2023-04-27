@@ -32,7 +32,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
     const [loading, setLoading] = useState<boolean>(false)
     
     useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com") 
+        socket = io.connect("https://ascea.herokuapp.com", { transports: ['websocket'] }) 
         // "http://localhost:3001" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
         socket.emit("setup", user);

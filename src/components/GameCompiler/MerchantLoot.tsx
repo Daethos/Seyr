@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { GAME_ACTIONS } from './GameStore';
+import { useLocation } from 'react-router-dom';
+import { Ascean, Equipment, GAME_ACTIONS, GameData } from './GameStore';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -7,15 +8,26 @@ import * as asceanAPI from '../../utils/asceanApi';
 import Col  from 'react-bootstrap/Col';
 
 interface Props {
-    item: any;
+    item: Equipment;
     ascean: any;
     error: object;
     setError: React.Dispatch<React.SetStateAction<object>>;
     table?: any;
     gameDispatch: React.Dispatch<any>;
+    gameState: GameData;
+    stealItem: (purchaseSetting: {
+        ascean: Ascean;
+        item: Equipment;
+        cost: {
+            silver: number;
+            gold: number;
+        };
+    }) => Promise<void>;
+    thievery: boolean;
 };
 
-const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch }: Props) => {
+const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, gameState, stealItem, thievery }: Props) => {
+    const location = useLocation();
     const [purchaseSetting, setPurchaseSetting] = useState({
         ascean: ascean,
         item: item,
@@ -29,6 +41,13 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch }: Pr
     const determineCost = async ( ascean: any, rarity: string, type: string ) => {
         try {
             let cost = { silver: 0, gold: 0 };
+            if (location.pathname.startsWith('/GameAdmin')) {
+                return setPurchaseSetting({
+                    ascean: ascean,
+                    item: item,
+                    cost: cost
+                });
+            };
             switch (rarity) {
                 case 'Common': {
                     cost = {
@@ -173,6 +192,12 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch }: Pr
                 {purchaseSetting?.cost?.gold}g{' '}
                 {purchaseSetting?.cost?.silver}s{' '}
                 <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: -4 + '%', fontSize: 18 + 'px', marginRight: -5 + '%' }} onClick={purchaseItem}>Purchase</Button>
+                { thievery ? (
+                    <>
+                    <br />
+                    <Button variant='' style={{ color: 'red', fontWeight: 600, marginTop: '0%', fontSize: 18 + 'px', marginLeft: '72.5%' }} onClick={() => stealItem({ ascean: ascean, item: item, cost: { silver: 0, gold: 0 } })}>Steal</Button>
+                    </>
+                ) : ( '' ) }
                 </>
             </Popover.Body>
         </Popover>

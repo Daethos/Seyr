@@ -29,13 +29,11 @@ const StoryBox = ({ ascean, mapState, storyContent, moveTimer, interactPhenomena
 
 
     useEffect(() => {
-        // console.log('mapState.currentTile: ', mapState.currentTile)
         setCurrentTileContent(mapState.currentTile);
     }, [mapState]);
 
     const tileStyle = {
         color: mapState?.currentTile?.color,
-        // border: `1px solid ${mapState?.currentTile?.color}`,
         marginTop: '5px',
     };
 

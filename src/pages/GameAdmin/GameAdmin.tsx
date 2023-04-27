@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import AsceanListItem from '../../components/GameCompiler/AsceanListItem';
 import AdminAscean from '../../components/GameCompiler/AdminAscean';
 import MerchantTable from '../../components/GameCompiler/MerchantTable';
+import { GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
+import LevelUpModal from '../../game/LevelUpModal';
 
 export interface Ascean {
     _id: string;
@@ -90,6 +92,42 @@ const asceanTemplate: Ascean = {
     likes: [],
     dislikes: [],
     double_dislikes: [],
+};
+
+interface AsceanState {
+    ascean: Ascean;
+    currentHealth: number;
+    constitution: number;
+    strength: number;
+    agility: number;
+    achre: number;
+    caeren: number;
+    kyosir: number;
+    level: number;
+    opponent: number;
+    opponentExp: number;
+    experience: number;
+    experienceNeeded: number;
+    mastery: string;
+    faith: string;
+};
+
+const initialAsceanState: AsceanState = {
+    ascean: {...asceanTemplate},
+    currentHealth: 0,
+    constitution: 0,
+    strength: 0,
+    agility: 0,
+    achre: 0,
+    caeren: 0,
+    kyosir: 0,
+    level: 0,
+    opponent: 0,
+    opponentExp: 0,
+    experience: 0,
+    experienceNeeded: 0,
+    mastery: '',
+    faith: '',
 };
 
 export interface GameAdminData {
@@ -214,12 +252,14 @@ interface GameAdminProps {
 
 const GameAdmin = ({ user }: GameAdminProps) => {
     const [state, dispatch] = useReducer(GameAdminStore, initialGameAdaminData);
+    const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [itemPurchased, setItemPurchased] = useState<boolean>(false);
+    const [asceanState, setAsceanState] = useState<AsceanState>(initialAsceanState);
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(state, 'The State ~=V');
-    }, [state]);
+        console.log(state, asceanState, 'The State ~=V');
+    }, [state, asceanState]);
 
     useEffect(() => {
         if (user.username !== 'lonely guy') navigate('/');
@@ -291,8 +331,48 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                 type: ACTIONS.GENERATE_ASCEAN,
                 payload: updatedResponse.data.data,
             });
+            setAsceanState({ ...asceanState, ascean: updatedResponse.data.data.ascean, level: updatedResponse.data.data.ascean.level, experience: updatedResponse.data.data.ascean.experience, experienceNeeded: (updatedResponse.data.data.ascean.experience * 1000), mastery: updatedResponse.data.data.ascean.mastery, faith: updatedResponse.data.data.ascean.faith });
         } catch (err: any) {
             console.log(err.message);
+        };
+    };
+
+    const levelUpAscean = async (vaEsai: any) => {
+        try {
+            let response = await asceanAPI.levelUp(vaEsai);
+            setAsceanState({
+                ...asceanState,
+                ascean: response.data,
+                currentHealth: response.data.health.current,
+                constitution: 0,
+                strength: 0,
+                agility: 0,
+                achre: 0,
+                caeren: 0,
+                kyosir: 0,
+                level: response.data.level,
+                experience: 0,
+                experienceNeeded: response.data.level * 1000,
+                mastery: response.data.mastery,
+                faith: response.data.faith,
+            });
+            await getAsceanLeveled(response.data);
+        } catch (err: any) {
+            console.log(err.message, 'Error Leveling Up')
+        };
+    };
+
+    const getAsceanLeveled = async (ascean: Ascean) => {
+        try {
+            const firstResponse = await asceanAPI.getCleanAscean(ascean._id);
+            const response = await asceanAPI.getAsceanStats(ascean._id);
+            console.log(firstResponse, response, "First Response, Response")
+            // dispatch({
+            //     type: ACTIONS.GENERATE_ASCEAN,
+            //     payload: response.data.data.ascean
+            //  });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Leveled');
         };
     };
 
@@ -327,9 +407,13 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                         )})
                     ) : ( '' ) }
                     { state.asceanLoaded ?
+                    <>
+                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                     <AdminAscean ascean={state.generatedAscean} loading={false} />
+                    </>
                     : ''}
                     {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontSize: 25 + 'px' }} onClick={() => generateAscean(state.asceanSearched._id)}>Generate Ascean</Button> */}
+                    <br /><br /><br /><br />
                 </Card.Body>
             </Card>
             </Row>
@@ -353,8 +437,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     </Form>
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testLevel)}>Get Equipment</Button>
                     { state.equipmentTable.length > 0 ?
-                        ''
-                        // <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} itemPurchased={itemPurchased} setItemPurchased={setItemPurchased} error={state.error} setError={state.setError} />
+                        <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} gameDispatch={gameDispatch} gameState={gameState} error={state.error} setError={state.setError} />
                     : '' }
                     <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={() => deleteEquipment(state.equipmentTable)}>Delete Equipment</Button>
                     </Card.Body>

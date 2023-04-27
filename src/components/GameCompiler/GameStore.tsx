@@ -140,10 +140,10 @@ const nonNamedEnemy =
     "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
 
 const namedEnemy = 
-    ["Achreus", "Ashreu'ul" ,"Cyrian Shyne", "Daetheus", "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", 
-    "Fierous Ashfyre", "Garris Ashenus", "King Mathyus Caderyn", "Kreceus", 
-    "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavros Ilios", "Mirio", "Quor'estes", "Relien Myelle",
-    "Sera Lorian", "Synaethi Spiras", "Torreous Ashfyre", "Vincere"];
+    ["Achreus", "Ashreu'ul", "Caelan Greyne", "Chios Dachreon", "Cyrian Shyne", "Daetheus", 
+    "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", "Fierous Ashfyre", "Garris Ashenus", 
+    "King Mathyus Caderyn", "Kreceus", "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavros Ilios", 
+    "Mirio", "Quor'estes", "Relien Myelle", "Sera Lorian", "Synaethi Spiras", "Torreous Ashfyre", "Vincere"];
 
 export const nameCheck = (name: string) => {
     if (namedEnemy.includes(name)) {

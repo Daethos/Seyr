@@ -904,7 +904,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('general')}>See the merchant's wares.</Button>
                         <br />
                         { merchantEquipment?.length > 0 ?
-                            <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} ascean={ascean} error={error} setError={setError} />
+                            <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                         : '' }
 
                     </>
