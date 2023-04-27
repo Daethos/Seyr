@@ -494,6 +494,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             <Loading Combat={true} />
         );
     };
+    
     return (
         <>
         <Modal show={questModalShow} onHide={() => setQuestModalShow(false)} centered id='modal-weapon'>

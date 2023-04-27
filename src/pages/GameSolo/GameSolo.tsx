@@ -19,7 +19,7 @@ import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/D
 import DialogBox from '../../game/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
-import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC, getAsceanTraits } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC, getAsceanTraits, checkPlayerTrait } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
@@ -146,25 +146,22 @@ const GameSolo = ({ user }: GameProps) => {
         setMoveTimerDisplay(moveTimer);
     }, [moveTimer]);
 
-    useEffect(() => {
-        if (moveTimer !== 0 || moveTimer === gameState.moveTimer) return;
-        if (mapState.currentTile.content === 'enemy' || gameState?.opponent) {
-            console.log("Fighting An Enemy, Not Triggering Move Timer Content")
-            return;
-        }
-        const timer = setTimeout(() => {
-            if (moveTimer === 0 && mapState?.steps > 0) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                setMoveTimer(gameState.moveTimer);
-            }
-        }, moveTimer);
-        return () => clearTimeout(timer);
-    }, [moveTimer, mapState]);
-
-    const checkPlayerTrait = (trait: string) => {
-        if (gameState.primary.name.includes(trait) || gameState.secondary.name.includes(trait) || gameState.tertiary.name.includes(trait)) return true;
-        return false;
+    const useMoveTimerEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (moveTimer !== 0 || moveTimer === gameState.moveTimer) return;
+            if (mapState.currentTile.content === 'enemy' || gameState?.opponent) return; 
+            const timer = setTimeout(() => {
+                if (moveTimer === 0 && mapState?.steps > 0) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                    setMoveTimer(gameState.moveTimer);
+                };
+            }, moveTimer);
+            return () => clearTimeout(timer);
+        }, [moveTimer, mapState]);
     };
+    useMoveTimerEffect(mapState);
+
+
 
     const useMoveContentEffect = (mapState: MapData) => {
         useEffect(() => {
@@ -190,11 +187,11 @@ const GameSolo = ({ user }: GameProps) => {
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you." });
                 return () => mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false }); 
             };
-            if (checkPlayerTrait("Kyn'gian") && mapState.steps % 10 === 0) {
+            if (checkPlayerTrait("Kyn'gian", gameState) && mapState.steps % 10 === 0) {
                 console.log("I'm Walking!");
                 dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
             };
-            if (checkPlayerTrait("Shrygeian") && mapState.steps % 10 === 0) {
+            if (checkPlayerTrait("Shrygeian", gameState) && mapState.steps % 10 === 0) {
                 const chance = Math.floor(Math.random() * 101);
                 if (chance <= 10) {
                     getTreasure();
@@ -982,12 +979,13 @@ const GameSolo = ({ user }: GameProps) => {
 
     const interactPhenomena = async () => {
         try {
-            const caeren = state?.player_attributes?.totalCaeren;
+            const fyeran: number = checkPlayerTrait('Fyeran', gameState) ? 10 : 0;
+            const caeren = state?.player_attributes?.totalCaeren + fyeran;
             const level = gameState?.player?.level;
             const initialIntensity = level * caeren / 10;
             const maxIntensity = level * caeren;
             const healCurse = async () => {
-                const chance = Math.floor(Math.random() * 101);
+                const chance = Math.floor(Math.random() * 101) + fyeran;
                 if (chance > 33) {
                     dispatch({ type: ACTIONS.PLAYER_REST, payload: initialIntensity });
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You heal for ${Math.round(initialIntensity * 0.01 * state?.player_health)}, a small respite from the harsh tones of your surroundings.` });
@@ -998,7 +996,7 @@ const GameSolo = ({ user }: GameProps) => {
             };
 
             const trickster = async (ascean: Player) => {
-                const chance = Math.floor(Math.random() * 101);
+                const chance = Math.floor(Math.random() * 101) + fyeran;
                 if (chance + level > 75) {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A light pool of caeren juts out into you, increasing your experience by ${maxIntensity + ascean.kyosir}.` });
                     const response = await asceanAPI.setExperience({ asceanID, experience: (maxIntensity + ascean.kyosir) });
@@ -1020,10 +1018,10 @@ const GameSolo = ({ user }: GameProps) => {
             };
 
             const returnPhenomena = async () => {
-                const chance = Math.floor(Math.random() * 101);
-                if (chance - level > 66) {
+                const chance = Math.floor(Math.random() * 101) + fyeran;
+                if (chance + level < 40) {
                     await healCurse();
-                } else if (chance - level > 33) {
+                } else if (chance + level < 80) {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. Do you wish to enter? \n\n Chance To: Heal, Damage, Gain Exp, Lose Exp, Gain Treasure, Wealth, Encounter Dead Ascean` });
                     await trickster(gameState.player);
                 } else {
@@ -1817,12 +1815,6 @@ const GameSolo = ({ user }: GameProps) => {
                     : '' }
                 </>
             }
-            {/* { mapState?.currentTile ?
-                <>
-                <Coordinates mapState={mapState} />
-                <Content mapState={mapState} />
-                </>
-            : '' } */}
             <GameplayOverlay 
                 ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}

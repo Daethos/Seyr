@@ -172,6 +172,14 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     height: 47.5 + 'vh',
     overflow: 'auto',
   };
+
+  const getDraggingStyle = {
+    boxShadow: '0 0 0 0.5rem purple',
+    display: "inline-block",
+    transform: 'scale(0.9)',
+  };
+
+  const relaxedStyle = {};
   
   return (
     <>
@@ -198,9 +206,6 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
           : '' }
           </> 
         }
-        {/* { showBleed ?
-          <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }} onClick={replenishFirewater}>Bleed</Button>
-        : '' } */}
         <Button onClick={() => setShowFirewaterModal(false)} variant='' style={{ float: "right", color: "gold", fontSize: "24px" }}>Resist</Button>
     </Modal.Body>
     </Modal>
@@ -211,16 +216,15 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
             dndInventory.map((item: any, index: number) => {
               return (
                 <Droppable key={index} droppableId={item._id}>
-                  {(provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps} >
-              <Inventory gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} index={index} />
-              {provided.placeholder}
-            </div>
+                  {(provided, snapshot) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDraggingStyle : relaxedStyle}>
+                      <Inventory gameState={gameState} gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} index={index} />
+                      {provided.placeholder}
+                    </div>
                   )}
                 </Droppable>
-                )
-            })
-          : '' }
+            )})
+        : '' }
         </div>
     </DragDropContext>
 

@@ -67,10 +67,6 @@ interface Props {
 
 const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerState, playerDispatch, gameState, gameDispatch, mapState, mapDispatch, specState, specDispatch, asceanState, setAsceanState, autoAttack, getOpponent, getNPCDialog, emergencyText, setEmergencyText, moveTimer, setMoveTimer, timeLeft, setTimeLeft, getAsceanCoords, generateWorld, clearOpponent, handleInitiate, handlePvPInitiate, handleInstant, handlePrayer, liveGameplay, setLiveGameplay, instantUpdate, statusUpdate, softUpdate, handlePlayerWin, handleEnemyWin, currentMessage, setCurrentMessage, messageList, setMessageList, user, ascean, enemy, spectator, room, socket, setShowChat, handleRoomReset, handleSocketEvent }: Props) => {
     const [modalShow, setModalShow] = useState(false);
-    const [duelReady, setDuelReady] = useState<boolean>(false);
-
-
-
     const sendMessage = async () => {
         if (currentMessage !== "") {
             const messageData = {
@@ -84,17 +80,6 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
             setCurrentMessage("");
         };
     };
-    
-    // TODO:FIXME: This is the button to commit you as a player to be 'ready'
-
-    const playerReady = async () => {
-        // playerDispatch({})
-        try { 
-            await socket.emit(`player_game_ready`, user);
-        } catch (err: any) { 
-            console.log(err.message, 'Error With Player Ready') };
-    };
-
     const spectatePlayer = async (spectateID: string) => {
         const data = { spectator: ascean._id, spectate: spectateID };
         try { 
@@ -102,7 +87,6 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
         } catch (err: any) { 
             console.log(err.message, 'Error With Spectate Player') };
     };
-
     function checkPlayer () {
         if (playerState.playerOne && playerState.playerTwo && playerState.playerThree && playerState.playerFour) {
             return true;
@@ -110,7 +94,6 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
             return false;
         };
     };
-
     return (
         <>
         { liveGameplay ?
@@ -265,7 +248,6 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                 
                 <ScrollToBottom className="message-container">
                 { messageList.map((message: any, index: number) => {
-                    console.log(message.author, user.username, message.author === user.username)
                     return (
                         <div className="message" key={index} id={user.username === message.author ? "you" : "other"}>
                         <div>

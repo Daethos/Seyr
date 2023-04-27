@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import * as eqpAPI from '../../utils/equipmentApi';
 import Overlay from 'react-bootstrap/Overlay';
 import Table from 'react-bootstrap/Table';
-import { GAME_ACTIONS } from './GameStore';
+import { GAME_ACTIONS, GameData, checkPlayerTrait } from './GameStore';
 import { useLocation } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd'
 
@@ -17,12 +17,13 @@ interface Props {
     inventory: any;
     ascean: any;
     bag: any;
+    gameState: GameData;
     gameDispatch: React.Dispatch<any>;
     blacksmith?: boolean;
     index: number;
 }
 
-const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: Props) => {
+const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, gameState }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [forgeModalShow, setForgeModalShow] = useState<boolean>(false);
@@ -78,6 +79,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
 
     function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
         const matches = inventory.filter(item => item?.name === name && item?.rarity === rarity);
+        console.log(matches.length, "Matches Length")
         return matches.length >= 3;
     };
 
@@ -123,11 +125,11 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
     };
     
     async function checkInventory() {
-        let type: string = '';
-        let typeTwo: string = '';
-        let typeThree: string = '';
-        let ringType: string = '';
         try {
+            let type: string = '';
+            let typeTwo: string = '';
+            let typeThree: string = '';
+            let ringType: string = '';
             if (inventory?.grip) {
                 type = 'weapon_one';
                 typeTwo = 'weapon_two';
@@ -440,10 +442,11 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
 
     const getDraggingStyle = {
         margin: blacksmith ? '0 2% 10% 2%' : '0 0 0 0',
-        // background: 'gold',
         border: getBorderStyle(inventory?.rarity),
         boxShadow: '0 0 0 0.25rem gold',
-        display: "inline-block"
+        display: "inline-block",
+        cursor: 'grabbing',
+        transform: 'scale(0.75)',
     };
 
     const getItemStyle = (rarity: string) => {
@@ -533,26 +536,26 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                         <tr style={{ color: '#fdf6d8' }}>
                             <td style={{ color: textColor((inventory?.constitution + inventory?.strength + inventory?.agility + inventory?.achre + inventory?.caeren + inventory?.kyosir), 
                                 (ascean[inventoryType as keyof typeof ascean]?.constitution + ascean[inventoryType as keyof typeof ascean]?.strength + ascean[inventoryType as keyof typeof ascean]?.agility + ascean[inventoryType as keyof typeof ascean]?.achre + ascean[inventoryType as keyof typeof ascean]?.caeren + ascean[inventoryType as keyof typeof ascean]?.kyosir)) }}>
-                            {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ''}
-                            {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ''}
-                            {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ''}
-                            {inventory?.achre > 0 ? 'Ach: +' + inventory?.achre + ' ' : ''}
-                            {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ''}
-                            {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}
+                                {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ''}
+                                {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ''}
+                                {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ''}
+                                {inventory?.achre > 0 ? 'Ach: +' + inventory?.achre + ' ' : ''}
+                                {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ''}
+                                {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}
                             </td>
 
                             <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.constitution + ascean[inventoryType as keyof typeof ascean]?.strength + ascean[inventoryType as keyof typeof ascean]?.agility + ascean[inventoryType as keyof typeof ascean]?.achre + ascean[inventoryType as keyof typeof ascean]?.caeren + ascean[inventoryType as keyof typeof ascean]?.kyosir), 
                                 (inventory?.constitution + inventory?.strength + inventory?.agility + inventory?.achre + inventory?.caeren + inventory?.kyosir)) }}>
-                            {ascean[inventoryType as keyof typeof ascean]?.constitution > 0 ? 'Con: +' + ascean[inventoryType as keyof typeof ascean]?.constitution + ' ' : ''}
-                            {ascean[inventoryType as keyof typeof ascean]?.strength > 0 ? 'Str: +' + ascean[inventoryType as keyof typeof ascean]?.strength + ' ' : ''}
-                            {ascean[inventoryType as keyof typeof ascean]?.agility > 0 ? 'Agi: +' + ascean[inventoryType as keyof typeof ascean]?.agility + ' ' : ''}
-                            {ascean[inventoryType as keyof typeof ascean]?.achre > 0 ? 'Ach: +' + ascean[inventoryType as keyof typeof ascean]?.achre + ' ' : ''}
-                            {ascean[inventoryType as keyof typeof ascean]?.caeren > 0 ? 'Caer: +' + ascean[inventoryType as keyof typeof ascean]?.caeren + ' ' : ''}
-                            {ascean[inventoryType as keyof typeof ascean]?.kyosir > 0 ? 'Kyo: +' + ascean[inventoryType as keyof typeof ascean]?.kyosir + ' ' : ''}
+                                {ascean[inventoryType as keyof typeof ascean]?.constitution > 0 ? 'Con: +' + ascean[inventoryType as keyof typeof ascean]?.constitution + ' ' : ''}
+                                {ascean[inventoryType as keyof typeof ascean]?.strength > 0 ? 'Str: +' + ascean[inventoryType as keyof typeof ascean]?.strength + ' ' : ''}
+                                {ascean[inventoryType as keyof typeof ascean]?.agility > 0 ? 'Agi: +' + ascean[inventoryType as keyof typeof ascean]?.agility + ' ' : ''}
+                                {ascean[inventoryType as keyof typeof ascean]?.achre > 0 ? 'Ach: +' + ascean[inventoryType as keyof typeof ascean]?.achre + ' ' : ''}
+                                {ascean[inventoryType as keyof typeof ascean]?.caeren > 0 ? 'Caer: +' + ascean[inventoryType as keyof typeof ascean]?.caeren + ' ' : ''}
+                                {ascean[inventoryType as keyof typeof ascean]?.kyosir > 0 ? 'Kyo: +' + ascean[inventoryType as keyof typeof ascean]?.kyosir + ' ' : ''}
                             </td>
                         </tr>
 
-                        {(inventory?.physical_damage && inventory?.grip) || (inventory?.magical_damage && inventory?.grip) ?  
+                        { (inventory?.physical_damage && inventory?.grip) || (inventory?.magical_damage && inventory?.grip) ?  
                         <tr style={{ color: '#fdf6d8' }}>
                             <td style={{ color: textColor((inventory?.physical_damage + inventory?.magical_damage), (ascean[inventoryType as keyof typeof ascean]?.physical_damage + ascean[inventoryType as keyof typeof ascean]?.magical_damage)) }}>
                             Damage: {inventory?.physical_damage} Phys | {inventory?.magical_damage} Magi
@@ -561,8 +564,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                             Damage: {ascean[inventoryType as keyof typeof ascean]?.physical_damage} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_damage} Magi
                             </td>
                         </tr>
-                        : ''}
-                        {inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 || inventory?.magical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ? 
+                        : '' }
+                        { inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 || inventory?.magical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ? 
                         <tr>
                             <td style={{ color: textColor((inventory?.physical_resistance + inventory?.magical_resistance), (ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance)) }}>
                             { inventory?.physical_resistance || inventory?.magical_resistance ?
@@ -579,29 +582,25 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                             : 'Defense: 0 Phys | 0 Magi' }
                             </td>
                         </tr>
-                        : ''}
+                        : '' }
                         {inventory?.magical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_penetration > 0 || inventory?.physical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_penetration > 0 ? 
                         <tr>
                             <td style={{ color: textColor((inventory?.physical_penetration + inventory?.magical_penetration), (ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration)) }}>
-                            {
-                                inventory?.physical_penetration || inventory?.magical_penetration ?
+                            { inventory?.physical_penetration || inventory?.magical_penetration ?
                                 <>
                                 Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi 
                                 </>
-                                : 'Penetration: 0 Phys | 0 Magi'
-                            }
+                            : 'Penetration: 0 Phys | 0 Magi' }
                             </td>
                             <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration), (inventory?.physical_penetration + inventory?.magical_penetration)) }}>
-                            {
-                                ascean[inventoryType as keyof typeof ascean]?.physical_penetration || ascean[inventoryType as keyof typeof ascean]?.magical_penetration ?
+                            { ascean[inventoryType as keyof typeof ascean]?.physical_penetration || ascean[inventoryType as keyof typeof ascean]?.magical_penetration ?
                                 <>
                                 Penetration: {ascean[inventoryType as keyof typeof ascean]?.physical_penetration} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_penetration} Magi
                                 </>
-                                : 'Penetration: 0 Phys | 0 Magi'
-                            }
+                            : 'Penetration: 0 Phys | 0 Magi' }
                             </td>
                         </tr>
-                        : ''}
+                        : '' }
 
                         <tr>
                             <td style={{ color: textColor(inventory?.critical_chance, ascean[inventoryType as keyof typeof ascean]?.critical_chance) }}>
@@ -641,28 +640,25 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                         {inventory?.influences?.length > 0 || ascean[inventoryType as keyof typeof ascean]?.influences?.length > 0 ?
                         <tr style={{ color: '#fdf6d8' }}>
                             <td>
-                            { inventory?.influences?.length > 0 
-                            ? <>
+                            { inventory?.influences?.length > 0 ? 
+                                <>
                                 Influence: {inventory?.influences} <br />
                                 </>
                             : '' }
                             </td>
                             <td>
-                            { ascean[inventoryType as keyof typeof ascean]?.influences?.length > 0 
-                            ? <>
+                            { ascean[inventoryType as keyof typeof ascean]?.influences?.length > 0 ? 
+                                <>
                                 Influence: {ascean[inventoryType as keyof typeof ascean]?.influences} <br />
                                 </>
                             : '' }
                             </td>
                         </tr>
                         : ''}
-
                         <tr>
-                            <td style={getRarity}>
-                            {inventory?.rarity}
-                            </td>
+                            <td style={getRarity}>{inventory?.rarity}</td>
                             <td style={{ color: getRarityColor(ascean[inventoryType as keyof typeof ascean]?.rarity), fontSize: "20px" }}>
-                            {ascean[inventoryType as keyof typeof ascean]?.rarity}
+                                {ascean[inventoryType as keyof typeof ascean]?.rarity}
                             </td>
                         </tr>
                     </tbody>
@@ -719,13 +715,15 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                 : 
                 <Button variant='outline' style={{ color: 'red', fontWeight: 600, marginLeft: "16.5%" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
             }
-            { ascean?.hardcore && location.pathname.startsWith(`/Hardcore`) ? (
+            { !ascean?.hardcore && location.pathname.startsWith(`/Hardcore`) ? (
+                <>
+                { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
+                </>
+            ) : checkPlayerTrait("Sedyrist", gameState) ? (
                 <>
                 { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
                 </>
             ) : ( '' ) }
-            {/* <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button>
-            <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button> */}
             <Button variant='outline' className='' style={{ float: 'right', color: 'blue', fontWeight: 600 }} onClick={() => setInventoryModalShow(false)}>Close</Button>
             </Modal.Body>
         </Modal>
@@ -737,41 +735,25 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index }: 
                 </Button>
             </OverlayTrigger>   
         :
-        <Draggable draggableId={inventory?._id} index={index} key={inventory?._id}>
-        {(provided, snapshot) => (
-          <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
-              {/* <Button variant="" className={`inventory-icon rarity-${inventory?.rarity.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)}> */}
-                <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={`inventory-icon rarity-${inventory?.rarity.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
-              {/* </Button> */}
-            </OverlayTrigger>
-          </div>
-        )}
-      </Draggable>
-      
-        }
-        
-
-
-        {blacksmith ? <><Button variant='outline' className='mb-2' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button></>:''}
+            <Draggable draggableId={inventory?._id} index={index} key={inventory?._id}>
+            {(provided, snapshot) => (
+                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                    <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
+                        <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={`inventory-icon rarity-${inventory?.rarity.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
+                    </OverlayTrigger>
+                </div>
+            )}
+            </Draggable>
+        } 
+        { blacksmith ?  
+            <Button variant='outline' className='mb-2' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button>
+        : '' }
         <Overlay target={targetRef} show={isLoading}>
-        <div
-          className='d-flex align-items-center justify-content-center'
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.65)',
-            zIndex: 9999,
-          }}
-        >
-            <h1 style={{ color: 'gold', fontVariant: 'small-caps', textAlign: 'center', fontSize: 36 + 'px', textShadow: '1px 1px 1px goldenrod', fontWeight: 600,
-            }}>
-            {loadingContent}
-            </h1>
-        </div>
+            <div className='d-flex align-items-center justify-content-center' style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.65)', zIndex: 9999 }}>
+                <h1 style={{ color: 'gold', fontVariant: 'small-caps', textAlign: 'center', fontSize: 36 + 'px', textShadow: '1px 1px 1px goldenrod', fontWeight: 600 }}>
+                    {loadingContent}
+                </h1>
+            </div>
         </Overlay>
         </>
     );

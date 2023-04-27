@@ -598,6 +598,11 @@ export const getAsceanTraits = async (ascean: Player) => {
     return newTraits;
 };
 
+export const checkPlayerTrait = (trait: string, gameState: GameData) => {
+    if (gameState.primary.name.includes(trait) || gameState.secondary.name.includes(trait) || gameState.tertiary.name.includes(trait)) return true;
+    return false;
+};
+
 export interface GameData {
     player: Player;
     opponent: Enemy;

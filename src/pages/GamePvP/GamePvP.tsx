@@ -110,49 +110,78 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         setMoveTimerDisplay(moveTimer);
     }, [moveTimer]);
 
-    useEffect(() => {
-        // if (mapState.currentTile.content === 'enemy') return;
-        if (moveTimer !== 0 || moveTimer === gameState.moveTimer) return;
-        if (mapState.contentMoved === true || checkPlayerTiles(mapState) || checkPvP(mapState)) return;
-        const timer = setTimeout(() => {
-            if (moveTimer === 0 && mapState.steps > 0 && playerState.playerOne?.user?._id === user._id) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                setMoveTimer(gameState.moveTimer);
-            };
-        }, moveTimer);
-        return () => clearTimeout(timer);
-    }, [moveTimer, mapState]);
+    const useMoveTimerEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (mapState.contentMoved === true || checkPlayerTiles(mapState) || checkPvP(mapState)) return;
+            const timer = setTimeout(() => {
+                if (moveTimer === 0 && mapState.steps > 0 && playerState.playerOne?.user?._id === user._id) {
+                    console.log("Player One Moving Content");
+                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                    setMoveTimer(gameState.moveTimer);
+                };
+            }, moveTimer);
+            return () => clearTimeout(timer);
+        }, [moveTimer, mapState]);
+    };
+    useMoveTimerEffect(mapState);
 
-    useEffect(() => {
-        if (mapState.contentMoved) {
-            const movedContent = async (map: MapData) => {
-                await socket.emit('syncMapContent', map);
-            };
-            movedContent(mapState);
-            return () => {
+    const useContentMovedEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (mapState.contentMoved) {
+                console.log("Player One Syncing Content");
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
+                const movedContent = async (map: MapData) => {
+                    await socket.emit('syncMapContent', map);
+                };
+                movedContent(mapState);
             };
-        };
-    }, [mapState.contentMoved, mapState]);
+        }, [mapState.contentMoved]);
+    };
+    useContentMovedEffect(mapState);
 
-    useEffect(() => {
-        if (mapState?.currentTile?.content === 'nothing') {
-            if (gameState.cityButton) {
-                gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                setBackground({
-                    ...background,
-                    'background': getPlayerBackground.background
-                });
+    const useMoveContentEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (mapState.currentTile.content !== 'nothing' && mapState?.lastTile) {
+                handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
             };
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-            });
-            return;
-        };
-        handleTileContent(mapState?.currentTile?.content, mapState?.lastTile?.content);
-    }, [mapState.currentTile, mapState.steps, mapState.currentTile.content]);
+        }, [mapState.currentTile, mapState.currentTile.content]);
+    };
+    useMoveContentEffect(mapState);
+
+
+    const usePlayerMovementEffect = (mapState: MapData, mapDispatch: (arg0: { type: string; payload: string | boolean | MapData; }) => void) => {
+        useEffect(() => {
+            if (mapState?.currentTile?.content === 'nothing') {
+                if (gameState.cityButton) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+                    setBackground({
+                        ...background,
+                        'background': getPlayerBackground.background
+                    });
+                };
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you." });
+            };
+            if (checkPlayerTrait("Kyn'gian") && mapState.steps % 10 === 0) {
+                console.log("I'm Walking!");
+                dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
+            };
+            if (checkPlayerTrait("Shrygeian") && mapState.steps % 10 === 0) {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance > 90) {
+                    getTreasure();
+                };                
+            };
+
+        }, [mapState.steps]);
+    };
+    usePlayerMovementEffect(mapState, mapDispatch);
+
+    const checkPlayerTrait = (trait: string) => {
+        if (gameState.primary.name.includes(trait) || gameState.secondary.name.includes(trait) || gameState.tertiary.name.includes(trait)) return true;
+        return false;
+    };
+
 
     function checkPvP(mapData: MapData) {
         const players = [mapData?.player1Tile, mapData?.player2Tile, mapData?.player3Tile, mapData?.player4Tile];

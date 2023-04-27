@@ -257,7 +257,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
                         <>
                         {upgradeItems.map((item: any, index: number) => {
                             return (
-                                <Inventory key={index} inventory={item} bag={inventory} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} index={index} />
+                                <Inventory key={index} inventory={item} bag={inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} index={index} />
                             )
                         })}
                         </>
@@ -429,7 +429,7 @@ const CityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clear
             </div>
             </Overlay>
         </div>
-    )
-}
+    );
+};
 
-export default CityBox
+export default CityBox;

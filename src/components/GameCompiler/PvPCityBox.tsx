@@ -250,7 +250,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                         <>
                         {upgradeItems.map((item: any, index: number) => {
                             return (
-                                <Inventory key={index} inventory={item} bag={inventory} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} index={index} />
+                                <Inventory key={index} inventory={item} bag={inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={ascean} blacksmith={true} index={index} />
                             )
                         })}
                         </>

@@ -56,29 +56,7 @@ const io = require('socket.io')(server, {
 });
 io.engine.pingInterval = 30000;
 io.engine.pingTimeout = 5000;
-// const { MongoClient } = require('mongodb');
-// const mongoAdapter = require('@socket.io/mongo-adapter');
-// console.log(mongoAdapter, "mongoAdapter")
-// const mongoClient = new MongoClient(URL, { useUnifiedTopology: true });
-// const adapter = mongoAdapter.createAdapter({ mongoClient, collectionName: 'socket_io' });
-// mongoClient.connect(err => {
-//   if (err) {
-//     console.log('Error connecting to MongoDB:', err);
-//   } else {
-//     const db = mongoClient.db('mydb');
-//     const ioWithMongoAdapter = io.adapter(adapter);
-
-//     ioWithMongoAdapter.on('connection', socket => {
-//       // Handle socket events
-//     });
-
-//     server.listen(3000, () => {
-//       console.log('Server started on port 3000');
-//     });
-//   }
-// });
 io.on("connection", (socket) => {
-  
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
   let personalUser = { user: null, ascean: null };
@@ -283,7 +261,7 @@ io.on("connection", (socket) => {
     console.log('Syncing Map Content');
     const newMap = mapData;
     mapSyncData = newMap;
-    io.to(newUser.room).emit('mapContentSynced', newMap);
+    socket.broadcast.emit('mapContentSynced', newMap);
   };
 
   async function newEnvironmentTile(tileData) {

@@ -303,7 +303,7 @@
             "text": "Here are my artifacts and oddities, do they amuse you?",
             "options": [
                 {
-                    "text": "See such bejeweled spectcles.",
+                    "text": "See such bejeweled spectacles.",
                     "next": "0009",
                     "npcIds": [
                         4

@@ -29,11 +29,9 @@ const GamePvPLobby = ({ user }: Props) => {
     const [currentMessage, setCurrentMessage] = useState("");
     const [messageList, setMessageList] = useState<any>([]);
     const [liveGameplay, setLiveGameplay] = useState<boolean>(false);
-
     const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
     const [ascean, setAscean] = useState<any>({});
     const [username, setUsername] = useState<any>('');
-    const [users, setUsers] = useState<any>([]);
     const [spectator, setSpectator] = useState<boolean>(false);
     const [room, setRoom] = useState<any>("");
     const [showChat, setShowChat] = useState<boolean>(false);
@@ -43,7 +41,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
     const [emergencyText, setEmergencyText] = useState<any[]>([])
     const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [moveTimer, setMoveTimer] = useState<number>(6)
+    const [moveTimer, setMoveTimer] = useState<number>(gameState.moveTimer);
     const { playOpponent, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     
     const [loadingAscean, setLoadingAscean] = useState<boolean>(false);
@@ -185,6 +183,7 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
         const mapContentSyncedCallback = async (response: any) => {
+            console.log("Syncing Map Content");
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA_SYNC,
                 payload: response

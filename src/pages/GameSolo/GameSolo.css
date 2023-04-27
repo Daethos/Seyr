@@ -229,8 +229,9 @@
   position: absolute;
   display: grid;
   grid-template-columns: repeat(6, 16%);
-  grid-template-rows: repeat(36, 16%);
+  grid-template-rows: repeat(36, 13%);
   justify-content: space-evenly;
+  padding: 2%;
   z-index: 99;
   color: #fdf6d8;
   background-color: black;
@@ -278,7 +279,7 @@
   color: #fdf6d8;
   font-weight: 600;
   display: inline-block;
-  vertical-align: top;
+  /* vertical-align: top; */
 };
 
 .rarity-common {
