@@ -1437,12 +1437,12 @@ const GamePvPLobby = ({ user }: Props) => {
             <button className='btn btn-outline-info my-2' onClick={joinRoom} > Join Room </button>
             { gameState?.player ? (
                 <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 24 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 24 + 'px', color: '#ff0195', fontVariant: 'small-caps' }}>
                     {gameState?.player.name}
                     </h3>
                     <p>Level: {gameState?.player.level} | {gameState?.player.mastery}</p>
-                    <span style={{ float: "left", marginTop: "-20%" }}>
-                    <img src={process.env.PUBLIC_URL + `/images/` + gameState?.player.origin + '-' + gameState?.player.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "17.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <span style={{ float: "left", marginTop: "-22%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + gameState?.player.origin + '-' + gameState?.player.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "17.5vw", borderRadius: "50%", border: "2px solid #ff0195" }} />
                     </span>
                 </div>
             ) : ( '' ) }

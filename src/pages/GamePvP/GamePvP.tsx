@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button';
 import PvPConditions from '../../components/GameCompiler/PvPConditions';
-import PvPCombatText from '../../components/GameCompiler/PvPCombatText';
 import PvPActions from '../../components/GameCompiler/PvPActions';
-import PVPAnimations from '../../components/GameCompiler/PvPAnimations';
-import { ACTIONS, PLAYER_ACTIONS, PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
+import { ACTIONS, PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
 import { Enemy, GAME_ACTIONS, NPC, Player } from '../../components/GameCompiler/GameStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import { MAP_ACTIONS, DIRECTIONS, MapData, debounce, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
@@ -23,8 +20,6 @@ import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import StoryBox from '../../components/GameCompiler/StoryBox';
 import PvPCityBox from '../../components/GameCompiler/PvPCityBox';
 import Joystick from '../../components/GameCompiler/Joystick';
-import Coordinates from '../../components/GameCompiler/Coordinates';
-import Content from '../../components/GameCompiler/Content';
 import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
 import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal';
 import { Merchant } from '../../components/GameCompiler/NPCs';
@@ -1320,17 +1315,16 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 : '' }
             </>
         )}
-
-                <Button variant='' style={chatStyle} onClick={() => setModalShow(true)}>
-                { spectator ?
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-smile-upside-down" viewBox="0 0 16 16">
-                        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0-1a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"/>
-                        <path d="M4.285 6.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 4.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 3.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 9.5C7 8.672 6.552 8 6 8s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5zm4 0c0-.828-.448-1.5-1-1.5s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5z"/>
-                    </svg>
-                : 
-                    <img src={process.env.PUBLIC_URL + `/images/` + ascean.origin + '-' + ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "10vw", borderRadius: "50%", border: "2px solid purple" }} />
-                }
-                </Button>
+            <Button variant='' style={chatStyle} onClick={() => setModalShow(true)}>
+            { spectator ?
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-smile-upside-down" viewBox="0 0 16 16">
+                    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0-1a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"/>
+                    <path d="M4.285 6.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 4.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 3.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 9.5C7 8.672 6.552 8 6 8s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5zm4 0c0-.828-.448-1.5-1-1.5s-1 .672-1 1.5.448 1.5 1 1.5 1-.672 1-1.5z"/>
+                </svg>
+            : 
+                <img src={process.env.PUBLIC_URL + `/images/` + ascean.origin + '-' + ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "10vw", borderRadius: "50%", border: "2px solid purple" }} />
+            }
+            </Button>
             <SpectatorOverlay
                 ascean={ascean} mapState={mapState} mapDispatch={mapDispatch} loadingSpectator={gameState.loadingSpectator} gameDispatch={gameDispatch} state={specState} dispatch={specDispatch} 
                 emergencyText={emergencyText} setEmergencyText={setEmergencyText} playerState={playerState} gameState={gameState} setModalShow={setModalShow}

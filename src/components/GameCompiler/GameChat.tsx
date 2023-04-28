@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ScrollToBottom from 'react-scroll-to-bottom'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import Container from 'react-bootstrap/Container';
@@ -7,10 +7,9 @@ import Form from 'react-bootstrap/Form';
 import './GameCompiler.css'
 import GamePvP from '../../pages/GamePvP/GamePvP';
 import Modal from 'react-bootstrap/Modal';
-import PvPChatModal from './PvPChatModal';
 import { PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
 import { MapData } from '../../components/GameCompiler/WorldStore';
-import { Enemy, GAME_ACTIONS, NPC, Player } from '../../components/GameCompiler/GameStore';
+import { Enemy, Player } from '../../components/GameCompiler/GameStore';
 
 interface Props {
     state: PvPData;
@@ -160,8 +159,8 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                 </div>
             </Container>
             { playerState.playerOne ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em gold" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: '24px', color: 'gold', fontVariant: 'small-caps' }}>
                     {playerState.playerOne.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerOne.ascean.level} | {playerState.playerOne.ascean.mastery}
@@ -172,14 +171,14 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
-                    <span style={{ float: "left", marginTop: "-20%" }}>
-                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <span style={{ float: "left", marginTop: "-22%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                     </span>
                 </div>
             ) : ( '' ) }
             { playerState.playerTwo ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'purple', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em purple" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: '24px', color: 'purple', fontVariant: 'small-caps' }}>
                     {playerState.playerTwo.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerTwo.ascean.level} | {playerState.playerTwo.ascean.mastery}</p>
@@ -189,14 +188,14 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
-                    <span style={{ float: "left", marginTop: "-20%" }}>
-                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerTwo.ascean.origin + '-' + playerState.playerTwo.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <span style={{ float: "left", marginTop: "-22%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerTwo.ascean.origin + '-' + playerState.playerTwo.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                     </span>
                 </div>
             ) : ( '' ) }
             { playerState.playerThree ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'blue', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em blue" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: '24px', color: 'blue', fontVariant: 'small-caps' }}>
                     {playerState.playerThree.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerThree.ascean.level} | {playerState.playerThree.ascean.mastery}</p>
@@ -206,14 +205,14 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
-                    <span style={{ float: "left", marginTop: "-20%" }}>
-                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerThree.ascean.origin + '-' + playerState.playerThree.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <span style={{ float: "left", marginTop: "-22%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerThree.ascean.origin + '-' + playerState.playerThree.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                     </span>
                 </div>
             ) : ( '' ) }
             { playerState.playerFour ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 20 + 'px', color: 'red', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em red" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: '24px', color: 'red', fontVariant: 'small-caps' }}>
                     {playerState.playerFour.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerFour.ascean.level} | {playerState.playerFour.ascean.mastery}</p>
@@ -223,8 +222,8 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                             Spectate</Button>
                         </span>
                     ) : ( '' ) }
-                    <span style={{ float: "left", marginTop: "-20%" }}>
-                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerFour.ascean.origin + '-' + playerState.playerFour.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "12.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    <span style={{ float: "left", marginTop: "-22%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerFour.ascean.origin + '-' + playerState.playerFour.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                     </span>
                 </div>
             ) : ( '' ) }
@@ -236,16 +235,13 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
             <div className='Chat-Window' id='pvp-chat' style={{ overflow: 'auto' }}>
             <div className='Chat-Header my-2' style={{ width: 100 + '%' }}>
             <span style={{ float: 'left', marginLeft: 1 + '%', marginTop: -0.75 + '%' }} onClick={() => setShowChat(false)}>
-
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
             <path fillRule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
             </svg> 
-
             </span> 
             <span style={{ marginLeft: -5 + '%', marginTop: -0.75 + '%' }}>Live Chat</span>
             </div>
             <div className='Chat-Body'>
-                
                 <ScrollToBottom className="message-container">
                 { messageList.map((message: any, index: number) => {
                     return (
@@ -270,52 +266,56 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                 <Button variant="outline-info" onClick={sendMessage} style={{ float: 'right', marginTop: -9.25 + '%' }}>Submit</Button>
             </div>
             { playerState.playerOne ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                        <h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em gold" }}>
+                        <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
                         {playerState.playerOne.ascean.name}
                         </h3>
                         <p>Level: {playerState.playerOne.ascean.level} | {playerState.playerOne.ascean.mastery}
                         </p>
                         { ascean._id === playerState.playerOne.ascean._id ? (
-                            <span style={{ float: "right", marginTop: "-10%" }}>
+                            <span style={{ float: "right", marginTop: "-12.5%" }}>
                                 <Button variant='' style={{ color: "gold" }} onClick={() => generateWorld(`${ascean?.name}_PVP_${Date.now()}`)} disabled={checkPlayer()}>Get Map</Button>
                             </span>
                         ) : ( '' ) }
-                        <span style={{ float: "left", marginTop: "-14.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                        <span style={{ float: "left", marginTop: "-16.5%" }}>
+                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" 
+                            style={{ width: "15vw", borderRadius: "50%", border: "2px solid gold" }} />
                         </span>
                 </div>
             ) : ( '' ) }
             { playerState.playerTwo ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'purple', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em purple" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'purple', fontVariant: 'small-caps' }}>
                         {playerState.playerTwo.ascean.name}
                         </h3>
                         <p>Level: {playerState.playerTwo.ascean.level} | {playerState.playerTwo.ascean.mastery}</p>
-                        <span style={{ float: "left", marginTop: "-14.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerTwo.ascean.origin + '-' + playerState.playerTwo.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                        <span style={{ float: "left", marginTop: "-16.5%" }}>
+                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerTwo.ascean.origin + '-' + playerState.playerTwo.ascean.sex + '.jpg'} alt="Origin Culture Here" 
+                        style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
                         </span>
                 </div>
             ) : ( '' ) }
             { playerState.playerThree ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'blue', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em blue" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'blue', fontVariant: 'small-caps' }}>
                         {playerState.playerThree.ascean.name}
                         </h3>
                         <p>Level: {playerState.playerThree.ascean.level} | {playerState.playerThree.ascean.mastery}</p>
-                        <span style={{ float: "left", marginTop: "-14.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerThree.ascean.origin + '-' + playerState.playerThree.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                        <span style={{ float: "left", marginTop: "-16.5%" }}>
+                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerThree.ascean.origin + '-' + playerState.playerThree.ascean.sex + '.jpg'} alt="Origin Culture Here" 
+                        style={{ width: "15vw", borderRadius: "50%", border: "2px solid blue" }} />
                         </span>
                 </div>
             ) : ( '' ) }
             { playerState.playerFour ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
-                    <h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'red', fontVariant: 'small-caps' }}>
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em red" }}>
+                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'red', fontVariant: 'small-caps' }}>
                         {playerState.playerFour.ascean.name}
                         </h3>
                         <p>Level: {playerState.playerFour.ascean.level} | {playerState.playerFour.ascean.mastery}</p>
-                        <span style={{ float: "left", marginTop: "-14.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerFour.ascean.origin + '-' + playerState.playerFour.ascean.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+                        <span style={{ float: "left", marginTop: "-16.5%" }}>
+                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerFour.ascean.origin + '-' + playerState.playerFour.ascean.sex + '.jpg'} alt="Origin Culture Here" 
+                        style={{ width: "15vw", borderRadius: "50%", border: "2px solid red" }} />
                         </span>
                 </div>
             ) : ( '' ) }

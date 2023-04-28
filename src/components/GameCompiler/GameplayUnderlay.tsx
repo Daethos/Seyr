@@ -333,6 +333,9 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
             <Button variant='' style={{ float: 'right', color: 'red', fontSize: "24px", marginLeft: "40vw", zIndex: 9999 }} onClick={closeEverything}>X</Button>
           </Row>
           </>
+        ) : gameState?.miniGameShrygeian ? (
+          <>
+          </>
         ) : ( 
           <>
             <h6 className='overlay-content' style={ gameState?.underlayContent !== '' ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>

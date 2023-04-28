@@ -106,23 +106,16 @@ io.on("connection", (socket) => {
     const { players, password: correctPassword } = rooms.get(data.room);
     const numPlayers = players.size;
 
-    // Check if the room is full
     if (numPlayers >= maxPlayersPerRoom) {
-      return callback('Room is full.');
+      return callback('The Room you attempted to join is full.');
     };
-
-    // Check if the password is correct
     if (data.password !== correctPassword) {
-      return callback('Incorrect password.');
+      return callback('You have typed the incorrect password for room: ' + data.room);
     };
 
-    // Add the player to the room
-    players.add(socket.id); // Added
-    
-
+    players.add(socket.id);
     socket.join(data.room);
-
-    callback(); // Added
+    callback(); 
 
     console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
     connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
@@ -547,6 +540,7 @@ io.on("connection", (socket) => {
   });
 
   socket.off("setup", () => {
+    console.log("Leaving Room");
     socket.leave(userData._id);
     const room = rooms.get(newUser.room);
     if (!room) return;

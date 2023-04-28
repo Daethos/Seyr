@@ -8,7 +8,7 @@ import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/PvPStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck, checkPlayerTrait } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import dialogNodes from "../components/GameCompiler/DialogNodes.json"
 import { useLocation } from 'react-router-dom';
@@ -44,30 +44,6 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     });
     return <>{buttons}</>;
 };
-
-interface Traits {
-    primary: { 
-        name: string, 
-        description: string,
-        action: string,
-        success: string,
-        failure: string
-     };
-    secondary: { 
-        name: string, 
-        description: string,
-        action: string,
-        success: string,
-        failure: string
-     };
-    tertiary: { 
-        name: string, 
-        description: string,
-        action: string,
-        success: string,
-        failure: string
-     };
-}
 
 interface Props {
     ascean: any;
@@ -113,7 +89,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<any | null>(null);
     const [combatAction, setCombatAction] = useState<any | null>('actions');
-    const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});
     const [showQuest, setShowQuest] = useState<boolean>(false);
     const regionInformation = {
@@ -138,7 +113,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
     const [luckoutTraits, setLuckoutTraits] = useState<any>([]);
     const [persuasion, setPersuasion] = useState<boolean>(false);
     const [persuasionTraits, setPersuasionTraits] = useState<any>([]);
-    const [enemyPersuaded, setEnemyPersuaded] = useState<boolean>(false);
     const article = ['a', 'e', 'i', 'o', 'u'].includes(enemy?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
 
     useEffect(() => {
@@ -217,16 +191,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         };
     };
 
-    const checkReset = async () => {
-        await checkingLoot();
-        await resetAscean();
-    };
-
-    const checkOpponent = async () => {
-        await checkingLoot();
-        await getOpponent(ascean);
-    };
-
     const getLoot = async (type: string) => {
         if (merchantEquipment.length > 0) {
             const deleteResponse = await eqpAPI.deleteEquipment(merchantEquipment);
@@ -267,13 +231,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
             gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDropTwo });
         };
     };
-
-    function checkUniqueQuest () {
-        let thisQuest = getQuests(enemy?.name);
-        let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
-        let uniqueQuest = ascean?.quests.some((q: any) => q.title === newQuest.title);
-        return uniqueQuest;
-    }
 
     const getQuest = async (newQuest: any) => {
         try {
@@ -531,7 +488,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                 <p style={{ fontSize: "18px", color: "gold" }}>
                 Arbituous - Ethos (Affects all enemies within the Ley) <br /><br />
                 Chiomic - Humor (This affects enemies of lesser Chomism) <br /><br />
-                Fyeran - Seer (Affects all enemies who are more mystic than martial) <br /><br />
+                Fyeran - Seer (Affects all enemies who are more <i>mystic</i> than martial) <br /><br />
                 Ilian - Heroism (This can affect all potential enemies) <br /><br />
                 Kyr'naic - Apathy (Affects all enemies of lesser conviction) <br /><br /> 
                 Lilosian - Pathos (Affects all enemies of the same faith) <br /><br />
@@ -583,7 +540,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                             <>
                             { state.playerTrait === 'Arbituous' ? ( 
                                 <>
-                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}."<br /><br />
+                                "Oh dear, another wandering Arbiter. I am absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again"<br /><br />
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
@@ -675,17 +632,17 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         { namedEnemy ? ( 
                             <>
                             "Greetings traveler, I am {enemy.name}. {ascean.name}, is it? You seem a bit dazed, can I be of some help?"<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise atack {npc}?</Button>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise attack {npc}?</Button>
                             </> 
                         ) : ( 
                             <>
-                            {article === 'a' ? article?.charAt(0).toUpperCase() : article?.charAt(0).toUpperCase() + article?.slice(1)} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            {article === 'a' ? article?.charAt(0).toUpperCase() : article?.charAt(0).toUpperCase() + article?.slice(1)} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your {ascean.weapon_one.name} and get into position?<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {npc}?</Button>
                             </> 
                         ) }
                         { luckout ?
                             ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
                                 {luckoutTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
@@ -763,13 +720,13 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Prepare to strike {npc}?</Button>
                             </>
                         : enemy?.name !== 'Traveling General Merchant' ?
-                        <>
+                            <>
                             "Where do you think you're going, {ascean?.name}? Yes, I know who you are, and you may be stronger, but I'm not going to let you pass."
                             <br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage with {npc}?</Button>
                             </>
                         : 
-                        <> 
+                            <> 
                             "Well, {ascean?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
                             <br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
@@ -777,6 +734,9 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         }
                         </>
                     }
+                    { checkPlayerTrait("Kyn'gian", gameState) ? (
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'green' }} onClick={() => clearDuel()}>Your Kyn'gian nature allows you to shirk most encounters.</Button>
+                    ) : ( '' ) }
                     </>
                 : currentIntent === 'localLore' ?
                     <>

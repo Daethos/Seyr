@@ -10,7 +10,7 @@ import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS, CombatData } from '../components/GameCompiler/CombatStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck, checkPlayerTrait } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import dialogNodes from "../components/GameCompiler/DialogNodes.json"
 import { useLocation } from 'react-router-dom';
@@ -589,7 +589,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             <>
                             { state.playerTrait === 'Arbituous' ? ( 
                                 <>
-                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}."<br /><br />
+                                "Oh dear, another wandering Arbiter. I am absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."<br /><br />
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
@@ -681,17 +681,17 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         { namedEnemy ? ( 
                             <>
                             "Greetings traveler, I am {enemy?.name}. {ascean.name}, is it? You seem a bit dazed, can I be of some help?"<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise atack {npc}?</Button>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise attack {npc}?</Button>
                             </> 
                         ) : ( 
                             <>
-                            {enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            {enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your {ascean.weapon_one.name} and get into position?<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {npc}?</Button>
                             </> 
                         ) }
                         { luckout ?
                             ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative {'<<<'} ]</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
                                 {luckoutTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
@@ -794,7 +794,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage with {npc}?</Button>
                             </>
                         : 
-                        <> 
+                            <> 
                             "Well, {ascean?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
                             <br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
@@ -802,6 +802,9 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         }
                         </>
                     }
+                    { checkPlayerTrait("Kyn'gian", gameState) ? (
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'green' }} onClick={() => clearDuel()}>Your Kyn'gian nature allows you to shirk most encounters.</Button>
+                    ) : ( '' ) }
                     </>
                 : currentIntent === 'localLore' ?
                     <>

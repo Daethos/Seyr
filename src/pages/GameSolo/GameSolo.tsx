@@ -185,7 +185,7 @@ const GameSolo = ({ user }: GameProps) => {
                 if (mapState.steps % 3 === 0 && !mapState.contentMoved) mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState }); 
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you." });
-                return () => mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false }); 
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false }); 
             };
             if (checkPlayerTrait("Kyn'gian", gameState) && mapState.steps % 10 === 0) {
                 console.log("I'm Walking!");
