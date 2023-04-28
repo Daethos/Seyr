@@ -34,7 +34,7 @@ import SpectatorOverlay from '../../components/GameCompiler/SpectatorOverlay';
 import userService from '../../utils/userService';
 import { shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
-
+import pako from 'pako';
 
 export enum MapMode {
     FULL_MAP,
@@ -98,6 +98,16 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     });
     const [moveTimerDisplay, setMoveTimerDisplay] = useState<number>(moveTimer);
 
+    const compressData = async (data: any) => {
+        try {
+            const stringifiedData = JSON.stringify(data);
+            const compressedData = pako.deflate(stringifiedData, { to: 'string' });
+            return compressedData;
+        } catch (err: any) {
+            console.log(err, "Error Compressing Data");
+        };
+    };
+
     useEffect(() => {
         if (!moveTimerDisplay) return;
         const intervalId = setInterval(() => {
@@ -131,7 +141,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 console.log("Player One Syncing Content");
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
                 const movedContent = async (map: MapData) => {
-                    await socket.emit('syncMapContent', map);
+                    const compressedMap = await compressData(map.map);
+                    await socket.emit('syncMapContent', compressedMap);
                 };
                 movedContent(mapState);
             };
@@ -1077,7 +1088,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     player: state.playerPosition
                 };
                 if (newTile.content === 'enemy' || newTile.content === 'npc') mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: true });
-                await socket.emit(`playerDirectionChange`, socketData);
+                const compressedSocketData = await compressData(socketData);
+                await socket.emit(`playerDirectionChange`, compressedSocketData);
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_MAP_COORDS, payload: data });
                 const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
                 const random = Math.floor(Math.random() * options.length);

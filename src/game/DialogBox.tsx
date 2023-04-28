@@ -494,7 +494,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             <Loading Combat={true} />
         );
     };
-    
+
     return (
         <>
         <Modal show={questModalShow} onHide={() => setQuestModalShow(false)} centered id='modal-weapon'>
@@ -695,8 +695,8 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 {luckoutTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
-                                    </div>
+                                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
+                                        </div>
                                     )
                         })} 
                             </div>
@@ -830,8 +830,16 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         At the moment this is testing the utilization of traits, in creation and evaluation. 
                         As a temporary display of its concept, you may persuade an enemy--if available, to cease hostility 
                         (This currently only affects non-named enemies, as named enemies start neutral).<br /><br />
-                        { persuasion ?
-                            ( <div>
+                        { playerWin ? (
+                            <>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path, perhaps words will work next time.</Button>
+                            </>
+                        ) : computerWin ? (
+                            <>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={() => clearDuel()}>Continue moving along your path, there's nothing left to say now.</Button>
+                            </>
+                        ) : persuasion && !state.enemyPersuaded ? ( 
+                            <div>
                                 <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
                                 {persuasionTraits.map((trait: any, index: number) => {
                                     return (
@@ -839,11 +847,12 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                         <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
                                     </div>
                                     )
-                        })} 
+                                })} 
                             </div>
                         ) : ('') }
                         { state.enemyPersuaded ?
-                            <>
+                            <div style={{ color: "gold" }}>
+                            [Success]:{' '}
                              { namedEnemy ? (
                             <>
                             { state.playerTrait === 'Arbituous' ? ( 
@@ -893,7 +902,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         ) }
                             You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
-                            </>
+                            </div>
                         : '' }
                     </>
                 : currentIntent === 'services' ?
@@ -911,8 +920,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     </>
                 : currentIntent === 'provincialWhispers' ?
                 <>
-                    {
-                        playerWin ?
+                    { playerWin ? (
                         <>
                         "There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"<br />
                         <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
@@ -920,10 +928,11 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                             "{regionInformation?.[province]}"
                         </div>
                         </>
-                        : computerWin ?
+                    ) : computerWin ? (
                         <>"I guess those whipspers must wait another day."</>
-                        : <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
-                    }
+                    ) : ( 
+                        <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
+                    ) }
                     </>
                 : currentIntent === 'worldLore' ?
                     <>

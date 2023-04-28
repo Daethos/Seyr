@@ -24,9 +24,11 @@
     "bcrypt": "^5.1.0",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
+    "browserify-zlib": "^0.2.0",
     "chance": "^1.1.9",
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
+    "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "fs": "^0.0.1-security",
@@ -42,6 +44,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "noisejs": "^2.1.0",
+    "pako": "^2.1.0",
     "phaser": "^3.55.2",
     "phaser-matter-collision-plugin": "^1.0.0",
     "phaser3-rex-plugins": "^1.1.77",
@@ -95,6 +98,7 @@
   "proxy": "http://localhost:3001",
   "devDependencies": {
     "@types/lodash": "^4.14.191",
+    "@types/pako": "^2.0.0",
     "@types/react-beautiful-dnd": "^13.1.4",
     "file-loader": "^6.2.0"
   }

@@ -558,7 +558,7 @@ export const getAsceanTraits = async (ascean: Player) => {
         "Chiomic": {
             persuasion: {
                 description: "you can cause bouts of confusion and disorientation in the enemy, reducing their conviction in attacking you.",
-                action: "Speak a chiomic riddle to befuddle ${enemy.name}.",
+                action: "Speak a chiomic riddle to befuddle {enemy.name}.",
                 success: "The {enemy.name} contorts and swirls with designs of ancient artifice and delight.",
                 failure: "Failure!"
             },

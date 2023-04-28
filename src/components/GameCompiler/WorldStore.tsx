@@ -84,7 +84,7 @@ export const MapStore = (map: MapData, action: Action) => {
         case 'SET_MAP_DATA_SYNC':
             return {
                 ...map,
-                map: action.payload.map
+                map: action.payload
             };
         case 'SET_MAP_COORDS':
             return {

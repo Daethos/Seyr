@@ -16,20 +16,20 @@ interface Firewater {
 };
 
 interface IBProps {
-    inventory: any;
-    ascean: any;
-    dispatch: any;
-    settings?: boolean;
-    gameDispatch: React.Dispatch<any>;
-    gameState: any;
-    mapState: any;
+  inventory: any;
+  ascean: any;
+  dispatch: any;
+  settings?: boolean;
+  gameDispatch: React.Dispatch<any>;
+  gameState: any;
+  mapState: any;
 };
 
 interface IOProps {
-    drinkFirewater: () => void;
-    setShowFirewaterModal: (show: boolean) => void;
-    firewater: Firewater;
-    mapState: any;
+  drinkFirewater: () => void;
+  setShowFirewaterModal: (show: boolean) => void;
+  firewater: Firewater;
+  mapState: any;
 };
 
 const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, mapState }: IOProps) => {
@@ -60,10 +60,6 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
       { firewater?.charges === 0 && mapState?.currentTile?.content !== 'city' ?
           <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
             Inspect
-          </Button>
-      : firewater?.charges === 0 && mapState?.currentTile?.content === 'city' ?
-          <Button variant='' onClick={() => setShowFirewaterModal(true)} style={{ color: "blue", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
-            Empty
           </Button>
       :
           <Button variant='' onClick={drinkFirewater} style={{ color: "gold", fontSize: "20px", fontWeight: 700, textShadow: "1px 1px 1px black", float: "right" }}>
@@ -173,7 +169,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     overflow: 'auto',
   };
 
-  const getDraggingStyle = {
+  const getDroppingStyle = {
     boxShadow: '0 0 0 0.5rem purple',
     display: "inline-block",
     transform: 'scale(0.9)',
@@ -217,7 +213,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
               return (
                 <Droppable key={index} droppableId={item._id}>
                   {(provided, snapshot) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDraggingStyle : relaxedStyle}>
+                    <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDroppingStyle : relaxedStyle}>
                       <Inventory gameState={gameState} gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} index={index} />
                       {provided.placeholder}
                     </div>
@@ -241,7 +237,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
       </Button>
     </div>
     </>
-  )
-}
+  );
+};
 
-export default InventoryBag
+export default InventoryBag;

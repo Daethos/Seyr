@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const favicon = require('serve-favicon');
+const zlib = require('zlib');
 
 require('./config/database');
 
@@ -41,6 +42,7 @@ const questService = require('./services/questServices');
 const WorldMap = require('./services/worldServices');
 const port = process.env.PORT || 3001;
 const URL = process.env.DATABASE_URL || 'mongodb://localhost:3000';
+const debug = require('debug')('socket');
 const server = app.listen(port, function() {
   console.log(`Express app listening on port ${port}`);
 });
@@ -57,6 +59,14 @@ const io = require('socket.io')(server, {
 io.engine.pingInterval = 30000;
 io.engine.pingTimeout = 5000;
 io.on("connection", (socket) => {
+  const clientIp = socket.handshake.address;
+  debug(`Client connected from ${clientIp}`);
+  socket.onAny((eventName, ...args) => {
+    const data = args[0];
+    const size = data ? JSON.stringify(data).length : 0;
+    console.log((size / 1000), "KBs");
+    debug(`Message from client: ${eventName}, size: ${size} bytes`);
+  });
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
   let personalUser = { user: null, ascean: null };
@@ -226,23 +236,22 @@ io.on("connection", (socket) => {
       message: `${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)} has joined the game.`,
       time: Date.now()
     };
-    // Changed from io to socket. Hopefully this will message specifically to the user who joined. Does it work? 
-    // io.to(data.room).emit('receive_message', helloMessage);
     socket.to(data.room).emit('receive_message', userUpdateMessage);
     socket.emit('receive_message', helloMessage);
   };
 
   async function createMap(mapData) {
     const map = new WorldMap(mapData.name, mapData.ascean);
-    newMap = map;
+    newMap = zlib.deflateSync(JSON.stringify(map));
     const roomSockets = await io.of('/').in(newUser.room).fetchSockets();
     for (const clientSocket of roomSockets) {
-      clientSocket.emit('mapCreated', map);
+      clientSocket.emit('mapCreated', newMap);
     };
   };
 
   async function playerDirection(directionData) {
     const newDirection = directionData;
+    console.log("Player Direction Changed");
     io.to(newUser.room).emit('playerDirectionChanged', newDirection);
   };
 

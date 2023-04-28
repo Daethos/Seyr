@@ -132,10 +132,6 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
   ]);
 
   useEffect(() => {
-    console.log(bodyParts, enemyBodyParts, "Body Parts");
-  }, [bodyParts, enemyBodyParts])
-
-  useEffect(() => {
     if (!enemy) return;
     setBodyParts(bodyParts.map((bodyPart) => {
       const { player, opponent } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);

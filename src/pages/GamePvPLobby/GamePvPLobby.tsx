@@ -13,6 +13,7 @@ import { shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { getMerchantDialog, getNpcDialog } from '../../components/GameCompiler/Dialog';
+import pako from 'pako';
 
 interface Props {
     user: any;
@@ -71,9 +72,9 @@ const GamePvPLobby = ({ user }: Props) => {
     }, [socket]);
 
       useEffect(() => {
-        // "http://localhost:3001" When Tinkering Around 
+        // "http://localhost:3000" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
-        const newSocket = io.connect('http://localhost:3000', { transports: ['websocket'] });
+        const newSocket = io.connect('https://ascea.herokuapp.com', { transports: ['websocket'] });
         setSocket(newSocket);
         newSocket.emit("setup", user);
         return () => {
@@ -166,27 +167,30 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('updatePlayerData', updatePlayerDataCallback);
 
         const mapCreatedCallback = async (response: any) => {
+            console.log(response, "Map Created");
+            const inflatedResponse = await decompressData(response);
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
-                payload: response
+                payload: inflatedResponse
             });
             const messageData = {
                 room: room,
                 author: user.username,
-                message: `Received created map with variables: City: ${response.contentCounts.city}, Enemy: ${response.contentCounts.enemy}, Treasure: ${response.contentCounts.treasure}.`,
+                message: `Received created map with variables: City: ${inflatedResponse.contentCounts.city}, Enemy: ${inflatedResponse.contentCounts.enemy}, Treasure: ${inflatedResponse.contentCounts.treasure}.`,
                 time: Date.now()
             };
             setMessageList((list: any) => [...list, messageData]);
-            await setCoordinates(playerState, response);
+            await setCoordinates(playerState, inflatedResponse);
             await socket.emit('commenceGame');
         };
         handleSocketEvent("mapCreated", mapCreatedCallback);
 
         const mapContentSyncedCallback = async (response: any) => {
             console.log("Syncing Map Content");
+            const inflatedResponse = await decompressData(response);
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA_SYNC,
-                payload: response
+                payload: inflatedResponse
             });
         };
         handleSocketEvent("mapContentSynced", mapContentSyncedCallback);
@@ -250,7 +254,8 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('consume_prayer_response', consumePrayerResponseCallback);
 
         const playerDirectionChangedCallback = (data: any) => {
-            mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: data });
+            const decompressedData = decompressData(data);
+            mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: decompressedData });
         }; 
         handleSocketEvent('playerDirectionChanged', playerDirectionChangedCallback);
 
@@ -366,6 +371,18 @@ const GamePvPLobby = ({ user }: Props) => {
             return () => clearTimeout(timeoutId);
         };
     }, [state.player_luckout]);
+
+    const decompressData = async (data: any) => {
+        try {
+            const decompressedData = pako.inflate(data, { to: 'string' });
+            const parsedData = JSON.parse(decompressedData);
+            return parsedData;
+        } catch (err: any) {
+            console.log(err, "Error Decompressing Data");
+        };
+    };
+
+
 
     const duelData = async (data: any) => {
         if (data.duelDataID === gameState?.player._id) return; // This is you, you don't need to set yourself
