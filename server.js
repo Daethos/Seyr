@@ -90,7 +90,9 @@ io.on("connection", (socket) => {
     socket.emit("Connected");
   };
 
-  async function joinRoom(data) {
+  async function joinRoom(preData) {
+    const newData = zlib.inflateSync(preData).toString();
+    const data = JSON.parse(newData);
     socket.join(data.room);
     console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
     connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
@@ -251,7 +253,6 @@ io.on("connection", (socket) => {
 
   async function playerDirection(directionData) {
     const newDirection = directionData;
-    console.log("Player Direction Changed");
     io.to(newUser.room).emit('playerDirectionChanged', newDirection);
   };
 
@@ -266,16 +267,16 @@ io.on("connection", (socket) => {
     socket.emit('Game Commencing', messageData);
   };
 
-  async function syncMap(mapData) {
+  async function syncMapContent(mapData) {
     console.log('Syncing Map Content');
     const newMap = mapData;
-    mapSyncData = newMap;
+    // mapSyncData = newMap;
     socket.broadcast.emit('mapContentSynced', newMap);
   };
 
   async function newEnvironmentTile(tileData) {
     console.log("New Environment");
-    socket.to(newUser.room).emit('newEnvironment', tileData);
+    socket.broadcast.emit('newEnvironment', tileData);
   };
 
   socket.on("setup", onSetup);
@@ -285,13 +286,13 @@ io.on("connection", (socket) => {
   socket.on('createMap', createMap);
   socket.on('playerDirectionChange', playerDirection);
   socket.on('commenceGame', commenceGame);
-  socket.on('syncMapContent', syncMap);
+  socket.on('syncMapContent', syncMapContent);
   socket.on('newEnvironmentTile', newEnvironmentTile);
 
   socket.on("join_chat", (room) => {
     socket.join(room);
     console.log("User Joined Room: " + room);
- });
+  });
 
   socket.on("new_message", (newMessageReceived) => {
     let chat = newMessageReceived.chat;
@@ -303,7 +304,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on('ascean', async (asceanData) => {
-    socket.to(asceanData.room).emit('update_ascean', asceanData);
+    const newData = zlib.inflateSync(asceanData).toString();
+    const parsedData = JSON.parse(newData);
+    socket.to(parsedData.room).emit('update_ascean', parsedData);
   });
 
   socket.on('spectatePlayer', async (playerData) => {
@@ -323,7 +326,9 @@ io.on("connection", (socket) => {
     io.to(newUser.room).emit('duelDataShared', duelData);
   });
 
-  socket.on('pvpInitiated', async (pvpState) => {
+  socket.on('pvpInitiated', async (pvpData) => {
+    const inflateState = zlib.inflateSync(pvpData).toString();
+    const pvpState = JSON.parse(inflateState);
     console.log('PvP Initiated: ', pvpState.playerPosition, pvpState.action);
     const playerKey = pvpState.playerPosition < pvpState.enemyPosition ? 'playerOneData' : 'playerTwoData';
     if (pvpState.playerPosition < pvpState.enemyPosition) {
@@ -336,24 +341,31 @@ io.on("connection", (socket) => {
       ...duelData[playerKey],
       ...pvpState,
     };
-  
     if (duelData.playerOneData && duelData.playerTwoData && duelData.playerOneData.playerOneReady === true && duelData.playerTwoData.playerTwoReady === true) {
       const response = await pvpService.pvpActionCompiler(duelData);
       duelData = response;
-      io.to(newUser.room).emit('pvpInitiateUpdate', response);
+      const deflateResponse = zlib.deflateSync(JSON.stringify(response));
+      io.to(newUser.room).emit('pvpInitiateUpdate', deflateResponse);
     } else {
-      io.to(newUser.room).emit('pvpInitiateSoftUpdate', duelData);
+      const deflateResponse = zlib.deflateSync(JSON.stringify(duelData));
+      io.to(newUser.room).emit('pvpInitiateSoftUpdate', deflateResponse);
     };
   });
     
   socket.on('instantActionPvP', async (instantData) => {
-    const response = await pvpService.instantActionCompiler(instantData);
-    io.to(newUser.room).emit('instantResponsePvP', response);
+    const inflateData = zlib.inflateSync(instantData).toString();
+    const parsedData = JSON.parse(inflateData);
+    const response = await pvpService.instantActionCompiler(parsedData);
+    const deflateReponse = zlib.deflateSync(JSON.stringify(response));
+    io.to(newUser.room).emit('instantResponsePvP', deflateReponse);
   });
 
   socket.on('consumePrayerPvP', async (prayerData) => {
-    const response = await pvpService.consumePrayer(prayerData);
-    io.to(newUser.room).emit('consumePrayerResponsePvP', response);
+    const inflatePrayer = zlib.inflateSync(prayerData).toString();
+    const parsedPrayer = JSON.parse(inflatePrayer);
+    const response = await pvpService.consumePrayer(parsedPrayer);
+    const deflateReponse = zlib.deflateSync(JSON.stringify(response));
+    io.to(newUser.room).emit('consumePrayerResponsePvP', deflateReponse);
   });
 
   socket.on('combatData_update', async () => {
@@ -384,7 +396,8 @@ io.on("connection", (socket) => {
 
   socket.on('playerDataResponding', async () => {
     console.log('Responding Data')
-    socket.to(newUser.room).emit('newPlayerDataResponse', newUser)
+    const compressUser = zlib.deflateSync(JSON.stringify(newUser));
+    socket.to(newUser.room).emit('newPlayerDataResponse', compressUser)
   });
 
   socket.on('update_player_data', async (data) => {
@@ -427,22 +440,33 @@ io.on("connection", (socket) => {
   });
 
   socket.on('computer_combat_initiated', async (combatData) => {
-    const response = await pvpService.actionCompiler(combatData);
-    io.to(newUser.room).emit('combat_response', response);
+    const inflateData = zlib.inflateSync(combatData).toString();
+    const parsedData = JSON.parse(inflateData);
+    const response = await pvpService.actionCompiler(parsedData);
+    const deflateResponse = zlib.deflateSync(JSON.stringify(response));
+    io.to(newUser.room).emit('combat_response', deflateResponse);
   });
 
   socket.on('instant_action', async (instantData) => {
-    const response = await pvpService.instantActionCompiler(instantData);
-    io.to(newUser.room).emit('instant_response', response);
+    const inflateData = zlib.inflateSync(instantData).toString();
+    const parsedData = JSON.parse(inflateData);
+    const response = await pvpService.instantActionCompiler(parsedData);
+    const deflateResponse = zlib.deflateSync(JSON.stringify(response));
+    io.to(newUser.room).emit('instant_response', deflateResponse);
   });
 
   socket.on('consume_prayer', async (prayerData) => {
-    const response = await pvpService.consumePrayer(prayerData);
-    io.to(newUser.room).emit('consume_prayer_response', response);
+    const inflateData = zlib.inflateSync(prayerData).toString();
+    const parsedData = JSON.parse(inflateData);
+    const response = await pvpService.consumePrayer(parsedData);
+    const deflateResponse = zlib.deflateSync(JSON.stringify(response));
+    io.to(newUser.room).emit('consume_prayer_response', deflateResponse);
   });
 
   socket.on('pvp_initiated', async (data) => {
-    let newData = data;
+    const inflateData = zlib.inflateSync(data).toString();
+    const parsedData = JSON.parse(inflateData);
+    let newData = parsedData;
     if (newUser.playerPosition === 1) {
       newData.player_one_initiated = true;
     } else {
@@ -450,10 +474,12 @@ io.on("connection", (socket) => {
     };
     
     if (newData.player_one_initiated === true && newData.player_two_initiated === true) {
-      const response = await pvpService.actionCompiler(data)
-      io.to(newUser.room).emit('combat_response', response);
+      const response = await pvpService.actionCompiler(parsedData);
+      const deflateResponse = zlib.deflateSync(JSON.stringify(response));
+      io.to(newUser.room).emit('combat_response', deflateResponse);
     } else {
-      io.to(newUser.room).emit('soft_response', newData);
+      const deflateResponse = zlib.deflateSync(JSON.stringify(newData));
+      io.to(newUser.room).emit('soft_response', deflateResponse);
     };
   });
 
@@ -473,8 +499,11 @@ io.on("connection", (socket) => {
   })
   
   socket.on('auto_engage', async (combatData) => {
-    const response = await pvpService.actionCompiler(combatData);
-    io.to(newUser.room).emit('combat_response', response);
+    const inflateData = zlib.inflateSync(combatData).toString();
+    const parsedData = JSON.parse(inflateData);
+    const response = await pvpService.actionCompiler(parsedData);
+    const deflateResponse = zlib.deflateSync(JSON.stringify(response));
+    io.to(newUser.room).emit('combat_response', deflateResponse);
   });
 
   socket.on("send_message", (data) => {

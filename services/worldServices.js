@@ -43,6 +43,8 @@ class WorldMap {
         this.countContent();
         this.updateContentClusters();
         this.steps = 0;
+        this.preMovedTiles = [];
+        this.postMovedTiles = [];
     };
 
     countContent() {

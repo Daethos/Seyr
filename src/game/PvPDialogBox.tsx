@@ -431,7 +431,6 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         };
     };
 
-
     const checkLuckout = async () => {
         const traits = {
             primary: gameState?.primary,
@@ -675,13 +674,13 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         <div>
                         { namedEnemy ? ( 
                             <>
-                            "Greetings, I am {enemy.name}. {ascean.name}, is it? How can I be of some help?"<br />
+                            "Greetings traveler, I am {enemy.name}. {ascean.name}, is it? You seem a bit dazed, can I be of some help?"<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise atack {npc}?</Button>
                             </> 
                         ) : ( 
                             <>
-                            {article.charAt(0).toUpperCase()} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities {npc}?</Button>
+                            {article === 'a' ? article?.charAt(0).toUpperCase() : article?.charAt(0).toUpperCase() + article?.slice(1)} {enemy.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {npc}?</Button>
                             </> 
                         ) }
                         { luckout ?
@@ -806,7 +805,15 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         At the moment this is testing the utilization of traits, in creation and evaluation. 
                         As a temporary display of its concept, you may persuade an enemy--if available, to cease hostility 
                         (This currently only affects non-named enemies, as named enemies start neutral).<br /><br />
-                        { persuasion ?
+                        { playerWin ? (
+                            <>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path, perhaps words will work next time.</Button>
+                            </>
+                        ) : enemyWin ? (
+                            <>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={() => clearDuel()}>Continue moving along your path, there's nothing left to say now.</Button>
+                            </>
+                        ) : persuasion && !state.enemyPersuaded ?
                             ( <div>
                                 <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
                                 {persuasionTraits.map((trait: any, index: number) => {

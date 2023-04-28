@@ -18,6 +18,8 @@ const mapSchema = new Schema({
     steps: { type: Number, default: 0 },
     contentMoved: { type: Boolean, default: false },
     joystickDisabled: { type: Boolean, default: false },
+    preMovedTiles: { type: [], default: [] },
+    postMovedTiles: { type: [], default: [] },
     }, {
     timestamps: true
 });

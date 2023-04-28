@@ -472,7 +472,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 current_computer_health: 0,
                 player_luckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
-                player_win: action.payload,
+                player_win: true,
             };
         case 'SET_GRAPPLING_WIN':
             console.log('grappling win')

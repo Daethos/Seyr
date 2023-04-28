@@ -680,13 +680,13 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         <div>
                         { namedEnemy ? ( 
                             <>
-                            "Greetings, I am {enemy?.name}. {ascean.name}, is it? How can I be of some help?"<br />
+                            "Greetings traveler, I am {enemy?.name}. {ascean.name}, is it? You seem a bit dazed, can I be of some help?"<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise atack {npc}?</Button>
                             </> 
                         ) : ( 
                             <>
                             {enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} {enemy?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip {ascean.weapon_one.name} and get into position?<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities {npc}?</Button>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {npc}?</Button>
                             </> 
                         ) }
                         { luckout ?
@@ -698,7 +698,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                             <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
                                         </div>
                                     )
-                        })} 
+                                })} 
                             </div>
                         ) : ('') }
                         { miniGame ? (
@@ -707,7 +707,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                                 return (
                                     <div key={index}>
                                         {trait.name === "Se'van" ? (
-                                            <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Test] Surprise {enemy.name} and initiate Se'van Grappling</Button>
+                                            <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Testing] Surprise {enemy.name} and initiate Se'van Grappling</Button>
                                         ) : trait.name === "Cambiren" ? (
                                             <Button variant='' className='dialog-buttons inner' >[WIP] Cambiren Combat</Button>
                                         ) : trait.name === "Tshaeral" ? (

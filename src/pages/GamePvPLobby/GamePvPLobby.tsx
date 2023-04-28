@@ -74,7 +74,7 @@ const GamePvPLobby = ({ user }: Props) => {
       useEffect(() => {
         // "http://localhost:3000" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
-        const newSocket = io.connect('https://ascea.herokuapp.com', { transports: ['websocket'] });
+        const newSocket = io.connect('http://localhost:3000', { transports: ['websocket'] });
         setSocket(newSocket);
         newSocket.emit("setup", user);
         return () => {
@@ -127,18 +127,19 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('requestingPlayerData', requestPlayerDataCallback);
 
         const newPlayerDataResponseCallback = async (data: any) => {
-            switch (data.player) {
+            const playerData = await decompressData(data);
+            switch (playerData.player) {
                 case 1:
-                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE, payload: data });
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE, payload: playerData });
                     break;
                 case 2:
-                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO, payload: data });
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO, payload: playerData });
                     break;
                 case 3:
-                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE, payload: data });
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE, payload: playerData });
                     break;
                 case 4:
-                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR, payload: data });
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR, payload: playerData });
                     break;
                 default:
                     break;
@@ -196,10 +197,11 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent("mapContentSynced", mapContentSyncedCallback);
 
         const newEnvironmentCallback = async (response: any) => {
-            console.log(response, "New Environment Response");
+            const decompressedData = await decompressData(response);
+            console.log(decompressedData, "New Environment Response");
             const newMapData = {
                 ...mapState,
-                convertedTile: response
+                convertedTile: decompressedData
             };
             mapDispatch({ type: MAP_ACTIONS.SYNC_NEW_ENVIRONMENT, payload: newMapData });
         };
@@ -234,27 +236,31 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('duel_ready_response', duelReadyResponseCallback);
 
         const combatResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
+            const decompressedData = await decompressData(response);
+            if (decompressedData.playerPosition === state.playerPosition) await statusUpdate(decompressedData);
         };
         handleSocketEvent('combat_response', combatResponseCallback);
 
         const softResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await softUpdate(response);
+            const decompressedData = await decompressData(response);
+            if (decompressedData.playerPosition === state.playerPosition) await softUpdate(decompressedData);
         };
         handleSocketEvent('soft_response', softResponseCallback);
 
         const instantResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await instantUpdate(response);
+            const decompressedData = await decompressData(response);
+            if (decompressedData.playerPosition === state.playerPosition) await instantUpdate(decompressedData);
         };
         handleSocketEvent('instant_response', instantResponseCallback);
 
         const consumePrayerResponseCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
+            const decompressedData = await decompressData(response);
+            if (decompressedData.playerPosition === state.playerPosition) await statusUpdate(decompressedData);
         };
         handleSocketEvent('consume_prayer_response', consumePrayerResponseCallback);
 
-        const playerDirectionChangedCallback = (data: any) => {
-            const decompressedData = decompressData(data);
+        const playerDirectionChangedCallback = async (data: any) => {
+            const decompressedData = await decompressData(data);
             mapDispatch({ type: MAP_ACTIONS.SET_MULTIPLAYER_PLAYER, payload: decompressedData });
         }; 
         handleSocketEvent('playerDirectionChanged', playerDirectionChangedCallback);
@@ -268,17 +274,19 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('requestSpectatePlayer', spectatePlayerCallback);
 
         const spectatePlayerResponseCallback = async (data: any) => {
-            console.log(data, gameState.player._id, "Spectate Player Response Callback");
-            if (data.data.spectator === gameState.player._id) {
-                specDispatch({ type: SPECTATOR_ACTIONS.SET_SPECTATOR, payload: data.state });
+            const decompressedData = await decompressData(data);
+            console.log(decompressedData, gameState.player._id, "Spectate Player Response Callback");
+            if (decompressedData.data.spectator === gameState.player._id) {
+                specDispatch({ type: SPECTATOR_ACTIONS.SET_SPECTATOR, payload: decompressedData.state });
                 gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: true });
             };
         };
         handleSocketEvent('spectatePlayerResponse', spectatePlayerResponseCallback);
 
         const spectateUpdateCallback = async (spectator: string, data: PvPData) => {
-            console.log(data, "Spectate Update Data");
-            if (spectator === gameState.player._id) await updateSpecate(data);
+            const decompressedData = await decompressData(data);
+            console.log(decompressedData, "Spectate Update Data");
+            if (spectator === gameState.player._id) await updateSpecate(decompressedData);
         };
         handleSocketEvent('spectateUpdate', spectateUpdateCallback);
 
@@ -291,22 +299,23 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('duelDataShared', duelDataSharedCallback);
 
         const instantResponsePvPCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await instantUpdate(response);
-            if (response.playerPosition === state.enemyPosition) await instantUpdateReverse(response);
+            const decompressedData = await decompressData(response);
+            if (decompressedData.playerPosition === state.playerPosition) await instantUpdate(decompressedData);
+            if (decompressedData.playerPosition === state.enemyPosition) await instantUpdateReverse(decompressedData);
         };
         handleSocketEvent('instantResponsePvP', instantResponsePvPCallback);
 
         const consumePrayerResponsePvPCallback = async (response: any) => {
-            if (response.playerPosition === state.playerPosition) await statusUpdate(response);
-            if (response.playerPosition === state.enemyPosition) await instantUpdateReverse(response);
+            const decompressedData = await decompressData(response);
+            if (decompressedData.playerPosition === state.playerPosition) await statusUpdate(decompressedData);
+            if (decompressedData.playerPosition === state.enemyPosition) await instantUpdateReverse(decompressedData);
         };
         handleSocketEvent('consumePrayerResponsePvP', consumePrayerResponsePvPCallback);
 
         const pvpInitiateUpdateCallback = async (data: any) => {
-            console.log(data, "PVP Initiate Update Callback");
-            const playerOne = data.playerOneData;
-            const playerTwo = data.playerTwoData;
-            console.log(playerOne, playerTwo, "Player One and Two Data")
+            const decompressedData = await decompressData(data);
+            const playerOne = decompressedData.playerOneData;
+            const playerTwo = decompressedData.playerTwoData;
             if (state.playerPosition === playerOne.playerPosition) {
                 await statusUpdate(playerOne);
             } else {
@@ -316,8 +325,9 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('pvpInitiateUpdate', pvpInitiateUpdateCallback);
     
         const pvpInitiateSoftUpdateCallback = async (data: any) => {
-            console.log('pvpInitiateSoftUpdateCallback', data);
-            const playerTwo = data.playerTwoData;
+            const decompressedData = await decompressData(data);
+            console.log('pvpInitiateSoftUpdateCallback', decompressedData);
+            const playerTwo = decompressedData.playerTwoData;
             if (playerTwo && state.playerPosition === playerTwo.enemyPosition) { // This means it would be p2 relaying info to p1 ? 
                 console.log(playerTwo.timestamp, "Player Two Timestamp");
                 if (playerTwo.timestamp === 1) await softUpdate(playerTwo);
@@ -382,7 +392,15 @@ const GamePvPLobby = ({ user }: Props) => {
         };
     };
 
-
+    const compressData = async (data: any) => {
+        try {
+            const stringifiedData = JSON.stringify(data);
+            const compressedData = pako.deflate(stringifiedData, { to: 'string' });
+            return compressedData;
+        } catch (err: any) {
+            console.log(err, "Error Compressing Data");
+        };
+    };
 
     const duelData = async (data: any) => {
         if (data.duelDataID === gameState?.player._id) return; // This is you, you don't need to set yourself
@@ -570,7 +588,8 @@ const GamePvPLobby = ({ user }: Props) => {
         try {
             console.log(data, "Spectate Data");
             const specData = { data, state };
-            await socket.emit('spectatePlayerData', specData);
+            const compressSpecData = await compressData(specData);
+            await socket.emit('spectatePlayerData', compressSpecData);
             dispatch({ type: ACTIONS.SET_SPECTATOR, payload: data.spectator });
         } catch (err: any) { 
             console.log(err.message, 'Error Spectating Player.'); 
@@ -873,7 +892,8 @@ const GamePvPLobby = ({ user }: Props) => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
             if (mapState.currentTile.content === 'enemy' && state.new_enemy_health <= 0) {
-                await socket.emit('newEnvironmentTile', mapState.currentTile);
+                const compressTile = await compressData(mapState.currentTile);
+                await socket.emit('newEnvironmentTile', compressTile);
                 mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             };
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
@@ -983,11 +1003,8 @@ const GamePvPLobby = ({ user }: Props) => {
             shakeScreen(gameState.shake);
             setEmergencyText(['']);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            const data = {
-                player: pvpState.player._id,
-                state: pvpState
-            };
-            await socket.emit('pvpInitiated', state);
+            const compressState = await compressData(state);
+            await socket.emit('pvpInitiated', compressState);
             dispatch({ type: ACTIONS.SET_PLAYER_READY, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action');
@@ -1001,7 +1018,8 @@ const GamePvPLobby = ({ user }: Props) => {
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            await socket.emit('instantActionPvP', state);
+            const compressState = await compressData(state);
+            await socket.emit('instantActionPvP', compressState);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
         } catch (err: any) {
@@ -1019,7 +1037,8 @@ const GamePvPLobby = ({ user }: Props) => {
             shakeScreen(gameState.shake);
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            await socket.emit('consumePrayerPvP', state);
+            const compressState = await compressData(state);
+            await socket.emit('consumePrayerPvP', compressState);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
         } catch (err: any) {
@@ -1033,7 +1052,8 @@ const GamePvPLobby = ({ user }: Props) => {
             setEmergencyText(['']);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
             if (pvpState.enemyPosition === -1) {
-                await socket.emit('computer_combat_initiated', pvpState);
+                const compressState = await compressData(pvpState);
+                await socket.emit('computer_combat_initiated', compressState);
                 return;
             };
             await socket.emit('initiated', pvpState);
@@ -1050,7 +1070,8 @@ const GamePvPLobby = ({ user }: Props) => {
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            await socket.emit('instant_action', state);
+            const compressState = await compressData(state);
+            await socket.emit('instant_action', compressState);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
         } catch (err: any) {
@@ -1068,7 +1089,8 @@ const GamePvPLobby = ({ user }: Props) => {
             shakeScreen(gameState.shake);
             setEmergencyText([``]);
             setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
-            await socket.emit('consume_prayer', state);
+            const compressState = await compressData(state);
+            await socket.emit('consume_prayer', compressState);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             playReligion();
         } catch (err: any) {
@@ -1086,7 +1108,8 @@ const GamePvPLobby = ({ user }: Props) => {
             setTimeLeft(gameState.timeLeft);
             setEmergencyText([`Auto Engagement Response`]);
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            await socket.emit(`auto_engage`, combatData);
+            const compressState = await compressData(combatData);
+            await socket.emit(`auto_engage`, compressState);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action');
         };
@@ -1166,7 +1189,8 @@ const GamePvPLobby = ({ user }: Props) => {
             if (newResponse.spectacle) {
                 await newResponse.spectators.map((spectator: any) => {
                     console.log(spectator, "Spectator?")
-                    socket.emit('updateSpectatorData', spectator, newResponse);
+                    const compressResponse = compressData(newResponse);
+                    socket.emit('updateSpectatorData', spectator, compressResponse);
                 });
             };
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: newResponse });
@@ -1189,9 +1213,10 @@ const GamePvPLobby = ({ user }: Props) => {
     const instantUpdate = async (response: any) => {
         try {
             if (response.spectacle) {
-                await response.spectators.map((spectator: any) => {
+                await response.spectators.map(async (spectator: any) => {
                     console.log(spectator, "Spectator?")
-                    socket.emit('updateSpectatorData', spectator, response);
+                    const compressResponse = await compressData(response);
+                    socket.emit('updateSpectatorData', spectator, compressResponse);
                 });
             };
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response });
@@ -1214,7 +1239,8 @@ const GamePvPLobby = ({ user }: Props) => {
     const softUpdate = async (response: any) => {
         try {
             console.log('Player One Doing The Lords Work');
-            await socket.emit('pvpInitiated', response);
+            const compressedResponse = await compressData(response);
+            await socket.emit('pvpInitiated', compressedResponse);
             setLastUpdateTimestamp(response.timestamp);
         } catch (err: any) {
             console.log(err.message, 'Error Performing Soft Update');
@@ -1226,8 +1252,9 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(response.spectacle, "Is this a Spectable?");
             if (response.spectacle) {
                 response.spectators.map(async (spectator: any) => {
-                    console.log(spectator, "Spectator?")
-                    await socket.emit('updateSpectatorData', spectator, response);
+                    console.log(spectator, "Spectator?");
+                    const compressResponse = await compressData(response);
+                    await socket.emit('updateSpectatorData', spectator, compressResponse);
                 });
             };
             await soundEffects(response);
@@ -1247,17 +1274,6 @@ const GamePvPLobby = ({ user }: Props) => {
             console.log(err.message, 'Error Updating Status');
         };
     };
-
-    const setPlayerOrder = async (you: any, enemy: any) => {
-        setLoading(true);
-        try {   
-        setLoading(false);
-
-        } catch (err: any) {
-            console.log('Error Setting Player Order');
-        };
-    };
-
 
     const playerSameTileCheck = (mapData: MapData) => {
         let p1 = mapData?.player1Tile ? mapData.player1Tile : null;
@@ -1337,8 +1353,9 @@ const GamePvPLobby = ({ user }: Props) => {
                 user: user,
                 combatData: state
             };
-            socket.emit("join_room", asceanData);
-            await socket.emit(`ascean`, asceanData);
+            const compressAsceanData = await compressData(asceanData);
+            await socket.emit("join_room", compressAsceanData);
+            await socket.emit(`ascean`, compressAsceanData);
             setShowChat(true);
         };
     };

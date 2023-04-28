@@ -21,6 +21,8 @@ export interface MapData {
     player2Tile: null | { x: number; y: number; content: string; color: string };
     player3Tile: null | { x: number; y: number; content: string; color: string };
     player4Tile: null | { x: number; y: number; content: string; color: string };
+    preMovedTiles: any[];
+    postMovedTiles: any[];
 };
 
 interface Action {
@@ -73,6 +75,8 @@ export const initialMapData: MapData = {
     player2Tile:  null,
     player3Tile:  null,
     player4Tile:  null,
+    preMovedTiles: [],
+    postMovedTiles: [],
 };
 
 export const MapStore = (map: MapData, action: Action) => {
@@ -82,9 +86,10 @@ export const MapStore = (map: MapData, action: Action) => {
                 ...action.payload,
             };
         case 'SET_MAP_DATA_SYNC':
+            updateMapWithMovedTiles(action.payload.preMovedTiles, action.payload.postMovedTiles, map);
             return {
                 ...map,
-                map: action.payload
+                // map: action.payload
             };
         case 'SET_MAP_COORDS':
             return {
@@ -214,6 +219,23 @@ export const DIRECTIONS = {
     'downRight': { x: 1, y: -1 },
 };
 
+function updateMapWithMovedTiles(preMoved: any[], postMoved: any[], map: MapData) {
+    preMoved.forEach(tile => {
+      const x = tile.x + 100;
+      const y = tile.y + 100;
+      map.map[x][y] = null;
+      map.map[x][y] = tile;
+    });
+  
+    postMoved.forEach(tile => {
+      const x = tile.x + 100;
+      const y = tile.y + 100;
+      map.map[x][y] = null;
+      map.map[x][y] = tile;
+    });
+};
+  
+
 function setEnvironmentTile(x: number, y: number, map: MapData) {
     const mapX = x + 100;
     const mapY = y + 100;
@@ -257,6 +279,8 @@ function sliceContentCluster(oldX: number, oldY: number, contentType: string, co
 };
   
 export function moveContent(mapState: MapData, contentClusters: any, visitedTiles: any) {
+    mapState.preMovedTiles = [];
+    mapState.postMovedTiles = [];
     // Define a function to get the adjacent tiles for a given coordinate
     function getAdjacentTiles(x: number, y: number): [number, number][] {
         return [
@@ -327,6 +351,25 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
         // Add the new coordinate to the array for the new content value
         contentClusters[contentType].push([newX, newY]);
     };
+
+    function setPrevMovedTiles(x: number, y: number, map: MapData) {
+        const mapX = x + 100;
+        const mapY = y + 100;
+        
+        if (mapX >= 0 && mapX < map.map.length && mapY >= 0 && mapY < map.map.length) {
+            map.preMovedTiles.push(map.map[mapX][mapY]);
+        };
+    };
+
+    function setPostMovedTiles(x: number, y: number, map: MapData) {
+        const mapX = x + 100;
+        const mapY = y + 100;
+        
+        if (mapX >= 0 && mapX < map.map.length && mapY >= 0 && mapY < map.map.length) {
+            map.postMovedTiles.push(map.map[mapX][mapY]);
+        };
+    };
+
     // Loop through each content cluster
     for (const cluster in contentClusters) {
         // If the cluster is 'nothing', skip it
@@ -362,12 +405,12 @@ export function moveContent(mapState: MapData, contentClusters: any, visitedTile
                 const newMapX: number = newX + 100;
                 const newMapY: number = newY + 100;
 
-                // Update the content property of the new tile
-                const oldContent = mapState.map[oldMapX][oldMapY].content;
+                if (mapState.player1Tile) setPrevMovedTiles(x, y, mapState);
                 mapState.map[newMapX][newMapY].content = cluster;
                 mapState.map[newMapX][newMapY].color = setColor(cluster);
                 setEnvironmentTile(x, y, mapState);
                 updateContentClusters(x, y, newX, newY, cluster);
+                if (mapState.player1Tile) setPostMovedTiles(newX, newY, mapState);
                 const visitedTile = visitedTiles?.[`${x},${y}`];
                 if (visitedTile) {
                     setVisitedTile(x, y, newX, newY, mapState);

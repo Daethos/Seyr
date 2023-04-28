@@ -141,7 +141,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                 console.log("Player One Syncing Content");
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
                 const movedContent = async (map: MapData) => {
-                    const compressedMap = await compressData(map.map);
+                    const data = { preMovedTiles: map.preMovedTiles, postMovedTiles: map.postMovedTiles };
+                    const compressedMap = await compressData(data);
                     await socket.emit('syncMapContent', compressedMap);
                 };
                 movedContent(mapState);
@@ -468,7 +469,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             const firstResponse = await asceanAPI.getCleanAscean(ascean._id);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_LEVEL_UP, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(ascean._id);
-            // await socket.emit('update_player_data', response.data.data);
             dispatch({ type: ACTIONS.SET_PLAYER_LEVEL_UP, payload: response.data.data });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Leveled');
@@ -510,7 +510,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             const firstResponse = await asceanAPI.getAsceanAndInventory(ascean._id);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(ascean._id);
-            // await socket.emit('update_player_data', response.data.data);
             dispatch({ type: ACTIONS.SET_PLAYER_SLICK, payload: response.data.data });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
@@ -740,7 +739,8 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             
             await returnPhenomena();
             mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
-            await socket.emit('newEnvironmentTile', mapState.currentTile);
+            const compressedTile = await compressData(mapState.currentTile);
+            await socket.emit('newEnvironmentTile', compressedTile);
         } catch (err: any) {
             console.log(err, "Error Interacting With Phenomena");
         };
