@@ -1,26 +1,25 @@
 import { useState } from "react";
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
 
 interface CreateProps {
     ascean?: any;
     handleAsceanCreate: (newAscean: Object) => Promise<void>;
-}
+};
 
 const CreateAscean = ({ ascean, handleAsceanCreate }: CreateProps) => {
-    const [saveState, setSaveState] = useState<boolean>(false)
-
+    const [saveState, setSaveState] = useState<boolean>(false);
     function handleSubmit(e: any) {
         e.preventDefault();
         async function createAscean() {
             try {
-                handleAsceanCreate(ascean);
+                await handleAsceanCreate(ascean);
                 setSaveState(true);
-                } catch (err) {
-                    console.log(err, '%c <- You have an error in creating a character', 'color: red')
-                }
-            }
-            createAscean(); 
-        }
+            } catch (err) {
+                console.log(err, '%c <- You have an error in creating a character', 'color: red')
+            };
+        };
+        createAscean(); 
+    };
     return (
         <>
         { saveState ? 

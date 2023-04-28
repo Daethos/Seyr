@@ -58,6 +58,8 @@ const io = require('socket.io')(server, {
 });
 io.engine.pingInterval = 30000;
 io.engine.pingTimeout = 5000;
+const maxPlayersPerRoom = 4;
+const rooms = new Map();
 io.on("connection", (socket) => {
   const clientIp = socket.handshake.address;
   debug(`Client connected from ${clientIp}`);
@@ -90,10 +92,38 @@ io.on("connection", (socket) => {
     socket.emit("Connected");
   };
 
-  async function joinRoom(preData) {
+  async function joinRoom(preData, callback) {
     const newData = zlib.inflateSync(preData).toString();
     const data = JSON.parse(newData);
+    console.log(data.password, data.room);
+    const room = rooms.get(data.room);
+    
+    // If the room doesn't exist, create it
+    if (!room) {
+      rooms.set(data.room, { players: new Set(), password: data.password });
+    };
+    
+    const { players, password: correctPassword } = rooms.get(data.room);
+    const numPlayers = players.size;
+
+    // Check if the room is full
+    if (numPlayers >= maxPlayersPerRoom) {
+      return callback('Room is full.');
+    };
+
+    // Check if the password is correct
+    if (data.password !== correctPassword) {
+      return callback('Incorrect password.');
+    };
+
+    // Add the player to the room
+    players.add(socket.id); // Added
+    
+
     socket.join(data.room);
+
+    callback(); // Added
+
     console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
     connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
     if (data.user._id === personalUser.user._id) personalUser.ascean = data.ascean;
@@ -104,6 +134,7 @@ io.on("connection", (socket) => {
       player: connectedUsersCount,
       ready: false,
     };
+
     if (newUser.player === 1) {
       playerStateData.playerOne = newUser;
     } else if (newUser.player === 2) {
@@ -517,5 +548,11 @@ io.on("connection", (socket) => {
 
   socket.off("setup", () => {
     socket.leave(userData._id);
+    const room = rooms.get(newUser.room);
+    if (!room) return;
+
+    const { players } = room;
+    players.delete(socket.id);
+    socket.leave(newUser.room);
   });
 });

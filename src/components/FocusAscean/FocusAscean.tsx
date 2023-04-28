@@ -53,23 +53,14 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
                 <p> {ascean.mastery}</p>
             </div>
             <div className="property-line">
-                <h4>Adherence ?{' '}</h4>
-                <p id="adherence"> {' '}
-                { ascean.faith === 'adherent' ? 'You bet your ass' : 'No fucking way man' }
-                </p>
-            </div>
-            <div className="property-line last">
-                <h4>Devotion ?{' '}</h4>
-                <p>{' '}
-                { ascean.faith === 'devoted' ? 'You bet your ass' : 'No fucking way man' }
-                </p>
+                <h4>Faith</h4>
+                <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
             </div>
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <div className="top-stats">
-            <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
-
+                <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
             <svg height="5" width="100%" className="tapered-rule mt-3">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
@@ -102,7 +93,7 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
             </div>
             
         </div>
-        <CreateAscean ascean={ascean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} />
+        {/* <CreateAscean ascean={ascean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} /> */}
         <hr className='orange-border bottom' />
         </Col>
         </>

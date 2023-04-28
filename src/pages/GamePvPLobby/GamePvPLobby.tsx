@@ -14,6 +14,7 @@ import useGameSounds from '../../components/GameCompiler/Sounds';
 import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { getMerchantDialog, getNpcDialog } from '../../components/GameCompiler/Dialog';
 import pako from 'pako';
+import Button from 'react-bootstrap/Button';
 
 interface Props {
     user: any;
@@ -33,6 +34,7 @@ const GamePvPLobby = ({ user }: Props) => {
     const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
     const [ascean, setAscean] = useState<any>({});
     const [username, setUsername] = useState<any>('');
+    const [password, setPassword] = useState<any>('');
     const [spectator, setSpectator] = useState<boolean>(false);
     const [room, setRoom] = useState<any>("");
     const [showChat, setShowChat] = useState<boolean>(false);
@@ -1349,12 +1351,25 @@ const GamePvPLobby = ({ user }: Props) => {
         if (username !== '' && room !== '') {
             const asceanData = {
                 ascean: gameState.player,
+                password: password,
                 room: room,
                 user: user,
                 combatData: state
             };
             const compressAsceanData = await compressData(asceanData);
-            await socket.emit("join_room", compressAsceanData);
+            await socket.emit("join_room", compressAsceanData, (error: any) => {
+                if (error) {
+                    console.log(error, "Error Joining Room");
+                    const messageData = {
+                        room: room,
+                        author: user.username,
+                        message: `Error Joining Room: ${error}`,
+                        time: Date.now()
+                    };
+                    setMessageList((list: any) => [...list, messageData]);
+                    return;
+                };
+            });
             await socket.emit(`ascean`, compressAsceanData);
             setShowChat(true);
         };
@@ -1368,9 +1383,12 @@ const GamePvPLobby = ({ user }: Props) => {
         setRoom(e.target.value);
     };
 
+    function handlePassword(e: any) {
+        setPassword(e.target.value);
+    };
+
     function handleRoomReset() {
         setShowChat(false);
-        
     };
 
     if (loading || loadingAscean) {
@@ -1404,7 +1422,6 @@ const GamePvPLobby = ({ user }: Props) => {
                 Choose a prospective Ascean to duel with, and either create or join an existing room to fight against an opponent.
                 </div>
             </h3>
-                <div className='' style={{  }}>
             <select value={username} onChange={handleAscean} style={{ width: 45 + '%', marginRight: 10 + '%' }}>
                 <option>Ascean</option>
                 {asceanVaEsai.map((ascean: any, index: number) => {
@@ -1413,9 +1430,22 @@ const GamePvPLobby = ({ user }: Props) => {
                     )
                 })}
             </select>
-            <input className='my-1' type='text' placeholder='Room ID...' onChange={handleRoom} style={{ width: 45 + '%' }}/>
+                <div className='' style={{  }}>
+            <input className='my-1' type='text' placeholder='Room ID...' onChange={handleRoom} style={{ width: '50%' }}/>
+            <input className='my-1' type='text' placeholder='Password...' onChange={handlePassword} style={{ width: '50%' }}/>
                 </div>
-            <button className='btn btn-outline-info my-2' onClick={joinRoom}> Join Room </button>
+            <button className='btn btn-outline-info my-2' onClick={joinRoom} > Join Room </button>
+            { gameState?.player ? (
+                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
+                    <h3 style={{ fontWeight: 500, fontSize: 24 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
+                    {gameState?.player.name}
+                    </h3>
+                    <p>Level: {gameState?.player.level} | {gameState?.player.mastery}</p>
+                    <span style={{ float: "left", marginTop: "-20%" }}>
+                    <img src={process.env.PUBLIC_URL + `/images/` + gameState?.player.origin + '-' + gameState?.player.sex + '.jpg'} alt="Origin Culture Here" style={{ width: "17.5vw", borderRadius: "50%", border: "2px solid purple" }} />
+                    </span>
+                </div>
+            ) : ( '' ) }
             </Container>
         :
             <GameChat 
