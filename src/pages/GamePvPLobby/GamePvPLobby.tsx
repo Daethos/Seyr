@@ -296,6 +296,7 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('requestSpectatePlayer', spectatePlayerCallback);
 
         const spectatePlayerResponseCallback = async (data: any) => {
+            console.log("Specate Player Response Callback")
             const decompressedData = await decompressData(data);
             console.log(decompressedData, gameState.player._id, "Spectate Player Response Callback");
             if (decompressedData.data.spectator === gameState.player._id) {
@@ -306,6 +307,7 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('spectatePlayerResponse', spectatePlayerResponseCallback);
 
         const spectateUpdateCallback = async (spectator: string, data: PvPData) => {
+            console.log(data, "Spectate Update Callback")
             const decompressedData = await decompressData(data);
             console.log(decompressedData, "Spectate Update Data");
             if (spectator === gameState.player._id) await updateSpecate(decompressedData);
@@ -313,14 +315,16 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('spectateUpdate', spectateUpdateCallback);
 
         const duelDataSharedCallback = async (data: any) => {
-            console.log(data, "Duel Data Callback");
-            if (data.playerOne === gameState.player._id || data.playerTwo === gameState.player._id) {
-                await duelData(data);
+            const decompressedData = await decompressData(data);
+            console.log(decompressedData, "Duel Data Callback");
+            if (decompressedData.playerOne === gameState.player._id || decompressedData.playerTwo === gameState.player._id) {
+                await duelData(decompressedData);
             };
         };
         handleSocketEvent('duelDataShared', duelDataSharedCallback);
 
         const instantResponsePvPCallback = async (response: any) => {
+            console.log("Instant Response PvP Callback")
             const decompressedData = await decompressData(response);
             if (decompressedData.playerPosition === state.playerPosition) await instantUpdate(decompressedData);
             if (decompressedData.playerPosition === state.enemyPosition) await instantUpdateReverse(decompressedData);
@@ -328,6 +332,7 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('instantResponsePvP', instantResponsePvPCallback);
 
         const consumePrayerResponsePvPCallback = async (response: any) => {
+            console.log("Consume Prayer Response PvP Callback")
             const decompressedData = await decompressData(response);
             if (decompressedData.playerPosition === state.playerPosition) await statusUpdate(decompressedData);
             if (decompressedData.playerPosition === state.enemyPosition) await instantUpdateReverse(decompressedData);
@@ -335,18 +340,20 @@ const GamePvPLobby = ({ user }: Props) => {
         handleSocketEvent('consumePrayerResponsePvP', consumePrayerResponsePvPCallback);
 
         const pvpInitiateUpdateCallback = async (data: any) => {
+            console.log("PvP Initiate Update Callback");
             const decompressedData = await decompressData(data);
             const playerOne = decompressedData.playerOneData;
             const playerTwo = decompressedData.playerTwoData;
             if (state.playerPosition === playerOne.playerPosition) {
                 await statusUpdate(playerOne);
-            } else {
+            } else if (state.playerPosition === playerTwo.playerPosition) {
                 await statusUpdate(playerTwo);
             };
         };
         handleSocketEvent('pvpInitiateUpdate', pvpInitiateUpdateCallback);
     
         const pvpInitiateSoftUpdateCallback = async (data: any) => {
+            console.log("PvP Initiate Soft Update Callback");
             const decompressedData = await decompressData(data);
             console.log('pvpInitiateSoftUpdateCallback', decompressedData);
             const playerTwo = decompressedData.playerTwoData;
@@ -426,6 +433,7 @@ const GamePvPLobby = ({ user }: Props) => {
     };
 
     const duelData = async (data: any) => {
+        console.log(data, "Duel Data")
         if (data.duelDataID === gameState?.player._id) return; // This is you, you don't need to set yourself
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         shakeScreen(gameState.shake);
@@ -465,7 +473,8 @@ const GamePvPLobby = ({ user }: Props) => {
                         player_attributes: state.player_attributes,
                         player_defense_default: state.player_defense_default,
                     };
-                    await socket?.emit('duelDataShare', duelData);
+                    const cdData = await compressData(duelData);
+                    await socket?.emit('duelDataShare', cdData);
                 };
             };
 
@@ -489,7 +498,8 @@ const GamePvPLobby = ({ user }: Props) => {
                         player_attributes: state.player_attributes,
                         player_defense_default: state.player_defense_default,
                     };
-                    await socket?.emit('duelDataShare', duelData);
+                    const cdData = await compressData(duelData);
+                    await socket?.emit('duelDataShare', cdData);
                 };
             };
 
@@ -513,7 +523,8 @@ const GamePvPLobby = ({ user }: Props) => {
                         player_attributes: state.player_attributes,
                         player_defense_default: state.player_defense_default,
                     };
-                    await socket?.emit('duelDataShare', duelData);
+                    const cdData = await compressData(duelData);
+                    await socket?.emit('duelDataShare', cdData);
                 };
             };
 
@@ -537,7 +548,8 @@ const GamePvPLobby = ({ user }: Props) => {
                         player_attributes: state.player_attributes,
                         player_defense_default: state.player_defense_default,
                     };
-                    await socket?.emit('duelDataShare', duelData);
+                    const cdData = await compressData(duelData);
+                    await socket?.emit('duelDataShare', cdData);
                 };
             };
 
@@ -561,7 +573,8 @@ const GamePvPLobby = ({ user }: Props) => {
                         player_attributes: state.player_attributes,
                         player_defense_default: state.player_defense_default,
                     };
-                    await socket?.emit('duelDataShare', duelData);
+                    const cdData = await compressData(duelData);
+                    await socket?.emit('duelDataShare', cdData);
                 };
             };
 
@@ -585,7 +598,8 @@ const GamePvPLobby = ({ user }: Props) => {
                         player_attributes: state.player_attributes,
                         player_defense_default: state.player_defense_default,
                     };
-                    await socket?.emit('duelDataShare', duelData);
+                    const cdData = await compressData(duelData);
+                    await socket?.emit('duelDataShare', cdData);
                 };
             };
         } catch (err: any) {
@@ -594,7 +608,6 @@ const GamePvPLobby = ({ user }: Props) => {
     };
 
     const updateSpecate = async (response: PvPData) => {
-        // 
         await soundEffects(response);
         specDispatch({ type: SPECTATOR_ACTIONS.UPDATE_SPECTATOR, payload: response });
         if (response.player_win === true || response.enemy_win === true) {
@@ -1210,9 +1223,9 @@ const GamePvPLobby = ({ user }: Props) => {
                 ...reverseResult
             }
             if (newResponse.spectacle) {
-                await newResponse.spectators.map((spectator: any) => {
+                await newResponse.spectators.map(async (spectator: any) => {
                     console.log(spectator, "Spectator?")
-                    const compressResponse = compressData(newResponse);
+                    const compressResponse = await compressData(newResponse);
                     socket.emit('updateSpectatorData', spectator, compressResponse);
                 });
             };

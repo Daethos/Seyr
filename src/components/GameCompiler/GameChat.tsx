@@ -86,11 +86,32 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
         } catch (err: any) { 
             console.log(err.message, 'Error With Spectate Player') };
     };
-    function checkPlayer () {
+    function checkPlayer() {
         if (playerState.playerOne && playerState.playerTwo && playerState.playerThree && playerState.playerFour) {
             return true;
         } else {
             return false;
+        };
+    };
+    function checkPvP(mapData: MapData, position: number) {
+        const players = [mapData?.player1Tile, mapData?.player2Tile, mapData?.player3Tile, mapData?.player4Tile];
+        return checkPlayerPvP(players[0], players[1], players[2], players[3], position);
+    };
+
+    function checkPlayerPvP(player1: any, player2: any, player3: any, player4: any, position: number) {
+        if (
+          (player1 && player2 && player1.x === player2.x && player1.y === player2.y && position === (1 || 2)) ||
+          (player1 && player3 && player1.x === player3.x && player1.y === player3.y && position === (1 || 3)) ||
+          (player1 && player4 && player1.x === player4.x && player1.y === player4.y && position === (1 || 4)) ||
+          (player2 && player3 && player2.x === player3.x && player2.y === player3.y && position === (2 || 3)) ||
+          (player2 && player4 && player2.x === player4.x && player2.y === player4.y && position === (2 || 4)) ||
+          (player3 && player4 && player3.x === player4.x && player3.y === player4.y && position === (3 || 4))
+        ) {
+          console.log("Returning True");
+          return true;
+        } else {
+          console.log("Returning False");
+          return false;
         };
     };
     return (
@@ -166,7 +187,7 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                     </h3>
                     <p>Level: {playerState.playerOne.ascean.level} | {playerState.playerOne.ascean.mastery}
                     </p>
-                    { mapState.player1Tile && mapState?.player1Tile?.content === 'enemy' ? (
+                    {( mapState.player1Tile && mapState?.player1Tile?.content === 'enemy') || (checkPvP(mapState, 1)) ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
                             <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerOne?.ascean._id)}>
                             Spectate</Button>
@@ -183,7 +204,7 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                     {playerState.playerTwo.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerTwo.ascean.level} | {playerState.playerTwo.ascean.mastery}</p>
-                    { mapState.player2Tile && mapState.player2Tile.content === 'enemy' ? (
+                    { (mapState?.player2Tile && mapState?.player2Tile?.content === 'enemy') || (checkPvP(mapState, 2)) ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
                             <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerTwo?.ascean._id)}>
                             Spectate</Button>
@@ -200,7 +221,7 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                     {playerState.playerThree.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerThree.ascean.level} | {playerState.playerThree.ascean.mastery}</p>
-                    { mapState.player3Tile && mapState.player3Tile.content === 'enemy' ? (
+                    { (mapState?.player3Tile && mapState?.player3Tile?.content === 'enemy') || (checkPvP(mapState, 3)) ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
                             <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerThree?.ascean._id)}>
                             Spectate</Button>
@@ -217,7 +238,7 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                     {playerState.playerFour.ascean.name}
                     </h3>
                     <p>Level: {playerState.playerFour.ascean.level} | {playerState.playerFour.ascean.mastery}</p>
-                    { mapState.player4Tile && mapState.player4Tile.content === 'enemy' ? (
+                    { (mapState?.player4Tile && mapState?.player4Tile?.content === 'enemy') || (checkPvP(mapState, 4)) ? (
                         <span style={{ float: "right", marginTop: "-10%" }}>
                             <Button variant='' style={{ color: "gold", marginTop: "-25%" }} onClick={() => spectatePlayer(playerState?.playerFour?.ascean._id)}>
                             Spectate</Button>

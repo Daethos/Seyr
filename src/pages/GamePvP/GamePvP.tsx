@@ -1138,7 +1138,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         switch (true) {
           case height < 700:
             return "-95%";
-          case height < 800:
+          case height < 805:
             return "-90%";
           case height < 851:
             return "-42.5%";

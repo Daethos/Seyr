@@ -62,12 +62,12 @@ const rooms = new Map();
 io.on("connection", (socket) => {
   // const clientIp = socket.handshake.address;
   // debug(`Client connected from ${clientIp}`);
-  // socket.onAny((eventName, ...args) => {
-  //   const data = args[0];
-  //   const size = data ? JSON.stringify(data).length : 0;
-  //   console.log((size / 1000), "KBs");
-  //   debug(`Message from client: ${eventName}, size: ${size} bytes`);
-  // });
+  socket.onAny((eventName, ...args) => {
+    const data = args[0];
+    const size = data ? JSON.stringify(data).length : 0;
+    console.log((size / 1000), "KBs");
+    // debug(`Message from client: ${eventName}, size: ${size} bytes`);
+  });
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
   let personalUser = { user: null, ascean: null };
@@ -95,7 +95,6 @@ io.on("connection", (socket) => {
     const data = JSON.parse(newData);
     const room = rooms.get(data.room);
     
-    // If the room doesn't exist, create it
     if (!room) {
       rooms.set(data.room, { players: new Set(), password: data.password });
     };
