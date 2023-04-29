@@ -8,6 +8,7 @@ interface TutorialProps {
     gameDispatch: React.Dispatch<any>;
     setTutorialContent: React.Dispatch<any>;
     firstBoot?: boolean;
+    firstCity?: boolean;
     firstCombat?: boolean;
     firstQuest?: boolean;
     firstShop?: boolean;
@@ -18,7 +19,7 @@ interface TutorialProps {
     firstDeath?: boolean;
 };
 
-const Tutorial = ({ player, gameDispatch, firstBoot, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, setTutorialContent }: TutorialProps) => {
+const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, setTutorialContent }: TutorialProps) => {
     console.log(player, "Tutorial Triggering")
     const completeTutorial = async (tutorial: string, ascean: string) => {
         const data = { ascean, tutorial };
@@ -45,6 +46,19 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCombat, firstDeath, fi
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
                 <br /><br /><br /><br /><br /><br />
                 Welcome to the Ascea, {player.name}. Below explains the general premise and gameplay loop which is a work in progress.<br /><br />
+                </h6>
+            ) : ( '' ) }
+            { firstCity ? (
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
+                Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.
+                <br /><br />
+                <p style={{ color: '#fdf6d8' }}>
+                You can click on the [Inventory] button that appears when you are in* a city, enabling multiple vendors selling specified equipment, and various services to heal and replenish your firewater. Much of the city's content is in framework and
+                conceptual, as--like much of this game, the final design is uncertain. 
+                </p>
+                *Noted by the 'Content' on the StoryBox, in addition the map's purple tiles and changing background.
+                <br /><br />
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", marginTop: "2.5vw", color: "red" }} onClick={() => completeTutorial('firstCity', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
             { firstCombat ? (
@@ -215,7 +229,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCombat, firstDeath, fi
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstShop', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
-            { !firstBoot && !firstCombat && !firstDeath && !firstInventory && !firstLevelUp && !firstLoot && !firstMovement && !firstQuest && !firstShop && 
+            { !firstBoot && !firstCity && !firstCombat && !firstDeath && !firstInventory && !firstLevelUp && !firstLoot && !firstMovement && !firstQuest && !firstShop && 
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>Nothing to see here!
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('', player._id)}>X</Button>
                 </h6> 

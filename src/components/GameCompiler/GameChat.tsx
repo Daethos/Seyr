@@ -100,12 +100,12 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
 
     function checkPlayerPvP(player1: any, player2: any, player3: any, player4: any, position: number) {
         if (
-          (player1 && player2 && player1.x === player2.x && player1.y === player2.y && position === (1 || 2)) ||
-          (player1 && player3 && player1.x === player3.x && player1.y === player3.y && position === (1 || 3)) ||
-          (player1 && player4 && player1.x === player4.x && player1.y === player4.y && position === (1 || 4)) ||
-          (player2 && player3 && player2.x === player3.x && player2.y === player3.y && position === (2 || 3)) ||
-          (player2 && player4 && player2.x === player4.x && player2.y === player4.y && position === (2 || 4)) ||
-          (player3 && player4 && player3.x === player4.x && player3.y === player4.y && position === (3 || 4))
+          (player1 && player2 && player1.x === player2.x && player1.y === player2.y && (position === 1 || position === 2)) ||
+          (player1 && player3 && player1.x === player3.x && player1.y === player3.y && (position === 1 || position === 3)) ||
+          (player1 && player4 && player1.x === player4.x && player1.y === player4.y && (position === 1 || position === 4)) ||
+          (player2 && player3 && player2.x === player3.x && player2.y === player3.y && (position === 2 || position === 3)) ||
+          (player2 && player4 && player2.x === player4.x && player2.y === player4.y && (position === 2 || position === 4)) ||
+          (player3 && player4 && player3.x === player4.x && player3.y === player4.y && (position === 3 || position === 4))
         ) {
           console.log("Returning True");
           return true;

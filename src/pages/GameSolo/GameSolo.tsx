@@ -24,10 +24,8 @@ import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
-import Coordinates from '../../components/GameCompiler/Coordinates';
 import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal';
 import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
-import Content from '../../components/GameCompiler/Content';
 import CityBox from '../../components/GameCompiler/CityBox';
 import StoryBox from '../../components/GameCompiler/StoryBox';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
@@ -237,8 +235,9 @@ const GameSolo = ({ user }: GameProps) => {
     const checkTutorial = async (tutorial: string, player: Player) => {
         console.log(tutorial, '<- Tutorial Check');
         switch (tutorial) {
+            case 'firstCity':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstCity={true} />);
             case 'firstCombat':
-                console.log('First Combat Tutorial')
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstCombat={true} />);
             case 'firstQuest':
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstQuest={true} />);
@@ -1245,17 +1244,12 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const getCity = async () => {
-        gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You walk up to the edges of an open city, some structure of wall exists but is overall porous. Here, you may find services to aid and replenish your journey.` });
-                
+        if (gameState?.player?.tutorial.firstCity === true) await checkTutorial('firstCity', gameState.player);
         setBackground({
             ...background,
             'background': getCityBackground.background
         });
-        gameDispatch({ type: GAME_ACTIONS.SET_ENTER_CITY, payload: `You're now in a local city of the province. Using the City button, you can access the city's services and shops.`});
-        setTimeout(() => {
-            gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-        }, 3000);
+        gameDispatch({ type: GAME_ACTIONS.SET_ENTER_CITY, payload: `You walk up to the edges of an open city, some structure of wall exists but is overall porous. Here, you may find services to aid and replenish your journey.`});
     };
 
     const handleTileContent = async (content: string, lastContent: string) => {

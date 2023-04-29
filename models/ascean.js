@@ -214,6 +214,7 @@ const asceanSchema = new Schema(
         }],
         tutorial: {
             firstBoot: { type: Boolean, default: true },
+            firstCity: { type: Boolean, default: true },
             firstCombat: { type: Boolean, default: true },
             firstQuest: { type: Boolean, default: true },
             firstShop: { type: Boolean, default: true },
