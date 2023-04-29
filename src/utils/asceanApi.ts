@@ -69,8 +69,21 @@ export async function getCleanAscean(asceanID: string | undefined) {
         const response = await res.json();
         console.log(response);
         throw new Error(response.err);
-    })
-}
+    });
+};
+
+export async function getOneAsceanLight(asceanID: string | undefined) {
+    return fetch(BASE_URL + 'light/' + asceanID, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
 
 export async function getAsceanAndInventory(asceanID: string | undefined) {
     return fetch(BASE_URL + 'ascean-inventory/' + asceanID, {

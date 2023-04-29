@@ -9,7 +9,6 @@ const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
-const GameSetting = require('../models/gamesetting');
 const jwt = require('jsonwebtoken');
 const S3 = require("aws-sdk/clients/s3");
 const s3 = new S3(); // initate the S3 constructor which can talk to aws/s3 our bucket!
@@ -86,7 +85,7 @@ async function profile(req, res) {
         { path: 'user' },
         ...populateOptions
       ]);
-    }
+    };
                                 
     res.status(200).json({
       data: {
@@ -120,7 +119,6 @@ async function profileCharacter(req, res) {
 };
 
 async function deadEnemy(req, res) {
-  console.log(req.body, 'Getting Profile Character')
   try {
     const user = await User.findOne({ username: req.body.username });
     const ascean = await Ascean.find({ user: user._id, alive: false });
@@ -189,7 +187,6 @@ async function login(req, res) {
     user.comparePassword(req.body.password, (err, isMatch) => {
       if (isMatch) {
         const token = createJWT(user);
-        console.log(token, '<- Token from Login')
         res.json({token});
       } else {
         return res.status(401).json({err: 'The Password You Have Provided Does Not Match The Registered Email Address'});

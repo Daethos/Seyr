@@ -36,7 +36,7 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
                 The determination of several factors within combat is based on your Constitution. Overall your health is most weighted by your Constitution, 
                 in addition toward being able to augment higher thresholds of endurance, like the quality of your critical attacks and ability to absord damage.
             </p>
-            <p> Increases Health, Defense, Posturing, Crit Damage, its Mastery Pervasive</p>
+            <p> Increases Health, Defenses, Posturing, Crit Damage, its Mastery Pervasive</p>
             </Popover.Body>
         </Popover>
     )
@@ -93,11 +93,11 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
             <Popover.Header id='popover-header'>Kyosir</Popover.Header>
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic' }}>
-            Compulsion concocted through the Gold Veins of Kyrisos mixed with blood and phlegm of Chiomyr, Ancient of Humor.
+            Compulsion concocted through the Gold Veins of Kyrisos mixed with bile and phlegm of Chiomyr, Ancient of Humor.
             A charisma that warps those regardless of their caer, capable of quelling the most quality strikes, granting a sure smile shearing shields.
             </p>
             <br /><br />
-            <p>Increases Myriad Defenses, Penetration, its Mastery Pervasive</p>
+            <p>Increases Defenses, Penetration, its Mastery Pervasive</p>
             </Popover.Body>
         </Popover>
     )

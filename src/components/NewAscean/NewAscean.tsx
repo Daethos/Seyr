@@ -163,11 +163,11 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
     }, [kyosirOutput]);
 
     return (
-        <Row className="justify-content-center my-3">
+        <Row className="justify-content-center my-3" >
             <h3 style={{ color: '#fdf6d8', textAlign: 'center' }}>New Character</h3>
-        <Form className="stat-block wide my-3" id="new-ascean" onSubmit={handleSubmit}>
+        <Form className="stat-block wide my-3" id="new-ascean" onSubmit={handleSubmit} style={{ color: "gold" }}>
             <hr className="orange-border" />
-            <div className="section-left">
+            <div className="section-left" >
             <Character asceanState={asceanState} setAsceanState={setAsceanState} />
             <Origin asceanState={asceanState} setAsceanState={setAsceanState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <Sex asceanState={asceanState} setAsceanState={setAsceanState} />
@@ -190,14 +190,14 @@ const NewAscean = ({ loggedUser, setUser, createSuccess, handleAsceanCreate }: A
                 <button 
                     className="btn mt-4" 
                     value={asceanState} 
-                    style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textDecoration: 'none', textAlign: "center" }}
+                    style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: '28px', textDecoration: 'none', textAlign: "center" }}
                     type="submit" disabled>
                 Created {asceanState.name}!</button>
             : 
                 <button 
-                    className="btn mt-4" 
+                    className="btn my-2" 
                     value={asceanState} 
-                    style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', textAlign: "center" }}
+                    style={{ color: 'blueviolet', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', marginLeft: "22%" }}
                     type="submit">
                 Create Ascean</button>
             }

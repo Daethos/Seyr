@@ -4,8 +4,8 @@ html, body {
   /* align-items: center;
   justify-content: center;
   margin: 0 auto;
-  max-width: 1920px;
-  max-height: 1200px; */
+  max-width: 1000px;
+  max-height: 1000px; */
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);

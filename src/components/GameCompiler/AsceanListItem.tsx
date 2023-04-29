@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Ascean, ACTIONS, Action, GameAdminData } from '../../pages/GameAdmin/GameAdmin';
 import Button from 'react-bootstrap/Button';
 
@@ -7,18 +6,9 @@ interface Props {
     state: GameAdminData;
     dispatch: React.Dispatch<Action>;
     fetch: any;
-}
+};
 
 const AsceanListItem = ({ ascean, state, dispatch, fetch }: Props) => {
-    console.log(ascean, 'Ascean in AsceanListItem');
-
-    const setAscean = (vaEsai: Ascean) => {
-        dispatch({
-            type: ACTIONS.SET_ASCEAN,
-            payload: vaEsai
-        });
-    }
-
     return (
         <div className='friend-block my-3' style={{ height: 125 + 'px', display: 'flex' }}>
             <h3 style={{ fontWeight: 500, fontSize: 24 + 'px', color: 'purple', fontVariant: 'small-caps', marginTop: 5 + '%' }}>

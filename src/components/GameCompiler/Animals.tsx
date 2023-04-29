@@ -6,9 +6,8 @@ function findSex() {
         return "Male";
     } else {
         return "Female";
-    }
-
-}
+    };
+};
 
 const Wolf_Claw: Equipment = {
     name: "Wolf's Paw",

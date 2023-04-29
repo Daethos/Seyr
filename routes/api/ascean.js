@@ -10,6 +10,7 @@ router.get('/lean', protect, asceanCtrl.quickIndex);
 router.get('/search/', protect, asceanCtrl.searchAscean);
 router.get('/:id', protect, asceanCtrl.getOneAscean);
 router.get('/clean/:id', protect, asceanCtrl.getOneAsceanClean);
+router.get('/light/:id', protect, asceanCtrl.getOneAsceanLight);
 router.get('/inventory/:id', protect, asceanCtrl.getAsceanInventory);
 router.get('/ascean-inventory/:id', protect, asceanCtrl.getAsceanAndInventory);
 router.get('/quests/:id', protect, asceanCtrl.getAsceanQuests);

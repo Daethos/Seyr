@@ -49,6 +49,7 @@ module.exports = {
     updateHealth,
     setCurrency,
     setExperience,
+    getOneAsceanLight
 };
 
 async function setCurrency(req, res) {
@@ -887,8 +888,8 @@ async function quickIndex(req, res) {
     } catch (err) { 
         console.log(err, 'Error in Lean Profile Controller') 
         res.status(400).json({ err });
-    }
-  }
+    };
+};
 
 async function getOneAscean(req, res) {
     try {
@@ -926,6 +927,18 @@ async function getOneAscean(req, res) {
         });
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
+        res.status(200).json({ data: ascean });
+    } catch (err) {
+        console.log(err, 'Error Getting An Ascean');
+        res.status(400).json({ err });
+    };
+};
+
+async function getOneAsceanLight(req, res) {
+    try {
+        const ascean = await Ascean.findById({ _id: req.params.id })
+                                   .populate('user')
+                                   .exec();
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');

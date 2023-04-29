@@ -1,4 +1,4 @@
-import './FriendPopover.css'
+import './FriendPopover.css';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -6,7 +6,7 @@ import Popover from 'react-bootstrap/Popover';
 
 interface Props {
     friend: any;
-}
+};
 
 const FriendPopover = ({ friend }: Props) => {
 
@@ -17,13 +17,13 @@ const FriendPopover = ({ friend }: Props) => {
                 {friend?.userId.bio}
             </Popover.Body>
         </Popover>
-    )
+    );
 
   return (
     <OverlayTrigger trigger="click" placement="bottom" overlay={friendPopover}>
         <Button variant="outline-danger"  className="m-3 p-4 friend-popover">{friend?.username.charAt(0).toUpperCase() + friend?.username.slice(1)}</Button>
     </OverlayTrigger>
-  )
-}
+  );
+};
 
-export default FriendPopover
+export default FriendPopover;

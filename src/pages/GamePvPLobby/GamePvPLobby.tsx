@@ -149,6 +149,26 @@ const GamePvPLobby = ({ user }: Props) => {
         };
         handleSocketEvent('newPlayerDataResponse', newPlayerDataResponseCallback);
 
+        const playerLeftCallback = async (player: any) => {
+            switch (player) {
+                case 1:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_ONE, payload: null });
+                    break;
+                case 2:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_TWO, payload: null });
+                    break;
+                case 3:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_THREE, payload: null });
+                    break;
+                case 4:
+                    playerDispatch({ type: PLAYER_ACTIONS.SET_PLAYER_FOUR, payload: null });
+                    break;
+                default:
+                    break;
+            };
+        };
+        handleSocketEvent('playerLeft', playerLeftCallback);
+
         const updatePlayerDataCallback = async (data: any) => {
             switch (data.player) {
                 case 1:
@@ -343,6 +363,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 socket.off('newUser', newUserCallback);
                 socket.off('requestingPlayerData', requestPlayerDataCallback);
                 socket.off('newPlayerDataResponse', newPlayerDataResponseCallback);
+                socket.off('playerLeft', playerLeftCallback);
                 socket.off('mapCreated', mapCreatedCallback);
                 socket.off('mapContentSynced', mapContentSyncedCallback);
                 socket.off('newEnvironment', newEnvironmentCallback);
@@ -1387,7 +1408,8 @@ const GamePvPLobby = ({ user }: Props) => {
         setPassword(e.target.value);
     };
 
-    function handleRoomReset() {
+    async function handleRoomReset() {
+        await socket.emit("leaveRoom");
         setShowChat(false);
     };
 

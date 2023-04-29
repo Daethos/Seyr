@@ -26,17 +26,15 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
     const [showPlayer, setShowPlayer] = useState<boolean>(false)
     if (loading) {
         return (
-        <Loading Combat={true} />
-        )
-    }
+            <Loading Combat={true} />
+        );
+    };
     return (
         <>
         <div className="story-block" id='story-ascean'>
-        {
-            !showPlayer ? 
-            (
+        { !showPlayer ? (
             <div className='story-ascean'>
-            { asceanState.experience !== asceanState.experienceNeeded ? (
+            { asceanState.experience === asceanState.experienceNeeded ? (
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
             <div className="actions" style={{ marginBottom: 0 + '%'}}>
@@ -63,9 +61,7 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
                 key={ascean._id}
             />
             </div>
-            ) : ( '' )
-        }
-        
+        ) : ( '' ) }
         </div>
         </>
     );

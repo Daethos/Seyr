@@ -15,10 +15,10 @@ app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json({ limit: '50mb' }));
 
-app.use(express.static(path.join(__dirname, 'build'))); // this allows express to find the build folder
+app.use(express.static(path.join(__dirname, 'build'))); 
 app.use(require('./config/auth')); 
 
-app.use('/api/users', require('./routes/api/users')); // USERS IS NOW LIVE!
+app.use('/api/users', require('./routes/api/users')); 
 app.use('/api/equipment', require('./routes/api/equipment'));
 app.use('/api/ascean', require('./routes/api/ascean'));
 app.use('/api/game', require('./routes/api/game'));
@@ -38,7 +38,6 @@ app.get('/*', function(req, res) {
 
 const pvpService = require('./services/pvpServices');
 const asceanService = require('./services/asceanServices');
-const questService = require('./services/questServices');
 const WorldMap = require('./services/worldServices');
 const port = process.env.PORT || 3001;
 const URL = process.env.DATABASE_URL || 'mongodb://localhost:3000';
@@ -61,19 +60,18 @@ io.engine.pingTimeout = 5000;
 const maxPlayersPerRoom = 4;
 const rooms = new Map();
 io.on("connection", (socket) => {
-  const clientIp = socket.handshake.address;
-  debug(`Client connected from ${clientIp}`);
-  socket.onAny((eventName, ...args) => {
-    const data = args[0];
-    const size = data ? JSON.stringify(data).length : 0;
-    console.log((size / 1000), "KBs");
-    debug(`Message from client: ${eventName}, size: ${size} bytes`);
-  });
+  // const clientIp = socket.handshake.address;
+  // debug(`Client connected from ${clientIp}`);
+  // socket.onAny((eventName, ...args) => {
+  //   const data = args[0];
+  //   const size = data ? JSON.stringify(data).length : 0;
+  //   console.log((size / 1000), "KBs");
+  //   debug(`Message from client: ${eventName}, size: ${size} bytes`);
+  // });
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
   let personalUser = { user: null, ascean: null };
   let newUser = { user: null, room: null, ascean: null, player: null, ready: false };
-  let mapSyncData = {};
   let combatData = {};
   let newMap = {};
   let duelData = { playerOneData: null, playerTwoData: null };
@@ -95,7 +93,6 @@ io.on("connection", (socket) => {
   async function joinRoom(preData, callback) {
     const newData = zlib.inflateSync(preData).toString();
     const data = JSON.parse(newData);
-    console.log(data.password, data.room);
     const room = rooms.get(data.room);
     
     // If the room doesn't exist, create it
@@ -294,7 +291,6 @@ io.on("connection", (socket) => {
   async function syncMapContent(mapData) {
     console.log('Syncing Map Content');
     const newMap = mapData;
-    // mapSyncData = newMap;
     socket.broadcast.emit('mapContentSynced', newMap);
   };
 
@@ -520,7 +516,7 @@ io.on("connection", (socket) => {
       io.to(newUser.room).emit('reduel_requested', newData);
     }
 
-  })
+  });
   
   socket.on('auto_engage', async (combatData) => {
     const inflateData = zlib.inflateSync(combatData).toString();
@@ -539,14 +535,20 @@ io.on("connection", (socket) => {
     socket.to(data.room).emit("receive_opponent", data);
   });
 
-  socket.off("setup", () => {
-    console.log("Leaving Room");
-    socket.leave(userData._id);
+  socket.on('leaveRoom', async () => {
     const room = rooms.get(newUser.room);
     if (!room) return;
-
     const { players } = room;
     players.delete(socket.id);
+    if (players.size === 0) {
+      rooms.delete(room.id);
+    } else {
+      await socket.to(newUser.room).emit("playerLeft", newUser.player);
+    };
     socket.leave(newUser.room);
+  });
+
+  socket.off("setup", () => {
+    socket.leave(userData._id);
   });
 });

@@ -52,14 +52,14 @@ const PvPConditions = ({ state, playerState, dispatch, timeLeft, setTimeLeft, se
         };
     }, [state.gameIsLive]);
 
-    const higherPosition = (playerPosition: number, enemyPosition: number) => {
-        console.log(playerPosition, enemyPosition, 'playerPosition, enemyPosition')
-        if (playerPosition > enemyPosition) {
-            return true;
-        } else {
-            return false;
-        };
-    };
+    // const higherPosition = (playerPosition: number, enemyPosition: number) => {
+    //     console.log(playerPosition, enemyPosition, 'playerPosition, enemyPosition')
+    //     if (playerPosition > enemyPosition) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     };
+    // };
 
     if (loading) {
         return (
@@ -69,11 +69,12 @@ const PvPConditions = ({ state, playerState, dispatch, timeLeft, setTimeLeft, se
 
     return (
         <>            
-        { state.player_win || state.enemy_win || !state.combatEngaged ? '' :
-            state.enemyPosition !== -1 && higherPosition(state.playerPosition, state.enemyPosition) ? // PvP And Player is Player Higher Position
-            <button className="btn" id='auto-engage' onClick={autoEngage}>
-                {!state.gameIsLive ? `Auto Engage` : `Disengage`}
-            </button>
+        { state.player_win || state.enemy_win || !state.combatEngaged ? '' 
+        // :
+        //     state.enemyPosition !== -1 && higherPosition(state.playerPosition, state.enemyPosition) ? // PvP And Player is Player Higher Position
+        //     <button className="btn" id='auto-engage' onClick={autoEngage}>
+        //         {!state.gameIsLive ? `Auto Engage` : `Disengage`}
+        //     </button>
             : state.enemyPosition === -1 ? // Computer Enemy
             <button className="btn" id='auto-engage' onClick={autoEngage}>
                 {!state.gameIsLive ? `Auto Engage` : `Disengage`}
