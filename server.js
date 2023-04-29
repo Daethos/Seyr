@@ -291,12 +291,12 @@ io.on("connection", (socket) => {
   async function syncMapContent(mapData) {
     console.log('Syncing Map Content');
     const newMap = mapData;
-    socket.broadcast.emit('mapContentSynced', newMap);
+    socket.to(newUser.room).emit('mapContentSynced', newMap);
   };
 
   async function newEnvironmentTile(tileData) {
     console.log("New Environment");
-    socket.broadcast.emit('newEnvironment', tileData);
+    socket.to(newUser.room).emit('newEnvironment', tileData);
   };
 
   socket.on("setup", onSetup);
