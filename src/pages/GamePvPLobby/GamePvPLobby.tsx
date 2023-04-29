@@ -76,7 +76,7 @@ const GamePvPLobby = ({ user }: Props) => {
       useEffect(() => {
         // "http://localhost:3000" When Tinkering Around 
         // "https://ascea.herokuapp.com" When Deploying
-        const newSocket = io.connect('http://localhost:3000', { transports: ['websocket'] });
+        const newSocket = io.connect('https://ascea.herokuapp.com', { transports: ['websocket'] });
         setSocket(newSocket);
         newSocket.emit("setup", user);
         return () => {
