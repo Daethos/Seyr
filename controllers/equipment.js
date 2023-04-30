@@ -26,19 +26,42 @@ module.exports = {
     getMysticalWeaponEquipment,
     getArmorEquipment,
     getJewelryEquipment,
-    getClothEquipment
+    getClothEquipment,
+    getTestEquipment
 }
+
+async function getTestEquipment(req, res) {
+    try {
+        const types = {
+            Weapon,
+            Shield,
+            Helmet,
+            Chest,
+            Legs,
+            Ring,
+            Amulet,
+            Trinket
+        };
+        const { name, type, rarity } = req.body;
+        console.log(name, type, rarity, 'Name, Type, Rarity');
+        const equipment = await types[type].findOne({ name, rarity }).exec();
+        console.log(equipment, 'Equipment');
+        res.status(200).json({ data: equipment });
+    } catch (err) {
+        res.status(400).json({ err }); 
+    };
+};
 
 async function indexEquipment(req, res) {
     try {
-        const weapons = await Weapon.find({ rarity: { $in: ['Default', 'Common', 'Uncommon'] } }).populate().exec();
-        const shields = await Shield.find({ rarity: { $in: ['Default', 'Common', 'Uncommon'] } }).populate().exec();
-        const helmets = await Helmet.find({ rarity: { $in: ['Common', 'Uncommon'] } }).populate().exec();
-        const chests = await Chest.find({ rarity: { $in: ['Common', 'Uncommon'] } }).populate().exec();
-        const legs = await Legs.find({ rarity: { $in: ['Common', 'Uncommon'] } }).populate().exec();
-        const rings = await Ring.find({ rarity: { $in: ['Default', 'Uncommon'] } }).populate().exec();
-        const amulets = await Amulet.find({ rarity: { $in: ['Default', 'Uncommon'] } }).populate().exec();
-        const trinkets = await Trinket.find({ rarity: { $in: ['Default', 'Uncommon'] } }).populate().exec();
+        const weapons = await Weapon.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
+        const shields = await Shield.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        const helmets = await Helmet.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        const chests = await Chest.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        const legs = await Legs.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        const rings = await Ring.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
+        const amulets = await Amulet.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
+        const trinkets = await Trinket.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
         res.status(200).json({ data: {
             weapons,
             shields,
@@ -632,8 +655,9 @@ async function deleteEquipment(req, res) {
     try {
         let result = null;
         for (const item of req.body) {
+            if (!item) continue;
             result = await Equipment.deleteMany({ _id: { $in: [item._id] } }).exec();
-        }
+        };
         res.status(200).json({ success: true, result });
     } catch (err) {
         console.log(err, 'err');

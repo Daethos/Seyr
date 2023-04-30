@@ -13,8 +13,10 @@ import { useNavigate } from 'react-router-dom';
 import AsceanListItem from '../../components/GameCompiler/AsceanListItem';
 import AdminAscean from '../../components/GameCompiler/AdminAscean';
 import MerchantTable from '../../components/GameCompiler/MerchantTable';
-import { GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
 import LevelUpModal from '../../game/LevelUpModal';
+import { MapStore, initialMapData } from '../../components/GameCompiler/WorldStore';
+import InventoryBag from '../../components/GameCompiler/InventoryBag';
 
 export interface Ascean {
     _id: string;
@@ -134,11 +136,13 @@ export interface GameAdminData {
     loading: boolean;
     asceanLoaded: boolean;
     testLevel: number;
+    testEquipment: { name: string; type: string; rarity: string; };
     equipmentTable: any[];
     searchQuery: string;
     asceanSearched: Ascean;
     asceanSearchData: any[];
     generatedAscean: object;
+    asceanInventory: any[];
     error: { title: string, content: string };
     setError: Function;
 };
@@ -151,9 +155,11 @@ export interface Action {
 export const ACTIONS = {
     SET_LOADING: 'set-loading',
     SET_TEST_LEVEL: 'set-test-level',
+    SET_EQUIPMENT_NAME: 'set-equipment-name',
     SET_EQUIPMENT_TABLE: 'set-equipment-table',
     SET_ASCEAN: 'set-ascean',
     SET_ASCEAN_DATA: 'set-ascean-data',
+    SET_INVENTORY: 'set-inventory',
     SET_SEARCH_QUERY: 'set-search-query',
     SET_ERROR: 'set-error',
     GENERATE_ASCEAN: 'generate-ascean',
@@ -164,11 +170,13 @@ const initialGameAdaminData: GameAdminData = {
     loading: false,
     asceanLoaded: false,
     testLevel: 0,
+    testEquipment: { name: '', type: '', rarity: '' },
     equipmentTable: [],
     searchQuery: '',
     asceanSearched: {...asceanTemplate},
     asceanSearchData: [],
     generatedAscean: {...asceanTemplate},
+    asceanInventory: [],
     error: { title: '', content: '' },
     setError: () => {},
 };
@@ -240,6 +248,20 @@ const GameAdminStore = (state: GameAdminData, action: Action) => {
                 equipmentTable: []
             };
         };
+        case 'set-equipment-name': {
+            return {
+                ...state,
+                loading: false,
+                testEquipment: action.payload
+            };
+        };
+        case 'set-inventory': {
+            return {
+                ...state,
+                loading: false,
+                asceanInventory: action.payload
+            };
+        };
         default: {
             return state;
         };
@@ -253,13 +275,14 @@ interface GameAdminProps {
 const GameAdmin = ({ user }: GameAdminProps) => {
     const [state, dispatch] = useReducer(GameAdminStore, initialGameAdaminData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
-    const [itemPurchased, setItemPurchased] = useState<boolean>(false);
+    const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [asceanState, setAsceanState] = useState<AsceanState>(initialAsceanState);
+    const [showInventory, setShowInventory] = useState<boolean>(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(state, asceanState, 'The State ~=V');
-    }, [state, asceanState]);
+        console.log(state, 'The State ~=V');
+    }, [state]);
 
     useEffect(() => {
         if (user.username !== 'lonely guy') navigate('/');
@@ -267,19 +290,91 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             console.log('Unmounting');
         };
     }, [user]);
+
+    useEffect(() => {
+        if (gameState.itemSaved === false) return;
+        console.log("Saving Item", gameState.itemSaved)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
+        };
+    }, [gameState, gameState.itemSaved]);
+
+    useEffect(() => {
+        if (gameState.eqpSwap === false) return;
+        console.log("Swapping Equipment", gameState.eqpSwap)
+        getAsceanAndInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
+        };
+    }, [gameState, gameState.eqpSwap]);
+
+    useEffect(() => {
+        if (gameState.removeItem === false) return;
+        console.log("Removing Item", gameState.removeItem)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
+        };
+    }, [gameState, gameState.removeItem]);
+
+    useEffect(() => {
+        if (gameState.repositionInventory === false) return;
+        console.log("Repositioning Inventory", gameState.repositionInventory)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
+        };
+    }, [gameState, gameState.repositionInventory]);
+
+    useEffect(() => {
+        if (gameState.purchasingItem === false) return;
+        console.log("Purchasing Item", gameState.purchasingItem)
+        getOnlyInventory();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
+        };
+    }, [gameState, gameState.purchasingItem]);
+
+    const getAsceanAndInventory = async () => {
+        try {
+            console.log("Getting Ascean and Inventory");
+            const firstResponse = await asceanAPI.getAsceanInventory(state?.generatedAscean?.ascean._id);
+            dispatch({ type: ACTIONS.SET_INVENTORY, payload: firstResponse.inventory });
+            const response = await asceanAPI.getAsceanStats(state?.generatedAscean?.ascean._id);
+            dispatch({
+                type: ACTIONS.GENERATE_ASCEAN,
+                payload: response.data.data
+            });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
+
+    const getOnlyInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanInventory(state?.generatedAscean?.ascean._id);
+            console.log(firstResponse, "Ascean Inventory ?")
+            dispatch({ type: ACTIONS.SET_INVENTORY, payload: firstResponse.inventory });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
     
 
-    const getEquipment = async (level: number) => {
+    const getEquipment = async (equipment: { name: string; type: string; rarity: string; }) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         try {
             if (state.equipmentTable.length > 0) {
                 const deleteResponse = await eqpAPI.deleteEquipment(state.equipmentTable);
                 console.log(deleteResponse, 'Delete Response');
             };
-            const response = await eqpAPI.getMerchantEquipment(level);
+            console.log(equipment, 'Equipment')
+            const response = await eqpAPI.getTestEquipment(equipment);
             dispatch({
                 type: ACTIONS.SET_EQUIPMENT_TABLE,
-                payload: response.data,
+                payload: [response.data],
             });
         } catch (err: any) {
             console.log(err.message);
@@ -296,15 +391,27 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         };
     };
 
-    const setTestLevel = (e: any) => {
-        if (e.target.value > 20) e.target.value = 20;
-        if (e.target.value < 0) e.target.value = 0;
-        dispatch({ type: ACTIONS.SET_TEST_LEVEL, payload: e.target.value });
+    const setTestEquipment = async (e: any) => {
+        try {
+        const data = e.target.value.split(/,\s?/);
+        console.log(data, 'Data')
+        const equipment = {
+            name: data[0].split(' ').map((word: string, index: number) => {
+                        if (index === 0 || (index > 0 && word.toLowerCase() !== 'of')) {
+                            return word.charAt(0).toUpperCase() + word.slice(1);
+                        } else {
+                            return word.toLowerCase();
+                        };
+                }).join(' '),
+            type: data?.[1] ? data?.[1].charAt(0).toUpperCase() + data?.[1].slice(1) : '',
+            rarity: data?.[2] ? data?.[2].charAt(0).toUpperCase() + data?.[2].slice(1) : '',
+        };
+        dispatch({ type: ACTIONS.SET_EQUIPMENT_NAME, payload: equipment });
+        } catch (err: any) {
+            console.log(err.message);
+        };
     };
 
-    const searchAsceanName = async (name: string) => dispatch({ type: ACTIONS.SET_SEARCH_QUERY, payload: name });
-
-    
     const fetchAscean = async (id: string) => {
         if (id === '') {
             dispatch({ type: ACTIONS.SET_ASCEAN_DATA, payload: [] });
@@ -332,6 +439,9 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                 payload: updatedResponse.data.data,
             });
             setAsceanState({ ...asceanState, ascean: updatedResponse.data.data.ascean, level: updatedResponse.data.data.ascean.level, experience: updatedResponse.data.data.ascean.experience, experienceNeeded: (updatedResponse.data.data.ascean.experience * 1000), mastery: updatedResponse.data.data.ascean.mastery, faith: updatedResponse.data.data.ascean.faith });
+            const firstResponse = await asceanAPI.getAsceanInventory(id);
+            console.log(firstResponse, "Ascean Inventory ?")
+            dispatch({ type: ACTIONS.SET_INVENTORY, payload: firstResponse.inventory });
         } catch (err: any) {
             console.log(err.message);
         };
@@ -367,10 +477,10 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             const firstResponse = await asceanAPI.getCleanAscean(ascean._id);
             const response = await asceanAPI.getAsceanStats(ascean._id);
             console.log(firstResponse, response, "First Response, Response")
-            // dispatch({
-            //     type: ACTIONS.GENERATE_ASCEAN,
-            //     payload: response.data.data.ascean
-            //  });
+            dispatch({
+                type: ACTIONS.GENERATE_ASCEAN,
+                payload: response.data.data
+             });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Leveled');
         };
@@ -410,6 +520,15 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     <>
                     <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                     <AdminAscean ascean={state.generatedAscean} loading={false} />
+                    { state.asceanInventory.length > 0 ?
+                        <>
+                        <br />
+                        <Button variant='outline' className='my-5' style={{ color: '#fdf6d8', fontSize: '20px', marginLeft: "auto" }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button>
+                        </>
+                    : '' }
+                    { showInventory ?
+                        <InventoryBag admin={true}  gameDispatch={gameDispatch} inventory={state.asceanInventory} ascean={state.generatedAscean.ascean} dispatch={dispatch} gameState={gameState} mapState={mapState} />
+                    : '' }
                     </>
                     : ''}
                     {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontSize: 25 + 'px' }} onClick={() => generateAscean(state.asceanSearched._id)}>Generate Ascean</Button> */}
@@ -421,21 +540,20 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             <Card style={{ background: 'black', color: 'white' }}>
                 <Card.Body>
                     <Card.Title>Test Equipment</Card.Title>
-                    <Card.Text>Placeholder Test for the Equipment</Card.Text>
+                    <Card.Text>Find Equipment Using Name, Type, Rarity</Card.Text>
+                    <Card.Text>{state?.testEquipment?.name} {state?.testEquipment?.type} {state?.testEquipment?.rarity}</Card.Text>
                     {/* <Button variant='' style={{ color: 'blue', fontVariant: 'small-caps' }} onClick={writeEquipmentFile}>Write Equipment</Button> */}
                     <Form>
                         <Form.Group>
-                            <Form.Label>Test Level</Form.Label>
+                            <Form.Label>Test Equipment</Form.Label>
                             <Form.Control
-                                type="number"
-                                min="0"
-                                max="20"
-                                placeholder="Enter Test Level"
-                                onChange={(e) => setTestLevel(e)}
+                                type="input"
+                                placeholder="Enter Test Equipment"
+                                onChange={(e) => setTestEquipment(e)}
                             />
                         </Form.Group>
                     </Form>
-                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testLevel)}>Get Equipment</Button>
+                    <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testEquipment)}>Get Equipment</Button>
                     { state.equipmentTable.length > 0 ?
                         <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} gameDispatch={gameDispatch} gameState={gameState} error={state.error} setError={state.setError} />
                     : '' }

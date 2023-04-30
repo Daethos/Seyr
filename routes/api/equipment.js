@@ -12,6 +12,7 @@ router.get('/armor/:level', eqpCtrl.getArmorEquipment);
 router.get('/cloth/:level', eqpCtrl.getClothEquipment);
 router.get('/jewelry/:level', eqpCtrl.getJewelryEquipment);
 router.get('/write', eqpCtrl.getAndWriteEquipmentIds);
+router.post('/test', eqpCtrl.getTestEquipment);
 router.put('/upgrade', eqpCtrl.upgradeEquipment);
 router.delete('/delete', eqpCtrl.deleteEquipment);
 

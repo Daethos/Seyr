@@ -19,6 +19,7 @@ interface IBProps {
   inventory: any;
   ascean: any;
   dispatch: any;
+  admin?: boolean;
   settings?: boolean;
   gameDispatch: React.Dispatch<any>;
   gameState: any;
@@ -79,7 +80,7 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal, ma
   );
 };
 
-const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gameState, mapState }: IBProps) => {
+const InventoryBag = ({ ascean, dispatch, inventory, admin, settings, gameDispatch, gameState, mapState }: IBProps) => {
   const [dndInventory, setDndInventory] = useState(inventory);
   const [activeTab, setActiveTab] = useState('gear');
   const [drinking, setDrinking] = useState(false);
@@ -191,7 +192,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
         Do you wish to set camp and let it bleed?
         </p>
         <br />
-        { ascean?.firewater.charges === 0 && mapState?.currentTile?.content === 'city' ?
+        { ascean?.firewater?.charges === 0 && mapState?.currentTile?.content === 'city' ?
           <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }}>
           In a City
           </Button>
@@ -207,7 +208,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
     </Modal>
 
     <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-      <div className={settings ? 'inventory-bag-settings' : 'inventory-bag'}>
+      <div className={settings ? 'inventory-bag-settings' : admin ? 'inventory-bag-admin' : 'inventory-bag'}>
         { activeTab === 'gear' && dndInventory?.length > 0 ?
             dndInventory.map((item: any, index: number) => {
               return (
@@ -224,7 +225,7 @@ const InventoryBag = ({ ascean, dispatch, inventory, settings, gameDispatch, gam
         </div>
     </DragDropContext>
 
-    { !drinking ?
+    { !drinking && !admin ?
       <InventoryOptions firewater={ascean?.firewater} drinkFirewater={drinkFirewater} setShowFirewaterModal={setShowFirewaterModal} mapState={mapState} />
       :
     '' }

@@ -21,7 +21,7 @@ interface Props {
     gameDispatch: React.Dispatch<any>;
     blacksmith?: boolean;
     index: number;
-}
+};
 
 const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, gameState }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
@@ -664,7 +664,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     </tbody>
                 </Table>
             <br />
-        { canEquip(ascean?.level, inventory?.rarity) ?
+        { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
             <>
             <Form.Select value={
                 inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
@@ -707,7 +707,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 <br /><br />    
             </div>
         }
-            { canEquip(ascean?.level, inventory?.rarity) ?
+            { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
                 <> 
                 <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> 
                 <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
@@ -749,7 +749,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             <Button variant='outline' className='mb-2' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button>
         : '' }
         <Overlay target={targetRef} show={isLoading}>
-            <div className='d-flex align-items-center justify-content-center' style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.65)', zIndex: 9999 }}>
+            <div className='d-flex align-items-center justify-content-center' style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.65)', zIndex: 99999 }}>
                 <h1 style={{ color: 'gold', fontVariant: 'small-caps', textAlign: 'center', fontSize: 36 + 'px', textShadow: '1px 1px 1px goldenrod', fontWeight: 600 }}>
                     {loadingContent}
                 </h1>

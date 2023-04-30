@@ -50,6 +50,23 @@ export async function upgradeEquipment(data: object) {
     })
 }
 
+export async function getTestEquipment(equipment: object) {
+    return fetch(BASE_URL + 'test/', {
+        method: 'POST',
+        body: JSON.stringify(equipment),
+        headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response);
+            throw new Error(response.err);
+        });
+    });
+};
+
 export async function getMerchantEquipment(level: number) {
     return fetch(BASE_URL + 'merchant/' + level, {
         headers: {

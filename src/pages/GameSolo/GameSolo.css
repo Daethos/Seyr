@@ -262,6 +262,27 @@
   overflow-y: scroll;
   border-radius: 6px;
 }
+.inventory-bag-admin {
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(6, 16%);
+  grid-template-rows: repeat(36, 16%);
+  justify-content: space-evenly;
+  z-index: 99;
+  margin-left: -6%;
+  /* padding: 5%; */
+  grid-column-start: 1;
+  grid-column-end: 5;
+  grid-row-start: 1;
+  color: #fdf6d8;
+  background-color: black;
+  border: 3px solid purple;
+  box-shadow: 2px 2px 2px black;
+  width: 99%;
+  height: 50vh;
+  overflow-y: scroll;
+  border-radius: 6px;
+}
 .inventory-button {
   grid-column-start: 4;
   grid-row-start: 8;

@@ -212,6 +212,107 @@ const asceanSchema = new Schema(
         completedQuests: [{
             type: Schema.Types.ObjectId, ref: 'Quest'
         }],
+        statistics: {
+            combat: { // Some combat things will be every duel, some will be every level
+                losses: { type: Number, default: 0 },
+                total: { type: Number, default: 0 },
+                wins: { type: Number, default: 0 },
+                attacks: { magical: { type: Number, default: 0 }, physical: { type: Number, default: 0 } },
+                damage: { magical: { type: Number, default: 0 }, physical: { type: Number, default: 0 } },
+                prayers: { buff: { type: Number, default: 0 }, damage: { type: Number, default: 0 }, debuff: { type: Number, default: 0 }, heal: { type: Number, default: 0 } },
+                mastery: { constitution: { type: Number, default: 0 }, strength: { type: Number, default: 0 }, agility: { type: Number, default: 0 }, 
+                            achre: { type: Number, default: 0 }, caeren: { type: Number, default: 0 }, kyosir: { type: Number, default: 0 } },
+            },
+            luckout: {
+                arbitious: { 
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                 }, 
+                chiomic: { 
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                 }, 
+                kyrnaic: { 
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                 }, 
+                lilosian: { 
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                 }, 
+
+            },
+            miniGames: {
+                cambiren: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                sevan: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                shrygeian: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                tshaeral: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                }
+            },
+            persuasion: {
+                arbitious: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                }, 
+                chiomic: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                fyeran: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                ilian: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                kyrnaic: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                lilosian: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+                shaorahi: {
+                    failures: { type: Number, default: 0 },
+                    successes: { type: Number, default: 0 },
+                    total: { type: Number, default: 0 },
+                },
+            },
+            thievery: {
+                failures: { type: Number, default: 0 },
+                successes: { type: Number, default: 0 },
+                total: { type: Number, default: 0 },
+                totalValue: { type: Number, default: 0 },
+            },
+            // something about phenomena
+        },
         tutorial: {
             firstBoot: { type: Boolean, default: true },
             firstCity: { type: Boolean, default: true },
