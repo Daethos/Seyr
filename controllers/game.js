@@ -1,7 +1,5 @@
-const Ascean = require('../models/ascean');
-const User = require('../models/user');
-const gameService = require('../services/gameServices')
-const pvpService = require('../services/pvpServices')
+const gameService = require('../services/gameServices');
+const pvpService = require('../services/pvpServices');
 
 module.exports = {
     initiate,
@@ -10,7 +8,7 @@ module.exports = {
     pvpInitiate,
     pvpInstant,
     pvpPrayer,
-}
+};
 
 async function prayer(req, res) {
     try {

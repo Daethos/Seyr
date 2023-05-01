@@ -159,8 +159,6 @@ const GameSolo = ({ user }: GameProps) => {
     };
     useMoveTimerEffect(mapState);
 
-
-
     const useMoveContentEffect = (mapState: MapData) => {
         useEffect(() => {
             if (mapState.currentTile.content !== 'nothing' && mapState?.lastTile) {
@@ -195,7 +193,6 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
-
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -776,22 +773,6 @@ const GameSolo = ({ user }: GameProps) => {
             const firstResponse = await asceanAPI.getAsceanQuests(asceanID);
             console.log(firstResponse, "Ascean Inventory ?")
             gameDispatch({ type: GAME_ACTIONS.SET_QUESTS, payload: firstResponse });
-            const response = await asceanAPI.getAsceanStats(asceanID);
-            dispatch({
-                type: ACTIONS.SET_PLAYER_SLICK,
-                payload: response.data.data
-            });
-            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
-        } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly');
-        };
-    };
-
-    const getAsceanInventory = async () => {
-        try {
-            const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
-            console.log(firstResponse, "Ascean Inventory ?")
-            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_SLICK,
@@ -1775,7 +1756,6 @@ const GameSolo = ({ user }: GameProps) => {
                     { gameState.player.quests.length > 0 ?
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
                     : '' }
-                    {/* TODO:FIXME: This will be the event modal, handling currentTIle content in this modal as a pop-up occurrence I believe TODO:FIXME: */}
                     { gameState.showDialog && gameState.opponent ?    
                         <DialogBox 
                             npc={gameState?.opponent?.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}

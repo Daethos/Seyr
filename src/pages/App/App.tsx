@@ -8,7 +8,6 @@ import userService from "../../utils/userService";
 import * as asceanAPI from '../../utils/asceanApi';
 import EditAscean from "../../components/EditAscean/EditAscean";
 import AuthPage from "../AuthPage/AuthPage";
-import Loading from "../../components/Loading/Loading";
 import CommunityFeed from "../CommunityFeed/CommunityFeed";
 import CommunityFocus from "../CommunityFocus/CommunityFocus";
 import ProfilePage from "../ProfilePage/ProfilePage"
@@ -78,7 +77,7 @@ function App() {
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
-        <Route path="/Ascean" element={<NewAscean loggedUser={user} setUser={setUser} createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/Ascean" element={<NewAscean createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
         <Route path='/Hardcore/:asceanID' element={<HardCoreAscea user={user} />} />
         <Route path="/Story/:asceanID" element={<Story user={user} />} />

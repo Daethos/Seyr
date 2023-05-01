@@ -74,8 +74,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setIsLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Trouble Loading Ascean');
-        }
-    }
+        };
+    };
 
     function canUpgrade(inventory: any[], name: string, rarity: string): boolean {
         const matches = inventory.filter(item => item?.name === name && item?.rarity === rarity);
@@ -739,7 +739,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             {(provided, snapshot) => (
                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                     <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
-                        <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={`inventory-icon rarity-${inventory?.rarity.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
+                        <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={`inventory-icon rarity-${inventory?.rarity?.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
                     </OverlayTrigger>
                 </div>
             )}

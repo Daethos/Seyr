@@ -26,7 +26,6 @@ async function determineItemType(id) {
         Amulet: Amulet,
         Trinket: Trinket,
     };
-      
     const itemTypes = ['Equipment', 'Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket'];
     for (const itemType of itemTypes) {
         const item = await models[itemType].findById(id).exec();

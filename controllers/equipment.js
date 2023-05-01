@@ -27,7 +27,8 @@ module.exports = {
     getArmorEquipment,
     getJewelryEquipment,
     getClothEquipment,
-    getTestEquipment
+    getTestEquipment,
+    writeEnemyDialog
 }
 
 async function getTestEquipment(req, res) {
@@ -626,14 +627,6 @@ async function upgradeEquipment(req, res) {
     };
 };
 
-const removeItems = async (items, inventory) => {
-    console.log(items, 'items in removeItems')
-    await Promise.all(items.map(async itemID => {
-        await deleteEquipmentCheck(itemID);
-    }));
-    return inventory.filter(id => !items.includes(id));
-};
-
 async function getHigherRarity(name, type, rarity) {
     let nextRarity;
     if (rarity === 'Common') {
@@ -691,6 +684,24 @@ async function getAndWriteEquipmentIds(req, res) {
         console.log(allEquipmentIds, 'allEquipmentIds');
         await fs.promises.writeFile('data/equipmentIds.json', JSON.stringify(allEquipmentIds));
         res.status(200).json({ success: true, allEquipmentIds });
+    } catch (err) {
+        console.log(err, 'err');
+        res.status(400).json(err);
+    };
+};
+
+async function writeEnemyDialog(req, res) {
+    try {
+        const jsonData = await fs.promises.readFile('src/components/GameCompiler/EnemyDialogNodes.json');
+        const parsedData = await JSON.parse(jsonData);
+        const existingNodeIndex = parsedData.nodes.findIndex(node => node.id === req.body.id);
+        if (existingNodeIndex !== -1) {
+            parsedData.nodes[existingNodeIndex] = req.body;
+        } else {
+            parsedData.nodes.push(req.body);
+        };
+        await fs.promises.writeFile('src/components/GameCompiler/EnemyDialogNodes.json', JSON.stringify(parsedData));
+        res.status(200).json({ success: true, parsedData });
     } catch (err) {
         console.log(err, 'err');
         res.status(400).json(err);

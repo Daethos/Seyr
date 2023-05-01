@@ -13,10 +13,253 @@ import { useNavigate } from 'react-router-dom';
 import AsceanListItem from '../../components/GameCompiler/AsceanListItem';
 import AdminAscean from '../../components/GameCompiler/AdminAscean';
 import MerchantTable from '../../components/GameCompiler/MerchantTable';
-import { GAME_ACTIONS, GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
+import { Enemy, GAME_ACTIONS, GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
 import LevelUpModal from '../../game/LevelUpModal';
 import { MapStore, initialMapData } from '../../components/GameCompiler/WorldStore';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
+import EnemyDialogNodes from '../../components/GameCompiler/EnemyDialogNodes.json';
+
+interface DialogNodeOption {
+    text: string;
+    next: string | null;
+    npcIds?: any[];
+    conditions?: { key: string; operator: string; value: string; }[];
+    action?: string | null;
+};
+
+export interface DialogNode {
+    id: string;
+    text: string;
+    options: DialogNodeOption[] | [];
+    npcIds: any[];
+};
+
+interface NpcIds {
+    [key: string]: number;
+};
+
+interface NodeFormProps {
+    node: DialogNode;
+    onSave: (node: DialogNode) => void;
+};
+
+interface DialogOptionProps {
+    option: DialogNodeOption;
+    onClick: (nextNodeId: string | null) => void;
+    actions: { [key: string]: Function }
+};
+
+const DialogNodeForm = ({ node, onSave }: NodeFormProps) => {
+    const [nodeId, setNodeId] = useState(node.id);
+    const [text, setText] = useState(node.text);
+    const [options, setOptions] = useState(node.options);
+    const [npcIds, setNpcIds] = useState(node.npcIds);
+
+    useEffect(() => {
+        setNodeId(node.id);
+        setText(node.text);
+        setOptions(node.options);
+        setNpcIds(node.npcIds);
+    }, [node]);
+
+    const handleOptionChange = async (index: number, option: DialogNodeOption) => {
+        const newOptions = [...options];
+        newOptions[index] = option;
+        setOptions(newOptions);
+    };
+    
+    const handleAddOption = () => {
+        const newOption: DialogNodeOption = {
+            text: '',
+            next: null,
+            npcIds: [],
+            conditions: [],
+            action: null,
+        };
+        setOptions([...options, newOption]);
+      };
+    
+    const handleSave = () => {
+        const newNode: DialogNode = {
+            ...node,
+            id: nodeId,
+            text,
+            options,
+            npcIds,
+        };
+        onSave(newNode);
+    };
+    return (
+        <div>
+        <label htmlFor="text">Node ID:</label>{' '}
+        <input
+            id="text"
+            type="text"
+            value={nodeId}
+            onChange={(e) => setNodeId(e.target.value)}
+        /><br />
+
+        <label htmlFor="text">Node Text:</label>{' '}
+        <input
+            id="text"
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+        /><br />
+    
+        <label htmlFor="npcIds">NPC Ids:</label>{' '}
+        <input
+            id="npcIds"
+            type="text"
+            value={npcIds.join(',')}
+            onChange={(e) => setNpcIds(e.target.value.split(','))}
+        /><br />
+        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleAddOption}>Add Option</Button>
+        <h5 style={{ color: "#fdf6d8" }}>Options</h5>
+        {options.map((option, index) => (
+            <OptionForm
+              key={index}
+              option={option}
+              onSave={(newOption) => handleOptionChange(index, newOption)}
+            />
+        ))}
+        <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Node</Button>
+        </div>
+    );
+};
+
+interface OptionFormProps {
+    option: DialogNodeOption;
+    onSave: (option: DialogNodeOption) => Promise<void>;
+};
+
+const OptionForm = ({ option, onSave }: OptionFormProps) => {
+    const [text, setText] = useState(option.text);
+    const [next, setNext] = useState(option.next);
+    const [npcIds, setNpcIds] = useState(option.npcIds);
+    const [conditions, setConditions] = useState(option.conditions);
+    const [action, setAction] = useState(option.action);
+
+    useEffect(() => {
+        setText(option.text);
+        setNext(option.next);
+        setNpcIds(option.npcIds);
+        setConditions(option.conditions);
+        setAction(option.action);
+    }, [option])
+
+    const handleSave = () => {
+        const newOption: DialogNodeOption = {
+            text,
+            next,
+            npcIds,
+            conditions,
+            action,
+        };
+        onSave(newOption);
+    };
+
+    return (
+        <div style={{  }} >
+            <label htmlFor="text">Option Text:</label>{' '}
+            <input
+                id="text"
+                type="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+            /><br />
+            <label htmlFor="next">Next Node ID:</label>{' '}
+            <input 
+                id="next"
+                type="text"
+                value={next ?? ''}
+                onChange={(e) => setNext(e.target.value)}
+            /><br />
+            <label htmlFor="npcIds">NPC Ids:</label>{' '}
+            <input
+                id="npcIds"
+                type="text"
+                value={npcIds?.join(',')}
+                onChange={(e) => setNpcIds(e.target.value.split(','))}
+            /><br />
+            <label htmlFor="conditions">Conditions:</label>{' '}
+            <input
+                id="conditions"
+                type="text"
+                value={conditions?.map((condition) => `${condition.key} ${condition.operator} ${condition.value}`).join(',')}
+                onChange={(e) => setConditions(e.target.value.split(',').map((condition) => {
+                    const [key, operator, value] = condition.split(' ');
+                    return { key, operator, value };
+                }))}
+            /><br />
+            <label htmlFor="action">Action:</label>{' '}
+            <input
+                id="action"
+                type="text"
+                value={action ?? ''}
+                onChange={(e) => setAction(e.target.value)}
+            /><br />
+            <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Option</Button>
+            <br /><br />
+        </div>
+    );
+};
+
+interface NodeTableProps {
+    nodes: DialogNode[];
+    getNodeById: (nodeId: string) => DialogNode | undefined;
+    onEdit: (node: DialogNode) => void;
+    onDelete: (nodeId: string) => void;
+};
+
+const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete }: NodeTableProps) => {
+    const getNodeId = (id: string) => {
+        getNodeById(id);
+    };
+    return (
+        <div>
+            <h5 style={{ color: "#fdf6d8" }}>Nodes</h5>
+            <Table striped bordered hover variant="dark">
+                <thead>
+                    <tr>
+                        <th>Node ID</th>
+                        <th>Node Text</th>
+                        <th>Options</th>
+                        <th>NPC Ids</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {nodes.map((node) => (
+                        <tr key={node.id}>
+                            <td onClick={() => getNodeId(node.id)}>{node.id}</td>
+                            <td>{node.text}</td>
+                            <td>{node.options.map((option: DialogNodeOption, index: number) => {
+                                console.log(option, "Option Being Mapped Out")
+                                return (
+                                    <div key={index}>
+                                        <p>Text: {option.text}</p>
+                                        <p>Next Node: {option.next}</p>
+                                        <p>NPCs: {option?.npcIds?.join(',')}</p>
+                                        <p>Conditions: {option?.conditions?.map((condition) => `${condition.key} ${condition.operator} ${condition.value}`).join(',')}</p>
+                                        <p>Actions: {option.action}</p>
+                                    </div>
+                                )
+                            } )}
+                            </td>
+                            <td>{node.npcIds.join(',')}</td>
+                            <td>
+                                <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => onEdit(node)}>Edit</Button>{' '}
+                                <br /><br />
+                                <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => onDelete(node.id)}>Delete</Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+        </div>
+    );
+};
 
 export interface Ascean {
     _id: string;
@@ -279,21 +522,16 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const [asceanState, setAsceanState] = useState<AsceanState>(initialAsceanState);
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log(state, 'The State ~=V');
-    }, [state]);
+    const [dialogNodes, setDialogNodes] = useState<DialogNode>({ id: '', text: '', options: [], npcIds: [] });
+    const [enemyNodes, setEnemyNodes] = useState<any[]>([]);
 
     useEffect(() => {
         if (user.username !== 'lonely guy') navigate('/');
-        return () => {
-            console.log('Unmounting');
-        };
     }, [user]);
 
     useEffect(() => {
         if (gameState.itemSaved === false) return;
-        console.log("Saving Item", gameState.itemSaved)
+        console.log("Saving Item", gameState.itemSaved);
         getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
@@ -302,7 +540,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     useEffect(() => {
         if (gameState.eqpSwap === false) return;
-        console.log("Swapping Equipment", gameState.eqpSwap)
+        console.log("Swapping Equipment", gameState.eqpSwap);
         getAsceanAndInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
@@ -311,7 +549,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     useEffect(() => {
         if (gameState.removeItem === false) return;
-        console.log("Removing Item", gameState.removeItem)
+        console.log("Removing Item", gameState.removeItem);
         getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
@@ -320,7 +558,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     useEffect(() => {
         if (gameState.repositionInventory === false) return;
-        console.log("Repositioning Inventory", gameState.repositionInventory)
+        console.log("Repositioning Inventory", gameState.repositionInventory);
         getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
@@ -329,7 +567,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     useEffect(() => {
         if (gameState.purchasingItem === false) return;
-        console.log("Purchasing Item", gameState.purchasingItem)
+        console.log("Purchasing Item", gameState.purchasingItem);
         getOnlyInventory();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
@@ -362,7 +600,6 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         };
     };
     
-
     const getEquipment = async (equipment: { name: string; type: string; rarity: string; }) => {
         dispatch({ type: ACTIONS.SET_LOADING, payload: true });
         try {
@@ -494,6 +731,49 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             console.log(err.message);
         };
     };
+
+    function getNodesForEnemy(e: any): DialogNode[] {
+        e.preventDefault();
+        const matchingNodes: DialogNode[] = [];
+        for (const node of EnemyDialogNodes.nodes) {
+            if (node.options.length === 0) {
+                continue;
+            };
+            const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(e.target.value));
+            if (npcOptions.length > 0) {
+                const updatedNode = { ...node, options: npcOptions };
+                matchingNodes.push(updatedNode);
+            };
+        };
+        console.log(matchingNodes, 'Matching Nodes');
+        setEnemyNodes(matchingNodes);
+        return matchingNodes;
+    };
+    function getNodeById(nodeId: string): DialogNode | undefined {
+        const node = EnemyDialogNodes.nodes.find((node) => node.id === nodeId);
+        if (node) {
+            console.log(node, 'Node');
+            setDialogNodes(node);
+        };
+        return node;
+    };
+    const handleNodeDelete = (nodeID: string) => {
+        console.log(nodeID, 'Node in handleNodeSave');
+    };
+
+    const handleNodeEdit = (node: DialogNode) => {
+        console.log(node, 'Node in handleNodeSave');
+    };
+
+    const handleNodeSave = async (node: DialogNode) => {
+        console.log(node, 'Node in handleNodeSave');
+        try {
+            const response = await eqpAPI.writeEnemyDialog(node);
+            console.log(response, 'Response in handleNodeSave');
+        } catch (err: any) {
+            console.log(err.message);
+        };
+    };
     
     return (
         <Container>
@@ -522,8 +802,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     <AdminAscean ascean={state.generatedAscean} loading={false} />
                     { state.asceanInventory.length > 0 ?
                         <>
-                        <br />
-                        <Button variant='outline' className='my-5' style={{ color: '#fdf6d8', fontSize: '20px', marginLeft: "auto" }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button>
+                        <Button variant='outline' className='' style={{ color: '#fdf6d8', fontSize: '18px', marginLeft: "27.5%", marginTop: "20%" }} onClick={() => setShowInventory(!showInventory)}>Inspect Inventory</Button>
                         </>
                     : '' }
                     { showInventory ?
@@ -531,7 +810,6 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     : '' }
                     </>
                     : ''}
-                    {/* <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontSize: 25 + 'px' }} onClick={() => generateAscean(state.asceanSearched._id)}>Generate Ascean</Button> */}
                     <br /><br /><br /><br />
                 </Card.Body>
             </Card>
@@ -559,6 +837,28 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     : '' }
                     <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={() => deleteEquipment(state.equipmentTable)}>Delete Equipment</Button>
                     </Card.Body>
+            </Card>
+            </Row>
+            <Row className='my-5'>
+            <Card style={{ background: 'black', color: 'white' }}>
+                <Card.Body>
+                    <Card.Title style={{ color: "#fdf6d8" }}>Test Dialog</Card.Title>
+                    <Card.Text style={{ color: "#fdf6d8" }}>Find Dialog Nodes Using Enemy Name</Card.Text>
+                    <Form className='my-2'>
+                        <Form.Group>
+                            <Form.Label style={{ color: "#fdf6d8" }}>Test Dialog</Form.Label>
+                            <Form.Control
+                                type="input"
+                                placeholder="Enter Enemy Name"
+                                onChange={(e) => getNodesForEnemy(e)}
+                            />
+                        </Form.Group>
+                    </Form>
+                    { enemyNodes.length > 0 ?
+                        <DialogNodeTable nodes={enemyNodes} getNodeById={getNodeById} onEdit={handleNodeEdit} onDelete={handleNodeDelete} />
+                    : '' }
+                    <DialogNodeForm node={dialogNodes} onSave={handleNodeSave} />
+                </Card.Body>
             </Card>
             </Row>
         </Container>

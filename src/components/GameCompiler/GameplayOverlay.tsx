@@ -31,7 +31,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
     };
 
     const saveWorldMiddleware = async () => {
-        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Saving Map: ${mapState?.name} \n\n To \n\n Ascean: ${ascean?.name}` });
+        // gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Saving Map: ${mapState?.name} \n\n To \n\n Ascean: ${ascean?.name}` });
         await saveWorld();
     };
 
@@ -86,7 +86,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                     <br />
                     This is where you're starting, and hopefully, nothing is happening, because you are starting here and now. 
                     {' '}Let's imagine a chunk of this arena is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering combat in any direction.<br /><br /> 
-                    {' '}You may find the arena you're in to be lacking, as this lightweight design is to simulate a Phaser canvas for coherence of gameplay.
+                    {' '}You may find the arena you're in to be lacking, as this lightweight prototype is to simulate a Phaser canvas for coherence of gameplay.
                     {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. It won't save, so each time you generate an arena, it'll be different.
                     Once you're ready, click your name.
                     <br /><br />
@@ -134,7 +134,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         <br />
                         This is where you're starting, and as expected, nothing is happening, but that's okay because you can move around and explore this world. 
                         {' '}Let's imagine a chunk of this province is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering adventure in any direction.<br /><br /> 
-                        {' '}You may find the world you're in to be lacking, but over time more will occur than last experienced, as this lightweight design is to simulate a Phaser canvas for coherence of gameplay.
+                        {' '}You may find the world you're in to be lacking, but over time more will occur than last experienced, as this lightweight design is a prototype to simulate a Phaser canvas for coherence of gameplay.
                         {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. Once you're ready, click your name.
                         </p>
                         <Button variant='' onClick={saveWorldMiddleware}>

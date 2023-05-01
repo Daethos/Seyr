@@ -260,12 +260,12 @@ async function persistAscean(req, res) {
             visibility: req.body.visibility,
             hardcore: true,
             lineage: [...previous.lineage, previous._id]
-        })
+        });
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, "Error Persisting Ascean");
         res.status(400).json({ err });
-    }
+    };
 };
 
 async function editAscean(req, res) {
@@ -531,12 +531,13 @@ async function purchaseToInventory(req, res) {
 
 async function swapItems(req, res) {
     try {
+        console.log(req.body, 'req.body')
         const ascean = await Ascean.findById(req.params.id);
         const keyToUpdate = Object.keys(req.body).find(key => {
-            console.log(key, 'Key in Swapping Items');
             return typeof req.body[key] === 'string' && req.body[key] !== '';
         });
         const itemType = keyToUpdate.replace('new_', '');
+        console.log(itemType, keyToUpdate, 'itemType, keyToUpdate')
         const currentItemId = ascean[itemType];
         ascean[itemType] = req.body[keyToUpdate];
         const currentItem = await determineItemType(currentItemId);
@@ -562,7 +563,7 @@ const deleteEquipmentCheck = async (equipmentID) => {
             return console.log('Equipment found in golden template list. Must be preserved at all costs!');
         };
         const deleted = await Equipment.findByIdAndDelete(equipmentID).exec();
-        console.log(`Successfully deleted equipment with id: ${deleted}`);
+        console.log(`Successfully deleted equipment with id: ${equipmentID}`);
     } catch (err) {
         console.log(err, 'err');
         res.status(400).json({ err });
@@ -694,9 +695,9 @@ async function updateHighScore(req, res) {
 
 async function deleteAscean(req, res) {
     try {
-        // const ascean = await Ascean.findById(req.params.id);
-        // await asceanEquipmentDeleteCheck(ascean);
-        console.log(req.params.id, '<- Ascean ID in Delete Ascean Function')
+        const ascean = await Ascean.findById(req.params.id);
+        await asceanEquipmentDeleteCheck(ascean);
+        console.log(req.params.id, '<- Ascean ID in Delete Ascean Function');
         await Ascean.findByIdAndDelete(req.params.id);
         res.status(201).json({});
     } catch (err) {
@@ -706,7 +707,6 @@ async function deleteAscean(req, res) {
 }
 
 const asceanEquipmentDeleteCheck = async (ascean) => {
-    console.log(ascean, 'Ascean Checking For Deletion')
     await deleteEquipmentCheck(ascean.helmet);
     await deleteEquipmentCheck(ascean.chest);
     await deleteEquipmentCheck(ascean.legs);
@@ -722,8 +722,8 @@ const asceanEquipmentDeleteCheck = async (ascean) => {
     if (inventory.length > 0) {
         for (const item of inventory) {
             await deleteEquipmentCheck(item);
-        }
-    }
+        };
+    };
 };
 
 async function create(req, res) {
@@ -1112,14 +1112,14 @@ async function animalStats(req, res) {
 
 async function searchAscean(req, res) {
     const keyword = req.query.search ? {
-        $or: [
-            { name: { $regex: req.query.search, $options: "i" } },
-            // { level: { $regex: req.query.search, $options: "i" } },
-            { origin: { $regex: req.query.search, $options: "i" } },
-            // { high_score: { $regex: req.query.search, $options: "i" } },
-        ]
+        $or: [ 
+        { name: { $regex: req.query.search, $options: "i" } },
+        { sex: { $regex: req.query.search, $options: "i" } },
+        { origin: { $regex: req.query.search, $options: "i" } },
+        { level: isNaN(parseInt(req.query.search)) ? null : parseInt(req.query.search) },
+        { high_score: isNaN(parseInt(req.query.search)) ? null : parseInt(req.query.search) }
+        ].filter(item => item)
     } : [];
-
     const ascean = await Ascean.find(keyword);
     console.log(ascean, 'Ascean in search Ascean controller');
     res.send(ascean);

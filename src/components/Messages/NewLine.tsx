@@ -1,6 +1,6 @@
 interface Props {
     spaceCount: number;
-}
+};
 
 const NewLine = ({ spaceCount }: Props) => {
   return (
@@ -9,7 +9,7 @@ const NewLine = ({ spaceCount }: Props) => {
       return <br key={index} />
     })}
     </>
-  )
-}
+  );
+};
 
-export default NewLine
+export default NewLine;

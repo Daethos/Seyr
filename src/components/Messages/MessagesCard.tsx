@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import Loading from '../Loading/Loading';
-import './Messages.css'
+import './Messages.css';
 
 interface Props {
     message: any
     user: any;
     friend: any
-}
+};
 
 const MessagesCard = ({ friend, message, user }:Props) => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -31,7 +31,7 @@ const MessagesCard = ({ friend, message, user }:Props) => {
             : ''
             }
         </div>
-    )
-}
+    );
+};
 
-export default MessagesCard
+export default MessagesCard;

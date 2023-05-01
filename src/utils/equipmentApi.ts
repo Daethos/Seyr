@@ -133,8 +133,8 @@ export async function getClothEquipment(level: number) {
         return res.json().then(response => {
             console.log(response);
             throw new Error(response.err);
-        })
-    })
+        });
+    });
 };
 
 export async function getJewelryEquipment(level: number) {
@@ -147,9 +147,9 @@ export async function getJewelryEquipment(level: number) {
         return res.json().then(response => {
             console.log(response);
             throw new Error(response.err);
-        })
-    })
-}
+        });
+    });
+};
 
 export async function deleteEquipment(data: object) {
     return fetch(BASE_URL + 'delete', {
@@ -165,9 +165,9 @@ export async function deleteEquipment(data: object) {
         return res.json().then(response => {
             console.log(response);
             throw new Error(response.err);
-        })
-    })
-}
+        });
+    });
+};
 
 export async function writeEquipment() {
     return fetch(BASE_URL + 'write', {
@@ -180,6 +180,23 @@ export async function writeEquipment() {
         return res.json().then(response => {
             console.log(response);
             throw new Error(response.err);
-        })
-    })
-}
+        });
+    });
+};
+
+export async function writeEnemyDialog(dialog: any) {
+    return fetch(BASE_URL + 'enemy-dialog/', {
+        method: 'POST',
+        body: JSON.stringify(dialog),
+        headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        },
+    }).then(async (res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err);
+        });
+    });
+};

@@ -1,9 +1,9 @@
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 interface Props {
     user: any;
     message: any;
-}
+};
 
 const UserMessageCard = ({ user, message }: Props) => {
   return (
@@ -16,7 +16,7 @@ const UserMessageCard = ({ user, message }: Props) => {
       </span>
     : '' }
     </>
-  )
-}
+  );
+};
 
-export default UserMessageCard
+export default UserMessageCard;

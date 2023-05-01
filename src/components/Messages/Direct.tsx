@@ -51,11 +51,11 @@ const Direct = ({ user, friend, usersMessages, frenDMs }: Props) => {
     };
     return (
         <>
-        { DMstate.map((message: any, index: number) => {
+        {DMstate.map((message: any, index: number) => {
             return (
                 <MessagesCard message={message} user={user} friend={friend} key={index} />
             )
-        }) }
+        })}
         </>
     );
 };

@@ -10,7 +10,6 @@ interface Props {
     userProfile: boolean;
     accordionState: string;
     accordionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-
 };
 
 const HomeSettings = ({ ascean, loggedUser, userProfile, accordionChange, accordionState }: Props) => {

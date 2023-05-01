@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from 'react'
-import './Messages.css'
+import { useEffect, useState, useRef } from 'react';
+import './Messages.css';
 import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading';
-import * as messageAPI from '../../utils/messageApi'
+import * as messageAPI from '../../utils/messageApi';
 import FormMessage from '../../components/Messages/FormMessage';
 import UserMessageCard from './UserMessageCard';
 import FriendMessageCard from './FriendMessageCard';
@@ -14,7 +14,7 @@ interface Props {
     friend: any
     friendMessages: any;
     friendID: any;
-}
+};
 
 const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Props) => {
     const [friendsMessages, setFriendsMessages] = useState<any>([])
@@ -25,16 +25,15 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
     const [sortedDMs, setSortedDMs] = useState<any>([])
     const [messageDraft, setMessageDraft] = useState({
         message: ''
-      })
-
+    });
     const bottomRef = useRef<null | HTMLDivElement>(null);
     useEffect(() => {
         bottomRef.current?.scrollIntoView({behavior: 'smooth'});
-      }, [sortedDMs]);
+    }, [sortedDMs]);
 
-    const cleanFriendMessages = async () => userMessages.filter((message: any) => message.username === friend.username)
+    const cleanFriendMessages = async () => userMessages.filter((message: any) => message.username === friend.username);
 
-    const cleanUserMessages = async () => friendMessages.filter((message: any) => message.username === user.username)
+    const cleanUserMessages = async () => friendMessages.filter((message: any) => message.username === user.username);
 
     async function getDMs() {
         try {
@@ -49,16 +48,14 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, '<- Error getting DMs')
-        }
-    }
+        };
+    };
 
-    useEffect(() => {getDMs()}, [])
+    useEffect(() => { getDMs(); }, [])
 
-    useEffect(() => {
-        sortDMs()
-      }, [getDMs])
+    useEffect(() => { sortDMs(); }, [getDMs]);
 
-      async function updateDMs() {
+    async function updateDMs() {
         try {
           const response = await messageAPI.getPersonalMessages(user._id, friendID)
           console.log(response, '<- Response Updating Messages')
@@ -69,23 +66,19 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
         } catch (err: any) {
           setLoading(false)
           console.log(err.message, '<- Error Retrieving Messages')
-        }
-      }
+        };
+    };
       
   
     const sortingFunction = async () => DMstate?.sort((a: any, b: any) => {
-        if  (a.createdAt > b.createdAt) {
-            return 1
-        }
-        if (a.createdAt < b.createdAt) {
-            return -1
-        }
-        return 0
-    })
+        if  (a.createdAt > b.createdAt) return 1;
+        if (a.createdAt < b.createdAt) return -1;
+        return 0;
+    });
 
     useEffect(() => {
-        sortUpdatedDMs()
-      }, [updateDMs])
+        sortUpdatedDMs();
+    }, [updateDMs]);
 
     async function sortUpdatedDMs() {
         try {
@@ -95,70 +88,67 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
             setSortedDMs(response)
         } catch (err: any) {
             console.log(err.message, '<- Error sorting DMs')
-        }
-    }
+        };
+    };
 
     async function sortDMs() {
         try {
-            const response = await sortingFunction()
-            console.log(response, '<- Response sorting DMs in Starter')
-            setDMstate(response)
-            setSortedDMs(response)
+            const response = await sortingFunction();
+            console.log(response, '<- Response sorting DMs in Starter');
+            setDMstate(response);
+            setSortedDMs(response);
         } catch (err: any) {
-            console.log(err.message, '<- Error sorting DMs')
-        }
-    }
+            console.log(err.message, '<- Error sorting DMs');
+        };
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
             updateDMs()
         }, 10000);
         return () => clearInterval(interval);
-      }, []);
+    }, []);
     
-      function handleChange(e: { target: { name: any; value: any; }; }) {
-        console.log('Name:', e.target.name, 'Value:', e.target.value)
+    function handleChange(e: { target: { name: any; value: any; }; }) {
         setMessageDraft({
             ...messageDraft,
             [e.target.name]: e.target.value,
-        })
-    }
+        });
+    };
     
     async function handleSubmit(e: any) {
-      e.preventDefault(); // this stop the browser from submitting the form!
-      console.log(messageDraft, '<- New Message Being Created!')
-      setLoading(true)
-      try {
-        const response = await messageAPI.createMessage(user._id, friend._id, messageDraft);
-        console.log(response, '<- Response creating message')
-        setMessaging(true)
-        setMessageDraft({message: ''})
-        setLoading(false)
-      } catch (err: any) {
-        setLoading(false)
-        console.log(err.message, '<- Error Creating Message');
-      }
-    }
+        e.preventDefault(); // this stop the browser from submitting the form!
+        console.log(messageDraft, '<- New Message Being Created!')
+        setLoading(true)
+        try {
+            const response = await messageAPI.createMessage(user._id, friend._id, messageDraft);
+            console.log(response, '<- Response creating message')
+            setMessaging(true)
+            setMessageDraft({message: ''})
+            setLoading(false)
+        } catch (err: any) {
+            setLoading(false)
+            console.log(err.message, '<- Error Creating Message');
+        };
+    };
 
     if (loading) {
         return (
-        <>
             <Loading Chat={true} />
-        </>
         );
-    }
+    };
+
     if (messaging) {
-        updateDMs()
-        setMessaging(false)
-      }
-  return (
-    <>
-    <Col className="stat-block wide" id="message-card" style={{ overflowX: 'auto' }}>
-        <div className="property-line">
-            <h4 className="texts">
-                {
-                    sortedDMs
-                    ? 
+        updateDMs();
+        setMessaging(false);
+    };
+
+    return (
+        <>
+        <Col className="stat-block wide" id="message-card" style={{ overflowX: 'auto' }}>
+            <div className="property-line">
+                <h4 className="texts">
+                    { sortedDMs ? 
                         sortedDMs.map((message: any, index: number) => {
                             return (
                                 <>
@@ -166,20 +156,17 @@ const Messages = ({ user, userMessages, friend, friendMessages, friendID }: Prop
                                     <NewLine spaceCount={1} />
                                     <UserMessageCard user={user} message={message} key={index} />
                                     <NewLine spaceCount={1} />
-
                                 </>
-                            )
-                        })
-                    : ''
-                }
-                
-            </h4>
-        </div>
-        <div ref={bottomRef} />
-    </Col>
-        <FormMessage friendProfile={friend} messageDraft={messageDraft} handleChange={handleChange} handleSubmit={handleSubmit} />
-    </>
-  )
-}
+                        )})
+                    : '' }
+                    
+                </h4>
+            </div>
+            <div ref={bottomRef} />
+        </Col>
+            <FormMessage friendProfile={friend} messageDraft={messageDraft} handleChange={handleChange} handleSubmit={handleSubmit} />
+        </>
+    );
+};
 
-export default Messages
+export default Messages;
