@@ -200,3 +200,37 @@ export async function writeEnemyDialog(dialog: any) {
         });
     });
 };
+
+export async function deleteEnemyDialog(dialog: string) {
+    return fetch(BASE_URL + 'delete-enemy-dialog/', {
+        method: 'PUT',
+        body: JSON.stringify(dialog),
+        headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        },
+    }).then(async (res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err);
+        });
+    });
+};
+
+export async function deleteEnemyDialogOption(dialog: any) {
+    return fetch(BASE_URL + 'delete-enemy-option/', {
+        method: 'PUT',
+        body: JSON.stringify(dialog),
+        headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        },
+    }).then(async (res) => {
+        if(res.ok) return res.json();
+        return res.json().then(response => {
+            console.log(response)
+            throw new Error(response.err);
+        });
+    });
+};

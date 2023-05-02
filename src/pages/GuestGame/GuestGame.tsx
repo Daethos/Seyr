@@ -50,7 +50,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean._id);
             console.log(response.data.data, 'Response');
             setAscean(response.data.data.ascean);
-            dispatch({ type: ACTIONS.SET_PLAYER, payload: response.data.data });
+            dispatch({ type: ACTIONS.SET_GUEST, payload: response.data.data });
             let minLevel: number = 0;
             let maxLevel: number = 0;
             if (firstResponse.data.ascean.level === 4) {
@@ -72,7 +72,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const opponentResponse = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
             console.log(opponentResponse.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
-            dispatch({ type: ACTIONS.SET_COMPUTER, payload: opponentResponse.data.data });
+            dispatch({ type: ACTIONS.SET_NEW_COMPUTER_GUEST, payload: opponentResponse.data.data });
             playOpponent();
             setLoading(false);
             setLoadingAscean(false);
@@ -99,7 +99,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             const response = await asceanAPI.getAsceanStats(firstResponse.data.ascean._id);
             console.log(response.data.data, 'Response');
             setAscean(response.data.data.ascean);
-            dispatch({ type: ACTIONS.SET_PLAYER, payload: response.data.data });
+            dispatch({ type: ACTIONS.SET_GUEST, payload: response.data.data });
             setLoadingAscean(false);
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit');
@@ -150,7 +150,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             console.log(response.data.data, 'Opponent Response');
             setOpponent(selectedOpponent.data);
             dispatch({
-                type: ACTIONS.SET_NEW_COMPUTER,
+                type: ACTIONS.SET_NEW_COMPUTER_GUEST,
                 payload: response.data.data
             });
             playOpponent();
@@ -448,7 +448,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             />
             <Button variant='' className='settings-button' style={{ color: 'gold' }} onClick={() => handleLogout()}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
+            <path fillRule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
             </svg> Signup</Button>
             <FirstCombatModal />
             { !state.combatEngaged ?

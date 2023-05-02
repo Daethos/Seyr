@@ -28,7 +28,9 @@ module.exports = {
     getJewelryEquipment,
     getClothEquipment,
     getTestEquipment,
-    writeEnemyDialog
+    writeEnemyDialog,
+    deleteEnemyDialogNode,
+    deleteEnemyDialogNodeOption
 }
 
 async function getTestEquipment(req, res) {
@@ -707,6 +709,45 @@ async function writeEnemyDialog(req, res) {
         res.status(400).json(err);
     };
 };
+
+async function deleteEnemyDialogNode(req, res) {
+    try {
+        const jsonData = await fs.promises.readFile('src/components/GameCompiler/EnemyDialogNodes.json');
+        const parsedData = JSON.parse(jsonData);
+        const index = parsedData.nodes.findIndex(node => node.id === req.body.nodeId);
+        if (index !== -1) {
+            parsedData.nodes.splice(index, 1);
+            await fs.promises.writeFile('src/components/GameCompiler/EnemyDialogNodes.json', JSON.stringify(parsedData));
+            res.status(200).json({ success: true });
+        } else {
+            res.status(404).json({ success: false, message: `Node with ID ${req.body.nodeId} not found` });
+        };
+    } catch (err) {
+        console.log(err);
+        res.status(400).json(err);
+    };
+};
+
+async function deleteEnemyDialogNodeOption(req, res) {
+    const { nodeId, optionId } = req.body;
+    console.log(nodeId, optionId, 'nodeId, optionId')
+    try {
+        const jsonData = await fs.promises.readFile('src/components/GameCompiler/EnemyDialogNodes.json');
+        const parsedData = JSON.parse(jsonData);
+        const index = parsedData.nodes.findIndex(node => node.id === nodeId);
+        console.log(index, 'Index in Delete Enemy Dialog Node Option');
+        if (index === -1) res.status(404).json({ success: false, message: `Node with ID ${nodeId} not found` });
+        console.log(optionId, 'optionId in Delete Enemy Dialog Node Option');
+        if (optionId === -1) res.status(404).json({ success: false, message: `Option with ID ${optionId} not found` });
+        parsedData.nodes[index].options.splice(optionId, 1);
+        await fs.promises.writeFile('src/components/GameCompiler/EnemyDialogNodes.json', JSON.stringify(parsedData));
+        res.status(200).json({ success: true });
+    } catch (err) {
+        console.log(err);
+        res.status(400).json(err);
+    };
+};
+  
 
 const deleteEquipmentCheck = async (equipmentID) => {
     console.log(equipmentID, 'Did this carry over?')

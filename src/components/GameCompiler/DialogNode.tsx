@@ -10,7 +10,7 @@ interface DialogNodeOption {
     next: string | null;
     npcIds?: any[];
     conditions?: { key: string; operator: string; value: string; }[];
-    action?: string;
+    action?: string | null;
 };
 
 export interface DialogNode {

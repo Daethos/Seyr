@@ -13,6 +13,8 @@ router.get('/cloth/:level', eqpCtrl.getClothEquipment);
 router.get('/jewelry/:level', eqpCtrl.getJewelryEquipment);
 router.get('/write', eqpCtrl.getAndWriteEquipmentIds);
 router.post('/enemy-dialog', eqpCtrl.writeEnemyDialog);
+router.put('/delete-enemy-dialog', eqpCtrl.deleteEnemyDialogNode);
+router.put('/delete-enemy-option', eqpCtrl.deleteEnemyDialogNodeOption);
 router.post('/test', eqpCtrl.getTestEquipment);
 router.put('/upgrade', eqpCtrl.upgradeEquipment);
 router.delete('/delete', eqpCtrl.deleteEquipment);

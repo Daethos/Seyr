@@ -9,6 +9,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Loading from '../../components/Loading/Loading';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useNavigate } from 'react-router-dom';
 import AsceanListItem from '../../components/GameCompiler/AsceanListItem';
 import AdminAscean from '../../components/GameCompiler/AdminAscean';
@@ -37,19 +38,19 @@ export interface DialogNode {
 interface NpcIds {
     [key: string]: number;
 };
-
-interface NodeFormProps {
-    node: DialogNode;
-    onSave: (node: DialogNode) => void;
-};
-
 interface DialogOptionProps {
     option: DialogNodeOption;
     onClick: (nextNodeId: string | null) => void;
     actions: { [key: string]: Function }
 };
 
-const DialogNodeForm = ({ node, onSave }: NodeFormProps) => {
+interface NodeFormProps {
+    node: DialogNode;
+    onSave: (node: DialogNode) => void;
+    optionDelete: (nodeId: string, optionId: number) => void;
+};
+
+const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
     const [nodeId, setNodeId] = useState(node.id);
     const [text, setText] = useState(node.text);
     const [options, setOptions] = useState(node.options);
@@ -90,10 +91,33 @@ const DialogNodeForm = ({ node, onSave }: NodeFormProps) => {
         onSave(newNode);
     };
     return (
-        <div>
-        <label htmlFor="text">Node ID:</label>{' '}
+        <Form>
+        {/* <Form.Group>
+        <FloatingLabel controlId="text" label='Node ID'>
+        <Form.Control
+            type="text"
+            placeholder="Node ID"
+            name='nodeId'
+            value={nodeId}
+            onChange={(e) => setNodeId(e.target.value)}
+            />
+        </FloatingLabel>
+        </Form.Group>
+        <br />
+        <Form.Group>
+        <FloatingLabel controlId="text" label='Node Text'>
+        <Form.Control
+            type="text"
+            placeholder="Node Text"
+            name='text'
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            />
+        </FloatingLabel>
+        </Form.Group> */}
+        <label htmlFor="nodeId">Node ID:</label>{' '}
         <input
-            id="text"
+            id="nodeId"
             type="text"
             value={nodeId}
             onChange={(e) => setNodeId(e.target.value)}
@@ -120,20 +144,26 @@ const DialogNodeForm = ({ node, onSave }: NodeFormProps) => {
             <OptionForm
               key={index}
               option={option}
+              nodeId={nodeId}
+              index={index}
               onSave={(newOption) => handleOptionChange(index, newOption)}
+              optionDelete={async (nodeId, index) => optionDelete(nodeId, index)}
             />
         ))}
         <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Node</Button>
-        </div>
+        </Form>
     );
 };
 
 interface OptionFormProps {
     option: DialogNodeOption;
+    nodeId: string;
+    index: number;
     onSave: (option: DialogNodeOption) => Promise<void>;
+    optionDelete: (nodeId: string, optionId: number) => Promise<void>;
 };
 
-const OptionForm = ({ option, onSave }: OptionFormProps) => {
+const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormProps) => {
     const [text, setText] = useState(option.text);
     const [next, setNext] = useState(option.next);
     const [npcIds, setNpcIds] = useState(option.npcIds);
@@ -157,6 +187,10 @@ const OptionForm = ({ option, onSave }: OptionFormProps) => {
             action,
         };
         onSave(newOption);
+    };
+
+    const handleDelete = () => {
+        optionDelete(nodeId, index);
     };
 
     return (
@@ -200,6 +234,7 @@ const OptionForm = ({ option, onSave }: OptionFormProps) => {
                 onChange={(e) => setAction(e.target.value)}
             /><br />
             <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Option</Button>
+            <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleDelete}>Delete Option</Button>
             <br /><br />
         </div>
     );
@@ -210,16 +245,25 @@ interface NodeTableProps {
     getNodeById: (nodeId: string) => DialogNode | undefined;
     onEdit: (node: DialogNode) => void;
     onDelete: (nodeId: string) => void;
+    optionDelete: (nodeId: string, optionId: number) => Promise<void>;
 };
 
-const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete }: NodeTableProps) => {
+const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }: NodeTableProps) => {
+    const [tableNodes, setTableNodes] = useState(nodes);
+    useEffect(() => {
+        console.log(nodes, "Nodes in Table");
+        setTableNodes(nodes);
+    }, [nodes])
     const getNodeId = (id: string) => {
         getNodeById(id);
+    };
+    const handleOptionDelete = (nodeId: string, optionId: number) => {
+        optionDelete(nodeId, optionId);
     };
     return (
         <div>
             <h5 style={{ color: "#fdf6d8" }}>Nodes</h5>
-            <Table striped bordered hover variant="dark">
+            <Table striped bordered hover variant="dark" size="sm" style={{ color: "gold" }}>
                 <thead>
                     <tr>
                         <th>Node ID</th>
@@ -230,26 +274,27 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete }: NodeTableProp
                     </tr>
                 </thead>
                 <tbody>
-                    {nodes.map((node) => (
+                    {tableNodes.map((node) => (
                         <tr key={node.id}>
                             <td onClick={() => getNodeId(node.id)}>{node.id}</td>
                             <td>{node.text}</td>
                             <td>{node.options.map((option: DialogNodeOption, index: number) => {
-                                console.log(option, "Option Being Mapped Out")
                                 return (
                                     <div key={index}>
+                                        <p>Option {index + 1}</p>
                                         <p>Text: {option.text}</p>
                                         <p>Next Node: {option.next}</p>
                                         <p>NPCs: {option?.npcIds?.join(',')}</p>
                                         <p>Conditions: {option?.conditions?.map((condition) => `${condition.key} ${condition.operator} ${condition.value}`).join(',')}</p>
                                         <p>Actions: {option.action}</p>
+                                        <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => handleOptionDelete(node.id, index)}>Delete</Button>{' '}
                                     </div>
                                 )
                             } )}
                             </td>
                             <td>{node.npcIds.join(',')}</td>
                             <td>
-                                <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => onEdit(node)}>Edit</Button>{' '}
+                                <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => getNodeId(node.id)}>Edit</Button>{' '}
                                 <br /><br />
                                 <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => onDelete(node.id)}>Delete</Button>
                             </td>
@@ -524,9 +569,10 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const navigate = useNavigate();
     const [dialogNodes, setDialogNodes] = useState<DialogNode>({ id: '', text: '', options: [], npcIds: [] });
     const [enemyNodes, setEnemyNodes] = useState<any[]>([]);
+    const [searchedEnemy, setSearchedEnemy] = useState<string>('');
 
     useEffect(() => {
-        if (user.username !== 'lonely guy') navigate('/');
+        if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
     }, [user]);
 
     useEffect(() => {
@@ -732,14 +778,33 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         };
     };
 
-    function getNodesForEnemy(e: any): DialogNode[] {
+    useEffect(() => {
+        if (searchedEnemy !== '') {
+            getNodesForEnemy(searchedEnemy);
+        };
+    }, [EnemyDialogNodes]);
+
+    async function enemyNodeMiddleware(e: any) {
         e.preventDefault();
+        // need to clean up, and capitalize first letter of each word
+        const enemy = e.target.value.split(' ').map((word: string, index: number) => {
+            if (index === 0 || (index > 0 && word.toLowerCase() !== 'of')) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            } else {
+                return word.toLowerCase();
+            };
+        }).join(' ');
+
+        await getNodesForEnemy(enemy);
+    };
+
+    async function getNodesForEnemy(enemy: string) {
         const matchingNodes: DialogNode[] = [];
         for (const node of EnemyDialogNodes.nodes) {
             if (node.options.length === 0) {
                 continue;
             };
-            const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(e.target.value));
+            const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(enemy));
             if (npcOptions.length > 0) {
                 const updatedNode = { ...node, options: npcOptions };
                 matchingNodes.push(updatedNode);
@@ -747,8 +812,9 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         };
         console.log(matchingNodes, 'Matching Nodes');
         setEnemyNodes(matchingNodes);
-        return matchingNodes;
+        setSearchedEnemy(enemy);
     };
+
     function getNodeById(nodeId: string): DialogNode | undefined {
         const node = EnemyDialogNodes.nodes.find((node) => node.id === nodeId);
         if (node) {
@@ -757,12 +823,15 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         };
         return node;
     };
-    const handleNodeDelete = (nodeID: string) => {
-        console.log(nodeID, 'Node in handleNodeSave');
+    const handleNodeDelete = async (nodeID: string) => {
+        console.log(nodeID, 'Node in Handle Node Delete');
+        const response = await eqpAPI.deleteEnemyDialog(nodeID);
+        console.log(response, 'Response in Handle Node Delete');
+        await getNodesForEnemy(searchedEnemy);
     };
 
     const handleNodeEdit = (node: DialogNode) => {
-        console.log(node, 'Node in handleNodeSave');
+        console.log(node, 'Node in handle node edit');
     };
 
     const handleNodeSave = async (node: DialogNode) => {
@@ -770,6 +839,19 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         try {
             const response = await eqpAPI.writeEnemyDialog(node);
             console.log(response, 'Response in handleNodeSave');
+            await getNodesForEnemy(searchedEnemy);
+        } catch (err: any) {
+            console.log(err.message);
+        };
+    };
+
+    const handleOptionDelete = async (nodeId: string, optionId: number) => {
+        console.log(nodeId, optionId, 'NodeID, OptionID in handleOptionDelete');
+        try {
+            const data = { nodeId, optionId };
+            const response = await eqpAPI.deleteEnemyDialogOption(data);
+            console.log(response, 'Response in handleOptionDelete');
+            await getNodesForEnemy(searchedEnemy);
         } catch (err: any) {
             console.log(err.message);
         };
@@ -850,14 +932,14 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                             <Form.Control
                                 type="input"
                                 placeholder="Enter Enemy Name"
-                                onChange={(e) => getNodesForEnemy(e)}
+                                onChange={(e) => enemyNodeMiddleware(e)}
                             />
                         </Form.Group>
                     </Form>
                     { enemyNodes.length > 0 ?
-                        <DialogNodeTable nodes={enemyNodes} getNodeById={getNodeById} onEdit={handleNodeEdit} onDelete={handleNodeDelete} />
+                        <DialogNodeTable nodes={enemyNodes} getNodeById={getNodeById} onEdit={handleNodeEdit} onDelete={handleNodeDelete} optionDelete={handleOptionDelete} />
                     : '' }
-                    <DialogNodeForm node={dialogNodes} onSave={handleNodeSave} />
+                    <DialogNodeForm node={dialogNodes} onSave={handleNodeSave} optionDelete={handleOptionDelete} />
                 </Card.Body>
             </Card>
             </Row>

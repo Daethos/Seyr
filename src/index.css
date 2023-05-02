@@ -44,13 +44,14 @@ html, body {
   margin-right: 1.5vw;
 }
 .first-combat-button {
-  grid-row-start: 6;
-  grid-column-start: 2;
+  position: absolute;
+  grid-row-start: 1;
+  grid-column-start: 4;
 }
 .first-combat {
-  margin-left: 35%;
+  margin-left: -45%;
   margin-right: auto;
-  /* margin-top: -50%; */
+  /* margin-top: -5%; */
   font-size: 1.1em;
   width: 150%;
   color: gold;
@@ -105,7 +106,7 @@ html, body {
   pointer-events: none;
   opacity: 0;
 
-  animation: fade 1.5s ease-in 0.5s forwards;
+  animation: fade 1s ease-in 0.25s forwards;
 
 }
 .welcome-explanation {
@@ -119,11 +120,11 @@ html, body {
   pointer-events: none;
   opacity: 0;
 
-  animation: fade 1.5s ease-in 2s forwards;
+  animation: fade 1.25s ease-in 0.75s forwards;
 }
 .auth {
   opacity: 0;
-  animation: fade 1.5s ease-in 3.5s forwards;
+  animation: fade 1.25s ease-in 2s forwards;
 }
 /* .ascean {
   animation: fade 1s ease-in 2.5s forwards;

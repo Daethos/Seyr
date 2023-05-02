@@ -1083,6 +1083,7 @@ async function getAsceanStats(req, res) {
             ascean[fields[index]] = item;
         });
         let data = await asceanService.asceanCompiler(ascean);
+        if (ascean.health.current === -10) ascean.health.current = data.data.attributes.healthTotal;
         if (data.data.attributes.healthTotal > ascean.health.total) {
             ascean.health.total = data.data.attributes.healthTotal;
             data.data.ascean.health.total = data.data.attributes.healthTotal;

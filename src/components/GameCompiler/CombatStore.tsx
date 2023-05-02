@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export interface CombatData {
     player: any;
@@ -108,10 +109,12 @@ interface Action {
 };
 
 export const ACTIONS = {
+    SET_GUEST: 'SET_GUEST',
     SET_PLAYER: 'SET_PLAYER',
     SET_EXPERIENCE: 'SET_EXPERIENCE',
     SET_CURRENCY: 'SET_CURRENCY',
     SET_COMPUTER: 'SET_COMPUTER',
+    SET_NEW_COMPUTER_GUEST: 'SET_NEW_COMPUTER_GUEST',
     SET_DUEL: 'SET_DUEL',
     RESET_LUCKOUT: 'RESET_LUCKOUT',
     RESET_GRAPPLING_WIN: 'RESET_GRAPPLING_WIN',
@@ -246,6 +249,22 @@ export const initialCombatData: CombatData = {
 
 export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
+        case 'SET_GUEST':
+            return {
+                ...state,
+                player: action.payload.ascean,
+                player_health: action.payload.ascean.health.total,
+                current_player_health: action.payload.ascean.health.total,
+                new_player_health: action.payload.ascean.health.total,
+                weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                weapon_one: action.payload.combat_weapon_one,
+                weapon_two: action.payload.combat_weapon_two,
+                weapon_three: action.payload.combat_weapon_three,
+                player_defense: action.payload.defense,
+                player_attributes: action.payload.attributes,
+                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                highScore: action.payload.ascean.high_score,
+            };
         case 'SET_PLAYER':
             return {
                 ...state,
@@ -341,6 +360,23 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 current_player_health: newHealth,
                 new_player_health: newHealth,
+                computer: action.payload.ascean,
+                computer_health: action.payload.attributes.healthTotal,
+                current_computer_health: action.payload.attributes.healthTotal,
+                new_computer_health: action.payload.attributes.healthTotal,
+                computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                computer_weapon_one: action.payload.combat_weapon_one,
+                computer_weapon_two: action.payload.combat_weapon_two,
+                computer_weapon_three: action.payload.combat_weapon_three,
+                computer_defense: action.payload.defense,
+                computer_attributes: action.payload.attributes,
+                player_win: false,
+                computer_win: false,
+                combatRound: 1,
+            };
+        case 'SET_NEW_COMPUTER_GUEST':
+            return {
+                ...state,
                 computer: action.payload.ascean,
                 computer_health: action.payload.attributes.healthTotal,
                 current_computer_health: action.payload.attributes.healthTotal,
