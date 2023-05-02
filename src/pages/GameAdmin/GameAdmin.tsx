@@ -176,7 +176,23 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
         setNpcIds(option.npcIds);
         setConditions(option.conditions);
         setAction(option.action);
-    }, [option])
+    }, [option]);
+
+    const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const condition = option.conditions ?? [{ key: '', operator: '', value: '' }];
+        const conditionState = conditions ?? [{ key: '', operator: '', value: '' }];
+        console.log(condition, conditions, "Condition Created and current Conditions")
+        const newOption: DialogNodeOption = {
+            ...option,
+            conditions: [{
+                ...condition[0],
+                ...conditionState[0],
+                [e.target.name]: e.target.value,
+            }]
+        };
+        console.log(newOption, "New Option")
+        setConditions(newOption.conditions);
+    };
 
     const handleSave = () => {
         const newOption: DialogNodeOption = {
@@ -216,16 +232,50 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
                 value={npcIds?.join(',')}
                 onChange={(e) => setNpcIds(e.target.value.split(','))}
             /><br />
-            <label htmlFor="conditions">Conditions:</label>{' '}
+            <label htmlFor="conditions">Conditions:</label><br />
+            <label htmlFor="key">Key:</label>{' '}
             <input
+                id="key"
+                type="text"
+                name='key'
+                value={conditions && conditions?.map((condition) => `${condition?.key}`)}
+                onChange={(e) => handleOptionChange(e)}
+                /><br />
+            <label htmlFor="operator">Operator:</label>{' '}
+            <input
+                id="operator"
+                type="text"
+                name='operator'
+                value={conditions && conditions?.map((condition) => `${condition?.operator}`)}
+                onChange={(e) => handleOptionChange(e)}
+                /><br />
+            <label htmlFor="value">Value:</label>{' '}
+            <input
+                id="value"
+                type="text"
+                name='value'
+                value={conditions && conditions?.map((condition) => `${condition?.value}`)}
+                onChange={(e) => handleOptionChange(e)}
+            /><br />
+            {/* <input
                 id="conditions"
                 type="text"
-                value={conditions?.map((condition) => `${condition.key} ${condition.operator} ${condition.value}`).join(',')}
-                onChange={(e) => setConditions(e.target.value.split(',').map((condition) => {
-                    const [key, operator, value] = condition.split(' ');
-                    return { key, operator, value };
-                }))}
-            /><br />
+                value={conditions && conditions?.map((condition) => `${condition?.key} ${condition?.operator} ${condition?.value}`).join(',')}
+                onChange={(e) => {
+                    const conditionValues = e.target.value.split(',').map((condition) => {
+                        const [key, operator, value] = condition.trim().split(' ');
+                        return {
+                            key: key ? key : '',
+                            operator: operator ? operator : '',
+                            value: value ? value : ''
+                        };
+                    });
+                    setConditions(conditionValues);
+                }}
+
+                  
+                                                
+                /><br /> */}
             <label htmlFor="action">Action:</label>{' '}
             <input
                 id="action"
