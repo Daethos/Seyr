@@ -3,6 +3,7 @@ import { GAME_ACTIONS, Player } from './GameStore';
 import * as asceanAPI from '../../utils/asceanApi';
 import Button from 'react-bootstrap/Button';
 import Faith from '../AsceanBuilder/Faith';
+import { shakeScreen } from './CombatStore';
 
 interface TutorialProps {
     player: any;
@@ -33,6 +34,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
     const blessPlayer = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            shakeScreen({ duration: 1000, intensity: 2});
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n And undo these sins of fate?"` });
             if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree.` });
             const response = await asceanAPI.blessAscean(player._id);
@@ -40,7 +42,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             console.log(response, "Blessing Player");
             await completeTutorial('firstPhenomena', player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: true });
-            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
+            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 7500);
         } catch (err: any) {
             console.log(err, '%c <- You have an error in blessing a player', 'color: red')
         };
@@ -48,33 +50,28 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
     const rebukePlayer = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            shakeScreen({ duration: 1000, intensity: 2});
             if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
             if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless your will to persist, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we fearfully sing."` });
             await completeTutorial('firstPhenomena', player._id);
-            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
+            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 7500);
         } catch (err: any) {
             console.log(err, '%c <- You have an error in rebuking a player', 'color: red');
         };
     };
     const highestFaith = () => {
         const influences = [player.weapon_one.influences[0], player.weapon_two.influences[0], player.weapon_three.influences[0], player.amulet.influences[0], player.trinket.influences[0]];
-        console.log(influences, "Influences")
-        const faiths = influences.filter((influence: any) => influence.faith !== '');
-        console.log(faiths, "Faiths")
-        const faithsCount = faiths.reduce((acc: any, faith: any) => {
+        const faithsCount = influences.reduce((acc: any, faith: any) => {
             if (acc[faith]) acc[faith]++;
             else acc[faith] = 1;
             return acc;
         }, {});
-        console.log(faithsCount, "Faiths Count");
-        const faithsArray = Object.entries(faithsCount);
-        console.log(faithsArray, "Faiths Array");
+        const faithsArray = Object.entries(faithsCount).filter((faith: any) => faith[0] !== '');
         const highestFaith = faithsArray.reduce((acc: any, faith: any) => {
             if (acc[1] < faith[1]) acc = faith;
             return acc;
         }, faithsArray[0]);
-        console.log(highestFaith, "Highest Faith");
         return highestFaith[0];
     };
     const faithBorder = (mastery: string) => {

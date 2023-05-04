@@ -192,7 +192,7 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
-            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
+            if (mapState.steps > 1 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -251,6 +251,7 @@ const GameSolo = ({ user }: GameProps) => {
             case 'firstLevelUp':
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstLevelUp={true} />);
             case 'firstPhenomena':
+                shakeScreen({ duration: 1000, intensity: 2 });
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstPhenomena={true} />);
             default:
                 return null;
