@@ -241,6 +241,20 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             console.log(newAscean, '<- newAscean in Swapping Equipment start');
             const response = await asceanAPI.equipmentSwap(newAscean);
             console.log(response, '<- Response in Swapping Equipment');
+            setEditState({
+                ...editState,
+                new_weapon_one: '',
+                new_weapon_two: '',
+                new_weapon_three: '',
+                new_helmet: '',
+                new_chest: '',
+                new_legs: '',
+                new_amulet: '',
+                new_ring_one: '',
+                new_ring_two: '',
+                new_trinket: '',
+                new_shield: '',
+            });
             setInventoryModalShow(false);
             gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
         } catch (err) {
@@ -290,14 +304,12 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         <Popover className="text-info" id="popover-inv">
             <Popover.Header id="popover-header-inv" className="" as="h2">{inventory?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body-inv" className="">
-                {
-                    inventory?.grip && inventory?.type ?
+                { inventory?.grip && inventory?.type ?
                     <>
-                {inventory?.type} [{inventory?.grip}] <br />
-                {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : '' }]  <br />
+                    {inventory?.type} [{inventory?.grip}] <br />
+                    {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : '' }]  <br />
                     </>
-                    : inventory?.type ? <>{inventory?.type} <br /></> : ''
-                }
+                : inventory?.type ? <>{inventory?.type} <br /></> : '' }
                 {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ''}
                 {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ''}
                 {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ''}
@@ -305,47 +317,38 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ''}
                 {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}<br />
                 Damage: {inventory?.physical_damage} Phys | {inventory?.magical_damage} Magi <br />
-                {
-                    inventory?.physical_resistance || inventory?.magical_resistance ?
+                { inventory?.physical_resistance || inventory?.magical_resistance ?
                     <>
                     Defense: {inventory?.physical_resistance} Phys | {inventory?.magical_resistance} Magi <br />
                     </>
-                    : ''
-                }
-                {
-                    inventory?.physical_penetration || inventory?.magical_penetration ?
+                : '' }
+                { inventory?.physical_penetration || inventory?.magical_penetration ?
                     <>
                     Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi <br />
                     </>
-                    : ''
-                }
+                : '' }
                 Critical Chance: {inventory?.critical_chance}% <br />
                 Critical Damage: {inventory?.critical_damage}x <br />
                 Dodge Timer: {inventory?.dodge}s <br />
                 Roll Chance: {inventory?.roll}% <br />
-                {
-                    inventory?.influences?.length > 0 ?
+                { inventory?.influences?.length > 0 ?
                     <>
-                Influence: {inventory?.influences} <br />
+                    Influence: {inventory?.influences} <br />
                     </>
-                    : ''
-                }
+                : '' }
                 <br />
                 <p style={{ color: getRarityColor(inventory?.rarity), fontSize: "16px", float: 'left', textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }}>
                 {inventory?.rarity}
                 </p>
-                {
-                    blacksmith ? 
+                { blacksmith ? 
                     ''
-                    :
-                    <Button variant='outline' style={{ float: 'right', color: 'blue', 
-                    marginTop: '-3%', marginRight: -8 + '%', 
-                    textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
+                :
+                    <Button variant='outline' style={{ float: 'right', color: 'blue', marginTop: '-3%', marginRight: -8 + '%', textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
                 }
                 <br />
             </Popover.Body>
         </Popover>
-    )
+    );
 
     function canEquip (level: number, rarity: string) {
         switch (rarity) {

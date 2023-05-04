@@ -63,7 +63,7 @@ const Play = ({ ascean }: Props) => {
                 trinket={ascean.trinket}
                 key={ascean._id} 
             />
-        <Nav.Link as={NavLink} to={'/Game/Solo/' + ascean._id} style={{ color: ascean.hardcore ? 'red' : 'blue', fontSize: "32px", fontWeight: 900, textShadow: "1px 1px 1px purple" }} className='btn btn-lg btn-outline-black mb-1 update-links'>
+        <Nav.Link as={NavLink} to={'/Solo/' + ascean._id} style={{ color: ascean.hardcore ? 'red' : 'blue', fontSize: "32px", fontWeight: 900, textShadow: "1px 1px 1px purple" }} className='btn btn-lg btn-outline-black mb-1 update-links'>
             Play as {ascean.name}
         </Nav.Link>
         </Modal.Body>

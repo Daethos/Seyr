@@ -5,7 +5,7 @@ import Popover from 'react-bootstrap/Popover';
 
 interface FaithProps {
     faith?: any;
-}
+};
 
 const FaithCard = ({ faith }: FaithProps) => {
     const faithPopover = (

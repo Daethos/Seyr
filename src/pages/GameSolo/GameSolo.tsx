@@ -93,7 +93,6 @@ const GameSolo = ({ user }: GameProps) => {
                     settingsAPI.getSettings(),
                 ]);
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
-                console.log(traitResponse, "Ascean Traits");
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
                     type: ACTIONS.SET_PLAYER,
@@ -193,6 +192,7 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
+            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -250,6 +250,8 @@ const GameSolo = ({ user }: GameProps) => {
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstDeath={true} />);
             case 'firstLevelUp':
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstLevelUp={true} />);
+            case 'firstPhenomena':
+                return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstPhenomena={true} />);
             default:
                 return null;
         };
@@ -693,6 +695,15 @@ const GameSolo = ({ user }: GameProps) => {
     }, [state.player_luckout]);   
 
     useEffect(() => {
+        if (!gameState.playerBlessed) return;
+        console.log("Blessing Player", gameState.playerBlessed)
+        getAsceanOnly();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: false });
+        };
+    }, [gameState, gameState.playerBlessed]);
+
+    useEffect(() => {
         if (gameState.itemSaved === false) return;
         console.log("Saving Item", gameState.itemSaved)
         getOnlyInventory();
@@ -773,6 +784,20 @@ const GameSolo = ({ user }: GameProps) => {
             const firstResponse = await asceanAPI.getAsceanQuests(asceanID);
             console.log(firstResponse, "Ascean Inventory ?")
             gameDispatch({ type: GAME_ACTIONS.SET_QUESTS, payload: firstResponse });
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_SLICK,
+                payload: response.data.data
+            });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
+
+    const getAsceanOnly = async () => {
+        try {
+            console.log("Getting Ascean");
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_SLICK,

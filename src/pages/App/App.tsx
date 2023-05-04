@@ -78,10 +78,10 @@ function App() {
         <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
-        <Route path="/Game/Solo/:asceanID" element={<GameSolo user={user} />} />
+        <Route path="/Solo/:asceanID" element={<GameSolo user={user} />} />
         <Route path='/Hardcore/:asceanID' element={<HardCoreAscea user={user} />} />
         <Route path="/Story/:asceanID" element={<Story user={user} />} />
-        <Route path="/Game/Lobby" element={<GameLobby user={user} />} />
+        <Route path="/ChatLobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />

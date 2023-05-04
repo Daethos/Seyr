@@ -33,7 +33,7 @@ export interface Ascean {
     level: number;
     
     coordinates: object;
-    firewater: object;
+    firewater: { charges: number; maxCharges: number; };
     inventory: [];
     maps: [];
     quests: [];
@@ -630,6 +630,7 @@ export interface GameData {
 
     loadedAscean: boolean;
 
+    playerBlessed: boolean;
     saveExp: boolean;
     saveQuest: boolean;
     lootRoll: boolean;
@@ -693,6 +694,7 @@ export const GAME_ACTIONS = {
     SET_BACKGROUND: 'SET_BACKGROUND',
     SET_DIALOG: 'SET_DIALOG',
     SET_TUTORIAL: 'SET_TUTORIAL',
+    SET_PLAYER_BLESSING: 'SET_PLAYER_BLESSING',
     SAVE_EXP: 'SAVE_EXP',
     SAVE_QUEST: 'SAVE_QUEST',
     SET_SAVE_WORLD: 'SET_SAVE_WORLD',
@@ -705,6 +707,7 @@ export const GAME_ACTIONS = {
     SET_QUESTS: 'SET_QUESTS',
     SET_INVENTORY: 'SET_INVENTORY',
     SET_INVENTORY_POSITION: 'SET_INVENTORY_POSITION',
+    SET_ASCEAN_ATTRIBUTES: 'SET_ASCEAN_ATTRIBUTES',
     SET_ASCEAN_AND_INVENTORY: 'SET_ASCEAN_AND_INVENTORY',
 
     SET_PURCHASING_ITEM: 'SET_PURCHASING_ITEM',
@@ -800,6 +803,7 @@ export const initialGameData: GameData = {
     loadingCombatSpectatorOverlay: false,
     loadingSpectator: false,
     loadedAscean: false,
+    playerBlessed: false,
     saveExp: false,
     saveQuest: false,
     lootRoll: false,
@@ -903,6 +907,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     tutorial: action.payload,
                 }
             };
+        case 'SET_PLAYER_BLESSING':
+            return {
+                ...game,
+                playerBlessed: action.payload,
+            };
         case 'SAVE_EXP':
             return {
                 ...game,
@@ -968,6 +977,19 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 player:  action.payload,
+            };
+        case 'SET_ASCEAN_ATTRIBUTES':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    constitution: action.payload.constitution,
+                    strength: action.payload.strength,
+                    agility: action.payload.agility,
+                    achre: action.payload.achre,
+                    caeren: action.payload.caeren,
+                    kyosir: action.payload.kyosir,
+                },
             };
         case 'SET_QUESTS':
             return {

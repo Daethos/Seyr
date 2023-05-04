@@ -1,1 +1,72 @@
-{"nodes":[{"id":"0001","text":"Who are you to disturb these wilds?","options":[{"text":"Say nothing and attack.","next":"0002","npcIds":["Achreon Druid","Cambiren Druid"],"conditions":[],"action":"getCombat"},{"text":"I am ${ascean.name}. To whom am I speaking with?","next":"0002","npcIds":["Achreon Druid","Cambiren Druid"],"conditions":[],"action":null},{"text":"That's not how this works, friend. Who are?","next":"0003","npcIds":["Achreon Druid","Cambiren Druid"],"conditions":[],"action":null}],"npcIds":["Achreon Druid","Cambiren Druid"]},{"id":"0002","text":"You're in trouble now boooooi","options":[{"text":"I better set your entire forest on fire in self defense.","next":"0003","npcIds":["Achreon Druid","Cambiren Druid"]}],"npcIds":["Achreon Druid","Cambiren Druid"]},{"id":"0003","text":"Well you seem certain of yourself, very well, I am ${article} ${enemy.name}. And you are?","options":[{"text":"That's better, you needn't know my name. [Reach for your weapon]","next":"0000","npcIds":["Achreon Druid","Cambiren Druid"],"conditions":[],"action":"getCombat"}],"npcIds":["Achreon Druid","Cambiren Druid"]},{"id":"0004","text":"Perhaps I was hasty in my threat, you may pass.","options":[{"text":"That's more like it, glad we're on the same page kek.","next":"0005","npcIds":["Achreon Druid","Cambiren Druid"],"conditions":[],"action":null}],"npcIds":["Achreon Druid","Cambiren Druid"]}]}
+{
+  "nodes": [
+    {
+      "id": "0001",
+      "text": "Who are you to disturb these wilds?",
+      "options": [
+        {
+          "text": "Say nothing and attack.",
+          "next": "0002",
+          "npcIds": ["Achreon Druid", "Cambiren Druid"],
+          "conditions": [],
+          "action": "getCombat"
+        },
+        {
+          "text": "I am ${ascean.name}. To whom am I speaking with?",
+          "next": "0002",
+          "npcIds": ["Achreon Druid", "Cambiren Druid"],
+          "conditions": [],
+          "action": null
+        },
+        {
+          "text": "That's not how this works, friend. Who are?",
+          "next": "0003",
+          "npcIds": ["Achreon Druid", "Cambiren Druid"],
+          "conditions": [],
+          "action": null
+        }
+      ],
+      "npcIds": ["Achreon Druid", "Cambiren Druid"]
+    },
+    {
+      "id": "0002",
+      "text": "You're in trouble now boooooi",
+      "options": [
+        {
+          "text": "I better set your entire forest on fire in self defense.",
+          "next": "0003",
+          "npcIds": ["Achreon Druid", "Cambiren Druid"]
+        }
+      ],
+      "npcIds": ["Achreon Druid", "Cambiren Druid"]
+    },
+    {
+      "id": "0003",
+      "text": "Well you seem certain of yourself, very well, I am ${article} ${enemy.name}. And you are?",
+      "options": [
+        {
+          "text": "That's better, you needn't know my name. [Reach for your weapon]",
+          "next": "0000",
+          "npcIds": ["Achreon Druid", "Cambiren Druid"],
+          "conditions": [{ "key": "level", "operator": ">=", "value": "4" }],
+          "action": "getCombat"
+        }
+      ],
+      "npcIds": ["Achreon Druid", "Cambiren Druid"]
+    },
+    {
+      "id": "0004",
+      "text": "Perhaps I was hasty in my threat, you may pass.",
+      "options": [
+        {
+          "text": "That's more like it, glad we're on the same page kek.",
+          "next": "0005",
+          "npcIds": ["Achreon Druid", "Cambiren Druid"],
+          "conditions": [],
+          "action": null
+        }
+      ],
+      "npcIds": ["Achreon Druid", "Cambiren Druid"]
+    }
+  ]
+}

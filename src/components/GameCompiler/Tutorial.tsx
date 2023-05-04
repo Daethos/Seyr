@@ -2,9 +2,10 @@ import React from 'react'
 import { GAME_ACTIONS, Player } from './GameStore';
 import * as asceanAPI from '../../utils/asceanApi';
 import Button from 'react-bootstrap/Button';
+import Faith from '../AsceanBuilder/Faith';
 
 interface TutorialProps {
-    player: Player;
+    player: any;
     gameDispatch: React.Dispatch<any>;
     setTutorialContent: React.Dispatch<any>;
     firstBoot?: boolean;
@@ -17,9 +18,10 @@ interface TutorialProps {
     firstMovement?: boolean;
     firstLevelUp?: boolean;
     firstDeath?: boolean;
+    firstPhenomena?: boolean;
 };
 
-const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, setTutorialContent }: TutorialProps) => {
+const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, firstPhenomena, setTutorialContent }: TutorialProps) => {
     console.log(player, "Tutorial Triggering")
     const completeTutorial = async (tutorial: string, ascean: string) => {
         const data = { ascean, tutorial };
@@ -27,6 +29,99 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         console.log(response, tutorial, "Tutorial Complete");
         setTutorialContent(null);
         gameDispatch({ type: GAME_ACTIONS.SET_TUTORIAL, payload: response.tutorial });
+    };
+    const blessPlayer = async () => {
+        try {
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n And undo these sins of fate?"` });
+            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree.` });
+            const response = await asceanAPI.blessAscean(player._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
+            console.log(response, "Blessing Player");
+            await completeTutorial('firstPhenomena', player._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: true });
+            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
+        } catch (err: any) {
+            console.log(err, '%c <- You have an error in blessing a player', 'color: red')
+        };
+    };
+    const rebukePlayer = async () => {
+        try {
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+            if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
+            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless your will to persist, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
+            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we fearfully sing."` });
+            await completeTutorial('firstPhenomena', player._id);
+            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
+        } catch (err: any) {
+            console.log(err, '%c <- You have an error in rebuking a player', 'color: red');
+        };
+    };
+    const highestFaith = () => {
+        const influences = [player.weapon_one.influences[0], player.weapon_two.influences[0], player.weapon_three.influences[0], player.amulet.influences[0], player.trinket.influences[0]];
+        console.log(influences, "Influences")
+        const faiths = influences.filter((influence: any) => influence.faith !== '');
+        console.log(faiths, "Faiths")
+        const faithsCount = faiths.reduce((acc: any, faith: any) => {
+            if (acc[faith]) acc[faith]++;
+            else acc[faith] = 1;
+            return acc;
+        }, {});
+        console.log(faithsCount, "Faiths Count");
+        const faithsArray = Object.entries(faithsCount);
+        console.log(faithsArray, "Faiths Array");
+        const highestFaith = faithsArray.reduce((acc: any, faith: any) => {
+            if (acc[1] < faith[1]) acc = faith;
+            return acc;
+        }, faithsArray[0]);
+        console.log(highestFaith, "Highest Faith");
+        return highestFaith[0];
+    };
+    const faithBorder = (mastery: string) => {
+        switch (mastery) {
+            case 'Constitution':
+                return {
+                    marginTop: "25%",
+                    maxWidth: "25vw",
+                    border: '2px solid white',
+                    boxShadow: '0 0 2em white',
+                };
+            case 'Strength':
+                return {
+                    marginTop: "25%",
+                    maxWidth: "25vw",
+                    border: '2px solid red',
+                    boxShadow: '0 0 2em red',
+                };
+            case 'Agility':
+                return {
+                    marginTop: "25%",
+                    maxWidth: "25vw",
+                    border: '2px solid green',
+                    boxShadow: '0 0 2em green',
+                };
+            case 'Achre':
+                return {
+                    marginTop: "25%",
+                    maxWidth: "25vw",
+                    border: '2px solid blue',
+                    boxShadow: '0 0 2em blue',
+                };
+            case 'Caeren':
+                return {
+                    marginTop: "25%",
+                    maxWidth: "25vw",
+                    border: '2px solid purple',
+                    boxShadow: '0 0 2em purple',
+                };
+            case 'Kyosir':
+                return {
+                    marginTop: "25%",
+                    maxWidth: "25vw",
+                    border: '2px solid gold',
+                    boxShadow: '0 0 2em gold',
+                };
+        };
     };
     return (
         <div className='d-flex align-items-center justify-content-center'
@@ -44,14 +139,14 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         }}>
             { firstBoot ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                <br /><br /><br /><br /><br /><br />
+                <br /><br />
                 Welcome to the Ascea, {player.name}. Below explains the general premise and gameplay loop which is a work in progress.<br /><br />
                 </h6>
             ) : ( '' ) }
             { firstCity ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.
                 <br /><br />
+                Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
                 You can click on the [Inventory] button that appears when you are in* a city, enabling multiple vendors selling specified equipment, and various services to heal and replenish your firewater. Much of the city's content is in framework and
                 conceptual, as--like much of this game, the final design is uncertain. 
@@ -63,7 +158,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             ) : ( '' ) }
             { firstCombat ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                <br /><br /><br /><br /><br /><br />
+                <br /><br />
                 Welcome to your first combat encounter, {player.name}. Below explains the series of actions in conception and execution.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 512 512">
@@ -130,9 +225,9 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstCombat', player._id)}>X</Button>
                 </h6> 
             ) : ( '' ) }
-
             { firstDeath ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
+                    <br /><br />
                     Welcome to your first death, {player.name}! If you are reading this, it ain't hardcore so never fear.<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 436.028 436.028">
@@ -145,11 +240,10 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstDeath', player._id)}>X</Button>
                 </h6> 
             ) : ( '') }
-
             { firstInventory ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                    Welcome again, {player.name}, it appears you've opened your inventory with an item for the first time!
-                    <br /><br /><br /><br /><br /><br />
+                    <br /><br />
+                    Welcome again, {player.name}, it appears you've opened your inventory with an item for the first time!<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     Inventory - Here you are able to view item statistics, and inspect for use in various ways. If you are of the mind, you may even be able to find a way to tinker with them.
                     </p>
@@ -164,10 +258,9 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstInventory', player._id)}>X</Button>
                 </h6>
             ) : ( '') }
-
             { firstLevelUp ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                    <br /><br /><br /><br /><br /><br />
+                    <br /><br /><br /><br />
                     Welcome {player.name} to your first level up!
                     <br /><br />
                     <p style={{ color: '#fdf6d8' }}>
@@ -195,10 +288,9 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLevelUp', player._id)}>X</Button>
                 </h6>
             ) : ( '') }
-
             { firstLoot ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                    <br /><br />
+                    <br /><br /><br /><br />
                     Congratulations {player.name} on your first piece of equipment you've come across.
                     <br /><br />
                     <p style={{ color: '#fdf6d8' }}>
@@ -211,10 +303,44 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLoot', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
-
             { firstMovement ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Move
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstMovement', player._id)}>X</Button>
+                </h6>
+            ) : ( '' ) }
+
+            { firstPhenomena ? (
+                <h6 className='overlay-content' style={{ animation: "fade 1.5s ease-in 0.5s forwards", marginTop: "50%" }}>
+                    <Button variant='' style={{ zIndex: 9999 }} onClick={() => blessPlayer()}>
+                        <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devote' ? '/images/daethos-rising.png' : process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt={Faith.name} id='origin-pic' style={faithBorder(player?.mastery)} />
+                    </Button>
+                <br /><br />
+                { player?.faith === 'adherent' ? (
+                    <div>
+                        <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}...</p>
+                    </div>
+                ) : player?.faith === 'devoted' ? (
+                    <div>
+                        <p style={{ color: "#fdf6d8" }}>You feel the presence of Daethos...</p>
+                    </div>
+                ) : (
+                    <div>
+                        <p style={{ color: "#fdf6d8" }}>You feel the presence of an overhwelming power...</p>
+                    </div>
+                ) }
+                A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
+                Wrapping warp it rounds you seething, forms of shade shimmer to dance upon your being. <br /><br />
+                Yet perchance you seek to twist {player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my {player.mastery} burn the resin of your dreams. <br /><br />
+                <br />
+                <p style={{ color: "#fdf6d8" }}>You become attuned to a whisper...</p>
+                <p style={{ fontSize: "24px" }}>
+                "Do you seek {player.faith === 'adherent' ? 'adherence' : 'devotion'}?" 
+                </p>
+                <br />
+                <p style={{ color: "#fdf6d8", fontSize: "14px" }}>
+                [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
+                </p>
+                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
                 </h6>
             ) : ( '' ) }
 
@@ -223,19 +349,18 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstQuest', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
-
             { firstShop ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Shop
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstShop', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
-            { !firstBoot && !firstCity && !firstCombat && !firstDeath && !firstInventory && !firstLevelUp && !firstLoot && !firstMovement && !firstQuest && !firstShop && 
+            { !firstBoot && !firstPhenomena && !firstCity && !firstCombat && !firstDeath && !firstInventory && !firstLevelUp && !firstLoot && !firstMovement && !firstQuest && !firstShop && 
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>Nothing to see here!
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('', player._id)}>X</Button>
                 </h6> 
             }
         </div>
-    )
-}
+    );
+};
 
-export default Tutorial
+export default Tutorial;

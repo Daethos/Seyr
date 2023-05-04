@@ -465,3 +465,16 @@ export async function saveTutorial(data: any) {
         });
     });
 };
+
+export async function blessAscean(ascean: string) {
+    return fetch(BASE_URL + 'bless/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        return res.json().then((response: any) => {
+            console.log(response, '<- Response in Save Tutorial Utility Return')
+        });
+    });
+};

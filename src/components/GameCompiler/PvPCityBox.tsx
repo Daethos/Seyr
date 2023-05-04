@@ -7,11 +7,13 @@ import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import MerchantTable from './MerchantTable';
 import { ACTIONS } from './CombatStore';
-import { GAME_ACTIONS } from './GameStore';
+import { Enemy, GAME_ACTIONS, GameData, Player } from './GameStore';
 import Inventory from './Inventory';
 import DialogTree, { getNodesForNPC, npcIds } from '../GameCompiler/DialogNode';
 import dialogNodes from "../GameCompiler/DialogNodes.json"
 import Currency from './Currency';
+import { PvPData } from './PvPStore';
+import { MapData } from './WorldStore';
 
 const CityButtons = ({ options, setOptions }: { options: any, setOptions: any }) => {
     // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -47,11 +49,11 @@ const merchant = {
 };
 
 interface CityProps {
-    state: any;
+    state: PvPData;
     dispatch: any;
-    mapState: any;
-    ascean: any;
-    enemy: any;
+    mapState: MapData;
+    ascean: Player;
+    enemy: Enemy;
     cityOption: any;
     merchantEquipment: any;
     inventory: any;
@@ -60,7 +62,7 @@ interface CityProps {
     deleteEquipment: (eqp: any) => Promise<void>;
     clearOpponent: () => Promise<void>;
     gameDispatch: React.Dispatch<any>;
-    gameState: any;
+    gameState: GameData;
 };
 
 const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, clearOpponent, cityOption, merchantEquipment, inventory, getOpponent, resetAscean, deleteEquipment, gameState }: CityProps) => {
@@ -219,7 +221,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt='Notheon' className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Armorer
                     <br />
-                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Armor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <DialogTree gameState={gameState} engageCombat={engageCombat} getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Armor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
@@ -272,7 +274,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                     <img src={process.env.PUBLIC_URL + `/images/` + "Quor'eite" + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Jeweler
                     <br />
-                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Jewelry"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <DialogTree gameState={gameState} engageCombat={engageCombat} getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Jewelry"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
@@ -283,7 +285,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                     <img src={process.env.PUBLIC_URL + `/images/` + "Li'ivi" + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}General Merchant
                     <br />
-                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-General"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <DialogTree gameState={gameState} engageCombat={engageCombat} getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-General"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
@@ -294,7 +296,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Fyers' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Tailor
                     <br />
-                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Tailor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <DialogTree gameState={gameState} engageCombat={engageCombat} getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Tailor"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
@@ -316,7 +318,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                             <br />
                             <Button variant='' className='dialog-buttons inner' onClick={checkOpponent}>Seek other, stronger opponents to test your skills.</Button>
                         </>
-                    : state?.computer_win ?
+                    : state?.enemy_win ?
                         <> 
                             "You seemed a little eager there, perhaps you ought to sit the next one out and watch the others. I'm sure you'll learn something."
                             <br />
@@ -347,7 +349,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Nothos' + '-' + 'Woman' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Seer
                     <br />
-                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Mystic"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <DialogTree gameState={gameState} engageCombat={engageCombat} getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Mystic"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
@@ -358,7 +360,7 @@ const PvPCityBox = ({ state, dispatch, gameDispatch, mapState, ascean, enemy, cl
                     <img src={process.env.PUBLIC_URL + `/images/` + 'Notheo' + '-' + 'Man' + '.jpg'} alt="Merchant" className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
                     {' '}Weaponsmith
                     <br />
-                    <DialogTree getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Weapon"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
+                    <DialogTree gameState={gameState} engageCombat={engageCombat} getLoot={getLoot} refillFlask={refillFlask} state={state} ascean={ascean} enemy={merchant} dialogNodes={getNodesForNPC(npcIds["Merchant-Weapon"])} currentNodeIndex={currentNodeIndex} setCurrentNodeIndex={setCurrentNodeIndex} />
                     <Currency ascean={ascean} />
                     { merchantEquipment?.length > 0 ?
                         <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />

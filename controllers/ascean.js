@@ -49,7 +49,8 @@ module.exports = {
     updateHealth,
     setCurrency,
     setExperience,
-    getOneAsceanLight
+    getOneAsceanLight,
+    blessAscean
 };
 
 async function setCurrency(req, res) {
@@ -389,7 +390,7 @@ async function replenishFirewater(req, res) {
         console.log(ascean.firewater, "Firewater After Saving Replenish")
         res.status(201).json(ascean);
     } catch (err) {
-        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        console.log(err.message, '<- Error in the Controller Replenish Firewater!')
         res.status(400).json(err);
     }
 };
@@ -403,7 +404,7 @@ async function updateHealth(req, res) {
         await ascean.save();
         res.status(201).json(ascean);
     } catch (err) {
-        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        console.log(err.message, '<- Error in the Controller Update Health!')
         res.status(400).json(err);
     };
 };
@@ -427,7 +428,7 @@ async function asceanTax(req, res) {
         await ascean.save();
         res.status(201).json(ascean.currency);
     } catch (err) {
-        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        console.log(err.message, '<- Error in the Controller Ascean Tax!')
         res.status(400).json(err);
     };
 };
@@ -454,7 +455,7 @@ async function restoreFirewater(req, res) {
         console.log(ascean.firewater, ascean.currency, "Firewater After Saving Restore");
         res.status(201).json(ascean);
     } catch (err) {
-        console.log(err.message, '<- Error in the Controller Drinking Firewater!')
+        console.log(err.message, '<- Error in the Controller Restore Firewater!')
         res.status(400).json(err);
     }
 }
@@ -1107,6 +1108,21 @@ async function animalStats(req, res) {
         res.status(200).json({ data });
     } catch (err) {
         console.log(err, 'Error in Animal Stats Controller');
+        res.status(400).json(err);
+    };
+};
+
+async function blessAscean(req, res) {
+    try {
+        let ascean = await Ascean.findById({ _id: req.params.id });
+        const blessing = ascean.mastery.toLowerCase();
+        console.log(blessing, ascean[blessing], 'Blessing');
+        ascean[blessing] += 1;
+        console.log(ascean[blessing], 'Blessed');
+        await ascean.save();
+        res.status(200).json(ascean);
+    } catch (err) {
+        console.log(err, 'Error in Bless Ascean Controller');
         res.status(400).json(err);
     };
 };

@@ -324,6 +324,7 @@ const asceanSchema = new Schema(
             firstMovement: { type: Boolean, default: true },
             firstDeath: { type: Boolean, default: true },
             firstLevelUp: { type: Boolean, default: true },
+            firstPhenomena: { type: Boolean, default: true },
         },
         likes: [likeSchema],
         dislikes: [dislikeSchema],

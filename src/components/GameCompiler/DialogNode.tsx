@@ -2,7 +2,7 @@ import DialogNodes from "./DialogNodes.json";
 import EnemyDialogNodes from './EnemyDialogNodes.json';
 import { useState, useEffect, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
-import { Ascean, Enemy, NPC } from "./GameStore";
+import { Ascean, Enemy, GameData, NPC } from "./GameStore";
 import { CombatData } from "./CombatStore";
 
 interface DialogNodeOption {
@@ -104,16 +104,19 @@ interface DialogTreeProps {
   dialogNodes: DialogNode[];
   currentNodeIndex: number;
   setCurrentNodeIndex: (index: number) => void;
+  engageCombat: () => Promise<void>;
   getLoot: (type: string) => void;
   refillFlask: () => void;
   state: any;
+  gameState: GameData;
 };
 
-const DialogTree = ({ ascean, enemy, getLoot, dialogNodes, currentNodeIndex, setCurrentNodeIndex, state, refillFlask }: DialogTreeProps) => {
+const DialogTree = ({ ascean, enemy, engageCombat, getLoot, dialogNodes, currentNodeIndex, setCurrentNodeIndex, gameState, state, refillFlask }: DialogTreeProps) => {
   const [renderedText, setRenderedText] = useState<any>('');
   const [renderedOptions, setRenderedOptions] = useState<DialogNodeOption[]>([]);
   const [currentNode, setCurrentNode] = useState<DialogNode | undefined>(undefined);
   const actions = {
+    getCombat: () => engageCombat(),
     getArmor: () => getLoot('armor'),
     getGeneral: () => getLoot('general'),
     getJewelry: () => getLoot('jewelry'),
@@ -122,7 +125,6 @@ const DialogTree = ({ ascean, enemy, getLoot, dialogNodes, currentNodeIndex, set
     getWeapon: () => getLoot('physical-weapon'),
     getFlask: () => refillFlask()
   };
-  // Compute the rendered text and options whenever the current node changes.
   useEffect(() => {
     setCurrentNode(dialogNodes[currentNodeIndex]);
   }, [currentNodeIndex, dialogNodes]);
