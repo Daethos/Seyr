@@ -61,7 +61,7 @@ const UserModal = ({ user, setUser }: Props) => {
         <ToastAlert error={error} setError={setError} />
         <h3 className='mb-4' style={{ color: 'red' }}>{user.username.charAt(0).toUpperCase() + user.username.slice(1)}</h3>           
         <Form.Group className='my-3' >
-        <FloatingLabel label={user.username} className="mb-3" controlId='floatingInput'>
+        <FloatingLabel style={{ color: "black" }} label={user.username} className="mb-3" controlId='floatingInput'>
             <Form.Control
                 type='name'
                 // name='chatName'
@@ -73,7 +73,7 @@ const UserModal = ({ user, setUser }: Props) => {
         </FloatingLabel>
         </Form.Group>
         <Form.Group className='my-2' >
-        <FloatingLabel label={user.bio} className="mb-3" controlId='floatingInput'>
+        <FloatingLabel style={{ color: "black" }} label={user.bio} className="mb-3" controlId='floatingInput'>
             <Form.Control
                 type='name'
                 // name='chatName'
@@ -84,7 +84,7 @@ const UserModal = ({ user, setUser }: Props) => {
         </FloatingLabel>
         </Form.Group>
         {/* <Form.Group className='my-2' >
-        <FloatingLabel label={`Email Address`} className="mb-3" controlId='floatingInput'>
+        <FloatingLabel style={{ color: "black" }} label={`Email Address`} className="mb-3" controlId='floatingInput'>
             <Form.Control
                 type='name'
                 // name='chatName'

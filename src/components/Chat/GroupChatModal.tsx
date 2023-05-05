@@ -109,7 +109,7 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
                 <Form onSubmit={handleSubmit}>
                     <h3 className='mb-4' style={{ color: 'red' }}>Create Group Chat Form</h3>
                     <Form.Group className='my-2' >
-                    <FloatingLabel label={`Group Name`} className="mb-3" controlId='floatingInput'>
+                    <FloatingLabel style={{ color: "black" }} label={`Group Name`} className="mb-3" controlId='floatingInput'>
                         <Form.Control
                             type='name'
                             name='chatName'
@@ -120,7 +120,7 @@ const GroupChatModal = ({ user, chats, setChats }: Props) => {
                     </FloatingLabel>
                     </Form.Group>
                     <Form.Group className='my-2' >
-                    <FloatingLabel label={`Add Users`} className="mb-3" controlId='floatingInput'>
+                    <FloatingLabel style={{ color: "black" }} label={`Add Users`} className="mb-3" controlId='floatingInput'>
                         <Form.Control
                             type='name'
                             name='chatName'

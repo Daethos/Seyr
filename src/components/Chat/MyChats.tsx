@@ -35,6 +35,17 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
         handleClose()
     }, [selectedChat]);
 
+    const getLastMessageColor = (latestMessages: any, userId: any) => {
+        if (!latestMessages) return;
+        if (latestMessages.sender._id === userId) {
+            return 'green';
+        } else if (!latestMessages.readBy.includes(userId)) {
+            return 'gold';
+        } else {
+            return '#fdf6d8';
+        };
+    };
+
     return (
         <>
         <GroupChatModal user={user} chats={chats} setChats={setChats} />
@@ -47,31 +58,37 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
                             <Button variant="" style={{ color: '#fdf6d8' }} size="lg" onClick={() => setSelectedChat(chat)} key={index}>
                             <h3>
                             { !chat.isGroupChat ? 
-                                <> <img 
+                                <> 
+                                <img 
                                     src={chatLogic.getSenderPhoto(user, chat.users)} 
                                     alt={chatLogic.getSender(user, chat.users)} 
                                     style={{ 
-                                        width: 35 + 'px', 
-                                        height: 35 + 'px', 
+                                        width: '35px', 
+                                        height: '35px', 
                                         borderRadius: 50 + '%', 
                                         float: 'left',
                                     }}
-                                /> {' '}{chatLogic.getSender(user, chat.users)} </>
+                                />{' '}
+                                {chatLogic.getSender(user, chat.users)}
+                                </>
                             : 
-                            <> <img
+                            <> 
+                            <img
                                 src={user.photoUrl}
                                 alt={user.username}
                                 style={{ 
-                                    width: 35 + 'px', 
-                                    height: 35 + 'px', 
+                                    width: '35px', 
+                                    height: '35px', 
                                     borderRadius: 50 + '%', 
                                     float: 'left',
                                 }}
-                            /> {chat.chatName} </>
+                            />{' '}
+                            {chat.chatName} 
+                            </>
                             }
                             </h3>
                             {chat.latestMessages && (
-                                <p style={{ fontSize: 14 + 'px' }}>
+                                <p style={{ fontSize: 14 + 'px', color: getLastMessageColor(chat.latestMessages, user._id) }}>
                                 <b>{chat.latestMessages.sender.username.charAt(0).toUpperCase() + chat.latestMessages.sender.username.slice(1)} : {' '}</b>
                                 { chat.latestMessages.content.length > 50
                                     ? chat.latestMessages.content.substring(0, 51) + '...'

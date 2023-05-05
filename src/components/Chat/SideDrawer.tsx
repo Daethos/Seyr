@@ -1,5 +1,5 @@
-import { RefAttributes, useState } from 'react'
-import * as chatAPI from '../../utils/chatApi'
+import { RefAttributes, useState } from 'react';
+import * as chatAPI from '../../utils/chatApi';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Button from 'react-bootstrap/Button';
 import Loading from '../../components/Loading/Loading';
@@ -14,11 +14,11 @@ interface Props {
     setSelectedChat: React.Dispatch<React.SetStateAction<never[]>>;
     chats: any;
     setChats: any;
-}
+};
 
 const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setSelectedChat }: Props) => {
-    const [search, setSearch] = useState("")
-    const [loadingChat, setLoadingChat] = useState(false)
+    const [search, setSearch] = useState("");
+    const [loadingChat, setLoadingChat] = useState(false);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -31,18 +31,18 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
 
     const accessChat = async (userId: string) => {
         try {
-            setLoadingChat(true)
-            const response = await chatAPI.accessChat(userId)
-            console.log(response, 'Response Accessing or Creating Chat')
-            if (!chats.find((c: { _id: any; }) => c._id === response._id)) setChats([response.data, ...chats])
-            console.log(response, 'Response in Accessing Chat')
-            setSelectedChat(response)
-            setLoadingChat(false)
-            handleClose()
+            setLoadingChat(true);
+            const response = await chatAPI.accessChat(userId);
+            console.log(response, 'Response Accessing or Creating Chat');
+            if (!chats.find((c: { _id: any; }) => c._id === response._id)) setChats([response.data, ...chats]);
+            console.log(response, 'Response in Accessing Chat');
+            setSelectedChat(response);
+            setLoadingChat(false);
+            handleClose();
         } catch (err: any) {
-            console.log(err.message, 'Error Accessing Chat')
-        }
-    }
+            console.log(err.message, 'Error Accessing Chat');
+        };
+    };
 
     return (
         <>
@@ -68,16 +68,14 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
                 onKeyPress={(e) => { e.key === "Enter" && handleSearch(search) }}
             />
             <Button variant="" onClick={() => handleSearch(search)} style={{ color: '#fdf6d8' }}>Go</Button>
-            {
-                loading 
-                ? (
+            { loading ? (
                 <Loading Combat={true} />
-                ) : (
-                    searchResult?.map((user: any, index: number) => {
-                        return (
-                            <UserListItem key={index} user={user} accessChat={() => accessChat(user._id)} />
-                        )
-                    })
+            ) : (
+                searchResult?.map((user: any, index: number) => {
+                    return (
+                        <UserListItem key={index} user={user} accessChat={() => accessChat(user._id)} />
+                    )
+                })
             )}
             { loadingChat ? 
                 <Loading Combat={true} />
@@ -85,7 +83,7 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
         </Offcanvas.Body>
         </Offcanvas>
         </>
-    )
-}
+    );
+};
 
-export default SideDrawer
+export default SideDrawer;

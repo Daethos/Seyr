@@ -16,7 +16,7 @@ interface Props {
 };
 
 const GameLobby = ({ user }: Props) => {
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     const [fetchAgain, setFetchAgain] = useState<boolean>(false);
     const [notification, setNotification] = useState<any>([]);
     const [searchResult, setSearchResult] = useState([]);
@@ -42,6 +42,7 @@ const GameLobby = ({ user }: Props) => {
                 const response = await chatAPI.allMessagesNotRead();
                 console.log(response.data);
                 setNotification(response.data);
+                setFetchAgain(false);
             } catch (err: any) {
                 console.log(err.message, 'Error Fetching Chats');
             };

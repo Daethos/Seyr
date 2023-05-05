@@ -148,7 +148,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                 <div className="chat-footer mt-3">
                     <Form.Control 
                         as="textarea" style={{ maxHeight: 42 + 'px', width: 76 + '%', background: 'black', color: '#fdf6d8', border: 2 + 'px' + ' solid ' + 'purple' }} 
-                        type="text" placeholder='Warning, no profanity filter ^_^ !!!' 
+                        type="text" placeholder='Warning, no profanity filter ^_^' 
                         value={newMessage} onChange={typingHandler} required
                         onKeyPress={(e) => { e.key === "Enter" && sendMessage() }}
                     />
