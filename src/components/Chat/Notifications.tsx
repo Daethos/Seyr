@@ -2,15 +2,15 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Badge from 'react-bootstrap/Badge';
-import Dropdown from 'react-bootstrap/Dropdown'
-import * as chatLogic from '../../config/chatLogics'
+import Dropdown from 'react-bootstrap/Dropdown';
+import * as chatLogic from '../../config/chatLogics';
 
 interface Props {
     user: any;
     notification: any;
     setSelectedChat: any;
     setNotification: any;
-}
+};
 
 const Notifications = ({ user, notification, setSelectedChat, setNotification }: Props) => {
     const notificationPopover = (
@@ -21,7 +21,8 @@ const Notifications = ({ user, notification, setSelectedChat, setNotification }:
             <Popover.Body id='popover-body'>
                 { !notification.length 
                 ? <p style={{ color: 'purple' }}>No New Messages</p> 
-                : notification?.map((note: any, index: number) => { return ( 
+                : notification?.map((note: any, index: number) => { 
+                    return ( 
                     <Dropdown.Item key={index} style={{ color: 'purple' }} onClick={() => {
                         setSelectedChat(note.chat);
                         setNotification(notification.filter((n: any) => n !== note))
@@ -35,16 +36,16 @@ const Notifications = ({ user, notification, setSelectedChat, setNotification }:
             </Popover.Body>
         </Popover>
     );
-  return (
-    <OverlayTrigger trigger="click" placement="auto-start" overlay={notificationPopover}>
-        <Button variant='' style={{ fontSize: 10 + 'px' }}>
-        <svg xmlns="http://www.w3.org/2000/svg" style={{ color: '#fdf6d8' }}  width="24" height="24" fill="currentColor" className="bi bi-envelope" viewBox="0 0 16 16">
-        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
-        </svg>
-        <Badge bg='danger' style={{ marginLeft: -5 + 'px' }}>{notification.length}</Badge>
-        </Button>
-    </OverlayTrigger>
-  )
-}
+    return (
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={notificationPopover}>
+            <Button variant='' style={{ fontSize: 10 + 'px' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" style={{ color: '#fdf6d8' }}  width="24" height="24" fill="currentColor" className="bi bi-envelope" viewBox="0 0 16 16">
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                </svg>
+            <Badge bg='danger' style={{ marginLeft: -5 + 'px' }}>{notification.length}</Badge>
+            </Button>
+        </OverlayTrigger>
+    );
+};
 
-export default Notifications
+export default Notifications;

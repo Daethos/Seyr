@@ -36,6 +36,7 @@ import Journal from '../../components/GameCompiler/Journal';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import GameplayUnderlay from '../../components/GameCompiler/GameplayUnderlay';
 import Tutorial from '../../components/GameCompiler/Tutorial';
+import { User } from '../App/App';
 
 export enum MapMode {
     FULL_MAP,
@@ -45,26 +46,24 @@ export enum MapMode {
 };
 
 interface GameProps {
-    user: any;
+    user: User;
 };
 
 const GameSolo = ({ user }: GameProps) => {
     const { asceanID } = useParams();
-    const navigate = useNavigate();
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [mapState, mapDispatch] = useReducer(MapStore, initialMapData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [emergencyText, setEmergencyText] = useState<any[]>([]);
-    const [timeLeft, setTimeLeft] = useState<number>(gameState.timeLeft);
-    const [moveTimer, setMoveTimer] = useState<number>(gameState.moveTimer);
-    const [background, setBackground] = useState<any | null>({
-        background: ''
-    });
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     type Direction = keyof typeof DIRECTIONS;
+    const navigate = useNavigate();
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
+    const [background, setBackground] = useState<any | null>({ background: '' });
+    const [emergencyText, setEmergencyText] = useState<any[]>([]);
+    const [moveTimer, setMoveTimer] = useState<number>(gameState.moveTimer);
+    const [moveTimerDisplay, setMoveTimerDisplay] = useState<number>(moveTimer);
+    const [timeLeft, setTimeLeft] = useState<number>(gameState.timeLeft);
     const [tutorialContent, setTutorialContent] = useState<any | null>(null);
-
     const [asceanState, setAsceanState] = useState({
         ascean: gameState.player,
         currentHealth: 0,
@@ -129,7 +128,6 @@ const GameSolo = ({ user }: GameProps) => {
         fetchData();
     }, [asceanID]);
 
-    const [moveTimerDisplay, setMoveTimerDisplay] = useState<number>(moveTimer);
 
     useEffect(() => {
         if (!moveTimerDisplay) return;
@@ -183,16 +181,17 @@ const GameSolo = ({ user }: GameProps) => {
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false }); 
             };
             if (checkPlayerTrait("Kyn'gian", gameState) && mapState.steps % 10 === 0) {
-                console.log("I'm Walking!");
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of the Tshios course through your veins." });
                 dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
             };
             if (checkPlayerTrait("Shrygeian", gameState) && mapState.steps % 10 === 0) {
                 const chance = Math.floor(Math.random() * 101);
                 if (chance <= 10) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of Shrygei runs through your veins, you are able to sing life into the land." });
                     getTreasure();
                 };                
             };
-            if (mapState.steps > 1 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
+            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -866,7 +865,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000)
+                        }, 2000)
                     } else if (chance > 98) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -875,7 +874,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getOpponent();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -888,7 +887,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getOpponent();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -901,7 +900,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getOpponent();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else if (chance > 95) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -909,7 +908,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getNPC();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -921,7 +920,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000)
+                        }, 2000)
                     } else if (chance > 98) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -930,7 +929,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getOpponent();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else if (chance > 97) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -938,7 +937,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getNPC();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else {
                         if (gameState.storyContent !== '') {
                             gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
@@ -958,7 +957,7 @@ const GameSolo = ({ user }: GameProps) => {
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000)
+                        }, 2000)
                     };
                     break;
                 };
@@ -1283,7 +1282,7 @@ const GameSolo = ({ user }: GameProps) => {
                     await getOpponent();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'npc': {
@@ -1293,7 +1292,7 @@ const GameSolo = ({ user }: GameProps) => {
                     await getNPC();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'phenomena': {
@@ -1328,7 +1327,7 @@ const GameSolo = ({ user }: GameProps) => {
                     await getTreasure();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'landmark': {

@@ -24,8 +24,8 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
             setChats(response.data);
         } catch (err: any) {
             console.log(err.message, 'Error Fetching Chats')
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         fetchChats();

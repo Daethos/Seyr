@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import * as io from 'socket.io-client'
 import Container from 'react-bootstrap/Container'
 import SideDrawer from '../../components/Chat/SideDrawer';
 import MyChats from '../../components/Chat/MyChats';
@@ -7,7 +8,9 @@ import userService from "../../utils/userService";
 import Notifications from '../../components/Chat/Notifications';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import * as chatAPI from '../../utils/chatMessageApi';
 
+let socket: any;
 interface Props {
     user: any;
 };
@@ -19,6 +22,32 @@ const GameLobby = ({ user }: Props) => {
     const [searchResult, setSearchResult] = useState([]);
     const [selectedChat, setSelectedChat] = useState<any>([]);
     const [chats, setChats] = useState<any>([]);
+    const [socketConnected, setSocketConnected] = useState<boolean>(false);
+    const [isTyping, setIsTyping] = useState<boolean>(false);
+    useEffect(() => {
+        socket = io.connect("https://ascea.herokuapp.com", { transports: ['websocket'] }) 
+        // "http://localhost:3001" When Tinkering Around 
+        // "https://ascea.herokuapp.com" When Deploying
+        socket.emit("setup", user);
+        socket.on("Connected", () => setSocketConnected(true));
+
+        socket.on('typing', () => setIsTyping(true));
+        socket.on('stop_typing', () => setIsTyping(false));
+        socket.on('message_received', () => setFetchAgain(true));
+    }, []);
+
+    useEffect(() => {
+        const fetchChats = async () => {
+            try {
+                const response = await chatAPI.allMessagesNotRead();
+                console.log(response.data);
+                setNotification(response.data);
+            } catch (err: any) {
+                console.log(err.message, 'Error Fetching Chats');
+            };
+        };
+        fetchChats();
+    }, [fetchAgain]);
 
     const handleSearch = async (search: string) => {
         if (!search) return;
@@ -42,7 +71,7 @@ const GameLobby = ({ user }: Props) => {
             </Tab>
             </Tabs>
             { selectedChat?._id 
-                ? <ChatBox user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                ? <ChatBox user={user} socket={socket} socketConnected={socketConnected} isTyping={isTyping} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                 : <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />
             }
         </Container>

@@ -155,27 +155,24 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
     };
     useMoveContentEffect(mapState);
 
-
     const usePlayerMovementEffect = (mapState: MapData, mapDispatch: (arg0: { type: string; payload: string | boolean | MapData; }) => void) => {
         useEffect(() => {
             if (mapState?.currentTile?.content === 'nothing') {
                 if (gameState.cityButton) {
                     gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                    setBackground({
-                        ...background,
-                        'background': getPlayerBackground.background
-                    });
+                    setBackground({ ...background, 'background': getPlayerBackground.background });
                 };
                 gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you." });
             };
             if (checkPlayerTrait("Kyn'gian") && mapState.steps % 10 === 0) {
-                console.log("I'm Walking!");
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of the Tshios course through your veins." });
                 dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
             };
             if (checkPlayerTrait("Shrygeian") && mapState.steps % 10 === 0) {
                 const chance = Math.floor(Math.random() * 101);
                 if (chance > 90) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of Shrygei runs through your veins, you are able to sing life into the land." });
                     getTreasure();
                 };                
             };
@@ -544,7 +541,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000)
+                        }, 2000)
                     } else if (chance > 96) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -552,7 +549,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -564,7 +561,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -576,7 +573,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else if (chance > 95) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -584,7 +581,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getNPC();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -596,7 +593,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else if (chance > 98) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -604,7 +601,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getOpponent(ascean);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else if (chance > 97) {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You spy a traveling merchant peddling wares. He approaches cautious yet peaceful.` })
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -612,7 +609,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getNPC();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     } else {
                         if (gameState.storyContent !== '') gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' }); 
                         mapDispatch({
@@ -630,7 +627,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                        }, 3000);
+                        }, 2000);
                     };
                     break;
                 };
@@ -876,9 +873,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
 
     const getTreasure = async () => {
         playTreasure();
-        if (gameState.cityButton) {
-            gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
-        };
+        if (gameState.cityButton) gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_EVENT, payload: {
             title: "Treasure!",
             description: `${ascean.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
@@ -916,7 +911,6 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         playDungeon();
         if (gameState.cityButton) gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
         await chanceEncounter('dungeon');
-        // This will be a probabilistic roll of random dungeons that affect gameplay, similar to environmental effects. May last for some time.
     };
 
     const getCity = async () => {
@@ -952,7 +946,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     await getOpponent(ascean);
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'npc': {
@@ -962,7 +956,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     await getNPC();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'phenomena': {
@@ -996,7 +990,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
                     await getTreasure();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'landmark': {

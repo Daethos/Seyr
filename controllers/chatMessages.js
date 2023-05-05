@@ -4,7 +4,9 @@ const Message = require('../models/message');
 
 module.exports = {
     sendMessage,
-    allMessages
+    allMessages,
+    allMessagesNotRead,
+    markMessagesAsRead
 };
 
 async function sendMessage(req, res) {
@@ -43,5 +45,37 @@ async function allMessages(req, res) {
         res.status(200).json({ data: messages });
     } catch (err) {
         res.status(400).json({ err: 'Error Retrieving Messages in Controller' });
+    };
+};
+
+async function allMessagesNotRead(req, res) {
+    try {
+        const userId = req.user._id;
+        console.log(userId, "User ID")
+        const chatGroups = await Chat.find({ users: userId });
+        const chatIds = chatGroups.map(chat => chat._id);
+        let messages = await Message.find({ chat: { $in: chatIds }, readBy: { $nin: [userId] }, sender: { $ne: userId } })
+                                        .populate('sender', 'username email photoUrl')
+                                        .populate('chat')
+        messages = await User.populate(messages, {
+            path: 'chat.users',
+            select: 'username email photoUrl',
+        });
+        res.status(200).json({ data: messages });
+    } catch (err) {
+        res.status(400).json({ err: 'Error Retrieving Messages in Controller' });
+    };
+};
+
+async function markMessagesAsRead(req, res) {
+    try {
+        const messages = await Message.updateMany(
+            { chat: req.params.chatId, readBy: { $ne: req.user._id } }, 
+            { $addToSet: { readBy: req.user._id } }
+        );
+
+        res.status(200).json({ data: messages });
+    } catch (err) {
+        res.status(400).json({ err: 'Error Updating Messages in Controller' });
     };
 };

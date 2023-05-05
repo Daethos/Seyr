@@ -8,10 +8,11 @@ import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/PvPStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck, checkPlayerTrait } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck, checkPlayerTrait, TRAIT_DESCRIPTIONS } from '../components/GameCompiler/GameStore';
 import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import dialogNodes from "../components/GameCompiler/DialogNodes.json"
 import { useLocation } from 'react-router-dom';
+import { shakeScreen } from '../components/GameCompiler/CombatStore';
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
     const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
@@ -314,14 +315,23 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
             default:
                 break;
         };
-        if (namedEnemy) { enemyPersuasion *= 1.25; } else { enemyPersuasion *= 1.1; };
+        const specialEnemies = ["Laetrois Ath'Shaorah", "Mavros Ilios", "Lorian", "King Mathyus Caderyn"];
+        const persuasionTrait = persuasionTraits.find((trait: { name: string; }) => trait.name === persuasion);
+        if (namedEnemy && specialEnemies.includes(enemy.name)) {
+            enemyPersuasion *= 1.5;
+        } else if (namedEnemy) { 
+            enemyPersuasion *= 1.25; 
+        } else { 
+            enemyPersuasion *= 1.1; 
+        };
         console.log(playerPersuasion, enemyPersuasion, "Persuasion");
         if (playerPersuasion >= enemyPersuasion) {
             dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: true, playerTrait: persuasion } });       
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Failure. Despite your ${persuasion} nature,${namedEnemy ? '' : ` the`} ${enemy.name} was not persuased, and infact, became incensed. Presumably, this was not your intention. \n\n Nevertheless, prepare for combat, ${ascean.name}, and perhaps leave the pleasantries for warmer company.` });
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
+                payload: `Failure. ${persuasionTrait?.persuasion?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Nevertheless, prepare for combat, ${ascean.name}, and perhaps leave the pleasantries for warmer company.` });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
@@ -356,8 +366,15 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
             default:
                 break;
         };
+        const specialEnemies = ["Laetrois Ath'Shaorah", "Mavros Ilios", "Lorian", "King Mathyus Caderyn"];
         const luckoutTrait = luckoutTraits?.find((trait: { name: string; }) => trait.name === luck);
-        if (namedEnemy) { enemyLuck *= 1.5; } else { enemyLuck *= 1.25; };
+        if (namedEnemy && specialEnemies.includes(enemy.name)) { 
+            enemyLuck *= 2; 
+        } else if (namedEnemy) {
+            enemyLuck *= 1.5;
+        } else { 
+            enemyLuck *= 1.25; 
+        };
         console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -365,6 +382,8 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
+                shakeScreen({ duration: 1000, intensity: 1.5 });
+                if ('vibrate' in navigator) navigator.vibrate(1000);
                 dispatch({
                     type: ACTIONS.PLAYER_LUCKOUT,
                     payload: {
@@ -376,7 +395,8 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Failure. Despite your ${luck} nature,${namedEnemy ? '' : ` ${article}`} ${enemy.name} managed to resist its temptation having some affectation of it themself. \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
+            gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
+                payload: `Failure. ${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
@@ -384,7 +404,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                     type: ACTIONS.SET_DUEL,
                     payload: ''
                 });
-            }, 4000);
+            }, 3000);
         };
     };
 
@@ -734,8 +754,8 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                         }
                         </>
                     }
-                    { checkPlayerTrait("Kyn'gian", gameState) ? (
-                        <Button variant='' className='dialog-buttons inner' style={{ color: 'green' }} onClick={() => clearDuel()}>Your Kyn'gian nature allows you to shirk most encounters.</Button>
+                    { checkPlayerTrait("Kyn'gian", gameState) && !playerWin && !enemyWin ? (
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'green' }} onClick={() => clearDuel()}>You remain at the edges of sight and sound, and before {enemy.name} can react, you attempt to flee.</Button>
                     ) : ( '' ) }
                     </>
                 : currentIntent === 'localLore' ?
@@ -805,20 +825,29 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                                 <>
                                 Tears well up in {enemy.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
                                 </>
-                            ) : (
+                            ) : state.playerTrait === 'Shaorahi' ? (
                                 <>
+                                A stillness hollows {enemy?.name}, the chant of a dead language stirs their blood without design.<br /><br />
                                 </>
-                            ) }
+                            ) : state.playerTrait === 'Ilian' ? (
+                                <>
+                                "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {ascean.name}, others may be feaful of the Black Sun."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Fyeran' ? (
+                                <>
+                                "You are not here right now, {ascean.name}. Perchance we may see us in another land, then?"<br /><br />
+                                </>
+                            ) : ( '' ) }
                             </>
                         ) : ( 
                             <>
                             { state.playerTrait === 'Arbituous' ? ( 
                                 <>
-                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}."<br /><br />
+                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."<br /><br />
                                 </>
                             ) : state.playerTrait === 'Chiomic' ? (
                                 <>
-                                The {enemy.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                The {enemy.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
                                 </>
                             ) : state.playerTrait === "Kyr'naic" ? (
                                 <>
@@ -828,10 +857,19 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
                                 <>
                                 Tears well up in the {enemy.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
                                 </>
-                            ) : (
+                            ) : state.playerTrait === 'Shaorahi' ? (
                                 <>
+                                An unsure unease stifles the ascent of the {enemy.name}, their eyes a haze of murk. <br /><br />
                                 </>
-                            ) }         
+                            ) : state.playerTrait === 'Ilian' ? (
+                                <>
+                                "Nooo, you cannot be Him." Concern marks the {enemy.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Fyeran' ? (
+                                <>
+                                Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
+                                </>
+                            ) : ( '' ) }         
                             </>
                         ) }
                             You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />

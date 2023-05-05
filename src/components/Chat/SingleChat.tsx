@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import * as io from 'socket.io-client'
 import Button from 'react-bootstrap/Button'
 import * as chatLogic from '../../config/chatLogics'
 import Modal from 'react-bootstrap/Modal';
@@ -7,10 +6,10 @@ import ProfileModal from './ProfileModal';
 import UpdateGroupChatModal from './UpdateGroupChatModal';
 import Loading from '../Loading/Loading';
 import Form from 'react-bootstrap/Form'
-import * as messageAPI from '../../utils/chatMessageApi'
+import * as messageAPI from '../../utils/chatMessageApi';
+import * as chatAPI from '../../utils/chatMessageApi';
 import ScrollableChat from './ScrollableChat';
 
-let socket: any;
 let selectedChatCompare: { _id: any };
 
 interface Props {
@@ -21,46 +20,38 @@ interface Props {
     setSelectedChat: any;
     notification: any[];
     setNotification: React.Dispatch<React.SetStateAction<any[]>>;
-}
-const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelectedChat, notification, setNotification  }: Props) => {
-    const [messages, setMessages] = useState<any>([])
-    const [newMessage, setNewMessage] = useState("")
-    const [socketConnected, setSocketConnected] = useState<boolean>(false)
-    const [typing, setTyping] = useState<boolean>(false)
-    const [isTyping, setIsTyping] = useState<boolean>(false)
-    const [modalShow, setModalShow] = useState<boolean>(false)
-    const [loading, setLoading] = useState<boolean>(false)
-    
-    useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com", { transports: ['websocket'] }) 
-        // "http://localhost:3001" When Tinkering Around 
-        // "https://ascea.herokuapp.com" When Deploying
-        socket.emit("setup", user);
-        socket.on("Connected", () => setSocketConnected(true))
+    socketConnected: boolean;
+    isTyping: boolean;
+    socket: any;
+};
 
-        socket.on('typing', () => setIsTyping(true))
-        socket.on('stop_typing', () => setIsTyping(false))
-    }, [])
+const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelectedChat, notification, setNotification, socketConnected, isTyping, socket  }: Props) => {
+    const [messages, setMessages] = useState<any>([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [typing, setTyping] = useState<boolean>(false);
+    const [modalShow, setModalShow] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const fetchMessages = async () => {
-        if (!selectedChat) {
-            return
-        }
+        if (!selectedChat)  return;
         try {
-            setLoading(true)
-            const response = await messageAPI.allMessages(selectedChat._id)
+            const response = await messageAPI.allMessages(selectedChat._id);
             setMessages(response.data);
-            setLoading(false)
+            const mark = await chatAPI.markAsRead(selectedChat._id);
+            console.log(response.data, notification, "Notifications in Selected Chat ?")
+            console.log(mark, "Marked As Read?")
+            setNotification(notification.filter((n: any) => n.chat._id !== selectedChat._id));
             socket.emit("join_chat", selectedChat._id);
+            setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Fetching Messages')
-        }
-    }
+        };
+    };
 
     useEffect(() => {
-      fetchMessages();
-      selectedChatCompare = selectedChat;
-    }, [selectedChat])
+        fetchMessages();
+        selectedChatCompare = selectedChat;
+    }, [selectedChat]);
     
     useEffect(() => {
         socket.on('message_received', (newMessageReceived: { chat: { _id: any } }) => {
@@ -68,56 +59,55 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                 if (!notification.includes(newMessageReceived)) {
                     setNotification([newMessageReceived, ...notification]);
                     setFetchAgain(!fetchAgain);
-                }
+                };
             } else {
-                setMessages([...messages, newMessageReceived])
-            }
+                setMessages([...messages, newMessageReceived]);
+            };
         });
-    })
+    });
 
 
     const sendMessage = async () => {
         socket.emit('stop_typing', selectedChat._id);
         try {
-            setLoading(true)
+            setLoading(true);
             const response = await messageAPI.sendMessage({
                 content: newMessage,
                 chatId: selectedChat._id
             });
             console.log(response.data, 'New Message Response in Send Message');
             setNewMessage("");
-            socket.emit('new_message', response.data)
+            socket.emit('new_message', response.data);
             setMessages([...messages, response.data]);
             setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Sending a Message');
-        }
-    }
+        };
+    };
 
     const typingHandler = async (e: any) => {
-        setNewMessage(e.target.value)
+        setNewMessage(e.target.value);
         if (!socketConnected) return;
         if (!typing) {
-            setTyping(true)
+            setTyping(true);
             socket.emit('typing', selectedChat._id);
-        }
+        };
         let lastTypingTime = new Date().getTime()
         let timerLength = 3000;
         setTimeout(() => {
             let timeNow = new Date().getTime();
-            let timeDiff = timeNow - lastTypingTime
+            let timeDiff = timeNow - lastTypingTime;
 
             if (timeDiff >= timerLength && typing) {
                 socket.emit('stop_typing', selectedChat._id);
-                setTyping(false)
-            }
-        }, timerLength)
-    }
+                setTyping(false);
+            };
+        }, timerLength);
+    };
 
     return (
         <>
-        {
-            selectedChat ? (
+        { selectedChat ? (
                 <>
                 <h3 style={{ justifyContent: 'space-between' }}>
                 <Button variant='' style={{ color: '#fdf6d8', float: 'left' }} 
@@ -146,11 +136,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                                 <>
                                 <ProfileModal user={chatLogic.getSenderFull(user, selectedChat?.users)} />
                                 </>
-                            ) : (
+                        ) : (
                                 <UpdateGroupChatModal user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} fetchMessages={fetchMessages} />
-                            )
-                            : ''
-                        }
+                        ) : ( '' ) }
                     </Modal.Body>
                 </Modal>
                 </h3>

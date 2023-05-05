@@ -132,7 +132,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                         Weather: {mapState?.contentCounts?.weather} |
                         Wonder: {mapState?.contentCounts?.wonder}<br />
                         <br />
-                        This is where you're starting, and as expected, nothing is happening, but that's okay because you can move around and explore this world. 
+                        This is where you're starting, and as expected, nothing much is happening, but that's okay because you can move around and explore this world. 
                         {' '}Let's imagine a chunk of this province is a grid, and you're in the middle of it. You can navigate with the joystick and change that, encountering adventure in any direction.<br /><br /> 
                         {' '}You may find the world you're in to be lacking, but over time more will occur than last experienced, as this lightweight design is a prototype to simulate a Phaser canvas for coherence of gameplay.
                         {' '}And to that end this will help me test the occurrence, quality, and variety of content you will experience throughout. Once you're ready, click your name.

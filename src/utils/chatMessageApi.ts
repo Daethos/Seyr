@@ -15,7 +15,7 @@ export async function sendMessage(message: any) {
         if (res.ok) return res.json();
         throw new Error(res.error);
     });
-}
+};
 
 export async function allMessages(chatId: string) {
     console.log(chatId, 'Chat ID in chat message api')
@@ -28,4 +28,26 @@ export async function allMessages(chatId: string) {
         if (res.ok) return res.json();
         throw new Error(res.error);
     });
-}
+};
+
+export async function allMessagesNotRead() {
+    return fetch (BASE_URL + '/unread', {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+};
+
+export async function markAsRead(chatId: string) {
+    return fetch (BASE_URL + '/read/' + chatId, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        throw new Error(res.error);
+    });
+};

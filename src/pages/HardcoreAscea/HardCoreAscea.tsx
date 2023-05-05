@@ -17,15 +17,13 @@ import LevelUpModal from '../../game/LevelUpModal';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
-import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, checkPlayerTrait } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, debounce, getAsceanCoords, getAsceanGroupCoords, MapData } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
 import Joystick from '../../components/GameCompiler/Joystick';
-import Coordinates from '../../components/GameCompiler/Coordinates';
 import GameplayEventModal from '../../components/GameCompiler/GameplayEventModal';
 import GameplayOverlay from '../../components/GameCompiler/GameplayOverlay';
-import Content from '../../components/GameCompiler/Content';
 import StoryBox from '../../components/GameCompiler/StoryBox';
 import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 import GameMap from '../../components/GameCompiler/GameMap';
@@ -136,6 +134,75 @@ const HardCoreAscea = ({ user }: GameProps) => {
         }, moveTimer);
         return () => clearTimeout(timer);
     }, [moveTimer, mapState]);
+
+    const useMoveContentEffect = (mapState: MapData) => {
+        useEffect(() => {
+            if (mapState.currentTile.content !== 'nothing') {
+                handleTileContent(mapState.currentTile.content);
+            }; 
+        }, [mapState.currentTile, mapState.currentTile.content]);
+    };
+    useMoveContentEffect(mapState);
+
+    const usePlayerMovementEffect = (mapState: MapData, mapDispatch: (arg0: { type: string; payload: string | boolean | MapData; }) => void) => {
+        useEffect(() => {
+            if (mapState?.currentTile?.content === 'nothing') {
+                if (gameState.cityButton) {
+                    gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
+                    setBackground({
+                        ...background,
+                        'background': getPlayerBackground.background
+                    });
+                };
+                if (mapState.steps % 3 === 0 && !mapState.contentMoved) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
+                };
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you." });
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
+            };
+            if (checkPlayerTrait("Kyn'gian", gameState) && mapState.steps % 10 === 0) {
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of the Tshios course through your veins." });
+                dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
+            };
+            if (checkPlayerTrait("Shrygeian", gameState) && mapState.steps % 10 === 0) {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance <= 10) {
+                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of Shrygei runs through your veins, you are able to sing life into the land." });
+                    getTreasure();
+                };                
+            };
+        }, [mapState.steps]);
+    };
+    usePlayerMovementEffect(mapState, mapDispatch);
+
+    const handleDirectionChange = async (direction: Direction, mapData: MapData) => {
+        const offset = DIRECTIONS[direction];
+        if (offset) {
+            const newX = mapData.currentTile.x + offset.x;
+            const newY = mapData.currentTile.y + offset.y;
+            if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
+                const newTile = await getAsceanCoords(newX, newY, mapData.map);
+                const newTiles = await getAsceanGroupCoords(newX, newY, mapData.map);
+                const data = {
+                newTile: newTile,
+                    oldTile: mapData.currentTile,
+                    newTiles: newTiles,
+                    map: mapData,
+                };
+                mapDispatch({
+                    type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
+                    payload: data,
+                });
+                const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
+                const random = Math.floor(Math.random() * options.length);
+                options[random]();
+                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            };
+        };
+    };
+    
+    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
 
     const getOpponentDialog = async (enemy: string) => {
         try {
@@ -456,16 +523,11 @@ const HardCoreAscea = ({ user }: GameProps) => {
         };
     };
 
-    const getAsceanInventory = async () => {
+    const getAsceanOnly = async () => {
         try {
-            const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
-            console.log(firstResponse, "Ascean Inventory ?");
-            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             const response = await asceanAPI.getAsceanStats(asceanID);
-            dispatch({
-                type: ACTIONS.SET_PLAYER_SLICK,
-                payload: response.data.data
-            });
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: response.data.data.ascean });
+            dispatch({ type: ACTIONS.SET_PLAYER_SLICK, payload: response.data.data });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly')
@@ -551,17 +613,9 @@ const HardCoreAscea = ({ user }: GameProps) => {
         try {
             const data = { name: mapName, ascean: gameState.player };
             const response = await mapAPI.arenaMap(data);
-            //TODO:FIXME: GET ARENA MAP
-            console.log(response, 'Response Generating World Environment.');
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_DATA,
-                payload: response
-            });
+            mapDispatch({ type: MAP_ACTIONS.SET_MAP_DATA, payload: response });
             const coords = await getAsceanCoords(0, 0, response.map);
-            mapDispatch({
-                type: MAP_ACTIONS.SET_MAP_COORDS,
-                payload: coords,
-            });
+            mapDispatch({ type: MAP_ACTIONS.SET_MAP_COORDS, payload: coords, });
             mapDispatch({ type: MAP_ACTIONS.SET_GENERATING_WORLD, payload: false });
         } catch (err: any) {
             console.log(err.message, 'Error Generating World Environment.');
@@ -611,72 +665,6 @@ const HardCoreAscea = ({ user }: GameProps) => {
             console.log(err.message, 'Error Encountering Chance Encounter');
         };
     };
-
-    const useMoveContentEffect = (mapState: MapData) => {
-        useEffect(() => {
-            if (mapState.currentTile.content !== 'nothing') {
-                handleTileContent(mapState.currentTile.content);
-            };
-            return () => {
-                console.log("Cleaning Up Move Content Effect");
-            };
-        }, [mapState.currentTile, mapState.currentTile.content]);
-    };
-    useMoveContentEffect(mapState);
-
-    const usePlayerMovementEffect = (mapState: MapData, mapDispatch: (arg0: { type: string; payload: string | boolean | MapData; }) => void) => {
-        useEffect(() => {
-            if (mapState?.currentTile?.content === 'nothing') {
-                if (gameState.cityButton) {
-                    gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false });
-                    setBackground({
-                        ...background,
-                        'background': getPlayerBackground.background
-                    });
-                };
-                if (mapState.steps % 3 !== 0 && !mapState.contentMoved) {
-                    mapDispatch({ type: MAP_ACTIONS.SET_MOVE_CONTENT, payload: mapState });
-                };
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: '' });
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "You continue moving through your surroundings and find nothing of interest in your path, yet the world itself seems to be watching you."
-                });
-                return () => {
-                    mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false });
-                };
-            };
-        }, [mapState.steps]);
-    };
-    usePlayerMovementEffect(mapState, mapDispatch);
-
-    const handleDirectionChange = async (direction: Direction, mapData: MapData) => {
-        const offset = DIRECTIONS[direction];
-        if (offset) {
-            const newX = mapData.currentTile.x + offset.x;
-            const newY = mapData.currentTile.y + offset.y;
-            if (newX >= -100 && newX <= 100 && newY >= -100 && newY <= 100) {
-                const newTile = await getAsceanCoords(newX, newY, mapData.map);
-                const newTiles = await getAsceanGroupCoords(newX, newY, mapData.map);
-                const data = {
-                    newTile: newTile,
-                    oldTile: mapData.currentTile,
-                    newTiles: newTiles,
-                    map: mapData,
-                };
-                mapDispatch({
-                    type: MAP_ACTIONS.SET_NEW_MAP_COORDS,
-                    payload: data,
-                });
-                const options = [playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9];
-                const random = Math.floor(Math.random() * options.length);
-                options[random]();
-                if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            };
-        };
-    };
-    
-    const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
 
     const getDeadAscean = async () => {
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
@@ -922,7 +910,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                     await getOpponent();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 case 'phenomena': {
@@ -943,7 +931,7 @@ const HardCoreAscea = ({ user }: GameProps) => {
                     await getTreasure();
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
-                    }, 3000);
+                    }, 2000);
                     break;
                 };
                 default: {

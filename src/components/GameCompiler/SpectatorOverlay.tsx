@@ -1,16 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS } from './GameStore';
-import { MAP_ACTIONS } from './WorldStore';
-import { SPECTATOR_ACTIONS } from './PvPStore';
-import Loading from '../Loading/Loading';
-import { useLocation, useNavigate } from 'react-router-dom';
 import GameAnimations from './GameAnimations';
 import GameCombatText from './GameCombatText';
-import PvPActions from './PvPActions';
-import PvPAscean from './PvPAscean';
-import PvPConditions from './PvPConditions';
 import SpectatorAscean from './SpectatorAscean';
 import CombatSpectatorOverlay from './CombatSpectatorOverlay';
 
@@ -31,18 +24,7 @@ interface Props {
 
 const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingSpectator, dispatch, state, emergencyText, setEmergencyText, playerState, gameState, setModalShow }: Props) => {
     const overlayRef = useRef(null);
-    const location = useLocation();
-    const article = ['a', 'e', 'i', 'o', 'u'].includes(ascean?.maps?.[0]?.currentTile?.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-    const navigate = useNavigate();
-    const closeEverything = () => {
-        gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: false });
-    };
-    useEffect(() => {
-        console.log(loadingSpectator, state, 'Spectator Overlay Mounted');
-        return () => {
-            console.log(loadingSpectator, 'Spectator Overlay Unmounted');
-        };
-    }, [loadingSpectator, state]);
+    const closeEverything = () => gameDispatch({ type: GAME_ACTIONS.LOADING_SPECTATOR, payload: false });
     const chatStyle = {
         borderRadius: "50%",
         marginTop: "25%",

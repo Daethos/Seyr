@@ -22,7 +22,7 @@ import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
 import HardCoreAscea from "../HardcoreAscea/HardCoreAscea";
 
-interface User {
+export interface User {
   _id: string;
   username: string;
   email: string;
