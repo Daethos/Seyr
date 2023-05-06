@@ -29,6 +29,8 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
     useEffect(() => { console.log(ascean, "THe Community ???") }, [ascean])
 
     function compareScores(a: any, b: any) {
+        if (a[0] === undefined) a[0] = { score: 0 };
+        if (b[0] === undefined) b[0] = { score: 0 };
         return a[0].score - b[0].score;
     };
 
@@ -36,28 +38,26 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         setLoading(true);
         try {
             const response = await communityAPI.getEveryone();
-            console.log(response.data, "Community Response")
             setAscean([...response.data].reverse());
             const scores = await response.data.map((ascean: any, index: number) => {
               let newArr = []
               if (ascean.hardcore) {
                 let scoreData = { ascean: ascean.name, score: ascean.high_score, key: index, _id: ascean._id, mastery: ascean.mastery, photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg' };
-                newArr.push(scoreData)
-              } else {
-                console.log("No Hardcore Scores")
-              }
+                newArr.push(scoreData);
+              };
               return (
                   newArr
               );
             });
+            console.log(scores, "SCORES")
             const sortedScores = await scores.sort(compareScores);
             setHighScores(sortedScores.reverse());
             setLoading(false);
         } catch (err: any) {
             setLoading(false);
             console.log(err.message);
-        }
-    }
+        };
+    };
 
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
@@ -168,7 +168,6 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         </Accordion>
         </h6>
         {ascean.map((a: any) => {
-          console.log(a, "THese are the Ascean")
           return (
             <CommunityAscean
                 ascean={a}

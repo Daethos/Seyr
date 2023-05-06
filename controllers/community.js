@@ -38,9 +38,7 @@ async function determineItemType(id) {
 
 async function focus(req, res) {
     try {
-        let ascean = await Ascean.findById({ _id: req.params.id })
-                                 .populate('user')
-                                 .exec();
+        let ascean = await Ascean.findById({ _id: req.params.id }).populate('user').exec();
         let fields = [
             'weapon_one',
             'weapon_two',
@@ -69,8 +67,7 @@ async function focus(req, res) {
 
 async function indexCommunity(req, res) {
     try {
-        console.log(req.user._id, '<- Index Function in Community Controller')
-        const asceanCrew = await Ascean.find({ visibility: 'public' });
+        const asceanCrew = await Ascean.find({ visibility: 'public', alive: true });
         res.status(200).json({ data: asceanCrew });
     } catch (err) {
         res.status(400).json({ err });

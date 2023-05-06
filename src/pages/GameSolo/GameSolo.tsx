@@ -588,8 +588,7 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (gameState.saveExp === false) return;
-        console.log(asceanState, 'Ascean State');
+        if (!gameState.saveExp) return;
         saveExperience();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
@@ -597,9 +596,7 @@ const GameSolo = ({ user }: GameProps) => {
     }, [asceanState, gameState.saveExp]);
 
     const saveExperience = async () => {
-        if (gameState.saveExp === false || state.player_win === false) {
-            return;
-        };
+        if (!gameState.saveExp || !state.player_win) return;
         try {
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
             const response = await asceanAPI.saveExperience(asceanState);
@@ -673,30 +670,27 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (state.playerGrapplingWin) {
-            handlePlayerGrapplingWin();
-            setTimeout(() => {
-                gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
-                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
-                dispatch({ type: ACTIONS.RESET_GRAPPLING_WIN, payload: false });
-            }, 6000);
-        }
+        if (!state.playerGrapplingWin) return;
+        handlePlayerGrapplingWin();
+        setTimeout(() => {
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            dispatch({ type: ACTIONS.RESET_GRAPPLING_WIN, payload: false });
+        }, 6000);
     }, [state.playerGrapplingWin]);
 
     useEffect(() => {
-        if (state.player_luckout) {
-          handlePlayerLuckout();
-          setTimeout(() => {
+        if (!state.player_luckout)
+        handlePlayerLuckout();
+        setTimeout(() => {
             gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
-          }, 6000);
-        }
+        }, 6000);
     }, [state.player_luckout]);   
 
     useEffect(() => {
         if (!gameState.playerBlessed) return;
-        console.log("Blessing Player", gameState.playerBlessed)
         getAsceanOnly();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: false });
@@ -704,52 +698,37 @@ const GameSolo = ({ user }: GameProps) => {
     }, [gameState, gameState.playerBlessed]);
 
     useEffect(() => {
-        if (gameState.itemSaved === false) return;
-        console.log("Saving Item", gameState.itemSaved)
+        if (!gameState.itemSaved) return;
         getOnlyInventory();
-        return () => {
-            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
-        };
+        return () => gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
     }, [gameState, gameState.itemSaved]);
 
     useEffect(() => {
-        if (gameState.eqpSwap === false) return;
-        console.log("Swapping Equipment", gameState.eqpSwap)
+        if (!gameState.eqpSwap) return;
         getAsceanAndInventory();
-        return () => {
-            gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
-        };
+        return () => gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
     }, [gameState, gameState.eqpSwap]);
 
     useEffect(() => {
-        if (gameState.removeItem === false) return;
-        console.log("Removing Item", gameState.removeItem)
+        if (!gameState.removeItem) return;
         getOnlyInventory();
-        return () => {
-            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
-        };
+        return () => gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
     }, [gameState, gameState.removeItem]);
 
     useEffect(() => {
-        if (gameState.repositionInventory === false) return;
-        console.log("Repositioning Inventory", gameState.repositionInventory)
+        if (!gameState.repositionInventory) return;
         getOnlyInventory();
-        return () => {
-            gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
-        };
+        return () => gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
     }, [gameState, gameState.repositionInventory]);
 
     useEffect(() => {
-        if (gameState.purchasingItem === false) return;
-        console.log("Purchasing Item", gameState.purchasingItem)
+        if (!gameState.purchasingItem) return;
         getOnlyInventory();
-        return () => {
-            gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
-        };
+        return () => gameDispatch({ type: GAME_ACTIONS.SET_PURCHASING_ITEM, payload: false });
     }, [gameState, gameState.purchasingItem]);
 
     useEffect(() => {
-        if (gameState.saveQuest === false) return;
+        if (!gameState.saveQuest) return;
         getAsceanQuests();
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SAVE_QUEST, payload: false });
@@ -782,7 +761,6 @@ const GameSolo = ({ user }: GameProps) => {
     const getAsceanQuests = async () => {
         try {
             const firstResponse = await asceanAPI.getAsceanQuests(asceanID);
-            console.log(firstResponse, "Ascean Inventory ?")
             gameDispatch({ type: GAME_ACTIONS.SET_QUESTS, payload: firstResponse });
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
@@ -797,7 +775,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getAsceanOnly = async () => {
         try {
-            console.log("Getting Ascean");
             const response = await asceanAPI.getAsceanStats(asceanID);
             dispatch({
                 type: ACTIONS.SET_PLAYER_SLICK,
@@ -811,7 +788,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     const getAsceanAndInventory = async () => {
         try {
-            console.log("Getting Ascean and Inventory");
             const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(asceanID);
@@ -828,7 +804,6 @@ const GameSolo = ({ user }: GameProps) => {
     const getOnlyInventory = async () => {
         try {
             const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
-            console.log(firstResponse, "Ascean Inventory ?")
             gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {

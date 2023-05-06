@@ -64,7 +64,6 @@ const UserModal = ({ user, setUser }: Props) => {
         <FloatingLabel style={{ color: "black" }} label={user.username} className="mb-3" controlId='floatingInput'>
             <Form.Control
                 type='name'
-                // name='chatName'
                 placeholder='Group Chat Name'
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
@@ -76,7 +75,6 @@ const UserModal = ({ user, setUser }: Props) => {
         <FloatingLabel style={{ color: "black" }} label={user.bio} className="mb-3" controlId='floatingInput'>
             <Form.Control
                 type='name'
-                // name='chatName'
                 placeholder='User Bio'
                 value={newBio}
                 onChange={(e) => setNewBio(e.target.value)}
@@ -87,7 +85,6 @@ const UserModal = ({ user, setUser }: Props) => {
         <FloatingLabel style={{ color: "black" }} label={`Email Address`} className="mb-3" controlId='floatingInput'>
             <Form.Control
                 type='name'
-                // name='chatName'
                 placeholder='Email Address'
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
@@ -95,14 +92,11 @@ const UserModal = ({ user, setUser }: Props) => {
         </FloatingLabel>
         </Form.Group> */}
         <br />
-        {
-            loadingBio 
-            ? 
+        { loadingBio ? 
             <div className='mb-2' style={{ float: 'left', marginRight: 10 + '%' }}>
                 <Loading Modal={true} /> 
             </div>
-            
-            : 
+        : 
             <Button variant='outline-warning' 
             onClick={handleBio}
             className=''
@@ -117,14 +111,11 @@ const UserModal = ({ user, setUser }: Props) => {
                 Update Bio
             </Button>
         }
-        {
-            loading 
-            ? 
+        { loading ? 
             <div className='mb-2' style={{ float: 'right', marginRight: 10 + '%' }}>
                 <Loading Modal={true} /> 
             </div>
-            
-            : 
+        : 
             <Button variant='outline-warning' 
             onClick={handleUser}
             className=''

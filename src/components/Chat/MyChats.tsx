@@ -38,7 +38,7 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
     const getLastMessageColor = (latestMessages: any, userId: any) => {
         if (!latestMessages) return;
         if (latestMessages.sender._id === userId) {
-            return 'green';
+            return '#fdf6d8';
         } else if (!latestMessages.readBy.includes(userId)) {
             return 'gold';
         } else {
