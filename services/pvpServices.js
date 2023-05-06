@@ -2,7 +2,6 @@ const StatusEffect = require('./faithServices.js');
 
 const statusEffectCheck = async (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
-        // console.log(effect.name, effect.tick.end, combatData.combatRound, combatData.player_win, combatData.enemy_win, 'Player Effect in statusCheck, Checking: End Tick, Combat Round, Player Win, enemy Win');
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.enemy_weapons.find(weapon => weapon.name === effect.debuffTarget);
@@ -40,9 +39,9 @@ const statusEffectCheck = async (combatData) => {
                     if (key in combatData.enemy_defense) {
                         // console.log(effect.effect, key, 'Debuff Effect Expires in Defense Loop');
                         combatData.enemy_defense[key] += effect.effect[key] * effect.activeStacks;
-                    }
-                }
-            }
+                    };
+                };
+            };
             // console.log(effect.name, effect.prayer, 'Player Effect Expiring');
             return false;
         } else { // The Effect Persists
@@ -51,79 +50,84 @@ const statusEffectCheck = async (combatData) => {
                     if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                const modifiedValue = (effect.effect[key] + combatData.weapons[matchingWeaponIndex][key]).toFloat(2);
+                                combatData.weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
+                                // combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
                             } else {
-                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
-                            }
-                        }
+                                const modifiedValue = (effect.effect[key] + combatData.weapons[matchingWeaponIndex][key]).toFloat(2);
+                                combatData.weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
+                                // combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                            };
+                        };
                         for (let key in combatData.player_defense) {
-                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
-                        }
-                    }
-                    // console.log(effect.name, effect.prayer, 'Player Buff Ticking');
+                            if (effect.effect[key]) {
+                                const modifiedValue = (effect.effect[key] + combatData.player_defense[key]).toFloat(2);
+                                combatData.player_defense[key] = parseFloat(modifiedValue);
+                                // combatData.player_defense[key] += effect.effect[key];
+                            }; 
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
                     if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
                         effect.debuffTarget = combatData.enemy_weapons[0].name;
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                combatData.enemy_weapons[0][key] -= effect.effect[key];
+                                const modifiedValue = (combatData.enemy_weapons[matchingDebuffTargetIndex][key] - effect.effect[key]).toFloat(2);
+                                combatData.enemy_weapons[matchingDebuffTargetIndex][key] = parseFloat(modifiedValue);
+                                // combatData.enemy_weapons[0][key] -= effect.effect[key];
                             } else {
-                                combatData.enemy_weapons[0][key] += effect.effect[key];
-                            }
-                        }
+                                const modifiedValue = (combatData.enemy_weapons[matchingDebuffTargetIndex][key] + effect.effect[key]).toFloat(2);
+                                combatData.enemy_weapons[matchingDebuffTargetIndex][key] = parseFloat(modifiedValue);
+                                // combatData.enemy_weapons[0][key] += effect.effect[key];
+                            };
+                        };
                         for (let key in combatData.enemy_defense) { // Buff
                             if (effect.effect[key]) {
-                                combatData.enemy_defense[key] -= effect.effect[key];
-                            }
-                        }
-                    }
-                    // console.log(effect.name, effect.prayer, 'enemy Debuff Ticking');
+                                const modifiedValue = (combatData.enemy_defense[key] - effect.effect[key]).toFloat(2);
+                                combatData.enemy_defense[key] = parseFloat(modifiedValue);
+                                // combatData.enemy_defense[key] -= effect.effect[key];
+                            };
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
                     combatData.new_enemy_health -= effect.effect.damage * 0.33;
                     combatData.current_enemy_health -= effect.effect.damage * 0.33;
-
-                    // console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
 
                     if (combatData.current_enemy_health < 0 || combatData.new_enemy_health < 0) {
                         combatData.new_enemy_health = 0;
                         combatData.current_enemy_health = 0;
                         combatData.enemy_win = false;
                         combatData.player_win = true;
-                    }
+                    };
                     break;
-                }
+                };
                 case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
                     combatData.new_player_health += effect.effect.healing * 0.33;
                     combatData.current_player_health += effect.effect.healing * 0.33;
 
                     if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
                         combatData.enemy_win = false;
-                    }
-                    // console.log(effect.name, effect.prayer, 'Heal Ticking');
+                    };
                     break;
-                }
-
-            }
+                };
+            };
             return true;
-        }
+        };
     });
 
     combatData.enemyEffects = combatData.enemyEffects.filter(effect => {
-        // console.log(effect.name, effect.tick.end, combatData.combatRound, combatData.player_win, combatData.enemy_win, 'enemy Effect in statusCheck, Checking: End Tick, Combat Round, Player Win, enemy Win')
         const matchingWeapon = combatData.enemy_weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.enemy_weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
         if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.enemy_win === true) { // The Effect Expires
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
-                // console.log('enemy Buff Effect Expires');
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
-                        // console.log(combatData.enemy_weapons[matchingWeaponIndex], effect.effect, key, 'Buff Effect Expires in Effect Loop');
                         combatData.enemy_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
                     } else {
                         combatData.enemy_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
@@ -156,15 +160,14 @@ const statusEffectCheck = async (combatData) => {
                                 combatData.enemy_weapons[matchingWeaponIndex][key] += effect.effect[key];
                             } else {
                                 combatData.enemy_weapons[matchingWeaponIndex][key] -= effect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.enemy_defense) {
                             if (effect.effect[key]) combatData.enemy_defense[key] += effect.effect[key];
-                        }
-                    }
-                    // console.log(effect.name, effect.prayer, 'enemy Buff Ticking');
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Debuff': { // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
                     if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
                         effect.debuffTarget = combatData.weapons[0].name;
@@ -173,59 +176,55 @@ const statusEffectCheck = async (combatData) => {
                                 combatData.weapons[0][key] -= effect.effect[key];
                             } else {
                                 combatData.weapons[0][key] += effect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.player_defense) { // Buff
                             if (effect.effect[key]) {
                                 combatData.player_defense[key] -= effect.effect[key];
-                            }
-                        }
-                    }
-                    // console.log(effect.name, effect.prayer, 'enemy Debuff Ticking');
+                            };
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
                     combatData.new_player_health -= effect.effect.damage * 0.33;
                     combatData.current_player_health -= effect.effect.damage * 0.33;
-
-                    // console.log(effect.name, effect.prayer, 'Damage Effect Ticking');
 
                     if (combatData.current_player_health < 0 || combatData.new_player_health < 0) {
                         combatData.new_player_health = 0;
                         combatData.current_player_health = 0;
                         combatData.player_win = false;
                         combatData.enemy_win = true;
-                    }
+                    };
                     break;
-                }
+                };
                 case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
                     combatData.new_enemy_health += effect.effect.healing * 0.33;
                     combatData.current_enemy_health += effect.effect.healing * 0.33;
 
                     if (combatData.current_enemy_health > 0 || combatData.new_enemy_health > 0) {
                         combatData.player_win = false;
-                    }
-                    // console.log(effect.name, effect.prayer, 'Heal Ticking');
+                    };
                     break;
-                }
-            }
-        }
+                };
+            };
+        };
         return true;
     });
 
     if (combatData.new_player_health > 0) {
         combatData.enemy_win = false;
-    }
+    };
     if (combatData.new_enemy_health > 0) {
         combatData.player_win = false;
-    }
+    };
     return combatData;
-}
+};
 
 const faithFinder = async (combatData, player_action, enemy_action) => { // The influence will add a chance to have a special effect occur
     if (combatData.player_win === true || combatData.enemy_win === true) {
         return
-    }
+    };
     
     let faith_number = Math.floor(Math.random() * 101);
     let faith_number_two = Math.floor(Math.random() * 101);
@@ -237,155 +236,155 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
     let enemy_faith_mod_one = 0;
     let enemy_faith_mod_two = 0;
 
-    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance)
-    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage)
+    combatData.weapons[0].critical_chance = Number(combatData.weapons[0].critical_chance);
+    combatData.weapons[0].critical_damage = Number(combatData.weapons[0].critical_damage);
 
-    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance)
-    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage)
+    combatData.weapons[1].critical_chance = Number(combatData.weapons[1].critical_chance);
+    combatData.weapons[1].critical_damage = Number(combatData.weapons[1].critical_damage);
 
-    combatData.enemy_weapons[0].critical_chance = Number(combatData.enemy_weapons[0].critical_chance)
-    combatData.enemy_weapons[0].critical_damage = Number(combatData.enemy_weapons[0].critical_damage)
+    combatData.enemy_weapons[0].critical_chance = Number(combatData.enemy_weapons[0].critical_chance);
+    combatData.enemy_weapons[0].critical_damage = Number(combatData.enemy_weapons[0].critical_damage);
 
-    combatData.enemy_weapons[1].critical_chance = Number(combatData.enemy_weapons[1].critical_chance)
-    combatData.enemy_weapons[1].critical_damage = Number(combatData.enemy_weapons[1].critical_damage)
+    combatData.enemy_weapons[1].critical_chance = Number(combatData.enemy_weapons[1].critical_chance);
+    combatData.enemy_weapons[1].critical_damage = Number(combatData.enemy_weapons[1].critical_damage);
 
     if (combatData.player.faith === 'devoted' && combatData.weapons[0].influences[0] === 'Daethos') {
         faith_number += 5;
         faith_number_two += 5;
         faith_mod_one += 5;
         faith_mod_two += 5;
-    }
+    };
     if (combatData.player.faith === 'adherent' && combatData.weapons[0].influences[0] !== 'Daethos') {
         faith_number += 5;
         faith_number_two += 5;
         faith_mod_one += 5;
         faith_mod_two += 5;
-    }
+    };
 
     switch (combatData.weapons[0].rarity) {
         case 'Common': {
             faith_number += 1;
             faith_mod_one += 1;
             break;
-        }
+        };
         case 'Uncommon': {
             faith_number += 2;
             faith_mod_one += 2;
             break;
-        }
+        };
         case 'Rare': {
             faith_number += 3;
             faith_mod_one += 3;
             break;
-        }
+        };
         case 'Epic': {
             faith_number += 5;
             faith_mod_one += 5;
             break;
-        }
+        };
         case 'Legendary': {
             faith_number += 10;
             faith_mod_one += 10;
-        }
+        };
         default: {
             faith_number += 0;
             faith_mod_one += 0;
             break;
-        }
-    }
+        };
+    };
     switch (combatData.weapons[1].rarity) {
         case 'Common': {
             faith_number_two += 1;
             faith_mod_two += 1;
             break;
-        }
+        };
         case 'Uncommon': {
             faith_number_two += 2;
             faith_mod_two += 2;
             break;
-        }
+        };
         case 'Rare': {
             faith_number_two += 3;
             faith_mod_two += 3;
             break;
-        }
+        };
         case 'Epic': {
             faith_number_two += 5;
             faith_mod_two += 5;
             break;
-        }
+        };
         case 'Legendary': {
             faith_number_two += 10;
             faith_mod_two += 10;
-        }
+        };
         default: {
             faith_number_two += 0;
             faith_mod_two += 0;
             break;
-        }
-    }
+        };
+    };
     switch (combatData.enemy_weapons[0].rarity) {
         case 'Common': {
             enemy_faith_number += 1;
             enemy_faith_mod_one += 1;
             break;
-        }
+        };
         case 'Uncommon': {
             enemy_faith_number += 2;
             enemy_faith_mod_one += 2;
             break;
-        }
+        };
         case 'Rare': {
             enemy_faith_number += 3;
             enemy_faith_mod_one += 3;
             break;
-        }
+        };
         case 'Epic': {
             enemy_faith_number += 5;
             enemy_faith_mod_one += 5;
             break;
-        }
+        };
         case 'Legendary': {
             enemy_faith_number += 10;
             enemy_faith_mod_one += 10;
-        }
+        };
         default: {
             enemy_faith_number += 0;
             enemy_faith_mod_one += 0;
             break;
-        }
-    }
+        };
+    };
     switch (combatData.enemy_weapons[1].rarity) {
         case 'Common': {
             enemy_faith_number_two += 1;
             enemy_faith_mod_two += 1;
             break;
-        }
+        };
         case 'Uncommon': {
             enemy_faith_number_two += 2;
             enemy_faith_mod_two += 2;
             break;
-        }
+        };
         case 'Rare': {
             enemy_faith_number_two += 3;
             enemy_faith_mod_two += 3;
             break;
-        }
+        };
         case 'Epic': {
             enemy_faith_number_two += 5;
             enemy_faith_mod_two += 5;
             break;
-        }
+        };
         case 'Legendary': {
             enemy_faith_number_two += 10;
             enemy_faith_mod_two += 10;
-        }
+        };
         default: {
             enemy_faith_number_two += 0;
             enemy_faith_mod_two += 0;
             break;
-        }
-    }
+        };
+    };
 
     if (combatData.weapons[0].influences[0] === combatData.player.amulet.influences[0]) {
         if (combatData.player.amulet.rarity === 'Common') {
@@ -400,8 +399,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.player.amulet.rarity === 'Epic') {
             faith_number += 5;
             faith_mod_one +=5;
-        }
-    }
+        };
+    };
     if (combatData.weapons[1].influences[0] === combatData.player.amulet.influences[0]) {
         if (combatData.player.amulet.rarity === 'Common') {
             faith_number_two += 1;
@@ -430,8 +429,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.enemy.amulet.rarity === 'Epic') {
             enemy_faith_number += 5;
             enemy_faith_mod_one +=5;
-        }
-    }
+        };
+    };
     if (combatData.enemy_weapons[1].influences[0] === combatData.enemy.amulet.influences[0]) {
         if (combatData.enemy.amulet.rarity === 'Common') {
             enemy_faith_number_two += 1;
@@ -445,8 +444,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.enemy.amulet.rarity === 'Epic') {
             enemy_faith_number_two += 5;
             enemy_faith_mod_two +=5;
-        }
-    }
+        };
+    };
     if (combatData.weapons[0].influences[0] === combatData.player.trinket.influences[0]) {
         if (combatData.player.amulet.rarity === 'Common') {
             faith_number += 1;
@@ -460,8 +459,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.player.amulet.rarity === 'Epic') {
             faith_number += 5;
             faith_mod_one +=5;
-        }
-    }
+        };
+    };
     if (combatData.weapons[1].influences[0] === combatData.player.trinket.influences[0]) {
         if (combatData.player.amulet.rarity === 'Common') {
             faith_number_two += 1;
@@ -475,8 +474,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.player.amulet.rarity === 'Epic') {
             faith_number_two += 5;
             faith_mod_two +=5;
-        }
-    }
+        };
+    };
     if (combatData.enemy_weapons[0].influences[0] === combatData.enemy.trinket.influences[0]) {
         if (combatData.enemy.amulet.rarity === 'Common') {
             enemy_faith_number += 1;
@@ -490,8 +489,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.enemy.amulet.rarity === 'Epic') {
             enemy_faith_number += 5;
             enemy_faith_mod_one +=5;
-        }
-    }
+        };
+    };
     if (combatData.enemy_weapons[1].influences[0] === combatData.enemy.trinket.influences[0]) {
         if (combatData.enemy.amulet.rarity === 'Common') {
             enemy_faith_number_two += 1;
@@ -505,8 +504,8 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         } else if (combatData.enemy.amulet.rarity === 'Epic') {
             enemy_faith_number_two += 5;
             enemy_faith_mod_two +=5;
-        }
-    }
+        };
+    };
 
 
     if (combatData.enemy.faith === 'devoted' && combatData.enemy_weapons[0].influences[0] === 'Daethos') {
@@ -514,33 +513,21 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
         enemy_faith_number_two += 5;
         enemy_faith_mod_one += 5;
         enemy_faith_mod_two += 5;
-    }
+    };
     if (combatData.enemy.faith === 'adherent' && combatData.enemy_weapons[0].influences[0] !== 'Daethos') {
         enemy_faith_number += 5;
         enemy_faith_number_two += 5;
         enemy_faith_mod_one += 5;
         enemy_faith_mod_two += 5;
-    }
-    // console.log(combatData.weapons[0].influences[0], combatData.weapons[1].influences[0]);
-    // console.log(combatData.player.name, `'s Faith #`, faith_number, `Faith #2`, faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
-    // console.log(combatData.player.name, `'s Faith Mod #`, faith_mod_one, `Faith Mod #2`, faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
-
-    // console.log(combatData.enemy_weapons[0].influences[0], combatData.enemy_weapons[1].influences[0]);
-    // console.log(combatData.enemy.name, `'s Faith #`, enemy_faith_number, `Faith #2`, enemy_faith_number_two, `Dual Wielding?`, combatData.dual_wielding);
-    // console.log(combatData.enemy.name, `'s Faith Mod #`, enemy_faith_mod_one, `Faith Mod #2`, enemy_faith_mod_two, `Dual Wielding?`, combatData.dual_wielding);
-
-
-    //TODO:FIXME: START OF CODE TESTING
+    };
 
     if (faith_number > 90) {
         combatData.religious_success = true;
         let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
-        // Handles the creation of a new Status Effect if it doesn't already exist
         if (!existingEffect) {
             existingEffect = new StatusEffect(combatData, combatData.player, combatData.enemy, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
             combatData.playerEffects.push(existingEffect);
             combatData.player_influence_description = existingEffect.description;
-            // console.log(existingEffect, 'New Status Effect in Game Services');
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
             existingEffect.tick.end += 2;
             existingEffect.activeStacks += 1;
@@ -553,37 +540,35 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                             combatData.weapons[0][key] += existingEffect.effect[key];
                         } else {
                             combatData.weapons[0][key] -= existingEffect.effect[key];
-                        }
-                    }
+                        };
+                    };
                     for (let key in combatData.player_defense) {
                         if (existingEffect.effect[key]) {
                             combatData.player_defense[key] += existingEffect.effect[key];
-                        }
-                    }
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Damage': {
                     existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                     break;
-                }
-            }
+                };
+            };
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
             existingEffect.activeRefreshes += 1;
             combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
-        }    
-    }
+        };
+    };
     if (combatData.dual_wielding === true) {
         if (faith_number_two > 90) {
             combatData.religious_success = true;
             let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
-            // Handles the creation of a new Status Effect if it doesn't already exist
             if (!existingEffect) {
                 existingEffect = new StatusEffect(combatData, combatData.player, combatData.enemy, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
                 combatData.playerEffects.push(existingEffect);
                 combatData.player_influence_description_two = existingEffect.description;
-                // console.log(existingEffect, 'New Status Effect in Game Services');
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
                 existingEffect.activeStacks += 1;
@@ -596,37 +581,35 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                                 combatData.weapons[1][key] += existingEffect.effect[key];
                             } else {
                                 combatData.weapons[1][key] -= existingEffect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.player_defense) {
                             if (existingEffect.effect[key]) {
                                 combatData.player_defense[key] += existingEffect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         break;
-                    }
+                    };
                     case 'Damage': {
                         existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                         break;
-                    }
-                }
+                    };
+                };
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.activeRefreshes += 1;
                 combatData.player_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
-            }    
-        }
-    }
+            };
+        };
+    };
     if (enemy_faith_number > 90) {
         combatData.enemy_religious_success = true;
         let existingEffect = combatData.enemyEffects.find(effect => effect.name === `Gift of ${combatData.enemy_weapons[0].influences[0]}` && effect.prayer === combatData.enemyBlessing);   
-        // Handles the creation of a new Status Effect if it doesn't already exist
         if (!existingEffect) {
             existingEffect = new StatusEffect(combatData, combatData.enemy, combatData.player, combatData.enemy_weapons[0], combatData.enemy_attributes, combatData.enemyBlessing);
             combatData.enemyEffects.push(existingEffect);
             combatData.enemy_influence_description = existingEffect.description;
-            // console.log(existingEffect, 'New Status Effect in Game Services');
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
             existingEffect.tick.end += 2;
             existingEffect.activeStacks += 1;
@@ -639,37 +622,35 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                             combatData.enemy_weapons[0][key] += existingEffect.effect[key];
                         } else {
                             combatData.enemy_weapons[0][key] -= existingEffect.effect[key];
-                        }
-                    }
+                        };
+                    };
                     for (let key in combatData.enemy_defense) {
                         if (existingEffect.effect[key]) {
                             combatData.enemy_defense[key] += existingEffect.effect[key];
-                        }
-                    }
+                        };
+                    };
                     break;
-                }
+                };
                 case 'Damage': {
                     existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                     break;
-                }
-            }
+                };
+            };
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.enemy.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.enemy.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
             existingEffect.activeRefreshes += 1;
             combatData.enemy_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
-        }    
-    }
+        };
+    };
     if (combatData.enemy_dual_wielding === true) {
         if (enemy_faith_number_two > 90) {
             combatData.enemy_religious_success = true;
             let existingEffect = combatData.enemyEffects.find(effect => effect.name === `Gift of ${combatData.enemy_weapons[1].influences[0]}` && effect.prayer === combatData.enemyBlessing);   
-            // Handles the creation of a new Status Effect if it doesn't already exist
             if (!existingEffect) {
                 existingEffect = new StatusEffect(combatData, combatData.enemy, combatData.player, combatData.enemy_weapons[1], combatData.enemy_attributes, combatData.enemyBlessing);
                 combatData.enemyEffects.push(existingEffect);
                 combatData.enemy_influence_description_two = existingEffect.description;
-                // console.log(existingEffect, 'New Status Effect in Game Services');
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
                 existingEffect.activeStacks += 1;
@@ -682,31 +663,31 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                                 combatData.enemy_weapons[1][key] += existingEffect.effect[key];
                             } else {
                                 combatData.enemy_weapons[1][key] -= existingEffect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         for (let key in combatData.enemy_defense) {
                             if (existingEffect.effect[key]) {
                                 combatData.enemy_defense[key] += existingEffect.effect[key];
-                            }
-                        }
+                            };
+                        };
                         break;
-                    }
+                    };
                     case 'Damage': {
                         existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                         break;
-                    }
-                }
+                    };
+                };
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.enemy.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.enemy.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.activeRefreshes += 1;
                 combatData.enemy_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
-            }    
-        }
-    }
+            };
+        };
+    };
 
-    return combatData
-}
+    return combatData;
+};
 
 // ================================= enemy COMPILER FUNCTIONS ================================== \\
 

@@ -68,7 +68,7 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
                                 // combatData.computer_weapons[0][key] -= effect.effect[key];
-                                const modifiedValue = (effect.effect[key] - combatData.computer_weapons[0][key]).toFixed(2);
+                                const modifiedValue = (combatData.computer_weapons[0][key] - effect.effect[key]).toFixed(2);
                                 combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
                             } else {
                                 // combatData.computer_weapons[0][key] += effect.effect[key];
@@ -79,7 +79,7 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in combatData.computer_defense) { // Buff
                             if (effect.effect[key]) {
                                 // combatData.computer_defense[key] -= effect.effect[key];
-                                const modifiedValue = (effect.effect[key] - combatData.computer_defense[key]).toFixed(2);
+                                const modifiedValue = (combatData.computer_defense[key] - effect.effect[key]).toFixed(2);
                                 combatData.computer_defense[key] = parseFloat(modifiedValue);
                             };
                         };
@@ -114,7 +114,6 @@ const statusEffectCheck = async (combatData) => {
     });
 
     combatData.computerEffects = combatData.computerEffects.filter(effect => {
-        // console.log(effect.name, effect.tick.end, combatData.combatRound, combatData.player_win, combatData.computer_win, 'Computer Effect in statusCheck, Checking: End Tick, Combat Round, Player Win, Computer Win')
         const matchingWeapon = combatData.computer_weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.computer_weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
@@ -174,7 +173,7 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
                                 // combatData.weapons[0][key] -= effect.effect[key];
-                                const modifiedValue = (effect.effect[key] - combatData.weapons[0][key]).toFixed(2);
+                                const modifiedValue = (combatData.weapons[0][key] - effect.effect[key]).toFixed(2);
                                 combatData.weapons[0][key] = parseFloat(modifiedValue);
                             } else {
                                 // combatData.weapons[0][key] += effect.effect[key];
@@ -185,7 +184,7 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in combatData.player_defense) { // Buff
                             if (effect.effect[key]) {
                                 // combatData.player_defense[key] -= effect.effect[key];
-                                const modifiedValue = (effect.effect[key] - combatData.player_defense[key]).toFixed(2);
+                                const modifiedValue = (combatData.player_defense[key] - effect.effect[key]).toFixed(2);
                                 combatData.player_defense[key] = parseFloat(modifiedValue);
                             };
                         };
@@ -527,12 +526,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     if (faith_number > 90) {
         combatData.religious_success = true;
         let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
-        // Handles the creation of a new Status Effect if it doesn't already exist
         if (!existingEffect) {
             existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
             combatData.playerEffects.push(existingEffect);
             combatData.player_influence_description = existingEffect.description;
-            // console.log(existingEffect, 'New Status Effect in Game Services');
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
             existingEffect.tick.end += 2;
             existingEffect.activeStacks += 1;
@@ -542,17 +539,24 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 case 'Buff': {
                     for (let key in existingEffect.effect) {
                         if (existingEffect.effect[key] && key !== 'dodge') {
-                            combatData.weapons[0][key] += existingEffect.effect[key];
-                            parseFloat(combatData.weapons[0][key].toFixed(2));
+                            const modifiedValue = (existingEffect.effect[key] + combatData.weapons[0][key]).toFixed(2);
+                            combatData.weapons[0][key] = parseFloat(modifiedValue);
+
+                            // combatData.weapons[0][key] += existingEffect.effect[key];
+                            // parseFloat(combatData.weapons[0][key].toFixed(2));
                         } else {
-                            combatData.weapons[0][key] -= existingEffect.effect[key];
-                            parseFloat(combatData.weapons[0][key].toFixed(2));
+                            const modifiedValue = (existingEffect.effect[key] - combatData.weapons[0][key]).toFixed(2);
+                            combatData.weapons[0][key] = parseFloat(modifiedValue);
+                            // combatData.weapons[0][key] -= existingEffect.effect[key];
+                            // parseFloat(combatData.weapons[0][key].toFixed(2));
                         };
                     };
                     for (let key in combatData.player_defense) {
                         if (existingEffect.effect[key]) {
-                            combatData.player_defense[key] += existingEffect.effect[key];
-                            parseFloat(combatData.player_defense[key].toFixed(2));
+                            const modifiedValue = (existingEffect.effect[key] + combatData.player_defense[key]).toFixed(2);
+                            combatData.player_defense[key] = parseFloat(modifiedValue);
+                            // combatData.player_defense[key] += existingEffect.effect[key];
+                            // parseFloat(combatData.player_defense[key].toFixed(2));
                         };
                     };
                     break;
@@ -573,12 +577,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (faith_number_two > 90) {
             combatData.religious_success = true;
             let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
-            // Handles the creation of a new Status Effect if it doesn't already exist
             if (!existingEffect) {
                 existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
                 combatData.playerEffects.push(existingEffect);
                 combatData.player_influence_description_two = existingEffect.description;
-                // console.log(existingEffect, 'New Status Effect in Game Services');
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
                 existingEffect.activeStacks += 1;
@@ -588,17 +590,23 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
                             if (existingEffect.effect[key] && key !== 'dodge') {
-                                combatData.weapons[1][key] += existingEffect.effect[key];
-                                parseFloat(combatData.weapons[1][key].toFixed(2));
+                                const modifiedValue = (existingEffect.effect[key] + combatData.weapons[1][key]).toFixed(2);
+                                combatData.weapons[1][key] = parseFloat(modifiedValue);
+                                // combatData.weapons[1][key] += existingEffect.effect[key];
+                                // parseFloat(combatData.weapons[1][key].toFixed(2));
                             } else {
-                                combatData.weapons[1][key] -= existingEffect.effect[key];
-                                parseFloat(combatData.weapons[1][key].toFixed(2));
+                                const modifiedValue = (existingEffect.effect[key] - combatData.weapons[1][key]).toFixed(2);
+                                combatData.weapons[1][key] = parseFloat(modifiedValue);
+                                // combatData.weapons[1][key] -= existingEffect.effect[key];
+                                // parseFloat(combatData.weapons[1][key].toFixed(2));
                             };
                         };
                         for (let key in combatData.player_defense) {
                             if (existingEffect.effect[key]) {
-                                combatData.player_defense[key] += existingEffect.effect[key];
-                                parseFloat(combatData.player_defense[key].toFixed(2));
+                                const modifiedValue = (existingEffect.effect[key] + combatData.player_defense[key]).toFixed(2);
+                                combatData.player_defense[key] = parseFloat(modifiedValue);
+                                // combatData.player_defense[key] += existingEffect.effect[key];
+                                // parseFloat(combatData.player_defense[key].toFixed(2));
                             };
                         };
                         break;
@@ -619,7 +627,6 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     if (computer_faith_number > 90) {
         combatData.computer_religious_success = true;
         let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[0].influences[0]}` && effect.prayer === combatData.computerBlessing);   
-        // Handles the creation of a new Status Effect if it doesn't already exist
         if (!existingEffect) {
             existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
             combatData.computerEffects.push(existingEffect);
@@ -633,17 +640,23 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 case 'Buff': {
                     for (let key in existingEffect.effect) {
                         if (existingEffect.effect[key] && key !== 'dodge') {
-                            combatData.computer_weapons[0][key] += existingEffect.effect[key];
-                            parseFloat(combatData.computer_weapons[0][key].toFixed(2));
+                            const modifiedValue = (existingEffect.effect[key] + combatData.computer_weapons[0][key]).toFixed(2);
+                            combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
+                            // combatData.computer_weapons[0][key] += existingEffect.effect[key];
+                            // parseFloat(combatData.computer_weapons[0][key].toFixed(2));
                         } else {
-                            combatData.computer_weapons[0][key] -= existingEffect.effect[key];
-                            parseFloat(combatData.computer_weapons[0][key].toFixed(2));
+                            const modifiedValue = (existingEffect.effect[key] - combatData.computer_weapons[0][key]).toFixed(2);
+                            combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
+                            // combatData.computer_weapons[0][key] -= existingEffect.effect[key];
+                            // parseFloat(combatData.computer_weapons[0][key].toFixed(2));
                         };
                     };
                     for (let key in combatData.computer_defense) {
                         if (existingEffect.effect[key]) {
-                            combatData.computer_defense[key] += existingEffect.effect[key];
-                            parseFloat(combatData.computer_defense[key].toFixed(2));
+                            const modifiedValue = (existingEffect.effect[key] + combatData.computer_defense[key]).toFixed(2);
+                            combatData.computer_defense[key] = parseFloat(modifiedValue);
+                            // combatData.computer_defense[key] += existingEffect.effect[key];
+                            // parseFloat(combatData.computer_defense[key].toFixed(2));
                         };
                     };
                     break;
@@ -664,12 +677,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (computer_faith_number_two > 90) {
             combatData.computer_religious_success = true;
             let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
-            // Handles the creation of a new Status Effect if it doesn't already exist
             if (!existingEffect) {
                 existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
                 combatData.computerEffects.push(existingEffect);
                 combatData.computer_influence_description_two = existingEffect.description;
-                // console.log(existingEffect, 'New Status Effect in Game Services');
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
                 existingEffect.activeStacks += 1;
@@ -679,17 +690,23 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
                             if (existingEffect.effect[key] && key !== 'dodge') {
-                                combatData.computer_weapons[1][key] += existingEffect.effect[key];
-                                parseFloat(combatData.computer_weapons[1][key].toFixed(2));
+                                const modifiedValue = (existingEffect.effect[key] + combatData.computer_weapons[1][key]).toFixed(2);
+                                combatData.computer_weapons[1][key] = parseFloat(modifiedValue);
+                                // combatData.computer_weapons[1][key] += existingEffect.effect[key];
+                                // parseFloat(combatData.computer_weapons[1][key].toFixed(2));
                             } else {
-                                combatData.computer_weapons[1][key] -= existingEffect.effect[key];
-                                parseFloat(combatData.computer_weapons[1][key].toFixed(2));
+                                const modifiedValue = (existingEffect.effect[key] - combatData.computer_weapons[1][key]).toFixed(2);
+                                combatData.computer_weapons[1][key] = parseFloat(modifiedValue);
+                                // combatData.computer_weapons[1][key] -= existingEffect.effect[key];
+                                // parseFloat(combatData.computer_weapons[1][key].toFixed(2));
                             };
                         };
                         for (let key in combatData.computer_defense) {
                             if (existingEffect.effect[key]) {
-                                combatData.computer_defense[key] += existingEffect.effect[key];
-                                parseFloat(combatData.computer_defense[key].toFixed(2));
+                                const modifiedValue = (existingEffect.effect[key] + combatData.computer_defense[key]).toFixed(2);
+                                combatData.computer_defense[key] = parseFloat(modifiedValue);
+                                // combatData.computer_defense[key] += existingEffect.effect[key];
+                                // parseFloat(combatData.computer_defense[key].toFixed(2));
                             };
                         };
                         break;
@@ -727,7 +744,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_dodge_weight = 0;
         newData.counter_posture_weight = 0;
         newData.counter_roll_weight = 0;
-    }
+    };
     
     const computerActions = {
         attack: 50 + newData.attack_weight,
@@ -742,7 +759,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         counter_roll: 20 + newData.counter_roll_weight,
         roll_rating: newData.computer_weapons[0].roll,
         armor_rating: (newData.computer_defense.physicalPosture + newData.computer_defense.magicalPosture)  /  4,
-    }
+    };
 
     if (player_action === 'attack') { 
         if (computerActions.roll_rating > computerActions.armor_rating) {
@@ -751,7 +768,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         } else {
             newData.posture_weight += 1.5;
             newData.roll_weight += 0.5;
-        }
+        };
         // newData.roll_weight += 1;
         // newData.posture_weight += 1;
         newData.counter_weight += 1;
@@ -761,7 +778,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_dodge_weight -= 1;
         newData.counter_posture_weight -= 1;
         newData.counter_roll_weight -= 1;
-    }
+    };
     if (player_action === 'counter') { 
         newData.counter_weight += 3;
         // newData.dodge_weight += 2;
@@ -771,7 +788,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_counter_weight += 2;
         newData.counter_attack_weight -= 1;
         newData.counter_dodge_weight -= 1;
-    }
+    };
     if (player_action === 'dodge') { 
         // newData.counter_weight += 2;
         // newData.dodge_weight -= 2;
@@ -780,7 +797,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_counter_weight -= 1;
         newData.counter_posture_weight -= 1;
         newData.counter_roll_weight -= 1;
-    }
+    };
     if (player_action === 'posture') { 
         newData.attack_weight += 2;  
         newData.posture_weight -= 3;
@@ -788,7 +805,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_posture_weight += 3;
         newData.counter_roll_weight -= 2;
         newData.counter_attack_weight -= 1;
-    }
+    };
 
     if (player_action === 'roll') { 
         newData.attack_weight += 2;  
@@ -797,9 +814,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         newData.counter_roll_weight += 3;
         newData.counter_posture_weight -= 2;
         newData.counter_attack_weight -= 1;
-    }
-
-    // const computerAction = async (computerActions) => {
+    };
 
     let actionNumber = Math.floor(Math.random() * 101);
     if (actionNumber > (100 - computerActions.attack)) {
@@ -812,7 +827,7 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
         computer_action = 'posture';
     } else {
         computer_action = 'roll';
-    }
+    };
 
     if (computer_action === 'counter') {
         let counterNumber = Math.floor(Math.random() * 101);
@@ -826,20 +841,18 @@ const computerActionCompiler = async (newData, player_action, computer_action, c
             computer_counter = 'posture';
         } else {
             computer_counter = 'roll';
-        }
+        };
         newData.counter_weight -= 3;
         newData.attack_weight += 1;  
         newData.posture_weight += 1;
         newData.roll_weight += 1;
-    }
+    };
     newData.computer_action = computer_action;
     newData.computer_counter_guess = computer_counter;
-    // console.log(newData.computer_action, newData.computer_counter_guess, 'New Computer Action')
-
     return (
         newData
-    )
-}
+    );
+};
 
 const computerDualWieldCompiler = async (combatData, player_physical_defense_multiplier, player_magical_defense_multiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const player = combatData.player;
@@ -867,14 +880,14 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     computer_weapon_one_magical_damage = resultOne.computer_magical_damage;
     if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
-    }
+    };
     const resultTwo = await computerCriticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.computer_weapons[1], computer_weapon_two_physical_damage, computer_weapon_two_magical_damage);
     combatData = resultTwo.combatData;
     computer_weapon_two_physical_damage = resultTwo.computer_physical_damage;
     computer_weapon_two_magical_damage = resultTwo.computer_magical_damage;
     if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
-    }
+    };
 
     
     // console.log(firstWeaponCrit, secondWeaponCrit)
