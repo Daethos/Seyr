@@ -330,7 +330,7 @@ export const TRAIT_DESCRIPTIONS = {
     "Arbituous": {
         persuasion: {
             description: "you can use your knowledge of ley law to deter enemies from attacking you.",
-            action: "Attempt to convince {enemy.name} of the current ley law as it stands, and their attempt to break it with murder will not stand before a trial by Arbiter, with precedent set execute those outside the ley harming those within, and even if the enemy only bcomes cross with the arbiters, rather than the whole business of murdering--which while they have their merits in a merciless world isn't the angle you're going with. In summation, attempts to harm you are unequally disadvantageous for all parties involved, and you're really prefer getting back on the road if possible.",
+            action: "Attempt to convince {enemy.name} of the current ley law as it stands, and their attempt to break it with murder will not stand before a trial by Arbiter, with precedent set to execute those outside the ley harming those within. And the enemy truly wishes not to acost the achre of the arbiters--last war the Arbiter's entered caused the other side to cede their religiosity entirely, and the reckoning of one's eternal caeren seems a bit harsher than the whole business of simple murdering--which while they have their merits in a merciless world wrought with mischief, isn't really the angle you're going with in order to skirt this combat issue. In summation, attempts to harm you are unequally disadvantageous for all parties involved, and you'd really prefer to getting back on the road, if possible.",
             success: "Success! There shall be no need of murder.",
             failure: "{enemy.name} seems more convinced of that whole murder thing."
         },

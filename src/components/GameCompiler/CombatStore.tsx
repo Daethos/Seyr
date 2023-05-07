@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 
 export interface CombatData {
     player: any;
@@ -151,7 +150,7 @@ export const ACTIONS = {
     PLAYER_REST: 'PLAYER_REST',
     TOGGLED_DAMAGED: 'TOGGLED_DAMAGED',
     SET_GRAPPLING_WIN: 'SET_GRAPPLING_WIN',
-}
+};
 
 export const initialCombatData: CombatData = {
     player: {},
@@ -245,7 +244,7 @@ export const initialCombatData: CombatData = {
     winStreak: 0,
     loseStreak: 0,
     weather: '',
-}
+};
 
 export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
@@ -633,26 +632,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
         default: 
             return state;
     };
-};
-
-export const useInterval = (callback: () => void, delay: number) => {
-    const savedCallback = useRef<() => void>();
-
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
-
-    useEffect(() => {
-        function tick() {
-            if (savedCallback.current) {
-                savedCallback.current();
-            };
-        };
-        if (delay !== null) {
-            let id = setInterval(tick, delay);
-            return () => clearInterval(id);
-        };
-    }, [delay]);
 };
 
 export function shakeScreen(settings: {duration: number, intensity: number}) {

@@ -72,20 +72,20 @@ class StatusEffect {
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {
-                potentialModifiers.physical_damage = playerDamage / 18;
-                potentialModifiers.magical_damage = playerDamage / 18;
-                potentialModifiers.physical_penetration = playerDamage / 18;
-                potentialModifiers.magical_penetration = playerDamage / 18;
+                potentialModifiers.physical_damage = playerDamage / 10;
+                potentialModifiers.magical_damage = playerDamage / 10;
+                potentialModifiers.physical_penetration = playerDamage / 10;
+                potentialModifiers.magical_penetration = playerDamage / 10;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = playerDamage;
                 break;
             };
             case "Achreo": {
-                potentialModifiers.physical_damage = playerDamage / 18;
-                potentialModifiers.magical_damage = playerDamage / 18;
-                potentialModifiers.critical_chance = playerDamage / 18;
-                potentialModifiers.critical_damage = playerDamage / 180;
+                potentialModifiers.physical_damage = playerDamage / 10;
+                potentialModifiers.magical_damage = playerDamage / 10;
+                potentialModifiers.critical_chance = playerDamage / 10;
+                potentialModifiers.critical_damage = playerDamage / 100;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = playerDamage * 1.25;
@@ -122,13 +122,13 @@ class StatusEffect {
                 potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
                 potentialModifiers.critical_chance = effectModifiers.critical_chance;
 
-                potentialModifiers.damage = playerDamage * 1.25;
+                potentialModifiers.damage = playerDamage * 1.5;
                 potentialModifiers.healing = effectModifiers.healing;
                 break;
             };
             case "Fyer": {
                 potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
-                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.1;
             
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
@@ -143,7 +143,7 @@ class StatusEffect {
                 potentialModifiers.magicalPosture = effectModifiers.magicalPosture / 1.5;
 
                 potentialModifiers.damage = playerDamage;
-                potentialModifiers.healing = playerDamage;
+                potentialModifiers.healing = playerDamage * 1.25;
                 break;
             };
             case "Kyn'gi": {
@@ -160,7 +160,7 @@ class StatusEffect {
                 potentialModifiers.roll = effectModifiers.roll;
             
                 potentialModifiers.damage = effectModifiers.damage;
-                potentialModifiers.healing = playerDamage * 1.25;
+                potentialModifiers.healing = playerDamage * 1.5;
                 break;
             };
             case "Kyr'na": {
@@ -185,7 +185,7 @@ class StatusEffect {
                 potentialModifiers.critical_chance = effectModifiers.critical_chance / 1.25;
                 potentialModifiers.critical_damage = effectModifiers.critical_damage / 1.25;
 
-                potentialModifiers.damage = playerDamage;
+                potentialModifiers.damage = playerDamage * 1.25;
                 potentialModifiers.healing = playerDamage;
                 break;
             };
@@ -237,16 +237,16 @@ class StatusEffect {
                 break;
             };
             case "Se'vas": {
-                potentialModifiers.critical_chance = effectModifiers.critical_chance * 1.15;
-                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.15;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance * 1.1;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.1;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
                 break;
             };
             case "Shrygei": {
-                potentialModifiers.physical_penetration = effectModifiers.physical_penetration * 1.15;
-                potentialModifiers.magical_penetration = effectModifiers.magical_penetration * 1.15;
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration * 1.1;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration * 1.1;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
@@ -283,7 +283,6 @@ class StatusEffect {
         return this.effect = realizedModifiers;
     };
     static updateBuff(potentialModifiers, realizedModifiers) {
-
         realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
@@ -460,7 +459,6 @@ class StatusEffect {
         intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player)
         let playerIntensity = intensity.value * intensity.magnitude;
 
-        // TODO:FIXME: Another Computer/Enemy Check
         let enemyFaith = combatData.computer === undefined ? combatData.enemy : combatData.computer;
         let playerFaith = combatData.player.name === player.name ? combatData.player.faith : enemyFaith.faith;
         if (weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') {
@@ -505,20 +503,20 @@ class StatusEffect {
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {
-                potentialModifiers.physical_damage = playerDamage / 18;
-                potentialModifiers.magical_damage = playerDamage / 18;
-                potentialModifiers.physical_penetration = playerDamage / 18;
-                potentialModifiers.magical_penetration = playerDamage / 18;
+                potentialModifiers.physical_damage = playerDamage / 10;
+                potentialModifiers.magical_damage = playerDamage / 10;
+                potentialModifiers.physical_penetration = playerDamage / 10;
+                potentialModifiers.magical_penetration = playerDamage / 10;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = playerDamage;
                 break;
             };
             case "Achreo": {
-                potentialModifiers.physical_damage = playerDamage / 18;
-                potentialModifiers.magical_damage = playerDamage / 18;
-                potentialModifiers.critical_chance = playerDamage / 18;
-                potentialModifiers.critical_damage = playerDamage / 180;
+                potentialModifiers.physical_damage = playerDamage / 10;
+                potentialModifiers.magical_damage = playerDamage / 10;
+                potentialModifiers.critical_chance = playerDamage / 10;
+                potentialModifiers.critical_damage = playerDamage / 100;
 
                 potentialModifiers.damage = playerDamage;
                 potentialModifiers.healing = playerDamage * 1.25;
@@ -555,13 +553,13 @@ class StatusEffect {
                 potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
                 potentialModifiers.critical_chance = effectModifiers.critical_chance;
 
-                potentialModifiers.damage = playerDamage * 1.25;
+                potentialModifiers.damage = playerDamage * 1.5;
                 potentialModifiers.healing = effectModifiers.healing;
                 break;
             };
             case "Fyer": {
                 potentialModifiers.critical_chance = effectModifiers.critical_chance / 2;
-                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.1;
             
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
@@ -576,7 +574,7 @@ class StatusEffect {
                 potentialModifiers.magicalPosture = effectModifiers.magicalPosture / 1.5;
 
                 potentialModifiers.damage = playerDamage;
-                potentialModifiers.healing = playerDamage;
+                potentialModifiers.healing = playerDamage * 1.25;
                 break;
             };
             case "Kyn'gi": {
@@ -593,7 +591,7 @@ class StatusEffect {
                 potentialModifiers.roll = effectModifiers.roll;
             
                 potentialModifiers.damage = effectModifiers.damage;
-                potentialModifiers.healing = playerDamage * 1.25;
+                potentialModifiers.healing = playerDamage * 1.5;
                 break;
             };
             case "Kyr'na": {
@@ -618,7 +616,7 @@ class StatusEffect {
                 potentialModifiers.critical_chance = effectModifiers.critical_chance / 1.25;
                 potentialModifiers.critical_damage = effectModifiers.critical_damage / 1.25;
 
-                potentialModifiers.damage = playerDamage;
+                potentialModifiers.damage = playerDamage * 1.25;
                 potentialModifiers.healing = playerDamage;
                 break;
             };
@@ -670,16 +668,16 @@ class StatusEffect {
                 break;
             };
             case "Se'vas": {
-                potentialModifiers.critical_chance = effectModifiers.critical_chance * 1.15;
-                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.15;
+                potentialModifiers.critical_chance = effectModifiers.critical_chance * 1.1;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage * 1.1;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
                 break;
             };
             case "Shrygei": {
-                potentialModifiers.physical_penetration = effectModifiers.physical_penetration * 1.15;
-                potentialModifiers.magical_penetration = effectModifiers.magical_penetration * 1.15;
+                potentialModifiers.physical_penetration = effectModifiers.physical_penetration * 1.1;
+                potentialModifiers.magical_penetration = effectModifiers.magical_penetration * 1.1;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;

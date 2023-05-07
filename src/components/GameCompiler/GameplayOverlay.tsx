@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS } from './GameStore';
-import { MAP_ACTIONS } from './WorldStore';
 import Loading from '../Loading/Loading';
 import PersistAscean from '../PersistAscean/PersistAscean';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
     ascean: any;
@@ -25,13 +24,11 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
     const overlayRef = useRef(null);
     const location = useLocation();
     const article = ['a', 'e', 'i', 'o', 'u'].includes(ascean?.maps?.[0]?.currentTile?.content.charAt(0).toLowerCase()) ? 'an' : 'a';
-    const navigate = useNavigate();
     const closeEverything = () => {
         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false })
     };
 
     const saveWorldMiddleware = async () => {
-        // gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Saving Map: ${mapState?.name} \n\n To \n\n Ascean: ${ascean?.name}` });
         await saveWorld();
     };
 

@@ -382,7 +382,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     type: ACTIONS.SET_DUEL,
                     payload: ''
                 });
-            }, 3000);
+            }, 4000);
         };
     };
 
@@ -448,7 +448,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     type: ACTIONS.SET_DUEL,
                     payload: ''
                 });
-            }, 3000);
+            }, 4000);
         };
     };
 
@@ -552,7 +552,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 Named Enemies are 25% more difficult to persuade. Perhaps with more notoriety this can change.<br /><br />
                 <p style={{ fontSize: "18px", color: "gold" }}>
                 Arbituous - Ethos (Affects all enemies within the Ley) <br /><br />
-                Chiomic - Humor (This affects enemies of lesser Chomism) <br /><br />
+                Chiomic - Humor (This affects enemies of lesser Chiomism) <br /><br />
                 Fyeran - Seer (Affects all enemies who are more mystic than martial) <br /><br />
                 Ilian - Heroism (This can affect all potential enemies) <br /><br />
                 Kyr'naic - Apathy (Affects all enemies of lesser conviction) <br /><br /> 
@@ -575,6 +575,78 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         </div>
                     </>
                 : currentIntent === 'challenge' ?
+                    state.enemyPersuaded ?
+                        <div style={{ color: "gold" }}>
+                        [Success]:{' '}
+                        { namedEnemy ? (
+                        <>
+                        { state.playerTrait === 'Arbituous' ? ( 
+                            <>
+                            "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}."<br /><br />
+                            </>
+                        ) : state.playerTrait === 'Chiomic' ? (
+                            <>
+                            {enemy?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                            </>
+                        ) : state.playerTrait === "Kyr'naic" ? (
+                            <>
+                            "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                            </>
+                        ) : state.playerTrait === 'Lilosian' ? (
+                            <>
+                            Tears well up in {enemy?.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                            </>
+                        ) : state.playerTrait === 'Shaorahi' ? (
+                            <>
+                            A stillness hollows {enemy?.name}, the chant of a dead language stirs their blood without design.<br /><br />
+                            </>
+                        ) : state.playerTrait === 'Ilian' ? (
+                            <>
+                            "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {ascean.name}, others may be feaful of the Black Sun."<br /><br />
+                            </>
+                        ) : state.playerTrait === 'Fyeran' ? (
+                            <>
+                            "You are not here right now, {ascean.name}. Perchance we may see us in another land, then?"<br /><br />
+                            </>
+                        ) : ( '' ) }
+                        </>
+                    ) : ( 
+                        <>
+                        { state.playerTrait === 'Arbituous' ? ( 
+                            <>
+                            "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."<br /><br />
+                            </>
+                        ) : state.playerTrait === 'Chiomic' ? (
+                            <>
+                            The {enemy?.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
+                            </>
+                        ) : state.playerTrait === "Kyr'naic" ? (
+                            <>
+                            "{ascean.name}, all my life as {article} {enemy?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                            </>
+                        ) : state.playerTrait === 'Lilosian' ? (
+                            <>
+                            Tears well up in the {enemy?.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                            </>
+                        ) : state.playerTrait === 'Shaorahi' ? (
+                            <>
+                            An unsure unease stifles the ascent of the {enemy.name}, their eyes a haze of murk. <br /><br />
+                            </>
+                        ) : state.playerTrait === 'Ilian' ? (
+                            <>
+                            "Nooo, you cannot be Him." Concern marks the {enemy.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {ascean.name}."<br /><br />
+                            </>
+                        ) : state.playerTrait === 'Fyeran' ? (
+                            <>
+                            Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
+                            </>
+                        ) : ( '' ) }         
+                        </>
+                    ) }
+                        You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
+                        <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
+                        </div>
+                :
                     state.playerTrait !== '' ?
                         <div>
                         { namedEnemy ? (
@@ -756,7 +828,144 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                     </>
                 : currentIntent === 'farewell' ?
                     <>
-                    { playerWin ?
+                    { state.enemyPersuaded ?
+                        <div style={{ color: "gold" }}>
+                            [Success]:{' '}
+                        { namedEnemy ? (
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                {enemy?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in {enemy?.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Shaorahi' ? (
+                                <>
+                                A stillness hollows {enemy?.name}, the chant of a dead language stirs their blood without design.<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Ilian' ? (
+                                <>
+                                "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {ascean.name}, others may be feaful of the Black Sun."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Fyeran' ? (
+                                <>
+                                "You are not here right now, {ascean.name}. Perchance we may see us in another land, then?"<br /><br />
+                                </>
+                            ) : ( '' ) }
+                            </>
+                        ) : ( 
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                The {enemy?.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "{ascean.name}, all my life as {article} {enemy?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in the {enemy?.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Shaorahi' ? (
+                                <>
+                                An unsure unease stifles the ascent of the {enemy.name}, their eyes a haze of murk. <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Ilian' ? (
+                                <>
+                                "Nooo, you cannot be Him." Concern marks the {enemy.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Fyeran' ? (
+                                <>
+                                Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
+                                </>
+                            ) : ( '' ) }         
+                            </>
+                        ) }
+                            You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
+                            </div>
+                    : state.playerTrait !== '' ?
+                        <div>
+                        { namedEnemy ? (
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                {enemy?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {ascean.name}. What is happening to me, what have you brought back?"<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in {enemy?.name}'s eyes. "I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            ) }
+                            </>
+                        ) : ( 
+                            <>
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh dear, another wandering Arbiter. I am absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                The {enemy?.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "{ascean.name}, all my life as {article} {enemy?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in the {enemy?.name}'s eyes. "All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}." <br /><br />
+                                </>
+                            ) : (
+                                <>
+                                </>
+                            ) }         
+                            </>
+                        ) }
+                        { lootDrop?._id && lootDropTwo?._id ?
+                            <>
+                                <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                                <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                            </>
+                        : lootDrop?._id ?
+                        <LootDrop lootDrop={lootDrop}  ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        : lootDropTwo?._id ?
+                        <LootDrop lootDrop={lootDropTwo} ascean={ascean} itemSaved={itemSaved} gameDispatch={gameDispatch} />
+                        : '' }
+                        { location.pathname.startsWith(`/Hardcore`) ?
+                            <p style={{ color: 'orangered' }}>
+                                You Win. Hot Streak: {winStreak} Hi-Score: {highScore}
+                            </p>
+                        : ''  }
+                         <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Leave {enemy.name}'s caeren behind in contemplation of your {state.playerTrait} nature.</Button>
+                        </div>          
+                    : playerWin ?
                         <>
                         { namedEnemy ? (
                             <>

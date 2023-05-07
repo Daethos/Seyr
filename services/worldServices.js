@@ -4,7 +4,7 @@ class Tile {
       this.y = y;
       this.content = content;
       this.color = this.setColor(content);
-    }
+    };
   
     setColor(content) {
       const colorMap = {
@@ -23,9 +23,8 @@ class Tile {
         'wonder': 'white'
       };
       return colorMap[content] || 'black';
-    }
-}
-  
+    };
+};
 
 class WorldMap {
     constructor(name, player) {
@@ -35,7 +34,6 @@ class WorldMap {
         this.size = 100;
         this.reference = player._id;
         this.contentOptions = ['enemy', 'npc', 'treasure', 'landmark', 'hazard', 'dungeon', 'city', 'nothing', 'weather', 'ruins', 'cave', 'phenomena', 'wonder'];
-        // this.contentClusters = this.generateContentClusters(this.province);
         this.contentClusters = this.generateContentClusters(this.provinceWeights(this.generateProvince(player.origin)));
 
         this.map = this.generateMap();
@@ -65,14 +63,14 @@ class WorldMap {
         };
       
         for (let j = 0; j < 201; j++) {
-          for (let k = 0; k < 201; k++) {
-            let content = this.map[j][k].content;
-            if (content in this.contentCounts) {
-              this.contentCounts[content]++;
-            } else {
-              this.contentCounts['nothing']++;
-            }
-          };
+            for (let k = 0; k < 201; k++) {
+                let content = this.map[j][k].content;
+                if (content in this.contentCounts) {
+                    this.contentCounts[content]++;
+                } else {
+                    this.contentCounts['nothing']++;
+                };
+            };
         };
     };
 
@@ -242,9 +240,9 @@ class WorldMap {
                         for (let k = 0; k < bigSize; k++) {
                             const point = [centerX + j, centerY + k, option];
                             points.push(point);
-                        }
-                    }
-                }
+                        };
+                    };
+                };
             } else {
                 for (let i = 0; i < numClusters; i++) {
                     const centerX = this.getRandomInt(-50, 50);
@@ -257,17 +255,16 @@ class WorldMap {
                         };
                     };
                 };
-            }
-        }
+            };
+        };
       
         const clusters = {};
         for (const option of this.contentOptions) {
           clusters[option] = points.filter((point) => point[2] === option).map((point) => point.slice(0, 2));
-        }
+        };
       
-        // Return the clusters
         return clusters;
-    }
+    };
   
 
     generateMap() {
@@ -290,7 +287,6 @@ class WorldMap {
     };
 
     updateContentClusters() {
-        const updatedClusters = {};
         const options = ['enemy', 'npc', 'phenomena'];
         for (const option of options) {
             if (!this.contentClusters[option]) {
