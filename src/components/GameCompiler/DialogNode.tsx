@@ -2,10 +2,10 @@ import DialogNodes from "./DialogNodes.json";
 import EnemyDialogNodes from './EnemyDialogNodes.json';
 import { useState, useEffect, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
-import { Ascean, Enemy, GameData, NPC } from "./GameStore";
+import { Ascean, Enemy, GAME_ACTIONS, GameData, NPC } from "./GameStore";
 import { CombatData } from "./CombatStore";
 
-interface DialogNodeOption {
+export interface DialogNodeOption {
     text: string;
     next: string | null;
     npcIds?: any[];
@@ -102,19 +102,15 @@ interface DialogTreeProps {
   ascean: Ascean;
   enemy: NPC | Enemy | any;
   dialogNodes: DialogNode[];
-  currentNodeIndex: number;
-  setCurrentNodeIndex: (index: number) => void;
   engageCombat: () => Promise<void>;
   getLoot: (type: string) => void;
   refillFlask: () => void;
   state: any;
   gameState: GameData;
+  gameDispatch: React.Dispatch<any>;
 };
 
-const DialogTree = ({ ascean, enemy, engageCombat, getLoot, dialogNodes, currentNodeIndex, setCurrentNodeIndex, gameState, state, refillFlask }: DialogTreeProps) => {
-  const [renderedText, setRenderedText] = useState<any>('');
-  const [renderedOptions, setRenderedOptions] = useState<DialogNodeOption[]>([]);
-  const [currentNode, setCurrentNode] = useState<DialogNode | undefined>(undefined);
+const DialogTree = ({ ascean, enemy, engageCombat, getLoot, dialogNodes, gameState, gameDispatch, state, refillFlask }: DialogTreeProps) => {
   const actions = {
     getCombat: () => engageCombat(),
     getArmor: () => getLoot('armor'),
@@ -125,19 +121,40 @@ const DialogTree = ({ ascean, enemy, engageCombat, getLoot, dialogNodes, current
     getWeapon: () => getLoot('physical-weapon'),
     getFlask: () => refillFlask()
   };
+  const [currentNodeIndex, setCurrentNodeIndex] = useState(gameState?.currentNodeIndex || 0);
+
+useEffect(() => {
+  setCurrentNodeIndex(gameState?.currentNodeIndex || 0);
+}, [gameState?.currentNodeIndex]);
+
+useEffect(() => {
+  console.log("We made it here!", dialogNodes[currentNodeIndex])
+  gameDispatch({
+    type: GAME_ACTIONS.SET_CURRENT_DIALOG_NODE,
+    payload: dialogNodes[currentNodeIndex]
+  });
+  gameDispatch({
+    type: GAME_ACTIONS.SET_RENDERING,
+    payload: {
+      options: dialogNodes[currentNodeIndex]?.options,
+      text: dialogNodes[currentNodeIndex]?.text
+    },
+  });
+}, [currentNodeIndex]);
+
+useEffect(() => {
+  console.log("We made it here!", gameState.renderedText, gameState.renderedOptions)
+}, [gameState.renderedText, gameState.renderedOptions]);
+
   useEffect(() => {
-    setCurrentNode(dialogNodes[currentNodeIndex]);
-  }, [currentNodeIndex, dialogNodes]);
-  
-  useEffect(() => {
-    if (currentNode) {
-      let newText = currentNode.text;
+    if (gameState?.currentNode) {
+      let newText = gameState?.currentNode?.text;
       let newOptions: DialogNodeOption[] = [];
-      if (currentNode.text) {
-        newText = currentNode.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
+      if (gameState?.currentNode?.text) {
+        newText = gameState?.currentNode?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g));
       };
-    if (currentNode.options) {
-      newOptions = currentNode.options.filter(option => {
+    if (gameState?.currentNode?.options) {
+      newOptions = gameState?.currentNode?.options.filter(option => {
         if (option.conditions) {
           return option.conditions.every(condition => {
             const { key, operator, value } = condition;
@@ -168,31 +185,29 @@ const DialogTree = ({ ascean, enemy, engageCombat, getLoot, dialogNodes, current
         };
       });
     };
-    setRenderedText(newText);
-    setRenderedOptions(newOptions);
+    gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
   };
 
-  }, [currentNode]);
+  }, [gameState.currentNode]);
 
   const handleOptionClick = (nextNodeId: string | null) => {
     if (nextNodeId === null) {
-      // End of dialog tree
-      setCurrentNodeIndex(0);
+      gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_NODE_INDEX, payload: 0 });
     } else {
       let nextNodeIndex = dialogNodes.findIndex((node) => node.id === nextNodeId);
       if (nextNodeIndex === -1) nextNodeIndex = 0;
-      setCurrentNodeIndex(nextNodeIndex);
-    }
+      gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_NODE_INDEX, payload: nextNodeIndex });
+    };
   };
 
-  if (!currentNode) {
+  if (!gameState?.currentNode) {
     return null;
   };
 
   return (
     <div>
-      <p>{renderedText}</p>
-      {renderedOptions?.map((option: DialogNodeOption) => (
+      <p>{gameState?.renderedText}</p>
+      {gameState?.renderedOptions?.map((option: DialogNodeOption) => (
         <DialogOption key={option.text} option={option} onClick={handleOptionClick} actions={actions} />
       ))}
       <br />

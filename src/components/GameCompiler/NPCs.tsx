@@ -328,5 +328,6 @@ export const Merchant: NPC = {
     currency: { gold: 20, silver: 60 },
     experience: 0,
     level: 4,
+    alive: true,
     dialogId: "Merchant-General",
-}
+};

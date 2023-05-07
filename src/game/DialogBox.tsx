@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import LootDrop from '../components/GameCompiler/LootDrop';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
@@ -91,7 +89,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<any | null>(null);
     const [combatAction, setCombatAction] = useState<any | null>('actions');
-    const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
     const [localWhispers, setLocalWhispers] = useState<any>({});
     const [showQuest, setShowQuest] = useState<boolean>(false);
     const regionInformation = {
@@ -105,7 +102,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         Isles: "The Alluring Isles is its own world, gigantic and terrifying despite its grandeur isolated by strange tides. The land itself a shade of this world, yet what can allow a man to travel a fortnight here, and a day there? I've heard about the size of the animals that stalk those jungles and swim in the waters, hard to believe anyone can sustain themselves there. Would you wish to see this place?",
     };
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [quest, setQuest] = useState<any>({});
     const [questModalShow, setQuestModalShow] = useState<boolean>(false);
@@ -139,20 +135,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         );
     }, [enemy]);
 
-    useEffect(() => {
-        console.log(namedEnemy, "Named Enemy");
-    }, [namedEnemy]);
-
-    useEffect(() => {
-        console.log(dialogTree, "Dialog Tree")
-    }, [dialogTree]);
-    
-    useEffect(() => {
-        console.log(localWhispers, "Local Whisper")
-    }, [localWhispers]);
-
     const getDialogTree = () => {
-        console.log(enemy, "New Enemy")
         if (!enemy.dialogId) return;
         let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
         setDialogTree(dialogTree);
@@ -208,16 +191,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         };
     };
 
-    const checkReset = async () => {
-        await checkingLoot();
-        await resetAscean();
-    };
-
-    const checkOpponent = async () => {
-        await checkingLoot();
-        await getOpponent();
-    };
-
     const getLoot = async (type: string) => {
         try {
             if (merchantEquipment.length > 0) {
@@ -225,7 +198,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 console.log(deleteResponse, 'Delete Response!');
             };
             let response: any;
-            setLoading(true);
             if (type === 'weapon') {
                 response = await eqpAPI.getPhysicalWeaponEquipment(ascean?.level);
             } else if (type === 'armor') {
@@ -233,12 +205,11 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             } else if (type === 'jewelry') {
                 response = await eqpAPI.getJewelryEquipment(ascean?.level);
             } else if (type === 'general') {
-                response = await eqpAPI.getMerchantEquipment(ascean?.level);
+                response = await eqpAPI.getMerchantEquipment(ascean?.level + 1);
             } else if (type === 'cloth') {
                 response = await eqpAPI.getClothEquipment(ascean?.level);
             };
             gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data });
-            setLoading(false);
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
         };
@@ -264,7 +235,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         let newQuest = thisQuest[Math.floor(Math.random() * thisQuest.length)];
         let uniqueQuest = ascean?.quests.some((q: any) => q.title === newQuest.title);
         return uniqueQuest;
-    }
+    };
 
     const getQuest = async (newQuest: any) => {
         try {
@@ -503,12 +474,6 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             default:
                 break;
         };
-    };
-
-    if (loading) {
-        return (
-            <Loading Combat={true} />
-        );
     };
 
     return (

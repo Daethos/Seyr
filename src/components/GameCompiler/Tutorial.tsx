@@ -36,7 +36,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             shakeScreen({ duration: 1000, intensity: 2});
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n And undo these sins of fate?"` });
-            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree.` });
+            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
             const response = await asceanAPI.blessAscean(player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
             console.log(response, "Blessing Player");

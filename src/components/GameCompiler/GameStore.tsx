@@ -1,3 +1,5 @@
+import { DialogNode, DialogNodeOption } from "./DialogNode";
+
 export interface Ascean {
     name: string;
     description: string;
@@ -91,6 +93,7 @@ export interface NPC {
     mastery: string;
     origin: string;
     sex: string;
+    alive: boolean;
     
     currency: object;
     level: number;
@@ -679,6 +682,12 @@ export interface GameData {
     canvasHeight: number;
     joystickSpeed: number;
     soundEffectVolume: number;
+
+    // Dialog Concerns And Options
+    currentNodeIndex: number;
+    currentNode: DialogNode | undefined;
+    renderedOptions: DialogNodeOption[];
+    renderedText: string;
 };
 
 interface Game_Action {
@@ -779,6 +788,10 @@ export const GAME_ACTIONS = {
     SET_MINIGAME_SEVAN: 'SET_MINIGAME_SEVAN',
     SET_MINIGAME_SHRYGEIAN: 'SET_MINIGAME_SHRYGEIAN',
     SET_MINIGAME_TSHAERAL: 'SET_MINIGAME_TSHAERAL',
+
+    SET_CURRENT_NODE_INDEX: 'SET_CURRENT_NODE_INDEX',
+    SET_CURRENT_DIALOG_NODE: 'SET_CURRENT_DIALOG_NODE',
+    SET_RENDERING: 'SET_RENDERING',
 };
 
 export const initialGameData: GameData = {
@@ -845,6 +858,10 @@ export const initialGameData: GameData = {
     canvasHeight: 300,
     joystickSpeed: 1000,
     soundEffectVolume: 0.3,
+    currentNodeIndex: 0,
+    currentNode: { id: '', text: '', options: [], npcIds: [] },
+    renderedOptions: [],
+    renderedText: '',
 };
 
 export const GameStore = (game: GameData, action: Game_Action) => {
@@ -1323,6 +1340,22 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 miniGameTshaeral: action.payload,
+            };
+        case 'SET_CURRENT_DIALOG_NODE':
+            return {
+                ...game,
+                currentNode: action.payload,
+            };
+        case 'SET_CURRENT_NODE_INDEX':
+            return {
+                ...game,
+                currentNodeIndex: action.payload,
+            };
+        case 'SET_RENDERING':
+            return {
+                ...game,
+                renderedOptions: action.payload.options,
+                renderedText: action.payload.text,
             };   
         default:
             return game;

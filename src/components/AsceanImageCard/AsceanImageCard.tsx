@@ -45,12 +45,12 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? '' : 
-                <>
-                { item?.type && item?.grip ? 
-                <>
-                {item?.type} [{item?.grip}] <br />
-                {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type?.[2] : '' }] <br />
-                </>
+                    <>
+                    { item?.type && item?.grip ? 
+                    <>
+                    {item?.type} [{item?.grip}] <br />
+                    {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type?.[2] : '' }] <br />
+                    </>
                 : item?.type ? <>{item.type} <br /></> : ''}
                 {item?.constitution > 0 ? 'CON: +' + item?.constitution + ' ' : ''}
                 {item?.strength > 0 ? 'STR: +' + item?.strength + ' ' : ''}
@@ -104,7 +104,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             border: getBorderStyle(rarity),
             background: 'black',
             boxShadow: '2px 2px 2px black',
-            borderRadius: 1 + 'px',
+            borderRadius: '0px',
         };
     };
 
