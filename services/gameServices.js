@@ -12,12 +12,15 @@ const statusEffectCheck = async (combatData) => {
                     if (key in combatData.weapons[matchingWeaponIndex]) {
                         if (key !== 'dodge') {
                             combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                         } else {
                             combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                         };
                     };
                     if (key in combatData.player_defense) {
                         combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                     };
                 };
             };
@@ -27,12 +30,15 @@ const statusEffectCheck = async (combatData) => {
                     if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingDebuffTargetIndex][key]);
                         } else {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingDebuffTargetIndex][key]);
                         };
                     };
                     if (key in combatData.computer_defense) {
                         combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
+                        combatData.computer_defense[key] = roundToTwoDecimals(combatData.computer_defense[key]);
                     };
                 };
             };
@@ -43,20 +49,20 @@ const statusEffectCheck = async (combatData) => {
                     if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                const modifiedValue = (effect.effect[key] + combatData.weapons[matchingWeaponIndex][key]).toFixed(2);
-                                combatData.weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
-                                // combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                let modifiedValue = effect.effect[key] + combatData.weapons[matchingWeaponIndex][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[matchingWeaponIndex][key] = modifiedValue;
                             } else {
-                                const modifiedValue = (effect.effect[key] - combatData.weapons[matchingWeaponIndex][key]).toFixed(2);
-                                combatData.weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
-                                // combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                                let modifiedValue = combatData.weapons[matchingWeaponIndex][key] - effect.effect[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[matchingWeaponIndex][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.player_defense) {
                             if (effect.effect[key]) {
-                                const modifiedValue = (effect.effect[key] + combatData.player_defense[key]).toFixed(2);
-                                combatData.player_defense[key] = parseFloat(modifiedValue);
-                                // combatData.player_defense[key] += effect.effect[key];
+                                let modifiedValue = effect.effect[key] + combatData.player_defense[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.player_defense[key] = modifiedValue;
                             };
                         };
                     };
@@ -68,19 +74,22 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
                                 // combatData.computer_weapons[0][key] -= effect.effect[key];
-                                const modifiedValue = (combatData.computer_weapons[0][key] - effect.effect[key]).toFixed(2);
-                                combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
+                                let modifiedValue = combatData.computer_weapons[0][key] - effect.effect[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_weapons[0][key] = modifiedValue;
                             } else {
                                 // combatData.computer_weapons[0][key] += effect.effect[key];
-                                const modifiedValue = (effect.effect[key] + combatData.computer_weapons[0][key]).toFixed(2);
-                                combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
+                                let modifiedValue = effect.effect[key] + combatData.computer_weapons[0][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_weapons[0][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.computer_defense) { // Buff
                             if (effect.effect[key]) {
                                 // combatData.computer_defense[key] -= effect.effect[key];
-                                const modifiedValue = (combatData.computer_defense[key] - effect.effect[key]).toFixed(2);
-                                combatData.computer_defense[key] = parseFloat(modifiedValue);
+                                let modifiedValue = combatData.computer_defense[key] - effect.effect[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_defense[key] = modifiedValue;
                             };
                         };
                     };
@@ -123,24 +132,34 @@ const statusEffectCheck = async (combatData) => {
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.computer_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingWeaponIndex][key]);
                     } else {
                         combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                        combatData.computer_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingWeaponIndex][key]);
                     };
                 };
                 for (let key in combatData.computer_defense) {
-                    if (effect.effect[key]) combatData.computer_defense[key] -= effect.effect[key] * effect.activeStacks;
+                    if (effect.effect[key]) {
+                        combatData.computer_defense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.computer_defense[key] = roundToTwoDecimals(combatData.computer_defense[key]);
+                    };
                 };
             };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+                        combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
                     } else {
                         combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
+                        combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
                     };
                 };
                 for (let key in combatData.player_defense) {
-                    if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                    if (effect.effect[key]) {
+                        combatData.player_defense[key] += effect.effect[key];
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
+                    };
                 };
             };
             return false;
@@ -149,20 +168,20 @@ const statusEffectCheck = async (combatData) => {
                 case 'Buff': { // Buffs are applied
                     if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
                         for (let key in effect.effect) {
-                            if (effect.effect[key] && key !== 'dodge') {
-                                // combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key];
-                                const modifiedValue = (effect.effect[key] + combatData.computer_weapons[matchingWeaponIndex][key]).toFixed(2);
-                                combatData.computer_weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
+                            if (effect.effect[key] && key !== 'dodge') { 
+                                let modifiedValue = effect.effect[key] + combatData.computer_weapons[matchingWeaponIndex][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_weapons[matchingWeaponIndex][key] = modifiedValue;
                             } else {
-                                // combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key];
-                                const modifiedValue = (effect.effect[key] - combatData.computer_weapons[matchingWeaponIndex][key]).toFixed(2);
-                                combatData.computer_weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
+                                let modifiedValue = effect.effect[key] - combatData.computer_weapons[matchingWeaponIndex][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_weapons[matchingWeaponIndex][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.computer_defense) {
-                            // if (effect.effect[key]) combatData.computer_defense[key] += effect.effect[key];
-                            const modifiedValue = (effect.effect[key] + combatData.computer_defense[key]).toFixed(2);
-                            combatData.computer_defense[key] = parseFloat(modifiedValue);
+                            let modifiedValue = effect.effect[key] + combatData.computer_defense[key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.computer_defense[key] = modifiedValue;
                         };
                     };
                     break;
@@ -172,20 +191,20 @@ const statusEffectCheck = async (combatData) => {
                         effect.debuffTarget = combatData.weapons[0].name;
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                // combatData.weapons[0][key] -= effect.effect[key];
-                                const modifiedValue = (combatData.weapons[0][key] - effect.effect[key]).toFixed(2);
-                                combatData.weapons[0][key] = parseFloat(modifiedValue);
+                                let modifiedValue = combatData.weapons[0][key] - effect.effect[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[0][key] = modifiedValue;
                             } else {
-                                // combatData.weapons[0][key] += effect.effect[key];
-                                const modifiedValue = (effect.effect[key] + combatData.weapons[0][key]).toFixed(2);
-                                combatData.weapons[0][key] = parseFloat(modifiedValue);
+                                let modifiedValue = effect.effect[key] + combatData.weapons[0][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[0][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.player_defense) { // Buff
                             if (effect.effect[key]) {
-                                // combatData.player_defense[key] -= effect.effect[key];
-                                const modifiedValue = (combatData.player_defense[key] - effect.effect[key]).toFixed(2);
-                                combatData.player_defense[key] = parseFloat(modifiedValue);
+                                let modifiedValue = combatData.player_defense[key] - effect.effect[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.player_defense[key] = modifiedValue;
                             };
                         };
                     };
@@ -199,9 +218,9 @@ const statusEffectCheck = async (combatData) => {
                         combatData.current_player_health = 0;
                         combatData.player_win = false;
                         combatData.computer_win = true;
-                    }
+                    };
                     break;
-                }
+                };
                 case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
                     combatData.new_computer_health += effect.effect.healing * 0.33;
                     combatData.current_computer_health += effect.effect.healing * 0.33;
@@ -539,28 +558,24 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 case 'Buff': {
                     for (let key in existingEffect.effect) {
                         if (existingEffect.effect[key] && key !== 'dodge') {
-                            const modifiedValue = (existingEffect.effect[key] + combatData.weapons[0][key]).toFixed(2);
-                            combatData.weapons[0][key] = parseFloat(modifiedValue);
-
-                            // combatData.weapons[0][key] += existingEffect.effect[key];
-                            // parseFloat(combatData.weapons[0][key].toFixed(2));
+                            let modifiedValue = existingEffect.effect[key] + combatData.weapons[0][key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.weapons[0][key] = modifiedValue;
                         } else {
-                            const modifiedValue = (existingEffect.effect[key] - combatData.weapons[0][key]).toFixed(2);
-                            combatData.weapons[0][key] = parseFloat(modifiedValue);
-                            // combatData.weapons[0][key] -= existingEffect.effect[key];
-                            // parseFloat(combatData.weapons[0][key].toFixed(2));
+                            let modifiedValue = existingEffect.effect[key] - combatData.weapons[0][key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.weapons[0][key] = modifiedValue;
                         };
                     };
                     for (let key in combatData.player_defense) {
                         if (existingEffect.effect[key]) {
-                            const modifiedValue = (existingEffect.effect[key] + combatData.player_defense[key]).toFixed(2);
-                            combatData.player_defense[key] = parseFloat(modifiedValue);
-                            // combatData.player_defense[key] += existingEffect.effect[key];
-                            // parseFloat(combatData.player_defense[key].toFixed(2));
+                            let modifiedValue = existingEffect.effect[key] + combatData.player_defense[key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.player_defense[key] = modifiedValue;
                         };
                     };
                     break;
-                }
+                };
                 case 'Damage': {
                     existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                     break;
@@ -590,23 +605,20 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
                             if (existingEffect.effect[key] && key !== 'dodge') {
-                                const modifiedValue = (existingEffect.effect[key] + combatData.weapons[1][key]).toFixed(2);
-                                combatData.weapons[1][key] = parseFloat(modifiedValue);
-                                // combatData.weapons[1][key] += existingEffect.effect[key];
-                                // parseFloat(combatData.weapons[1][key].toFixed(2));
+                                let modifiedValue = existingEffect.effect[key] + combatData.weapons[1][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[1][key] = modifiedValue;
                             } else {
-                                const modifiedValue = (existingEffect.effect[key] - combatData.weapons[1][key]).toFixed(2);
-                                combatData.weapons[1][key] = parseFloat(modifiedValue);
-                                // combatData.weapons[1][key] -= existingEffect.effect[key];
-                                // parseFloat(combatData.weapons[1][key].toFixed(2));
+                                let modifiedValue = existingEffect.effect[key] - combatData.weapons[1][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[1][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.player_defense) {
                             if (existingEffect.effect[key]) {
-                                const modifiedValue = (existingEffect.effect[key] + combatData.player_defense[key]).toFixed(2);
-                                combatData.player_defense[key] = parseFloat(modifiedValue);
-                                // combatData.player_defense[key] += existingEffect.effect[key];
-                                // parseFloat(combatData.player_defense[key].toFixed(2));
+                                let modifiedValue = existingEffect.effect[key] + combatData.player_defense[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.player_defense[key] = modifiedValue;
                             };
                         };
                         break;
@@ -640,23 +652,20 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                 case 'Buff': {
                     for (let key in existingEffect.effect) {
                         if (existingEffect.effect[key] && key !== 'dodge') {
-                            const modifiedValue = (existingEffect.effect[key] + combatData.computer_weapons[0][key]).toFixed(2);
-                            combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
-                            // combatData.computer_weapons[0][key] += existingEffect.effect[key];
-                            // parseFloat(combatData.computer_weapons[0][key].toFixed(2));
+                            let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[0][key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.computer_weapons[0][key] = modifiedValue;
                         } else {
-                            const modifiedValue = (existingEffect.effect[key] - combatData.computer_weapons[0][key]).toFixed(2);
-                            combatData.computer_weapons[0][key] = parseFloat(modifiedValue);
-                            // combatData.computer_weapons[0][key] -= existingEffect.effect[key];
-                            // parseFloat(combatData.computer_weapons[0][key].toFixed(2));
+                            let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[0][key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.computer_weapons[0][key] = modifiedValue;
                         };
                     };
                     for (let key in combatData.computer_defense) {
                         if (existingEffect.effect[key]) {
-                            const modifiedValue = (existingEffect.effect[key] + combatData.computer_defense[key]).toFixed(2);
-                            combatData.computer_defense[key] = parseFloat(modifiedValue);
-                            // combatData.computer_defense[key] += existingEffect.effect[key];
-                            // parseFloat(combatData.computer_defense[key].toFixed(2));
+                            let modifiedValue = existingEffect.effect[key] + combatData.computer_defense[key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.computer_defense[key] = modifiedValue;
                         };
                     };
                     break;
@@ -690,23 +699,23 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
                             if (existingEffect.effect[key] && key !== 'dodge') {
-                                const modifiedValue = (existingEffect.effect[key] + combatData.computer_weapons[1][key]).toFixed(2);
-                                combatData.computer_weapons[1][key] = parseFloat(modifiedValue);
+                                let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[1][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_weapons[1][key] = modifiedValue;
                                 // combatData.computer_weapons[1][key] += existingEffect.effect[key];
-                                // parseFloat(combatData.computer_weapons[1][key].toFixed(2));
                             } else {
-                                const modifiedValue = (existingEffect.effect[key] - combatData.computer_weapons[1][key]).toFixed(2);
-                                combatData.computer_weapons[1][key] = parseFloat(modifiedValue);
+                                let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[1][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_weapons[1][key] = modifiedValue;
                                 // combatData.computer_weapons[1][key] -= existingEffect.effect[key];
-                                // parseFloat(combatData.computer_weapons[1][key].toFixed(2));
                             };
                         };
                         for (let key in combatData.computer_defense) {
                             if (existingEffect.effect[key]) {
-                                const modifiedValue = (existingEffect.effect[key] + combatData.computer_defense[key]).toFixed(2);
-                                combatData.computer_defense[key] = parseFloat(modifiedValue);
+                                let modifiedValue = existingEffect.effect[key] + combatData.computer_defense[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computer_defense[key] = modifiedValue;
                                 // combatData.computer_defense[key] += existingEffect.effect[key];
-                                // parseFloat(combatData.computer_defense[key].toFixed(2));
                             };
                         };
                         break;
@@ -913,7 +922,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     combatData.realized_computer_damage = computer_weapon_one_total_damage + computer_weapon_two_total_damage;
     if (combatData.realized_computer_damage < 0) {
         combatData.realized_computer_damage = 0;
-    }
+    };
 
     let strength = combatData.computer_attributes.totalStrength + combatData.computer_weapons[0].strength  + combatData.computer_weapons[1].strength;
     let agility = combatData.computer_attributes.totalAgility + combatData.computer_weapons[0].agility  + combatData.computer_weapons[1].agility;
@@ -925,16 +934,16 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
             combatData.realized_computer_damage *= (agility / 100)
         } else {
             combatData.realized_computer_damage *= (achre / 100)
-        }
-    }
+        };
+    };
 
     if (combatData.computer_weapons[0].grip === 'Two Hand') {
         if (combatData.computer_weapons[0].attack_type === 'Physical') {
             combatData.realized_computer_damage *= (strength / 150) 
         } else {
             combatData.realized_computer_damage *= (caeren / 150)
-        }
-    }
+        };
+    };
 
     if (combatData.action === 'attack') {
         combatData.realized_computer_damage *= 1.1;
@@ -949,14 +958,14 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
         combatData.computer_win = true;
-    }
+    };
     
     combatData.computer_action_description = 
         `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${combatData.computer_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
     return (
         combatData
-    )
-}
+    );
+};
 
 const computerAttackCompiler = async (combatData, computer_action) => {
     if (combatData.player_win === true) { return }
@@ -2600,6 +2609,17 @@ const actionSplitter = async (combatData) => {
     return newData;
 };
 
+function roundToTwoDecimals(num) {
+    const roundedNum = Number(num.toFixed(2));
+    console.log(num, roundedNum, "num, roundedNum");
+    if (roundedNum.toString().match(/\.\d{3,}$/)) {
+        return parseFloat(roundedNum);
+    };
+    return roundedNum;
+};
+  
+  
+
 const prayerSplitter = async (combatData, prayer) => {
     let originalPrayer = combatData.playerBlessing;
     combatData.playerBlessing = prayer;
@@ -2619,23 +2639,30 @@ const prayerSplitter = async (combatData, prayer) => {
             case 'Buff': {
                 for (let key in existingEffect.effect) {
                     if (existingEffect.effect[key] && key !== 'dodge') {
-                        combatData.weapons[0][key] += existingEffect.effect[key];
+                        let modifiedValue = combatData.weapons[0][key] + existingEffect.effect[key];
+                        modifiedValue = roundToTwoDecimals(modifiedValue);
+                        console.log(modifiedValue, 'modifiedValue');
+                        combatData.weapons[0][key] = modifiedValue;
                     } else {
-                        combatData.weapons[0][key] -= existingEffect.effect[key];
-                    }
-                }
+                        let modifiedValue = combatData.weapons[0][key] - existingEffect.effect[key];
+                        modifiedValue = roundToTwoDecimals(modifiedValue);
+                        combatData.weapons[0][key] = modifiedValue;
+                    };
+                };
                 for (let key in combatData.player_defense) {
                     if (existingEffect.effect[key]) {
-                        combatData.player_defense[key] += existingEffect.effect[key];
-                    }
-                }
+                        let modifiedValue = combatData.player_defense[key] + existingEffect.effect[key];
+                        modifiedValue = roundToTwoDecimals(modifiedValue);
+                        combatData.player_defense[key] = modifiedValue;
+                    };
+                };
                 break;
-            }
+            };
             case 'Damage': {
                 existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
                 break;
-            }
-        }
+            };
+        };
     } else if (existingEffect.refreshes) {
         existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
         existingEffect.tick.end += existingEffect.duration + 1;
@@ -2705,13 +2732,22 @@ const instantEffectCheck = async (combatData) => {
                     if (effect.activeStacks === 1) {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                // combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                let modifiedValue = effect.effect[key] + combatData.weapons[matchingWeaponIndex][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[matchingWeaponIndex][key] = modifiedValue;
                             } else {
-                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                                // combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                                let modifiedValue = combatData.weapons[matchingWeaponIndex][key] - effect.effect[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.weapons[matchingWeaponIndex][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.player_defense) {
-                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                            if (effect.effect[key]) {
+                                combatData.player_defense[key] += effect.effect[key];
+                                combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
+                            }; 
                         };
                     };
                     break;
@@ -2722,13 +2758,16 @@ const instantEffectCheck = async (combatData) => {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
                                 combatData.computer_weapons[0][key] -= effect.effect[key];
+                                combatData.computer_weapons[0][key] = roundToTwoDecimals(combatData.computer_weapons[0][key]);
                             } else {
                                 combatData.computer_weapons[0][key] += effect.effect[key];
+                                combatData.computer_weapons[0][key] = roundToTwoDecimals(combatData.computer_weapons[0][key]);
                             };
                         };
                         for (let key in combatData.computer_defense) { // Buff
                             if (effect.effect[key]) {
                                 combatData.computer_defense[key] -= effect.effect[key];
+                                combatData.computer_defense[key] = roundToTwoDecimals(combatData.computer_defense[key]);
                             };
                         };
                     };
@@ -2791,12 +2830,15 @@ const consumePrayerSplitter = async (combatData) => {
                     if (key in combatData.weapons[matchingWeaponIndex]) {
                         if (key !== 'dodge') {
                             combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                         } else {
                             combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                         };
                     };
                     if (key in combatData.player_defense) {
                         combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                     };
                 };
                 break;
@@ -2824,12 +2866,15 @@ const consumePrayerSplitter = async (combatData) => {
                     if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingDebuffTargetIndex][key]);
                         } else {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.computer_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingDebuffTargetIndex][key]);
                         };
                     };
                     if (key in combatData.computer_defense) {
                         combatData.computer_defense[key] += effect.effect[key] * effect.activeStacks;
+                        combatData.computer_defense[key] = roundToTwoDecimals(combatData.computer_defense[key]);
                     };
                 };
                 break;

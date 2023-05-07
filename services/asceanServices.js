@@ -267,6 +267,7 @@ const weaponCompiler = async (weapon, ascean, attributes, combatStats, rarity) =
         kyosir: (weapon.kyosir * rarity),
         influences: weapon.influences,
         imgURL: weapon.imgURL,
+        _id: weapon._id,
     };
     await originCompiler(weaponOne, ascean);
     await gripCompiler(weaponOne, attributes, ascean);

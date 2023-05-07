@@ -132,7 +132,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
             <h6 style={{ textAlign: 'center' }}className='mb-5' >
         <Accordion>
         <Accordion.Item eventKey="0">
-        <Accordion.Header>Hardcore High Scores [Public] :</Accordion.Header>
+        <Accordion.Header>Hardcore High Scores [Public]</Accordion.Header>
         <Accordion.Body style={{ overflow: 'auto', height: 50 + 'vh' }}>
         <Table responsive style={{ color: '#fdf6d8' }}>
           <thead>
@@ -153,7 +153,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
                   style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
                 </td>
                 <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
-                  <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id} className='' >{ascean[0].ascean}</Nav.Link>
+                  <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id}>{ascean[0].ascean}</Nav.Link>
                 </td>
                 <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
                 <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
@@ -177,7 +177,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         )})}
         </Row>
     </Container>
-  )
-}
+  );
+};
 
-export default CommunityFeed
+export default CommunityFeed;

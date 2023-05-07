@@ -66,9 +66,9 @@ class StatusEffect {
         // TODO:FIXME: This is a fix for enemy/computer variables
         let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realized_computer_damage;
         let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : enemyDamage;
-        if (playerDamage < effectModifiers.damage) {
-            playerDamage = effectModifiers.damage;
-        };
+        // if (playerDamage < effectModifiers.damage) {
+        // };
+        playerDamage = effectModifiers.damage;
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {
@@ -212,7 +212,7 @@ class StatusEffect {
             case "Rahvre": {
                 potentialModifiers.magical_damage = effectModifiers.magical_damage;
                 potentialModifiers.magical_penetration = effectModifiers.magical_penetration;
-                potentialModifiers.critical_damage = effectModifiers.critical_damage / 2;
+                potentialModifiers.critical_damage = effectModifiers.critical_damage / 1.5;
 
                 potentialModifiers.damage = effectModifiers.damage;
                 potentialModifiers.healing = effectModifiers.healing;
@@ -268,21 +268,21 @@ class StatusEffect {
         // Make the functions for the various status effects
         switch (prayer) {
             case "Buff": {
-                return this.effect = StatusEffect.updateBuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.updateBuff(potentialModifiers, realizedModifiers);
             };
             case "Damage": {
-                return this.effect = StatusEffect.updateDamage(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.updateDamage(potentialModifiers, realizedModifiers);
             };
             case "Debuff": {
-                return this.effect = StatusEffect.updateDebuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.updateDebuff(potentialModifiers, realizedModifiers);
             };
             case "Heal": {
-                return this.effect = StatusEffect.updateHeal(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.updateHeal(potentialModifiers, realizedModifiers);
             };
         };
         return this.effect = realizedModifiers;
     };
-    static updateBuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    static updateBuff(potentialModifiers, realizedModifiers) {
 
         realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
@@ -305,11 +305,11 @@ class StatusEffect {
         };
         return cleanSlate;
     };
-    static updateDamage(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    static updateDamage(potentialModifiers, realizedModifiers) {
         realizedModifiers.damage = potentialModifiers.damage;
         return realizedModifiers;
     };
-    static updateDebuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    static updateDebuff(potentialModifiers, realizedModifiers) {
         
         realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
@@ -330,11 +330,10 @@ class StatusEffect {
                 cleanSlate[key] = realizedModifiers[key];
             };
         };
-        
         console.log(cleanSlate, 'Realized Modifiers From De-Buff');
         return cleanSlate;
     };
-    static updateHeal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    static updateHeal(potentialModifiers, realizedModifiers) {
         realizedModifiers.healing = potentialModifiers.healing;
         return realizedModifiers;
     };
@@ -470,7 +469,6 @@ class StatusEffect {
         if (weapon.influences[0] !== 'Daethos' && playerFaith === 'adherent') {
             playerIntensity *= 1.15;
         };
-
         let effectModifiers = {
             physical_damage: playerIntensity,
             magical_damage: playerIntensity,
@@ -501,9 +499,9 @@ class StatusEffect {
         // TODO:FIXME: Another Computer/Enemy Check
         let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realized_computer_damage;
         let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : enemyDamage;
-        if (playerDamage < effectModifiers.damage) {
-            playerDamage = effectModifiers.damage;
-        };
+        // if (playerDamage < effectModifiers.damage) {
+            // };
+        playerDamage = effectModifiers.damage;
         // So setting up the intensity and modifiers, I can filter which ones are relevant to the weapon's influence.
         switch(weapon.influences[0]) {
             case "Daethos": {
@@ -704,22 +702,22 @@ class StatusEffect {
         // Make the functions for the various status effects
         switch (prayer) {
             case "Buff": {
-                return this.effect = this.buff(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = this.buff(potentialModifiers, realizedModifiers);
             };
             case "Damage": {
-                return this.effect = this.damage(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = this.damage(potentialModifiers, realizedModifiers);
             };
             case "Debuff": {
-                return this.effect = this.debuff(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = this.debuff(potentialModifiers, realizedModifiers);
             };
             case "Heal": {
-                return this.effect = this.heal(combatData, player, weapon, potentialModifiers, realizedModifiers);
+                return this.effect = this.heal(potentialModifiers, realizedModifiers);
             };
         };
         return this.effect = realizedModifiers;
     };
 
-    buff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    buff(potentialModifiers, realizedModifiers) {
 
         realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
@@ -742,11 +740,11 @@ class StatusEffect {
         };
         return cleanSlate;
     };
-    damage(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    damage(potentialModifiers, realizedModifiers) {
         realizedModifiers.damage = potentialModifiers.damage;
         return realizedModifiers;
     };
-    debuff(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    debuff(potentialModifiers, realizedModifiers) {
         
         realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
@@ -769,12 +767,11 @@ class StatusEffect {
         };
         return cleanSlate;
     };
-    heal(combatData, player, weapon, potentialModifiers, realizedModifiers) {
+    heal(potentialModifiers, realizedModifiers) {
         realizedModifiers.healing = potentialModifiers.healing;
         return realizedModifiers;
     };
     setDescription(combatData, player, enemy, weapon, attributes, prayer) {
-        let intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player);
         let duration = this.setDuration(player);
         let effect = this.setEffect(combatData, player, weapon, attributes, prayer);
         const article = ['a','e','i','o','u'].includes(weapon.name[0].toLowerCase()) ? "an" : "a";
@@ -787,5 +784,3 @@ class StatusEffect {
 };
 
 module.exports = StatusEffect;
-
-//TODO:FIXME: Need to make status effect concept for pvp unfortunately

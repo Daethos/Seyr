@@ -488,6 +488,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computerDamaged: action.payload,
             };
         case 'PLAYER_WIN':
+            let resetWeapons = [state.weapon_one, state.weapon_two, state.weapon_three];
+            let weapy: any[] = state.weapons.map(weapon => resetWeapons.find(w => w._id === weapon._id));;
             return {
                 ...state,
                 winStreak: state.winStreak + 1,
@@ -497,6 +499,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 combatEngaged: false,
                 dodgeStatus: false,
                 instantStatus: false,
+                weapons: weapy,
             };
         case 'PLAYER_LUCKOUT':
             return {
@@ -539,6 +542,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 playerGrapplingWin: action.payload,
             };
         case 'COMPUTER_WIN':
+            const weaponReset = [state.weapon_one, state.weapon_two, state.weapon_three];
+            const resetty = state.weapons.map(weapon => weaponReset.find(w => w._id === weapon._id));
             return {
                 ...state,
                 loseStreak: state.loseStreak + 1,
@@ -547,6 +552,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 combatEngaged: false,
                 dodgeStatus: false,
                 instantStatus: false,
+                weapons: resetty,
             }
         case 'CLEAR_DUEL':
             return {
