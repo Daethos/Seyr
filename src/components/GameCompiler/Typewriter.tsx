@@ -2,50 +2,6 @@ import React from 'react';
 import { useEffect, useRef } from 'react';
 import Typed from 'typed.js';
 
-
-// interface Props {
-//     text: string;
-// };
-  
-// const formatText = (text: string) => {
-//     const formattedText: React.ReactNode[] = [];
-//     const chunks = text.split(/(<[^>]+>)/g);
-//     let currentTag: string | undefined;
-  
-//     chunks.forEach((chunk, index) => {
-//       if (chunk.startsWith('<')) {
-//             currentTag = chunk;
-//       } else if (currentTag) {
-//             const tag = currentTag.substring(1, currentTag.length - 1);
-//             let style: React.CSSProperties = {};
-//             if (tag === 'h6') {
-//                 style = { fontSize: '24px', fontWeight: 'bold' };
-//             } else if (tag === 'p') {
-//                 style = { fontSize: '16px' };
-//             } else if (tag === 'span') {
-//                 style = { color: 'red' };
-//             };
-//             formattedText.push( React.createElement( tag, { key: index, style }, chunk ) );
-//             currentTag = undefined;
-//         } else {
-//             formattedText.push(chunk);
-//         }
-//     });
-  
-//     return formattedText;
-// };
-  
-// const TypewriterText: React.FC<Props> = ({ text }) => {
-//     const formattedText = formatText(text);
-//     return (
-//       <>
-//         {formattedText.map((text, index) => (
-//           <span key={index}>{text}</span>
-//         ))}
-//       </>
-//     );
-// };
-
 type StyleMap = { [key: string]: React.CSSProperties };
 
 const styleMap: StyleMap = {
@@ -54,9 +10,14 @@ const styleMap: StyleMap = {
     fontSize: "24px",
     zIndex: 9999,
     marginLeft: "90vw",
-    color: "red"
+    marginTop: "5vh",
+    color: "red",
+    border: 'none',
+    textDecoration: 'none',
+    backgroundColor: 'transparent',
   },
   journeyText: {
+    marginTop: "10vh",
     color: "#fdf6d8",
     fontSize: "14px"
   },
@@ -64,14 +25,17 @@ const styleMap: StyleMap = {
     fontSize: "24px"
   },
   otherText: {
+    fontSize: "20px",
     color: "red",
     textShadow: '1.5px 1.5px 1.5px darkred',
   },
   devotedText: {
+    fontSize: "20px",
     color: "darkmagenta",
     textShadow: '1.5px 1.5px 1.5px purple',
   },
   adherentText: {
+    fontSize: "20px",
     color: "orangered",
     textShadow: '1.5px 1.5px 1.5px red',
   },
@@ -79,16 +43,60 @@ const styleMap: StyleMap = {
     zIndex: 9999,
     border: 'none',
     textDecoration: 'none',
+    backgroundColor: 'transparent',
   },
   typewriterContainer: {
-    marginTop: "50%",
     color: "gold",
     display: 'inline-block',
     textAlign: 'center',
     textShadow: '1.5px 1.5px 1.5px darkgoldenrod',
     overflowY: 'auto',
     width: '100%',
+    fontSize: "16px",
+    padding: "10px",
   },
+  godBorderConstitution: {
+    marginTop: "15%",
+    borderRadius: "50%",
+    maxWidth: '50vw',
+    border: '2px solid #fdf6d8',
+    boxShadow: '0 0 2em #fdf6d8',
+  },
+  godBorderStrength: {
+    marginTop: "15%",
+    borderRadius: "50%",
+    maxWidth: '50vw',
+    border: '2px solid #ff0000',
+    boxShadow: '0 0 2em #ff0000',
+  },
+  godBorderAgility: {
+    marginTop: "15%",
+    borderRadius: "50%",
+    maxWidth: '50vw',
+    border: '2px solid #00ff00',
+    boxShadow: '0 0 2em #00ff00',
+  },
+  godBorderAchre: {
+    marginTop: "15%",
+    borderRadius: "50%",
+    maxWidth: '50vw',
+    border: '2px solid blue',
+    boxShadow: '0 0 2em blue',
+  },
+  godBorderCaeren: {
+    marginTop: "15%",
+    borderRadius: "50%",
+    maxWidth: '50vw',
+    border: '2px solid purple',
+    boxShadow: '0 0 2em purple',
+  },
+  godBorderKyosir: {
+    marginTop: "15%",
+    borderRadius: "50%",
+    maxWidth: '50vw',
+    border: '2px solid gold',
+    boxShadow: '0 0 2em gold',
+  }
 };
   
 const applyStyles = (element: HTMLElement, styles: React.CSSProperties) => {
@@ -100,10 +108,10 @@ const applyStyles = (element: HTMLElement, styles: React.CSSProperties) => {
 const applyClassStyles = (element: Element, className: string, styles: React.CSSProperties) => {
     if (element.classList.contains(className)) {
       applyStyles(element as HTMLElement, styles);
-    }
+    };
     for (const child of element.children as any) {
       applyClassStyles(child, className, styles);
-    }
+    };
 };
   
 const styleHTML = (html: string, styles: Record<string, React.CSSProperties>) => {
@@ -112,25 +120,25 @@ const styleHTML = (html: string, styles: Record<string, React.CSSProperties>) =>
     const traverseElement = (element: any) => {
         if (element?.attributes?.classname?.value) {
             applyStyles(element as HTMLElement, styleMap[element?.attributes?.classname?.value]);
-        }
+        };
         for (const child of element.children as any) {
-          traverseElement(child);
-        }
-      };    
+            traverseElement(child);
+        };
+    };    
     traverseElement(doc.body);
     return doc.body.innerHTML;
 };
   
-  const createStyledText = (text: string, classNames: string[]): string => {
+const createStyledText = (text: string, classNames: string[]): string => {
     let styledText = text;
     classNames.forEach((className) => {
-      const styles = styleMap[className];
-      if (styles) {
-        styledText = styleHTML(styledText, { [className]: styles });
-      }
+        const styles = styleMap[className];
+        if (styles) {
+            styledText = styleHTML(styledText, { [className]: styles });
+        };
     });
     return styledText;
-  };
+};
   
 
 interface TypewriterProps {
@@ -150,37 +158,37 @@ const Typewriter = ({ stringText, styling }: TypewriterProps) => {
             typeSpeed: 10,
             backSpeed: 10, 
             showCursor: false,
-            smartBackspace: false, // don't delete characters as user types
-            startDelay: 1000, // delay before typing starts
-            preStringTyped: (arrayPos: any, self: any) => {
-                // scroll to bottom before typing each line
-                const element = document.getElementById('typewriter');
-                let scrollTop: number | undefined;
-                if (element instanceof HTMLElement) {
-                    scrollTop = element.scrollHeight;
-                }
-                if (el && element) {
-                    (el.current as any).scrollTop = scrollTop;
-                }
+            autoInsertCss: true,
+            // smartBackspace: false,
+            // preStringTyped: (arrayPos: any, self: any) => {
+            //     // scroll to bottom before typing each line
+            //     const element = document.getElementById('typewriter');
+            //     let scrollTop: number | undefined;
+            //     if (element instanceof HTMLElement) {
+            //         scrollTop = element.scrollHeight;
+            //     }
+            //     if (el && element) {
+            //         (el.current as any).scrollTop = scrollTop;
+            //     }
                   
                   
-            },
-            onStringTyped: (arrayPos: any, self: any) => {
-                const typedTextEl = self.el;
-                const typedTextContainer = typedTextEl.parentNode;
-                const styleString = typedTextEl.getAttribute('style');
-                const style = document.createElement('style');
-                style.textContent = styleString;
-                typedTextContainer.appendChild(style);
-                console.log(typedTextEl, "typedTextEl")
-                const line = self.el.querySelector('.typed-line:last-child');
-                console.log(line, "line")
-                // const lineHeight = parseInt(getComputedStyle(line).lineHeight, 10);
-                const lineHeight = 20;
-                if (el.current) {
-                    (el.current as any).scrollTop  += lineHeight;
-                } ;
-            },
+            // },
+            // onStringTyped: (arrayPos: any, self: any) => {
+            //     const typedTextEl = self.el;
+            //     const typedTextContainer = typedTextEl.parentNode;
+            //     const styleString = typedTextEl.getAttribute('style');
+            //     const style = document.createElement('style');
+            //     style.textContent = styleString;
+            //     typedTextContainer.appendChild(style);
+            //     console.log(typedTextEl, "typedTextEl")
+            //     const line = self.el.querySelector('last-child');
+            //     console.log(line, "line")
+            //     const lineHeight = parseInt(getComputedStyle(line).lineHeight, 10);
+            //     // const lineHeight = 20;
+            //     if (el.current) {
+            //         (el.current as any).scrollTop  += lineHeight;
+            //     } ;
+            // },
         };
         const typed = new Typed(el.current, typedContent);
         return () => typed.destroy();

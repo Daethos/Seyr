@@ -58,30 +58,30 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                     <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
                 </h6>
             ]);
-            // <Button variant='' style={styles.button} onClick={blessPlayer}>
-            //     <img src=${player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt=${player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
-            // </Button>
-            // <br /><br />
             setTypewriterString(
                 `<h6 className='typewriterContainer' style=${styles.typewriterContainer} key='phenomena'>
-
-                A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
-                Writhing, it warps to wrap round you, seething, forms of shade shimmer to dance upon your being. <br /><br />
-                Yet perchance you seek to twist ${player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my ${player.mastery} burn the resin of your dreams. <br /><br />
-
+                <Button variant='' className='button' style={styles.button} onClick={blessPlayer}>
+                    <img src=${player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt=${player.faith}  className=${'godBorder'+player.mastery} style={faithBorder(player?.mastery)} />
+                </Button>
+                <br /><br /><br />
                 ${ player?.faith === 'adherent' ? (
                     `<p className='adherentText' style=${styles.adherentText}>You feel the presence of ${highestFaith()}... perhaps?</p>`
                 ) : player?.faith === 'devoted' ? (
                     `<p className='devotedText' style=${styles.devotedText}>You feel the presence of ${highestFaith()}... perhaps?</p>`
                 ) : (
                     '<p style=${styles.otherText}>You feel the presence of an overwhelming power...</p>'
-                ) }
+                ) } <br />
+
+                A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
+                Writhing, it warps to wrap round you, seething, forms of shade shimmer to dance upon your being. <br /><br />
+                Yet perchance you seek to twist ${player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my ${player.mastery} burn the resin of your dreams. <br /><br />
+
                 <p className='${player.faith === 'adherent' ? 'adherentText' : player?.faith === 'devoted' ? 'devotedText' : 'otherText'}' style=${styles.whisperText}>You become attuned to a whisper...</p>
                 <p className='whisperText' style=${styles.whisperText}>
                 "Who are you?" 
                 </p>
                 <p className='journeyText' style=${styles.journeyText}>
-                    [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
+                    [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise, you may rebuke this calling and continue your journey.] 
                 </p>
                 <Button variant='' className='rebukeButton' style={styles.rebukeButton} onClick={rebukePlayer}>X</Button>
             </h6>`
@@ -100,7 +100,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             shakeScreen({ duration: 1000, intensity: 2});
-            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n And undo these sins of fate?"` });
+            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
             if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
             const response = await asceanAPI.blessAscean(player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
@@ -143,43 +143,37 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         switch (mastery) {
             case 'Constitution':
                 return {
-                    marginTop: "25%",
-                    maxWidth: "25vw",
+                    maxWidth: "50vw",
                     border: '2px solid white',
                     boxShadow: '0 0 2em white',
                 };
             case 'Strength':
                 return {
-                    marginTop: "25%",
-                    maxWidth: "25vw",
+                    maxWidth: "50vw",
                     border: '2px solid red',
                     boxShadow: '0 0 2em red',
                 };
             case 'Agility':
                 return {
-                    marginTop: "25%",
-                    maxWidth: "25vw",
+                    maxWidth: "50vw",
                     border: '2px solid green',
                     boxShadow: '0 0 2em green',
                 };
             case 'Achre':
                 return {
-                    marginTop: "25%",
-                    maxWidth: "25vw",
+                    maxWidth: "50vw",
                     border: '2px solid blue',
                     boxShadow: '0 0 2em blue',
                 };
             case 'Caeren':
                 return {
-                    marginTop: "25%",
-                    maxWidth: "25vw",
+                    maxWidth: "50vw",
                     border: '2px solid purple',
                     boxShadow: '0 0 2em purple',
                 };
             case 'Kyosir':
                 return {
-                    marginTop: "25%",
-                    maxWidth: "25vw",
+                    maxWidth: "50vw",
                     border: '2px solid gold',
                     boxShadow: '0 0 2em gold',
                 };
@@ -227,10 +221,10 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         <div className='d-flex align-items-center justify-content-center'
         style={{
           position: 'fixed',
-          top: '17.5%',
+          top: firstPhenomena ? 0 : '17.5%',
           left: 0,
           width: '100%',
-          height: '45vh',
+          height: firstPhenomena ? '100vh' : '45vh',
           backgroundColor: 'rgba(0, 0, 0, 1)',
           zIndex: 9999, 
           border: "0.2em solid purple",
@@ -244,8 +238,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '' ) }
             { firstCity ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                <br /><br />
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}>
                 Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
                 You can click on the [Inventory] button that appears when you are in* a city, enabling multiple vendors selling specified equipment, and various services to heal and replenish your firewater. Much of the city's content is in framework and
@@ -257,8 +250,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '' ) }
             { firstCombat ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                <br /><br />
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}>
                 Welcome to your first combat encounter, {player.name}. Below explains the series of actions in conception and execution.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 512 512">
@@ -326,8 +318,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6> 
             ) : ( '' ) }
             { firstDeath ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                    <br /><br />
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}> 
                     Welcome to your first death, {player.name}! If you are reading this, it ain't hardcore so never fear.<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 436.028 436.028">
@@ -341,8 +332,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6> 
             ) : ( '') }
             { firstInventory ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                    <br /><br />
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}>
                     Welcome again, {player.name}, it appears you've opened your inventory with an item for the first time!<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     Inventory - Here you are able to view item statistics, and inspect for use in various ways. If you are of the mind, you may even be able to find a way to tinker with them.
@@ -389,8 +379,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '') }
             { firstLoot ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                    <br /><br /><br /><br />
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%"}}>
                     Congratulations {player.name} on your first piece of equipment you've come across.
                     <br /><br />
                     <p style={{ color: '#fdf6d8' }}>
@@ -410,49 +399,18 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             ) : ( '' ) }
 
             { firstPhenomena ? (
-                // <h6 className='typewriter-container' style={{ marginTop: "50%" }}>
-                //     <Button variant='' style={{ zIndex: 9999 }} onClick={() => blessPlayer()}>
-                //         <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
-                //     </Button>
-                // <br /><br />
-                // <div className='typewriter'>
-
-                // A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
-                // Wrapping warp it rounds you seething, forms of shade shimmer to dance upon your being. <br /><br />
-                // Yet perchance you seek to twist {player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my {player.mastery} burn the resin of your dreams. <br /><br />
-
-                // { player?.faith === 'adherent' ? (
-                //     <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
-                //     ) : player?.faith === 'devoted' ? (
-                //         <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
-                //         ) : (
-                //             <p style={{ color: "#fdf6d8" }}>You feel the presence of an overwhelming power...</p>
-                //             ) }
-                // <br />
-                // <p style={{ color: "#fdf6d8" }}>You become attuned to a whisper...</p>
-                // <p style={{ fontSize: "24px" }}>
-                // "Who are you?" 
-                // </p>
-                // <br />
-
-                // <p style={{ color: "#fdf6d8", fontSize: "14px" }}>
-                //     [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
-                // </p>
-                // </div>
-                // <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
-                // </h6>o
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ position: "absolute", top: '-5%', marginLeft: "35%", textAlign: 'center' }}>
+                {/* <div style={{ position: "absolute",  marginLeft: "22.5%", textAlign: 'center' }}>
                 <Button variant='' style={{ zIndex: 9999  }} onClick={() => blessPlayer()}>
-                    <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
+                    <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' className={'godBorder-' + player.mastery} style={faithBorder(player?.mastery)} />
                 </Button>
-                </div>
-                <Typewriter stringText={typewriterString} styling={{ marginTop: '15%', overflowY: 'auto' }} />
+                </div> */}
+                <Typewriter stringText={typewriterString} styling={{ overflowY: 'auto' }} />
                 </div>
             ) : ( '' ) }
 
             { firstQuest ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Quest
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}>First Quest
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstQuest', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
