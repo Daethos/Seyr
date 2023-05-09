@@ -146,7 +146,7 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
             : ( '' ) }
             </div>
         </Overlay>
-    )
-}
+    );
+};
 
-export default GameplayOverlay
+export default GameplayOverlay;

@@ -1,9 +1,9 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { GAME_ACTIONS, Player } from './GameStore';
 import * as asceanAPI from '../../utils/asceanApi';
 import Button from 'react-bootstrap/Button';
-import Faith from '../AsceanBuilder/Faith';
 import { shakeScreen } from './CombatStore';
+import Typewriter from './Typewriter';
 
 interface TutorialProps {
     player: any;
@@ -23,7 +23,72 @@ interface TutorialProps {
 };
 
 const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, firstPhenomena, setTutorialContent }: TutorialProps) => {
-    console.log(player, "Tutorial Triggering")
+    console.log(player, "Tutorial Triggering");
+    const [typewriterContent, setTypewriterContent] = useState<any>(null);
+    const [typewriterString, setTypewriterString] = useState<string>('')
+    useEffect(() => {
+        if (firstPhenomena) {
+            setTypewriterContent([
+                <h6 className='typewriter-container' style={{ marginTop: "50%" }} key='phenomena'>
+                    <Button variant='' style={{ zIndex: 9999 }} onClick={() => blessPlayer()}>
+                        <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
+                    </Button>
+                    <br /><br />
+
+                    A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
+                    Wrapping warp it rounds you seething, forms of shade shimmer to dance upon your being. <br /><br />
+                    Yet perchance you seek to twist {player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my {player.mastery} burn the resin of your dreams. <br /><br />
+
+                    { player?.faith === 'adherent' ? (
+                        <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
+                    ) : player?.faith === 'devoted' ? (
+                        <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
+                    ) : (
+                        <p style={{ color: "#fdf6d8" }}>You feel the presence of an overwhelming power...</p>
+                    ) }
+                    <br />
+                    <p style={{ color: "#fdf6d8" }}>You become attuned to a whisper...</p>
+                    <p style={{ fontSize: "24px" }}>
+                    "Who are you?" 
+                    </p>
+                    <br />
+                    <p style={{ color: "#fdf6d8", fontSize: "14px" }}>
+                        [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
+                    </p>
+                    <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
+                </h6>
+            ]);
+            // <Button variant='' style={styles.button} onClick={blessPlayer}>
+            //     <img src=${player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt=${player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
+            // </Button>
+            // <br /><br />
+            setTypewriterString(
+                `<h6 className='typewriterContainer' style=${styles.typewriterContainer} key='phenomena'>
+
+                A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
+                Writhing, it warps to wrap round you, seething, forms of shade shimmer to dance upon your being. <br /><br />
+                Yet perchance you seek to twist ${player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my ${player.mastery} burn the resin of your dreams. <br /><br />
+
+                ${ player?.faith === 'adherent' ? (
+                    `<p className='adherentText' style=${styles.adherentText}>You feel the presence of ${highestFaith()}... perhaps?</p>`
+                ) : player?.faith === 'devoted' ? (
+                    `<p className='devotedText' style=${styles.devotedText}>You feel the presence of ${highestFaith()}... perhaps?</p>`
+                ) : (
+                    '<p style=${styles.otherText}>You feel the presence of an overwhelming power...</p>'
+                ) }
+                <p className='${player.faith === 'adherent' ? 'adherentText' : player?.faith === 'devoted' ? 'devotedText' : 'otherText'}' style=${styles.whisperText}>You become attuned to a whisper...</p>
+                <p className='whisperText' style=${styles.whisperText}>
+                "Who are you?" 
+                </p>
+                <p className='journeyText' style=${styles.journeyText}>
+                    [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
+                </p>
+                <Button variant='' className='rebukeButton' style={styles.rebukeButton} onClick={rebukePlayer}>X</Button>
+            </h6>`
+            );
+        };
+    }, []);
+
     const completeTutorial = async (tutorial: string, ascean: string) => {
         const data = { ascean, tutorial };
         const response = await asceanAPI.saveTutorial(data);
@@ -52,8 +117,8 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             shakeScreen({ duration: 1000, intensity: 2});
             if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
-            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless your will to persist, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
-            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we fearfully sing."` });
+            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
+            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
             await completeTutorial('firstPhenomena', player._id);
             setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 7500);
         } catch (err: any) {
@@ -119,6 +184,44 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                     boxShadow: '0 0 2em gold',
                 };
         };
+    };
+    const styles = {
+        typewriterContainer: {
+          marginTop: "50%",
+          color: "gold",
+          display: 'inline-block',
+          textAlign: 'center',
+          textShadow: '1.5px 1.5px 1.5px darkgoldenrod',
+          overflowY: 'auto',
+          width: '100%',
+        },
+        button: {
+          zIndex: 9999,
+          border: 'none'
+        }, 
+        adherentText: {
+          color: "#fdf6d8"
+        },
+        devotedText: {
+          color: "#fdf6d8"
+        },
+        otherText: {
+          color: "red"
+        },
+        whisperText: {
+          fontSize: "24px"
+        },
+        journeyText: {
+          color: "#fdf6d8",
+          fontSize: "14px"
+        },
+        rebukeButton: {
+          float: "right",
+          fontSize: "24px",
+          zIndex: 9999,
+          marginLeft: "90vw",
+          color: "red"
+        },
     };
     return (
         <div className='d-flex align-items-center justify-content-center'
@@ -307,38 +410,45 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             ) : ( '' ) }
 
             { firstPhenomena ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1.5s ease-in 0.5s forwards", marginTop: "50%" }}>
-                    <Button variant='' style={{ zIndex: 9999 }} onClick={() => blessPlayer()}>
-                        <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devote' ? '/images/daethos-rising.png' : process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt={Faith.name} id='origin-pic' style={faithBorder(player?.mastery)} />
-                    </Button>
-                <br /><br />
-                { player?.faith === 'adherent' ? (
-                    <div>
-                        <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}...</p>
-                    </div>
-                ) : player?.faith === 'devoted' ? (
-                    <div>
-                        <p style={{ color: "#fdf6d8" }}>You feel the presence of Daethos...</p>
-                    </div>
-                ) : (
-                    <div>
-                        <p style={{ color: "#fdf6d8" }}>You feel the presence of an overhwelming power...</p>
-                    </div>
-                ) }
-                A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
-                Wrapping warp it rounds you seething, forms of shade shimmer to dance upon your being. <br /><br />
-                Yet perchance you seek to twist {player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my {player.mastery} burn the resin of your dreams. <br /><br />
-                <br />
-                <p style={{ color: "#fdf6d8" }}>You become attuned to a whisper...</p>
-                <p style={{ fontSize: "24px" }}>
-                "Do you seek {player.faith === 'adherent' ? 'adherence' : 'devotion'}?" 
-                </p>
-                <br />
-                <p style={{ color: "#fdf6d8", fontSize: "14px" }}>
-                [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
-                </p>
-                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
-                </h6>
+                // <h6 className='typewriter-container' style={{ marginTop: "50%" }}>
+                //     <Button variant='' style={{ zIndex: 9999 }} onClick={() => blessPlayer()}>
+                //         <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
+                //     </Button>
+                // <br /><br />
+                // <div className='typewriter'>
+
+                // A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
+                // Wrapping warp it rounds you seething, forms of shade shimmer to dance upon your being. <br /><br />
+                // Yet perchance you seek to twist {player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my {player.mastery} burn the resin of your dreams. <br /><br />
+
+                // { player?.faith === 'adherent' ? (
+                //     <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
+                //     ) : player?.faith === 'devoted' ? (
+                //         <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
+                //         ) : (
+                //             <p style={{ color: "#fdf6d8" }}>You feel the presence of an overwhelming power...</p>
+                //             ) }
+                // <br />
+                // <p style={{ color: "#fdf6d8" }}>You become attuned to a whisper...</p>
+                // <p style={{ fontSize: "24px" }}>
+                // "Who are you?" 
+                // </p>
+                // <br />
+
+                // <p style={{ color: "#fdf6d8", fontSize: "14px" }}>
+                //     [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
+                // </p>
+                // </div>
+                // <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
+                // </h6>o
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: "absolute", top: '-5%', marginLeft: "35%", textAlign: 'center' }}>
+                <Button variant='' style={{ zIndex: 9999  }} onClick={() => blessPlayer()}>
+                    <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
+                </Button>
+                </div>
+                <Typewriter stringText={typewriterString} styling={{ marginTop: '15%', overflowY: 'auto' }} />
+                </div>
             ) : ( '' ) }
 
             { firstQuest ? (

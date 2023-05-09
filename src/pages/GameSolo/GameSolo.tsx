@@ -191,7 +191,7 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
-            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
+            if (mapState.steps > 1 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -267,7 +267,6 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     const loadMap = async (ascean: Player, map: MapData) => {
-        console.log(map, "Loading Map");
         const article = ['a', 'e', 'i', 'o', 'u'].includes(map.currentTile.content.charAt(0).toLowerCase()) ? 'an' : 'a';
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
@@ -287,7 +286,6 @@ const GameSolo = ({ user }: GameProps) => {
     const saveWorld = async () => {
         try {
             const response = await mapAPI.saveNewMap(mapState);
-            console.log(response);
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
@@ -316,7 +314,6 @@ const GameSolo = ({ user }: GameProps) => {
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
             }, 2000);
-            console.log(response, 'Response Saving Ascean Coordinates');
         } catch (err: any) {
             console.log(err.message, 'Error Saving Ascean Coordinates');
         };
@@ -327,7 +324,6 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             const data = { name: mapName, ascean: gameState.player };
             const response = await mapAPI.createMap(data);
-            console.log(response, 'Response Generating World Environment.');
             mapDispatch({
                 type: MAP_ACTIONS.SET_MAP_DATA,
                 payload: response
@@ -737,8 +733,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     const deleteEquipment = async (eqp: any) => {
         try {
-            const response = await eqpAPI.deleteEquipment(eqp);
-            console.log(response, 'Delete Response!');
+            await eqpAPI.deleteEquipment(eqp);
         } catch (err) {
             console.log(err, 'Error!')
         };

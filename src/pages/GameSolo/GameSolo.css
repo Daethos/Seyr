@@ -72,6 +72,34 @@
   }
 }
 
+.typewriterContainer {
+  display: inline-block;
+  color: gold;
+  text-align: center;
+  text-shadow: 1.5px 1.5px 1.5px darkgoldenrod;
+  overflow-y: auto;
+  width: 100%;
+  max-height: 40vh;
+}
+
+.typewriter {
+  text-align: left;
+  border-right: .15em solid gold; 
+  white-space: pre-wrap;
+  animation: typing 6s steps(40, end), blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: gold; }
+}
+
+
 .journal-button {
   position: absolute;
   grid-column-start: 2;
