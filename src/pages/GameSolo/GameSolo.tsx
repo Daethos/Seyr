@@ -191,7 +191,7 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
-            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
+            if (mapState.steps > 1 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
