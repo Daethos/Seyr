@@ -55,6 +55,8 @@ export interface Player extends Ascean {
     primary: { name: string, description: string };
     secondary: { name: string, description: string };
     tertiary: { name: string, description: string };
+    journal: object;
+
 };
 
 export interface Enemy extends Ascean {
@@ -714,6 +716,8 @@ export const GAME_ACTIONS = {
     SET_INVENTORY_POSITION: 'SET_INVENTORY_POSITION',
     SET_ASCEAN_ATTRIBUTES: 'SET_ASCEAN_ATTRIBUTES',
     SET_ASCEAN_AND_INVENTORY: 'SET_ASCEAN_AND_INVENTORY',
+    SET_JOURNAL: 'SET_JOURNAL',
+    SET_JOURNAL_ENTRY: 'SET_JOURNAL_ENTRY',
 
     SET_PURCHASING_ITEM: 'SET_PURCHASING_ITEM',
 
@@ -1003,6 +1007,25 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     caeren: action.payload.caeren,
                     kyosir: action.payload.kyosir,
                 },
+            };
+        case 'SET_JOURNAL':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    journal: action.payload,
+                },
+            };
+        case 'SET_JOURNAL_ENTRY':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    journal: {
+                        ...game.player.journal,
+                        currentEntry: action.payload,
+                    }
+                }
             };
         case 'SET_QUESTS':
             return {

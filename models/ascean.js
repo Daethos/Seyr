@@ -120,7 +120,6 @@ const asceanSchema = new Schema(
                 type: Number,
                 default: 0,
             },
-            
         },
         name: String,
         description: String,

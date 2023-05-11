@@ -26,6 +26,7 @@ router.get('/:tax/:id', protect, asceanCtrl.asceanTax);
 
 router.put('/coords', protect, asceanCtrl.saveCoordinates)
 router.put('/highscore', protect, asceanCtrl.updateHighScore);
+router.put('/journal', protect, asceanCtrl.addJournalEntry)
 router.put('/exp', protect, asceanCtrl.saveExperience);
 router.put('/setCurrency', protect, asceanCtrl.setCurrency);
 router.put('/setExp', protect, asceanCtrl.setExperience);

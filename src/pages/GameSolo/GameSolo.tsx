@@ -191,7 +191,7 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
-            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
+            if (mapState.steps > 1 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -1749,7 +1749,7 @@ const GameSolo = ({ user }: GameProps) => {
             : 
                 <>
                     <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
-                    { gameState.player.quests.length > 0 ?
+                    { gameState.player.journal.entries.length > 0 ?
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
                     : '' }
                     { gameState.showDialog && gameState.opponent ?    

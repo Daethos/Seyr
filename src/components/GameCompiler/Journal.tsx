@@ -3,13 +3,16 @@ import Button from 'react-bootstrap/Button';
 import Loading from '../../components/Loading/Loading';
 import ToastAlert from '../../components/ToastAlert/ToastAlert';
 import { GAME_ACTIONS } from './GameStore';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 
 const JournalButtons = ({ options, setJournalEntry }: { options: any, setJournalEntry: any }) => {
-    const buttons = Object.keys(options).map((o: any, i: number) => {
+    console.log(options, 'The Options')
+    const buttons = options.map((o: any, i: number) => {
+        console.log(o, 'Options in JournalButtons')
         return (
             <div key={i}>
-            <Button variant='' onClick={() => setJournalEntry(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o.title}</Button>
+            <Button variant='' onClick={() => setJournalEntry(i)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o.title}</Button>
             </div>
         );
     });
@@ -45,17 +48,15 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     return <>{buttons}</>;
 };
 
-const JournalEntry = ({ entry, setJournalEntry }: { entry: any, setJournalEntry: any }) => {
+const JournalEntry = ({ entry }: { entry: any }) => {
     const { title, body, footnote, date, location, coordinates } = entry;
     return (
-        <div>
-        <h3>{entry?.title}
-        <p>{entry?.date}</p>
-        </h3>
-        <h6>{entry?.body}</h6>
-        <p>[{entry?.footnote}]</p>
-        <p>({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
-        {/* <Button variant='' onClick={() => setJournalEntry(null)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>Back</Button> */}
+        <div style={{ whiteSpace: "pre-wrap" }}>
+        <h3 style={{ color: "gold" }}>{entry?.title}</h3>
+        <p style={{ color: "#fdf6d8" }}>{formatDistanceToNow(new Date(entry?.date))}</p>
+        <h6 style={{ color: "gold" }}>{entry?.body}</h6>
+        <p className='mt-5'>[{entry?.footnote}]</p>
+        <p style={{ color: "gold" }}>({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
         </div>
     );
 };
@@ -93,7 +94,7 @@ interface JournalProps {
 
 const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests }: JournalProps) => {
     const [questData, setQuestData] = useState<any>(quests[0]);
-    const [journalEntries, setJournalEntries] = useState(ascean.journal);
+    const [journalEntries, setJournalEntries] = useState(ascean.journal.entries);
     const [entry, setEntry] = useState(ascean.journal.currentEntry);
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
     const [loading, setLoading] = useState(false);
@@ -101,8 +102,9 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
     const [showJournal, setShowJournal] = useState<boolean>(false);
 
     useEffect(() => {
-        setJournalEntries(ascean?.journal);
-        setEntry(ascean?.journal?.currentEntry);
+        setJournalEntries(ascean?.journal?.entries);
+        setEntry(ascean?.journal?.entries[ascean?.journal?.currentEntry]);
+        console.log(new Date(), Date.now(), "New Dates ???")
     }, [ascean]);
 
     useEffect(() => {
@@ -117,7 +119,7 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
     };
 
     const handleJournal = (journal: any) => {
-        setEntry(journal);
+        setEntry(ascean?.journal?.entries[journal]);
     };
 
     const handleQuest = (quest: any) => {
@@ -130,6 +132,8 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
         );
     };
 
+
+
     return (
         <>
         { showJournal ? (
@@ -139,7 +143,7 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
             <img src={process.env.PUBLIC_URL + `/images/` + ascean?.origin + '-' + ascean?.sex + '.jpg'} alt={ascean?.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
             {' '}{ascean.name} (Level {ascean.level})<br />
             { journalEntries?.length > 0 ? (
-                <JournalEntry entry={entry} setJournalEntry={setJournalEntries} />
+                <JournalEntry entry={entry} />
             ) : ( '' ) }
             </div>
             <div className='dialog-options'>

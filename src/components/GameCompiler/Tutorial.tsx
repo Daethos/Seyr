@@ -88,6 +88,25 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You may not be one for the Ancients or so-called God of this world, yet an undeniable surge courses through you. \n\n Care for whom and what you befriend, ${player.name}.` })
             };
             const response = await asceanAPI.blessAscean(player._id);
+            const entry = {
+                title: 'Who am I?',
+                body: `You felt the presence of... ${highestFaith()}? \n\n You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither. \n\n "Who are you?"`,
+                footnote: `Seems you've been blessed by ${highestFaith()}, or some greater mimicry of it. It asked who you were, how would it not know?`,
+                date: Date.now(),
+                location: 'Unknown',
+                coordinates: {
+                    x: 0,
+                    y: 0,
+                },
+            };
+            const data = {
+                asceanID: player._id,
+                entry,
+            };
+            const journalResponse = await asceanAPI.saveJournalEntry(data);
+            console.log(journalResponse, "Journal Response");
+            gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
+
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
             gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your curiosity or perchance conviction? A journey to the discovery of yourself awaits, ${player.name}.` });
                         
@@ -107,6 +126,25 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
             
+            const entry = {
+                title: 'Who am I?',
+                body: `You felt the presence of... ${highestFaith()}? \n\n You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither. \n\n "Who are you?"`,
+                footnote: `Some mimicry of ${highestFaith()} asked who you were, as though the true incarnation would not know? Careful of what you rebuke, ${player.name}.`,
+                date: Date.now(),
+                location: 'Unknown',
+                coordinates: {
+                    x: 0,
+                    y: 0,
+                },
+            };
+            const data = {
+                asceanID: player._id,
+                entry,
+            };
+            const journalResponse = await asceanAPI.saveJournalEntry(data);
+            console.log(journalResponse, "Journal Response");
+            gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
+
             gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your caution or perchance cynicism? A journey to the discovery of this presence awaits, ${player.name}.` });
             await completeTutorial('firstPhenomena', player._id);
             setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 7500);

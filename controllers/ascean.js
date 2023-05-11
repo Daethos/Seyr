@@ -253,66 +253,69 @@ async function evaluateExperience(req, res) {
         const badBehaviorCount = badBehavior.length;
         const middlingBehaviorCount = middlingBehavior.length;
 
+        const presentTense = ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with';
+        const pastTense = ascean.faith === 'adherent' ? 'adherent toward' : ascean.faith === 'devoted' ? 'devoted toward' : 'curious with';
+
         switch (behavior) {
             case 'Convicted':
                 ascean[keywords[ascean.mastery]] += 1;
-                entry.footnote += ` ${ascean.name} has been convicted of their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                entry.footnote = `${ascean.name} has been convicted of their ${presentTense} ${deity}.`;
                 break;
             case 'Zealous':
-                entry.footnote += ` ${ascean.name} has been zealous in their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                entry.footnote = `${ascean.name} has been zealous in their ${presentTense} ${deity}.`;
                 ascean[keywords[ascean.mastery]] += 0.75;
                 break;
             case 'Faithful':
-                entry.footnote += ` ${ascean.name} has been faithful to ${deity}.`;
+                entry.footnote = `${ascean.name} has been faithful to ${deity}.`;
                 ascean[keywords[ascean.mastery]] += 0.5;
                 break;
             case 'Somewhat Faithful':
-                entry.footnote += ` ${ascean.name} has been somewhat faithful to ${deity}.`;
+                entry.footnote = `${ascean.name} has been somewhat faithful to ${deity}.`;
                 ascean[keywords[ascean.mastery]] += 0.25;
                 break;
             case 'Compliant':
-                entry.footnote += ` ${ascean.name} has been ${ascean.faith === 'adherent' ? 'adherent to' : ascean.faith === 'devoted' ? 'devoted to' : 'curious with'} ${deity}.`;
+                entry.footnote = `${ascean.name}'s ${pastTense} ${deity}.`;
                 
                 break;
             case 'Waning Faith':
-                entry.footnote += ` ${ascean.name} has been waning in their ${ascean.faith === 'adherent' ? 'adherence toward' : ascean.faith === 'devoted' ? 'devotion toward' : 'curiosity with'} ${deity}.`;
+                entry.footnote = `${ascean.name}'s waning in their ${presentTense} ${deity}.`;
                 
                 break;
             case 'Somewhat Compliant':
-                entry.footnote += ` ${ascean.name} has been somewhat ${ascean.faith === 'adherent' ? 'adherent to' : ascean.faith === 'devoted' ? 'devoted to' : 'curious with'} ${deity}.`;
+                entry.footnote = `${ascean.name}'s somewhat ${pastTense} ${deity}.`;
                 
                 break;
             case 'Strained Compliance':
-                entry.footnote += ` ${ascean.name} has been strained in their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                entry.footnote = `${ascean.name}'s strained in their ${presentTense} ${deity}.`;
                 
                 break;
             case 'Waning Compliance':
-                entry.footnote += ` ${ascean.name} has been waning in their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                entry.footnote = `${ascean.name}'s waning in their ${presentTense} ${deity}.`;
                 
                 break;
             case 'Somewhat Disobedient':
-                entry.footnote += ` ${ascean.name} has been somewhat disobedient to ${deity}.`;
+                entry.footnote = `${ascean.name} has been somewhat disobedient to ${deity}.`;
                 // This is where Chiomyr would mess with someone's inventory, etc...
                 break;
             case 'Disobedient':
-                entry.footnote += ` ${ascean.name} has been disobedient to ${deity}.`;
+                entry.footnote = `${ascean.name} has been disobedient to ${deity}.`;
                 // Or put their current health at level 1 as punishment
                 break;
             case 'Somewhat Unfaithful':
-                entry.footnote += ` ${ascean.name} has been somewhat unfaithful to ${deity}.`;
+                entry.footnote = `${ascean.name} has been somewhat unfaithful to ${deity}.`;
                 ascean[keywords[ascean.mastery]] -= 0.25;
                 break;
             case 'Unfaithful':
                 ascean[keywords[ascean.mastery]] -= 0.5;
-                entry.footnote += ` ${ascean.name} has been unfaithful to ${deity}.`;
+                entry.footnote = `${ascean.name} has been unfaithful to ${deity}.`;
                 break;
             case 'Rabid':
                 ascean[keywords[ascean.mastery]] -= 0.75;
-                entry.footnote += ` ${ascean.name} has been rabid in their unfaithfulness to ${deity}.`;
+                entry.footnote = `${ascean.name} has been rabid in their unfaithfulness to ${deity}.`;
                 break;
             case 'Hostile':
                 ascean[keywords[ascean.mastery]] -= 1;
-                entry.footnote += ` ${ascean.name} has been hostile to ${deity}.`;
+                entry.footnote = `${ascean.name} has been hostile to ${deity}.`;
                 break;
             default:
                 break;
@@ -329,8 +332,9 @@ async function evaluateExperience(req, res) {
 async function addJournalEntry(req, res) {
     try {
         let ascean = await Ascean.findById(req.body.asceanID);
-        ascean.journal.push(req.body.journalEntry);
+        ascean.journal.entries.push(req.body.entry);
         await ascean.save();
+        res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, "Error Adding Journal Entry");
         res.status(400).json(err);
