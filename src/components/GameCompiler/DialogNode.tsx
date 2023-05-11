@@ -11,6 +11,7 @@ export interface DialogNodeOption {
     npcIds?: any[];
     conditions?: { key: string; operator: string; value: string; }[];
     action?: string | null;
+    keywords?: string[] | null;
 };
 
 export interface DialogNode {

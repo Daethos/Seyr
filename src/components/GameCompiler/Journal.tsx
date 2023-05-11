@@ -5,15 +5,33 @@ import ToastAlert from '../../components/ToastAlert/ToastAlert';
 import { GAME_ACTIONS } from './GameStore';
 
 
-const QuestButtons = ({ options, setQuest }: { options: any, setQuest: any }) => {
-    const buttons = options.map((o: any, i: number) => {
+const JournalButtons = ({ options, setJournalEntry }: { options: any, setJournalEntry: any }) => {
+    const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
             <div key={i}>
-            <Button variant='' onClick={() => setQuest(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='quest-buttons'>{o.title}</Button>
+            <Button variant='' onClick={() => setJournalEntry(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o.title}</Button>
             </div>
         );
     });
-    return <>{buttons}</>;
+    return (
+        <div style={{ marginTop: "5%" }}>
+            <span style={{ color: 'gold' }}>Entries</span><br />
+            {buttons}
+        </div>
+    )};
+
+const QuestButtons = ({ options, setQuestData }: { options: any, setQuestData: any }) => {
+    const buttons = Object.keys(options).map((o: any, i: number) => {
+        return (
+            <div key={i}>
+            <Button variant='' onClick={() => setQuestData(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o.title}</Button>
+            </div>
+        );
+    });
+    return <>
+            <span style={{ color: 'gold' }}>Quests</span><br />
+            {buttons}
+        </>;
 };
   
 const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, handleRegion: any }) => {
@@ -21,10 +39,25 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     const buttons = Object.keys(options).map((o: any, i: number) => {
         console.log(o, 'Options in ProvincialWhispersButtons');
         return (
-            <Button variant='' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
+            <Button variant='' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o}</Button>
         )
     });
     return <>{buttons}</>;
+};
+
+const JournalEntry = ({ entry, setJournalEntry }: { entry: any, setJournalEntry: any }) => {
+    const { title, body, footnote, date, location, coordinates } = entry;
+    return (
+        <div>
+        <h3>{entry?.title}
+        <p>{entry?.date}</p>
+        </h3>
+        <h6>{entry?.body}</h6>
+        <p>[{entry?.footnote}]</p>
+        <p>({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
+        {/* <Button variant='' onClick={() => setJournalEntry(null)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>Back</Button> */}
+        </div>
+    );
 };
 
 const regionInformation = {
@@ -60,10 +93,17 @@ interface JournalProps {
 
 const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests }: JournalProps) => {
     const [questData, setQuestData] = useState<any>(quests[0]);
+    const [journalEntries, setJournalEntries] = useState(ascean.journal);
+    const [entry, setEntry] = useState(ascean.journal.currentEntry);
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [showJournal, setShowJournal] = useState<boolean>(false);
+
+    useEffect(() => {
+        setJournalEntries(ascean?.journal);
+        setEntry(ascean?.journal?.currentEntry);
+    }, [ascean]);
 
     useEffect(() => {
         if (quests.length > 0) {
@@ -74,6 +114,10 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
     const handleRegion = (region: keyof Region) => {
         console.log(region, 'What are you ?')
         setProvince(region);
+    };
+
+    const handleJournal = (journal: any) => {
+        setEntry(journal);
     };
 
     const handleQuest = (quest: any) => {
@@ -94,25 +138,13 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
             <ToastAlert error={error} setError={setError} />
             <img src={process.env.PUBLIC_URL + `/images/` + ascean?.origin + '-' + ascean?.sex + '.jpg'} alt={ascean?.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
             {' '}{ascean.name} (Level {ascean.level})<br />
-                {questData?.title}<br />
-                {questData?.description}<br /><br />
-                Quest Level: {questData?.level}<br />
-                Quest Giver: {questData?.giver}<br />
-                { questData?.details?.isBounty ? (
-                    <>
-                    Bounty: ({questData?.details?.bounty?.bounty}) {questData?.details?.bounty?.name} <br />
-                    Timer: {questData?.details?.timer - ascean?.level} {questData?.details?.bounty?.timer === 1 ? 'Month' : 'Months'}<br />
-                    </>
-                ) : ( "" ) }
-                Rewards: {questData?.rewards?.currency?.gold}g {questData?.rewards?.currency?.silver}s | 
-                {/* {questData?.rewards?.items?.map((item: any) => item + ' ')} |  */}
-                {' '}{questData?.rewards?.items?.slice(0, -1).join(", ")}
-                {questData?.rewards?.items?.length > 1 && <span>&nbsp;and&nbsp;</span>}
-                {questData?.rewards?.items?.slice(-1)} | 
-                {' '}{questData?.rewards?.experience} exp
+            { journalEntries?.length > 0 ? (
+                <JournalEntry entry={entry} setJournalEntry={setJournalEntries} />
+            ) : ( '' ) }
             </div>
             <div className='dialog-options'>
-                <QuestButtons options={quests} setQuest={handleQuest} />
+                <JournalButtons options={journalEntries} setJournalEntry={handleJournal} />
+                {/* <QuestButtons options={quests} setQuestData={handleQuest} /> */}
             </div>
             </div>
         ) : ('') }

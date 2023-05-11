@@ -54,6 +54,8 @@ const styleMap: StyleMap = {
     width: "100vw",
     fontSize: "16px",
     padding: "10px",
+    fontVariant: "small-caps"
+    // fontFamily: "Cinzel",
   },
   godBorderConstitution: {
     marginBottom: "15%",
@@ -162,7 +164,7 @@ const Typewriter = ({ stringText, styling, performAction }: TypewriterProps) => 
     return () => {
       typed.destroy();
     };
-  }, [stringText, el]);
+  }, [stringText]);
 
   return (
     <div id="typewriter" ref={el} style={styling} />

@@ -50,7 +50,291 @@ module.exports = {
     setCurrency,
     setExperience,
     getOneAsceanLight,
-    blessAscean
+    blessAscean,
+    addJournalEntry,
+    evaluateExperience,
+    updateStatistics
+};
+
+async function updateStatistics(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.body.asceanID);
+        ascean.statistics = req.body.statistics;
+        await ascean.save();
+        res.status(200).json(ascean);
+    } catch (err) {
+        console.log(err);
+        res.status(400).json(err);
+    };
+};
+
+async function evaluateExperience(req, res) {
+    try {
+
+        let ascean = await Ascean.findById(req.body.asceanID);
+        let entry = req.body.entry;
+        let deity = req.body.entry.deity;
+
+        const keywords = {
+            'Daethos': 'Daethos',
+            'Daethic': 'Daethic',
+            'Daethos\'s': 'Daethos\'s',
+            'Ancient': 'Ancient',
+            'Ancients': 'Ancients',
+            'Ancient\'s': 'Ancient\'s',
+            
+            'Achreo': 'Achreo',
+            'Achreo\'s': 'Achreo\'s',
+            
+            'Ahn\'ve': 'Ahn\'ve',
+            'Ahn\'ve\'s': 'Ahn\'ve\'s',
+            
+            'Astra': 'Astra',
+            'Astra\'s': 'Astra\'s',
+            
+            'Cambire': 'Cambire',
+            'Cambire\'s': 'Cambire\'s',
+            
+            'Chiomyr': 'Chiomyr',
+            'Chiomyr\'s': 'Chiomyr\'s',
+
+            'Fyer': 'Fyer',
+            'Fyer\'s': 'Fyer\'s',
+
+            'Ilios': 'Ilios',
+            'Ilios\'s': 'Ilios\'s',
+            
+            'Kyn\'gi': 'Kyn\'gi',
+            'Kyn\'gi\'s': 'Kyn\'gi\'s',
+            
+            'Kyr\'na': 'Kyr\'na',
+            'Kyr\'na\'s': 'Kyr\'na\'s',
+
+            'Kyrisos': 'Kyrisos',
+            'Kyrisos\'s': 'Kyrisos\'s',
+
+            'Lilos': 'Lilos',
+            'Lilos\'s': 'Lilos\'s',
+
+            'Ma\'anre': 'Ma\'anre',
+            'Ma\'anre\'s': 'Ma\'anre\'s',
+
+            'Nyrolus': 'Nyrolus',
+            'Nyrolus\'s': 'Nyrolus\'s',
+            
+            'Quor\'ei': 'Quor\'ei',
+            'Quor\'ei\'s': 'Quor\'ei\'s',
+
+            'Rahvre': 'Rahvre',
+            'Rahvre\'s': 'Rahvre\'s',
+            
+            'Senari': 'Senari',
+            'Senari\'s': 'Senari\'s',
+            
+            'Se\'dyro': 'Se\'dyro',
+            'Se\'dyro\'s': 'Se\'dyro\'s',
+            
+            'Se\'vas': 'Se\'vas',
+            'Se\'vas\'s': 'Se\'vas\'s',
+
+            'Shrygei': 'Shrygei',
+            'Shrygei\'s': 'Shrygei\'s',
+            
+            'Tshaer': 'Tshaer',
+            'Tshaer\'s': 'Tshaer\'s',
+        };
+
+        const keywordCount = {
+            'Compliant': {
+                occurrence: 0,
+                value: 0
+            },
+            'Faithful': {
+                occurrence: 0,
+                value: 0
+            },
+            'Unfaithful': {
+                occurrence: 0,
+                value: 0
+            },
+            'Disobedient': {
+                occurrence: 0,
+                value: 0
+            },
+        };
+
+        const masteryKeyords = {
+            'Constitution': 'constitution',
+            'Strength': 'strength',
+            'Agility': 'agility',
+            'Achre': 'achre',
+            'Caeren': 'caeren',
+            'Kyosir': 'kyosir',
+        };
+
+        const keywordResponse = entry.body.split(' ').filter(word => keywords[word]);
+        const masteryKeywordResponse = entry.body.split(' ').filter(word => masteryKeyords[word]);
+        entry.keywords.forEach((keyword) => {
+            if (keywordCount[keyword]) {
+                keywordCount[keyword].occurrence += 1;
+            };
+        });
+          
+        
+        keywordCount.Compliant.value = keywordCount.Compliant.occurrence;
+        keywordCount.Faithful.value = keywordCount.Faithful.occurrence * 2;
+        keywordCount.Unfaithful.value = -keywordCount.Unfaithful.occurrence * 2;
+        keywordCount.Disobedient.value = -keywordCount.Disobedient.occurrence;
+
+        const valueSum = keywordCount.Compliant.value + keywordCount.Faithful.value + keywordCount.Unfaithful.value + keywordCount.Disobedient.value;
+
+        const evaluateBehavior = (count) => {
+            const sortCountOccurrence = Object.values(count).sort((a, b) => b.occurrence - a.occurrence);
+            const sortCountValue = Object.values(count).sort((a, b) => b.value - a.value);
+            if (sortCountOccurrence[0] === 'Faithful') {
+                if (valueSum >= 4) {
+                    return 'Convicted';
+                } else if (valueSum >= 2) {
+                    return 'Faithful';
+                } else if (valueSum === 1) {
+                    return 'Somewhat Faithful';
+                } else {
+                    return 'Strained Faith';
+                };
+            } else if (sortCountOccurrence[0] === 'Compliant') {
+                if (valueSum >= 4) {
+                    return 'Zealous';
+                } else if (valueSum >= 2) {
+                    return 'Compliant';
+                } else if (valueSum >= 1) {
+                    return 'Somewhat Compliant';
+                } else {
+                    return 'Strained Compliance';
+                };
+            } else if (sortCountOccurrence[0] === 'Unfaithful') {
+                if (valueSum <= -4) {
+                    return 'Hostile';
+                } else if (valueSum <= -2) {
+                    return 'Unfaithful';
+                } else if (valueSum <= -1) {
+                    return 'Somewhat Unfaithful';
+                } else {
+                    return 'Waning Faith';
+                };
+            } else if (sortCountOccurrence[0] === 'Disobedient') {
+                if (valueSum <= -4) {
+                    return 'Rabid';
+                } else if (valueSum <= -2) {
+                    return 'Disobedient';
+                } else if (valueSum <= -1) {
+                    return 'Somewhat Disobedient';
+                } else {
+                    return 'Waning Compliance';
+                };
+            };
+        };
+
+        const behavior = evaluateBehavior(keywordCount);
+        ascean.relationships.deity.Compliant.occurrennce += keywordCount.Compliant.occurrence;
+        ascean.relationships.deity.Faithful.occurrence += keywordCount.Faithful.occurrence;
+        ascean.relationships.deity.Unfaithful.occurrence += keywordCount.Unfaithful.occurrence;
+        ascean.relationships.deity.Disobedient.occurrence += keywordCount.Disobedient.occurrence;
+        ascean.relationships.deity.Compliant.total += keywordCount.Compliant.value;
+        ascean.relationships.deity.Faithful.total += keywordCount.Faithful.value;
+        ascean.relationships.deity.Unfaithful.total += keywordCount.Unfaithful.value;
+        ascean.relationships.deity.Disobedient.total += keywordCount.Disobedient.value;
+        ascean.relationships.deity.value += valueSum;
+        ascean.relationships.deity.behaviors.push(behavior);
+
+        const goodBehavior = ascean.relationships.deity.behaviors.filter(behavior => behavior === 'Faithful' || behavior === 'Compliant');
+        const badBehavior = ascean.relationships.deity.behaviors.filter(behavior => behavior === 'Unfaithful' || behavior === 'Disobedient');
+        const middlingBehavior = ascean.relationships.deity.behaviors.filter(behavior => behavior === 'Somewhat Faithful' || behavior === 'Somewhat Compliant' || behavior === 'Somewhat Unfaithful' || behavior === 'Somewhat Disobedient');
+        const goodBehaviorCount = goodBehavior.length;
+        const badBehaviorCount = badBehavior.length;
+        const middlingBehaviorCount = middlingBehavior.length;
+
+        switch (behavior) {
+            case 'Convicted':
+                ascean[keywords[ascean.mastery]] += 1;
+                entry.footnote += ` ${ascean.name} has been convicted of their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                break;
+            case 'Zealous':
+                entry.footnote += ` ${ascean.name} has been zealous in their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                ascean[keywords[ascean.mastery]] += 0.75;
+                break;
+            case 'Faithful':
+                entry.footnote += ` ${ascean.name} has been faithful to ${deity}.`;
+                ascean[keywords[ascean.mastery]] += 0.5;
+                break;
+            case 'Somewhat Faithful':
+                entry.footnote += ` ${ascean.name} has been somewhat faithful to ${deity}.`;
+                ascean[keywords[ascean.mastery]] += 0.25;
+                break;
+            case 'Compliant':
+                entry.footnote += ` ${ascean.name} has been ${ascean.faith === 'adherent' ? 'adherent to' : ascean.faith === 'devoted' ? 'devoted to' : 'curious with'} ${deity}.`;
+                
+                break;
+            case 'Waning Faith':
+                entry.footnote += ` ${ascean.name} has been waning in their ${ascean.faith === 'adherent' ? 'adherence toward' : ascean.faith === 'devoted' ? 'devotion toward' : 'curiosity with'} ${deity}.`;
+                
+                break;
+            case 'Somewhat Compliant':
+                entry.footnote += ` ${ascean.name} has been somewhat ${ascean.faith === 'adherent' ? 'adherent to' : ascean.faith === 'devoted' ? 'devoted to' : 'curious with'} ${deity}.`;
+                
+                break;
+            case 'Strained Compliance':
+                entry.footnote += ` ${ascean.name} has been strained in their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                
+                break;
+            case 'Waning Compliance':
+                entry.footnote += ` ${ascean.name} has been waning in their ${ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with'} ${deity}.`;
+                
+                break;
+            case 'Somewhat Disobedient':
+                entry.footnote += ` ${ascean.name} has been somewhat disobedient to ${deity}.`;
+                // This is where Chiomyr would mess with someone's inventory, etc...
+                break;
+            case 'Disobedient':
+                entry.footnote += ` ${ascean.name} has been disobedient to ${deity}.`;
+                // Or put their current health at level 1 as punishment
+                break;
+            case 'Somewhat Unfaithful':
+                entry.footnote += ` ${ascean.name} has been somewhat unfaithful to ${deity}.`;
+                ascean[keywords[ascean.mastery]] -= 0.25;
+                break;
+            case 'Unfaithful':
+                ascean[keywords[ascean.mastery]] -= 0.5;
+                entry.footnote += ` ${ascean.name} has been unfaithful to ${deity}.`;
+                break;
+            case 'Rabid':
+                ascean[keywords[ascean.mastery]] -= 0.75;
+                entry.footnote += ` ${ascean.name} has been rabid in their unfaithfulness to ${deity}.`;
+                break;
+            case 'Hostile':
+                ascean[keywords[ascean.mastery]] -= 1;
+                entry.footnote += ` ${ascean.name} has been hostile to ${deity}.`;
+                break;
+            default:
+                break;
+        };
+        ascean.journal.entries.push(entry);
+        await ascean.save();
+        res.status(201).json(ascean);
+    } catch (err) {
+        console.log(err.message, "Error Evaluating Experience");
+        res.status(400).json(err);
+    };
+};
+
+async function addJournalEntry(req, res) {
+    try {
+        let ascean = await Ascean.findById(req.body.asceanID);
+        ascean.journal.push(req.body.journalEntry);
+        await ascean.save();
+    } catch (err) {
+        console.log(err.message, "Error Adding Journal Entry");
+        res.status(400).json(err);
+    };
 };
 
 async function setCurrency(req, res) {

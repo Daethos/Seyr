@@ -97,6 +97,31 @@ const asceanSchema = new Schema(
             type: [],
             default: null
         },
+        journal: {
+            entries: {
+                type: [{
+                    title: String,
+                    body: String,
+                    footnote: String,
+                    date: Date,
+                    location: String,
+                    coordinates: {
+                        x: Number,
+                        y: Number,
+                    },
+                }],
+                default: null
+            },
+            currentEntry: {
+                type: Number,
+                default: 0,
+            },
+            lastEntry: {
+                type: Number,
+                default: 0,
+            },
+            
+        },
         name: String,
         description: String,
         constitution: Number,
@@ -217,11 +242,28 @@ const asceanSchema = new Schema(
                 losses: { type: Number, default: 0 },
                 total: { type: Number, default: 0 },
                 wins: { type: Number, default: 0 },
-                attacks: { magical: { type: Number, default: 0 }, physical: { type: Number, default: 0 } },
-                damage: { magical: { type: Number, default: 0 }, physical: { type: Number, default: 0 } },
-                prayers: { buff: { type: Number, default: 0 }, damage: { type: Number, default: 0 }, debuff: { type: Number, default: 0 }, heal: { type: Number, default: 0 } },
-                mastery: { constitution: { type: Number, default: 0 }, strength: { type: Number, default: 0 }, agility: { type: Number, default: 0 }, 
-                            achre: { type: Number, default: 0 }, caeren: { type: Number, default: 0 }, kyosir: { type: Number, default: 0 } },
+                attacks: { 
+                    magical: { type: Number, default: 0 }, 
+                    physical: { type: Number, default: 0 } 
+                },
+                damage: { 
+                    magical: { type: Number, default: 0 }, 
+                    physical: { type: Number, default: 0 } 
+                },
+                prayers: { 
+                    buff: { type: Number, default: 0 }, 
+                    damage: { type: Number, default: 0 }, 
+                    debuff: { type: Number, default: 0 }, 
+                    heal: { type: Number, default: 0 } 
+                 },
+                mastery: { 
+                    constitution: { type: Number, default: 0 }, 
+                    strength: { type: Number, default: 0 }, 
+                    agility: { type: Number, default: 0 }, 
+                    achre: { type: Number, default: 0 }, 
+                    caeren: { type: Number, default: 0 }, 
+                    kyosir: { type: Number, default: 0 } 
+                },
             },
             luckout: {
                 arbitious: { 
@@ -311,6 +353,32 @@ const asceanSchema = new Schema(
                 total: { type: Number, default: 0 },
                 totalValue: { type: Number, default: 0 },
             },
+            relationships: {
+                deity: {
+                    name: { type: String, default: "" }, // This occurs when you meet a deity a second time, you can reinforce you believe it's *that* deity and it'll name them then.
+                    behaviors: {
+                        type: [],
+                        default: []
+                    },
+                    Compliant: { 
+                        occurence: { type: Number, default: 0 },
+                        value: { type: Number, default: 0 },
+                     },
+                    Disobedient: { 
+                        occurence: { type: Number, default: 0 },
+                        value: { type: Number, default: 0 },
+                     },
+                    Faithful: { 
+                        occurence: { type: Number, default: 0 },
+                        value: { type: Number, default: 0 },
+                     },
+                    Unfaithful: { 
+                        occurence: { type: Number, default: 0 },
+                        value: { type: Number, default: 0 },
+                     },
+                    value: { type: Number, default: 0 },
+                }
+            }
             // something about phenomena
         },
         tutorial: {

@@ -22,12 +22,8 @@ interface TutorialProps {
     firstPhenomena?: boolean;
 };
 
-
-
-
 const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, firstPhenomena, setTutorialContent }: TutorialProps) => {
     console.log(player, "Tutorial Triggering");
-    const [typewriterContent, setTypewriterContent] = useState<any>(null);
     const [typewriterString, setTypewriterString] = useState<string>('');
     function performAction(actionName: string) {
         console.log(actionName, "Action Name of Perform Action Function")
@@ -43,62 +39,32 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
 
     useEffect(() => {
         if (firstPhenomena) {
-            // setTypewriterContent([
-            //     <h6 className='typewriter-container' style={{ marginTop: "50%" }} key='phenomena'>
-            //         <Button variant='' style={{ zIndex: 9999 }} onClick={() => blessPlayer()}>
-            //             <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' style={faithBorder(player?.mastery)} />
-            //         </Button>
-            //         <br /><br />
-
-            //         A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
-            //         Wrapping warp it rounds you seething, forms of shade shimmer to dance upon your being. <br /><br />
-            //         Yet perchance you seek to twist {player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste my {player.mastery} burn the resin of your dreams. <br /><br />
-
-            //         { player?.faith === 'adherent' ? (
-            //             <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
-            //         ) : player?.faith === 'devoted' ? (
-            //             <p style={{ color: "#fdf6d8" }}>You feel the presence of {highestFaith()}... perhaps?</p>
-            //         ) : (
-            //             <p style={{ color: "#fdf6d8" }}>You feel the presence of an overwhelming power...</p>
-            //         ) }
-            //         <br />
-            //         <p style={{ color: "#fdf6d8" }}>You become attuned to a whisper...</p>
-            //         <p style={{ fontSize: "24px" }}>
-            //         "Who are you?" 
-            //         </p>
-            //         <br />
-            //         <p style={{ color: "#fdf6d8", fontSize: "14px" }}>
-            //             [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon that which you worship. Otherwise rebuke this calling and continue your journey.] 
-            //         </p>
-            //         <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => rebukePlayer()}>X</Button>
-            //     </h6>
-            // ]);
             setTypewriterString(
-                `<h6 className='typewriterContainer' style=${styles.typewriterContainer} key='phenomena'>
-                <Button variant='' className='button' style={styles.button} data-function-name='blessPlayer' >
-                <img src=${player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt=${player.faith}  className=${'godBorder'+player.mastery} style={faithBorder(player?.mastery)} />
+                `<h6 className='typewriterContainer' key='phenomena'>
+                <Button variant='' className='button' data-function-name='blessPlayer'>
+                <img src=${player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt=${player.faith}  className=${'godBorder'+player.mastery} />
                 </Button>
                 <br />
                 ${ player?.faith === 'adherent' ? (
-                    `<p className='adherentText' style=${styles.adherentText}>You feel the presence of... ^750 ${highestFaith()}^1000?</p>`
+                    `<p className='adherentText'>You feel the presence of... ^750 ${highestFaith()}^1000?</p>`
                 ) : player?.faith === 'devoted' ? (
-                    `<p className='devotedText' style=${styles.devotedText}>You feel the presence of... ^750 ${highestFaith()}^1000?</p>`
+                    `<p className='devotedText'>You feel the presence of... ^750 ${highestFaith()}^1000?</p>`
                 ) : (
-                    '<p style=${styles.otherText}>You feel the presence of an overwhelming power...</p>'
+                    '<p>You feel the presence of an overwhelming power...</p>'
                 ) } <br />
             
                 A tendril swirls soothing about your senses, its sweetness teasing as hush soon possesses. <br /><br />
                 Writhing, it warps to wrap round you, seething, forms of shade shimmer to dance upon your being. <br /><br />
                 Yet perchance you seek to twist ${player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste its ${player.mastery} burning the resin of your dreams. <br /><br />
             
-                <p className='${player.faith === 'adherent' ? 'adherentText' : player?.faith === 'devoted' ? 'devotedText' : 'otherText'}' style=${styles.whisperText}>You become attuned to a halt and paltry whisper, it rings and stretches your soft edges, its caeren it begs you hither.</p>
-                <p className='whisperText' style=${styles.whisperText}>
+                <p className='${player.faith === 'adherent' ? 'adherentText' : player?.faith === 'devoted' ? 'devotedText' : 'otherText'}'>You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither.</p>
+                <p className='whisperText'>
                 "Who are you?" 
                 </p>
-                <p className='journeyText' style=${styles.journeyText}>
+                <p className='journeyText'>
                     [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon the avatar. You may rebuke this ^500 calling.] 
                 </p>
-                <Button variant='' className='rebukeButton' style={styles.rebukeButton} data-function-name='rebukePlayer'  >X</Button>
+                <Button variant='' className='rebukeButton' data-function-name='rebukePlayer'>X</Button>
                 </h6>`
                 );
             };
@@ -114,12 +80,19 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             shakeScreen({ duration: 1000, intensity: 2});
-            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
-            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
+            if (player.faith === 'devoted') {
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
+            } else if (player.faith === 'adherent') {
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
+            } else {
+                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You may not be one for the Ancients or so-called God of this world, yet an undeniable surge courses through you. \n\n Care for whom and what you befriend, ${player.name}.` })
+            };
             const response = await asceanAPI.blessAscean(player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
+            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your curiosity or perchance conviction? A journey to the discovery of yourself awaits, ${player.name}.` });
+                        
             console.log(response, "Blessing Player");
-            // await completeTutorial('firstPhenomena', player._id);
+            await completeTutorial('firstPhenomena', player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: true });
             setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 7500);
         } catch (err: any) {
@@ -133,7 +106,9 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
             if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
-            // await completeTutorial('firstPhenomena', player._id);
+            
+            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your caution or perchance cynicism? A journey to the discovery of this presence awaits, ${player.name}.` });
+            await completeTutorial('firstPhenomena', player._id);
             setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 7500);
         } catch (err: any) {
             console.log(err, '%c <- You have an error in rebuking a player', 'color: red');
@@ -192,44 +167,6 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                     boxShadow: '0 0 2em gold',
                 };
         };
-    };
-    const styles = {
-        typewriterContainer: {
-          marginTop: "50%",
-          color: "gold",
-          display: 'inline-block',
-          textAlign: 'center',
-          textShadow: '1.5px 1.5px 1.5px darkgoldenrod',
-          overflowY: 'auto',
-          width: '100%',
-        },
-        button: {
-          zIndex: 9999,
-          border: 'none'
-        }, 
-        adherentText: {
-          color: "#fdf6d8"
-        },
-        devotedText: {
-          color: "#fdf6d8"
-        },
-        otherText: {
-          color: "red"
-        },
-        whisperText: {
-          fontSize: "24px"
-        },
-        journeyText: {
-          color: "#fdf6d8",
-          fontSize: "14px"
-        },
-        rebukeButton: {
-          float: "right",
-          fontSize: "24px",
-          zIndex: 9999,
-          marginLeft: "90vw",
-          color: "red"
-        },
     };
     return (
         <div className='d-flex align-items-center justify-content-center'

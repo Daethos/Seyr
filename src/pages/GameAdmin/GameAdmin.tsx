@@ -26,6 +26,7 @@ interface DialogNodeOption {
     npcIds?: any[];
     conditions?: { key: string; operator: string; value: string; }[];
     action?: string | null;
+    keywords?: string[] | null;
 };
 
 export interface DialogNode {
@@ -169,6 +170,7 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
     const [npcIds, setNpcIds] = useState(option.npcIds);
     const [conditions, setConditions] = useState(option.conditions);
     const [action, setAction] = useState(option.action);
+    const [keywords, setKeywords] = useState(option.keywords);
 
     useEffect(() => {
         setText(option.text);
@@ -176,6 +178,7 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
         setNpcIds(option.npcIds);
         setConditions(option.conditions);
         setAction(option.action);
+        setKeywords(option.keywords);
     }, [option]);
 
     const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
