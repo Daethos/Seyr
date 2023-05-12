@@ -73,7 +73,7 @@ async function evaluateExperience(req, res) {
 
         let ascean = await Ascean.findById(req.body.asceanID);
         let entry = req.body.entry;
-        let deity = req.body.entry.deity;
+        let deity = req.body.deity;
 
         const keywords = {
             'Daethos': 'Daethos',

@@ -37,6 +37,7 @@ import useGameSounds from '../../components/GameCompiler/Sounds';
 import GameplayUnderlay from '../../components/GameCompiler/GameplayUnderlay';
 import Tutorial from '../../components/GameCompiler/Tutorial';
 import { User } from '../App/App';
+import GameplayDeity from '../../components/GameCompiler/GameplayDeity';
 
 export enum MapMode {
     FULL_MAP,
@@ -191,7 +192,7 @@ const GameSolo = ({ user }: GameProps) => {
                     getTreasure();
                 };                
             };
-            if (mapState.steps > 1 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
+            if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
         }, [mapState.steps]);
     };
     usePlayerMovementEffect(mapState, mapDispatch);
@@ -225,8 +226,6 @@ const GameSolo = ({ user }: GameProps) => {
     };
     
     const debouncedHandleDirectionChange = debounce(handleDirectionChange, gameState.joystickSpeed);
-
-
 
     const checkTutorial = async (tutorial: string, player: Player) => {
         console.log(tutorial, '<- Tutorial Check');
@@ -955,6 +954,8 @@ const GameSolo = ({ user }: GameProps) => {
 
     const interactPhenomena = async () => {
         try {
+            // gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: true });
+            // return;
             const fyeran: number = checkPlayerTrait('Fyeran', gameState) ? 10 : 0;
             const caeren = state?.player_attributes?.totalCaeren + fyeran;
             const level = gameState?.player?.level;
@@ -1785,6 +1786,9 @@ const GameSolo = ({ user }: GameProps) => {
                     : '' }
                 </>
             }
+            <GameplayDeity 
+                ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} loadingDeity={gameState.loadingDeity}    
+            />
             <GameplayOverlay 
                 ascean={gameState.player} mapState={mapState} mapDispatch={mapDispatch} loadingOverlay={gameState.loadingOverlay}
                 generateWorld={generateWorld} saveWorld={saveWorld} overlayContent={gameState.overlayContent}

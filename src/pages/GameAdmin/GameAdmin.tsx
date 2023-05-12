@@ -204,6 +204,7 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
             npcIds,
             conditions,
             action,
+            keywords,
         };
         onSave(newOption);
     };
@@ -235,6 +236,13 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
                 value={npcIds?.join(',')}
                 onChange={(e) => setNpcIds(e.target.value.split(','))}
             /><br />
+            <label htmlFor="keywords">Keywords:</label>{' '}
+            <input
+                id="keywords"
+                type="text"
+                value={keywords?.join(',')}
+                onChange={(e) => setKeywords(e.target.value.split(','))}
+            /><br />
             <label htmlFor="conditions">Conditions:</label><br />
             <label htmlFor="key">Key:</label>{' '}
             <input
@@ -260,25 +268,6 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
                 value={conditions && conditions?.map((condition) => `${condition?.value}`)}
                 onChange={(e) => handleOptionChange(e)}
             /><br />
-            {/* <input
-                id="conditions"
-                type="text"
-                value={conditions && conditions?.map((condition) => `${condition?.key} ${condition?.operator} ${condition?.value}`).join(',')}
-                onChange={(e) => {
-                    const conditionValues = e.target.value.split(',').map((condition) => {
-                        const [key, operator, value] = condition.trim().split(' ');
-                        return {
-                            key: key ? key : '',
-                            operator: operator ? operator : '',
-                            value: value ? value : ''
-                        };
-                    });
-                    setConditions(conditionValues);
-                }}
-
-                  
-                                                
-                /><br /> */}
             <label htmlFor="action">Action:</label>{' '}
             <input
                 id="action"

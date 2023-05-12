@@ -377,8 +377,7 @@ const asceanSchema = new Schema(
                      },
                     value: { type: Number, default: 0 },
                 }
-            }
-            // something about phenomena
+            },
         },
         tutorial: {
             firstBoot: { type: Boolean, default: true },

@@ -11,7 +11,7 @@ export interface DialogNodeOption {
     npcIds?: any[];
     conditions?: { key: string; operator: string; value: string; }[];
     action?: string | null;
-    keywords?: string[] | null;
+    keywords?: any[] | null;
 };
 
 export interface DialogNode {
@@ -70,13 +70,13 @@ export function getNodesForNPC(npcId: number): DialogNode[] {
     return matchingNodes;
 };
 
-interface DialogOptionProps {
+export interface DialogOptionProps {
     option: DialogNodeOption;
     onClick: (nextNodeId: string | null) => void;
     actions: { [key: string]: Function }
 };
 
-const DialogOption = ({ option, onClick, actions }: DialogOptionProps) => {
+export const DialogOption = ({ option, onClick, actions }: DialogOptionProps) => {
     const handleClick = async () => {
       if (option.action && typeof option.action === 'string') {
         const actionName = option.action.trim();
@@ -129,7 +129,7 @@ useEffect(() => {
 }, [gameState?.currentNodeIndex]);
 
 useEffect(() => {
-  console.log("We made it here!", dialogNodes[currentNodeIndex])
+  console.log("We made it here!", dialogNodes[currentNodeIndex]);
   gameDispatch({
     type: GAME_ACTIONS.SET_CURRENT_DIALOG_NODE,
     payload: dialogNodes[currentNodeIndex]
@@ -142,10 +142,6 @@ useEffect(() => {
     },
   });
 }, [currentNodeIndex]);
-
-useEffect(() => {
-  console.log("We made it here!", gameState.renderedText, gameState.renderedOptions)
-}, [gameState.renderedText, gameState.renderedOptions]);
 
   useEffect(() => {
     if (gameState?.currentNode) {

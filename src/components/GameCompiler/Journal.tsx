@@ -7,9 +7,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 
 const JournalButtons = ({ options, setJournalEntry }: { options: any, setJournalEntry: any }) => {
-    console.log(options, 'The Options')
     const buttons = options.map((o: any, i: number) => {
-        console.log(o, 'Options in JournalButtons')
         return (
             <div key={i}>
             <Button variant='' onClick={() => setJournalEntry(i)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }} className='dialog-buttons'>{o.title}</Button>
@@ -49,14 +47,13 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
 };
 
 const JournalEntry = ({ entry }: { entry: any }) => {
-    const { title, body, footnote, date, location, coordinates } = entry;
     return (
         <div style={{ whiteSpace: "pre-wrap" }}>
-        <h3 style={{ color: "gold" }}>{entry?.title}</h3>
-        <p style={{ color: "#fdf6d8" }}>{formatDistanceToNow(new Date(entry?.date))}</p>
-        <h6 style={{ color: "gold" }}>{entry?.body}</h6>
-        <p className='mt-5'>[{entry?.footnote}]</p>
-        <p style={{ color: "gold" }}>({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
+            <h3 style={{ color: "gold" }}>{entry?.title}</h3>
+            <p style={{ color: "#fdf6d8" }}>{formatDistanceToNow(new Date(entry?.date))}</p>
+            <h6 style={{ color: "gold" }}>{entry?.body}</h6>
+            <p className='mt-5'>[{entry?.footnote}]</p>
+            <p style={{ color: "gold" }}>({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
         </div>
     );
 };
@@ -104,7 +101,6 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
     useEffect(() => {
         setJournalEntries(ascean?.journal?.entries);
         setEntry(ascean?.journal?.entries[ascean?.journal?.currentEntry]);
-        console.log(new Date(), Date.now(), "New Dates ???")
     }, [ascean]);
 
     useEffect(() => {
@@ -131,8 +127,6 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
             <Loading Combat={true} />
         );
     };
-
-
 
     return (
         <>

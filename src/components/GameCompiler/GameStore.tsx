@@ -12,17 +12,17 @@ export interface Ascean {
     caeren: number;
     kyosir: number;
     
-    weapon_one: object;
-    weapon_two: object;
-    weapon_three: object;
-    shield: object;
-    helmet: object;
-    chest: object; 
-    legs: object;
-    amulet: object;
-    ring_one: object;
-    ring_two: object;
-    trinket: object;
+    weapon_one: Equipment;
+    weapon_two: Equipment;
+    weapon_three: Equipment;
+    shield: Equipment;
+    helmet: Equipment;
+    chest: Equipment; 
+    legs: Equipment;
+    amulet: Equipment;
+    ring_one: Equipment;
+    ring_two: Equipment;
+    trinket: Equipment;
     
     faith: string;
     mastery: string;
@@ -622,6 +622,7 @@ export interface GameData {
     loading: boolean;
     loadingAscean: boolean;
     loadingOpponent: boolean;
+    loadingDeity: boolean;
     loadingOverlay: boolean;
     loadingUnderlay: boolean;
     loadingContent: boolean;
@@ -732,6 +733,7 @@ export const GAME_ACTIONS = {
     LOADING: 'LOADING',
     LOADING_ASCEAN: 'LOADING_ASCEAN',
     LOADING_OPPONENT: 'LOADING_OPPONENT',
+    LOADING_DEITY: 'LOADING_DEITY',
     LOADING_OVERLAY: 'LOADING_OVERLAY',
     LOADING_UNDERLAY: 'LOADING_UNDERLAY',
     LOADING_CONTENT: 'LOADING_CONTENT',
@@ -809,6 +811,7 @@ export const initialGameData: GameData = {
     loading: true,
     loadingAscean: false,
     loadingOpponent: false,
+    loadingDeity: false,
     loadingOverlay: false,
     loadingUnderlay: false,
     loadingContent: false,
@@ -1090,6 +1093,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 loadingOpponent: action.payload,
                 showInventory: false,
+            };
+        case 'LOADING_DEITY':
+            return {
+                ...game,
+                loadingDeity: action.payload,
             };
         case 'LOADING_OVERLAY':
             return {

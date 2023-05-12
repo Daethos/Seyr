@@ -67,7 +67,6 @@ interface GrapplingMoveStyle extends CSSProperties {
 };
 
 function DisplayGrapplingSequence({ sequence }: GrapplingProps) {
-
   return (
     <div className="grappling-sequence-container">
       {sequence.map((move: any, index: number) => (
@@ -78,7 +77,6 @@ function DisplayGrapplingSequence({ sequence }: GrapplingProps) {
     </div>
   );
 }
-
 
 interface UnderlayProps {
   ascean: Player;
@@ -143,11 +141,6 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
     }));
   }, [ascean, enemy])
 
-  // useEffect(() => {
-  //   console.log(grapplingSequence, 'Grappling Sequence');
-  //   if (grapplingSequence.length > 4) handleGrapple(grapplingSequence);
-  // }, [grapplingSequence]);
-
   useEffect(() => {
     if (positionsGained === 2) {
       setGrapplingWin(true);
@@ -183,9 +176,7 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
     const areArraysEqual = sequence.every((element: any, index: string | number) => element === newBankedSequence[index]);
     if (areArraysEqual) {
       if (positionsGained === 0) setGrapplingContent('You have successfully gained position!');
-      if (positionsGained === 1) {
-        setGrapplingContent('You have successfully worned down and submitted your opponent!');
-      }
+      if (positionsGained === 1) setGrapplingContent('You have successfully worned down and submitted your opponent!');
       setTimeout(() => {
         setPositionsGained((positionsGained: number) => positionsGained + 1);
         setGrapplingSequence([]);
@@ -201,7 +192,6 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
   };
 
   function createGrapplingSequence() {
-    console.log('Creating Sequence!');
     let iterations = 0;
     if (positionsGained === 0) iterations = 4;
     if (positionsGained === 1) iterations = 6;

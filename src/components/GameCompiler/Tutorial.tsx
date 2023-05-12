@@ -230,7 +230,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}>
                 Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
-                You can click on the [Inventory] button that appears when you are in* a city, enabling multiple vendors selling specified equipment, and various services to heal and replenish your firewater. Much of the city's content is in framework and
+                You can click on the [City] button that appears when you are in* a city, enabling multiple vendors selling specified equipment, and various services to heal and replenish your firewater. Much of the city's content is in framework and
                 conceptual, as--like much of this game, the final design is uncertain. 
                 </p>
                 *Noted by the 'Content' on the StoryBox, in addition the map's purple tiles and changing background.
@@ -389,11 +389,6 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
 
             { firstPhenomena ? (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {/* <div style={{ position: "absolute",  marginLeft: "22.5%", textAlign: 'center' }}>
-                <Button variant='' style={{ zIndex: 9999  }} onClick={() => blessPlayer()}>
-                    <img src={player?.faith === 'adherent' ? '/images/achreo-rising.png' : player?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + player.origin + '-' + player.sex + '.jpg'} alt={player.faith} id='origin-pic' className={'godBorder-' + player.mastery} style={faithBorder(player?.mastery)} />
-                </Button>
-                </div> */}
                 <Typewriter stringText={typewriterString} styling={{ overflowY: 'auto' }} performAction={performAction} />
                 </div>
             ) : ( '' ) }
