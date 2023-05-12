@@ -16,5 +16,10 @@
 .profile-name {
     display: flex;
     justify-content: center;
-    font-size: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    font-variant: small-caps;
+    font-family: Cinzel;
+    margin-top: 5%;
+    color: gold;
 }

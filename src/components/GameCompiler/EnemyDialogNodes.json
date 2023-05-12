@@ -2,30 +2,38 @@
   "nodes": [
     {
       "id": "0001",
-      "text": "Who are you to disturb these wilds?",
+      "text": "And who am I in your belief? It seems to stir your hand to sheath.",
       "options": [
         {
-          "text": "My life for yours, ${enemy.name}",
+          "text": "My life for yours, ${enemy.name}.",
           "next": "0002",
           "npcIds": ["Deity"],
           "conditions": [],
-          "action": "getCombat",
+          "action": "",
           "keywords": ["Faithful"]
         },
         {
-          "text": "I am ${ascean.name}. To whom am I speaking with?",
-          "next": "0002",
+          "text": "You portray yourself to be ${enemy.name}, are you not?",
+          "next": "0003",
           "npcIds": ["Deity"],
           "conditions": [],
           "action": null,
           "keywords": ["Compliant"]
         },
         {
-          "text": "That's not how this works, friend. Who are?",
-          "next": "0003",
+          "text": "That's not how this works, friend. Who are you?",
+          "next": "0004",
           "npcIds": ["Deity"],
           "conditions": [],
           "action": null
+        },
+        {
+          "text": "I haven't moved a flicker, seems though you sense something else sure about myself.",
+          "next": "0005",
+          "npcIds": [],
+          "conditions": [],
+          "action": null,
+          "keywords": ["Unfaithful"]
         }
       ],
       "npcIds": ["Deity"]

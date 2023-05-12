@@ -1,7 +1,9 @@
 import { useEffect, useState, useReducer } from 'react';
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as asceanAPI from '../../utils/asceanApi';
+import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
+import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -292,6 +294,15 @@ interface NodeTableProps {
 
 const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }: NodeTableProps) => {
     const [tableNodes, setTableNodes] = useState(nodes);
+    const [expandedNodeId, setExpandedNodeId] = useState('');
+    const [selectedNode, setSelectedNode] = useState<DialogNode | undefined>(nodes[0]);
+  
+    const handleSelectNode = (nodeId: string) => {
+        const newNode = getNodeById(nodeId);
+        setSelectedNode(newNode);
+        getNodeById(nodeId);
+    };
+
     useEffect(() => {
         console.log(nodes, "Nodes in Table");
         setTableNodes(nodes);
@@ -305,6 +316,17 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
     return (
         <div>
             <h5 style={{ color: "#fdf6d8" }}>Nodes</h5>
+            <Dropdown className='my-2'>
+            <Dropdown.Toggle variant="dark" id="dropdown-nodes">
+                {selectedNode?.id} {selectedNode?.text.slice(0, 40)}
+            </Dropdown.Toggle>
+    
+            <Dropdown.Menu>
+                {nodes.map((node) => (
+                <Dropdown.Item key={node.id} onClick={() => handleSelectNode(node.id)}>{node.id} {node.text.slice(0, 50)}</Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+            </Dropdown>
             <Table striped bordered hover variant="dark" size="sm" style={{ color: "gold" }}>
                 <thead>
                     <tr>
@@ -317,6 +339,7 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
                 </thead>
                 <tbody>
                     {tableNodes.map((node) => (
+                        node.id === selectedNode?.id && (
                         <tr key={node.id}>
                             <td onClick={() => getNodeId(node.id)}>{node.id}</td>
                             <td>{node.text}</td>
@@ -341,6 +364,7 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
                                 <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => onDelete(node.id)}>Delete</Button>
                             </td>
                         </tr>
+                        )
                     ))}
                 </tbody>
             </Table>
@@ -828,7 +852,6 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     async function enemyNodeMiddleware(e: any) {
         e.preventDefault();
-        // need to clean up, and capitalize first letter of each word
         const enemy = e.target.value.split(' ').map((word: string, index: number) => {
             if (index === 0 || (index > 0 && word.toLowerCase() !== 'of')) {
                 return word.charAt(0).toUpperCase() + word.slice(1);

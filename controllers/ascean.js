@@ -191,6 +191,7 @@ async function evaluateExperience(req, res) {
         const evaluateBehavior = (count) => {
             const sortCountOccurrence = Object.values(count).sort((a, b) => b.occurrence - a.occurrence);
             const sortCountValue = Object.values(count).sort((a, b) => b.value - a.value);
+            
             if (sortCountOccurrence[0] === 'Faithful') {
                 if (valueSum >= 4) {
                     return 'Convicted';

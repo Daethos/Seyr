@@ -108,26 +108,21 @@ const ProfilePage = ({ user }: ProfileProps) => {
             <Row className="justify-content-center">
             <Col className="stat-block wide">
             <hr className="orange-border" />
-            
             <div className="section-left">
-            <div className="creature-heading">
-            <svg height="5" width="100%" className="tapered-rule my-3">
-            <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
-            <img src={profileUser.photoUrl} alt={profileUser.username} id="profile-pic" />
-            </div> 
-            <svg height="5" width="100%" className="tapered-rule my-3">
-            <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg>
-            </div> 
-            <div className="section-right">
-                <div className="actions">
-                <h3 className='profile-name'>{profileUser.username}</h3>
-                <div className="property-block">
-                    <h4 className="m-4">{profileUser.bio}</h4>
+                <div className="creature-heading">
+                    <h3 className='profile-name'>{profileUser.username.charAt(0).toUpperCase() + profileUser.username.slice(1)}</h3>
+                    <svg height="5" width="100%" className="tapered-rule my-3">
+                    <polyline points="0,0 550,2.5 0,5"></polyline>
+                    </svg>
+                    <img src={profileUser.photoUrl} alt={profileUser.username} id="profile-pic" />
                 </div> 
-                </div>
-            </div>
+                <svg height="5" width="100%" className="tapered-rule mt-3">
+                <polyline points="0,0 550,2.5 0,5"></polyline>
+                </svg>
+                <div className="property-block">
+                    <h4 className="" style={{ color: "#fdf6d8", marginLeft: "5%" }}>{profileUser.bio}</h4>
+                </div> 
+            </div> 
             <hr className="orange-border bottom" />
             </Col>
             </Row>

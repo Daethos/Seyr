@@ -154,7 +154,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                     />
                 { loading 
                     ? <Loading Modal={true} />
-                    : <Button variant="" style={{ float: 'right', background: 'black', fontSize: 18 + 'px', marginLeft: 5 + 'px', marginTop: -10.5 + '%', color: 'red', border: 2 + 'px' + ' solid ' + 'red' }} onClick={sendMessage}>Submit</Button>
+                    : <Button variant="" style={{ float: 'right', background: 'black', fontSize: 18 + 'px', marginLeft: 5 + 'px', marginTop: '-10%', color: 'red', border: 2 + 'px' + ' solid ' + 'red' }} onClick={sendMessage}>Submit</Button>
                 }
                 </div>
                 </div>
