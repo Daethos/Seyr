@@ -736,6 +736,8 @@ export const PvPStore = (state: PvPData, action: Action) => {
                 dodgeStatus: false,
                 instantStatus: false,
                 action: '',
+                player_action: '',
+                playerTrait: '',
                 enemy_action: '',
                 counter_guess: '',
                 enemy_counter_guess: '',

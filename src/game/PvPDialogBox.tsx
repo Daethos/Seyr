@@ -120,7 +120,7 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
         let enemyQuests = getQuests(enemy?.name);
         setLocalWhispers(enemyQuests);
         setShowQuest(true);
-        getDialogTree();
+        // getDialogTree();
         checkLuckout();
         checkePersuasion();
         setNamedEnemy(nameCheck(enemy?.name));
@@ -139,10 +139,10 @@ const PvPDialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapD
     }, [localWhispers]);
 
     const getDialogTree = () => {
-        if (!enemy.dialogId) return;
-        let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
+        if (!enemy?.dialogId) return;
+        let dialogTree = getNodesForNPC(npcIds?.[enemy?.dialogId]);
         setDialogTree(dialogTree);
-    }
+    };
 
     const handleCurrentQuest = (currentQuest: any) => {
         let quest = {

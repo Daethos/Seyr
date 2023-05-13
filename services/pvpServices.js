@@ -1,5 +1,14 @@
 const StatusEffect = require('./faithServices.js');
 
+function roundToTwoDecimals(num) {
+    const roundedNum = Number(num.toFixed(2));
+    console.log(num, roundedNum, "num, roundedNum");
+    if (roundedNum.toString().match(/\.\d{3,}$/)) {
+        return parseFloat(roundedNum);
+    };
+    return roundedNum;
+};
+
 const statusEffectCheck = async (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
@@ -8,41 +17,39 @@ const statusEffectCheck = async (combatData) => {
         const matchingDebuffTargetIndex = combatData.enemy_weapons.indexOf(matchingDebuffTarget);
         if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.enemy_win === true) { // The Effect Expires
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
-                // console.log('Player Buff Effect Expires');
                 for (let key in effect.effect) {
                     if (key in combatData.weapons[matchingWeaponIndex]) {
                         if (key !== 'dodge') {
-                            // console.log(effect.effect, key, 'Buff Effect Expires in Weapon Loop');
                             combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                         } else {
                             combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
-                        }
-                    }
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
+                        };
+                    };
                     if (key in combatData.player_defense) {
-                        // console.log(effect.effect, key, 'Buff Effect Expires in Defense Loop');
                         combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
-                    }
-                }
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
+                    };
+                };
             }
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
-                // console.log(effect.name, 'The Effect Expiring Against the Debuff Target', effect.debuffTarget, matchingDebuffTarget, matchingDebuffTargetIndex);
                 for (let key in effect.effect) {
-
                     if (key in combatData.enemy_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
-                            // console.log(effect.effect, key, 'Debuff Effect Expires in Weapon Loop');
                             combatData.enemy_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.enemy_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingDebuffTargetIndex][key]);
                         } else {
                             combatData.enemy_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
-                        }
-                    }
+                            combatData.enemy_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingDebuffTargetIndex][key]);
+                        };
+                    };
                     if (key in combatData.enemy_defense) {
-                        // console.log(effect.effect, key, 'Debuff Effect Expires in Defense Loop');
                         combatData.enemy_defense[key] += effect.effect[key] * effect.activeStacks;
+                        combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
                     };
                 };
             };
-            // console.log(effect.name, effect.prayer, 'Player Effect Expiring');
             return false;
         } else { // The Effect Persists
             switch (effect.prayer) {
@@ -50,20 +57,17 @@ const statusEffectCheck = async (combatData) => {
                     if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                const modifiedValue = (effect.effect[key] + combatData.weapons[matchingWeaponIndex][key]).toFloat(2);
-                                combatData.weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
-                                // combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                combatData.weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                             } else {
-                                const modifiedValue = (effect.effect[key] + combatData.weapons[matchingWeaponIndex][key]).toFloat(2);
-                                combatData.weapons[matchingWeaponIndex][key] = parseFloat(modifiedValue);
-                                // combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                                combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                                combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                             };
                         };
                         for (let key in combatData.player_defense) {
                             if (effect.effect[key]) {
-                                const modifiedValue = (effect.effect[key] + combatData.player_defense[key]).toFloat(2);
-                                combatData.player_defense[key] = parseFloat(modifiedValue);
-                                // combatData.player_defense[key] += effect.effect[key];
+                                combatData.player_defense[key] += effect.effect[key];
+                                combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                             }; 
                         };
                     };
@@ -74,20 +78,17 @@ const statusEffectCheck = async (combatData) => {
                         effect.debuffTarget = combatData.enemy_weapons[0].name;
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
-                                const modifiedValue = (combatData.enemy_weapons[matchingDebuffTargetIndex][key] - effect.effect[key]).toFloat(2);
-                                combatData.enemy_weapons[matchingDebuffTargetIndex][key] = parseFloat(modifiedValue);
-                                // combatData.enemy_weapons[0][key] -= effect.effect[key];
+                                combatData.enemy_weapons[0][key] -= effect.effect[key];
+                                combatData.enemy_weapons[0][key] = roundToTwoDecimals(combatData.enemy_weapons[0][key]);
                             } else {
-                                const modifiedValue = (combatData.enemy_weapons[matchingDebuffTargetIndex][key] + effect.effect[key]).toFloat(2);
-                                combatData.enemy_weapons[matchingDebuffTargetIndex][key] = parseFloat(modifiedValue);
-                                // combatData.enemy_weapons[0][key] += effect.effect[key];
+                                combatData.enemy_weapons[0][key] += effect.effect[key];
+                                combatData.enemy_weapons[0][key] = roundToTwoDecimals(combatData.enemy_weapons[0][key]);
                             };
                         };
                         for (let key in combatData.enemy_defense) { // Buff
                             if (effect.effect[key]) {
-                                const modifiedValue = (combatData.enemy_defense[key] - effect.effect[key]).toFloat(2);
-                                combatData.enemy_defense[key] = parseFloat(modifiedValue);
-                                // combatData.enemy_defense[key] -= effect.effect[key];
+                                combatData.enemy_defense[key] -= effect.effect[key];
+                                combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
                             };
                         };
                     };
@@ -129,27 +130,36 @@ const statusEffectCheck = async (combatData) => {
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.enemy_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.enemy_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingWeaponIndex][key]);
                     } else {
                         combatData.enemy_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
-                    }
-                }
+                        combatData.enemy_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingWeaponIndex][key]);
+                    };
+                };
                 for (let key in combatData.enemy_defense) {
-                    if (effect.effect[key]) combatData.enemy_defense[key] -= effect.effect[key] * effect.activeStacks;
-                }
-            }
+                    if (effect.effect[key]) {
+                        combatData.enemy_defense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
+                    }; 
+                };
+            };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+                        combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
                     } else {
                         combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
-                    }
-                }
+                        combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
+                    };
+                };
                 for (let key in combatData.player_defense) {
-                    if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
-                }
-            }
-            // console.log(effect.name, effect.prayer, 'enemy Effect Expiring')
+                    if (effect.effect[key]) {
+                        combatData.player_defense[key] += effect.effect[key];
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
+                    };
+                };
+            };
             return false;
         } else { // The Effect Persists
             switch (effect.prayer) {
@@ -158,12 +168,17 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
                                 combatData.enemy_weapons[matchingWeaponIndex][key] += effect.effect[key];
+                                combatData.enemy_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingWeaponIndex][key]);
                             } else {
                                 combatData.enemy_weapons[matchingWeaponIndex][key] -= effect.effect[key];
+                                combatData.enemy_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingWeaponIndex][key]);
                             };
                         };
                         for (let key in combatData.enemy_defense) {
-                            if (effect.effect[key]) combatData.enemy_defense[key] += effect.effect[key];
+                            if (effect.effect[key]) {
+                                combatData.enemy_defense[key] += effect.effect[key];
+                                combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
+                            };
                         };
                     };
                     break;
@@ -174,13 +189,16 @@ const statusEffectCheck = async (combatData) => {
                         for (let key in effect.effect) {
                             if (effect.effect[key] && key !== 'dodge') {
                                 combatData.weapons[0][key] -= effect.effect[key];
+                                combatData.weapons[0][key] = roundToTwoDecimals(combatData.weapons[0][key]);
                             } else {
                                 combatData.weapons[0][key] += effect.effect[key];
+                                combatData.weapons[0][key] = roundToTwoDecimals(combatData.weapons[0][key]);
                             };
                         };
                         for (let key in combatData.player_defense) { // Buff
                             if (effect.effect[key]) {
                                 combatData.player_defense[key] -= effect.effect[key];
+                                combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                             };
                         };
                     };
@@ -538,13 +556,16 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                     for (let key in existingEffect.effect) {
                         if (existingEffect.effect[key] && key !== 'dodge') {
                             combatData.weapons[0][key] += existingEffect.effect[key];
+                            combatData.weapons[0][key] = roundToTwoDecimals(combatData.weapons[0][key]);
                         } else {
                             combatData.weapons[0][key] -= existingEffect.effect[key];
+                            combatData.weapons[0][key] = roundToTwoDecimals(combatData.weapons[0][key]);
                         };
                     };
                     for (let key in combatData.player_defense) {
                         if (existingEffect.effect[key]) {
                             combatData.player_defense[key] += existingEffect.effect[key];
+                            combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                         };
                     };
                     break;
@@ -579,13 +600,16 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                         for (let key in existingEffect.effect) {
                             if (existingEffect.effect[key] && key !== 'dodge') {
                                 combatData.weapons[1][key] += existingEffect.effect[key];
+                                combatData.weapons[1][key] = roundToTwoDecimals(combatData.weapons[1][key]);
                             } else {
                                 combatData.weapons[1][key] -= existingEffect.effect[key];
+                                combatData.weapons[1][key] = roundToTwoDecimals(combatData.weapons[1][key]);
                             };
                         };
                         for (let key in combatData.player_defense) {
                             if (existingEffect.effect[key]) {
                                 combatData.player_defense[key] += existingEffect.effect[key];
+                                combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                             };
                         };
                         break;
@@ -623,10 +647,12 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                         } else {
                             combatData.enemy_weapons[0][key] -= existingEffect.effect[key];
                         };
+                        combatData.enemy_weapons[0][key] = roundToTwoDecimals(combatData.enemy_weapons[0][key]);
                     };
                     for (let key in combatData.enemy_defense) {
                         if (existingEffect.effect[key]) {
                             combatData.enemy_defense[key] += existingEffect.effect[key];
+                            combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
                         };
                     };
                     break;
@@ -664,10 +690,12 @@ const faithFinder = async (combatData, player_action, enemy_action) => { // The 
                             } else {
                                 combatData.enemy_weapons[1][key] -= existingEffect.effect[key];
                             };
+                            combatData.enemy_weapons[1][key] = roundToTwoDecimals(combatData.enemy_weapons[1][key]);
                         };
                         for (let key in combatData.enemy_defense) {
                             if (existingEffect.effect[key]) {
                                 combatData.enemy_defense[key] += existingEffect.effect[key];
+                                combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
                             };
                         };
                         break;
@@ -2769,10 +2797,12 @@ const prayerSplitter = async (combatData, prayer) => {
                     } else {
                         combatData.weapons[0][key] -= existingEffect.effect[key];
                     };
+                    combatData.weapons[0][key] = roundToTwoDecimals(combatData.weapons[0][key]);
                 };
                 for (let key in combatData.player_defense) {
                     if (existingEffect.effect[key]) {
                         combatData.player_defense[key] += existingEffect.effect[key];
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                     };
                 };
                 break;
@@ -2854,9 +2884,13 @@ const instantEffectCheck = async (combatData) => {
                             } else {
                                 combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key];
                             };
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                         };
                         for (let key in combatData.player_defense) {
-                            if (effect.effect[key]) combatData.player_defense[key] += effect.effect[key];
+                            if (effect.effect[key]) {
+                                combatData.player_defense[key] += effect.effect[key];
+                                combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
+                            };
                         };
                     };
                     break;
@@ -2870,10 +2904,12 @@ const instantEffectCheck = async (combatData) => {
                             } else {
                                 combatData.enemy_weapons[0][key] += effect.effect[key];
                             };
+                            combatData.enemy_weapons[0][key] = roundToTwoDecimals(combatData.enemy_weapons[0][key]);
                         };
                         for (let key in combatData.enemy_defense) { // Buff
                             if (effect.effect[key]) {
                                 combatData.enemy_defense[key] -= effect.effect[key];
+                                combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
                             };
                         };
                     };
@@ -2942,9 +2978,11 @@ const consumePrayerSplitter = async (combatData) => {
                         } else {
                             combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
                         };
+                        combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
                     };
                     if (key in combatData.player_defense) {
                         combatData.player_defense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
                     };
                 };
                 break;
@@ -2974,9 +3012,11 @@ const consumePrayerSplitter = async (combatData) => {
                         } else {
                             combatData.enemy_weapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
                         };
+                        combatData.enemy_weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.enemy_weapons[matchingDebuffTargetIndex][key]);
                     };
                     if (key in combatData.enemy_defense) {
                         combatData.enemy_defense[key] += effect.effect[key] * effect.activeStacks;
+                        combatData.enemy_defense[key] = roundToTwoDecimals(combatData.enemy_defense[key]);
                     };
                 };
                 break;

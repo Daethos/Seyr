@@ -37,7 +37,7 @@ const GamePlayerStats = ({ attributes, magicalDefense, magicalPosture, physicalD
             </div>
             <div>
             Level: {player.level}<br />
-            Health: {player.health.current} / {player.health.total}<br />
+            {/* Health: {player.health.current} / {player.health.total}<br /> */}
             Experience: {player.experience} / {player.level * 1000}<br />
             {player?.currency?.silver ? <>Silver: {player.currency.silver} Gold: {player.currency.gold} <br /></> : '' }
             Mastery: {player.mastery}<br />

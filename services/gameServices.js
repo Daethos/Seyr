@@ -26,7 +26,6 @@ const statusEffectCheck = async (combatData) => {
             };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
                 for (let key in effect.effect) {
-
                     if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
@@ -702,12 +701,10 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                                 let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[1][key];
                                 modifiedValue = roundToTwoDecimals(modifiedValue);
                                 combatData.computer_weapons[1][key] = modifiedValue;
-                                // combatData.computer_weapons[1][key] += existingEffect.effect[key];
                             } else {
                                 let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[1][key];
                                 modifiedValue = roundToTwoDecimals(modifiedValue);
                                 combatData.computer_weapons[1][key] = modifiedValue;
-                                // combatData.computer_weapons[1][key] -= existingEffect.effect[key];
                             };
                         };
                         for (let key in combatData.computer_defense) {
@@ -715,7 +712,6 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
                                 let modifiedValue = existingEffect.effect[key] + combatData.computer_defense[key];
                                 modifiedValue = roundToTwoDecimals(modifiedValue);
                                 combatData.computer_defense[key] = modifiedValue;
-                                // combatData.computer_defense[key] += existingEffect.effect[key];
                             };
                         };
                         break;
