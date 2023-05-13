@@ -156,11 +156,11 @@ const randomFloatFromInterval = (min, max) => {
 const randomizeStats = (item, rarity) => {
     const stats = {};
     const attributeRanges = {
-        Common: [1, 1, 1, 2, 3],
-        Uncommon: [1, 2, 2, 3, 5],
-        Rare: [2, 3, 4, 5, 8],
-        Epic: [4, 5, 6, 9, 12],
-        Legendary: [10, 13, 16, 20, 25],
+        Common: [0, 1, 1, 1, 2, 3],
+        Uncommon: [1, 1, 2, 2, 3, 5],
+        Rare: [2, 3, 4, 5, 6, 8],
+        Epic: [4, 5, 6, 7, 10, 12],
+        Legendary: [10, 14, 17, 20, 24, 30],
     };
 
     const range = attributeRanges[rarity];
@@ -174,15 +174,19 @@ const randomizeStats = (item, rarity) => {
         console.log(attribute, item[attribute], 'Attribute')
         if (item[attribute] > 0) {
             if (attributeCount === 1) {
-                item[attribute] = randomIntFromInterval(range[3], range[4]);
+                item[attribute] = randomIntFromInterval(range[4], range[5]);
             } else if (attributeCount === 2) {
-                item[attribute] = randomIntFromInterval(range[2], range[3]);
+                item[attribute] = randomIntFromInterval(range[2], range[4]);
             } else if (attributeCount === 3) {
+                item[attribute] = randomIntFromInterval(range[1], range[3]);
+            } else if (attributeCount === 4) { // 4-6
                 item[attribute] = randomIntFromInterval(range[0], range[2]);
-            } else { // 4-6
+            } else if (attributeCount === 5) { // 5-6
                 item[attribute] = randomIntFromInterval(range[0], range[1]);
-            };
-        };
+            } else { // 6
+                item[attribute] = randomIntFromInterval(range[0], range[0]);
+            }
+        };;
     });
 
     chance.forEach(att => {
@@ -199,7 +203,7 @@ const randomizeStats = (item, rarity) => {
 
     damage.forEach(dam => {
         if (item[dam] > 20) { // 21 +/- 5/3
-            item[dam] = randomIntFromInterval(item[dam] - 2, item[dam] + 5);
+            item[dam] = randomIntFromInterval(item[dam] - 1, item[dam] + 5);
         } else if (item[dam] > 10) { // 11-20 +/- 3/2
             item[dam] = randomIntFromInterval(item[dam] - 1, item[dam] + 3);
         } else if (item[dam] > 5) { // 6-10 +/- 2/1

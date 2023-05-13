@@ -329,7 +329,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             default:
                 break;
         };
-        const specialEnemies = ["Laetrois Ath'Shaorah", "Mavros Ilios", "Lorian", "King Mathyus Caderyn"];
+        const specialEnemies = ["Laetrois Ath'Shaorah", "Mavros Ilios", "Lorian", "King Mathyus Caderyn", "Cyrian Shyne", "Vincere", "Eugenes", "Dorien Caderyn", "Ashreu'ul", "Kreceus"];
         const persuasionTrait = persuasionTraits.find((trait: { name: string; }) => trait.name === persuasion);
         if (namedEnemy && specialEnemies.includes(enemy.name)) {
             enemyPersuasion *= 1.5;
