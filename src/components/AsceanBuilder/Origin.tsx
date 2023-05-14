@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalShow }: Props) => {
-    const [originState, setOriginState] = useState<any[]>([
+    const originState = [
         {
             name: "Ashtre",
             bio: "A hard people from an inhospitable land to the East in the Astralands, many are ashen from tempest weather. Martial and religious--monotheistic in nature to Astra, the Lightning Ancient, their governance forms of their leaders in a tetrarchy shored by commerce and law. Laconic and mistrusting, few outsiders get to know these folk, drawing further tension from being the only civilization not to collapse during the Shattering in the War of the Ancients a millenia prior.",
@@ -62,7 +62,7 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             bonus: '+2 STR, +2 CAER, +3% Mag Def, +3% Phys Def, +3% Crit Dam',
             imgUrl: '/images/Sedyreal-Man.jpg'
         }
-    ])
+    ]
     function handleOrigin(origin: any) {
         console.log(origin.target.value, '<- the origin value being handled?')
         setAsceanState({
@@ -81,30 +81,14 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
             onClick={() => setOriginModalShow!(true)}
         >Origins</Button>
-        <Modal 
-            show={originModalShow}
-            onHide={() => setOriginModalShow!(false)}
-            centered
-            
-            aria-labelledby="contained-modal-title-vcenter"
-            id="modal-weapon"
-            >
-                {/* <Modal.Header closeButton>
-                    <Modal.Title >
-                    Weapons & Spells
-                    </Modal.Title>
-                </Modal.Header> */}
-        <Modal.Body id="modal-weapon" className="equipment-modal">
-        {originState.map((origin: any, index: any) => {
-            return (
-                <OriginsCard 
-                    origin={origin} 
-                    key={origin.index} 
-                />
-        )})}
-        </Modal.Body>
+        <Modal show={originModalShow} onHide={() => setOriginModalShow!(false)} centered aria-labelledby="contained-modal-title-vcenter" id="modal-weapon" > 
+            <Modal.Body id="modal-weapon" className="equipment-modal">
+            {originState.map((origin: any, index: any) => {
+                return (
+                    <OriginsCard origin={origin} key={index} />
+            )})}
+            </Modal.Body>
         </Modal>
-        
     </div>
     <div className="property-block">
     <Form.Select value={asceanState.origin}  onChange={handleOrigin}>

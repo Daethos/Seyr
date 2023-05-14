@@ -30,7 +30,7 @@
         {
           "text": "I haven't moved a flicker, seems though you sense something else sure about myself.",
           "next": "0005",
-          "npcIds": [],
+          "npcIds": ["Deity"],
           "conditions": [],
           "action": null,
           "keywords": ["Unfaithful"]
@@ -40,13 +40,21 @@
     },
     {
       "id": "0002",
-      "text": "You're in trouble now boooooi",
+      "text": "${ascean.name}, I have not regaled thought with humans in some time. I require from you a gift, if you'll forgive me.",
       "options": [
         {
-          "text": "I better set your entire forest on fire in self defense.",
-          "next": "0003",
+          "text": "Of course, my liege. What is it you require?",
+          "next": "0006",
           "npcIds": ["Deity"],
           "conditions": []
+        },
+        {
+          "text": "Stands to reason you may need aid, ${enemy.name}. What am I to perform?",
+          "next": "0006",
+          "npcIds": ["Deity"],
+          "conditions": [],
+          "action": null,
+          "keywords": ["Compliant"]
         }
       ],
       "npcIds": ["Deity"]
@@ -72,6 +80,48 @@
         {
           "text": "Fourth Node Reply",
           "next": "0005",
+          "npcIds": ["Deity"],
+          "conditions": [],
+          "action": null
+        }
+      ],
+      "npcIds": ["Deity"]
+    },
+    {
+      "id": "0005",
+      "text": "Fifth Node",
+      "options": [
+        {
+          "text": "5th Option Text",
+          "next": "0006",
+          "npcIds": ["Deity"],
+          "conditions": [],
+          "action": null
+        }
+      ],
+      "npcIds": ["Deity"]
+    },
+    {
+      "id": "0006",
+      "text": "6th Node Text",
+      "options": [
+        {
+          "text": "6th Option Text",
+          "next": "0007",
+          "npcIds": ["Deity"],
+          "conditions": [],
+          "action": null
+        }
+      ],
+      "npcIds": ["Deity"]
+    },
+    {
+      "id": "0007",
+      "text": "7th Node Text",
+      "options": [
+        {
+          "text": "7th Option Text",
+          "next": "0001",
           "npcIds": ["Deity"],
           "conditions": [],
           "action": null

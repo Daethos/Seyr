@@ -1,7 +1,6 @@
 import { useEffect, useState, useReducer } from 'react';
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as asceanAPI from '../../utils/asceanApi';
-import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
@@ -869,7 +868,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             if (node.options.length === 0) {
                 continue;
             };
-            const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(enemy));
+            const npcOptions = (node.options as any).filter((option: DialogNodeOption) => (option as DialogNodeOption)?.npcIds?.includes(enemy));
             if (npcOptions.length > 0) {
                 const updatedNode = { ...node, options: npcOptions };
                 matchingNodes.push(updatedNode);

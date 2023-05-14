@@ -3,12 +3,10 @@ import Overlay from 'react-bootstrap/Overlay';
 import * as asceanAPI from '../../utils/asceanApi';
 import Button from 'react-bootstrap/Button';
 import EnemyDialogNodes from './EnemyDialogNodes.json';
-import { GAME_ACTIONS, GameData, Player, Enemy, NPC } from './GameStore';
+import { GAME_ACTIONS, GameData, Player } from './GameStore';
 import { MapData } from './WorldStore';
 import { ACTIONS, CombatData, shakeScreen } from './CombatStore';
 import useGameSounds from './Sounds';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Typewriter from './Typewriter';
 import { DialogNodeOption, DialogNode } from './DialogNode';
 
@@ -18,7 +16,7 @@ function getNodesForDeity(enemy: string): DialogNode[] {
         if (node.options.length === 0) {
             continue;
         };
-        const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(enemy))
+        const npcOptions = (node.options as any).filter((option: DialogNodeOption) => (option as DialogNodeOption)?.npcIds?.includes(enemy))
         if (npcOptions.length > 0) {
             const updatedNode = { ...node, options: npcOptions };
             matchingNodes.push(updatedNode);
@@ -84,6 +82,8 @@ interface DialogTreeProps {
 const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state, actions, setPlayerResponses, setKeywordResponses }: DialogTreeProps) => {
     const [currentNodeIndex, setCurrentNodeIndex] = useState(gameState?.currentNodeIndex || 0);
     const [showDialogOptions, setShowDialogOptions] = useState(false);
+    const { playReligion } = useGameSounds(gameState.soundEffectVolume);
+   
     useEffect(() => {
         setCurrentNodeIndex(gameState?.currentNodeIndex || 0);
     }, [gameState?.currentNodeIndex]);
@@ -108,47 +108,48 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
     }, [currentNodeIndex]);
   
     useEffect(() => {
-      if (gameState?.currentNode) {
-        let newText = gameState?.currentNode?.text;
-        let newOptions: DialogNodeOption[] = [];
-        if (gameState?.currentNode?.text) {
-          newText = gameState?.currentNode?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g));
-        };
-      if (gameState?.currentNode?.options) {
-        newOptions = gameState?.currentNode?.options.filter(option => {
-          if (option.conditions) {
-            return option.conditions.every(condition => {
-              const { key, operator, value } = condition;
-              const optionValue = ascean[key] !== undefined ? ascean[key] : state[key]; // Hopefully this works!
-              switch (operator) {
-                case '>':
-                  return optionValue > value;
-                case '>=':
-                  return optionValue >= value;
-                case '<':
-                  return optionValue < value;
-                case '<=':
-                  return optionValue <= value;
-                case '=':
-                  return optionValue === value;
-                default:
-                  return false;
-              }
+        if (gameState?.currentNode) {
+            let newText = gameState?.currentNode?.text;
+            let newOptions: DialogNodeOption[] = [];
+            if (gameState?.currentNode?.text) {
+                newText = gameState?.currentNode?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g));
+            };
+        if (gameState?.currentNode?.options) {
+            newOptions = gameState?.currentNode?.options.filter(option => {
+                if (option.conditions) {
+                    return option.conditions.every(condition => {
+                        const { key, operator, value } = condition;
+                        const optionValue = ascean[key] !== undefined ? ascean[key] : state[key]; // Hopefully this works!
+                        switch (operator) {
+                            case '>':
+                                return optionValue > value;
+                            case '>=':
+                                return optionValue >= value;
+                            case '<':
+                                return optionValue < value;
+                            case '<=':
+                                return optionValue <= value;
+                            case '=':
+                                return optionValue === value;
+                            default:
+                                return false;
+                        };
+                    });
+                } else {
+                    return true;
+                };
+            }).map(option => {
+                const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
+                return {
+                    ...option,
+                    text: renderedOption,
+                };
             });
-          } else {
-            return true;
-          };
-        }).map(option => {
-          const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
-          return {
-            ...option,
-            text: renderedOption,
-          };
-        });
-      };
-      gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
-    };
-  
+        };
+        gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
+        shakeScreen(gameState?.shake);
+        playReligion();
+        };
     }, [gameState.currentNode]);
   
     const handleOptionClick = (nextNodeId: string | null) => {

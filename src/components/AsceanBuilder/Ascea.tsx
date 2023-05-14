@@ -63,7 +63,7 @@ const Ascea = ({ ascean }: Props) => {
       <Nav.Link as={NavLink} to={'/Hardcore/' + ascean._id}
           style={{ color: ascean.hardcore ? 'red' : 'blue', fontSize: "32px", fontWeight: 900, textShadow: "1px 1px 1px purple" }} 
           className='btn btn-lg btn-outline-black mb-1 update-links'>
-          Play as {ascean.name}
+          Play the Ascea's Arena Instantly as {ascean.name}
       </Nav.Link>
     </Modal.Body>
     </Modal>

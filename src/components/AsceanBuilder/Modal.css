@@ -1,6 +1,0 @@
-@media screen and (max-width: 675px) {
-    #modal-weapon {
-        overflow-y: auto;
-        max-height: 80vh;
-    }
-}

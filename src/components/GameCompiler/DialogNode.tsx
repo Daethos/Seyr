@@ -1,17 +1,16 @@
 import DialogNodes from "./DialogNodes.json";
 import EnemyDialogNodes from './EnemyDialogNodes.json';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Ascean, Enemy, GAME_ACTIONS, GameData, NPC } from "./GameStore";
-import { CombatData } from "./CombatStore";
 
 export interface DialogNodeOption {
     text: string;
     next: string | null;
-    npcIds?: any[];
+    npcIds?: Array<number | string>;
     conditions?: { key: string; operator: string; value: string; }[];
     action?: string | null;
-    keywords?: any[] | null;
+    keywords?: any[];
 };
 
 export interface DialogNode {
@@ -37,15 +36,13 @@ export const npcIds: NpcIds = {
     "Merchant-Tailor": 8,
 };
 
-// This is for enemy dialog nodes
-// May make 2, 1 for named, 1 for unnamed
 export function getNodesForEnemy(enemy: Enemy): DialogNode[] {
     const matchingNodes: DialogNode[] = [];
     for (const node of EnemyDialogNodes.nodes) {
         if (node.options.length === 0) {
             continue;
         };
-        const npcOptions = node.options.filter((option) => (option as DialogNodeOption)?.npcIds?.includes(enemy.name))
+        const npcOptions = (node.options as any).filter((option: DialogNodeOption) => (option as DialogNodeOption)?.npcIds?.includes(enemy.name))
         if (npcOptions.length > 0) {
             const updatedNode = { ...node, options: npcOptions };
             matchingNodes.push(updatedNode);

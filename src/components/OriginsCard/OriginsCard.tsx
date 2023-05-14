@@ -22,7 +22,7 @@ const OriginsCard = ({ origin }: OriginProps) => {
             Bonuses: {origin.bonus}
         </Modal.Body>
         </Modal>
-        <Button variant='outline-danger' className="m-3 p-4 eqp-popover" onClick={() => setOriginModalShow(true)}>{origin.name}</Button>
+        <Button variant='' className="m-3 p-4 eqp-popover" style={{ color: "gold", fontSize: "24px" }} onClick={() => setOriginModalShow(true)}><img src={process.env.PUBLIC_URL + origin.imgUrl} alt="Origin Culture Here" style={{ maxWidth: "15vw", borderRadius: "50%", border: "2px solid purple" }} /> <br /> {origin.name}</Button>
         </>
     );
 };

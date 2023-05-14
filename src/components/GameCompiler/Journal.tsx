@@ -49,11 +49,11 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
 const JournalEntry = ({ entry }: { entry: any }) => {
     return (
         <div style={{ whiteSpace: "pre-wrap" }}>
-            <h3 style={{ color: "gold" }}>{entry?.title}</h3>
-            <p style={{ color: "#fdf6d8" }}>{formatDistanceToNow(new Date(entry?.date))}</p>
+            <h3 style={{ color: "purple" }} className='mt-3 mb-4'>Entry: {entry?.title}</h3>
             <h6 style={{ color: "gold" }}>{entry?.body}</h6>
-            <p className='mt-5'>[{entry?.footnote}]</p>
-            <p style={{ color: "gold" }}>({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
+            <p className='mt-5'>Footnote: {entry?.footnote}</p>
+            <p style={{ color: "#fdf6d8" }}>Time: {formatDistanceToNow(new Date(entry?.date))} ago.</p>
+            <p style={{ color: "gold" }}>Location: ({entry?.location}) X: {entry?.coordinates?.x} Y: {entry?.coordinates?.y}</p>
         </div>
     );
 };

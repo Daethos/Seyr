@@ -1,4 +1,3 @@
-import './EquipmentCard.css';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -7,7 +6,7 @@ interface TrinketProps {
     trinket: any;
     index: any;
     userProfile: boolean;
-}
+};
 
 const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
     const trinketPopover = (
@@ -34,11 +33,11 @@ const TrinketsCard = ({ trinket, index, userProfile }: TrinketProps) => {
             </Popover.Body>
         </Popover>
     )
-  return (
-    <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
-        <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{trinket.name}</Button>
-    </OverlayTrigger>
-  )
-}
+    return (
+        <OverlayTrigger trigger="click" placement="auto-start" overlay={trinketPopover}>
+            <Button variant="outline-danger" className="m-3 p-4 eqp-popover">{trinket.name}</Button>
+        </OverlayTrigger>
+    );
+};
 
-export default TrinketsCard
+export default TrinketsCard;

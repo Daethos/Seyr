@@ -79,9 +79,9 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <div className="top-stats">
+            <Preference asceanState={asceanState} setAsceanState={setAsceanState} />
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
-            <Preference asceanState={asceanState} setAsceanState={setAsceanState} />
             <Communal editState={asceanState} setEditState={setAsceanState} />
             <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} />
             <svg height="5" width="100%" className="tapered-rule">

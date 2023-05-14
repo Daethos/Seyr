@@ -8,6 +8,9 @@
   margin: 0px;
   background-size: auto;
   background-position: center;
+  border: 2px solid rgb(91, 0, 91);
+  border-radius: 6px;
+  box-shadow: 0 0 2em purple;
 }
 *::-webkit-scrollbar {
   width: 0px;
@@ -91,7 +94,7 @@
 
 #origin-pic {
   max-width: 5vw;
-  border: 2px solid purple;
+  border: 1px solid purple;
   border-radius: 50%;
 }
 #godBorder-Constitution {
@@ -140,7 +143,6 @@
   from, to { border-color: transparent }
   50% { border-color: gold; }
 }
-
 
 .journal-button {
   position: absolute;

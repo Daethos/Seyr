@@ -41,8 +41,8 @@ const Story = ({ user }: Props) => {
         } catch (err: any) {
             setLoading(false)
             console.log(err.message, 'Error Getting Ascean')
-        }
-    }, [asceanID])
+        };
+    }, [asceanID]);
 
     useEffect(() => {
         getAscean();
