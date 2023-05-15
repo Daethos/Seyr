@@ -13,6 +13,11 @@ html, body {
   width: 0px;
   background: transparent;
 }
+.tree-container {
+  position: relative;
+  z-index: 9999;
+  color: #fdf6d8;
+}
 .signup-button {
   width: 75%;
 }

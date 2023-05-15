@@ -20,6 +20,7 @@ import LevelUpModal from '../../game/LevelUpModal';
 import { MapStore, initialMapData } from '../../components/GameCompiler/WorldStore';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import EnemyDialogNodes from '../../components/GameCompiler/EnemyDialogNodes.json';
+import { Tree } from 'react-d3-tree';
 
 interface DialogNodeOption {
     text: string;
@@ -94,31 +95,8 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
     };
     return (
         <Form>
-        {/* <Form.Group>
-        <FloatingLabel controlId="text" label='Node ID'>
-        <Form.Control
-            type="text"
-            placeholder="Node ID"
-            name='nodeId'
-            value={nodeId}
-            onChange={(e) => setNodeId(e.target.value)}
-            />
-        </FloatingLabel>
-        </Form.Group>
-        <br />
-        <Form.Group>
-        <FloatingLabel controlId="text" label='Node Text'>
-        <Form.Control
-            type="text"
-            placeholder="Node Text"
-            name='text'
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            />
-        </FloatingLabel>
-        </Form.Group> */}
         <label htmlFor="nodeId">Node ID:</label>{' '}
-        <input
+        <Form.Control
             id="nodeId"
             type="text"
             value={nodeId}
@@ -126,7 +104,7 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
         /><br />
 
         <label htmlFor="text">Node Text:</label>{' '}
-        <input
+        <Form.Control
             id="text"
             type="text"
             value={text}
@@ -134,7 +112,7 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
         /><br />
     
         <label htmlFor="npcIds">NPC Ids:</label>{' '}
-        <input
+        <Form.Control
             id="npcIds"
             type="text"
             value={npcIds.join(',')}
@@ -150,9 +128,10 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
               index={index}
               onSave={(newOption) => handleOptionChange(index, newOption)}
               optionDelete={async (nodeId, index) => optionDelete(nodeId, index)}
+              // Needs to be an option to expand button toggle
             />
         ))}
-        <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Node</Button>
+        <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Node {node.id}</Button>
         </Form>
     );
 };
@@ -172,6 +151,7 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
     const [conditions, setConditions] = useState(option.conditions);
     const [action, setAction] = useState(option.action);
     const [keywords, setKeywords] = useState(option.keywords);
+    const [showOption, setShowOption] = useState(false);
 
     useEffect(() => {
         setText(option.text);
@@ -214,71 +194,78 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
         optionDelete(nodeId, index);
     };
 
+    const toggleOption = () => setShowOption(!showOption);
+
     return (
-        <div style={{  }} >
-            <label htmlFor="text">Option Text:</label>{' '}
-            <input
+        <div >
+            <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={toggleOption}>Show Option</Button><br />
+            {showOption ? (
+                <>
+            <Form.Label htmlFor="text">Option Text:</Form.Label>{' '}
+            <Form.Control
                 id="text"
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-            /><br />
-            <label htmlFor="next">Next Node ID:</label>{' '}
-            <input 
+                /><br />
+            <Form.Label htmlFor="next">Next Node ID:</Form.Label>{' '}
+            <Form.Control 
                 id="next"
                 type="text"
                 value={next ?? ''}
                 onChange={(e) => setNext(e.target.value)}
             /><br />
-            <label htmlFor="npcIds">NPC Ids:</label>{' '}
-            <input
+            <Form.Label htmlFor="npcIds">NPC Ids:</Form.Label>{' '}
+            <Form.Control
                 id="npcIds"
                 type="text"
                 value={npcIds?.join(',')}
                 onChange={(e) => setNpcIds(e.target.value.split(','))}
-            /><br />
-            <label htmlFor="keywords">Keywords:</label>{' '}
-            <input
+                /><br />
+            <Form.Label htmlFor="keywords">Keywords:</Form.Label>{' '}
+            <Form.Control
                 id="keywords"
                 type="text"
                 value={keywords?.join(',')}
                 onChange={(e) => setKeywords(e.target.value.split(','))}
-            /><br />
-            <label htmlFor="conditions">Conditions:</label><br />
-            <label htmlFor="key">Key:</label>{' '}
-            <input
+                /><br />
+            <Form.Label htmlFor="conditions">Conditions:</Form.Label><br />
+            <Form.Label htmlFor="key">Key:</Form.Label>{' '}
+            <Form.Control
                 id="key"
                 type="text"
                 name='key'
                 value={conditions && conditions?.map((condition) => `${condition?.key}`)}
-                onChange={(e) => handleOptionChange(e)}
+                onChange={(e) => handleOptionChange(e as React.ChangeEvent<HTMLInputElement>)}
                 /><br />
-            <label htmlFor="operator">Operator:</label>{' '}
-            <input
+            <Form.Label htmlFor="operator">Operator:</Form.Label>{' '}
+            <Form.Control
                 id="operator"
                 type="text"
                 name='operator'
                 value={conditions && conditions?.map((condition) => `${condition?.operator}`)}
-                onChange={(e) => handleOptionChange(e)}
+                onChange={(e) => handleOptionChange(e as React.ChangeEvent<HTMLInputElement>)}
                 /><br />
-            <label htmlFor="value">Value:</label>{' '}
-            <input
+            <Form.Label htmlFor="value">Value:</Form.Label>{' '}
+            <Form.Control
                 id="value"
                 type="text"
                 name='value'
                 value={conditions && conditions?.map((condition) => `${condition?.value}`)}
-                onChange={(e) => handleOptionChange(e)}
-            /><br />
-            <label htmlFor="action">Action:</label>{' '}
-            <input
+                onChange={(e) => handleOptionChange(e as React.ChangeEvent<HTMLInputElement>)}
+                /><br />
+            <Form.Label htmlFor="action">Action:</Form.Label>{' '}
+            <Form.Control
                 id="action"
                 type="text"
                 value={action ?? ''}
                 onChange={(e) => setAction(e.target.value)}
-            /><br />
+                /><br />
             <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Option</Button>
             <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleDelete}>Delete Option</Button>
             <br /><br />
+                </>
+            ) : ('')}
         </div>
     );
 };
@@ -370,6 +357,194 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
         </div>
     );
 };
+
+async function convertToReactDeTreeFormat(nodes: DialogNode[]) {
+    const treeData: { id: any; text: any; children: any[]; }[] = [];
+    console.log(nodes, "Nodes in convertToReactDeTreeFormat")
+    // Define a helper function to recursively traverse the nodes
+    // async function traverse(node: DialogNode | undefined, parent?: { id?: string; text?: any; children?: any; } | undefined) {
+    //     // Create a new node object with the required properties
+    //     const newNode: {
+    //         id: any;
+    //         text: any;
+    //         children: {
+    //             id?: string;
+    //             text?: any;
+    //             children?: any[];
+    //         }[];
+    //     } = {
+    //         id: node?.id || "",
+    //         text: node?.text || "",
+    //         children: []
+    //     };
+    
+    //     // Add the node to its parent's children array
+    //     if (parent) {
+    //         parent.children.push(newNode);
+    //     } else {
+    //         treeData.push(newNode);
+    //     };
+    
+    //     // Add any options as child nodes
+    //     if (node?.options && node?.options.length) {
+    //         node.options.forEach(async option => {
+    //         const newChildNode = {
+    //             id: `${node.id}-${option.next}`,
+    //             text: option.text,
+    //             children: []
+    //         };
+    
+    //         newNode.children.push(newChildNode);
+    
+    //         // Recursively traverse child nodes
+    //         await traverse(nodes.find(n => n.id === option.next), newChildNode);
+    //         });
+    //     };
+    // };
+    async function traverse(node: DialogNode | undefined, parent?: { id?: string; text?: any; children?: any; }, depth = 0, maxDepth = 1) {
+        // Create a new node object with the required properties
+        const newNode: {
+            id: any;
+            text: any;
+            parent: boolean;
+            children: {
+                id?: string;
+                text?: any;
+                children?: any[];
+            }[];
+        } = {
+            id: node?.id || "",
+            text: node?.text || "",
+            parent: node?.options ? true : false,
+            children: []
+        };
+    
+        // Add the node to its parent's children array
+        if (parent) {
+            parent.children.push(newNode);
+        } else {
+            treeData.push(newNode);
+        };
+    
+        // Add any options as child nodes
+        if (depth < maxDepth && node?.options && node?.options.length) {
+            await Promise.all(node.options.map(async option => {
+                const newChildNode = {
+                    id: `${node.id}-${option.next}`,
+                    text: option.text,
+                    parent: false,
+                    children: []
+                };
+    
+                newNode.children.push(newChildNode);
+    
+                // Recursively traverse child nodes
+                await traverse(nodes.find(n => n.id === option.next), newChildNode, depth + 1, maxDepth);
+            }));
+        };
+    };
+    
+  
+    // Start the traversal with the first node
+    await traverse(nodes?.[0], undefined, 0, 2);
+    console.log(treeData, "Tree Data")
+    return treeData;
+};
+
+interface TreeNodeProps {
+    nodeData: any;
+    setNodeToggle: any;
+};
+  
+function TreeNode({ nodeData, setNodeToggle }: TreeNodeProps) {
+    const [isNodeOpen, setIsNodeOpen] = useState(false);
+  
+    const handleClick = () => {
+        setIsNodeOpen(!isNodeOpen);
+        setNodeToggle(nodeData.id);
+    };
+  
+    return (
+        <div>
+            <button onClick={handleClick}>{isNodeOpen ? '-' : '+'}</button>
+            <span>{nodeData.text}</span>
+        </div>
+    );
+};
+
+interface CustomTreeProps {
+    data: any;
+};
+  
+function CustomTree({ data }: CustomTreeProps) {
+    const [nodeToggle, setNodeToggle] = useState(null);
+    const [isExpanded, setIsExpanded] = useState(false);
+    function isPlayerResponse(node: DialogNode) {
+        console.log(node, "Node in isPlayerResponse")
+        // Check if the node has any options
+        if (node.options) {
+            // If the first option has an action property, it's a deity response
+            return false;
+        };
+        // If the node has no options, it's a player response
+        return true;
+    };
+      
+    const renderTree = (nodes: any, parent: any) => {
+        return (
+            <div>
+            <ul className='mt-1'>
+                {nodes.map((node: any, index: number) => (
+                    <li key={index}>
+                    <div className="node">
+                    <div className="node-content">
+                        <span style={{ color: !node.parent ? "#fdf6d8" : "gold" }}>{node.text}</span>
+                        {node.children && node.children.length > 0 && (
+                            <span
+                            className={`${
+                                node.isExpanded ? 'minus' : 'plus'
+                            }-button`}
+                            onClick={() => {
+                                node.isExpanded = !node.isExpanded;
+                                setIsExpanded(!isExpanded);
+                            }}
+                            >
+                            {node.isExpanded ? ' --' : ' ++'}
+                        </span>
+                        )}
+                    </div>
+                    {node.children && node.children.length > 0 && node.isExpanded && (
+                        <div className="node-children">
+                        {renderTree(node.children, node)}
+                        </div>
+                    )}
+                    </div>
+                </li>
+                ))}
+            </ul>
+            </div>
+        );
+    };
+      
+  
+    return (
+        <div>
+            <Tree 
+                data={data}
+                nodeSize={{ x: 150, y: 150 }}
+                collapsible={false}
+                orientation="vertical"
+                separation={{ siblings: 2, nonSiblings: 2 }}
+                translate={{ x: 50, y: 200 }} 
+                transitionDuration={0}
+                zoom={0.8}
+            />
+            <div style={{ position: 'absolute', top: 0 }}>
+            {renderTree(data, null)}
+            </div>
+        </div>
+    );
+}
 
 export interface Ascean {
     _id: string;
@@ -635,6 +810,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const [dialogNodes, setDialogNodes] = useState<DialogNode>({ id: '', text: '', options: [], npcIds: [] });
     const [enemyNodes, setEnemyNodes] = useState<any[]>([]);
     const [searchedEnemy, setSearchedEnemy] = useState<string>('');
+    const [treeData, setTreeData] = useState<any>([]);
 
     useEffect(() => {
         if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
@@ -876,6 +1052,10 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         };
         console.log(matchingNodes, 'Matching Nodes');
         setEnemyNodes(matchingNodes);
+        const setupTreeData = await convertToReactDeTreeFormat(matchingNodes);
+        console.log(setupTreeData, 'Setup Tree Data');
+        setTreeData(setupTreeData);
+
         setSearchedEnemy(enemy);
     };
 
@@ -920,6 +1100,15 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             console.log(err.message);
         };
     };
+
+    const cleanTitleText = (title: string) => {
+        // {dialogNodes?.text.slice(0, 50)}...
+        if (title.length > 50) {
+            return `${title.slice(0, 50)}...`;
+        } else {
+            return title;
+        };
+    }
     
     return (
         <Container>
@@ -986,6 +1175,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             </Card>
             </Row>
             <Row className='my-5'>
+            <Col>
             <Card style={{ background: 'black', color: 'white' }}>
                 <Card.Body>
                     <Card.Title style={{ color: "#fdf6d8" }}>Test Dialog</Card.Title>
@@ -997,15 +1187,32 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                                 type="input"
                                 placeholder="Enter Enemy Name"
                                 onChange={(e) => enemyNodeMiddleware(e)}
-                            />
+                                />
                         </Form.Group>
                     </Form>
                     { enemyNodes.length > 0 ?
                         <DialogNodeTable nodes={enemyNodes} getNodeById={getNodeById} onEdit={handleNodeEdit} onDelete={handleNodeDelete} optionDelete={handleOptionDelete} />
-                    : '' }
-                    <DialogNodeForm node={dialogNodes} onSave={handleNodeSave} optionDelete={handleOptionDelete} />
+                        : '' }
                 </Card.Body>
             </Card>
+            </Col>
+            </Row>
+            <Row className='my-5'>
+            <Col >
+            <Card style={{ background: 'black', color: 'white' }}>
+            <Card.Title style={{ color: "#fdf6d8" }}>Test Dialog: {dialogNodes?.id} {cleanTitleText(dialogNodes?.text)}</Card.Title>
+                <Card.Body className='m-5'>
+                <DialogNodeForm node={dialogNodes} onSave={handleNodeSave} optionDelete={handleOptionDelete} />
+                </Card.Body>
+            </Card>
+            </Col>
+            <Col style={{ background: "black" }}>
+            { treeData.length > 0 ?
+                <div className='tree-container'> 
+                    <CustomTree data={treeData} />
+                </div>
+            : '' }
+            </Col>
             </Row>
         </Container>
     );

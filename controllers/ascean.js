@@ -867,6 +867,15 @@ async function removeItem(req, res) {
         const itemIndex = ascean.inventory.indexOf(itemID);
         ascean.inventory.splice(itemIndex, 1);
         deleteEquipmentCheck(itemID);
+        
+        const doesItemStillExist = (itemID) => {
+            return ascean.inventory.includes(itemID);
+        };
+        if (doesItemStillExist(itemID)) {
+            console.log('Item still exists in inventory. Must be a duplicate. Removing duplicate(s).')
+            // Items need to be 'extracted' and also deleted. It means there was an accidental duplicate. Probably just filter them out ?
+            ascean.inventory = ascean.inventory.filter(item => item !== itemID);
+        };
         await ascean.save();
         res.status(201).json({ ascean });
     } catch (err) {
