@@ -132,8 +132,8 @@ export interface Equipment {
     _id: string;
 }
 
-const nonNamedEnemy = 
-    ['Achreon Druid', "Ahn'are Apostle", "Anashtre", 
+const nonNamedEnemy = [
+    'Achreon Druid', "Ahn'are Apostle", "Anashtre", 
     "Astral Apostle", "Cambiren Druid", "Chiomic Jester", 
     "Daethic Inquisitor", "Daethic Knight", "Fang Duelist", 
     "Fang Mercenary", 'Firesworn', 'Fyers Occultist', 
@@ -142,13 +142,16 @@ const nonNamedEnemy =
     "Northren Wanderer", "Nyren", "Old Li'ivi Occultist", 
     "Quor'eite Occultist", "Quor'eite Stalker", "Rahvrecur", 
     "Se'dyrist", "Sedyreal Guard", "Se'va Shrieker", 
-    "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"];
+    "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"
+];
 
-const namedEnemy = 
-    ["Achreus", "Ashreu'ul", "Caelan Greyne", "Chios Dachreon", "Cyrian Shyne", "Daetheus", 
+const namedEnemy = [
+    "Achreus", "Ashreu'ul", "Caelan Greyne", "Chios Dachreon", "Cyrian Shyne", "Daetheus", 
     "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", "Fierous Ashfyre", "Garris Ashenus", 
     "King Mathyus Caderyn", "Kreceus", "Laetrois Ath'Shaorah", "Leaf", "Lorian", "Mavros Ilios", 
-    "Mirio", "Quor'estes", "Relien Myelle", "Sera Lorian", "Synaethi Spiras", "Torreous Ashfyre", "Vincere"];
+    "Mirio", "Quor'estes", "Relien Myelle", "Sedeysus", "Sera Lorian", "Synaethi Spiras", "Torreous Ashfyre", 
+    "Tshios Ash'air", "Vincere"
+];
 
 export const nameCheck = (name: string) => {
     if (namedEnemy.includes(name)) {

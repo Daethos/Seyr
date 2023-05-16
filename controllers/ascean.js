@@ -13,8 +13,6 @@ const Map = require('../models/map');
 const fs = require('fs');
 const seedDB = require('./equipment').seedDB;
 const zlib = require('zlib');
-const { find } = require('lodash');
-const { forEach } = require('lodash');
 
 module.exports = {
     create,
@@ -53,12 +51,14 @@ module.exports = {
     setExperience,
     getOneAsceanLight,
     blessAscean,
+    curseAscean,
     addJournalEntry,
-    evaluateExperience,
+    evaluateDeity,
     updateStatistics,
     recordNonCombatStatistic,
     recordCombatStatistic,
     recordThievery,
+    sacrificeExp,
 };
 
 async function recordThievery(req, res) {
@@ -108,7 +108,6 @@ async function recordCombatStatistic(req, res) {
         let { asceanID, wins, losses, total, actionData, typeAttackData, typeDamageData, totalDamageData, prayerData, deityData } = req.body;
         let ascean = await Ascean.findById(asceanID);
         let statistic = ascean.statistics.combat;
-        console.log(statistic, "Statistic Pre-Recorded");
         statistic.wins += wins;
         statistic.losses += losses;
         statistic.total += total;
@@ -127,13 +126,9 @@ async function recordCombatStatistic(req, res) {
         statistic.prayers.debuff += prayerData.reduce((count, prayer) => prayer === 'Debuff' ? count + 1 : count, 0);
         statistic.attacks.magical += typeAttackData.reduce((count, type) => type === 'Magic' ? count + 1 : count, 0);
         statistic.attacks.physical += typeAttackData.reduce((count, type) => type === 'Physical' ? count + 1 : count, 0);
-        // statistic.deities.concat(...deityData).flat();
-        // statistic.damage.type.concat(...typeDamageData).flat();
         statistic.damage.type = statistic.damage.type.concat(...typeDamageData).flat();
         statistic.deities = statistic.deities.concat(...deityData).flat();
 
-        // Still need to do deityData, prayerData
-        console.log(statistic, "Statistic Post-Recorded");
         ascean.statistics.combat = statistic;
         await ascean.save();
         res.status(200).json(ascean.statistics);
@@ -155,12 +150,10 @@ async function updateStatistics(req, res) {
     };
 };
 
-async function evaluateExperience(req, res) {
+async function evaluateDeity(req, res) {
     try {
-
-        let ascean = await Ascean.findById(req.body.asceanID);
-        let entry = req.body.entry;
-        let deity = req.body.deity;
+        let { asceanID, deity, entry } = req.body;
+        let ascean = await Ascean.findById(asceanID);
 
         const keywords = {
             'Daethos': 'Daethos',
@@ -259,8 +252,8 @@ async function evaluateExperience(req, res) {
             'Kyosir': 'kyosir',
         };
 
-        const keywordResponse = entry.body.split(' ').filter(word => keywords[word]);
-        const masteryKeywordResponse = entry.body.split(' ').filter(word => masteryKeyords[word]);
+        entry.body = entry.body.join('\n\n'); 
+ 
         entry.keywords.forEach((keyword) => {
             if (keywordCount[keyword]) {
                 keywordCount[keyword].occurrence += 1;
@@ -276,10 +269,10 @@ async function evaluateExperience(req, res) {
         const valueSum = keywordCount.Compliant.value + keywordCount.Faithful.value + keywordCount.Unfaithful.value + keywordCount.Disobedient.value;
 
         const evaluateBehavior = (count) => {
-            const sortCountOccurrence = Object.values(count).sort((a, b) => b.occurrence - a.occurrence);
-            const sortCountValue = Object.values(count).sort((a, b) => b.value - a.value);
-            
-            if (sortCountOccurrence[0] === 'Faithful') {
+            const sortCountOccurrence = Object.entries(count).sort((a, b) => b[1].occurrence - a[1].occurrence);
+            const mostFrequentBehavior = sortCountOccurrence[0][0];
+            console.log(sortCountOccurrence, mostFrequentBehavior, "sortCountOccurrence, sortCountValue");
+            if (mostFrequentBehavior === 'Faithful') {
                 if (valueSum >= 4) {
                     return 'Convicted';
                 } else if (valueSum >= 2) {
@@ -289,7 +282,7 @@ async function evaluateExperience(req, res) {
                 } else {
                     return 'Strained Faith';
                 };
-            } else if (sortCountOccurrence[0] === 'Compliant') {
+            } else if (mostFrequentBehavior === 'Compliant') {
                 if (valueSum >= 4) {
                     return 'Zealous';
                 } else if (valueSum >= 2) {
@@ -299,7 +292,7 @@ async function evaluateExperience(req, res) {
                 } else {
                     return 'Strained Compliance';
                 };
-            } else if (sortCountOccurrence[0] === 'Unfaithful') {
+            } else if (mostFrequentBehavior === 'Unfaithful') {
                 if (valueSum <= -4) {
                     return 'Hostile';
                 } else if (valueSum <= -2) {
@@ -309,7 +302,7 @@ async function evaluateExperience(req, res) {
                 } else {
                     return 'Waning Faith';
                 };
-            } else if (sortCountOccurrence[0] === 'Disobedient') {
+            } else if (mostFrequentBehavior === 'Disobedient') {
                 if (valueSum <= -4) {
                     return 'Rabid';
                 } else if (valueSum <= -2) {
@@ -319,27 +312,32 @@ async function evaluateExperience(req, res) {
                 } else {
                     return 'Waning Compliance';
                 };
+            } else {
+                return 'Neutral';
             };
         };
 
         const behavior = evaluateBehavior(keywordCount);
-        ascean.statistics.relationships.deity.Compliant.occurrennce += keywordCount.Compliant.occurrence;
+
+        console.log(behavior, "Behavior");
+
+        ascean.statistics.relationships.deity.Compliant.occurrence += keywordCount.Compliant.occurrence;
         ascean.statistics.relationships.deity.Faithful.occurrence += keywordCount.Faithful.occurrence;
         ascean.statistics.relationships.deity.Unfaithful.occurrence += keywordCount.Unfaithful.occurrence;
         ascean.statistics.relationships.deity.Disobedient.occurrence += keywordCount.Disobedient.occurrence;
-        ascean.statistics.relationships.deity.Compliant.total += keywordCount.Compliant.value;
-        ascean.statistics.relationships.deity.Faithful.total += keywordCount.Faithful.value;
-        ascean.statistics.relationships.deity.Unfaithful.total += keywordCount.Unfaithful.value;
-        ascean.statistics.relationships.deity.Disobedient.total += keywordCount.Disobedient.value;
+        ascean.statistics.relationships.deity.Compliant.value += keywordCount.Compliant.value;
+        ascean.statistics.relationships.deity.Faithful.value += keywordCount.Faithful.value;
+        ascean.statistics.relationships.deity.Unfaithful.value += keywordCount.Unfaithful.value;
+        ascean.statistics.relationships.deity.Disobedient.value += keywordCount.Disobedient.value;
         ascean.statistics.relationships.deity.value += valueSum;
         ascean.statistics.relationships.deity.behaviors.push(behavior);
 
-        const goodBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Faithful' || behavior === 'Compliant');
-        const badBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Unfaithful' || behavior === 'Disobedient');
-        const middlingBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Somewhat Faithful' || behavior === 'Somewhat Compliant' || behavior === 'Somewhat Unfaithful' || behavior === 'Somewhat Disobedient');
-        const goodBehaviorCount = goodBehavior.length;
-        const badBehaviorCount = badBehavior.length;
-        const middlingBehaviorCount = middlingBehavior.length;
+        // const goodBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Faithful' || behavior === 'Compliant');
+        // const badBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Unfaithful' || behavior === 'Disobedient');
+        // const middlingBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Somewhat Faithful' || behavior === 'Somewhat Compliant' || behavior === 'Somewhat Unfaithful' || behavior === 'Somewhat Disobedient');
+        // const goodBehaviorCount = goodBehavior.length;
+        // const badBehaviorCount = badBehavior.length;
+        // const middlingBehaviorCount = middlingBehavior.length;
 
         const presentTense = ascean.faith === 'adherent' ? 'adherence to' : ascean.faith === 'devoted' ? 'devotion to' : 'curiosity with';
         const pastTense = ascean.faith === 'adherent' ? 'adherent toward' : ascean.faith === 'devoted' ? 'devoted toward' : 'curious with';
@@ -347,18 +345,18 @@ async function evaluateExperience(req, res) {
         switch (behavior) {
             case 'Convicted':
                 ascean[keywords[ascean.mastery]] += 1;
-                entry.footnote = `${ascean.name} has been convicted of their ${presentTense} ${deity}.`;
+                entry.footnote = `${ascean.name} seems convicted of their ${presentTense} ${deity}.`;
                 break;
             case 'Zealous':
-                entry.footnote = `${ascean.name} has been zealous in their ${presentTense} ${deity}.`;
+                entry.footnote = `${ascean.name} seems zealous in their ${presentTense} ${deity}.`;
                 ascean[keywords[ascean.mastery]] += 0.75;
                 break;
             case 'Faithful':
-                entry.footnote = `${ascean.name} has been faithful to ${deity}.`;
+                entry.footnote = `${ascean.name} seems faithful to ${deity}.`;
                 ascean[keywords[ascean.mastery]] += 0.5;
                 break;
             case 'Somewhat Faithful':
-                entry.footnote = `${ascean.name} has been somewhat faithful to ${deity}.`;
+                entry.footnote = `${ascean.name} seems somewhat faithful to ${deity}.`;
                 ascean[keywords[ascean.mastery]] += 0.25;
                 break;
             case 'Compliant':
@@ -375,11 +373,11 @@ async function evaluateExperience(req, res) {
                 break;
             case 'Strained Compliance':
                 entry.footnote = `${ascean.name}'s strained in their ${presentTense} ${deity}.`;
-                
+                // It'll sense that the deity notices this behavior
                 break;
             case 'Waning Compliance':
                 entry.footnote = `${ascean.name}'s waning in their ${presentTense} ${deity}.`;
-                
+                // Over time, this will have another closure that writes the footnote based on the specific deity
                 break;
             case 'Somewhat Disobedient':
                 entry.footnote = `${ascean.name} has been somewhat disobedient to ${deity}.`;
@@ -1512,6 +1510,10 @@ async function blessAscean(req, res) {
         const blessing = ascean.mastery.toLowerCase();
         console.log(blessing, ascean[blessing], 'Blessing');
         ascean[blessing] += 1;
+        ascean.statistics.relationships.deity.Faithful.occurrence += 1;
+        ascean.statistics.relationships.deity.Faithful.value += 2;
+        ascean.statistics.relationships.deity.value += 2;
+        ascean.statistics.relationships.deity.behaviors.push('Blessed');
         console.log(ascean[blessing], 'Blessed');
         await ascean.save();
         res.status(200).json(ascean);
@@ -1519,6 +1521,34 @@ async function blessAscean(req, res) {
         console.log(err, 'Error in Bless Ascean Controller');
         res.status(400).json(err);
     };
+};
+
+async function curseAscean(req, res) {
+    try {
+        let ascean = await Ascean.findById({ _id: req.params.id });
+        ascean.firewater.charges -= 1;
+        ascean.statistics.relationships.deity.Unfaithful.occurrence += 1;
+        ascean.statistics.relationships.deity.Unfaithful.value -= 2;
+        ascean.statistics.relationships.deity.value -= 2;
+        ascean.statistics.relationships.deity.behaviors.push('Cursed');
+        await ascean.save();
+        res.status(200).json(ascean);
+    } catch (err) {
+        console.log(err, 'Error in Curse Ascean Controller');
+        res.status(400).json(err);
+    }
+};
+
+async function sacrificeExp(req, res) {
+    try {
+        let ascean = await Ascean.findById({ _id: req.params.id });
+        ascean.experience = 0;
+        await ascean.save();
+        res.status(200).json(ascean);
+    } catch (err) {
+        console.log(err, 'Error in Sacrifice Experience Controller');
+        res.status(400).json(err);
+    }
 };
 
 async function searchAscean(req, res) {

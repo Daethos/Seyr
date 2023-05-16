@@ -542,3 +542,45 @@ export async function blessAscean(ascean: string) {
         });
     });
 };
+
+export async function curseAscean(ascean: string) {
+    return fetch(BASE_URL + 'curse/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        return res.json().then((response: any) => {
+            console.log(response, '<- Response in Save Tutorial Utility Return')
+        });
+    });
+};
+
+export async function sacrificeExp(ascean: string) {
+    return fetch(BASE_URL + 'sacrificeExp/' + ascean, {
+        headers: {
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        return res.json().then((response: any) => {
+            console.log(response, '<- Response in Save Tutorial Utility Return')
+        });
+    });
+};
+
+export async function evaluateDeity(data: any) {
+    return fetch(BASE_URL + 'evaluateDeity/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then(async (res: any) => {
+        if (res.ok) return res.json();
+        return res.json().then((response: any) => {
+            console.log(response, '<- Response in Save Tutorial Utility Return')
+        });
+    });
+};

@@ -11,6 +11,7 @@
   border-radius: 6px;
   box-shadow: 0 0 2em purple;
   scrollbar-width: none;
+  overflow: hidden;
   /* font-family: 'Cinzel'; */
   /* font-variant: small-caps; */
 }

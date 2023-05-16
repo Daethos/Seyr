@@ -682,7 +682,15 @@ export function shakeScreen(settings: {duration: number, intensity: number}) {
             requestAnimationFrame(shake);
         } else {
             body.style.transform = initialPosition;
+            body.removeEventListener('transitionend', resetPosition);
         };
     };
+
+    function resetPosition() {
+        body.style.transform = initialPosition;
+    };
+    
+    body.addEventListener('transitionend', resetPosition);
+
     requestAnimationFrame(shake);
 };

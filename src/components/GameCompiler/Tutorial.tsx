@@ -79,7 +79,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
     const blessPlayer = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            shakeScreen({ duration: 1000, intensity: 2});
+            shakeScreen({ duration: 1500, intensity: 1.5});
             if (player.faith === 'devoted') {
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
             } else if (player.faith === 'adherent') {
@@ -121,11 +121,12 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
     const rebukePlayer = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            shakeScreen({ duration: 1000, intensity: 2});
+            shakeScreen({ duration: 1500, intensity: 1.5});
             if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
             if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
-            
+            const response = await asceanAPI.curseAscean(player._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
             const entry = {
                 title: 'Who am I?',
                 body: `You felt the presence of... ${highestFaith()}? \n\n You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither. \n\n "Who are you?"`,

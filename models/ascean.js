@@ -371,19 +371,19 @@ const asceanSchema = new Schema(
                         default: []
                     },
                     Compliant: { 
-                        occurence: { type: Number, default: 0 },
+                        occurrence: { type: Number, default: 0 },
                         value: { type: Number, default: 0 },
                      },
                     Disobedient: { 
-                        occurence: { type: Number, default: 0 },
+                        occurrence: { type: Number, default: 0 },
                         value: { type: Number, default: 0 },
                      },
                     Faithful: { 
-                        occurence: { type: Number, default: 0 },
+                        occurrence: { type: Number, default: 0 },
                         value: { type: Number, default: 0 },
                      },
                     Unfaithful: { 
-                        occurence: { type: Number, default: 0 },
+                        occurrence: { type: Number, default: 0 },
                         value: { type: Number, default: 0 },
                      },
                     value: { type: Number, default: 0 },

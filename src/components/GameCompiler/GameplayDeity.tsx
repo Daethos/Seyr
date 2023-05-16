@@ -118,47 +118,47 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
             if (gameState?.currentNode?.text) {
                 newText = gameState?.currentNode?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g));
             };
-        if (gameState?.currentNode?.options) {
-            newOptions = gameState?.currentNode?.options.filter(option => {
-                if (option.next === '') {
-                    setShowDeity(false);
-                } else if (option.next !== '' && !showDeity) {
-                    setShowDeity(true);
-                };
-                if (option.conditions) {
-                    return option.conditions.every(condition => {
-                        const { key, operator, value } = condition;
-                        console.log(key, ascean[ascean[key].toLowerCase()], ascean[key], operator, value, ascean.level, "Key, Operator, Value");
-                        const optionValue = getOptionKey(ascean, state, key); // Hopefully this works!
-                        switch (operator) {
-                            case '>':
-                                return optionValue > value;
-                            case '>=':
-                                return optionValue >= value;
-                            case '<':
-                                return optionValue < value;
-                            case '<=':
-                                return optionValue <= value;
-                            case '=':
-                                return optionValue === value;
-                            default:
-                                return false;
-                        };
-                    });
-                } else {
-                    return true;
-                };
-            }).map(option => {
-                const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
-                return {
-                    ...option,
-                    text: renderedOption,
-                };
-            });
-        };
-        gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
-        shakeScreen(gameState?.shake);
-        playReligion();
+            if (gameState?.currentNode?.options) {
+                newOptions = gameState?.currentNode?.options.filter(option => {
+                    if (option.next === '') {
+                        setShowDeity(false);
+                    } else if (option.next !== '' && !showDeity) {
+                        setShowDeity(true);
+                    };
+                    if (option.conditions) {
+                        return option.conditions.every(condition => {
+                            const { key, operator, value } = condition;
+                            console.log(key, ascean[ascean[key].toLowerCase()], ascean[key], operator, value, ascean.level, "Key, Operator, Value");
+                            const optionValue = getOptionKey(ascean, state, key); // Hopefully this works!
+                            switch (operator) {
+                                case '>':
+                                    return optionValue > value;
+                                case '>=':
+                                    return optionValue >= value;
+                                case '<':
+                                    return optionValue < value;
+                                case '<=':
+                                    return optionValue <= value;
+                                case '=':
+                                    return optionValue === value;
+                                default:
+                                    return false;
+                            };
+                        });
+                    } else {
+                        return true;
+                    };
+                }).map(option => {
+                    const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
+                    return {
+                        ...option,
+                        text: renderedOption,
+                    };
+                });
+            };
+            gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
+            shakeScreen(gameState?.shake);
+            playReligion();
         };
     }, [gameState.currentNode]);
 
@@ -215,9 +215,9 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
     });
     useEffect(() => {
         setEnemy({
-            name: ascean?.relationships?.deity || highestFaith(),
+            name: ascean?.statistics.relationships.deity.name || highestFaith(),
         });
-    }, [ascean])
+    }, [ascean]);
     useEffect(() => {
         console.log(gameState.renderedText, gameState.renderedOptions, keywordResponses, playerResponses, "Rendered Text and Options");
     }, [gameState.renderedText, gameState.renderedOptions]);
@@ -230,25 +230,35 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
 
     const giveExp = async () => {
         console.log("Giving Experience to Deity");
-        // const response = await asceanAPI.sacrificeExp(ascean._id);
+        const response = await asceanAPI.sacrificeExp(ascean._id);
+        gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
+        dispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
     };
 
-    const resolveDeity = () => {
+    const resolveDeity = async () => {
         console.log('Resolving Conversation with Deity');
         const data = {
             asceanID: ascean._id,
             deity: highestFaith(),
             entry: {
-                title: 'Deific Encounter',
+                title: 'Phenomenon',
                 body: playerResponses,
                 footnote: '',
                 date: Date.now(),
-                location: 'In your mind?',
+                location: 'Peering into Phenomena',
                 coordinates: { x: mapState.currentTile.x, y: mapState.currentTile.y },
                 keywords: keywordResponses,
             }
         };
         console.log(data, "Data for Deity Encounter");
+        const response = await asceanAPI.evaluateDeity(data);
+        console.log(response, "Response from Deity Encounter");
+        gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
+        gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
+
+        setTimeout(() => {
+            gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
+        }, 1500);
     };
     const highestFaith = () => {
         const influences = [ascean?.weapon_one?.influences?.[0], ascean?.weapon_two?.influences?.[0], ascean?.weapon_three?.influences?.[0], ascean?.amulet?.influences?.[0], ascean?.trinket?.influences?.[0]];
@@ -277,7 +287,7 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
                 border: "0.2em solid purple",
                 color: "gold"
         }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', animation: "2s ease-in 0s fade" }}>
                 <DialogTree gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={ascean} enemy={enemy} dialogNodes={getNodesForDeity('Deity')} actions={actions} setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} />
             </div>
         </div>
