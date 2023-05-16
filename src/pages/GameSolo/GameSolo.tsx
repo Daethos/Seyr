@@ -249,7 +249,7 @@ const GameSolo = ({ user }: GameProps) => {
             case 'firstLevelUp':
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstLevelUp={true} />);
             case 'firstPhenomena':
-                shakeScreen({ duration: 1000, intensity: 2 });
+                shakeScreen({ duration: 1000, intensity: 1 });
                 playReligion();
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstPhenomena={true} />);
             default:
@@ -956,7 +956,7 @@ const GameSolo = ({ user }: GameProps) => {
         try {
             // if (gameState?.player.level > gameState?.player?.statistics?.relationships?.deity?.behaviors.length) {
             //     const chance = Math.floor(Math.random() * 101);
-            //     if (chance > 70) {
+            //     if (chance > 0) {
             //         gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: true });
             //         return;
             //     };

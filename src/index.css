@@ -18,6 +18,14 @@ html, body {
   z-index: 9999;
   color: #fdf6d8;
 }
+.minus-button {
+  color: red;
+  font-weight: 900;
+}
+.plus-button {
+  color: green;
+  font-weight: 900;
+}
 .signup-button {
   width: 75%;
 }

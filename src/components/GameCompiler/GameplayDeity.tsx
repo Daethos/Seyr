@@ -9,6 +9,7 @@ import { ACTIONS, CombatData, shakeScreen } from './CombatStore';
 import useGameSounds from './Sounds';
 import Typewriter from './Typewriter';
 import { DialogNodeOption, DialogNode } from './DialogNode';
+import { set } from 'lodash';
 
 function getNodesForDeity(enemy: string): DialogNode[] {
     const matchingNodes: DialogNode[] = [];
@@ -48,8 +49,8 @@ const DialogOption = ({ option, onClick, actions, setPlayerResponses, setKeyword
             console.log(actionName, "Did we make it here?")
             const actionFunction = actions[actionName];
             if (actionFunction) {
-            actionFunction();
-            return;
+                actionFunction();
+                // return;
             };
         };
         onClick(option.next);
@@ -82,6 +83,7 @@ interface DialogTreeProps {
 const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state, actions, setPlayerResponses, setKeywordResponses }: DialogTreeProps) => {
     const [currentNodeIndex, setCurrentNodeIndex] = useState(gameState?.currentNodeIndex || 0);
     const [showDialogOptions, setShowDialogOptions] = useState(false);
+    const [showDeity, setShowDeity] = useState<boolean>(true);
     const { playReligion } = useGameSounds(gameState.soundEffectVolume);
    
     useEffect(() => {
@@ -104,7 +106,9 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
             setShowDialogOptions(true);
         }, dialogNodes[currentNodeIndex].text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
 
-        return () => clearTimeout(dialogTimeout);
+        return () => {
+            clearTimeout(dialogTimeout);
+        }; 
     }, [currentNodeIndex]);
   
     useEffect(() => {
@@ -116,10 +120,17 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
             };
         if (gameState?.currentNode?.options) {
             newOptions = gameState?.currentNode?.options.filter(option => {
+                if (option.next === '') {
+                    console.log(option.next, "Option Next is Empty String");
+                    setShowDeity(false);
+                } else if (option.next !== '' && !showDeity) {
+                    setShowDeity(true);
+                };
                 if (option.conditions) {
                     return option.conditions.every(condition => {
                         const { key, operator, value } = condition;
-                        const optionValue = ascean[key] !== undefined ? ascean[key] : state[key]; // Hopefully this works!
+                        console.log(key, ascean[ascean[key].toLowerCase()], ascean[key], operator, value, ascean.level, "Key, Operator, Value");
+                        const optionValue = getOptionKey(ascean, state, key); // Hopefully this works!
                         switch (operator) {
                             case '>':
                                 return optionValue > value;
@@ -151,6 +162,12 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
         playReligion();
         };
     }, [gameState.currentNode]);
+
+    const getOptionKey = (ascean: Player, state: any, key: string) => {
+        console.log(key, ascean[key], ascean[key].toLowerCase(), ascean[ascean[key].toLowerCase()], state[key], "Key, Ascean, State")
+        const newKey = key === 'mastery' ? ascean[key].toLowerCase() : key;
+        return ascean[newKey] !== undefined ? ascean[newKey] : state[newKey];
+    };
   
     const handleOptionClick = (nextNodeId: string | null) => {
       if (nextNodeId === null) {
@@ -168,7 +185,9 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
   
     return (
         <div className=''>
-            <img className='my-5' src={ascean?.faith === 'adherent' ? '/images/achreo-rising.png' : ascean?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.faith} id={'godBorder-'+ascean.mastery} />
+                <div className={`my-5 ${showDeity ? 'fade-in' : 'fade-out'}`}>
+                    <img src={ascean?.faith === 'adherent' ? '/images/achreo-rising.png' : ascean?.faith === 'devoted' ? '/images/daethos-forming.png' : process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.faith} id={'godBorder-'+ascean.mastery} />
+                </div>
             <Typewriter stringText={gameState?.renderedText} styling={{ overflowY: 'auto' }} performAction={handleOptionClick} />
             {gameState?.renderedOptions?.map((option: DialogNodeOption) => (
             <DialogOption key={option.text} option={option} onClick={handleOptionClick} actions={actions} setPlayerResponses={setPlayerResponses} setKeywordResponses={setKeywordResponses} setShowDialogOptions={setShowDialogOptions} showDialogOptions={showDialogOptions} />
@@ -203,17 +222,18 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
     useEffect(() => {
         console.log(gameState.renderedText, gameState.renderedOptions, keywordResponses, playerResponses, "Rendered Text and Options");
     }, [gameState.renderedText, gameState.renderedOptions]);
-    const deityRef = useRef(null);
-    function performAction(actionName: string) {
-        console.log(actionName, "Action Name of Perform Action Function")
-        const actionFunction = actions[actionName as keyof typeof actions];
-        if (actionFunction) {
-          actionFunction();
-        };
-    };
+
+    const deityRef = useRef(null); 
     const actions = {
+        giveExp: () => giveExp(),
         resolveDeity: () => resolveDeity(),
     };
+
+    const giveExp = async () => {
+        console.log("Giving Experience to Deity");
+        // const response = await asceanAPI.sacrificeExp(ascean._id);
+    };
+
     const resolveDeity = () => {
         console.log('Resolving Conversation with Deity');
         const data = {
@@ -222,7 +242,7 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
             entry: {
                 title: 'Deific Encounter',
                 body: playerResponses,
-                footnote: 'What was that about?',
+                footnote: '',
                 date: Date.now(),
                 location: 'In your mind?',
                 coordinates: { x: mapState.currentTile.x, y: mapState.currentTile.y },
@@ -248,15 +268,15 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
     return (
         <Overlay target={deityRef} show={loadingDeity}>
         <div className='game-underlay'
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          position: 'fixed',
-          top: '17.5%',
-          backgroundColor: 'rgba(0, 0, 0, 1)',
-          zIndex: 9999,
-          border: "0.2em solid purple",
-          color: "gold"
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                position: 'fixed',
+                top: '17.5%',
+                backgroundColor: 'rgba(0, 0, 0, 1)',
+                zIndex: 9999,
+                border: "0.2em solid purple",
+                color: "gold"
         }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <DialogTree gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={ascean} enemy={enemy} dialogNodes={getNodesForDeity('Deity')} actions={actions} setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} />

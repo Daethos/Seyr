@@ -36,17 +36,9 @@ export interface DialogNode {
     text: string;
     options: DialogNodeOption[] | [];
     npcIds: any[];
+    rootId?: string;
 };
-
-interface NpcIds {
-    [key: string]: number;
-};
-interface DialogOptionProps {
-    option: DialogNodeOption;
-    onClick: (nextNodeId: string | null) => void;
-    actions: { [key: string]: Function }
-};
-
+ 
 interface NodeFormProps {
     node: DialogNode;
     onSave: (node: DialogNode) => void;
@@ -58,12 +50,14 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
     const [text, setText] = useState(node.text);
     const [options, setOptions] = useState(node.options);
     const [npcIds, setNpcIds] = useState(node.npcIds);
+    const [rootId, setRootId] = useState(node?.rootId);
 
     useEffect(() => {
         setNodeId(node.id);
         setText(node.text);
         setOptions(node.options);
         setNpcIds(node.npcIds);
+        setRootId(node?.rootId);
     }, [node]);
 
     const handleOptionChange = async (index: number, option: DialogNodeOption) => {
@@ -90,11 +84,12 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
             text,
             options,
             npcIds,
+            rootId,
         };
         onSave(newNode);
     };
     return (
-        <Form>
+        <Form style={{ fontSize: "12px" }}>
         <label htmlFor="nodeId">Node ID:</label>{' '}
         <Form.Control
             id="nodeId"
@@ -118,6 +113,15 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
             value={npcIds.join(',')}
             onChange={(e) => setNpcIds(e.target.value.split(','))}
         /><br />
+
+        <label htmlFor="rootId">Root ID:</label>{' '}
+        <Form.Control
+            id="rootId"
+            type="text"
+            value={rootId}
+            onChange={(e) => setRootId(e.target.value)}
+        /><br />
+
         <Button variant='' style={{ color: 'red', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleAddOption}>Add Option</Button>
         <h5 style={{ color: "#fdf6d8" }}>Options</h5>
         {options.map((option, index) => (
@@ -128,7 +132,6 @@ const DialogNodeForm = ({ node, onSave, optionDelete }: NodeFormProps) => {
               index={index}
               onSave={(newOption) => handleOptionChange(index, newOption)}
               optionDelete={async (nodeId, index) => optionDelete(nodeId, index)}
-              // Needs to be an option to expand button toggle
             />
         ))}
         <Button variant='' style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={handleSave}>Save Node {node.id}</Button>
@@ -197,7 +200,7 @@ const OptionForm = ({ option, nodeId, index, onSave, optionDelete }: OptionFormP
     const toggleOption = () => setShowOption(!showOption);
 
     return (
-        <div >
+        <div style={{ fontSize: "10px" }}>
             <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={toggleOption}>Show Option</Button><br />
             {showOption ? (
                 <>
@@ -280,7 +283,6 @@ interface NodeTableProps {
 
 const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }: NodeTableProps) => {
     const [tableNodes, setTableNodes] = useState(nodes);
-    const [expandedNodeId, setExpandedNodeId] = useState('');
     const [selectedNode, setSelectedNode] = useState<DialogNode | undefined>(nodes[0]);
   
     const handleSelectNode = (nodeId: string) => {
@@ -320,6 +322,7 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
                         <th>Node Text</th>
                         <th>Options</th>
                         <th>NPC Ids</th>
+                        <th>Root ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -344,6 +347,7 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
                             } )}
                             </td>
                             <td>{node.npcIds.join(',')}</td>
+                            <td>{node?.rootId}</td>
                             <td>
                                 <Button variant='' style={{ color: 'gold', fontVariant: 'small-caps', fontWeight: 600, fontSize: "20px" }} onClick={() => getNodeId(node.id)}>Edit</Button>{' '}
                                 <br /><br />
@@ -360,49 +364,8 @@ const DialogNodeTable = ({ nodes, getNodeById, onEdit, onDelete, optionDelete }:
 
 async function convertToReactDeTreeFormat(nodes: DialogNode[]) {
     const treeData: { id: any; text: any; children: any[]; }[] = [];
-    console.log(nodes, "Nodes in convertToReactDeTreeFormat")
-    // Define a helper function to recursively traverse the nodes
-    // async function traverse(node: DialogNode | undefined, parent?: { id?: string; text?: any; children?: any; } | undefined) {
-    //     // Create a new node object with the required properties
-    //     const newNode: {
-    //         id: any;
-    //         text: any;
-    //         children: {
-    //             id?: string;
-    //             text?: any;
-    //             children?: any[];
-    //         }[];
-    //     } = {
-    //         id: node?.id || "",
-    //         text: node?.text || "",
-    //         children: []
-    //     };
-    
-    //     // Add the node to its parent's children array
-    //     if (parent) {
-    //         parent.children.push(newNode);
-    //     } else {
-    //         treeData.push(newNode);
-    //     };
-    
-    //     // Add any options as child nodes
-    //     if (node?.options && node?.options.length) {
-    //         node.options.forEach(async option => {
-    //         const newChildNode = {
-    //             id: `${node.id}-${option.next}`,
-    //             text: option.text,
-    //             children: []
-    //         };
-    
-    //         newNode.children.push(newChildNode);
-    
-    //         // Recursively traverse child nodes
-    //         await traverse(nodes.find(n => n.id === option.next), newChildNode);
-    //         });
-    //     };
-    // };
-    async function traverse(node: DialogNode | undefined, parent?: { id?: string; text?: any; children?: any; }, depth = 0, maxDepth = 1) {
-        // Create a new node object with the required properties
+    console.log(nodes, "Nodes in convertToReactDeTreeFormat") 
+    async function traverse(node: DialogNode | undefined, parent?: { id?: string; text?: any; children?: any; }, depth = 0, maxDepth = 3) {
         const newNode: {
             id: any;
             text: any;
@@ -419,14 +382,12 @@ async function convertToReactDeTreeFormat(nodes: DialogNode[]) {
             children: []
         };
     
-        // Add the node to its parent's children array
         if (parent) {
             parent.children.push(newNode);
         } else {
             treeData.push(newNode);
         };
     
-        // Add any options as child nodes
         if (depth < maxDepth && node?.options && node?.options.length) {
             await Promise.all(node.options.map(async option => {
                 const newChildNode = {
@@ -437,39 +398,15 @@ async function convertToReactDeTreeFormat(nodes: DialogNode[]) {
                 };
     
                 newNode.children.push(newChildNode);
-    
-                // Recursively traverse child nodes
                 await traverse(nodes.find(n => n.id === option.next), newChildNode, depth + 1, maxDepth);
             }));
         };
     };
     
   
-    // Start the traversal with the first node
-    await traverse(nodes?.[0], undefined, 0, 2);
+    await traverse(nodes?.[0], undefined, 0, 5);
     console.log(treeData, "Tree Data")
     return treeData;
-};
-
-interface TreeNodeProps {
-    nodeData: any;
-    setNodeToggle: any;
-};
-  
-function TreeNode({ nodeData, setNodeToggle }: TreeNodeProps) {
-    const [isNodeOpen, setIsNodeOpen] = useState(false);
-  
-    const handleClick = () => {
-        setIsNodeOpen(!isNodeOpen);
-        setNodeToggle(nodeData.id);
-    };
-  
-    return (
-        <div>
-            <button onClick={handleClick}>{isNodeOpen ? '-' : '+'}</button>
-            <span>{nodeData.text}</span>
-        </div>
-    );
 };
 
 interface CustomTreeProps {
@@ -477,17 +414,18 @@ interface CustomTreeProps {
 };
   
 function CustomTree({ data }: CustomTreeProps) {
-    const [nodeToggle, setNodeToggle] = useState(null);
-    const [isExpanded, setIsExpanded] = useState(false);
-    function isPlayerResponse(node: DialogNode) {
-        console.log(node, "Node in isPlayerResponse")
-        // Check if the node has any options
-        if (node.options) {
-            // If the first option has an action property, it's a deity response
-            return false;
-        };
-        // If the node has no options, it's a player response
-        return true;
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+    const [nodeExpanded, setNodeExpanded] = useState<boolean>(true); 
+
+    const nodeExpansionHandler = (nodes: any, setIsExpanded: any) => {
+        nodes.forEach((node: any) => {
+            if (node.children && node.children.length > 0) {
+                node.isExpanded = nodeExpanded;
+                setIsExpanded(!isExpanded);
+                nodeExpansionHandler(node.children, setIsExpanded);
+                setNodeExpanded(!nodeExpanded);
+            };
+        });
     };
       
     const renderTree = (nodes: any, parent: any) => {
@@ -498,7 +436,7 @@ function CustomTree({ data }: CustomTreeProps) {
                     <li key={index}>
                     <div className="node">
                     <div className="node-content">
-                        <span style={{ color: !node.parent ? "#fdf6d8" : "gold" }}>{node.text}</span>
+                        <span style={{ color: node.parent ? "gold" : "#fdf6d8" }}> <p style={{ fontSize: "10px", display: "inline", color: "forestgreen" }}>[{node.id}]</p> {node.text}</span>
                         {node.children && node.children.length > 0 && (
                             <span
                             className={`${
@@ -525,11 +463,10 @@ function CustomTree({ data }: CustomTreeProps) {
             </div>
         );
     };
-      
   
     return (
         <div>
-            <Tree 
+            {/* <Tree 
                 data={data}
                 nodeSize={{ x: 150, y: 150 }}
                 collapsible={false}
@@ -538,10 +475,9 @@ function CustomTree({ data }: CustomTreeProps) {
                 translate={{ x: 50, y: 200 }} 
                 transitionDuration={0}
                 zoom={0.8}
-            />
-            <div style={{ position: 'absolute', top: 0 }}>
-            {renderTree(data, null)}
-            </div>
+            /> */}
+                <Button variant='' style={{ color: nodeExpanded ? 'red' : 'green', fontSize: "20px" }} onClick={() => nodeExpansionHandler(data, setIsExpanded)}>{nodeExpanded ? 'Collapsed ' : 'Expanded '}Dialog Tree</Button>
+                {renderTree(data, null)}
         </div>
     );
 }
@@ -808,6 +744,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const [showInventory, setShowInventory] = useState<boolean>(false);
     const navigate = useNavigate();
     const [dialogNodes, setDialogNodes] = useState<DialogNode>({ id: '', text: '', options: [], npcIds: [] });
+    const [lastNodeId, setLastNodeId] = useState<string>('');
     const [enemyNodes, setEnemyNodes] = useState<any[]>([]);
     const [searchedEnemy, setSearchedEnemy] = useState<string>('');
     const [treeData, setTreeData] = useState<any>([]);
@@ -1023,6 +960,9 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         if (searchedEnemy !== '') {
             getNodesForEnemy(searchedEnemy);
         };
+        if (lastNodeId !== '') {
+            getNodeById(lastNodeId);
+        };
     }, [EnemyDialogNodes]);
 
     async function enemyNodeMiddleware(e: any) {
@@ -1048,15 +988,15 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             if (npcOptions.length > 0) {
                 const updatedNode = { ...node, options: npcOptions };
                 matchingNodes.push(updatedNode);
-            };
+            }
         };
         console.log(matchingNodes, 'Matching Nodes');
         setEnemyNodes(matchingNodes);
         const setupTreeData = await convertToReactDeTreeFormat(matchingNodes);
         console.log(setupTreeData, 'Setup Tree Data');
         setTreeData(setupTreeData);
-
         setSearchedEnemy(enemy);
+        
     };
 
     function getNodeById(nodeId: string): DialogNode | undefined {
@@ -1064,6 +1004,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         if (node) {
             console.log(node, 'Node');
             setDialogNodes(node);
+            setLastNodeId(nodeId);
         };
         return node;
     };
@@ -1103,8 +1044,8 @@ const GameAdmin = ({ user }: GameAdminProps) => {
 
     const cleanTitleText = (title: string) => {
         // {dialogNodes?.text.slice(0, 50)}...
-        if (title.length > 50) {
-            return `${title.slice(0, 50)}...`;
+        if (title.length > 40) {
+            return `${title.slice(0, 40)}...`;
         } else {
             return title;
         };
@@ -1200,8 +1141,8 @@ const GameAdmin = ({ user }: GameAdminProps) => {
             <Row className='my-5'>
             <Col >
             <Card style={{ background: 'black', color: 'white' }}>
-            <Card.Title style={{ color: "#fdf6d8" }}>Test Dialog: {dialogNodes?.id} {cleanTitleText(dialogNodes?.text)}</Card.Title>
-                <Card.Body className='m-5'>
+            <Card.Title style={{ color: "#fdf6d8", marginTop: "1.5%", marginLeft: "5%" }}>Test Dialog: [ ID: {dialogNodes?.id} ] {cleanTitleText(dialogNodes?.text)}</Card.Title>
+                <Card.Body className='mx-5'>
                 <DialogNodeForm node={dialogNodes} onSave={handleNodeSave} optionDelete={handleOptionDelete} />
                 </Card.Body>
             </Card>

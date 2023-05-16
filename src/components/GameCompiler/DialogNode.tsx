@@ -18,6 +18,7 @@ export interface DialogNode {
     text: string;
     options: DialogNodeOption[] | [];
     npcIds: any[];
+    rootId?: string;
 };
 
 interface NpcIds {

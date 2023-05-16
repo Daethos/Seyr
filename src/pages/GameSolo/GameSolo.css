@@ -90,7 +90,17 @@
   border-right: .15em solid gold; 
   white-space: pre-wrap;
   animation: typing 6s steps(40, end), blink-caret .75s step-end infinite;
-} 
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 1s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease-in;
+}
 
 #origin-pic {
   max-width: 5vw;
