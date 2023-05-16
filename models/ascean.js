@@ -265,7 +265,7 @@ const asceanSchema = new Schema(
                 },
             },
             luckout: {
-                arbitious: { 
+                arbituous: { 
                     failures: { type: Number, default: 0 },
                     successes: { type: Number, default: 0 },
                     total: { type: Number, default: 0 },
@@ -310,7 +310,7 @@ const asceanSchema = new Schema(
                 }
             },
             persuasion: {
-                arbitious: {
+                arbituous: {
                     failures: { type: Number, default: 0 },
                     successes: { type: Number, default: 0 },
                     total: { type: Number, default: 0 },

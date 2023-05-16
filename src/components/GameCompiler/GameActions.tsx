@@ -169,7 +169,6 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
         default: return {};
     };
   };
-  console.log(gameState, "GameState")
   return (
     <>
     <textarea className='action-reader' id='action-reader' value={displayedAction} readOnly></textarea>

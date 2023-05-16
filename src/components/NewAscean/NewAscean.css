@@ -6,7 +6,12 @@
     border: 3px solid purple;
     box-shadow: 0 0 0.75em purple; 
 }
-
+.modal {
+    scrollbar-width: none;
+}
+.modal-body {
+    scrollbar-width: none;
+}
 #ascean-pic {
     display: block;
     margin-left: auto;

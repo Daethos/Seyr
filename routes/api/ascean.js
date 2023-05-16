@@ -34,6 +34,9 @@ router.put('/purchase', protect, asceanCtrl.purchaseToInventory)
 router.put('/levelup', protect, asceanCtrl.updateLevel);
 router.put('/inventory', protect, asceanCtrl.saveToInventory);
 router.put('/save-inventory', protect, asceanCtrl.saveInventory);
+router.put('/nonCombatStatistic', protect, asceanCtrl.recordNonCombatStatistic);
+router.put('/combatStatistic', protect, asceanCtrl.recordCombatStatistic);
+router.put('/thievery', protect, asceanCtrl.recordThievery);
 router.put('/:id/swap', protect, asceanCtrl.swapItems);
 router.put('/remove/:id', protect, asceanCtrl.removeItem);
 router.put('/:id', protect, asceanCtrl.editAscean);

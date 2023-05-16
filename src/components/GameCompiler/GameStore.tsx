@@ -719,6 +719,7 @@ export const GAME_ACTIONS = {
     SET_ASCEAN_AND_INVENTORY: 'SET_ASCEAN_AND_INVENTORY',
     SET_JOURNAL: 'SET_JOURNAL',
     SET_JOURNAL_ENTRY: 'SET_JOURNAL_ENTRY',
+    SET_STATISTICS: 'SET_STATISTICS',
 
     SET_PURCHASING_ITEM: 'SET_PURCHASING_ITEM',
 
@@ -1029,6 +1030,14 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                         currentEntry: action.payload,
                     }
                 }
+            };
+        case 'SET_STATISTICS':
+            return {
+                ...game,
+                player: {
+                    ...game.player,
+                    statistics: action.payload,
+                },
             };
         case 'SET_QUESTS':
             return {

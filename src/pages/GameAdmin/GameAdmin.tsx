@@ -1109,7 +1109,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     </Form>
                     <Button variant='' style={{ color: 'green', fontVariant: 'small-caps' }} onClick={() => getEquipment(state.testEquipment)}>Get Equipment</Button>
                     { state.equipmentTable.length > 0 ?
-                        <MerchantTable table={state.equipmentTable} ascean={state.generatedAscean.ascean} gameDispatch={gameDispatch} gameState={gameState} error={state.error} setError={state.setError} />
+                        <MerchantTable dispatch={dispatch} table={state.equipmentTable} ascean={state.generatedAscean.ascean} gameDispatch={gameDispatch} gameState={gameState} error={state.error} setError={state.setError} />
                     : '' }
                     <Button variant='' style={{ color: 'red', fontVariant: 'small-caps' }} onClick={() => deleteEquipment(state.equipmentTable)}>Delete Equipment</Button>
                     </Card.Body>

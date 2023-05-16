@@ -53,7 +53,61 @@ module.exports = {
     blessAscean,
     addJournalEntry,
     evaluateExperience,
-    updateStatistics
+    updateStatistics,
+    recordNonCombatStatistic,
+    recordCombatStatistic,
+    recordThievery,
+};
+
+async function recordThievery(req, res) {
+    try {
+        let { asceanID, successes, failures, total, totalValue } = req.body;
+        console.log(asceanID, successes, failures, total, totalValue, "destructured req.body")
+        let ascean = await Ascean.findById(asceanID);
+        ascean.statistics.thievery.successes += successes;
+        ascean.statistics.thievery.failures += failures;
+        ascean.statistics.thievery.total += total;
+        ascean.statistics.thievery.totalValue += totalValue;
+        await ascean.save();
+        res.status(200).json(ascean.statistics);
+    } catch (err) {
+        console.log(err, "error in recordThievery")
+        res.status(400).json({ message: "Error in recordThievery" })
+    }
+};
+
+async function recordNonCombatStatistic(req, res) {
+    try {
+        let { asceanID, name, type, successes, failures, total } = req.body;
+        console.log(asceanID, name, type, successes, failures, total, "destructured req.body");
+        let ascean = await Ascean.findById(asceanID);
+        let statistic = ascean.statistics[name];
+        let newType = type.toLowerCase();
+        console.log(statistic[newType], newType, "Statistic and Type of");
+        if (statistic) {
+            statistic[newType].successes += successes;
+            statistic[newType].failures += failures;
+            statistic[newType].total += total;
+        } else {
+            res.status(400).json({ message: "Statistic not found" });
+        };
+        ascean.statistics[newType] = statistic;
+        console.log(ascean.statistics[newType], "in record non-combat statistic saved ?");
+        await ascean.save();
+        res.status(200).json(ascean.statistics);
+    } catch (err) {
+        console.log(err, "error in Record Non-Combat Statistic");
+        res.status(400).json(err);
+    };
+};
+
+async function recordCombatStatistic(req, res) {
+    try {
+
+    } catch (err) {
+        console.log(err, "error in Record Combat Statistic");
+        res.status(400).json(err);
+    };
 };
 
 async function updateStatistics(req, res) {
@@ -236,20 +290,20 @@ async function evaluateExperience(req, res) {
         };
 
         const behavior = evaluateBehavior(keywordCount);
-        ascean.relationships.deity.Compliant.occurrennce += keywordCount.Compliant.occurrence;
-        ascean.relationships.deity.Faithful.occurrence += keywordCount.Faithful.occurrence;
-        ascean.relationships.deity.Unfaithful.occurrence += keywordCount.Unfaithful.occurrence;
-        ascean.relationships.deity.Disobedient.occurrence += keywordCount.Disobedient.occurrence;
-        ascean.relationships.deity.Compliant.total += keywordCount.Compliant.value;
-        ascean.relationships.deity.Faithful.total += keywordCount.Faithful.value;
-        ascean.relationships.deity.Unfaithful.total += keywordCount.Unfaithful.value;
-        ascean.relationships.deity.Disobedient.total += keywordCount.Disobedient.value;
-        ascean.relationships.deity.value += valueSum;
-        ascean.relationships.deity.behaviors.push(behavior);
+        ascean.statistics.relationships.deity.Compliant.occurrennce += keywordCount.Compliant.occurrence;
+        ascean.statistics.relationships.deity.Faithful.occurrence += keywordCount.Faithful.occurrence;
+        ascean.statistics.relationships.deity.Unfaithful.occurrence += keywordCount.Unfaithful.occurrence;
+        ascean.statistics.relationships.deity.Disobedient.occurrence += keywordCount.Disobedient.occurrence;
+        ascean.statistics.relationships.deity.Compliant.total += keywordCount.Compliant.value;
+        ascean.statistics.relationships.deity.Faithful.total += keywordCount.Faithful.value;
+        ascean.statistics.relationships.deity.Unfaithful.total += keywordCount.Unfaithful.value;
+        ascean.statistics.relationships.deity.Disobedient.total += keywordCount.Disobedient.value;
+        ascean.statistics.relationships.deity.value += valueSum;
+        ascean.statistics.relationships.deity.behaviors.push(behavior);
 
-        const goodBehavior = ascean.relationships.deity.behaviors.filter(behavior => behavior === 'Faithful' || behavior === 'Compliant');
-        const badBehavior = ascean.relationships.deity.behaviors.filter(behavior => behavior === 'Unfaithful' || behavior === 'Disobedient');
-        const middlingBehavior = ascean.relationships.deity.behaviors.filter(behavior => behavior === 'Somewhat Faithful' || behavior === 'Somewhat Compliant' || behavior === 'Somewhat Unfaithful' || behavior === 'Somewhat Disobedient');
+        const goodBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Faithful' || behavior === 'Compliant');
+        const badBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Unfaithful' || behavior === 'Disobedient');
+        const middlingBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Somewhat Faithful' || behavior === 'Somewhat Compliant' || behavior === 'Somewhat Unfaithful' || behavior === 'Somewhat Disobedient');
         const goodBehaviorCount = goodBehavior.length;
         const badBehaviorCount = badBehavior.length;
         const middlingBehaviorCount = middlingBehavior.length;

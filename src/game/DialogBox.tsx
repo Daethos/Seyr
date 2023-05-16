@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import LootDrop from '../components/GameCompiler/LootDrop';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
 import Loading from '../components/Loading/Loading';
+import * as asceanAPI from '../utils/asceanApi';
 import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS, CombatData, shakeScreen } from '../components/GameCompiler/CombatStore';
@@ -340,13 +341,35 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         };
         console.log(playerPersuasion, enemyPersuasion, "Persuasion");
         if (playerPersuasion >= enemyPersuasion) {
-            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: true, playerTrait: persuasion } });        
+            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: true, playerTrait: persuasion } });
+            const statistic = {
+                asceanID: ascean._id,
+                name: 'persuasion',
+                type: persuasion === "Kyr'naic" ? "Kyrnaic" : persuasion,
+                successes: 1,
+                failures: 0,
+                total: 1,
+            };
+            const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            console.log(response, "Persuasion Response Recorded");        
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
                 payload: `Failure. ${persuasionTrait?.persuasion?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Nevertheless, prepare for some chincanery, ${ascean.name}, and perhaps leave the pleasantries for warmer company.` });
-            setTimeout(() => {
+            const statistic = {
+                asceanID: ascean._id,
+                name: 'persuasion',
+                type: persuasion === "Kyr'naic" ? "Kyrnaic" : persuasion,
+                successes: 0,
+                failures: 1,
+                total: 1,
+            };
+            const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            console.log(response, "Persuasion Response Recorded");
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
+            
+                setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
                 dispatch({
@@ -394,6 +417,17 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
                 payload: `Success. Your ${luck} nature was irresistible to ${namedEnemy ? '' : ` ${article}`} ${enemy.name}. What is it they say, ${luckoutTrait.luckout.description} \n\n Congratulations, ${ascean.name}, your words ensured you needn't a single strike to win the day.` });
+            const statistic = {
+                   asceanID: ascean._id,
+                   name: 'luckout',
+                   type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
+                   successes: 1,
+                   failures: 0,
+                   total: 1,
+            };
+            const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            console.log(response, "Luckout Response Recorded");
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
@@ -412,6 +446,17 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
                 payload: `Failure. ${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
+            const statistic = {
+                   asceanID: ascean._id,
+                   name: 'luckout',
+                   type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
+                   successes: 0,
+                   failures: 1,
+                   total: 1,
+            }
+            const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            console.log(response, "Luckout Response Recorded");
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             setTimeout(() => {
                 gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
                 gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
@@ -1124,7 +1169,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                         <Button variant='' className='dialog-buttons inner' onClick={() => getLoot('general')}>See the merchant's wares.</Button>
                         <br />
                         { merchantEquipment?.length > 0 ?
-                            <MerchantTable table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
+                            <MerchantTable dispatch={dispatch} table={merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={ascean} error={error} setError={setError} />
                         : '' }
 
                     </>

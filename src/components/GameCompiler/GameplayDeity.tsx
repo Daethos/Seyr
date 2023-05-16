@@ -121,7 +121,6 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
         if (gameState?.currentNode?.options) {
             newOptions = gameState?.currentNode?.options.filter(option => {
                 if (option.next === '') {
-                    console.log(option.next, "Option Next is Empty String");
                     setShowDeity(false);
                 } else if (option.next !== '' && !showDeity) {
                     setShowDeity(true);

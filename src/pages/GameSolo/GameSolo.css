@@ -5,17 +5,20 @@
   position: fixed;
   height: 100vh;
   width: 100vw;
-  margin: 0px;
   background-size: auto;
   background-position: center;
   border: 2px solid rgb(91, 0, 91);
   border-radius: 6px;
   box-shadow: 0 0 2em purple;
+  scrollbar-width: none;
+  /* font-family: 'Cinzel'; */
+  /* font-variant: small-caps; */
 }
 *::-webkit-scrollbar {
   width: 0px;
   background: transparent;
-}
+  
+} 
 #game-block {
   margin-left: 7.5%;
   transform: scale(1.1);
@@ -40,6 +43,7 @@
   overflow-y: auto;
   white-space: pre-wrap;
   font-size: 18px;
+  scrollbar-width: none;
 }
 .overlay-content-combat {
   color: white;
@@ -234,6 +238,7 @@
   height: 150px;
   width: 100%;
   white-space: pre-wrap;
+  scrollbar-width: none;
 }
 .dialog-box, .city-box {
   position: absolute; 
@@ -250,6 +255,7 @@
   justify-content: space-between;
   box-shadow: 2px 2px 2px black;
   font-size: 14px;
+  scrollbar-width: none;
 }
 .dialog-box {
   z-index: 75;
@@ -264,6 +270,7 @@
   color: #fdf6d8;
   overflow-y: scroll;
   text-align: center;
+  scrollbar-width: none;
 }
 .dialog-options {
   text-align: center;
@@ -271,6 +278,7 @@
   width: 25%;
   border-left: 2px solid purple;
   overflow-y: scroll;
+  scrollbar-width: none;
 }
 #popover-inv, #popover-header-inv, #popover-body-inv {
   font-family: 'Cinzel';
@@ -323,6 +331,7 @@
   height: 62vh;
   overflow-y: scroll;
   border-radius: 6px;
+  scrollbar-width: none;
 }
 .inventory-bag-settings {
   position: absolute;
@@ -343,6 +352,7 @@
   height: 57vh;
   overflow-y: scroll;
   border-radius: 6px;
+  scrollbar-width: none;
 }
 .inventory-bag-admin {
   position: absolute;
@@ -364,6 +374,7 @@
   height: 50vh;
   overflow-y: scroll;
   border-radius: 6px;
+  scrollbar-width: none;
 }
 .inventory-button {
   grid-column-start: 4;

@@ -92,6 +92,7 @@ const GameSolo = ({ user }: GameProps) => {
                     mapAPI.getMap(asceanID),
                     settingsAPI.getSettings(),
                 ]);
+                console.log(gameStateResponse, "Game State Response")
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({

@@ -244,6 +244,54 @@ export async function edit(vaEsai: any) {
     });
 };
 
+export async function recordThievery(data: any) {
+    return fetch(BASE_URL + 'thievery/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
+
+export async function recordCombatStatistic(data: any) {
+    return fetch(BASE_URL + 'combatStatistic/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
+
+export async function recordNonCombatStatistic(data: any) {
+    return fetch(BASE_URL + 'nonCombatStatistic/', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        }
+    }).then(async (res) => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
+
 export async function saveJournalEntry(data: any) {
     return fetch(BASE_URL + 'journal/', {
         method: 'PUT',
