@@ -1532,6 +1532,23 @@ const GameSolo = ({ user }: GameProps) => {
                 playReligion();
                 await gainExperience();
             };
+        //     const statistic = {
+        //         asceanID: combatData.player._id,
+        //         wins: 1,
+        //         losses: 0,
+        //         total: 1,
+        //         actionData: combatData.actionData,
+                // typeAttackData: combatData.typeAttackData,
+                // typeDamageData: combatData.typeDamageData,
+                // totalDamageData: combatData.totalDamageData,
+                // prayerData: combatData.prayerData,
+                // deityData: combatData.deityData,
+        //         mastery: combatData.player.mastery
+
+        //  };
+        //  const response = await asceanAPI.recordNonCombatStatistic(statistic);
+        //  console.log(response, "Player Win Response Recorded");
+        //  gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             setTimeout(() => {
                 setTimeLeft(0);
@@ -1552,6 +1569,23 @@ const GameSolo = ({ user }: GameProps) => {
             return;
         };
         try {
+                    //     const statistic = {
+        //         asceanID: combatData.player._id,
+        //         wins: 0,
+        //         losses: 1,
+        //         total: 1,
+        //         actionData: combatData.actionData,
+                // typeAttackData: combatData.typeAttackData,
+                // typeDamageData: combatData.typeDamageData,
+                // totalDamageData: combatData.totalDamageData,
+                // prayerData: combatData.prayerData,
+                // deityData: combatData.deityData,
+        //         mastery: combatData.player.mastery
+
+        //  };
+        //  const response = await asceanAPI.recordNonCombatStatistic(statistic);
+        //  console.log(response, "Player Win Response Recorded");
+        //  gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });

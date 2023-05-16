@@ -13,6 +13,8 @@ const Map = require('../models/map');
 const fs = require('fs');
 const seedDB = require('./equipment').seedDB;
 const zlib = require('zlib');
+const { find } = require('lodash');
+const { forEach } = require('lodash');
 
 module.exports = {
     create,
@@ -103,7 +105,33 @@ async function recordNonCombatStatistic(req, res) {
 
 async function recordCombatStatistic(req, res) {
     try {
+        let { asceanID, wins, losses, total, actionData, typeAttackData, typeDamageData, totalDamageData, prayerData, deityData, mastery } = req.body;
+        let ascean = await Ascean.findById(asceanID);
+        let statistic = ascean.statistics.combat;
+        statistic.wins += wins;
+        statistic.losses += losses;
+        statistic.total += total;
+        statistic.damage.total = totalDamageData > statistic.totalDamageData ? totalDamageData : statistic.totalDamageData;
+        statistic.damage.type.push(typeDamageData).flat();
+        statistic.actions.attacks += forEach.actionData((action) => action === 'attack' ? 1 : 0);
+        statistic.actions.counters += forEach.actionData((action) => action === 'counter' ? 1 : 0);
+        statistic.actions.dodges += forEach.actionData((action) => action === 'dodge' ? 1 : 0);
+        statistic.actions.postures += forEach.actionData((action) => action === 'posture' ? 1 : 0);
+        statistic.actions.rolls += forEach.actionData((action) => action === 'roll' ? 1 : 0);
+        statistic.actions.invokes += forEach.actionData((action) => action === 'invoke' ? 1 : 0);
+        statistic.actions.prayers += forEach.actionData((action) => action === 'prayer' ? 1 : 0);
+        statistic.actions.consumes += forEach.actionData((action) => action === 'consume' ? 1 : 0);
+        statistic.prayers.buff += forEach.prayerData((prayer) => prayer === 'buff' ? 1 : 0);
+        statistic.prayers.heal += forEach.prayerData((prayer) => prayer === 'heal' ? 1 : 0);
+        statistic.prayers.damage += forEach.prayerData((prayer) => prayer === 'damage' ? 1 : 0);
+        statistic.prayers.debuff += forEach.prayerData((prayer) => prayer === 'debuff' ? 1 : 0);
+        statistic.attacks.magical += forEach.typeAttackData((type) => type === 'Magic' ? 1 : 0);
+        statistic.attacks.physical += forEach.typeAttackData((type) => type === 'Physical' ? 1 : 0);
+        // Still need to do deityData, prayerData, mastery
 
+        ascean.statistics.combat = statistic;
+        await ascean.save();
+        res.status(200).json(ascean.statistics);
     } catch (err) {
         console.log(err, "error in Record Combat Statistic");
         res.status(400).json(err);

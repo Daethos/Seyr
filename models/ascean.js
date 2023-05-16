@@ -241,13 +241,23 @@ const asceanSchema = new Schema(
                 losses: { type: Number, default: 0 },
                 total: { type: Number, default: 0 },
                 wins: { type: Number, default: 0 },
+                actions: {
+                    attacks: { type: Number, default: 0 },
+                    counters: { type: Number, default: 0 },
+                    dodges: { type: Number, default: 0 },
+                    postures: { type: Number, default: 0 },
+                    rolls: { type: Number, default: 0 },
+                    invokes: { type: Number, default: 0 },
+                    consumes: { type: Number, default: 0 },
+                    prayers: { type: Number, default: 0 },
+                },
                 attacks: { 
                     magical: { type: Number, default: 0 }, 
-                    physical: { type: Number, default: 0 } 
+                    physical: { type: Number, default: 0 }, 
                 },
                 damage: { 
-                    magical: { type: Number, default: 0 }, 
-                    physical: { type: Number, default: 0 } 
+                    total: { type: Number, default: 0 },
+                    type: { type: Array, default: [] }, 
                 },
                 prayers: { 
                     buff: { type: Number, default: 0 }, 

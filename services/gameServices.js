@@ -542,6 +542,12 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     };
 
     if (faith_number > 90) {
+         
+        // ==================== STATISTIC LOGIC ==================== 
+        combatData.actoinData.push('prayer');
+        combatData.prayerData.push(combatData.playerBlessing);
+        combatData.deityData.push(combatData.weapons[0].influences[0]);
+        // ==================== STATISTIC LOGIC ====================
         combatData.religious_success = true;
         let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
         if (!existingEffect) {
@@ -588,7 +594,13 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         };
     };
     if (combatData.dual_wielding === true) {
-        if (faith_number_two > 90) {
+        if (faith_number_two > 90) { 
+
+            // ==================== STATISTIC LOGIC ==================== 
+            combatData.actoinData.push('prayer');
+            combatData.prayerData.push(combatData.playerBlessing);
+            combatData.deityData.push(combatData.weapons[1].influences[0]);
+            // ==================== STATISTIC LOGIC ==================== 
             combatData.religious_success = true;
             let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
             if (!existingEffect) {
@@ -1610,7 +1622,13 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
-    }
+    };
+  
+    // ==================== STATISTIC LOGIC ====================
+    combatData.typeAttackData.push(combatData.weapons[0].attack_type, combatData.weapons[1].attack_type);
+    combatData.typeDamageData.push(combatData.weapons[0].damageType);
+    combatData.totalDamageData.push(combatData.realized_player_damage);
+    // ==================== STATISTIC LOGIC ====================
     
     combatData.player_action_description = 
         `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_player_damage)} ${combatData.player_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
@@ -1829,6 +1847,12 @@ const attackCompiler = async (combatData, player_action) => {
 
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
+
+// ==================== STATISTIC LOGIC ====================
+combatData.typeAttackData.push(combatData.weapons[0].attack_type);
+combatData.typeDamageData.push(combatData.weapons[0].damageType);
+combatData.totalDamageData.push(combatData.realized_player_damage);
+// ==================== STATISTIC LOGIC ====================
 
     combatData.player_action_description = 
         `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(player_total_damage)} ${combatData.player_damage_type} ${combatData.critical_success === true ? 'Critical Strike Damage' : combatData.glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
@@ -2350,8 +2374,17 @@ const actionSplitter = async (combatData) => {
         highScore: combatData.highScore,
         winStreak: combatData.winStreak,
         loseStreak: combatData.loseStreak,
+        actionData: combatData.actionData,
+        typeAttackData: combatData.typeAttackData,
+        typeDamageData: combatData.typeDamageData,
+        totalDamageData: combatData.totalDamageData,
+        prayerData: combatData.prayerData,
+        deityData: combatData.deityData,
         weather: combatData.weather,
     };
+    // ==================== STATISTIC LOGIC ====================
+    newData.actionData.push(newData.action);
+    // ==================== STATISTIC LOGIC ====================
     const player_initiative = newData.player_attributes.initiative;
     const computer_initiative = newData.computer_attributes.initiative;
     let player_action = newData.action;
@@ -2363,31 +2396,32 @@ const actionSplitter = async (combatData) => {
     let rollRating = combatData.weapons[0].roll;
     let posture = 'posture';
     let roll = 'roll';
+
     if (rollRating >= 100) {
-        possible_choices.push(roll)
+        possible_choices.push(roll);
     } else  if (postureRating >= 100) {
-        possible_choices.push(posture)
+        possible_choices.push(posture);
     } else if (postureRating >= rollRating) { 
-        possible_choices.push(posture)
+        possible_choices.push(posture);
     } else { 
-        possible_choices.push(roll) 
-    } 
+        possible_choices.push(roll);
+    };
     let new_choice = Math.floor(Math.random() * possible_choices.length)
     if (player_action === '') {
         newData.action = possible_choices[new_choice];
         newData.player_action = possible_choices[new_choice];
         player_action = possible_choices[new_choice];
-    }
+    };
     let newComputerWeaponOrder = newData.computer_weapons.sort(function() {
         return Math.random() - 0.5;
-    })
-    newData.computer_weapons = newComputerWeaponOrder
+    });
+    newData.computer_weapons = newComputerWeaponOrder;
 
     let new_damage_type = Math.floor(Math.random() * newData.computer_weapons[0].damage_type.length);
     newData.computer_damage_type = newData.computer_weapons[0].damage_type[new_damage_type];
 
     // Weighs and Evaluates the Action the Opponent Will Choose Based on Reaction to Player Actions (Cumulative)
-    await computerActionCompiler(newData, player_action, computer_action, computer_counter)
+    await computerActionCompiler(newData, player_action, computer_action, computer_counter);
     // COUNTER >>> DODGE >>> ROLL >>> POSTURE >>> ATTACK
     computer_counter = newData.computer_counter_guess;
     computer_action = newData.computer_action;
@@ -2619,6 +2653,18 @@ function roundToTwoDecimals(num) {
 const prayerSplitter = async (combatData, prayer) => {
     let originalPrayer = combatData.playerBlessing;
     combatData.playerBlessing = prayer;
+
+    
+        // actionData: combatData.actionData, 
+    // prayerData: combatData.prayerData,
+
+    // ==================== STATISTIC LOGIC ==================== 
+    combatData.actoinData.push('prayer');
+    combatData.prayerData.push(prayer);
+    combatData.deityData.push(combatData.weapons[0].influences[0]);
+    // ==================== STATISTIC LOGIC ====================
+
+
     let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
     // Handles the creation of a new Status Effect if it doesn't already exist
     if (!existingEffect) {
@@ -2685,7 +2731,7 @@ const instantActionSplitter = async (combatData) => {
     switch (combatData.player.mastery) {
         case 'Constitution':
             await prayerSplitter(combatData, 'Heal');
-            await instantEffectCheck(combatData);
+            // await instantEffectCheck(combatData);
             await prayerSplitter(combatData, 'Buff');
             break;
         case 'Strength':
@@ -2706,11 +2752,16 @@ const instantActionSplitter = async (combatData) => {
             break;
         case 'Kyosir':
             await prayerSplitter(combatData, 'Damage');
-            await instantEffectCheck(combatData);
             await prayerSplitter(combatData, 'Debuff');
             break;
-    };
+        };
+    await instantEffectCheck(combatData);
+
     
+    // ==================== STATISTIC LOGIC ==================== 
+    combatData.actoinData.push('invoke'); 
+    // ==================== STATISTIC LOGIC ====================
+        
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
@@ -2795,7 +2846,13 @@ const instantEffectCheck = async (combatData) => {
     });
 };
 
-const consumePrayerSplitter = async (combatData) => {
+const consumePrayerSplitter = async (combatData) => { 
+
+// ==================== STATISTIC LOGIC ==================== 
+combatData.actoinData.push('consume');
+combatData.prayerData.push(combatData.prayerSacrifice);
+// ==================== STATISTIC LOGIC ====================
+
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);

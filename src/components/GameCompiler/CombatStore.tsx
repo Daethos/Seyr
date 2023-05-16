@@ -99,6 +99,13 @@ export interface CombatData {
     winStreak: number;
     loseStreak: number;
 
+    actionData: [];
+    typeAttackData: [];
+    typeDamageData: [];
+    totalDamageData: number;
+    prayerData: [];
+    deityData: [];
+
     weather: string;
 };
 
@@ -243,6 +250,12 @@ export const initialCombatData: CombatData = {
     highScore: 0,
     winStreak: 0,
     loseStreak: 0,
+    actionData: [],
+    typeAttackData: [],
+    typeDamageData: [],
+    totalDamageData: 0,
+    prayerData: [],
+    deityData: [],
     weather: '',
 };
 
