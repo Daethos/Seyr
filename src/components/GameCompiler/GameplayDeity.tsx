@@ -9,12 +9,16 @@ import { ACTIONS, CombatData, shakeScreen } from './CombatStore';
 import useGameSounds from './Sounds';
 import Typewriter from './Typewriter';
 import { DialogNodeOption, DialogNode } from './DialogNode';
-import { set } from 'lodash';
 
-function getNodesForDeity(enemy: string): DialogNode[] {
+function checkRootId(node: DialogNode, id: string) {
+    return node.rootId === id;
+};
+
+function getNodesForDeity(enemy: string, deityInfo: any): DialogNode[] {
+    const nodeRange = `000${deityInfo.behaviors.length}`;
     const matchingNodes: DialogNode[] = [];
     for (const node of EnemyDialogNodes.nodes) {
-        if (node.options.length === 0) {
+        if (node.options.length === 0 || !checkRootId(node, nodeRange)) {
             continue;
         };
         const npcOptions = (node.options as any).filter((option: DialogNodeOption) => (option as DialogNodeOption)?.npcIds?.includes(enemy))
@@ -46,7 +50,6 @@ const DialogOption = ({ option, onClick, actions, setPlayerResponses, setKeyword
           
         if (option.action && typeof option.action === 'string') {
             const actionName = option.action.trim();
-            console.log(actionName, "Did we make it here?")
             const actionFunction = actions[actionName];
             if (actionFunction) {
                 actionFunction();
@@ -128,7 +131,6 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
                     if (option.conditions) {
                         return option.conditions.every(condition => {
                             const { key, operator, value } = condition;
-                            console.log(key, ascean[ascean[key].toLowerCase()], ascean[key], operator, value, ascean.level, "Key, Operator, Value");
                             const optionValue = getOptionKey(ascean, state, key); // Hopefully this works!
                             switch (operator) {
                                 case '>':
@@ -163,7 +165,6 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
     }, [gameState.currentNode]);
 
     const getOptionKey = (ascean: Player, state: any, key: string) => {
-        console.log(key, ascean[key], ascean[key].toLowerCase(), ascean[ascean[key].toLowerCase()], state[key], "Key, Ascean, State")
         const newKey = key === 'mastery' ? ascean[key].toLowerCase() : key;
         return ascean[newKey] !== undefined ? ascean[newKey] : state[newKey];
     };
@@ -217,10 +218,7 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
         setEnemy({
             name: ascean?.statistics.relationships.deity.name || highestFaith(),
         });
-    }, [ascean]);
-    useEffect(() => {
-        console.log(gameState.renderedText, gameState.renderedOptions, keywordResponses, playerResponses, "Rendered Text and Options");
-    }, [gameState.renderedText, gameState.renderedOptions]);
+    }, [ascean]); 
 
     const deityRef = useRef(null); 
     const actions = {
@@ -229,14 +227,12 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
     };
 
     const giveExp = async () => {
-        console.log("Giving Experience to Deity");
         const response = await asceanAPI.sacrificeExp(ascean._id);
         gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
         dispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
     };
 
     const resolveDeity = async () => {
-        console.log('Resolving Conversation with Deity');
         const data = {
             asceanID: ascean._id,
             deity: highestFaith(),
@@ -255,10 +251,9 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
         console.log(response, "Response from Deity Encounter");
         gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
         gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
+        gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: response.journal });
+        gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
 
-        setTimeout(() => {
-            gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
-        }, 1500);
     };
     const highestFaith = () => {
         const influences = [ascean?.weapon_one?.influences?.[0], ascean?.weapon_two?.influences?.[0], ascean?.weapon_three?.influences?.[0], ascean?.amulet?.influences?.[0], ascean?.trinket?.influences?.[0]];
@@ -288,7 +283,7 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
                 color: "gold"
         }}>
             <div style={{ display: 'flex', flexDirection: 'column', animation: "2s ease-in 0s fade" }}>
-                <DialogTree gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={ascean} enemy={enemy} dialogNodes={getNodesForDeity('Deity')} actions={actions} setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} />
+                <DialogTree gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={ascean} enemy={enemy} dialogNodes={getNodesForDeity('Deity', ascean.statistics.relationships.deity)} actions={actions} setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} />
             </div>
         </div>
       </Overlay>

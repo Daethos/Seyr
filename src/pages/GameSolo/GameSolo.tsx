@@ -955,13 +955,13 @@ const GameSolo = ({ user }: GameProps) => {
 
     const interactPhenomena = async () => {
         try {
-            if (gameState?.player.level > gameState?.player?.statistics?.relationships?.deity?.behaviors.length) {
-                const chance = Math.floor(Math.random() * 101);
-                if (chance > 0) {
-                    gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: true });
-                    return;
-                };
-            };
+            // if (gameState?.player.level > gameState?.player?.statistics?.relationships?.deity?.behaviors.length) {
+            //     const chance = Math.floor(Math.random() * 101);
+            //     if (chance > 0) {
+            //         gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: true });
+            //         return;
+            //     };
+            // };
             const fyeran: number = checkPlayerTrait('Fyeran', gameState) ? 10 : 0;
             const caeren = state?.player_attributes?.totalCaeren + fyeran;
             const level = gameState?.player?.level;
@@ -1581,7 +1581,7 @@ const GameSolo = ({ user }: GameProps) => {
                 deityData: combatData.deityData,
             };
             const response = await asceanAPI.recordCombatStatistic(statistic);
-            console.log(response, "Player Win Response Recorded");
+            console.log(response, "Player Loss Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
             playDeath();
