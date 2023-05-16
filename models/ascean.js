@@ -259,43 +259,44 @@ const asceanSchema = new Schema(
                     total: { type: Number, default: 0 },
                     type: { type: Array, default: [] }, 
                 },
+                deities: { type: Array, default: [] }, // Deities Invoked via Prayer
                 prayers: { 
                     buff: { type: Number, default: 0 }, 
                     damage: { type: Number, default: 0 }, 
                     debuff: { type: Number, default: 0 }, 
                     heal: { type: Number, default: 0 } 
                  },
-                mastery: { 
-                    constitution: { type: Number, default: 0 }, 
-                    strength: { type: Number, default: 0 }, 
-                    agility: { type: Number, default: 0 }, 
-                    achre: { type: Number, default: 0 }, 
-                    caeren: { type: Number, default: 0 }, 
-                    kyosir: { type: Number, default: 0 } 
-                },
             },
             luckout: {
                 arbituous: { 
                     failures: { type: Number, default: 0 },
                     successes: { type: Number, default: 0 },
                     total: { type: Number, default: 0 },
-                 }, 
+                }, 
                 chiomic: { 
                     failures: { type: Number, default: 0 },
                     successes: { type: Number, default: 0 },
                     total: { type: Number, default: 0 },
-                 }, 
+                }, 
                 kyrnaic: { 
                     failures: { type: Number, default: 0 },
                     successes: { type: Number, default: 0 },
                     total: { type: Number, default: 0 },
-                 }, 
+                }, 
                 lilosian: { 
                     failures: { type: Number, default: 0 },
                     successes: { type: Number, default: 0 },
                     total: { type: Number, default: 0 },
-                 }, 
-
+                }, 
+                
+            },
+            mastery: { 
+                constitution: { type: Number, default: 0 }, 
+                strength: { type: Number, default: 0 }, 
+                agility: { type: Number, default: 0 }, 
+                achre: { type: Number, default: 0 }, 
+                caeren: { type: Number, default: 0 }, 
+                kyosir: { type: Number, default: 0 } 
             },
             miniGames: {
                 cambiren: {

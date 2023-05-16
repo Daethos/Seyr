@@ -544,7 +544,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
     if (faith_number > 90) {
          
         // ==================== STATISTIC LOGIC ==================== 
-        combatData.actoinData.push('prayer');
+        combatData.actionData.push('prayer');
         combatData.prayerData.push(combatData.playerBlessing);
         combatData.deityData.push(combatData.weapons[0].influences[0]);
         // ==================== STATISTIC LOGIC ====================
@@ -597,7 +597,7 @@ const faithFinder = async (combatData, player_action, computer_action) => { // T
         if (faith_number_two > 90) { 
 
             // ==================== STATISTIC LOGIC ==================== 
-            combatData.actoinData.push('prayer');
+            combatData.actionData.push('prayer');
             combatData.prayerData.push(combatData.playerBlessing);
             combatData.deityData.push(combatData.weapons[1].influences[0]);
             // ==================== STATISTIC LOGIC ==================== 
@@ -1626,8 +1626,8 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
   
     // ==================== STATISTIC LOGIC ====================
     combatData.typeAttackData.push(combatData.weapons[0].attack_type, combatData.weapons[1].attack_type);
-    combatData.typeDamageData.push(combatData.weapons[0].damageType);
-    combatData.totalDamageData.push(combatData.realized_player_damage);
+    combatData.typeDamageData.push(combatData.player_damage_type);
+    combatData.totalDamageData = combatData.realized_player_damage > combatData.totalDamageData ? combatData.realized_player_damage : combatData.totalDamageData;
     // ==================== STATISTIC LOGIC ====================
     
     combatData.player_action_description = 
@@ -1850,8 +1850,8 @@ const attackCompiler = async (combatData, player_action) => {
 
 // ==================== STATISTIC LOGIC ====================
 combatData.typeAttackData.push(combatData.weapons[0].attack_type);
-combatData.typeDamageData.push(combatData.weapons[0].damageType);
-combatData.totalDamageData.push(combatData.realized_player_damage);
+combatData.typeDamageData.push(combatData.player_damage_type);
+combatData.totalDamageData = combatData.realized_player_damage > combatData.totalDamageData ? combatData.realized_player_damage : combatData.totalDamageData;
 // ==================== STATISTIC LOGIC ====================
 
     combatData.player_action_description = 
@@ -2659,7 +2659,7 @@ const prayerSplitter = async (combatData, prayer) => {
     // prayerData: combatData.prayerData,
 
     // ==================== STATISTIC LOGIC ==================== 
-    combatData.actoinData.push('prayer');
+    // combatData.actionData.push('prayer');
     combatData.prayerData.push(prayer);
     combatData.deityData.push(combatData.weapons[0].influences[0]);
     // ==================== STATISTIC LOGIC ====================
@@ -2759,7 +2759,7 @@ const instantActionSplitter = async (combatData) => {
 
     
     // ==================== STATISTIC LOGIC ==================== 
-    combatData.actoinData.push('invoke'); 
+    combatData.actionData.push('invoke'); 
     // ==================== STATISTIC LOGIC ====================
         
     if (combatData.new_computer_health <= 0 || combatData.current_computer_health <= 0) {
@@ -2849,7 +2849,7 @@ const instantEffectCheck = async (combatData) => {
 const consumePrayerSplitter = async (combatData) => { 
 
 // ==================== STATISTIC LOGIC ==================== 
-combatData.actoinData.push('consume');
+combatData.actionData.push('consume');
 combatData.prayerData.push(combatData.prayerSacrifice);
 // ==================== STATISTIC LOGIC ====================
 

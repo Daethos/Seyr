@@ -105,30 +105,35 @@ async function recordNonCombatStatistic(req, res) {
 
 async function recordCombatStatistic(req, res) {
     try {
-        let { asceanID, wins, losses, total, actionData, typeAttackData, typeDamageData, totalDamageData, prayerData, deityData, mastery } = req.body;
+        let { asceanID, wins, losses, total, actionData, typeAttackData, typeDamageData, totalDamageData, prayerData, deityData } = req.body;
         let ascean = await Ascean.findById(asceanID);
         let statistic = ascean.statistics.combat;
+        console.log(statistic, "Statistic Pre-Recorded");
         statistic.wins += wins;
         statistic.losses += losses;
         statistic.total += total;
-        statistic.damage.total = totalDamageData > statistic.totalDamageData ? totalDamageData : statistic.totalDamageData;
-        statistic.damage.type.push(typeDamageData).flat();
-        statistic.actions.attacks += forEach.actionData((action) => action === 'attack' ? 1 : 0);
-        statistic.actions.counters += forEach.actionData((action) => action === 'counter' ? 1 : 0);
-        statistic.actions.dodges += forEach.actionData((action) => action === 'dodge' ? 1 : 0);
-        statistic.actions.postures += forEach.actionData((action) => action === 'posture' ? 1 : 0);
-        statistic.actions.rolls += forEach.actionData((action) => action === 'roll' ? 1 : 0);
-        statistic.actions.invokes += forEach.actionData((action) => action === 'invoke' ? 1 : 0);
-        statistic.actions.prayers += forEach.actionData((action) => action === 'prayer' ? 1 : 0);
-        statistic.actions.consumes += forEach.actionData((action) => action === 'consume' ? 1 : 0);
-        statistic.prayers.buff += forEach.prayerData((prayer) => prayer === 'buff' ? 1 : 0);
-        statistic.prayers.heal += forEach.prayerData((prayer) => prayer === 'heal' ? 1 : 0);
-        statistic.prayers.damage += forEach.prayerData((prayer) => prayer === 'damage' ? 1 : 0);
-        statistic.prayers.debuff += forEach.prayerData((prayer) => prayer === 'debuff' ? 1 : 0);
-        statistic.attacks.magical += forEach.typeAttackData((type) => type === 'Magic' ? 1 : 0);
-        statistic.attacks.physical += forEach.typeAttackData((type) => type === 'Physical' ? 1 : 0);
-        // Still need to do deityData, prayerData, mastery
+        statistic.damage.total = totalDamageData > statistic.damage.total ? totalDamageData : statistic.damage.total;
+        statistic.actions.attacks += actionData.reduce((count, action) => action === 'attack' ? count + 1 : count, 0);
+        statistic.actions.counters += actionData.reduce((count, action) => action === 'counter' ? count + 1 : count, 0);
+        statistic.actions.dodges += actionData.reduce((count, action) => action === 'dodge' ? count + 1 : count, 0);
+        statistic.actions.postures += actionData.reduce((count, action) => action === 'posture' ? count + 1 : count, 0);
+        statistic.actions.rolls += actionData.reduce((count, action) => action === 'roll' ? count + 1 : count, 0);
+        statistic.actions.invokes += actionData.reduce((count, action) => action === 'invoke' ? count + 1 : count, 0);
+        statistic.actions.prayers += actionData.reduce((count, action) => action === 'prayer' ? count + 1 : count, 0);
+        statistic.actions.consumes += actionData.reduce((count, action) => action === 'consume' ? count + 1 : count, 0);
+        statistic.prayers.buff += prayerData.reduce((count, prayer) => prayer === 'Buff' ? count + 1 : count, 0);
+        statistic.prayers.heal += prayerData.reduce((count, prayer) => prayer === 'Heal' ? count + 1 : count, 0);
+        statistic.prayers.damage += prayerData.reduce((count, prayer) => prayer === 'Damage' ? count + 1 : count, 0);
+        statistic.prayers.debuff += prayerData.reduce((count, prayer) => prayer === 'Debuff' ? count + 1 : count, 0);
+        statistic.attacks.magical += typeAttackData.reduce((count, type) => type === 'Magic' ? count + 1 : count, 0);
+        statistic.attacks.physical += typeAttackData.reduce((count, type) => type === 'Physical' ? count + 1 : count, 0);
+        // statistic.deities.concat(...deityData).flat();
+        // statistic.damage.type.concat(...typeDamageData).flat();
+        statistic.damage.type = statistic.damage.type.concat(...typeDamageData).flat();
+        statistic.deities = statistic.deities.concat(...deityData).flat();
 
+        // Still need to do deityData, prayerData
+        console.log(statistic, "Statistic Post-Recorded");
         ascean.statistics.combat = statistic;
         await ascean.save();
         res.status(200).json(ascean.statistics);
@@ -975,6 +980,8 @@ async function updateLevel(req, res) {
     let kyosir = Number(req.body.kyosir);
     let mastery = req.body.ascean.mastery;
     let newMastery = req.body.mastery;
+    let statMastery = newMastery.toLowerCase();
+    console.log(statMastery, req.body.ascean.statistics.mastery[statMastery], 'statMastery, req.body.ascean.statistics.mastery[statMastery]');
     try {
         const ascean = await Ascean.findByIdAndUpdate(req.body.ascean._id, {
             level: req.body.ascean.level + 1,
@@ -987,6 +994,13 @@ async function updateLevel(req, res) {
             kyosir: Math.round((req.body.ascean.kyosir + kyosir) * (newMastery === 'Kyosir' ? 1.07 : 1.04)),
             mastery: newMastery, 
             faith: req.body.faith,
+            statistics: {
+                ...req.body.ascean.statistics,
+                mastery: {
+                    ...req.body.ascean.statistics.mastery,
+                    [statMastery]: req.body.ascean.statistics.mastery[statMastery] + 1,
+                }
+            } 
         }, { new: true });
         console.log(ascean, '<- Ascean Leveled Up in the Controller');
         res.status(200).json({ data: ascean });
