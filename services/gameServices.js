@@ -1,5 +1,97 @@
 const StatusEffect = require('./faithServices.js');
 
+const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) => {
+    
+    let magicalDamage = magDam;
+    let physicalDamage = physDam;
+
+
+    switch (weather) {
+        case 'Alluring Isles':
+            if (weapon.type === 'Bow' || weapon.type === 'Greatbow') {
+                physicalDamage *= 1.1;
+                magicalDamage *= 1.1;
+            };
+            break;
+        case 'Astralands':
+            magicalDamage *= 1.1;
+            physicalDamage *= 1.1;
+            break;
+        case 'Fangs': 
+            if (weapon.attack_type === 'Physical') {
+                if (weapon.type !== 'Bow' && weapon.type !== 'Greatbow') {
+                    physicalDamage *= 1.1; // +10% Physical Melee Damage
+                } else {
+                    physicalDamage *= 0.9; // -10% Physical Ranged Damage
+                };
+            } else {
+                if (weapon.damage_type === 'Fire' || weapon.damage_type === 'Frost' || weapon.damage_type === 'Earth' || weapon.damage_type === 'Wind' || weapon.damage_type === 'Lightning' || weapon.damage_type === 'Wild') {
+                    magicalDamage *= 1.1; // +10% Magical Damage
+                };
+            };
+            if (weapon.influences[0] !== 'Daethos') {
+                magicalDamage *= 1.1; // +10% Magical Damage
+            };
+            break;
+        case 'Firelands':
+            physicalDamage *= 1.1;
+            magicalDamage *= 1.1;
+            if (critical) {
+                magicalDamage *= 1.25;
+                physicalDamage *= 1.25;
+            };
+            break;
+        case 'Kingdom':
+            physicalDamage *= 1.1;
+            if (weapon.influences[0] !== 'Daethos') {
+                magicalDamage *= 1.1;
+                physicalDamage *= 1.1;
+            };
+            break;
+        case 'Licivitas':
+            if (weapon.influences[0] === 'Daethos') {
+                magicalDamage *= 1.15;
+                physicalDamage *= 1.15;
+            };
+            if (critical) {
+                magicalDamage *= 1.25;
+                physicalDamage *= 1.25;
+            };
+            break;
+        case 'Sedyrus':
+            magicalDamage *= 1.1;
+            if (weapon.influences[0] !== 'Daethos') {
+                magicalDamage *= 1.1;
+                physicalDamage *= 1.1;
+            };
+            if (weapon.type === 'Bow' || weapon.type === 'Greatbow') {
+                physicalDamage *= 1.1;
+                magicalDamage *= 1.1;
+            };
+            if (critical) {
+                magicalDamage *= 1.1;
+                physicalDamage *= 1.1;
+            };
+            break;
+        case 'Soverains':
+            magicalDamage *= 1.1;
+            if (weapon.influences[0] !== 'Daethos') {
+                magicalDamage *= 1.1;
+                physicalDamage *= 1.1;
+            };
+            break;
+
+        default:
+            break;
+    };
+
+    // magicalDamage = roundToTwoDecimals(magicalDamage);
+    // physicalDamage = roundToTwoDecimals(physicalDamage);
+
+    return { magicalDamage, physicalDamage };
+
+};
+
 const statusEffectCheck = async (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
@@ -922,6 +1014,16 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     computer_weapon_two_physical_damage = damageTypeTwo.computer_physical_damage;
     computer_weapon_two_magical_damage = damageTypeTwo.computer_magical_damage;
 
+    // =============== WEATHER EFFECTS ================ \\
+    const weatherResult = await weatherEffectCheck(weapons[0], computer_weapon_one_magical_damage, computer_weapon_one_physical_damage, combatData.weather, firstWeaponCrit);
+    computer_weapon_one_physical_damage = weatherResult.physicalDamage;
+    computer_weapon_one_magical_damage = weatherResult.magicalDamage;
+
+    const weatherResultTwo = await weatherEffectCheck(weapons[1], computer_weapon_two_magical_damage, computer_weapon_two_physical_damage, combatData.weather, secondWeaponCrit);
+    computer_weapon_two_physical_damage = weatherResultTwo.physicalDamage;
+    computer_weapon_two_magical_damage = weatherResultTwo.magicalDamage;
+        // =============== WEATHER EFFECTS ================ \\
+
     computer_weapon_one_total_damage = computer_weapon_one_physical_damage + computer_weapon_one_magical_damage;
     computer_weapon_two_total_damage = computer_weapon_two_physical_damage + computer_weapon_two_magical_damage;
 
@@ -1136,10 +1238,16 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     computer_physical_damage = damageType.computer_physical_damage;
     computer_magical_damage = damageType.computer_magical_damage;
 
+    // =============== WEATHER EFFECTS ================ \\
+    const weatherResult = await weatherEffectCheck(combatData.computer_weapons[0], computer_magical_damage, computer_physical_damage, combatData.weather, combatData.computer_critical_success);
+    computer_physical_damage = weatherResult.physicalDamage;
+    computer_magical_damage = weatherResult.magicalDamage; 
+        // =============== WEATHER EFFECTS ================ \\
+
     computer_total_damage = computer_physical_damage + computer_magical_damage;
     if (computer_total_damage < 0) {
         computer_total_damage = 0;
-    }
+    };
     combatData.realized_computer_damage = computer_total_damage;
 
     if (combatData.action === 'attack') {
@@ -1158,22 +1266,20 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
         combatData.new_player_health = 0;
         combatData.computer_win = true;
-    }
+    };
 
     if (combatData.new_player_health > 0) {
         combatData.computer_win = false;
-    }
+    };
 
     if (combatData.new_computer_health > 0) {
         combatData.player_win = false;
-    }
-
-    // console.log(computer_total_damage, 'Total Computer Damage')
-
+    };
+ 
     return (
         combatData
-    )
-}
+    );
+};
 
 const computerDamageTypeCompiter = async (combatData, weapon, computer_physical_damage, computer_magical_damage) => {
     if (combatData.computer_damage_type === 'Blunt' || combatData.computer_damage_type === 'Fire' || combatData.computer_damage_type === 'Earth' || combatData.computer_damage_type === 'Spooky') {
@@ -1420,6 +1526,17 @@ const computerDamageTypeCompiter = async (combatData, weapon, computer_physical_
 }
 
 const computerCriticalCompiler = async (combatData, critChance, critClearance, weapon, computer_physical_damage, computer_magical_damage) => {
+
+    if (combatData.weather === 'Alluring Isles') {
+        critChance -= 10;
+    };
+    if (combatData.weather === 'Astralands') {
+        critChance += 10;
+    };
+    if (combatData.weather === 'Kingdom') {
+        critChance += 5;
+    };
+
     if (critChance >= critClearance) {
         computer_physical_damage *= weapon.critical_damage;
         computer_magical_damage *= weapon.critical_damage;
@@ -1505,10 +1622,19 @@ const computerCounterCompiler = async (combatData, player_action, computer_actio
 }
     
 const computerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
-    const computer_roll = combatData.computer_weapons[0].roll;
-    let roll_catch = Math.floor(Math.random() * 101) + combatData.player_attributes.kyosirMod;
-    // console.log(computer_roll, 'Computer Roll %', roll_catch, 'Roll # To Beat')
-    if (computer_roll > roll_catch) {
+    const computerRoll = combatData.computer_weapons[0].roll;
+    let rollCatch = Math.floor(Math.random() * 101) + combatData.player_attributes.kyosirMod;
+    if (combatData.weather === 'Alluring Isles') {
+        computerRoll -= 10;
+    };
+    if (combatData.weather === 'Kingdom' || combatData.weather === 'Sedyrus') {
+        computerRoll -= 5;
+    };
+    if (combatData.weather === 'Fangs' || combatData.weather === 'Roll') {
+        computerRoll += 5;
+    };
+    // console.log(computerRoll, 'Computer Roll %', rollCatch, 'Roll # To Beat')
+    if (computerRoll > rollCatch) {
         combatData.computer_roll_success = true;
         combatData.computer_special_description = 
                 `${combatData.computer.name} successfully rolls against you, avoiding your ${  player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`
@@ -1553,14 +1679,14 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     player_weapon_one_magical_damage = resultOne.player_magical_damage;
     if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
-    }
+    };
     const resultTwo = await criticalCompiler(combatData, weapTwoCrit, weapTwoClearance, combatData.weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
     combatData = resultTwo.combatData;
     player_weapon_two_physical_damage = resultTwo.player_physical_damage;
     player_weapon_two_magical_damage = resultTwo.player_magical_damage;
     if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
-    }
+    };
 
     player_weapon_one_physical_damage *= 1 - ((1 - computer_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100)));
     player_weapon_one_magical_damage *= 1 - ((1 - computer_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration / 100)));
@@ -1577,6 +1703,16 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     const damageTypeTwo = await damageTypeCompiler(combatData, weapons[1], player_weapon_two_physical_damage, player_weapon_two_magical_damage);
     player_weapon_two_physical_damage = damageTypeTwo.player_physical_damage;
     player_weapon_two_magical_damage = damageTypeTwo.player_magical_damage;
+
+    // =============== WEATHER EFFECTS ================ \\
+    const weatherResult = await weatherEffectCheck(combatData.weapons[0], player_weapon_one_magical_damage, player_weapon_one_physical_damage, combatData.weather, firstWeaponCrit);
+    player_weapon_one_physical_damage = weatherResult.physicalDamage;
+    player_weapon_one_magical_damage = weatherResult.magicalDamage;
+
+    const weatherResultTwo = await weatherEffectCheck(combatData.weapons[1], player_weapon_two_magical_damage, player_weapon_two_physical_damage, combatData.weather, secondWeaponCrit);
+    player_weapon_two_physical_damage = weatherResultTwo.physicalDamage;
+    player_weapon_two_magical_damage = weatherResultTwo.magicalDamage;
+        // =============== WEATHER EFFECTS ================ \\
 
     // console.log('Attack Compiler Post-Damage Type Multiplier', player_weapon_one_physical_damage, player_weapon_one_magical_damage)
 
@@ -1798,15 +1934,11 @@ const attackCompiler = async (combatData, player_action) => {
     player_physical_damage = damageType.player_physical_damage;
     player_magical_damage = damageType.player_magical_damage;
 
-    // if (combatData.weather === 'Firelands') {
-    //     player_physical_damage *= 1.1;
-    // }
-    // if (combatData.weather === 'Astralands' || combatData.weather === 'Firelands' || combatData.weather === 'Soverains') {
-    //     player_magical_damage *= 1.1;
-    // }
-    // if (combatData.weather === 'Soverains') {
-    //     player_physical_damage *= 0.9;
-    // }
+    // =============== WEATHER EFFECTS ================ \\
+    const weatherResult = await weatherEffectCheck(combatData.weapons[0], player_magical_damage, player_physical_damage, combatData.weather, combatData.critical_success);
+    player_physical_damage = weatherResult.physicalDamage;
+    player_magical_damage = weatherResult.magicalDamage;
+     // =============== WEATHER EFFECTS ================ \\
 
     // console.log('Attack Compiler Post-Damage Type Multiplier', player_physical_damage, player_magical_damage)
 
@@ -2114,18 +2246,26 @@ const damageTypeCompiler = async (combatData, weapon, player_physical_damage, pl
         combatData,
         player_physical_damage,
         player_magical_damage
-    }
-}
+    };
+};
 
 const criticalCompiler = async (combatData, critChance, critClearance, weapon, player_physical_damage, player_magical_damage) => {
-    let num = critClearance;
-    num = (critClearance * 100) / 100; 
-    console.log(critChance, critClearance, 'Crit Chance and Clearance');
+
+    if (combatData.weather === 'Alluring Isles') {
+        critChance -= 10;
+    };
+    if (combatData.weather === 'Astralands') {
+        critChance += 10;
+    };
+    if (combatData.weather === 'Kingdom') {
+        critChance += 5;
+    };
+
     if (critChance >= critClearance) {
         player_physical_damage *= weapon.critical_damage;
         player_magical_damage *= weapon.critical_damage;
         combatData.critical_success = true;
-    }
+    };
 
     if (critClearance > critChance + combatData.player.level + 80) {
         player_physical_damage *= 0.1;
@@ -2194,30 +2334,38 @@ const criticalCompiler = async (combatData, critChance, critClearance, weapon, p
         player_physical_damage,
         player_magical_damage
     }
-}
+};
 
 const counterCompiler = async (combatData, player_action, computer_action) => {
     player_action = 'attack';
     await attackCompiler(combatData, player_action)
     return (
         combatData
-    )
-}
+    );
+};
 
 const playerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
-    const player_roll = combatData.weapons[0].roll;
-    let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
-    // console.log(player_roll, 'Player Roll %', roll_catch, 'Roll # To Beat')
-    if (player_roll > roll_catch) {
+    
+    const playerRoll = combatData.weapons[0].roll;
+    let rollCatch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
+    if (combatData.weather === 'Alluring Isles') {
+        playerRoll -= 10;
+    };
+    if (combatData.weather === 'Kingdom' || combatData.weather === 'Sedyrus') {
+        playerRoll -= 5;
+    };
+    if (combatData.weather === 'Fangs' || combatData.weather === 'Roll') {
+        playerRoll += 5;
+    };
+    if (playerRoll > rollCatch) {
         combatData.roll_success = true;
         combatData.player_special_description = 
-                `You successfully roll against ${combatData.computer.name}, avoiding their ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
-        await attackCompiler(combatData, player_action)
+                `You successfully roll against ${combatData.computer.name}, avoiding their ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`;
+        await attackCompiler(combatData, player_action);
     } else {
         // if (player_initiative > computer_initiative) {
         combatData.player_special_description =
         `You failed to roll against ${combatData.computer.name}'s ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
-        return combatData
             //     await attackCompiler(combatData, player_action)
         //     await computerAttackCompiler(combatData, computer_action)
         // } else {
@@ -2226,61 +2374,73 @@ const playerRollCompiler = async (combatData, player_initiative, computer_initia
         //     await computerAttackCompiler(combatData, computer_action)
         //     await attackCompiler(combatData, player_action)
         // }
-    }
+    };
     return (
         combatData
-    )
-}
+    );
+};
 
 // Resolves both Player and Computer Rolling
 const doubleRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
-    const player_roll = combatData.weapons[0].roll;
-    const computer_roll = combatData.computer_weapons[0].roll;
-    let roll_catch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
-    // console.log(player_roll, 'Player Roll %', computer_roll, 'Computer Roll %', roll_catch, 'Number to Beat')
+    const playerRoll = combatData.weapons[0].roll;
+    const computerRoll = combatData.computer_weapons[0].roll;
+    let rollCatch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
+    if (combatData.weather === 'Alluring Isles') {
+        playerRoll -= 10;
+        computerRoll -= 10;
+    };
+    if (combatData.weather === 'Kingdom' || combatData.weather === 'Sedyrus') {
+        playerRoll -= 5;
+        computerRoll -= 5;
+    };
+    if (combatData.weather === 'Fangs' || combatData.weather === 'Roll') {
+        playerRoll += 5;
+        computerRoll += 5;
+    };
+    // console.log(playerRoll, 'Player Roll %', computerRoll, 'Computer Roll %', rollCatch, 'Number to Beat')
     if (player_initiative > computer_initiative) { // You have Higher Initiative
-        if (player_roll > roll_catch) { // The Player Succeeds the Roll
+        if (playerRoll > rollCatch) { // The Player Succeeds the Roll
             combatData.player_special_description = 
-                `You successfully roll against ${combatData.computer.name}, avoiding their ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_action)
-        } else if (computer_roll > roll_catch) { // The Player Fails the Roll and the Computer Succeeds
+                `You successfully roll against ${combatData.computer.name}, avoiding their ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`;
+            await attackCompiler(combatData, player_action);
+        } else if (computerRoll > rollCatch) { // The Player Fails the Roll and the Computer Succeeds
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.computer.name}'s ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`
+                `You failed to roll against ${combatData.computer.name}'s ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`;
             combatData.computer_special_description = 
-                `${combatData.computer.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
-            await computerAttackCompiler(combatData, computer_action)
+                `${combatData.computer.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+            await computerAttackCompiler(combatData, computer_action);
         } else { // Neither Player nor Computer Succeed
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.computer.name}'s ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`
+                `You failed to roll against ${combatData.computer.name}'s ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`;
             combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_action)
-            await computerAttackCompiler(combatData, computer_action)
+                `${combatData.computer.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+            await attackCompiler(combatData, player_action);
+            await computerAttackCompiler(combatData, computer_action);
         }
     } else { // The Computer has Higher Initiative
-        if (computer_roll > roll_catch) { // The Computer Succeeds the Roll
+        if (computerRoll > rollCatch) { // The Computer Succeeds the Roll
             combatData.computer_special_description = 
-                `${combatData.computer.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
-            await computerAttackCompiler(combatData, computer_action)
-        } else if (player_roll > roll_catch) { // The Computer Fails the Roll and the Player Succeeds
+                `${combatData.computer.name} successfully rolls against you, avoiding your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
+            await computerAttackCompiler(combatData, computer_action);
+        } else if (playerRoll > rollCatch) { // The Computer Fails the Roll and the Player Succeeds
             combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+                `${combatData.computer.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             combatData.player_special_description = 
-                `You successfully roll against ${combatData.computer.name}, avoiding their ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`
-            await attackCompiler(combatData, player_action)
+                `You successfully roll against ${combatData.computer.name}, avoiding their ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`;
+            await attackCompiler(combatData, player_action);
         } else { // Neither Computer nor Player Succeed
             combatData.computer_special_description = 
-                `${combatData.computer.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`
+                `${combatData.computer.name} fails to roll against your ${combatData.player_action.charAt(0).toUpperCase() + combatData.player_action.slice(1)} Attack`;
             combatData.player_special_description = 
-                `You failed to roll against ${combatData.computer.name}'s ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`
-            await computerAttackCompiler(combatData, computer_action)
-            await attackCompiler(combatData, player_action)
-        }
-    }
+                `You failed to roll against ${combatData.computer.name}'s ${combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1)} Attack`;
+            await computerAttackCompiler(combatData, computer_action);
+            await attackCompiler(combatData, player_action);
+        };
+    };
     return (
         combatData
-    )
-}
+    );
+};
 
 // Action Splitter Determines the Action Payload and Sorts the Resolution of the Action Round
 const actionSplitter = async (combatData) => {
@@ -2461,8 +2621,8 @@ const actionSplitter = async (combatData) => {
                 newData.combatRound += 1;
                 newData.sessionRound += 1;
                 return newData
-            }    
-        }
+            };
+        };
         // If the Player Guesses Right and the Computer Guesses Wrong
         if (player_counter === computer_action && computer_counter !== player_action) {
             newData.counter_success = true;
@@ -2473,8 +2633,8 @@ const actionSplitter = async (combatData) => {
             await statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
-            return newData
-        }
+            return newData;
+        };
     
         // If the Computer Guesses Right and the Player Guesses Wrong
         if (computer_counter === player_action && player_counter !== computer_action) {
@@ -2486,8 +2646,8 @@ const actionSplitter = async (combatData) => {
             await statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
-            return newData
-        } 
+            return newData;
+        } ;
     
         if (player_counter !== computer_action && computer_counter !== player_action) {
             newData.player_special_description = 
@@ -2500,9 +2660,9 @@ const actionSplitter = async (combatData) => {
                 } else {
                     await computerAttackCompiler(newData, computer_action);
                     await attackCompiler(newData, player_action);
-                }
-        }
-    } 
+                };
+        };
+    };
 
 
     // Partially Resolves Player: Counter + Countering the Computer
@@ -2521,8 +2681,8 @@ const actionSplitter = async (combatData) => {
         } else {
             newData.player_special_description = 
                 `You failed to Counter ${newData.computer.name}'s ${ newData.computer_action === 'attack' ? 'Focused' : newData.computer_action.charAt(0).toUpperCase() + newData.computer_action.slice(1) } Attack. Heartbreaking!`
-        }
-    }
+        };
+    };
 
     if (computer_action === 'counter' && player_action !== 'counter') {
         if (computer_counter === player_action) {
@@ -2538,8 +2698,8 @@ const actionSplitter = async (combatData) => {
         } else {
             newData.computer_special_description = 
                 `${newData.computer.name} fails to Counter your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
-        }
-    }
+        };
+    };
 
 
     

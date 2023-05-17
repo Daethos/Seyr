@@ -97,7 +97,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
       });
     }, (state?.weapons?.[0]?.dodge * 1000));
     return () => clearTimeout(dodgeTimer);
-  }, [state.dodgeStatus, dispatch]);
+  }, [state.dodgeStatus, dispatch, state.weather]);
 
   useEffect(() => {
     const initiateTimer = setTimeout(() => {
@@ -233,7 +233,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
             <option value={counter} key={index}>{counter.charAt(0).toUpperCase() + counter.slice(1)}</option> 
           ))}
         </select>
-        <button value='dodge' onClick={handleAction} disabled={state.dodgeStatus ? true : false} className='btn btn-outline' id='dodge-button'>Dodge</button>
+        <button value='dodge' onClick={handleAction} disabled={state.dodgeStatus || state.weather === 'Sedyrus' || state.weather === 'Alluring Isles' || state.weather === 'Kingdom' ? true : false} className='btn btn-outline' id='dodge-button'>Dodge</button>
         <button value='posture' onClick={handleAction} className='btn btn-outline' id='action-button'>Posture</button>
         <button value='roll' onClick={handleAction} className='btn btn-outline' id='action-button'>Roll</button>
       </div>

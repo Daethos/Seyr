@@ -553,6 +553,8 @@ const GameSolo = ({ user }: GameProps) => {
             gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
             if (!gameState?.showDialog && mapState?.currentTile?.content !== 'city') {
                 gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
+            } else {
+                dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
             };
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
@@ -971,10 +973,10 @@ const GameSolo = ({ user }: GameProps) => {
                 const chance = Math.floor(Math.random() * 101) + fyeran;
                 if (chance > 33) {
                     dispatch({ type: ACTIONS.PLAYER_REST, payload: initialIntensity });
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You heal for ${Math.round(initialIntensity * 0.01 * state?.player_health)}, a small respite from the harsh tones of your surroundings.` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You heal for ${Math.round(initialIntensity * 0.03 * state?.player_health)}, a small respite from the harsh tones of your surroundings.` });
                 } else {
                     dispatch({ type: ACTIONS.PLAYER_REST, payload: -initialIntensity });
-                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You snap back in pain, its sensation coursing through you for ${Math.round(initialIntensity * 0.01 * state?.player_health)}.` });
+                    gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You snap back in pain, its sensation coursing through you for ${Math.round(initialIntensity * 0.03 * state?.player_health)}.` });
                 };
             };
 
@@ -982,7 +984,7 @@ const GameSolo = ({ user }: GameProps) => {
                 const chance = Math.floor(Math.random() * 101) + fyeran;
                 if (chance + level > 75) {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A light pool of caeren juts out into you, increasing your experience by ${maxIntensity + ascean.kyosir}.` });
-                    const response = await asceanAPI.setExperience({ asceanID, experience: (maxIntensity + ascean.kyosir) });
+                    const response = await asceanAPI.setExperience({ asceanID, experience: ((maxIntensity + ascean.kyosir) * 3) });
                     dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
                     gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
                 } else if (chance + level > 50) {
@@ -994,7 +996,7 @@ const GameSolo = ({ user }: GameProps) => {
                     gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_CURRENCY, payload: response.currency });
                 } else {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `A murky pool of caeren juts out to leech you, decreasing your experience by ${maxIntensity - ascean.kyosir}.` });
-                    const response = await asceanAPI.setExperience({ asceanID, experience: -(maxIntensity - ascean.kyosir) });
+                    const response = await asceanAPI.setExperience({ asceanID, experience: -((maxIntensity - ascean.kyosir) * 3) });
                     dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
                     gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
                 };
@@ -1053,94 +1055,94 @@ const GameSolo = ({ user }: GameProps) => {
     const getWeather = async (province: string) => {
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
-        }
+        };
         switch (province) {
             case 'Alluring Isles': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Increment jungle weighs your steps, succumbing to the dense and undisturbed natural wonder. -10% Roll, Critical Strike. +10% Elemental, Ranged Damage."
+                    payload: "Increment jungle weighs your steps, succumbing to the dense and undisturbed natural wonder. -10% Roll, Critical Strike. +10% Ranged Damage. You cannot dodge."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Alluring Isles"
-                })
+                });
                 break;
             };
             case 'Astralands': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Lightning strikes surround a swirl of heavy, bleeding clouds. +10% Critical Strikes, +10% Magic Damage."
+                    payload: "Lightning strikes surround a swirl of heavy, bleeding clouds. +10% Critical Strikes, +10% Damage."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Astralands"
-                })
+                });
                 break;
             };
             case 'Fangs': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Soft, frothing fog surrounds the area. -10% Elemental, Ranged Damage. +5% Roll. +10% Melee Damage."
+                    payload: "Soft, frothing fog surrounds the area. +10% Ancient, Elemental, Melee Damage. -10% Ranged Damage. +5% Roll."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Fangs"
-                })
+                });
                 break;
             };
             case 'Firelands': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "It's bright and sunny, just absolute beautiful weather. Couldn't ask for a better day for a stroll into the wilderness. +10% Damage, +25% Critical Damage. You cannot dodge."
+                    payload: "It's bright and sunny, just absolute beautiful weather. Couldn't ask for a better day for a stroll into the wilderness. +10% Damage, +25% Critical Damage."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Firelands"
-                })
+                });
                 break;
             };
             case 'Kingdom': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Snowfall gathers and the winds greet you with shrill smiles. +10% Ancient, Physical Damage. -5% Roll."
+                    payload: "Snowfall gathers and the winds greet you with shrill smiles. +10% Daethic, Physical Damage. +5% Critical Strikes. -5% Roll. You cannot dodge."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Kingdom"
-                })
+                });
                 break;
             };
             case 'Licivitas': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Slick weather draws palpable breaths as you embark across the plains. A calm gives glimpses of the land of hush and tendril. +10% Ancient, Daethic Damage."
+                    payload: "Slick weather draws palpable breaths as you embark across the plains. A calm gives glimpses of the land of hush and tendril. +15% Daethic Damage. +25% Crititcal Damage."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Licivitas"
-                })
+                });
                 break;
             };
             case 'Sedyrus': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Despite your settings, monsoons quench the root of these lands for months wtih a single flash of its reverence. +10% Ancient, Elemental Damage. +10% Critical Damage. -5% Roll. You cannot dodge."
+                    payload: "Despite your settings, monsoons quench the root of these lands for months wtih a single flash of its reverence. +10% Ancient, Ranged Damage. +10% Critical Damage. -5% Roll. You cannot dodge."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Sedyrus"
-                })
+                });
                 break;
             };
             case 'Soverains': {
                 mapDispatch({
                     type: MAP_ACTIONS.SET_MAP_CONTEXT,
-                    payload: "Strange airs pervade and grant a sense of shifting winds, its swirl caressing. +10% Magic Damage. +5% Roll."
+                    payload: "Strange airs pervade and grant a sense of shifting winds, its swirl caressing. +10% Ancient, Magic Damage. +5% Roll."
                 });
                 dispatch({
                     type: ACTIONS.SET_WEATHER,
                     payload: "Soverains"
-                })
+                });
                 break;
             };
         };
