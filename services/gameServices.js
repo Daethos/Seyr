@@ -335,8 +335,8 @@ const statusEffectCheck = async (combatData) => {
 };
 
 const faithFinder = async (combatData, player_action, computer_action) => { // The influence will add a chance to have a special effect occur
-    if (combatData.player_win === true || combatData.computer_win === true) {
-        return
+    if (combatData.player_win === true || combatData.computer_win === true || combatData.playerBlessing === '') {
+        return;
     };
     
     let faith_number = Math.floor(Math.random() * 101);

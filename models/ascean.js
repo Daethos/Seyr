@@ -390,6 +390,11 @@ const asceanSchema = new Schema(
                 }
             },
         },
+        capable: {
+            consume: { type: Boolean, default: false },
+            invoke: { type: Boolean, default: false },
+            pray: { type: Boolean, default: false },
+        },
         tutorial: {
             firstBoot: { type: Boolean, default: true },
             firstCity: { type: Boolean, default: true },

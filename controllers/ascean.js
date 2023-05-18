@@ -332,6 +332,9 @@ async function evaluateDeity(req, res) {
         ascean.statistics.relationships.deity.value += valueSum;
         ascean.statistics.relationships.deity.behaviors.push(behavior);
 
+        if (ascean.statistics.relationships.deity.behaviors.length === 2) ascean.capable.invoke = true;
+        if (ascean.statistics.relationships.deity.behaviors.length === 3) ascean.capable.consume = true;
+
         // const goodBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Faithful' || behavior === 'Compliant');
         // const badBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Unfaithful' || behavior === 'Disobedient');
         // const middlingBehavior = ascean.statistics.relationships.deity.behaviors.filter(behavior => behavior === 'Somewhat Faithful' || behavior === 'Somewhat Compliant' || behavior === 'Somewhat Unfaithful' || behavior === 'Somewhat Disobedient');
@@ -456,7 +459,8 @@ async function firstTutorial(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
         ascean.tutorial[req.params.tutorial] = false;
-        ascean.save();
+        if (req.params.tutorial === 'firstPhenomena') ascean.capable.pray = true;
+        await ascean.save();
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, "Error Changing Tutorial");

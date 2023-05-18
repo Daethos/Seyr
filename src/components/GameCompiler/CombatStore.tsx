@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-
 export interface CombatData {
     player: any;
     action: string;
@@ -164,7 +162,7 @@ export const initialCombatData: CombatData = {
     action: '',
     player_action: '',
     counter_guess: '',
-    playerBlessing: 'Buff',
+    playerBlessing: '',
     prayerSacrifice: '',
     prayerSacrificeName: '',
     player_health: 0,

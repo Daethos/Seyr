@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-interface Props {
+interface CombatSettingModalProps {
     setPrayerBlessing: any;
     setDamageType: any;
     damageType: any;
@@ -13,10 +13,8 @@ interface Props {
     state: any;
 };
 
-const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons }: Props) => {
-
-    const [combatModalShow, setCombatModalShow] = useState<boolean>(false);
-
+const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons }: CombatSettingModalProps) => { 
+    const [combatModalShow, setCombatModalShow] = useState<boolean>(false); 
     return (
         <>
         <Modal show={combatModalShow} onHide={() => setCombatModalShow(false)} centered id='modal-weapon'>
@@ -34,6 +32,10 @@ const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessin
                 damageType.map((damage: string, index: number) => { return ( <option value={damage} key={index} >{damage}</option> ) } )
             : '' }
             </Form.Select><br />
+            { state.player.capable.pray ? (
+                <>
+                </>
+            ) : ( '' ) }
             <p style={{ color: 'gold' }}>Current Prayer: {state.playerBlessing}</p>
             <Form.Select name="Prayer" className='combat-settings' value={state.playerBlessing} onChange={setPrayerBlessing}>
             {prayers.map((prayer: string, index: number) => {

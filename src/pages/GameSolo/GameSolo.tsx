@@ -163,6 +163,9 @@ const GameSolo = ({ user }: GameProps) => {
             if (mapState.currentTile.content !== 'nothing' && mapState?.lastTile) {
                 handleTileContent(mapState.currentTile.content, mapState.lastTile.content);
             };
+            if (mapState?.currentTile?.content !== 'weather' && mapState?.lastTile?.content === 'weather') {
+                dispatch({ type: ACTIONS.SET_WEATHER, payload: '' });
+            };
         }, [mapState.currentTile, mapState.currentTile.content]);
     };
     useMoveContentEffect(mapState);
@@ -183,12 +186,12 @@ const GameSolo = ({ user }: GameProps) => {
                 mapDispatch({ type: MAP_ACTIONS.SET_MAP_MOVED, payload: false }); 
             };
             if (checkPlayerTrait("Kyn'gian", gameState) && mapState.steps % 10 === 0) {
-                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of the Tshios course through your veins." });
+                mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of the Tshios course through your veins, its vigor renewing." });
                 dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
             };
             if (checkPlayerTrait("Shrygeian", gameState) && mapState.steps % 10 === 0) {
                 const chance = Math.floor(Math.random() * 101);
-                if (chance <= 10) {
+                if (chance <= 5) {
                     mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of Shrygei runs through your veins, you are able to sing life into the land." });
                     getTreasure();
                 };                
@@ -358,6 +361,45 @@ const GameSolo = ({ user }: GameProps) => {
         };
     };
 
+    const getDangerousOpponent = async (player: Player, content: string) => {
+        try {
+            let dangerMeter: number = 0;
+            switch (content) {
+                case 'cave':
+                    dangerMeter = 6;
+                    break;
+                case 'dungeon':
+                    dangerMeter = 8;
+                    break;
+                case 'ruins':
+                    dangerMeter = 4;
+                    break;
+                case 'weather':
+                    dangerMeter = 2;
+                    break;
+                default:
+                    break;
+            };
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: true });
+            const enemyData = {
+                username: 'mirio',
+                minLevel: player.level,
+                maxLevel: player.level + dangerMeter
+            };
+            const secondResponse = await userService.getRandomEnemy(enemyData);
+            const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
+            const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data });
+            setAsceanState({ ...asceanState, 'opponent': selectedOpponent.data.level });
+            dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: response.data.data });
+            playOpponent();
+            await getOpponentDialog(selectedOpponent.data.name);
+            gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit');
+        };
+    };
+
     const getOpponent = async () => {
         gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try {
@@ -403,8 +445,8 @@ const GameSolo = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
                     }, 2000);
                     return;
-                }
-            }
+                };
+            };
             if (gameState.player.level === 2) {
                 if (chance > 0.67) {
                     const wolf: Enemy = Object.assign({}, Wolf);
@@ -424,8 +466,8 @@ const GameSolo = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
                     }, 2000);
                     return;
-                }
-            }
+                };
+            };
             if (gameState.player.level < 3) {
                 minLevel = 1;
                 maxLevel = 2;
@@ -498,7 +540,7 @@ const GameSolo = ({ user }: GameProps) => {
             } else if (gameState.player.level <= 20) {
                 minLevel = 16;
                 maxLevel = 20;
-            }
+            };
             const enemyData = {
                 username: 'mirio',
                 minLevel: minLevel,
@@ -832,19 +874,18 @@ const GameSolo = ({ user }: GameProps) => {
             switch (content) {
                 case 'cave': {
                     if (chance > 99) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
                         await getTreasure();
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000)
-                    } else if (chance > 98) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                    } else if (chance > 96) {
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
-        
-                        await getOpponent();
+                        await getDangerousOpponent(gameState.player, 'cave');
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000);
@@ -852,12 +893,21 @@ const GameSolo = ({ user }: GameProps) => {
                     break;
                 };
                 case 'dungeon': {
-                    if (chance > 95) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                    if (chance > 98) {
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `The darkness creeping over the dim and sallow haunt stresses your sight of fleeting light, unsure it.` });
+                        gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                        gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You're unsure of what there is to witness, yet feel its tendrils beckoning. The darkness creeping over the dim and sallow haunt stresses your sight of fleeting light, vanishing traces of glitter reflect the void of your surroundings.` });
+                        
+                        setTimeout(() => {
+                            gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
+                            interactPhenomena();
+                        }, 4000)
+                    } else if (chance > 93) {
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getDangerousOpponent(gameState.player, 'dungeon');
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000);
@@ -866,11 +916,11 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 case 'ruins': {
                     if (chance > 97) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getDangerousOpponent(gameState.player, 'ruins');
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000);
@@ -887,7 +937,7 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 case 'weather': {
                     if (chance > 99) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
                         await getTreasure();
@@ -895,11 +945,11 @@ const GameSolo = ({ user }: GameProps) => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000)
                     } else if (chance > 98) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone to your presence!` });
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Your encroaching footsteps has alerted someone or some thing to your presence. Or perhaps they simply grew tired of watching. \n\n Luck be to you, ${gameState?.player?.name}.` });
         
-                        await getOpponent();
+                        await getDangerousOpponent(gameState.player, 'weather');
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000);
@@ -924,7 +974,7 @@ const GameSolo = ({ user }: GameProps) => {
                 };
                 case 'wonder': {
                     if (chance > 97) {
-                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
+                        gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
                         await getTreasure();
