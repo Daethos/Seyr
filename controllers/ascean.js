@@ -13,6 +13,7 @@ const Map = require('../models/map');
 const fs = require('fs');
 const seedDB = require('./equipment').seedDB;
 const zlib = require('zlib');
+const checkDeificConcerns = require('../services/deityServices');
 
 module.exports = {
     create,
@@ -57,8 +58,30 @@ module.exports = {
     updateStatistics,
     recordNonCombatStatistic,
     recordCombatStatistic,
+    recordSedyrist,
     recordThievery,
     sacrificeExp,
+};
+
+async function recordSedyrist(req, res) {
+    try {
+        let { asceanID, successes, failures, total, totalValue } = req.body;
+        console.log(asceanID, successes, failures, total, totalValue, "destructured req.body")
+        let ascean = await Ascean.findById(asceanID);
+        ascean.statistics.sedyrist.successes += successes;
+        ascean.statistics.sedyrist.failures += failures;
+        ascean.statistics.sedyrist.total += total;
+        ascean.statistics.sedyrist.totalValue += totalValue;
+        if (ascean.statistics.relationships.deity.name !== '') {
+            const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, 'sedyrist', 'value');
+            ascean.statistics = newStats;
+        };
+        await ascean.save();
+        res.status(200).json(ascean.statistics);
+    } catch (err) {
+        console.log(err, "error in recordSedyrist")
+        res.status(400).json({ message: "Error in recordSedyrist" })
+    };
 };
 
 async function recordThievery(req, res) {
@@ -70,12 +93,16 @@ async function recordThievery(req, res) {
         ascean.statistics.thievery.failures += failures;
         ascean.statistics.thievery.total += total;
         ascean.statistics.thievery.totalValue += totalValue;
+        if (ascean.statistics.relationships.deity.name !== '') {
+            const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, 'thievery', 'value');
+            ascean.statistics = newStats;
+        };
         await ascean.save();
         res.status(200).json(ascean.statistics);
     } catch (err) {
         console.log(err, "error in recordThievery")
         res.status(400).json({ message: "Error in recordThievery" })
-    }
+    };
 };
 
 async function recordNonCombatStatistic(req, res) {
@@ -94,6 +121,10 @@ async function recordNonCombatStatistic(req, res) {
             res.status(400).json({ message: "Statistic not found" });
         };
         ascean.statistics[newType] = statistic;
+        if (ascean.statistics.relationships.deity.name !== '') {
+            const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, name, newType);
+            ascean.statistics = newStats;
+        };
         console.log(ascean.statistics[newType], "in record non-combat statistic saved ?");
         await ascean.save();
         res.status(200).json(ascean.statistics);
@@ -128,6 +159,11 @@ async function recordCombatStatistic(req, res) {
         statistic.attacks.physical += typeAttackData.reduce((count, type) => type === 'Physical' ? count + 1 : count, 0);
         statistic.damage.type = statistic.damage.type.concat(...typeDamageData).flat();
         statistic.deities = statistic.deities.concat(...deityData).flat();
+
+        if (wins > losses && ascean.statistics.relationships.deity.name !== '') {
+            const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, 'combat', 'value');
+            ascean.statistics = newStats;
+        };
 
         ascean.statistics.combat = statistic;
         await ascean.save();
@@ -320,7 +356,7 @@ async function evaluateDeity(req, res) {
         const behavior = evaluateBehavior(keywordCount);
 
         console.log(behavior, "Behavior");
-
+        if (ascean.statistics.relationships.deity.name === '') ascean.statistics.relationships.deity.name = deity;
         ascean.statistics.relationships.deity.Compliant.occurrence += keywordCount.Compliant.occurrence;
         ascean.statistics.relationships.deity.Faithful.occurrence += keywordCount.Faithful.occurrence;
         ascean.statistics.relationships.deity.Unfaithful.occurrence += keywordCount.Unfaithful.occurrence;

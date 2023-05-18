@@ -346,6 +346,7 @@ const GameSolo = ({ user }: GameProps) => {
     const getOpponentDialog = async (enemy: string) => {
         try {
             const response = getNpcDialog(enemy);
+            if (!response) return;
             gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
@@ -355,6 +356,7 @@ const GameSolo = ({ user }: GameProps) => {
     const getNPCDialog = async (enemy: string) => {
         try {
             const response = getMerchantDialog(enemy);
+            if (!response) return;
             gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
@@ -1007,13 +1009,13 @@ const GameSolo = ({ user }: GameProps) => {
 
     const interactPhenomena = async () => {
         try {
-            // if (gameState?.player.level > gameState?.player?.statistics?.relationships?.deity?.behaviors.length) {
-            //     const chance = Math.floor(Math.random() * 101);
-            //     if (chance > 0) {
-            //         gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: true });
-            //         return;
-            //     };
-            // };
+            if (gameState?.player?.statistics?.relationships?.deity?.behaviors.length < 2) {
+                const chance = Math.floor(Math.random() * 101);
+                if (chance > 0) {
+                    gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: true });
+                    return;
+                };
+            };
             const fyeran: number = checkPlayerTrait('Fyeran', gameState) ? 10 : 0;
             const caeren = state?.player_attributes?.totalCaeren + fyeran;
             const level = gameState?.player?.level;

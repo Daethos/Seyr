@@ -36,7 +36,7 @@ const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessin
                 <>
                 </>
             ) : ( '' ) }
-            <p style={{ color: 'gold' }}>Current Prayer: {state.playerBlessing}</p>
+            <p style={{ color: 'gold' }}>Current Prayer: {state.playerBlessing}</p> 
             <Form.Select name="Prayer" className='combat-settings' value={state.playerBlessing} onChange={setPrayerBlessing}>
             {prayers.map((prayer: string, index: number) => {
                 return ( <option key={index} value={prayer}>{prayer}</option> )

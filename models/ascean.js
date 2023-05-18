@@ -357,6 +357,12 @@ const asceanSchema = new Schema(
                     total: { type: Number, default: 0 },
                 },
             },
+            sedyrist: {
+                failures: { type: Number, default: 0 },
+                successes: { type: Number, default: 0 },
+                total: { type: Number, default: 0 },
+                totalValue: { type: Number, default: 0 },
+            },
             thievery: {
                 failures: { type: Number, default: 0 },
                 successes: { type: Number, default: 0 },
@@ -392,8 +398,11 @@ const asceanSchema = new Schema(
         },
         capable: {
             consume: { type: Boolean, default: false },
+            dispel: { type: Boolean, default: false },
+            enemyConsume: { type: Boolean, default: false },
             invoke: { type: Boolean, default: false },
             pray: { type: Boolean, default: false },
+            silence: { type: Boolean, default: false },
         },
         tutorial: {
             firstBoot: { type: Boolean, default: true },
