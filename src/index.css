@@ -76,7 +76,7 @@ html, body {
   min-width:280px; 
   border-radius: 1em;
   padding: 5px 10px 20px; 
-  box-shadow: 0 0 1em gold; 
+  box-shadow: 0 0 1em blueviolet; 
 }
 .stat-block.wide { width: 65%; min-width: 560px; text-align: center; }
 .stat-block.wide .section-left,

@@ -143,6 +143,57 @@ const GameSolo = ({ user }: GameProps) => {
         setMoveTimerDisplay(moveTimer);
     }, [moveTimer]);
 
+    // function drawCubeOutline(context: CanvasRenderingContext2D, x: number, y: number, size: number, canvasWidth: number = 400, canvasHeight: number = 400) {
+    //     // Set line properties (color, thickness, etc.)
+    //     context.strokeStyle = 'gold';
+    //     context.lineWidth = 2;
+      
+    //     // Calculate the coordinates for the lines of the cube panels
+    //     const panel1 = { x1: x, y1: y, x2: x + size, y2: y };
+    //     const panel2 = { x1: x + size, y1: y, x2: x + size, y2: y + size };
+    //     const panel3 = { x1: x, y1: y + size, x2: x + size, y2: y + size };
+    //     const panel4 = { x1: x, y1: y, x2: x, y2: y + size };
+    //     const panel5 = { x1: x, y1: y, x2: x + size, y2: y + size };
+      
+    //     // Draw the panels
+    //     context.beginPath();
+    //     context.moveTo(panel1.x1, panel1.y1);
+    //     context.lineTo(panel1.x2, panel1.y2);
+    //     context.stroke();
+      
+    //     context.beginPath();
+    //     context.moveTo(panel2.x1, panel2.y1);
+    //     context.lineTo(panel2.x2, panel2.y2);
+    //     context.stroke();
+      
+    //     context.beginPath();
+    //     context.moveTo(panel3.x1, panel3.y1);
+    //     context.lineTo(panel3.x2, panel3.y2);
+    //     context.stroke();
+      
+    //     context.beginPath();
+    //     context.moveTo(panel4.x1, panel4.y1);
+    //     context.lineTo(panel4.x2, panel4.y2);
+    //     context.stroke();
+       
+      
+    //     // Add perspective lines
+    //     context.beginPath();
+    //     context.moveTo(x, y); // Top-left corner
+    //     context.lineTo(0, 0); // Top-left canvas corner
+      
+    //     context.moveTo(x + size, y); // Top-right corner
+    //     context.lineTo(canvasWidth, 0); // Top-right canvas corner
+      
+    //     context.moveTo(x, y + size); // Bottom-left corner
+    //     context.lineTo(0, canvasHeight); // Bottom-left canvas corner
+      
+    //     context.moveTo(x + size, y + size); // Bottom-right corner
+    //     context.lineTo(canvasWidth, canvasHeight); // Bottom-right canvas corner
+      
+    //     context.stroke();
+    // };   
+
     const useMoveTimerEffect = (mapState: MapData) => {
         useEffect(() => {
             if (moveTimer !== 0 || moveTimer === gameState.moveTimer) return;
@@ -193,7 +244,7 @@ const GameSolo = ({ user }: GameProps) => {
                 const chance = Math.floor(Math.random() * 101);
                 if (chance <= 5) {
                     mapDispatch({ type: MAP_ACTIONS.SET_MAP_CONTEXT, payload: "The blood of Shrygei runs through your veins, you are able to sing life into the land." });
-                    getTreasure();
+                    getTreasure(2);
                 };                
             };
             if (mapState.steps > 150 && gameState.player.tutorial.firstPhenomena === true) checkTutorial('firstPhenomena', gameState.player);
@@ -211,6 +262,14 @@ const GameSolo = ({ user }: GameProps) => {
                 const newTile = await getAsceanCoords(newX, newY, mapData.map);
                 if (newTile.content === 'enemy' || newTile.content === 'npc') mapDispatch({ type: MAP_ACTIONS.SET_JOYSTICK_DISABLED, payload: true });
                 const newTiles = await getAsceanGroupCoords(newX, newY, mapData.map);
+
+                // const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+                // const context = canvas.getContext('2d');
+                // console.log(context, "Context of Canvas")
+                // if (context) {
+                //     drawCubeOutline(context, 150, 150, 100)
+                // };
+
                 const data = {
                     newTile: newTile,
                     oldTile: mapData.currentTile,
@@ -253,7 +312,7 @@ const GameSolo = ({ user }: GameProps) => {
             case 'firstLevelUp':
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstLevelUp={true} />);
             case 'firstPhenomena':
-                shakeScreen({ duration: 1000, intensity: 1 });
+                shakeScreen({ duration: 1500, intensity: 2 });
                 playReligion();
                 return setTutorialContent(<Tutorial setTutorialContent={setTutorialContent} player={player} gameDispatch={gameDispatch} firstPhenomena={true} />);
             default:
@@ -371,13 +430,13 @@ const GameSolo = ({ user }: GameProps) => {
                     dangerMeter = 6;
                     break;
                 case 'dungeon':
-                    dangerMeter = 8;
+                    dangerMeter = 10;
                     break;
                 case 'ruins':
-                    dangerMeter = 4;
+                    dangerMeter = 8;
                     break;
                 case 'weather':
-                    dangerMeter = 2;
+                    dangerMeter = 4;
                     break;
                 default:
                     break;
@@ -879,7 +938,7 @@ const GameSolo = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
-                        await getTreasure();
+                        await getTreasure(3);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000)
@@ -942,7 +1001,7 @@ const GameSolo = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
-                        await getTreasure();
+                        await getTreasure(3);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000)
@@ -979,7 +1038,7 @@ const GameSolo = ({ user }: GameProps) => {
                         gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}.` });
                         gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                         gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
-                        await getTreasure();
+                        await getTreasure(3);
                         setTimeout(() => {
                             gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                         }, 2000)
@@ -1040,7 +1099,7 @@ const GameSolo = ({ user }: GameProps) => {
                     dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
                     gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
                 } else if (chance + level > 50) {
-                    await getTreasure();
+                    await getTreasure(5);
                 } else if (chance + level > 25) {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `The faint stain of Kyosir billows from its writhing tendrils and you suddenly feel lighter to the tune of ${maxIntensity}s.` });
                     const response = await asceanAPI.setCurrency({ asceanID, currency: maxIntensity });
@@ -1232,7 +1291,7 @@ const GameSolo = ({ user }: GameProps) => {
         await chanceEncounter('wonder');
     };
 
-    const getTreasure = async () => {
+    const getTreasure = async (bonus: number) => {
         playTreasure();
         if (gameState.cityButton) {
             gameDispatch({ type: GAME_ACTIONS.SET_LEAVE_CITY, payload: false }); 
@@ -1241,7 +1300,7 @@ const GameSolo = ({ user }: GameProps) => {
             title: "Treasure!",
             description: `${gameState.player.name}, you've come across some leftover spoils or treasure, either way its yours now if you desire.`,
         } });
-        await getOneLootDrop(gameState.player.level + 4);
+        await getOneLootDrop(gameState.player.level + bonus);
         gameDispatch({ type: GAME_ACTIONS.SET_GAMEPLAY_MODAL, payload: true });
     };
 
@@ -1356,7 +1415,7 @@ const GameSolo = ({ user }: GameProps) => {
                     gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You've happened on treasure. \n\n See what you've found?` });
                     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
                     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You've happened on treasure, perhaps ${state?.weapons?.[0]?.influences?.[0]} is smiling upon you, ${gameState?.player?.name}. \n\n See what you've found?` });
-                    await getTreasure();
+                    await getTreasure(4);
                     setTimeout(() => {
                         gameDispatch({ type: GAME_ACTIONS.CLOSE_OVERLAY, payload: false });
                     }, 2000);
@@ -1788,6 +1847,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     return (
         <Container fluid id="game-container" style={background}>
+            {/* <canvas id="game-canvas" width={400} height={400}></canvas> */}
             { gameState.opponent ?
                 <>
                 <GameAscean state={state} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />

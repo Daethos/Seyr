@@ -15,6 +15,18 @@
   /* font-family: 'Cinzel'; */
   /* font-variant: small-caps; */
 }
+#game-canvas {
+  /* position: absolute; */
+  margin-top: 150%;
+  margin-left: 10%;
+  background-color: black;
+  border: 3px solid purple;
+  border-radius: 6px;
+  box-shadow: 0 0 2em purple;
+  z-index: 999;
+  width: 400px;
+  height: 400px;
+}
 *::-webkit-scrollbar {
   width: 0px;
   background: transparent;
@@ -116,37 +128,37 @@
   border-radius: 50%;
   max-width: 50vw;
   border: 2px solid #fdf6d8;
-  box-shadow: 0 0 2em #fdf6d8;
+  box-shadow: 0 0 1.5em #fdf6d8;
 }
 #godBorder-Strength {
   border-radius: 50%;
   max-width: 50vw;
   border: 2px solid #ff0000;
-  box-shadow: 0 0 2em #ff0000;
+  box-shadow: 0 0 1.5em #ff0000;
 }
 #godBorder-Agility {
   border-radius: 50%;
   max-width: 50vw;
   border: 2px solid #00ff00;
-  box-shadow: 0 0 2em #00ff00;
+  box-shadow: 0 0 1.5em #00ff00;
 }
 #godBorder-Achre {
   border-radius: 50%;
   max-width: 50vw;
   border: 2px solid blue;
-  box-shadow: 0 0 2em blue;
+  box-shadow: 0 0 1.5em blue;
 }
 #godBorder-Caeren {
   border-radius: 50%;
   max-width: 50vw;
   border: 2px solid purple;
-  box-shadow: 0 0 2em purple;
+  box-shadow: 0 0 1.5em purple;
 }
 #godBorder-Kyosir {
   border-radius: 50%;
   max-width: 50vw;
   border: 2px solid gold;
-  box-shadow: 0 0 2em gold;
+  box-shadow: 0 0 1.5em gold;
 }
 
 @keyframes typing {

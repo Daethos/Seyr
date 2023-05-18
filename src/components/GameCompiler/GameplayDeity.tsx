@@ -107,7 +107,7 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
         });
         const dialogTimeout = setTimeout(() => {
             setShowDialogOptions(true);
-        }, dialogNodes[currentNodeIndex].text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
+        }, dialogNodes?.[currentNodeIndex].text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
 
         return () => {
             clearTimeout(dialogTimeout);
@@ -233,6 +233,7 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
     };
 
     const resolveDeity = async () => {
+        gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
         const data = {
             asceanID: ascean._id,
             deity: highestFaith(),
@@ -252,7 +253,6 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
         gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
         gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
         gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: response.journal });
-        gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
 
     };
     const highestFaith = () => {

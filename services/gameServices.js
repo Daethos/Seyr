@@ -2812,7 +2812,7 @@ function roundToTwoDecimals(num) {
 
 const prayerSplitter = async (combatData, prayer) => {
     let originalPrayer = combatData.playerBlessing;
-    combatData.playerBlessing = prayer;
+    combatData.playerBlessing = prayer === '' ? 'Buff' : prayer;
 
     
         // actionData: combatData.actionData, 
@@ -2895,19 +2895,19 @@ const instantActionSplitter = async (combatData) => {
             await prayerSplitter(combatData, 'Buff');
             break;
         case 'Strength':
-            await prayerSplitter(combatData, 'Buff');
+            await prayerSplitter(combatData, combatData.playerBlessing);
             await instantDamageSplitter(combatData, 'strength');
             break;
         case 'Agility':
-            await prayerSplitter(combatData, 'Buff');
+            await prayerSplitter(combatData, combatData.playerBlessing);
             await instantDamageSplitter(combatData, 'agility');
             break;
         case 'Achre':
-            await prayerSplitter(combatData, 'Buff');
+            await prayerSplitter(combatData, combatData.playerBlessing);
             await instantDamageSplitter(combatData, 'achre');
             break;
         case 'Caeren':
-            await prayerSplitter(combatData, 'Buff');
+            await prayerSplitter(combatData, combatData.playerBlessing);
             await instantDamageSplitter(combatData, 'caeren');
             break;
         case 'Kyosir':
