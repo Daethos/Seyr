@@ -366,8 +366,7 @@ class StatusEffect {
 
     setName(deity) {
         return this.name = `Gift of ${deity}`;
-    };
-    // TODO:FIXME: Another Computer/Enemy Fix
+    }; 
     setDebuffTarget(data, player, prayer) {
         if (prayer !== 'Debuff') return null;
         let enemyWeapon = data.computer_weapons === undefined ? data.enemy_weapons[0].name : data.computer_weapons[0].name;
@@ -397,7 +396,7 @@ class StatusEffect {
         let attribute = 0;
         let type = '';
         if (deity === 'Achreo' || deity === 'Astra' || deity === "Quor'ei" || deity === "Senari") {
-            if (weapon.grip === 'One Hand') {
+            if (weapon.grip === 'One Hand' || weapon.type === 'Bow') {
                 type = 'Achre';
                 attribute = (attributes.totalAchre + weapon.achre) * (player.mastery === type ? 1.5 : 1.25);
             } else {

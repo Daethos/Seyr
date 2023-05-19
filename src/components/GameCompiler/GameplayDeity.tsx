@@ -96,18 +96,18 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
     useEffect(() => {
         gameDispatch({
             type: GAME_ACTIONS.SET_CURRENT_DIALOG_NODE,
-            payload: dialogNodes[currentNodeIndex]
+            payload: dialogNodes?.[currentNodeIndex]
         });
         gameDispatch({
             type: GAME_ACTIONS.SET_RENDERING,
             payload: {
-                options: dialogNodes[currentNodeIndex]?.options,
-                text: dialogNodes[currentNodeIndex]?.text
+                options: dialogNodes?.[currentNodeIndex]?.options,
+                text: dialogNodes?.[currentNodeIndex]?.text
             },
         });
         const dialogTimeout = setTimeout(() => {
             setShowDialogOptions(true);
-        }, dialogNodes?.[currentNodeIndex].text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
+        }, dialogNodes?.[currentNodeIndex]?.text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
 
         return () => {
             clearTimeout(dialogTimeout);
@@ -211,19 +211,25 @@ interface DeityProps {
 const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameState, gameDispatch, loadingDeity }: DeityProps) => {
     const [playerResponses, setPlayerResponses] = useState<string[]>([]);
     const [keywordResponses, setKeywordResponses] = useState<string[]>([]);
+    const [dialogNodes, setDialogNodes] = useState<DialogNode[]>([]);
+    const deityRef = useRef(null); 
     const [enemy, setEnemy] = useState({
         name: '',
     });
     useEffect(() => {
         setEnemy({
-            name: ascean?.statistics.relationships.deity.name || highestFaith(),
+            name: ascean?.statistics.relationships.deity.name === '' ? highestFaith() : ascean?.statistics.relationships.deity.name,
         });
+        getDialogNodes();
     }, [ascean]); 
 
-    const deityRef = useRef(null); 
     const actions = {
         giveExp: () => giveExp(),
         resolveDeity: () => resolveDeity(),
+    };
+
+    const getDialogNodes = async () => {
+        setDialogNodes(getNodesForDeity('Deity', ascean.statistics.relationships.deity));
     };
 
     const giveExp = async () => {
@@ -233,11 +239,12 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
     };
 
     const resolveDeity = async () => {
-        gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
-        const data = {
-            asceanID: ascean._id,
-            deity: highestFaith(),
-            entry: {
+        try {
+            gameDispatch({ type: GAME_ACTIONS.LOADING_DEITY, payload: false });
+            const data = {
+                asceanID: ascean._id,
+                deity: enemy.name,
+                entry: {
                 title: 'Phenomenon',
                 body: playerResponses,
                 footnote: '',
@@ -245,15 +252,17 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
                 location: 'Peering into Phenomena',
                 coordinates: { x: mapState.currentTile.x, y: mapState.currentTile.y },
                 keywords: keywordResponses,
-            }
+                }
+            };
+            console.log(data, "Data for Deity Encounter");
+            const response = await asceanAPI.evaluateDeity(data);
+            console.log(response, "Response from Deity Encounter");
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
+            gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
+            gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: response.journal });        
+        } catch (err: any) {
+            console.log(err, "Error Resolving Deity Encounter");
         };
-        console.log(data, "Data for Deity Encounter");
-        const response = await asceanAPI.evaluateDeity(data);
-        console.log(response, "Response from Deity Encounter");
-        gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
-        gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
-        gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: response.journal });
-
     };
     const highestFaith = () => {
         const influences = [ascean?.weapon_one?.influences?.[0], ascean?.weapon_two?.influences?.[0], ascean?.weapon_three?.influences?.[0], ascean?.amulet?.influences?.[0], ascean?.trinket?.influences?.[0]];
@@ -282,9 +291,11 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
                 border: "0.2em solid purple",
                 color: "gold"
         }}>
+            { dialogNodes.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', animation: "2s ease-in 0s fade" }}>
-                <DialogTree gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={ascean} enemy={enemy} dialogNodes={getNodesForDeity('Deity', ascean.statistics.relationships.deity)} actions={actions} setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} />
+                <DialogTree gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={ascean} enemy={enemy} dialogNodes={dialogNodes} actions={actions} setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} />
             </div>
+            ) : ( '' ) }
         </div>
       </Overlay>
     );
