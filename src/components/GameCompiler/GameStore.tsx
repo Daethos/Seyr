@@ -1013,6 +1013,7 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     achre: action.payload.achre,
                     caeren: action.payload.caeren,
                     kyosir: action.payload.kyosir,
+                    statistics: action.payload.statistics,
                 },
             };
         case 'SET_JOURNAL':

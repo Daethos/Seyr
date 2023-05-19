@@ -495,7 +495,7 @@ async function firstTutorial(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
         ascean.tutorial[req.params.tutorial] = false;
-        if (req.params.tutorial === 'firstPhenomena') ascean.capable.pray = true;
+        // if (req.params.tutorial === 'firstPhenomena') ascean.capable.pray = true;
         await ascean.save();
         res.status(201).json(ascean);
     } catch (err) {

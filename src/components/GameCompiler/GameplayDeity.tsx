@@ -257,7 +257,7 @@ const GameplayDeity = ({ ascean, state, dispatch, mapState, mapDispatch, gameSta
             console.log(data, "Data for Deity Encounter");
             const response = await asceanAPI.evaluateDeity(data);
             console.log(response, "Response from Deity Encounter");
-            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
+            // gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
             gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: response.journal });        
         } catch (err: any) {

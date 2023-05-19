@@ -127,6 +127,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
             const response = await asceanAPI.curseAscean(player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
             const entry = {
                 title: 'Who am I?',
                 body: `You felt the presence of... ${highestFaith()}? \n\n You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither. \n\n "Who are you?"`,
