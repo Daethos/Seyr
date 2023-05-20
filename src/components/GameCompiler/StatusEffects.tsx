@@ -36,13 +36,21 @@ export interface StatusEffect {
 };
 
 interface StatusEffectProps {
+    ascean: any;
     effect: StatusEffect;
     player?: boolean;
     spectator?: boolean;
     enemy?: boolean;
+    state: any;
+    dispatch: any;
 };
 
-const StatusEffects = ({ effect, player, spectator, enemy }: StatusEffectProps) => {
+const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch }: StatusEffectProps) => {
+
+    const consumeEnemyPrayer = (name: string, prayer: string): void => {
+        console.log('Consume Enemy Prayer', name, prayer);
+    };
+
     const effectPopover = (
         <Popover className='text-info' id='popover' style={ spectator ? { zIndex: 9999 } :  { } }>
             <Popover.Header id='popover-header' as='h2'>{effect?.name}</Popover.Header>
@@ -70,9 +78,11 @@ const StatusEffects = ({ effect, player, spectator, enemy }: StatusEffectProps) 
                     {effect?.effect?.healing ? <>Heal (per Round): {Math.round(effect?.effect?.healing * 0.33)} <br /> </> : ''}
                     {effect?.effect?.damage ? <>Damage (per Round): {Math.round(effect?.effect?.damage * 0.33)} <br /> </> : ''}
                 </p>
+                { !player && ascean.capable.enemyConsume && !state.enemyPrayerConsumed ? <><Button variant='' style={{ color: 'purple' }} onClick={() => consumeEnemyPrayer(effect.name, effect.prayer)}>Consume</Button></> : '' }
             </Popover.Body>
         </Popover>
     );
+
 
     const borderColor = (prayer: string) => {
         switch (prayer) {

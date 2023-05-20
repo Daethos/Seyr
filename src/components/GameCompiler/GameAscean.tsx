@@ -12,10 +12,11 @@ interface Props {
   loading: boolean;
   totalPlayerHealth: number;
   state: any;
+  dispatch: any;
   damage?: boolean;
 };
 
-const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
+const GameAscean = ({ state, dispatch, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
 
   const getBlockStyle = {
     marginTop: state.playerEffects.length > 0 ? '-19%' : '6%',
@@ -33,7 +34,7 @@ const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHea
       <div id='game-block' className="game-block" style={getBlockStyle}>
         {state.playerEffects.length > 0 ?
           (state.playerEffects.map((effect: any, index: number) => {
-            return ( <StatusEffects effect={effect} player={true} key={index} /> )
+            return ( <StatusEffects state={state} dispatch={dispatch} ascean={ascean} effect={effect} player={true} key={index} /> )
         })) : '' }
       <div className="game-block-top">
       <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
@@ -87,7 +88,7 @@ const GameAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHea
     </div>
     {state.computerEffects.length > 0 ?
           (state.computerEffects.map((effect: any, index: number) => {
-            return ( <StatusEffects effect={effect} key={index} /> )
+            return ( <StatusEffects state={state} dispatch={dispatch} ascean={ascean} effect={effect} key={index} /> )
         })) : '' }
     </div>
     }

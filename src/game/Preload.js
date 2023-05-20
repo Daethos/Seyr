@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import NewText from './NewText.js' 
+import Player from "./Player.js";
 import PlayerHelm from "../game/PlayerHelm";
 import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
@@ -17,11 +18,12 @@ export default class Preload extends Phaser.Scene {
         this.width = 340;
         this.height = 36;
         this.ascean = {};
-    }
+    };
 
     init(data) {
-        this.gameData = data;
-    }
+        console.log(data.gameData, 'Preload Scene')
+        this.gameData = data.gameData;
+    };
 
     preload() {
         this.bg = this.add.graphics({ x: 0, y: 0 });
@@ -29,9 +31,9 @@ export default class Preload extends Phaser.Scene {
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         this.load.script('generic', 'phaser-virtual-joystick.min.js');
         this.load.atlas('generic', joystickPng, joystickJson);
-        PlayerHelm.preload(this);
-        PlayerArmor.preload(this);
-        PlayerLegs.preload(this);
+        Player.preload(this);
+        // PlayerArmor.preload(this);
+        // PlayerLegs.preload(this);
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
         this.load.image('tiles', Tileset);
         this.load.image('terrain', AtlasTerrain);
@@ -51,11 +53,11 @@ export default class Preload extends Phaser.Scene {
         },
             callbackScope: this
         });
-        
+        console.log(this.ascean, 'Creating Ascean in Preload Scene');
         window.addEventListener('get-ascean', this.asceanFinishedEventListener)
         const getAscean = new CustomEvent('request-ascean');
         window.dispatchEvent(getAscean);
-    }
+    };
     
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
@@ -70,7 +72,7 @@ export default class Preload extends Phaser.Scene {
             'Loading Game',
             'preload',
             0.5
-        )
+        );
         this.txt_progress = new NewText(
             this,
             this.centerX,
@@ -78,13 +80,13 @@ export default class Preload extends Phaser.Scene {
             'Loading...',
             'preload',
             { x: 0.5, y: 1 }
-        )
+        );
         let x = 10;
         let y = this.centerY + 5;
         this.progress = this.add.graphics({ x: x, y: y });
         this.border = this.add.graphics({ x: x, y: y })
         this.load.on('progress', this.onProgress, this);
-    }
+    };
     onProgress(val) {
         this.progress.clear();
         this.progress.fillStyle('0xFFFFFF', 1);
@@ -95,5 +97,5 @@ export default class Preload extends Phaser.Scene {
         this.border.strokeRect(0, 0, this.width * val, this.height, 2);
 
         this.txt_progress.setText(Math.round(val * 100) + '%');
-    }
-}
+    };
+};

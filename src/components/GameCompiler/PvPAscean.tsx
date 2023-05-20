@@ -1,3 +1,4 @@
+
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import Loading from '../Loading/Loading';
 import GameHealthBar from './GameHealthBar';
@@ -13,12 +14,13 @@ interface Props {
   loading: boolean;
   totalPlayerHealth: number;
   state: any;
+  dispatch: any;
   damage?: boolean;
   style?: boolean;
   spectator?: boolean;
 };
 
-const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage, style, spectator }: Props) => {
+const PvPAscean = ({ state, dispatch, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage, style, spectator }: Props) => {
   useEffect(() => {
     console.log(style, 'PvPAscean Mounted');
     return () => {
@@ -46,7 +48,7 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
       <div id='game-block' className={spectator ? "game-block spectator" : "game-block"} style={getBlockStyle}>
         {state.playerEffects.length > 0 ?
           (state.playerEffects.map((effect: any, index: number) => {
-            return ( <StatusEffects effect={effect} player={true} key={index} /> )
+            return ( <StatusEffects state={state} dispatch={dispatch} ascean={ascean} effect={effect} player={true} key={index} /> )
         })) : '' }
       <div className="game-block-top">
       <GamePlayerStats attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
@@ -102,7 +104,7 @@ const PvPAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHeal
       </div>
       {state.enemyEffects.length > 0 ?
         (state.enemyEffects.map((effect: any, index: number) => {
-          return ( <StatusEffects effect={effect} key={index} /> )
+          return ( <StatusEffects state={state} dispatch={dispatch} ascean={ascean} effect={effect} key={index} /> )
       })) : '' }
     </div>
     }

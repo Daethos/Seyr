@@ -1,0 +1,40 @@
+{
+    "anims": [
+        {
+            "key": "rolling",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_0"
+                },
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_1"
+                },
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_2"
+                },
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_3"
+                },
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_4"
+                },
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_5"
+                },
+                {
+                    "key": "rolling",
+                    "frame": "player_roll_48x48_6"
+                }
+            ]
+        }
+    ]
+}

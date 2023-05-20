@@ -27,53 +27,24 @@ export const useDocumentEvent = (event: string, callback: any) => {
 };
 
 interface Props {
-    user: any;
-    ascean: any;
-    weaponOne: any;
-    weaponTwo: any;
-    weaponThree: any;
-    totalPlayerHealth: number;
-    currentPlayerHealth: number;
-    attributes: any;
-    playerDefense: any;
-    levelUp: boolean;
-    setLevelUp: any;
+    user: any; 
     gameChange: boolean;
     setGameChange: React.Dispatch<React.SetStateAction<boolean>>;
+    state: any;
+    dispatch: any;
+    gameState: any;
+    gameDispatch: any;
+    asceanState: any;
+    setAsceanState: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlayerHealth, currentPlayerHealth, attributes, playerDefense, levelUp, setLevelUp, gameChange, setGameChange }: Props) => {
-    const [gameState, setGameState] = useState<any>({});
+const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState }: Props) => {
+    const [currentGame, setCurrentGame] = useState<any>({})
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
     const [fullScreen, setFullScreen] = useState<boolean>(false);
-    const [messages, setMessages] = useState<any>([]);
-    const [gameData, setGameData] = useState<any>({
-        ascean: ascean,
-        user: user,
-        weapon_one: weaponOne,
-        weapon_two: weaponTwo,
-        weapon_three: weaponThree,
-        total_player_health: totalPlayerHealth,
-        current_player_health: currentPlayerHealth,
-        player_attributes: attributes,
-        player_defense: playerDefense
-    });
-    const [asceanState, setAsceanState] = useState({
-        ascean: ascean,
-        constitution: 0,
-        strength: 0,
-        agility: 0,
-        achre: 0,
-        caeren: 0,
-        kyosir: 0,
-        level: ascean.level,
-        experience: ascean.experience,
-        experienceNeeded: ascean.level * 1000,
-        mastery: ascean.mastery,
-        faith: ascean.faith,
-    })
+    const [messages, setMessages] = useState<any>([]); 
     const { asceanID } = useParams();
     const [loading, setLoading] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
@@ -98,7 +69,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             zoom: 1,
         },
         data: {
-            ascean: ascean,
+            ascean: state.player,
             user: user
         },
         physics: {
@@ -129,7 +100,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             ],
         },
         backgroundColor: '#000',
-    })
+    });
     let canvasElement: any;
     const startGame = useCallback(async () => {
         try {
@@ -142,7 +113,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                 console.log(canvasElement, 'Canvas Element Before')
             };
             gameRef.current = new Phaser.Game(config);
-            setGameState(gameRef.current);
+            setCurrentGame(gameRef.current);
             canvasElement = document.querySelector('#story-game');
             setTimeout(() => {
                 setLoading(false);
@@ -150,12 +121,11 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game')
         };
-    }, [ascean]);
+    }, [asceanID]);
     
     const levelUpAscean = async (vaEsai: any) => {
         try {
-            let response = await asceanAPI.levelUp(vaEsai);
-            setLevelUp(true);
+            let response = await asceanAPI.levelUp(vaEsai); 
             setAsceanState({
                 ...asceanState,
                 ascean: response.data,
@@ -176,28 +146,17 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
         };
     };
 
-    useEffect(() => {
-        setGameData({
-            ascean: ascean,
-            user: user,
-            weapon_one: weaponOne,
-            weapon_two: weaponTwo,
-            weapon_three: weaponThree,
-            total_player_health: totalPlayerHealth,
-            current_player_health: currentPlayerHealth,
-            player_attributes: attributes,
-            player_defense: playerDefense
-        });
-        setTimeout(() => {
+    useEffect(() => { 
+        const newGame = setTimeout(() => {
             startGame();
         }, 500);
-    }, [ascean, asceanID]);
-
+        return () => clearTimeout(newGame);
+    }, [state.player]);
 
     const sendAscean = async () => {
         console.log('Event Listener Added');
         const asceanData = new CustomEvent('get-ascean', {
-            detail: gameData
+            detail: state.player
         });
         window.dispatchEvent(asceanData);
     };
@@ -218,7 +177,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             window.removeEventListener('request-ascean', sendAscean);
             window.removeEventListener('dialog-box', createDialog);
         };
-    }, [ascean]);
+    }, [asceanID]);
 
     const resizeGame = () => {
         let game_ratio = 360 / 480;
@@ -316,7 +275,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
             </Modal>
             <div id='ui-hud' className='mt-3 ui-hud'>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>{ascean.name}</h3>
+                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>{state.player.name}</h3>
                 </Button>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Inventory</h3>
@@ -328,8 +287,7 @@ const HostScene = ({ user, ascean, weaponOne, weaponTwo, weaponThree, totalPlaye
                     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Settings</h3>
                 </Button>
             { showPlayer ?
-                ( <StoryAscean ascean={ascean} weaponOne={weaponOne} weaponTwo={weaponTwo} weaponThree={weaponThree} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean}
-                    currentPlayerHealth={currentPlayerHealth} totalPlayerHealth={totalPlayerHealth} attributes={attributes} playerDefense={playerDefense} />
+                ( <StoryAscean ascean={state.player} state={state} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
             </div>
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>

@@ -1,0 +1,40 @@
+{
+    "anims": [
+        {
+            "key": "stab",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_0"
+                },
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_1"
+                },
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_2"
+                },
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_3"
+                },
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_4"
+                },
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_5"
+                },
+                {
+                    "key": "stab",
+                    "frame": "player_sword_stab_96x48_6"
+                }
+            ]
+        }
+    ]
+}

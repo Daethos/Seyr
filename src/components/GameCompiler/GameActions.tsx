@@ -37,8 +37,13 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
   const [prayerModal, setPrayerModal] = useState<boolean>(false);
   const { combatInitiated } = state;
   const counters = ['attack', 'counter', 'dodge', 'posture', 'roll'];
-  const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
+  // const prayers = ['Buff', 'Heal', 'Debuff', 'Damage'];
+  const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage' ]);
   const dropdownRef = useRef<HTMLSelectElement | null>(null);
+
+  useEffect(() => {
+    setupPrayers(gameState.player);
+  }, [gameState.player]);
 
   useEffect(() => {
     if (currentAction === 'counter') {
@@ -87,7 +92,6 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
       clearTimeout(instantTimer);
     };
   }, [gameState.instantStatus, gameDispatch]);
-  
 
   useEffect(() => {
     const dodgeTimer = setTimeout(() => {
@@ -113,6 +117,20 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
     if (state.prayerSacrifice === '' && state.prayerSacrificeName === '') return;
     handlePrayer({ preventDefault: () => {} });
   }, [state.prayerSacrifice]);
+
+  const setupPrayers = (player: any) => {
+    let extraPrayers: string[] = [];
+    if (player.capable.avarice) extraPrayers.push('Avarice');
+    if (player.capable.denial) extraPrayers.push('Denial');
+    if (player.capable.dispel) extraPrayers.push('Dispel');
+    if (player.capable.silence) extraPrayers.push('Silence');
+    if (extraPrayers.length > 0) {
+      setPrayers([
+        ...prayers,
+        ...extraPrayers
+      ]);
+    };
+  };
 
   const handlePrayerMiddleware = async (effect: StatusEffect) => {
     dispatch({ type: ACTIONS.SET_PRAYER_SACRIFICE, payload: effect });

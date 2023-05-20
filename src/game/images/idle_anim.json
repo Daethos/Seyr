@@ -1,0 +1,52 @@
+{
+    "anims": [
+        {
+            "key": "idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_0"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_1"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_2"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_3"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_4"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_5"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_6"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_7"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_8"
+                },
+                {
+                    "key": "idle",
+                    "frame": "character_idle_48x48_9"
+                }
+            ]
+        }
+    ]
+}

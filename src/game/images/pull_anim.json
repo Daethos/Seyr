@@ -1,0 +1,36 @@
+{
+    "anims": [
+        {
+            "key": "pull",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "pull",
+                    "frame": "player_pull_48x48_0"
+                },
+                {
+                    "key": "pull",
+                    "frame": "player_pull_48x48_1"
+                },
+                {
+                    "key": "pull",
+                    "frame": "player_pull_48x48_2"
+                },
+                {
+                    "key": "pull",
+                    "frame": "player_pull_48x48_3"
+                },
+                {
+                    "key": "pull",
+                    "frame": "player_pull_48x48_4"
+                },
+                {
+                    "key": "pull",
+                    "frame": "player_pull_48x48_5"
+                }
+            ]
+        }
+    ]
+}

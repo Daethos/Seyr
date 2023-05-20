@@ -1850,7 +1850,7 @@ const GameSolo = ({ user }: GameProps) => {
             {/* <canvas id="game-canvas" width={400} height={400}></canvas> */}
             { gameState.opponent ?
                 <>
-                <GameAscean state={state} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+                <GameAscean state={state} dispatch={dispatch} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
                 <CombatOverlay 
                     ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                     playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
@@ -1880,7 +1880,7 @@ const GameSolo = ({ user }: GameProps) => {
             { asceanState.ascean.experience >= asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
-            <GameAscean state={state} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <GameAscean state={state} dispatch={dispatch} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
             { state.combatEngaged ? 
                 <>
                     <GameAnimations 

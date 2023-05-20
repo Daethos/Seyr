@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Player from './Player';
 import PlayerHelm from "../game/PlayerHelm";
 import PlayerArmor from "../game/PlayerArmor";
 import PlayerLegs from "../game/PlayerLegs";
@@ -15,6 +16,7 @@ export default class Play extends Phaser.Scene {
     }
     
     init(data) {
+        console.log(data, "Data in Play")
         this.data = data;
         this.gameData = this.data.gameData.ascean.gameData.ascean;
         this.CONFIG = this.sys.game.config;
@@ -32,38 +34,7 @@ export default class Play extends Phaser.Scene {
 
     }
     
-    create() {
-        let player_armor = this.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
-        let player_helm = this.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
-        let player_legs = this.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
-        if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes('mask') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
-            player_helm = player_helm.replace(/quor'ite/g, 'earth');
-            player_helm = player_helm.replace(/hood/g, 'helm');
-            player_helm = player_helm.replace(/mask/g, 'helm');
-            player_helm = player_helm.replace(/knight's/g, 'knight');
-            player_helm = player_helm.replace(/marauder's/g, 'marauder');
-            player_helm = player_helm.replace(/licivitan/g, 'legion');
-        }
-        if (player_armor.includes('cuirass') || player_armor.includes('robes') || player_armor.includes("quor'ite") || player_armor.includes("knight's") || player_armor.includes("marauder's") || player_armor.includes('licivitan')) {
-            player_armor = player_armor.replace(/cuirass/g, 'armor');
-            player_armor = player_armor.replace(/robes/g, 'armor');
-            player_armor = player_armor.replace(/quor'ite/g, 'earth');
-            player_armor = player_armor.replace(/knight's/g, 'knight');
-            player_armor = player_armor.replace(/marauder's/g, 'marauder');
-            player_armor = player_armor.replace(/licivitan/g, 'legion');
-        }
-        if (player_legs.includes('greaves') || player_legs.includes('pants') || player_legs.includes("quor'ite") || player_legs.includes("knight's") || player_legs.includes("marauder's") || player_legs.includes('licivitan')) {
-            player_legs = player_legs.replace(/greaves/g, 'legs');
-            player_legs = player_legs.replace(/pants/g, 'legs');
-            player_legs = player_legs.replace(/quor'ite/g, 'earth');
-            player_legs = player_legs.replace(/knight's/g, 'knight');
-            player_legs = player_legs.replace(/marauder's/g, 'marauder');
-            player_legs = player_legs.replace(/licivitan/g, 'legion');
-        }
-
-        let armor_texture = player_armor.replace('_armor', '');
-        let helm_texture = player_helm.replace('_helm', '');
-        let legs_texture = player_legs.replace('_legs', '');
+    create() { 
 
         const map = this.make.tilemap({ key: 'map' });
         const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
@@ -76,42 +47,17 @@ export default class Play extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(layer2);
         this.map = map;
 
-
-        this.playerHelm = new PlayerHelm({scene: this, x: 100, y: 100, texture: helm_texture, frame: `${player_helm}_idle`});
-        this.playerArmor = new PlayerArmor({scene: this, x: 100, y: 110, texture: armor_texture, frame: `${player_armor}_idle`});
-        this.playerLegs = new PlayerLegs({scene: this, x: 100, y: 120, texture: legs_texture, frame: `${player_legs}_idle`});
-
-        // Get the top and bottom coordinates of each object
-        let objectATop = this.playerHelm.getTopLeft().y;
-        let objectABottom = this.playerHelm.getBottomRight().y;
-        let objectBTop = this.playerArmor.getTopLeft().y;
-        let objectBBottom = this.playerArmor.getBottomRight().y;
-        let objectCTop = this.playerLegs.getTopLeft().y;
-        let objectCBottom = this.playerLegs.getBottomRight().y;
-
-        // Calculate the total height of all three objects
-        let totalHeight = objectATop - objectABottom + objectBTop - objectBBottom + objectCTop - objectCBottom;
-
-        let objectA = this.playerHelm;
-        let objectB = this.playerArmor;
-        let objectC = this.playerLegs;
-
-        console.log(objectA.displayHeight, objectB.displayHeight, objectC.displayHeight, ' <- Widths');
-
-        objectB.setOrigin(0.5, 0.5);
-        objectB.setPosition(objectA.x, objectA.y + objectA.displayHeight / 2 + objectB.displayHeight / 2 - 1);
-
-        objectC.setOrigin(0.5, 0.5);
-        objectC.setPosition(objectB.x, objectB.y + objectB.displayHeight / 2 + objectC.displayHeight / 2 - 1);
-
-
-        this.playerHelm = objectA;
-        this.playerArmor = objectB;
-        this.playerLegs = objectC;
+        this.player = new Player({scene: this, x: 100, y: 100, texture: 'player', frame: 'player_idle_0'}); 
+        this.player.inputKeys = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+        });
 
         let camera = this.cameras.main;
-        camera.zoom = 1;
-        camera.startFollow(this.playerArmor);
+        camera.zoom = 1.25;
+        camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 1024, 1024);
         var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
@@ -128,9 +74,7 @@ export default class Play extends Phaser.Scene {
             // enable: true
         });
         joystick.setScrollFactor(0);
-        this.playerArmor.joystick = joystick;
-        this.playerLegs.joystick = joystick;
-        this.playerHelm.joystick = joystick;
+        this.player.joystick = joystick; 
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
         // this.stick.alignBottomLeft(20);
 
@@ -161,7 +105,7 @@ export default class Play extends Phaser.Scene {
                     this,
                     this.centerX,
                     this.centerY + 140,
-                    `Welcome to the Seyr of Daethos, ${this.gameData.ascean.name}! What do you do when you don't know what to do?`,
+                    `Welcome to the Seyr of Daethos, ${this.gameData.name}! What do you do when you don't know what to do?`,
                     'play',
                     0.5,
                     this.game,
@@ -183,19 +127,11 @@ export default class Play extends Phaser.Scene {
  
 
     update() {
-        
-        const gameObjects = this.add.group([this.playerHelm, this.playerArmor, this.playerLegs]);
+        this.player.update(this); 
         const boundaryTiles = this.map.filterTiles((tile) => {
             return tile.properties.collides;
           }, this, 0, 0, this.map.width, this.map.height);
-          
-        this.playerHelm.update(this);
-        this.playerArmor.update(this);
-        this.playerLegs.update(this);
-
-        if (this.alignmentCheck( this.playerHelm, this.playerArmor, this.playerLegs)) {
-            this.snapIntoAlignment();
-        }
+           
     }
 
     pause() {
@@ -204,33 +140,5 @@ export default class Play extends Phaser.Scene {
     resume() {
         this.scene.resume();
     }
-
-    alignmentCheck(helm, armor, legs) {
-        if (helm.x !== armor.x || helm.x !== legs.x || armor.x !== legs.x) {
-            return true;
-        }
-        if (armor.y !== (helm.y + helm.displayHeight / 2 + armor.displayHeight / 2 - 1) && (armor.y - (helm.y +helm.displayHeight / 2 + armor.displayHeight / 2 - 1)) > 0.2 ) {
-            return true;
-        }
-        if (legs.y !== (armor.y + armor.displayHeight / 2 + legs.displayHeight / 2 - 1) && (legs.y - (armor.y + armor.displayHeight / 2 + legs.displayHeight / 2 - 1)) > 0.2) {
-            return true;
-        }
-        return false;
-    }
-
-    snapIntoAlignment() {
-        let objectA = this.playerHelm;
-        let objectB = this.playerArmor;
-        let objectC = this.playerLegs;
-
-        // objectB.setOrigin(0.5, 0.5);
-        objectB.setPosition(objectA.x, objectA.y + objectA.displayHeight / 2 + objectB.displayHeight / 2 - 1);
-
-        // objectC.setOrigin(0.5, 0.5);
-        objectC.setPosition(objectB.x, objectB.y + objectB.displayHeight / 2 + objectC.displayHeight / 2 - 1);
-
-        this.playerHelm = objectA;
-        this.playerArmor = objectB;
-        this.playerLegs = objectC;
-    }
+ 
 }

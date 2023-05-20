@@ -2525,6 +2525,7 @@ const actionSplitter = async (combatData) => {
         computerBlessing: combatData.computerBlessing,
         prayerSacrifice: combatData.prayerSacrifice,
         prayerSacrificeName: combatData.prayerSacrificeName,
+        enemyPrayerConsumed: combatData.enemyPrayerConsumed,
         combatInitiated: combatData.combatInitiated,
         actionStatus: combatData.actionStatus,
         gameIsLive: combatData.gameIsLive,
@@ -2551,7 +2552,7 @@ const actionSplitter = async (combatData) => {
     const player_counter = newData.counter_guess;
     let computer_counter = newData.computer_counter_guess;
     let computer_action = newData.computer_action;
-    let possible_choices = ['attack', 'posture', 'roll']
+    let possible_choices = ['attack', 'posture', 'roll'];
     let postureRating = ((combatData.player_defense.physicalPosture + combatData.player_defense.magicalPosture) / 4) + 5;
     let rollRating = combatData.weapons[0].roll;
     let posture = 'posture';

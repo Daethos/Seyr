@@ -1227,7 +1227,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
         { enemy ? (
             <>
             <PvPAscean 
-                state={state} ascean={enemy} damage={state.enemyDamaged} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
+                state={state} dispatch={dispatch} ascean={enemy} damage={state.enemyDamaged} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
             /> 
             <CombatOverlay 
                 ascean={ascean} enemy={enemy} playerWin={state.player_win} computerWin={state.enemy_win} playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
@@ -1246,7 +1246,7 @@ const GamePvP = ({ handleSocketEvent, state, dispatch, playerState, playerDispat
             { asceanState.ascean.experience >= asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : '' }
-            <PvPAscean state={state} ascean={ascean} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <PvPAscean state={state} dispatch={dispatch} ascean={ascean} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
         { state.combatEngaged ? (
             <>
                 <GameAnimations 

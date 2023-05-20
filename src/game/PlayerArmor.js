@@ -26,7 +26,7 @@ export default class PlayerArmor extends Entity {
     }
 
     static preload(scene) {
-        let player_armor = scene.gameData.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
+        let player_armor = scene.gameData.chest.name.replace(/\s/g, '_').toLowerCase();
         if (player_armor.includes('cuirass') || player_armor.includes('robes') || player_armor.includes('licivitan') || player_armor.includes("quor'ite") || player_armor.includes("knight's") || player_armor.includes("marauder's")) {
             player_armor = player_armor.replace(/cuirass/g, 'armor');
             player_armor = player_armor.replace(/robes/g, 'armor');
@@ -70,7 +70,7 @@ export default class PlayerArmor extends Entity {
         if (this.joystick.touchCursor.forceY < -15) {
             this.setVelocityY(-1);
         }
-        let player_armor = scene.gameData.ascean.chest.name.replace(/\s/g, '_').toLowerCase();
+        let player_armor = scene.gameData.chest.name.replace(/\s/g, '_').toLowerCase();
         if (player_armor.includes('cuirass') || player_armor.includes('robes') || player_armor.includes("quor'ite") || player_armor.includes("knight's") || player_armor.includes("marauder's") || player_armor.includes('licivitan')) {
             player_armor = player_armor.replace(/cuirass/g, 'armor');
             player_armor = player_armor.replace(/robes/g, 'armor');

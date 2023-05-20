@@ -21,6 +21,7 @@ export interface CombatData {
     realized_player_damage: number;
     playerDamaged: boolean;
     enemyPersuaded: boolean;
+    enemyPrayerConsumed: boolean;
 
     player_start_description: string;
     player_special_description: string;
@@ -180,6 +181,7 @@ export const initialCombatData: CombatData = {
     realized_player_damage: 0,
     playerDamaged: false,
     enemyPersuaded: false,
+    enemyPrayerConsumed: false,
     player_start_description: '',
     player_special_description: '',
     player_action_description: '',

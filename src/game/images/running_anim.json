@@ -1,0 +1,44 @@
+{
+    "anims": [
+        {
+            "key": "run",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_0"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_1"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_2"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_3"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_4"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_5"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_6"
+                },
+                {
+                    "key": "running",
+                    "frame": "run_cycle_48x48_7"
+                }
+            ]
+        }
+    ]
+}

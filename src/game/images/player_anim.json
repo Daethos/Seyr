@@ -1,0 +1,372 @@
+{
+    "anims": [
+        {
+            "key": "player_airspin",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_airspin_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_airspin_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_airspin_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_airspin_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_airspin_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_airspin_5"
+                }
+            ]
+        },
+        {
+            "key": "player_pull",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_pull_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_pull_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_pull_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_pull_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_pull_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_pull_5"
+                }
+            ]
+        },
+        {
+            "key": "player_death",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_death_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_5"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_6"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_7"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_8"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_death_9"
+                }
+            ]
+        },
+        {
+            "key": "player_stab",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_stab_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_stab_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_stab_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_stab_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_stab_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_stab_5"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_stab_6"
+                }
+            ]
+        },
+        {
+            "key": "player_slash",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_slash_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_slash_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_slash_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_slash_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_slash_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_slash_5"
+                }
+            ]
+        },
+        {
+            "key": "player_rolling",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_rolling_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_rolling_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_rolling_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_rolling_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_rolling_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_rolling_5"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_rolling_6"
+                }
+            ]
+        },
+        {
+            "key": "player_landing",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_landing_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_5"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_6"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_7"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_landing_8"
+                }
+            ]
+        },
+        {
+            "key": "player_jump",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_jump_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_jump_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_jump_2"
+                }
+            ]
+        },
+        {
+            "key": "player_running",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_running_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_5"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_6"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_running_7"
+                }
+            ]
+        },
+        {
+            "key": "player_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 6,
+            "frames": [
+                {
+                    "key": "player",
+                    "frame": "player_idle_0"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_1"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_2"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_3"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_4"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_5"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_6"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_7"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_8"
+                },
+                {
+                    "key": "player",
+                    "frame": "player_idle_9"
+                }
+            ]
+        }
+    ]
+}

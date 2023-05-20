@@ -434,7 +434,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} combatRound={state.combatRound}
                 counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combat_engaged}
             />
-            <GameAscean state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+            <GameAscean dispatch={dispatch} state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
             <CombatOverlay 
                 ascean={state.player} enemy={state.computer} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
                 playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
@@ -471,7 +471,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 <Button variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>   
                 </>
             : '' }
-            <GameAscean state={state} ascean={ascean} damage={state.playerDamaged} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />
+            <GameAscean dispatch={dispatch} state={state} ascean={ascean} damage={state.playerDamaged} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />
             
             { state.player_win || state.computer_win || !state.combatEngaged ? '' : state?.weapons ?
             <GameActions 

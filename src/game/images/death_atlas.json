@@ -1,0 +1,138 @@
+{
+    "frames": [
+        {
+            "filename": "player_death_64x64_0",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_1",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 66,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_2",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 1,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_3",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 66,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_4",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 131,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_5",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 131,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_6",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 1,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_7",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 66,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_8",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 131,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_death_64x64_9",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 196,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

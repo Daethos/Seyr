@@ -1,0 +1,28 @@
+{
+    "anims": [
+        {
+            "key": "damaged",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "damaged",
+                    "frame": "player_hurt_48x48_0"
+                },
+                {
+                    "key": "damaged",
+                    "frame": "player_hurt_48x48_1"
+                },
+                {
+                    "key": "damaged",
+                    "frame": "player_hurt_48x48_2"
+                },
+                {
+                    "key": "damaged",
+                    "frame": "player_hurt_48x48_3"
+                }
+            ]
+        }
+    ]
+}

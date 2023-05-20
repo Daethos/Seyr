@@ -22,7 +22,8 @@ export default class PlayerHelm extends Entity {
     }
 
     static preload(scene) {
-        let player_helm = scene.gameData.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
+        console.log(scene, "Scene in Player Helm")
+        let player_helm = scene.gameData.helmet.name.replace(/\s/g, '_').toLowerCase();
         if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes('mask') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
             player_helm = player_helm.replace(/quor'ite/g, 'earth');
             player_helm = player_helm.replace(/mask/g, 'helm');
@@ -36,7 +37,7 @@ export default class PlayerHelm extends Entity {
 
         scene.load.atlas(`${helm_texture}`, equipment[player_helm].png, equipment[player_helm].json);
         scene.load.animation(`${player_helm}_anim`, equipment[player_helm].anim);
-    }
+    };
 
     update(scene) {
         const speed = 2.5;
@@ -46,25 +47,24 @@ export default class PlayerHelm extends Entity {
 
         if (this.joystick.touchCursor.forceX < 15 || this.joystick.touchCursor.forceX > -15) {
             this.setVelocityX(0);
-        } 
+        };
         if (this.joystick.touchCursor.forceX > 15) {
             this.setVelocityX(1);
-        } 
+        };
         if (this.joystick.touchCursor.forceX < -15) {
             this.setVelocityX(-1);
-        }
+        };
 
         if (this.joystick.touchCursor.forceY < 15 || this.joystick.touchCursor.forceY > -15) {
             this.setVelocityY(0);
-        } 
+        };
         if (this.joystick.touchCursor.forceY > 15) {
             this.setVelocityY(1);
-        } 
+        };
         if (this.joystick.touchCursor.forceY < -15) {
             this.setVelocityY(-1);
-        }
-     
-        let player_helm = scene.gameData.ascean.helmet.name.replace(/\s/g, '_').toLowerCase();
+        };
+        let player_helm = scene.gameData.helmet.name.replace(/\s/g, '_').toLowerCase();
         if (player_helm.includes("quor'ite") || player_helm.includes('hood') || player_helm.includes('mask') || player_helm.includes("knight's") || player_helm.includes("marauder's") || player_helm.includes('licivitan')) {
             player_helm = player_helm.replace(/quor'ite/g, 'earth');
             player_helm = player_helm.replace(/mask/g, 'helm');
@@ -72,13 +72,12 @@ export default class PlayerHelm extends Entity {
             player_helm = player_helm.replace(/knight's/g, 'knight');
             player_helm = player_helm.replace(/marauder's/g, 'marauder');
             player_helm = player_helm.replace(/licivitan/g, 'legion');
-        }
+        };
         this.player_helm = player_helm;
         if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1 ) {
             this.anims.play(`${this.player_helm}_move`, true);
         } else {
             this.anims.play(`${this.player_helm}_idle`, true);
-        }
-    
-    }
-}
+        };
+    };
+};

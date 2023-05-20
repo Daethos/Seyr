@@ -1,0 +1,24 @@
+{
+    "anims": [
+        {
+            "key": "jump",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "jump",
+                    "frame": "player_jump_48x48_0"
+                },
+                {
+                    "key": "jump",
+                    "frame": "player_jump_48x48_1"
+                },
+                {
+                    "key": "jump",
+                    "frame": "player_jump_48x48_2"
+                }
+            ]
+        }
+    ]
+}

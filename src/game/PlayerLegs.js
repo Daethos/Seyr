@@ -22,7 +22,7 @@ export default class PlayerLegs extends Entity {
     }
 
     static preload(scene) {
-        let player_legs = scene.gameData.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
+        let player_legs = scene.gameData.legs.name.replace(/\s/g, '_').toLowerCase();
         if (player_legs.includes('greaves') || player_legs.includes('pants') || player_legs.includes("quor'ite") || player_legs.includes("knight's") || player_legs.includes("marauder's") || player_legs.includes('licivitan')) {
             player_legs = player_legs.replace(/greaves/g, 'legs');
             player_legs = player_legs.replace(/pants/g, 'legs');
@@ -66,7 +66,7 @@ export default class PlayerLegs extends Entity {
             this.setVelocityY(-1);
         }
 
-        let player_legs = scene.gameData.ascean.legs.name.replace(/\s/g, '_').toLowerCase();
+        let player_legs = scene.gameData.legs.name.replace(/\s/g, '_').toLowerCase();
         if (player_legs.includes('greaves') || player_legs.includes('pants') || player_legs.includes("quor'ite") || player_legs.includes("knight's") || player_legs.includes("marauder's") || player_legs.includes('licivitan')) {
             player_legs = player_legs.replace(/greaves/g, 'legs');
             player_legs = player_legs.replace(/pants/g, 'legs');

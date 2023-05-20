@@ -1,0 +1,86 @@
+{
+    "frames": [
+        {
+            "filename": "player_air_spin_48x48_0",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_air_spin_48x48_1",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 50,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_air_spin_48x48_2",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 1,
+                "y": 50
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_air_spin_48x48_3",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 50,
+                "y": 50
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_air_spin_48x48_4",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 99,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_air_spin_48x48_5",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 99,
+                "y": 50
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

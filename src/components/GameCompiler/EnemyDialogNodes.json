@@ -42,10 +42,10 @@
     },
     {
       "id": "0002",
-      "text": "${ascean.name}, I have not regaled thought with humans in some time. If you'll forgive me, I require from you a gift, for our tether is ^500 limited.",
+      "text": "${ascean.name}, I have not regaled thought with humans in some time. Forgive me, I require from you a gift, for our tether is ^500 limited.",
       "options": [
         {
-          "text": "Of course, my liege. What is it you require?",
+          "text": "My liege.",
           "next": "0006",
           "npcIds": ["Deity"],
           "conditions": [],
@@ -60,7 +60,7 @@
           "keywords": ["Compliant"]
         },
         {
-          "text": "What do you mean? We seem to be communing well.",
+          "text": "Truly? We seem to be communing well. Already you ask for a gift?",
           "next": "0006",
           "npcIds": ["Deity"],
           "conditions": [],
@@ -160,7 +160,7 @@
     },
     {
       "id": "0006",
-      "text": "Well nothing you truly possess, simply the caer which resonates and imbues itself from its fleeting source. That of the fallen which come cross your way. This is not thankless, as I have gifted you a boon to augur brilliance.",
+      "text": "Nothing you truly possess, fleeting caer which resonates and imbues to you from its source. That of the fallen which come cross your way. This is not thankless, as I have gifted you a boon to augur brilliance.",
       "options": [
         {
           "text": "I shall seek it at once, my liege.",

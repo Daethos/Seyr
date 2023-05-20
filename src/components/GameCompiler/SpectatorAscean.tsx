@@ -13,10 +13,11 @@ interface Props {
   loading: boolean;
   totalPlayerHealth: number;
   state: any;
+  dispatch: any;
   damage?: boolean;
 };
 
-const SpectatorAscean = ({ state, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
+const SpectatorAscean = ({ state, dispatch, ascean, player, currentPlayerHealth, totalPlayerHealth, loading, damage }: Props) => {
 
   const getBlockStyle = {
     zIndex: 99999,
@@ -35,7 +36,7 @@ const SpectatorAscean = ({ state, ascean, player, currentPlayerHealth, totalPlay
       <div id='game-spec-block' className="game-block spectator" style={getBlockStyle}>
         {state.playerEffects.length > 0 ?
           (state.playerEffects.map((effect: any, index: number) => {
-            return ( <StatusEffects spectator={true} effect={effect} player={true} key={index} /> )
+            return ( <StatusEffects state={state} ascean={ascean} dispatch={dispatch} spectator={true} effect={effect} player={true} key={index} /> )
         })) : '' }
       <div className="game-block-top spectator">
       <GamePlayerStats spectator={true} attributes={state.player_attributes} player={state.player} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} />
@@ -91,7 +92,7 @@ const SpectatorAscean = ({ state, ascean, player, currentPlayerHealth, totalPlay
       </div>
       {state.enemyEffects.length > 0 ?
         (state.enemyEffects.map((effect: any, index: number) => {
-          return ( <StatusEffects spectator={true} enemy={true} effect={effect} key={index} /> )
+          return ( <StatusEffects state={state} ascean={ascean} dispatch={dispatch} spectator={true} enemy={true} effect={effect} key={index} /> )
       })) : '' }
     </div>
     }

@@ -4,7 +4,7 @@ export default class Boot extends Phaser.Scene {
     constructor() {
         super({ key: 'Boot', active: true });
         this.ascean = {};
-    }
+    };
     
     init() { }
     
@@ -18,10 +18,10 @@ export default class Boot extends Phaser.Scene {
         this.scene.start('Preload', {
             gameData: this.ascean
         });
-    }
+    };
 
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
     };
-}
+};

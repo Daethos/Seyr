@@ -6,23 +6,18 @@ import Button from 'react-bootstrap/Button'
 import StoryHealthBar from './StoryHealthBar';
 import StoryPlayerStats from './StoryPlayerStats';
 import LevelUpModal from '../../game/LevelUpModal';
+import GamePlayerStats from './GamePlayerStats';
 
 interface Props {
   ascean: any;
-  attributes: any;
-  currentPlayerHealth: number;
+  state: any;
   loading: boolean;
-  playerDefense: any;
-  totalPlayerHealth: number;
-  weaponOne: any;
-  weaponTwo: any;
-  weaponThree: any;
   asceanState: any;
   setAsceanState: any;
   levelUpAscean: any;
 };
 
-const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerHealth, totalPlayerHealth, loading, attributes, playerDefense, asceanState, setAsceanState, levelUpAscean }: Props) => {
+const StoryAscean = ({ ascean, state, loading, asceanState, setAsceanState, levelUpAscean }: Props) => {
     const [showPlayer, setShowPlayer] = useState<boolean>(false)
     if (loading) {
         return (
@@ -38,16 +33,16 @@ const StoryAscean = ({ ascean, weaponOne, weaponTwo, weaponThree, currentPlayerH
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
             <div className="actions" style={{ marginBottom: 0 + '%'}}>
-                <StoryHealthBar totalPlayerHealth={totalPlayerHealth} currentPlayerHealth={currentPlayerHealth} story={true} />
+                <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} />
             </div>
-            <StoryPlayerStats 
-                attributes={attributes} player={ascean} weaponAttributes={weaponOne} 
-                magicalDefense={playerDefense.magicalDefenseModifier} magicalPosture={playerDefense.magicalPosture} 
-                physicalDefense={playerDefense.physicalDefenseModifier} physicalPosture={playerDefense.physicalPosture} />
+            <GamePlayerStats 
+                attributes={state.player_attributes} player={ascean} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} 
+                physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} 
+            />
             <AsceanImageCard
-                weapon_one={weaponOne}
-                weapon_two={weaponTwo}
-                weapon_three={weaponThree}
+                weapon_one={state.weapons[0]}
+                weapon_two={state.weapons[1]}
+                weapon_three={state.weapons[2]}
                 shield={ascean.shield}
                 helmet={ascean.helmet}
                 chest={ascean.chest}

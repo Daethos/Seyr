@@ -45,7 +45,7 @@ const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loading
                 border: "0.2em solid purple",
             }}>
             <SpectatorAscean 
-                state={state} ascean={state.enemy} damage={state.enemyDamaged} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
+                state={state} dispatch={dispatch} ascean={state.enemy} damage={state.enemyDamaged} totalPlayerHealth={state.enemy_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_enemy_health}
             />
             <CombatSpectatorOverlay 
                 ascean={state.player} enemy={state.enemy} playerWin={state.player_win} computerWin={state.enemy_win} playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
@@ -53,7 +53,7 @@ const SpectatorOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loading
                 rollSuccess={state.roll_success} computerRollSuccess={state.enemy_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.enemy_counter_success}
                 loadingCombatSpectatorOverlay={gameState.loadingCombatSpectatorOverlay} combatSpectatorResolved={gameState.combatSpectatorResolved} combatSpectatorOverlayText={gameState.combatSpectatorOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
             /> 
-            <SpectatorAscean state={state} ascean={state.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <SpectatorAscean state={state} dispatch={dispatch} ascean={state.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
             <GameAnimations spectator={true}
                 playerCritical={state.critical_success} computerCritical={state.enemy_critical_success}
                 playerAction={state.player_action} computerAction={state.enemy_action} 

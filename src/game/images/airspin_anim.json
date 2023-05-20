@@ -1,0 +1,36 @@
+{
+    "anims": [
+        {
+            "key": "airspin",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "airspin",
+                    "frame": "player_air_spin_48x48_0"
+                },
+                {
+                    "key": "airspin",
+                    "frame": "player_air_spin_48x48_1"
+                },
+                {
+                    "key": "airspin",
+                    "frame": "player_air_spin_48x48_2"
+                },
+                {
+                    "key": "airspin",
+                    "frame": "player_air_spin_48x48_3"
+                },
+                {
+                    "key": "airspin",
+                    "frame": "player_air_spin_48x48_4"
+                },
+                {
+                    "key": "airspin",
+                    "frame": "player_air_spin_48x48_5"
+                }
+            ]
+        }
+    ]
+}
