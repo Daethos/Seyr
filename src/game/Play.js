@@ -1,19 +1,17 @@
 import Phaser from 'phaser';
 import Player from './Player';
-import PlayerHelm from "../game/PlayerHelm";
-import PlayerArmor from "../game/PlayerArmor";
-import PlayerLegs from "../game/PlayerLegs";
 import NewText from './NewText.js'
 import stick from './images/stick.png';
 import base from './images/base.png';
+import slashANIM from './images/slash_anim.json';
 
 export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
         this.ascean = null;
-        this.centerX = 180;
-        this.centerY = 240;
-    }
+        this.centerX = 480;
+        this.centerY = 320;
+    };
     
     init(data) {
         console.log(data, "Data in Play")
@@ -31,56 +29,79 @@ export default class Play extends Phaser.Scene {
         this.baseSprite = this.add.sprite(0, 0, base);
         this.thumbSprite = this.add.sprite(0, 0, stick);
         this.map = null;
-
-    }
+        this.isPlayerOnGround = true;
+    };
     
     create() { 
-
-        const map = this.make.tilemap({ key: 'map' });
-        const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
-        const atlasTerrain = map.addTilesetImage('Atlas Terrain', 'terrain', 32, 32, 0, 0);
-        const layer1 = map.createLayer('Tile Layer 1', atlasTerrain, 0, 0);
-        const layer2 = map.createLayer('Tile Layer 2', atlasTerrain, 0, 0);
+ 
+        const map = this.make.tilemap({ key: 'castle_map' });
+        const tileSet = map.addTilesetImage('castle_tiles', 'castle_tiles', 32, 32, 0, 0);
+        const backgroundSet = map.addTilesetImage('layer_1', 'layer_1', 32, 32, 0, 0);
+        const layer2 = map.createLayer('Tile Layer 2', backgroundSet, 0, 0);
+        const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
         layer1.setCollisionByProperty({ collides: true });
-        layer2.setCollisionByProperty({ collides: true });
+        // layer2.setCollisionByProperty({ collides: true });
         this.matter.world.convertTilemapLayer(layer1);
         this.matter.world.convertTilemapLayer(layer2);
         this.map = map;
+        // const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
+        // const atlasTerrain = map.addTilesetImage('Atlas Terrain', 'terrain', 32, 32, 0, 0);
+        // const layer1 = map.createLayer('Tile Layer 1', atlasTerrain, 0, 0);
+        // const layer2 = map.createLayer('Tile Layer 2', atlasTerrain, 0, 0);
+        // layer1.setCollisionByProperty({ collides: true });
+        // layer2.setCollisionByProperty({ collides: true });
+        // this.matter.world.convertTilemapLayer(layer1);
+        // this.matter.world.convertTilemapLayer(layer2);
+        // this.map = map;
+        console.log(this, "What is This in Create Play Scene?")
 
-        this.player = new Player({scene: this, x: 100, y: 100, texture: 'player', frame: 'player_idle_0'}); 
-        this.player.inputKeys = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D,
-        });
+        this.anims.fromJSON(slashANIM);
+        this.matter.world.setBounds(0, 0, this.CONFIG.width, this.CONFIG.height);
+        this.matter.world.createDebugGraphic();
+        
+        this.player = new Player({scene: this, x: 200, y: 100, texture: 'player', frame: 'player_idle_0'});
 
+        this.player.inputKeys = {
+            up: this.input.keyboard.addKeys('W,UP,SPACE'),
+            down: this.input.keyboard.addKeys('S,DOWN'),
+            left: this.input.keyboard.addKeys('A,LEFT'),
+            right: this.input.keyboard.addKeys('D,RIGHT'),
+            attack: this.input.keyboard.addKeys('ONE'),
+            counter: this.input.keyboard.addKeys('TWO'),
+            roll: this.input.keyboard.addKeys('THREE'),
+        };
+          
         let camera = this.cameras.main;
-        camera.zoom = 1.25;
-        camera.startFollow(this.player);
+        camera.zoom = 1;
+        // camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
-        camera.setBounds(0, 0, 1024, 1024);
-        var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
-            x: 50,
-            y: 400,
-            radius: 50,
-            // base: this.baseSprite,
-            // thumb: this.thumbSprite
-            base: this.add.circle(0, 0, 25, 0x800080),
-            thumb: this.add.circle(0, 0, 12.5, 0xfdf6d8),
-            dir: 2,
-            // forceMin: 16,
-            // fixed: true,
-            // enable: true
-        });
-        joystick.setScrollFactor(0);
-        this.player.joystick = joystick; 
+        camera.setBounds(0, 0, 640, 960);
+        // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
+        //     x: 50,
+        //     y: 400,
+        //     radius: 50,
+        //     // base: this.baseSprite,
+        //     // thumb: this.thumbSprite
+        //     base: this.add.circle(0, 0, 25, 0x800080),
+        //     thumb: this.add.circle(0, 0, 12.5, 0xfdf6d8),
+        //     dir: 2,
+        //     // forceMin: 16,
+        //     // fixed: true,
+        //     // enable: true
+        // });
+        // joystick.setScrollFactor(0);
+        // this.player.joystick = joystick; 
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
         // this.stick.alignBottomLeft(20);
 
-        this.createWelcome();
+        this.createWelcome(); 
+          
 
-    }
+    };
+
+    setPlayerOnGround = function(value) {
+        this.isPlayerOnGround = value;
+    };
 
     createTextBorder(text) {
         const border = this.add.graphics();
@@ -94,7 +115,7 @@ export default class Play extends Phaser.Scene {
           
         this.add.existing(border);
         return border;
-      }
+      };
       
 
     createWelcome() {
@@ -104,7 +125,7 @@ export default class Play extends Phaser.Scene {
                 this.welcome = new NewText(
                     this,
                     this.centerX,
-                    this.centerY + 140,
+                    this.centerY + 150,
                     `Welcome to the Seyr of Daethos, ${this.gameData.name}! What do you do when you don't know what to do?`,
                     'play',
                     0.5,
@@ -123,22 +144,23 @@ export default class Play extends Phaser.Scene {
             },
             callbackScope: this
         });
-    }
+    };
  
 
     update() {
         this.player.update(this); 
-        const boundaryTiles = this.map.filterTiles((tile) => {
-            return tile.properties.collides;
-          }, this, 0, 0, this.map.width, this.map.height);
+        
+        // const boundaryTiles = this.map.filterTiles((tile) => {
+        //     return tile.properties.collides;
+        //   }, this, 0, 0, this.map.width, this.map.height);
            
-    }
+    };
 
     pause() {
         this.scene.pause();
-    }
+    };
     resume() {
         this.scene.resume();
-    }
+    };
  
-}
+};

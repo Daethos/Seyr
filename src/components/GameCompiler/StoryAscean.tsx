@@ -7,9 +7,11 @@ import StoryHealthBar from './StoryHealthBar';
 import StoryPlayerStats from './StoryPlayerStats';
 import LevelUpModal from '../../game/LevelUpModal';
 import GamePlayerStats from './GamePlayerStats';
+import StatusEffects from './StatusEffects';
 
 interface Props {
   ascean: any;
+  dispatch: any;
   state: any;
   loading: boolean;
   asceanState: any;
@@ -17,7 +19,7 @@ interface Props {
   levelUpAscean: any;
 };
 
-const StoryAscean = ({ ascean, state, loading, asceanState, setAsceanState, levelUpAscean }: Props) => {
+const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean }: Props) => {
     const [showPlayer, setShowPlayer] = useState<boolean>(false)
     if (loading) {
         return (
@@ -29,6 +31,10 @@ const StoryAscean = ({ ascean, state, loading, asceanState, setAsceanState, leve
         <div className="story-block" id='story-ascean'>
         { !showPlayer ? (
             <div className='story-ascean'>
+                {state.playerEffects.length > 0 ?
+            (state.playerEffects.map((effect: any, index: number) => {
+                return ( <StatusEffects state={state} dispatch={dispatch} ascean={ascean} effect={effect} player={true} key={index} /> )
+            })) : '' }
             { asceanState.experience === asceanState.experienceNeeded ? (
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }

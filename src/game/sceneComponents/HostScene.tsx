@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Phaser from "phaser";
 import '../PhaserGame.css'
-import MainScene from '../../scenes/MainScene';
 import Modal from 'react-bootstrap/Modal';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
@@ -13,11 +12,7 @@ import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
 import DialogBox from '../DialogBox';
-import { Container } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import Attributes from '../LevelUp/Attributes';
-import Mastery from '../../components/AsceanBuilder/Mastery';
-import Faith from '../../components/AsceanBuilder/Faith';
 
 export const useDocumentEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -39,19 +34,17 @@ interface Props {
 };
 
 const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState }: Props) => {
+    const { asceanID } = useParams();
     const [currentGame, setCurrentGame] = useState<any>({})
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
     const [fullScreen, setFullScreen] = useState<boolean>(false);
     const [messages, setMessages] = useState<any>([]); 
-    const { asceanID } = useParams();
     const [loading, setLoading] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const gameRef = useRef<any>({});
-    const [IS_DEV, setIS_DEV] = useState<boolean>(true);
-    const [VERSION, setVERSION] = useState<string>('0.0.1');
     let scenes: any[] = [];
     scenes.push(Boot);
     scenes.push(Preload);
@@ -62,23 +55,25 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         type: Phaser.AUTO,
         parent: 'story-game',
         fullscreenTarget: 'story-game',
-        width: 360,
-        height: 480,
+        width: 960,
+        height: 640,
         scene: scenes,
-        scale: {
-            zoom: 1,
-        },
-        data: {
-            ascean: state.player,
-            user: user
-        },
+        scale: { zoom: 0.95, },
+        data: { ascean: state.player, user: user },
         physics: {
             default: 'matter',
             matter: {
                 debug: true,
-                gravity: { y: 0 },
+                gravity: { y: 10 },
             }
         },
+        // physics: {
+        //     default: 'arcade',
+        //     arcade: {
+        //         gravity: { y: 600 },
+        //         debug: true,
+        //     }
+        // },
         plugins: {
             global: [{
                 key: 'rexVirtualJoystick',
@@ -101,20 +96,29 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         },
         backgroundColor: '#000',
     });
-    let canvasElement: any;
+
+    let canvasElement: any = null;
+    useEffect(() => { 
+        startGame();
+        // const newGame = setTimeout(() => {
+        //     startGame();
+        // }, 500);
+        // return () => clearTimeout(newGame);
+    }, [state.player]);
+
     const startGame = useCallback(async () => {
         try {
             setLoading(true);
-            if (canvasElement) {
-                canvasElement.lastElementChild.remove();
-                canvasElement.removeChild(canvasElement.lastElementChild);
-                canvasElement.removeChild(canvasElement.children[canvasElement.children.length - 1]);
-                gameRef.current = null;
-                console.log(canvasElement, 'Canvas Element Before')
-            };
+            // if (canvasElement) {
+            //     canvasElement.lastElementChild.remove();
+            //     canvasElement.removeChild(canvasElement.lastElementChild);
+            //     canvasElement.removeChild(canvasElement.children[canvasElement.children.length - 1]);
+            //     gameRef.current = null;
+            //     console.log(canvasElement, 'Canvas Element Before')
+            // };
             gameRef.current = new Phaser.Game(config);
-            setCurrentGame(gameRef.current);
-            canvasElement = document.querySelector('#story-game');
+            // setCurrentGame(gameRef.current);
+            // canvasElement = document.querySelector('#story-game');
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
@@ -146,12 +150,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
-    useEffect(() => { 
-        const newGame = setTimeout(() => {
-            startGame();
-        }, 500);
-        return () => clearTimeout(newGame);
-    }, [state.player]);
 
     const sendAscean = async () => {
         console.log('Event Listener Added');
@@ -287,7 +285,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Settings</h3>
                 </Button>
             { showPlayer ?
-                ( <StoryAscean ascean={state.player} state={state} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                ( <StoryAscean ascean={state.player} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
             </div>
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>

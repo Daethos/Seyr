@@ -1,21 +1,23 @@
 import Phaser from "phaser";
 import NewText from './NewText.js' 
 import Player from "./Player.js";
-import PlayerHelm from "../game/PlayerHelm";
-import PlayerArmor from "../game/PlayerArmor";
-import PlayerLegs from "../game/PlayerLegs";
+import sky from '../game/images/sky.png';
+import ground from '../game/images/platform.png';
 import Tileset from '../game/images/Tileset.png';
 import AtlasTerrain from '../game/images/Atlas Terrain.png';
 import TileJson from '../game/images/map.json';
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
+import castle_tiles from '../game/images/castle_tiles.png';
+import castle_map from '../game/images/castle_map.json';
+import layer_1 from '../game/images/layer_1.png';
 
 export default class Preload extends Phaser.Scene {
     constructor() {
         super({ key: 'Preload', active: false });
-        this.centerX = 180;
-        this.centerY = 240;
-        this.width = 340;
+        this.centerX = 480;
+        this.centerY = 320;
+        this.width = 800;
         this.height = 36;
         this.ascean = {};
     };
@@ -29,18 +31,23 @@ export default class Preload extends Phaser.Scene {
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x8A2BE2', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
-        this.load.script('generic', 'phaser-virtual-joystick.min.js');
-        this.load.atlas('generic', joystickPng, joystickJson);
+        // this.load.script('generic', 'phaser-virtual-joystick.min.js');
+        // this.load.atlas('generic', joystickPng, joystickJson);
+        // this.load.image("sky", sky);
+        // this.load.image("ground", ground);
+        
+
         Player.preload(this);
-        // PlayerArmor.preload(this);
-        // PlayerLegs.preload(this);
-        this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
-        this.load.image('tiles', Tileset);
-        this.load.image('terrain', AtlasTerrain);
-        this.load.tilemapTiledJSON('map', TileJson);
+        // this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
+        // this.load.image('tiles', Tileset);
+        // this.load.image('terrain', AtlasTerrain);
+        // this.load.tilemapTiledJSON('map', TileJson);
+        this.load.image('castle_tiles', castle_tiles);
+        this.load.image('layer_1', layer_1);
+        this.load.tilemapTiledJSON('castle_map', castle_map);
  
         this.createLoadingBar();
-    }
+    };
 
     create() {
         this.time.addEvent({

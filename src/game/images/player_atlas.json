@@ -118,19 +118,6 @@
             }
         },
         {
-            "filename": "player_slash_4",
-            "frame": {
-                "w": 64,
-                "h": 64,
-                "x": 195,
-                "y": 131
-            },
-            "anchor": {
-                "x": 0.5,
-                "y": 0.5
-            }
-        },
-        {
             "filename": "player_slash_2",
             "frame": {
                 "w": 64,
@@ -150,6 +137,19 @@
                 "h": 64,
                 "x": 66,
                 "y": 197
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_slash_4",
+            "frame": {
+                "w": 64,
+                "h": 64,
+                "x": 195,
+                "y": 131
             },
             "anchor": {
                 "x": 0.5,

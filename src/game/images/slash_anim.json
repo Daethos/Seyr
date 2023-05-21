@@ -3,32 +3,32 @@
         {
             "key": "slash",
             "type": "frames",
-            "repeat": -1,
+            "repeat": 0,
             "frameRate": 12,
             "frames": [
                 {
                     "key": "slash",
-                    "frame": "player_sword_atk_64x64_0"
+                    "frame": "slash_0"
                 },
                 {
                     "key": "slash",
-                    "frame": "player_sword_atk_64x64_1"
+                    "frame": "slash_1"
                 },
                 {
                     "key": "slash",
-                    "frame": "player_sword_atk_64x64_2"
+                    "frame": "slash_2"
                 },
                 {
                     "key": "slash",
-                    "frame": "player_sword_atk_64x64_3"
+                    "frame": "slash_3"
                 },
                 {
                     "key": "slash",
-                    "frame": "player_sword_atk_64x64_4"
+                    "frame": "slash_4"
                 },
                 {
                     "key": "slash",
-                    "frame": "player_sword_atk_64x64_5"
+                    "frame": "slash_5"
                 }
             ]
         }

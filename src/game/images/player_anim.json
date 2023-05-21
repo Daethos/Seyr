@@ -116,7 +116,7 @@
             "key": "player_stab",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 12,
+            "frameRate": 24,
             "frames": [
                 {
                     "key": "player",
@@ -152,7 +152,7 @@
             "key": "player_slash",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 12,
+            "frameRate": 18,
             "frames": [
                 {
                     "key": "player",
@@ -219,7 +219,7 @@
         {
             "key": "player_landing",
             "type": "frames",
-            "repeat": -1,
+            "repeat": 0,
             "frameRate": 12,
             "frames": [
                 {
@@ -263,8 +263,8 @@
         {
             "key": "player_jump",
             "type": "frames",
-            "repeat": -1,
-            "frameRate": 12,
+            "repeat": 0,
+            "frameRate": 2,
             "frames": [
                 {
                     "key": "player",

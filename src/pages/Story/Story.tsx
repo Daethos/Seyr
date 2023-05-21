@@ -1,16 +1,10 @@
-import { useEffect, useState, useReducer, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useReducer } from 'react'
+import { useParams } from 'react-router-dom';
 import * as asceanAPI from '../../utils/asceanApi';  
-import * as eqpAPI from '../../utils/equipmentApi';
-import * as gameAPI from '../../utils/gameApi';
 import * as settingsAPI from '../../utils/settingsApi';
-import GameAscean from '../../components/GameCompiler/GameAscean';
-import Loading from '../../components/Loading/Loading';
 import HostScene from '../../game/sceneComponents/HostScene';
-import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC, getAsceanTraits, checkPlayerTrait } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
-import useGameSounds from '../../components/GameCompiler/Sounds';
+import { GAME_ACTIONS, GameStore, initialGameData, getAsceanTraits } from '../../components/GameCompiler/GameStore';
+import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 
 interface Props {
     user: any;
@@ -20,12 +14,6 @@ const Story = ({ user }: Props) => {
     const { asceanID } = useParams();
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
-    const [loading, setLoading] = useState(false);  
-    const navigate = useNavigate();
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
-    
-    const [tutorialContent, setTutorialContent] = useState<any | null>(null);
-
     const [gameChange, setGameChange] = useState<boolean>(true);
     const [asceanState, setAsceanState] = useState({
         ascean: gameState.player,
@@ -83,15 +71,7 @@ const Story = ({ user }: Props) => {
             };
         };
         fetchData();
-    }, [asceanID]);
-
-    // TODO:FIXME: Use stock models underneath the three frames of armor so they're not invisible, properly
-    
-    if (loading) {
-        return (
-            <Loading NavBar={true} />
-        );
-    };
+    }, [asceanID]); 
         
     return (
         <>
