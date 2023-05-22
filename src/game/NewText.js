@@ -14,9 +14,9 @@ export default class NewText {
     initStyle(key) {
         let style = {
             fontFamily: 'Cinzel',
-            fontSize: 16,
+            fontSize: 28,
             color: '#fdf6d8',
-            backgroundColor: '#800080',
+            backgroundColor: '#000',
             stroke: '#FFFFFF',
             strokeThickness: 2,
             shadow: {
@@ -30,16 +30,16 @@ export default class NewText {
             align: 'center',
             padding: 5,
             wordWrap: {
-                width: 340,
+                width: 720,
                 useAdvancedWrap: true
             },
         };
         switch (key.toLowerCase()) {
             case 'title':
-                style.fontSize = 32;
+                style.fontSize = 64;
                 break;
             case 'preload':
-                style.fontSize = 24;
+                style.fontSize = 48;
                 break;
             case 'play':
                 style.strokeThickness = 1;

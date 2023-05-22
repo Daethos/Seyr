@@ -1,0 +1,164 @@
+{
+    "anims": [
+        {
+            "key": "player_roll",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions",
+                    "frame": "roll_0"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "roll_1"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "roll_2"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "roll_3"
+                }
+            ]
+        },
+        {
+            "key": "player_jump",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_0"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_1"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_2"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_3"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_4"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_5"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_6"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_jump_7"
+                }
+            ]
+        },
+        {
+            "key": "player_pray",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_0"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_1"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_2"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_3"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_4"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_5"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_6"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_7"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_8"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_9"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_10"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_pray_11"
+                }
+            ]
+        },
+        {
+            "key": "player_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_0"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_1"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_2"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_3"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_4"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_5"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_6"
+                },
+                {
+                    "key": "player_actions",
+                    "frame": "player_idle_7"
+                }
+            ]
+        }
+    ]
+}

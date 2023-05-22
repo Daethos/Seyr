@@ -56,26 +56,29 @@ export default class Play extends Phaser.Scene {
         console.log(this, "What is This in Create Play Scene?")
 
         this.anims.fromJSON(slashANIM);
-        this.matter.world.setBounds(0, 0, this.CONFIG.width, this.CONFIG.height);
+        this.matter.world.setBounds(0, 0, 960, 640);
         this.matter.world.createDebugGraphic();
         
-        this.player = new Player({scene: this, x: 200, y: 100, texture: 'player', frame: 'player_idle_0'});
+        this.player = new Player({scene: this, x: 200, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
 
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP,SPACE'),
             down: this.input.keyboard.addKeys('S,DOWN'),
             left: this.input.keyboard.addKeys('A,LEFT'),
             right: this.input.keyboard.addKeys('D,RIGHT'),
-            attack: this.input.keyboard.addKeys('ONE'),
-            counter: this.input.keyboard.addKeys('TWO'),
-            roll: this.input.keyboard.addKeys('THREE'),
+            attack: this.input.keyboard.addKeys('ONE,SHIFT-ONE'),
+            counter: this.input.keyboard.addKeys('FIVE'),
+            roll: this.input.keyboard.addKeys('THREE,SHIFT-THREE'),
+            posture: this.input.keyboard.addKeys('TWO,SHIFT-TWO'),
+            dodge: this.input.keyboard.addKeys('FOUR,SHIFT-FOUR'),
+            strafe: this.input.keyboard.addKeys('E,Q'),
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1;
-        // camera.startFollow(this.player);
+        camera.zoom = 1.5;
+        camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
-        camera.setBounds(0, 0, 640, 960);
+        camera.setBounds(0, 0, 960, 640);
         // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
         //     x: 50,
         //     y: 400,
@@ -100,22 +103,23 @@ export default class Play extends Phaser.Scene {
     };
 
     setPlayerOnGround = function(value) {
+        console.log(value, "Setting Whether Player is On The Ground");
         this.isPlayerOnGround = value;
     };
 
     createTextBorder(text) {
         const border = this.add.graphics();
-        border.lineStyle(4, 0x000000, 1);
+        border.lineStyle(4, 0x2A0134, 1);
         border.strokeRect(
             text.x - text.width * text.originX - 2.5, // Subtract half of the border width and the x origin from the x position
             text.y - text.height * text.originY - 2.5, // Subtract half of the border width and the y origin from the y position
             text.width + 5, // Add the border width to the width of the text
             text.height + 5 // Add the border width to the height of the text
-          );
+        );
           
         this.add.existing(border);
         return border;
-      };
+    };
       
 
     createWelcome() {

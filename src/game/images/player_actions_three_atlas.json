@@ -1,0 +1,333 @@
+{
+    "frames": [
+        {
+            "filename": "player_hanging_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_4",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_5",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_6",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hanging_7",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_4",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_5",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_6",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_health_7",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hurt_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hurt_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_hurt_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "climb_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "climb_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "climb_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "climb_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "climb_4",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "climb_5",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 391
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -29,7 +29,7 @@ export default class Preload extends Phaser.Scene {
 
     preload() {
         this.bg = this.add.graphics({ x: 0, y: 0 });
-        this.bg.fillStyle('0x8A2BE2', 1);
+        this.bg.fillStyle('0x2A0134', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         // this.load.script('generic', 'phaser-virtual-joystick.min.js');
         // this.load.atlas('generic', joystickPng, joystickJson);
@@ -80,6 +80,7 @@ export default class Preload extends Phaser.Scene {
             'preload',
             0.5
         );
+        this.border = this.createTextBorder(this.title.obj);
         this.txt_progress = new NewText(
             this,
             this.centerX,
@@ -88,7 +89,7 @@ export default class Preload extends Phaser.Scene {
             'preload',
             { x: 0.5, y: 1 }
         );
-        let x = 10;
+        let x = this.centerX - (this.width / 2);
         let y = this.centerY + 5;
         this.progress = this.add.graphics({ x: x, y: y });
         this.border = this.add.graphics({ x: x, y: y })
@@ -96,13 +97,26 @@ export default class Preload extends Phaser.Scene {
     };
     onProgress(val) {
         this.progress.clear();
-        this.progress.fillStyle('0xFFFFFF', 1);
+        this.progress.fillStyle('0xFDF6D8', 1);
         this.progress.fillRect(0, 0, this.width * val, this.height);
 
         this.border.clear();
-        this.border.lineStyle(4, '0x800080', 1);
+        this.border.lineStyle(4, '0x000000', 1);
         this.border.strokeRect(0, 0, this.width * val, this.height, 2);
 
         this.txt_progress.setText(Math.round(val * 100) + '%');
+    };
+    createTextBorder(text) {
+        const border = this.add.graphics();
+        border.lineStyle(3, 0x2A0134, 1);
+        border.strokeRect(
+            text.x - text.width * text.originX - 1.5, // Subtract half of the border width and the x origin from the x position
+            text.y - text.height * text.originY - 1.5, // Subtract half of the border width and the y origin from the y position
+            text.width + 3, // Add the border width to the width of the text
+            text.height + 3 // Add the border width to the height of the text
+        );
+          
+        this.add.existing(border);
+        return border;
     };
 };

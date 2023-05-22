@@ -1,0 +1,148 @@
+{
+    "anims": [
+        {
+            "key": "player_attack_4",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_0"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_1"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_2"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_3"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_4"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_5"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_6"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_7"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_8"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_4_9"
+                }
+            ]
+        },
+        {
+            "key": "player_attack_3",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_3_0"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_3_1"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_3_2"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_3_3"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_3_4"
+                }
+            ]
+        },
+        {
+            "key": "player_attack_2",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_2_0"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_2_1"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_2_2"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_2_3"
+                }
+            ]
+        },
+        {
+            "key": "player_attack_1",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_0"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_1"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_2"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_3"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_4"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_5"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_6"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_7"
+                },
+                {
+                    "key": "player_attacks",
+                    "frame": "player_attacks_1_8"
+                }
+            ]
+        }
+    ]
+}

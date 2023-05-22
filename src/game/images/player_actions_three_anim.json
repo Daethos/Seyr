@@ -1,0 +1,136 @@
+{
+    "anims": [
+        {
+            "key": "player_hurt",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hurt_0"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hurt_1"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hurt_2"
+                }
+            ]
+        },
+        {
+            "key": "player_health",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_0"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_1"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_2"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_3"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_4"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_5"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_6"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_health_7"
+                }
+            ]
+        },
+        {
+            "key": "player_climb",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_three",
+                    "frame": "climb_0"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "climb_1"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "climb_2"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "climb_3"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "climb_4"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "climb_5"
+                }
+            ]
+        },
+        {
+            "key": "player_hanging",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_0"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_1"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_2"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_3"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_4"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_5"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_6"
+                },
+                {
+                    "key": "player_actions_three",
+                    "frame": "player_hanging_7"
+                }
+            ]
+        }
+    ]
+}

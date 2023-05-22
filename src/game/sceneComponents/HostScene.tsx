@@ -58,22 +58,15 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         width: 960,
         height: 640,
         scene: scenes,
-        scale: { zoom: 0.95, },
+        scale: { zoom: 1, },
         data: { ascean: state.player, user: user },
         physics: {
             default: 'matter',
             matter: {
                 debug: true,
-                gravity: { y: 10 },
+                gravity: { y: 2 },
             }
-        },
-        // physics: {
-        //     default: 'arcade',
-        //     arcade: {
-        //         gravity: { y: 600 },
-        //         debug: true,
-        //     }
-        // },
+        }, 
         plugins: {
             global: [{
                 key: 'rexVirtualJoystick',
@@ -96,29 +89,15 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         },
         backgroundColor: '#000',
     });
-
-    let canvasElement: any = null;
+ 
     useEffect(() => { 
-        startGame();
-        // const newGame = setTimeout(() => {
-        //     startGame();
-        // }, 500);
-        // return () => clearTimeout(newGame);
+        startGame(); 
     }, [state.player]);
 
     const startGame = useCallback(async () => {
         try {
-            setLoading(true);
-            // if (canvasElement) {
-            //     canvasElement.lastElementChild.remove();
-            //     canvasElement.removeChild(canvasElement.lastElementChild);
-            //     canvasElement.removeChild(canvasElement.children[canvasElement.children.length - 1]);
-            //     gameRef.current = null;
-            //     console.log(canvasElement, 'Canvas Element Before')
-            // };
-            gameRef.current = new Phaser.Game(config);
-            // setCurrentGame(gameRef.current);
-            // canvasElement = document.querySelector('#story-game');
+            setLoading(true); 
+            gameRef.current = new Phaser.Game(config); 
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
@@ -271,18 +250,18 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
                 </Modal.Body>
             </Modal>
-            <div id='ui-hud' className='mt-3 ui-hud'>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>{state.player.name}</h3>
+            <div id='ui-hud' className='ui-hud'>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>{state.player.name}</h3>
                 </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Inventory</h3>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
                 </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>World Status</h3>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
+                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>World Status</h3>
                 </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center' }} className=''>Settings</h3>
+                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
+                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Settings</h3>
                 </Button>
             { showPlayer ?
                 ( <StoryAscean ascean={state.player} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />

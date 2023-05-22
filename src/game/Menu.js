@@ -27,6 +27,7 @@ export default class Menu extends Phaser.Scene {
             'Seyr of Daethos',
             'title'
         );
+        this.border = this.createTextBorder(this.title.obj);
         this.text = new NewText(
             this,
             this.centerX,
@@ -34,7 +35,7 @@ export default class Menu extends Phaser.Scene {
             'Click To Play',
             'standard'
         );
-
+        this.border = this.createTextBorder(this.text.obj);
         this.createMoustInput();
         this.createKeyboardInput();
 
@@ -42,8 +43,24 @@ export default class Menu extends Phaser.Scene {
 
     createBackground() {
         this.bg = this.add.graphics({ x: 0, y: 0 });
-        this.bg.fillStyle('0x8A2BE2', 1);
+        this.bg.fillStyle('0x2A0134', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
+        // Need to create a black border around the backgrounds for the text boxes
+        
+    };
+
+    createTextBorder(text) {
+        const border = this.add.graphics();
+        border.lineStyle(3, 0x2A0134, 1);
+        border.strokeRect(
+            text.x - text.width * text.originX - 1.5, // Subtract half of the border width and the x origin from the x position
+            text.y - text.height * text.originY - 1.5, // Subtract half of the border width and the y origin from the y position
+            text.width + 3, // Add the border width to the width of the text
+            text.height + 3 // Add the border width to the height of the text
+          );
+          
+        this.add.existing(border);
+        return border;
     };
 
     createMoustInput() {

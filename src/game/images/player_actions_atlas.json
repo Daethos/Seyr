@@ -1,0 +1,424 @@
+{
+    "frames": [
+        {
+            "filename": "player_idle_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_4",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_5",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_6",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_idle_7",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_4",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_5",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_6",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_jump_7",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 66
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_4",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 131
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_5",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 196
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_6",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 261
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_7",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 326
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_8",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 391
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_9",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 391
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_10",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 391
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_pray_11",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 391
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "roll_0",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 1,
+                "y": 456
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "roll_1",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 130,
+                "y": 456
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "roll_2",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 259,
+                "y": 456
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "roll_3",
+            "frame": {
+                "w": 128,
+                "h": 64,
+                "x": 388,
+                "y": 456
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -1,0 +1,112 @@
+{
+    "frames": [
+        {
+            "filename": "player_walk_0",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_1",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 50,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_2",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 1,
+                "y": 50
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_3",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 50,
+                "y": 50
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_4",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 99,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_5",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 99,
+                "y": 50
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_6",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 1,
+                "y": 99
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "player_walk_7",
+            "frame": {
+                "w": 48,
+                "h": 48,
+                "x": 50,
+                "y": 99
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

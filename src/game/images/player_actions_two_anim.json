@@ -1,0 +1,236 @@
+{
+    "anims": [
+        {
+            "key": "player_death",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 5,
+            "frames": [
+                {
+                    "key": "player_actions_two",
+                    "frame": "death_0"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "death_1"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "death_2"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "death_3"
+                }
+            ]
+        },
+        {
+            "key": "player_crouch_idle",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_0"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_1"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_2"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_3"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_4"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_5"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_6"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_6"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_idle_7"
+                }
+            ]
+        },
+        {
+            "key": "player_crouch_attacks",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_0"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_1"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_2"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_3"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_4"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_5"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_crouch_attacks_6"
+                }
+            ]
+        },
+        {
+            "key": "player_attack_from_air",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 6,
+            "frames": [
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_0"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_1"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_2"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_3"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_4"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_5"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_attack_from_air_6"
+                }
+            ]
+        },
+        {
+            "key": "player_slide",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_0"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_1"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_2"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_3"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_4"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_5"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_6"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_7"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_8"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_slide_9"
+                }
+            ]
+        },
+        {
+            "key": "player_running",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_0"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_1"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_2"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_3"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_4"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_5"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_5"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_6"
+                },
+                {
+                    "key": "player_actions_two",
+                    "frame": "player_run_7"
+                }
+            ]
+        }
+    ]
+}
