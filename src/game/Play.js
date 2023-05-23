@@ -30,6 +30,7 @@ export default class Play extends Phaser.Scene {
         this.thumbSprite = this.add.sprite(0, 0, stick);
         this.map = null;
         this.isPlayerOnGround = true;
+        this.isPlayerHanging = false;
     };
     
     create() { 
@@ -105,6 +106,11 @@ export default class Play extends Phaser.Scene {
     setPlayerOnGround = function(value) {
         console.log(value, "Setting Whether Player is On The Ground");
         this.isPlayerOnGround = value;
+    };
+
+    setPlayerHanging = function(value) {
+        console.log(value, "Setting Whether Player is Hanging");
+        this.isPlayerHanging = value;
     };
 
     createTextBorder(text) {
