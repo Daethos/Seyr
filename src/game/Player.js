@@ -28,10 +28,17 @@ export default class Player extends Entity {
         super({ ...data }); 
         this.scene.add.existing(this);
         this.setScale(1);
-        // scene.physics.add.existing(this);
+        this.isAttacking = false;
+        this.isCountering = false;
+        this.isDodging = false;
+        this.isPosturing = false;
+        this.isRolling = false;
+        this.inCombat = false;
+        this.isCrouching = false;
         this.isJumping = false;
         this.isHanging = false;
-        this.inCombat = false;
+        this.isHurt = false;
+        this.isPraying = false;
         this.rollCooldown = 0;
         this.dodgeCooldown = 0;
         this.playerSensor = null;
@@ -49,22 +56,8 @@ export default class Player extends Entity {
         });
         this.playerSensor = playerSensor;
         this.setExistingBody(compoundBody);                                    
-        this.setFixedRotation();
-        // Check for collision with ground
-        // this.scene.matter.world.on('collisionstart', (event) => {
-        //     event.pairs.forEach((pair) => {
-        //         const { bodyA, bodyB } = pair;
-        //         if (!bodyA.gameObject || !bodyB.gameObject) return;
-        //         const isBodyAGround = bodyA?.gameObject.tile && bodyA?.gameObject.tile.properties.isGround;
-        //         const isBodyBGround = bodyB?.gameObject.tile && bodyB?.gameObject.tile.properties.isGround;
-            
-        //         if (isBodyAGround || isBodyBGround) { 
-        //             this.scene.setPlayerOnGround(true);
-        //         };
-        //     });
-        // });
+        this.setFixedRotation(); 
         this.scene.matter.world.on('collisionstart', (event) => {
-            console.log("Registering Collision Start")
             event.pairs.forEach((pair) => {
                 const { bodyA, bodyB, collision } = pair;
                 if (!bodyA.gameObject || !bodyB.gameObject) return;
@@ -76,7 +69,6 @@ export default class Player extends Entity {
                     const penetration = collision.penetration;
                     const normal = collision.normal;
         
-                    // Calculate collision points based on penetration and normal vectors
                     const collisionPointA = {
                         x: bodyA.position.x + penetration.x * normal.x,
                         y: bodyA.position.y + penetration.x * normal.y
@@ -86,17 +78,14 @@ export default class Player extends Entity {
                         y: bodyB.position.y + penetration.y * normal.y
                     };
         
-                    // Determine the relevant collision point
                     const collisionPoint = (collisionPointA.y > collisionPointB.y) ? collisionPointA : collisionPointB;
         
                     if (collisionPoint.y > playerPositionY) {
-                        // Player's feet are colliding with the ground, triggering landing animation
                         this.scene.setPlayerOnGround(true);
                         if (this.scene.isPlayerHanging) this.scene.setPlayerHanging(false);
                         if (this.isHanging) this.isHanging = false;
                         this.setStatic(false);
                     } else {
-                        // Player's upper body is colliding with the ground, triggering hanging animation
                         this.scene.setPlayerHanging(true);
                         this.isHanging = true; 
                         this.setStatic(true);
@@ -127,14 +116,29 @@ export default class Player extends Entity {
         playerVelocity.scale(speed);
         const jumpVelocity = 15;
 
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.crouch.C)) {
+            this.isCrouching = this.isCrouching ? false : true;
+            const displacement = 16;
+            if (this.isCrouching) {
+                this.body.parts[2].position.y += displacement;
+                this.body.parts[2].circleRadius = 21;
+                this.body.parts[1].vertices[0].y += displacement;
+                this.body.parts[1].vertices[1].y += displacement; 
+            } else {
+                this.body.parts[2].position.y -= displacement;
+                this.body.parts[2].circleRadius = 28;
+                this.body.parts[1].vertices[0].y -= displacement;
+                this.body.parts[1].vertices[1].y -= displacement;
+            };
+        };
+
         if (scene.isPlayerOnGround && this.isJumping) {
-            console.log("You just landed on the ground from jumping!")
             this.isJumping = false;
         };
         if (!this.isCollidingWithPlayer()) {
             this.isHanging = false;
             scene.setPlayerHanging(false);
-            this.setStatic(false);
+            this.setStatic(false); 
         };
         if (this.inputKeys.strafe.E.isDown) {
             this.setVelocityX(speed);
@@ -143,6 +147,31 @@ export default class Player extends Entity {
         if (this.inputKeys.strafe.Q.isDown) {
             this.setVelocityX(-speed);
             if (this.flipX) this.flipX = false;
+        };
+        
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+            this.isAttacking = true;
+        };
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+            this.isPosturing = true;
+        };
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+            this.isRolling = true;
+        };
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR)) {
+            this.isDodging = true;
+        };
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE)) {
+            this.isCountering = true;
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R)) {
+            console.log('Praying')
+            this.isPraying = this.isPraying ? false : true;
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.hurt.H)) {
+            this.isHurt = this.isHurt ? false : true;
         };
 
         if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
@@ -156,9 +185,7 @@ export default class Player extends Entity {
         if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
             this.setVelocityY(jumpVelocity);
         };
-        // console.log((this.isJumping === false), "isJumping", this.isJumping, "isPlayerOnGround", scene.isPlayerOnGround);
         if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown || this.inputKeys.up.SPACE.isDown) && scene.isPlayerOnGround && this.isJumping === false) {
-            // console.log("Jumping Now", this)
             this.setVelocityY(-jumpVelocity);
             scene.setPlayerOnGround(false);
             this.isJumping = true; 
@@ -174,10 +201,12 @@ export default class Player extends Entity {
         };
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
-            this.setVelocityX(this.body.velocity.x * 0.75);
+            this.setVelocityX(this.body.velocity.x * 0.85);
+            // This will be a +% Defense
         };
         if (this.inputKeys.roll.THREE.isDown) {
-            this.setVelocityX(this.body.velocity.x * 1.5);
+            this.setVelocityX(this.body.velocity.x * 1.25);
+            // Flagged to have its weapons[0].roll added fr
         }; 
 
         if (this.isHanging && scene.isPlayerHanging) {
@@ -191,7 +220,7 @@ export default class Player extends Entity {
                 if (this.isAtEdgeOfLedge(scene)) {
                     this.setStatic(false);
                     this.anims.play('player_climb', true);
-                    this.applyForce(new Phaser.Math.Vector2(0, -0.005));
+                    this.setVelocityY(-2);
                 };
             };
             if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
@@ -205,17 +234,21 @@ export default class Player extends Entity {
             if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
                 this.x += 3;
             };
-        } else if (this.isJumping && (this.inputKeys.attack.ONE.isDown || this.inputKeys.posture.TWO.isDown || this.inputKeys.counter.FIVE.isDown)) {
+        } else if (this.isJumping && (this.isAttacking || this.isPosturing || this.isCountering)) {
             this.anims.play('player_attack_from_air', true);
         } else if (this.isJumping && (this.inputKeys.roll.THREE.isDown)) {
             this.anims.play('player_roll', true);
-        } else if (this.inputKeys.counter.FIVE.isDown) {
-            this.anims.play('player_attack_2', true);
-        } else if (this.inputKeys.dodge.FOUR.isDown) {
+        } else if (this.isCrouching && (this.isAttacking || this.isPosturing || this.isCountering)) {
+            this.anims.play('player_crouch_attacks', true);
+        } else if (this.isCountering) {
+            this.anims.play('player_attack_2', true).on('animationcomplete', () => {
+                this.isCountering = false;
+            });
+        } else if (this.isDodging) {
             this.anims.play('player_slide', true);
             if (this.dodgeCooldown === 0) {
                 this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
-                const dodgeDistance = 72; 
+                const dodgeDistance = 96; 
 
                 const dodgeDuration = 12; // Total duration for the roll animation
                 const dodgeInterval = 1; // Interval between each movement update
@@ -227,6 +260,7 @@ export default class Player extends Entity {
                     if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
                         clearInterval(dodgeIntervalId);
                         this.dodgeCooldown = 0;
+                        this.isDodging = false;
                         return;
                     };
                     const direction = !this.flipX ? -(dodgeDistance / (dodgeDuration / dodgeInterval)) : (dodgeDistance / (dodgeDuration / dodgeInterval));
@@ -237,11 +271,11 @@ export default class Player extends Entity {
 
                 const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
             };
-        } else if (this.inputKeys.roll.THREE.isDown && !this.isJumping) {
+        } else if (this.inputKeys.roll.THREE.isDown && !this.isJumping && this.inCombat) {
             this.anims.play('player_roll', true);
             if (this.rollCooldown === 0) {
                 this.rollCooldown = this.inCombat ? 2000 : 500; 
-                const rollDistance = 48; 
+                const rollDistance = 60; 
                 
                 const rollDuration = 12; // Total duration for the roll animation
                 const rollInterval = 1; // Interval between each movement update
@@ -263,112 +297,63 @@ export default class Player extends Entity {
                 
                 const rollIntervalId = setInterval(rollLoop, rollInterval);  
             };
-        } else if (this.inputKeys.posture.TWO.isDown) {
-            this.anims.play('player_attack_3', true);
-        } else if (this.inputKeys.attack.ONE.isDown) {
-            this.anims.play('player_attack_1', true);
+        } else if (this.isRolling && !this.inCombbat) {
+            console.log(this.anims, "This.anims")
+            this.anims.play('player_roll', true).on('animationcomplete', () => { 
+                this.isRolling = false;
+            }); 
+            if (this.body.velocity.x > 0) {
+                this.setVelocityX(this.body.velocity.x * 1.1);
+            }; 
+        } else if (this.isPosturing) {
+            this.anims.play('player_attack_3', true).on('animationcomplete', () => {
+                this.isPosturing = false;
+            });
+        } else if (this.isAttacking) {
+            this.anims.play('player_attack_1', true).on('animationcomplete', () => {
+                this.isAttacking = false;
+            });
         } else if (!scene.isPlayerOnGround && !this.inputKeys.attack.ONE.isDown) {
             this.anims.play('player_jump', true);
+        } else if (this.isCrouching && Math.abs(this.body.velocity.x) > 0.1) {
+            this.anims.play('player_roll', true);
         } else if (Math.abs(this.body.velocity.x) > 0.1) {
-            console.log("I am Running Now");
             this.anims.play('player_running', true);
+        } else if (this.isHurt) {
+            this.anims.play('player_health', true).on('animationcomplete', () => {
+                this.isHurt = false;
+            });
+        } else if (this.isPraying) {
+            this.anims.play('player_pray', true).on('animationcomplete', () => {
+                console.log('Animation Complete')
+                this.isPraying = false;
+            });
+        } else if (this.isCrouching) {
+            this.anims.play('player_crouch_idle', true);
         } else {
             this.anims.play('player_idle', true);
         };
     };
-
-    // isAtEdgeOfLedge() {
-    //     const playerSensor = this.body.parts[2];
-    //     const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
-    //     const edgeThreshold = 0.9; // Adjust this value as needed
-    //     const overlapThreshold = 0.5; // Adjust this value as needed
-    //     let bodiesTouching = [];
-    //     for (let i = 0; i < bodies.length; i++) {
-    //         const body = bodies[i];
-        
-    //         if (body.id === playerSensor.id) {
-    //             continue;
-    //         };
-    //         // if (
-    //             //     body.position.y < (playerSensor.position.y - playerSensor.gameObject.height * edgeThreshold) 
-    //             //     && this.scene.matter.overlap(playerSensor, body)
-    //             // ) {
-    //                 //     bodiesTouching.push(body);
-    //                 // }; 
-    //                 // Calculate the minimum y-coordinate for overlap detection
-    //         const minY = playerSensor.position.y - playerSensor.gameObject.height * edgeThreshold;
-    //         console.log(body.position.y < minY, "Checking Params For Bodies Touching")
-
-    //         // Check if the body is within proximity to the top edge of the player's sensor
-    //         if (body.position.y < minY) {
-
-    //             // Calculate the overlap area between the body and the player's sensor
-    //             const overlapArea = this.scene.matter.overlap(playerSensor, body);
-    //             const playerSensorArea = playerSensor.gameObject.width * playerSensor.gameObject.height;
-    //             console.log(overlapArea, "Overlap Area", playerSensorArea, "Player Sensor Area", overlapThreshold, "Overlap Threshold");
-    //             // Check if the overlap area is above the threshold
-    //             if (overlapArea / playerSensorArea > overlapThreshold) {
-    //                 bodiesTouching.push(body);
-    //             }
-    //         }
-    //     };
-    //     console.log(bodiesTouching, "Bodies Touching")
-    //     // if (bodiesTouching.length === 1) {
-    //     //     return true;
-    //     // } else {
-    //     //     return false;
-    //     // };
-    //     return bodiesTouching.length > 0;
-
-    // };
+ 
 
     isAtEdgeOfLedge(scene) {
-        const playerSensor = this.body.parts[1]; // Assuming playerSensor is the second part of the compound body
-        const rayStart = { x: playerSensor.position.x, y: playerSensor.position.y }; // Starting point of the ray
-        const rayEnd = { x: playerSensor.position.x, y: playerSensor.position.y - playerSensor.circleRadius }; // Ending point of the ray
-      
-        const bodies = scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
         const edgeThreshold = 0.9; // Adjust this value as needed
-      
+        const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body
+        const rayStart = { x: playerSensor.position.x - playerSensor.circleRadius, y: playerSensor.position.y }; // Starting point of the ray
+        const rayEnd = { x: playerSensor.position.x + playerSensor.circleRadius, y: playerSensor.position.y - playerSensor.circleRadius }; // Ending point of the ray
+        const bodies = scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
         let isAtEdge = false;
-      
-        for (let i = 0; i < bodies.length; i++) {
-            const body = bodies[i];
-        
-            // Skip the player's sensor body
-            if (body.id === playerSensor.id) {
-                continue;
-            };
-        
-            // Perform ray casting
-            const intersection = scene.matter.intersectRay(rayStart, rayEnd, body);
-        
-            // Check if the ray intersects with the body
-            if (intersection.length > 0) {
-                // Analyze the intersection points or perform additional checks
-                // to determine if it corresponds to being at the edge of a ledge.
-                // You can access the intersection points using intersection[0].pointA and intersection[0].pointB
-        
-                // Example: Check if the intersection occurs near the top of the sensor
-                if (intersection[0].pointA.y < playerSensor.position.y - playerSensor.circleRadius * edgeThreshold) {
-                    isAtEdge = true;
-                    break; // No need to check further bodies
-                };
-            };
-        };
-      
+        const intersections = scene.matter.intersectRay(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y, 32, bodies).filter(intersection => intersection.id !== playerSensor.id);
+        if (intersections.length === 1) {
+            isAtEdge = true;
+        }; 
         return isAtEdge;
-    };
-      
-      
-      
-      
+    }; 
       
 
     isCollidingWithPlayer() {
         const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
         const playerSensor = this.body.parts[2];
         return this.scene.matter.overlap(playerSensor, bodies);
-    };  
-      
+    };   
 };

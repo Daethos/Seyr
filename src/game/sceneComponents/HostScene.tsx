@@ -157,7 +157,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     }, [asceanID]);
 
     const resizeGame = () => {
-        let game_ratio = 360 / 480;
+        let game_ratio = 960 / 640;
     
         let canvas = document.getElementsByTagName('canvas')[0];
 

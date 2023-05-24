@@ -1,7 +1,7 @@
 
 export const resizeGame = () => {
     // Width-Height Ration of Game Resolution
-    let game_ratio = 360 / 640;
+    let game_ratio = 640 / 960;
 
     // Make Div Full Height of Browser and Keep the Ratin of Game Resolution
     let div = document.getElementById('story-game');

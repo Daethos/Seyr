@@ -3,7 +3,6 @@ import Player from './Player';
 import NewText from './NewText.js'
 import stick from './images/stick.png';
 import base from './images/base.png';
-import slashANIM from './images/slash_anim.json';
 
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -40,6 +39,7 @@ export default class Play extends Phaser.Scene {
         const backgroundSet = map.addTilesetImage('layer_1', 'layer_1', 32, 32, 0, 0);
         const layer2 = map.createLayer('Tile Layer 2', backgroundSet, 0, 0);
         const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
+        console.log(layer1, layer2, map, "Layers");
         layer1.setCollisionByProperty({ collides: true });
         // layer2.setCollisionByProperty({ collides: true });
         this.matter.world.convertTilemapLayer(layer1);
@@ -54,9 +54,7 @@ export default class Play extends Phaser.Scene {
         // this.matter.world.convertTilemapLayer(layer1);
         // this.matter.world.convertTilemapLayer(layer2);
         // this.map = map;
-        console.log(this, "What is This in Create Play Scene?")
 
-        this.anims.fromJSON(slashANIM);
         this.matter.world.setBounds(0, 0, 960, 640);
         this.matter.world.createDebugGraphic();
         
@@ -69,14 +67,17 @@ export default class Play extends Phaser.Scene {
             right: this.input.keyboard.addKeys('D,RIGHT'),
             attack: this.input.keyboard.addKeys('ONE,SHIFT-ONE'),
             counter: this.input.keyboard.addKeys('FIVE'),
-            roll: this.input.keyboard.addKeys('THREE,SHIFT-THREE'),
-            posture: this.input.keyboard.addKeys('TWO,SHIFT-TWO'),
             dodge: this.input.keyboard.addKeys('FOUR,SHIFT-FOUR'),
+            posture: this.input.keyboard.addKeys('TWO,SHIFT-TWO'),
+            roll: this.input.keyboard.addKeys('THREE,SHIFT-THREE'),
+            crouch: this.input.keyboard.addKeys('C'),
+            hurt: this.input.keyboard.addKeys('H'),
+            pray: this.input.keyboard.addKeys('R'),
             strafe: this.input.keyboard.addKeys('E,Q'),
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 2;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 960, 640);
@@ -104,12 +105,10 @@ export default class Play extends Phaser.Scene {
     };
 
     setPlayerOnGround = function(value) {
-        console.log(value, "Setting Whether Player is On The Ground");
         this.isPlayerOnGround = value;
     };
 
     setPlayerHanging = function(value) {
-        console.log(value, "Setting Whether Player is Hanging");
         this.isPlayerHanging = value;
     };
 
@@ -141,8 +140,7 @@ export default class Play extends Phaser.Scene {
                     0.5,
                     this.game,
                 );
-                // console.log(this.welcome.obj, 'Welcome')
-                    this.border = this.createTextBorder(this.welcome.obj);
+                this.border = this.createTextBorder(this.welcome.obj);
             },
             callbackScope: this
         });
