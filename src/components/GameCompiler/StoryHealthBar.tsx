@@ -35,7 +35,7 @@ const StoryHealthBar = ({ totalPlayerHealth, currentPlayerHealth, story }: GameP
     };
 
     return (
-        <div className='mb-4'>
+        <div className='my-4'>
         <ProgressBar 
             variant="success" 
             id={story ? 'story-health' : 'player-health'} 

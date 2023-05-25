@@ -30,20 +30,25 @@ export default class NewText {
             align: 'center',
             padding: 5,
             wordWrap: {
-                width: 720,
+                width: 840,
                 useAdvancedWrap: true
             },
         };
         switch (key.toLowerCase()) {
             case 'title':
-                style.fontSize = 64;
+                style.fontSize = 84;
+                style.strokeThickness = 4;
+                style.shadow.blur = 4;
                 break;
             case 'preload':
                 style.fontSize = 48;
+                style.strokeThickness = 1;
+                style.shadow.blur = 1;
                 break;
             case 'play':
                 style.strokeThickness = 1;
                 style.shadow.blur = 1;
+                style.wordWrap.width = 640;
                 break;
         };
         return style;

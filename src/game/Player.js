@@ -50,9 +50,9 @@ export default class Player extends Entity {
             parts: [playerCollider, playerSensor],
             frictionAir: 0.01, // Adjust the air friction for smoother movement
             restitution: 0.25, // Set the restitution to reduce bounce
-            mass: 1.5, // Increase the mass for a heavier feel
-            gravity: { y: 0.05 }, // Increase gravity for a faster fall
-            friction: 0.75,
+            mass: 2, // Increase the mass for a heavier feel
+            gravity: { y: 0.075 }, // Increase gravity for a faster fall
+            friction: 1,
         });
         this.playerSensor = playerSensor;
         this.setExistingBody(compoundBody);                                    
@@ -110,7 +110,7 @@ export default class Player extends Entity {
     };
 
     update(scene) {
-        const speed = 5;
+        const speed = 4;
         let playerVelocity = new Phaser.Math.Vector2();
         playerVelocity.normalize();
         playerVelocity.scale(speed);
@@ -202,11 +202,13 @@ export default class Player extends Entity {
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
             this.setVelocityX(this.body.velocity.x * 0.85);
-            // This will be a +% Defense
+            // This will be a +% Defense from Shield. 
+            // Counter-Posturing gets +damage bonus against this tactic
         };
         if (this.inputKeys.roll.THREE.isDown) {
             this.setVelocityX(this.body.velocity.x * 1.25);
-            // Flagged to have its weapons[0].roll added fr
+            // Flagged to have its weapons[0].roll added as an avoidance buff
+            // Counter-Roll gets +damage bonus against this tactic
         }; 
 
         if (this.isHanging && scene.isPlayerHanging) {
@@ -271,11 +273,11 @@ export default class Player extends Entity {
 
                 const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
             };
-        } else if (this.inputKeys.roll.THREE.isDown && !this.isJumping && this.inCombat) {
+        } else if (this.inputKeys.roll.THREE.isDown && !this.isJumping && !this.inCombat) {
             this.anims.play('player_roll', true);
             if (this.rollCooldown === 0) {
                 this.rollCooldown = this.inCombat ? 2000 : 500; 
-                const rollDistance = 60; 
+                const rollDistance = 72; 
                 
                 const rollDuration = 12; // Total duration for the roll animation
                 const rollInterval = 1; // Interval between each movement update
@@ -297,13 +299,13 @@ export default class Player extends Entity {
                 
                 const rollIntervalId = setInterval(rollLoop, rollInterval);  
             };
-        } else if (this.isRolling && !this.inCombbat) {
+        } else if (this.isRolling && this.inCombbat) {
             console.log(this.anims, "This.anims")
             this.anims.play('player_roll', true).on('animationcomplete', () => { 
                 this.isRolling = false;
             }); 
             if (this.body.velocity.x > 0) {
-                this.setVelocityX(this.body.velocity.x * 1.1);
+                this.setVelocityX(this.body.velocity.x * 1.2);
             }; 
         } else if (this.isPosturing) {
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {

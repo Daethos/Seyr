@@ -9,7 +9,7 @@ interface Props {
     asceanState?: any;
     setAsceanState: React.Dispatch<any>;
     levelUpAscean?: any;
-}
+};
 
 const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => {
     const [levelUpModalShow, setLevelUpModalShow] = useState<boolean>(false);
@@ -37,14 +37,14 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
                 fontWeight: 550, 
                 fontVariant: 'small-caps', 
                 color: 'green', 
-                fontSize: 15 + 'px',
-                border: 2 + 'px' + ' solid ' + 'green' 
+                fontSize: '15px',
+                border: '2px solid green' 
             }}>
                 Level Up
             </Button>
             </Modal.Body>
         </Modal>
-        <Button variant='outline' style={{ }} id='level-up' onClick={() => setLevelUpModalShow(true)}>
+        <Button variant='outline' id='level-up' onClick={() => setLevelUpModalShow(true)}>
             <h3 className='level-up'>Level++!!</h3>
         </Button>
         </>

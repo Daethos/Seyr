@@ -23,19 +23,19 @@ export default class Menu extends Phaser.Scene {
         this.title = new NewText(
             this,
             this.centerX,
-            75,
-            'Seyr of Daethos',
+            150,
+            'The Land of Hush and Tendril',
             'title'
         );
-        this.border = this.createTextBorder(this.title.obj);
+        this.border = this.createMenuBorder(this.title.obj);
         this.text = new NewText(
             this,
             this.centerX,
             this.centerY,
-            'Click To Play',
+            'Click or Press Enter to Play',
             'standard'
         );
-        this.border = this.createTextBorder(this.text.obj);
+        this.border = this.createMenuBorder(this.text.obj);
         this.createMoustInput();
         this.createKeyboardInput();
 
@@ -49,9 +49,9 @@ export default class Menu extends Phaser.Scene {
         
     };
 
-    createTextBorder(text) {
+    createMenuBorder(text) {
         const border = this.add.graphics();
-        border.lineStyle(3, 0x2A0134, 1);
+        border.lineStyle(3, 0xFDF6D8, 1);
         border.strokeRect(
             text.x - text.width * text.originX - 1.5, // Subtract half of the border width and the x origin from the x position
             text.y - text.height * text.originY - 1.5, // Subtract half of the border width and the y origin from the y position

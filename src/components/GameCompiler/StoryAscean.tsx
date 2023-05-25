@@ -1,13 +1,10 @@
-import { useState } from 'react'
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import Loading from '../Loading/Loading';
-import Container from 'react-bootstrap/Container'
-import Button from 'react-bootstrap/Button'
 import StoryHealthBar from './StoryHealthBar';
-import StoryPlayerStats from './StoryPlayerStats';
 import LevelUpModal from '../../game/LevelUpModal';
 import GamePlayerStats from './GamePlayerStats';
 import StatusEffects from './StatusEffects';
+import ExperienceBar from './ExperienceBar';
 
 interface Props {
   ascean: any;
@@ -20,7 +17,6 @@ interface Props {
 };
 
 const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean }: Props) => {
-    const [showPlayer, setShowPlayer] = useState<boolean>(false)
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -28,8 +24,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     };
     return (
         <>
-        <div className="story-block" id='story-ascean'>
-        { !showPlayer ? (
+        <div className="story-block">
             <div className='story-ascean'>
                 {state.playerEffects.length > 0 ?
             (state.playerEffects.map((effect: any, index: number) => {
@@ -38,13 +33,15 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             { asceanState.experience === asceanState.experienceNeeded ? (
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
-            <div className="actions" style={{ marginBottom: 0 + '%'}}>
                 <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} />
+            <div className="actions" style={{ marginBottom: '-5%'}}>
             </div>
+            <div style={{ textAlign: 'center', marginTop: "-6%" }}>
             <GamePlayerStats 
                 attributes={state.player_attributes} player={ascean} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} 
                 physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} 
-            />
+                />
+            </div>
             <AsceanImageCard
                 weapon_one={state.weapons[0]}
                 weapon_two={state.weapons[1]}
@@ -61,8 +58,8 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                 loading={loading}
                 key={ascean._id}
             />
+            <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} story={true} />
             </div>
-        ) : ( '' ) }
         </div>
         </>
     );

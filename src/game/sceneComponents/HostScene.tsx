@@ -11,8 +11,16 @@ import Menu from '../Menu';
 import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
+import * as settingsAPI from '../../utils/settingsApi';
+import * as gameAPI from '../../utils/gameApi';
 import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
+import PhaserInventoryBag from '../PhaserInventoryBag';
+import { GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
+import PhaserSettings from '../PhaserSettings';
+import StatusEffects from '../../components/GameCompiler/StatusEffects';
+import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
+import useGameSounds from '../../components/GameCompiler/Sounds';
 
 export const useDocumentEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -35,6 +43,7 @@ interface Props {
 
 const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState }: Props) => {
     const { asceanID } = useParams();
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>({})
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
@@ -105,6 +114,20 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             console.log(err.message, 'Error Starting Game')
         };
     }, [asceanID]);
+
+    const getAsceanLeveled = async () => {
+        try {
+            const firstResponse = await asceanAPI.getCleanAscean(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_LEVEL_UP, payload: firstResponse.data });
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_LEVEL_UP,
+                payload: response.data.data
+             });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Leveled');
+        };
+    };
     
     const levelUpAscean = async (vaEsai: any) => {
         try {
@@ -124,6 +147,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 mastery: response.data.mastery,
                 faith: response.data.faith,
             });
+            await getAsceanLeveled();
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up');
         };
@@ -145,7 +169,233 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             author: e.detail.author,
             message: e.detail.message,
         });
-    }
+    };
+
+    useEffect(() => {
+        if (!gameState.itemSaved) return;
+        getOnlyInventory();
+        return () => gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
+    }, [gameState, gameState.itemSaved]);
+
+    useEffect(() => {
+        if (!gameState.eqpSwap) return;
+        getAsceanAndInventory();
+        return () => gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
+    }, [gameState, gameState.eqpSwap]);
+
+    useEffect(() => {
+        if (!gameState.removeItem) return;
+        getOnlyInventory();
+        return () => gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
+    }, [gameState, gameState.removeItem]);
+
+    useEffect(() => {
+        if (!gameState.repositionInventory) return;
+        getOnlyInventory();
+        return () => gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
+    }, [gameState, gameState.repositionInventory]);
+
+    useEffect(() => {
+        if (!gameState.saveExp) return;
+        saveExperience();
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
+        };
+    }, [asceanState, gameState.saveExp]);
+
+    const getAsceanAndInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
+            const response = await asceanAPI.getAsceanStats(asceanID);
+            dispatch({
+                type: ACTIONS.SET_PLAYER_SLICK,
+                payload: response.data.data
+            });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
+
+    const getOnlyInventory = async () => {
+        try {
+            const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
+
+    const saveExperience = async () => {
+        if (!gameState.saveExp || !state.player_win) return;
+        try {
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
+            const response = await asceanAPI.saveExperience(asceanState);
+            if (response.data.gold > 0 && response.data.silver > 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`] });
+            } else if (response.data.gold > 0 && response.data.silver === 0) { 
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`] });
+            } else if (response.data.gold === 0 && response.data.silver > 0) {
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`] });
+            } else {
+                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points.`] });
+            };
+            const cleanRes = await asceanAPI.getCleanAscean(asceanID);
+            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: cleanRes.data });
+            dispatch({
+                type: ACTIONS.SAVE_EXPERIENCE,
+                payload: cleanRes.data
+            });
+            setAsceanState({
+                ...asceanState,
+                'ascean': cleanRes.data,
+                'currentHealth': cleanRes.data.health.current,
+                'constitution': 0,
+                'strength': 0,
+                'agility': 0,
+                'achre': 0,
+                'caeren': 0,
+                'kyosir': 0,
+                'level': cleanRes.data.level,
+                'opponent': gameState.opponent.level,
+                'experience': 0,
+                'experienceNeeded': cleanRes.data.level * 1000,
+                'mastery': cleanRes.data.mastery,
+                'faith': cleanRes.data.faith,
+            });
+            gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
+        } catch (err: any) {
+            console.log(err.message, 'Error Saving Experience');
+        };
+    };
+    
+    const gainExperience = async () => {
+        try {
+            let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
+            if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
+                setAsceanState({
+                    ...asceanState,
+                    'opponentExp': opponentExp,
+                    'currentHealth': state.new_player_health,
+                    'experience': asceanState.experienceNeeded,
+                });
+                gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
+            };
+            if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
+                setAsceanState({
+                    ...asceanState,
+                    'opponentExp': opponentExp,
+                    'currentHealth': state.new_player_health,
+                    'experience': Math.round(asceanState.experience + opponentExp),
+                });
+                gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
+            };
+        } catch (err: any) {
+            console.log(err.message, 'Error Gaining Experience')
+        };
+    };
+
+    async function handlePlayerWin(combatData: CombatData) {
+        try {
+            playReligion();
+            await gainExperience();
+            const statistic = {
+                asceanID: combatData.player._id,
+                wins: 1,
+                losses: 0,
+                total: 1,
+                actionData: combatData.actionData,
+                typeAttackData: combatData.typeAttackData,
+                typeDamageData: combatData.typeDamageData,
+                totalDamageData: combatData.totalDamageData,
+                prayerData: combatData.prayerData,
+                deityData: combatData.deityData,
+
+            };
+            const response = await asceanAPI.recordCombatStatistic(statistic);
+            console.log(response, "Player Win Response Recorded");
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            }, 6000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
+    async function handleComputerWin(combatData: CombatData) {
+        try {
+            const statistic = {
+                asceanID: combatData.player._id,
+                wins: 0,
+                losses: 1,
+                total: 1,
+                actionData: combatData.actionData,
+                typeAttackData: combatData.typeAttackData,
+                typeDamageData: combatData.typeDamageData,
+                totalDamageData: combatData.totalDamageData,
+                prayerData: combatData.prayerData,
+                deityData: combatData.deityData,
+            };
+            const response = await asceanAPI.recordCombatStatistic(statistic);
+            console.log(response, "Player Loss Response Recorded");
+            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
+            await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
+            playDeath();
+            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.COMPUTER_WIN, payload: combatData });
+                gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
+                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
+            }, 6000);
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
+
+    async function handleInstant(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
+            const response = await gameAPI.instantAction(state);
+            console.log(response.data, "Instant Response");
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            shakeScreen(gameState.shake);
+            playReligion();
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Insant Action')
+        };
+    };
+
+    async function handlePrayer(e: { preventDefault: () => void; }) {
+        e.preventDefault();
+        try {
+            if (state.prayerSacrifice === '') return;
+            const response = await gameAPI.consumePrayer(state);
+            console.log(response.data, "Prayer Response");
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            shakeScreen(gameState.shake);
+            playReligion();
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Action')
+        };
+    };
 
     useEffect(() => {
         window.addEventListener('request-ascean', sendAscean);
@@ -228,45 +478,55 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    const handleInventoryMiddleware = async () => {
+        try {
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory });
+        } catch (err: any) {
+            console.log(err, "Error Handling Dialog Middleware");
+        };
+    };
+
     return (
         <>
             <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
                 <Modal.Body>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => toggleFullscreen()}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ fullScreen ? 'Exit' : 'Enter' } Full Screen</h3>
+                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>{ fullScreen ? 'Exit' : 'Enter' } Full Screen</h3>
                 </Button>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleMute}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ muteState ? 'Unmute' : 'Mute' } Game</h3>
+                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>{ muteState ? 'Unmute' : 'Mute' } Game</h3>
                 </Button>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => togglePause()}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>{ pauseState ? 'Resume' : 'Pause' } Game</h3>
+                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>{ pauseState ? 'Resume' : 'Pause' } Game</h3>
                 </Button>
                 </Modal.Body>
             </Modal>
             <Modal show={worldModalShow} onHide={() => setWorldModalShow(false)} centered>
                 <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Latency: {' '}</h3>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Friends: {' '}</h3>
-                    <h3 style={{ fontSize: 12 + 'px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
+                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Latency: {' '}</h3>
+                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Friends: {' '}</h3>
+                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
                 </Modal.Body>
             </Modal>
-            <div id='ui-hud' className='ui-hud'>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+            <div id='ui-hud'>
+                <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                     <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>{state.player.name}</h3>
                 </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
                     <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
                 </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setWorldModalShow(true)}>
-                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>World Status</h3>
-                </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' id='world-status' onClick={() => setModalShow(true)}>
-                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Settings</h3>
-                </Button>
+                <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
+                {state.playerEffects.length > 0 ?
+                (state.playerEffects.map((effect: any, index: number) => {
+                    return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} key={index} /> )
+                })) : '' }
+            </div>
             { showPlayer ?
                 ( <StoryAscean ascean={state.player} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
-            </div>
+            { gameState.showInventory ?
+                <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
+            : ""}
             <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
             </div>
         </>

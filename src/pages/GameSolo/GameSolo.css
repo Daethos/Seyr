@@ -382,6 +382,7 @@
   height: 50%;
   box-shadow: 2px 2px 2px black;
 }
+
 .inventory-icon {
   width: 64px;
   height: 64px;
@@ -389,29 +390,7 @@
   color: #fdf6d8;
   font-weight: 600;
   display: inline-block;
-  /* vertical-align: top; */
-};
-
-.rarity-common {
-  border: 5px solid white;
-}
-
-.rarity-uncommon {
-  border: 5px solid green;
-}
-
-.rarity-rare {
-  border: 5px solid blue;
-}
-
-.rarity-epic {
-  border: 5px solid purple;
-}
-
-.rarity-legendary {
-  border: 5px solid orange;
-}
-
+}; 
 .text-box {
   font-family: monospace;
   border: 2px solid purple;
@@ -584,6 +563,15 @@
   margin-top: -6.5%;
   height: 15%;
   left: -0.75%;
+}
+#story-xp {
+  background-color: transparent;
+  border: 1.5px solid purple;
+  margin-top: 9%;
+  margin-left: 7.5%;
+  height: 7.5%;
+  width: 35%;
+  /* left: -0.75%; */
 }
 #story {
   max-width: 34%;
@@ -834,6 +822,13 @@
   grid-row-start: 7;
   margin-top: 22.5%;
 }
+.story-firewater {
+  display: absolute;
+  color: gold;
+  z-index: 999;
+  margin-top: 25%;
+  grid-row-start: 7;
+}
 .dialog-buttons.inner {
   font-size: 16px;
 }
@@ -850,6 +845,25 @@
 }
 .save-inventory {
   height: 70%;
+  font-weight: 600;
+  text-shadow: 1px 1px 1px black;
+  color: gold;
+  border: 3px solid gold;
+  background: black;
+  box-shadow: 2px 2px 2px black;
+}
+.story-save-inventory-outer {
+  display: absolute;
+  z-index: 999;
+  grid-column-start: 2;
+  grid-row-start: 7;
+  margin-left: -25%;
+  margin-top: 25%;
+  height: 65%;
+}
+.story-save-inventory {
+  height: 100%;
+  z-index: 999;
   font-weight: 600;
   text-shadow: 1px 1px 1px black;
   color: gold;
@@ -1219,6 +1233,7 @@
   #player-animation {
     margin-left: 45%;
   }
+
   .joystick-outer {
     width: 150px;
     height: 150px;
@@ -1330,7 +1345,8 @@
     margin-top: 6.5%;
   }
   .progressxp-text {
-    margin-top: 4.5%;
+    margin-top: 8.5%;
+    margin-left: -50%;
     font-size: 16px;
   }
   .progress {
@@ -1591,6 +1607,7 @@
   .actionButtons {
     top: -2.5%;
   }
+  
 }
 @media screen and (max-height: 650px) {
   #game-container {

@@ -71,7 +71,7 @@
         {
             "key": "player_crouch_attacks",
             "type": "frames",
-            "repeat": -1,
+            "repeat": 0,
             "frameRate": 12,
             "frames": [
                 {
@@ -107,8 +107,8 @@
         {
             "key": "player_attack_from_air",
             "type": "frames",
-            "repeat": -1,
-            "frameRate": 6,
+            "repeat": 0,
+            "frameRate": 12,
             "frames": [
                 {
                     "key": "player_actions_two",
@@ -143,7 +143,7 @@
         {
             "key": "player_slide",
             "type": "frames",
-            "repeat": -1,
+            "repeat": 0,
             "frameRate": 12,
             "frames": [
                 {

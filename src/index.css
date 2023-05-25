@@ -503,21 +503,18 @@ html, body {
 }
 
 .story-block {
-  grid-column-start: 1;
-  grid-row-start: 6;
-  display: inline-block;
-  position: relative;
-  text-align: left;
-  min-width: 150px;
+  /* margin-top: 10%; */
+  position: absolute;
+  margin-top: 33%;
+  margin-left: -12%;
   height: 35%;
-  bottom: -35%;
   left: 0%;
 }
 #ui-hud {
-  width: 100%;
-  justify-content: space-evenly;
   position: absolute;
-  top: 6.5%;
+  /* top: 6.5%; */
+  justify-content: space-evenly;
+  width: 100%;
 }
 #ascean-stats {
   width: 100%;
@@ -527,9 +524,57 @@ html, body {
   pointer-events: visible;
 }
 .story-ascean {
-  background-color: rgba(0, 0, 0, 0.7);
-  margin-top: -5%;
+  background-color: rgba(0, 0, 0, 1);
+  border: 3px solid purple;
+  box-shadow: 2px 2px 2px black;
+  border-radius: 6px;
+  width: 50%;
+  height: 115%;
+  margin-left: 25%;
+  /* margin-top: -5%; */
 }
+#story-healthbar {
+  display: grid;
+  grid-column-start: 3;
+  grid-row-start: 1;
+  text-align: center; 
+  background-color: red;
+  width: 50%;
+  height: 10%;
+  margin-top: 1%;
+}
+.story-inventory-bag {
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(6, 16%);
+  grid-template-rows: repeat(12, 32.5%);
+  justify-content: space-evenly;
+  padding: 1%;
+  z-index: 99;
+  color: #fdf6d8;
+  background-color: black;
+  border: 3px solid purple;
+  box-shadow: 2px 2px 2px black;
+  width: 65vw;
+  height: 40.25vh;
+  overflow-y: scroll;
+  border-radius: 6px;
+  margin-left: 32.5%;
+  margin-top: 33%;
+  scrollbar-width: none;
+} 
+.story-inventory-bag-settings {
+  width: 100%;
+} 
+.story-inventory {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background-color: black;
+  color: #fdf6d8;
+  font-weight: 600;
+  padding: 2.5%;
+}; 
 #level-up {
   /* float: right; */
   position: absolute;
@@ -554,27 +599,30 @@ html, body {
 .settings-style { color: goldenrod; }
 #story-health {
   background-color: red;
-  font-size: 10px;
-  width: 34%;
-  margin-left: 33%;
-  margin-top: 1%;
+  background: green;
+  height: 10%;
+  width: 40%;
+  margin-left: 4.5%;
+  margin-top: 3%;
+  border: 2px solid purple;
 }
 
 .story-progress {
+  /* justify-content: center;
+  align-items: center; */
   position: absolute;
   overflow: hidden;
-  width: 34%;
-  margin-left: 33%;
-  margin-top: 1%;
-  font-size: 10px;
+  /* width: 25%; */
+  margin-left: 12.5%;
+  margin-top: 3%;
+  font-size: 16px;
   color: white;
   font-weight: 700;
   background: transparent;
 }
 .story-progress-text {
-  justify-content: center;
   align-items: center;
-  margin-left: 15%;
+  color: black;
 }
 
 #story-pic {

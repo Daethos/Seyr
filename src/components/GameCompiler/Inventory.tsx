@@ -21,9 +21,10 @@ interface Props {
     gameDispatch: React.Dispatch<any>;
     blacksmith?: boolean;
     index: number;
+    story?: boolean;
 };
 
-const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, gameState }: Props) => {
+const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, gameState, story }: Props) => {
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [forgeModalShow, setForgeModalShow] = useState<boolean>(false);
@@ -412,20 +413,28 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         };
     };
 
+    function getBorderSize() {
+        if (story) {
+            return 6;
+        } else {
+            return 4;
+        };
+    };
+
     function getBorderStyle(rarity: string) {
         switch (rarity) {
             case 'Common':
-                return '4px solid white';
+                return `${getBorderSize()}px solid white`;
             case 'Uncommon':
-                return '4px solid green';
+                return `${getBorderSize()}px solid green`;
             case 'Rare':
-                return '4px solid blue';
+                return `${getBorderSize()}px solid blue`;
             case 'Epic':
-                return '4px solid purple';
+                return `${getBorderSize()}px solid purple`;
             case 'Legendary':
-                return '4px solid orange';
+                return `${getBorderSize()}px solid orange`;
             default:
-                return '4px solid grey';
+                return `${getBorderSize()}px solid grey`;
         };
     };
 
@@ -454,7 +463,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
 
     const getItemStyle = (rarity: string) => {
         return {
-            margin: blacksmith ? '0 2% 10% 2%' : '0 0 0 0',
+            margin: blacksmith ? '0 2% 10% 2%' : story ? '5% 0 0 15%' : '0 0 0 0',
             background: 'black',
             border: getBorderStyle(rarity),
             display: "inline-block"
@@ -742,7 +751,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             {(provided, snapshot) => (
                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                     <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
-                        <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={`inventory-icon rarity-${inventory?.rarity?.toLowerCase()}`} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
+                        <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} className={story ? 'story-inventory' : 'inventory-icon'} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
                     </OverlayTrigger>
                 </div>
             )}

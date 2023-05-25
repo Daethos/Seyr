@@ -75,7 +75,7 @@ export default class Preload extends Phaser.Scene {
         this.title = new NewText(
             this,
             this.centerX,
-            75,
+            150,
             'Loading Game',
             'preload',
             0.5
@@ -108,7 +108,7 @@ export default class Preload extends Phaser.Scene {
     };
     createTextBorder(text) {
         const border = this.add.graphics();
-        border.lineStyle(3, 0x2A0134, 1);
+        border.lineStyle(3, 0xFDF6D8, 1);
         border.strokeRect(
             text.x - text.width * text.originX - 1.5, // Subtract half of the border width and the x origin from the x position
             text.y - text.height * text.originY - 1.5, // Subtract half of the border width and the y origin from the y position

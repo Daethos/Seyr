@@ -37,17 +37,16 @@ const ExperienceBar = ({ totalExperience, currentExperience, story, spectator }:
 
     return (
         <div className={spectator ? 'my-4' : 'mb-4'}>
-
         <ProgressBar 
             variant="warning" 
-            id={story ? 'player-xp story' : 'player-xp'} 
+            id={story ? 'story-xp' : 'player-xp'} 
             now={playerXPPercentage} 
         />
-        <div className="progressxp">
+            <div className="progressxp">
             <p className='progressxp-text'>
                 {`${Math.round(currentExperience)} / ${totalExperience} [${playerXPPercentage}%]`}
             </p>
-        </div>
+            </div>
         </div>
     );
 };
