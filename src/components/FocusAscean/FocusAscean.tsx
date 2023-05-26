@@ -65,12 +65,10 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             </div>
-        
-        </div>
-        <div className="section-right">
             <FeelingsCard loggedUser={loggedUser} ascean={ascean} key={ascean._id} />
-            <div className="actions">
+            <div className='actions'>
                 <h3>Eccentricities & Equipment</h3>
+            </div>
             <div className='property-block'>
             <AsceanImageCard
                 weapon_one={ascean.weapon_one}
@@ -86,9 +84,11 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
                 trinket={ascean.trinket}
             />
             </div>
-            <div className='property-block'>
-            
-            </div>
+        
+        </div>
+        <div className="section-right">
+            <div className="actions">
+
             <AsceanStatCompiler ascean={ascean} communityFocus={true} key={ascean._id} />
             </div>
             

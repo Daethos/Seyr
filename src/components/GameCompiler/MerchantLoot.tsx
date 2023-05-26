@@ -228,7 +228,7 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, game
     return (
         <Col>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={merchantItemPopover}>
-                <Button variant=""  className="m-3 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></Button>
+                <Button variant=""  className="my-3 mx-2 p-2" style={getItemStyle}><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></Button>
             </OverlayTrigger>
             <p style={{ fontSize: "11px", marginTop: "-14px" }}>
             {purchaseSetting?.cost?.gold ? `${purchaseSetting.cost.gold}g${' '}` : ''}

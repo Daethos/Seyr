@@ -73,3 +73,35 @@
     display: none;
 }
 
+@media screen and (min-width: 800px) and (max-width: 1001px) and (min-height: 600px) and (max-height: 900px) {
+    @keyframes slide {
+        from {
+            opacity: 0.65;
+            top: 0px;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            top: 275px;
+            transform: scale(1.05);
+        }
+    }
+    @keyframes mymove {
+        from {
+            opacity: 0.65;
+            bottom: 25px;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            bottom: 300px;
+            transform: scale(1.05);
+        }
+    }
+    .hidden {
+        animation: slide 3s ease-out infinite alternate;
+    }
+    .pulse {
+        animation: mymove 3s ease-out infinite alternate;
+    }  
+}

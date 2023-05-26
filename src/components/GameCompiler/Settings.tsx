@@ -176,7 +176,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
         </Accordion.Item>
         <Accordion.Item eventKey="5">
         <Accordion.Header>
-            <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
+            <h5 style={{ marginLeft: 'auto', color: 'gold' }}>
             Map Legend
             </h5>
         </Accordion.Header>

@@ -23,6 +23,10 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
     const [highScores, setHighScores] = useState<any>([]);
 
     useEffect(() => {
+      console.log(highScores, "High Scores")
+    }, [highScores])
+
+    useEffect(() => {
         getAscean();
     }, []);
 
@@ -50,8 +54,8 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
               );
             });
             console.log(scores, "SCORES")
-            const sortedScores = await scores.sort(compareScores);
-            setHighScores(sortedScores.reverse());
+            const sortedScores = await scores.sort(compareScores).filter((score: any) => score[0].ascean).reverse();
+            setHighScores(sortedScores);
             setLoading(false);
         } catch (err: any) {
             setLoading(false);
@@ -146,7 +150,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         { highScores.map((ascean: any, index: number) => {
           return (
             <tbody key={index}>
-            { index < 10 ? 
+            { index < 10 && (
               <tr>
                 <td>
                 <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
@@ -158,7 +162,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
                 <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
                 <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
               </tr>
-            : '' }
+             )}
             </tbody>
           )
         })}

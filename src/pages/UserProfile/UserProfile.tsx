@@ -71,11 +71,11 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
     <Container>
       <HomeSettings ascean={asceanVaEsai} loggedUser={loggedUser} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
         { asceanVaEsai.length > 0 ? 
-          asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }) => {
+          asceanVaEsai.map((ascean: { _id: React.Key | null | undefined; }, index: number) => {
             return (
               <SolaAscean
                 ascean={ascean}
-                key={ascean._id}
+                key={index}
                 userProfile={true}
                 handleAsceanCreate={saveAsceanMiddleware}
                 deleteAscean={deleteAscean}

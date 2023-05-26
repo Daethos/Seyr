@@ -57,9 +57,9 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 Writhing, it warps to wrap round you, seething, forms of shade shimmer to dance upon your being. <br /><br />
                 Yet perchance you seek to twist ${player.faith === 'adherent' ? 'adherence' : 'devotion'} in its seams, To taste its ${player.mastery} burning the resin of your dreams. <br /><br />
             
-                <p className='${player.faith === 'adherent' ? 'adherentText' : player?.faith === 'devoted' ? 'devotedText' : 'otherText'}'>You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither.</p>
+                <p className='${player.faith === 'adherent' ? 'adherentText' : player?.faith === 'devoted' ? 'devotedText' : 'otherText'}'>You become attuned to a halt and paltry whisper, it rings and stretches your soft edges, serenity begging you hither.</p>
                 <p className='whisperText'>
-                "Who are you?" 
+                ^500 "Who are you?" 
                 </p>
                 <p className='journeyText'>
                     [If you wish to peer into the land of Hush and Tendril and begin a journey of yourself and what you mean to this world, click upon the avatar. You may rebuke this ^500 calling.] 

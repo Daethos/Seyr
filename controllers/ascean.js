@@ -142,7 +142,6 @@ async function recordCombatStatistic(req, res) {
         statistic.wins += wins;
         statistic.losses += losses;
         statistic.total += total;
-        statistic.damage.total = totalDamageData > statistic.damage.total ? totalDamageData : statistic.damage.total;
         statistic.actions.attacks += actionData.reduce((count, action) => action === 'attack' ? count + 1 : count, 0);
         statistic.actions.counters += actionData.reduce((count, action) => action === 'counter' ? count + 1 : count, 0);
         statistic.actions.dodges += actionData.reduce((count, action) => action === 'dodge' ? count + 1 : count, 0);
@@ -157,9 +156,20 @@ async function recordCombatStatistic(req, res) {
         statistic.prayers.debuff += prayerData.reduce((count, prayer) => prayer === 'Debuff' ? count + 1 : count, 0);
         statistic.attacks.magical += typeAttackData.reduce((count, type) => type === 'Magic' ? count + 1 : count, 0);
         statistic.attacks.physical += typeAttackData.reduce((count, type) => type === 'Physical' ? count + 1 : count, 0);
-        statistic.damage.type = statistic.damage.type.concat(...typeDamageData).flat();
+        statistic.attacks.blunt += typeDamageData.reduce((count, type) => type === 'Blunt' ? count + 1 : count, 0);
+        statistic.attacks.pierce += typeDamageData.reduce((count, type) => type === 'Pierce' ? count + 1 : count, 0);
+        statistic.attacks.slash += typeDamageData.reduce((count, type) => type === 'Slash' ? count + 1 : count, 0);
+        statistic.attacks.earth += typeDamageData.reduce((count, type) => type === 'Earth' ? count + 1 : count, 0);
+        statistic.attacks.fire += typeDamageData.reduce((count, type) => type === 'Fire' ? count + 1 : count, 0);
+        statistic.attacks.frost += typeDamageData.reduce((count, type) => type === 'Frost' ? count + 1 : count, 0);
+        statistic.attacks.lightning += typeDamageData.reduce((count, type) => type === 'Lightning' ? count + 1 : count, 0);
+        statistic.attacks.righteous += typeDamageData.reduce((count, type) => type === 'Righteous' ? count + 1 : count, 0);
+        statistic.attacks.spooky += typeDamageData.reduce((count, type) => type === 'Spooky' ? count + 1 : count, 0);
+        statistic.attacks.sorcery += typeDamageData.reduce((count, type) => type === 'Sorcery' ? count + 1 : count, 0);
+        statistic.attacks.wild += typeDamageData.reduce((count, type) => type === 'Wild' ? count + 1 : count, 0);
+        statistic.attacks.wind += typeDamageData.reduce((count, type) => type === 'Wind' ? count + 1 : count, 0);
+        statistic.attacks.total = Math.max(totalDamageData, statistic.attacks.total);
         statistic.deities = statistic.deities.concat(...deityData).flat();
-
         if (wins > losses && ascean.statistics.relationships.deity.name !== '') {
             const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, 'combat', 'value');
             ascean.statistics = newStats;

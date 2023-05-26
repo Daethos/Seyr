@@ -29,12 +29,8 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
                 id="ascean-pic" />
             </Link>
             <h4 className='my-1' style={{ color: "red", fontFamily: "Cinzel", fontWeight: 700 }}> 
-                {ascean.hardcore ? "Hardcore" : ""}</h4>
-            </div>
-            {/* <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
-            </svg> */}
-            {/* <AsceanAttributeCompiler ascean={ascean} key={ascean._id + 1} /> */}
+                {ascean.hardcore ? "Hardcore" : ""}</h4><br />
+            </div> 
             <div className="actions" style={{ marginTop: -6 + '%', marginBottom: -1 + '%' }}><h3> </h3></div>
             <FeelingsCard ascean={ascean} loggedUser={loggedUser} />
             <hr className='orange-border bottom' />

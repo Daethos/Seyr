@@ -101,7 +101,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
  
     useEffect(() => { 
         startGame(); 
-    }, [state.player]);
+    }, []);
 
     const startGame = useCallback(async () => {
         try {

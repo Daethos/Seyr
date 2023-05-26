@@ -80,7 +80,7 @@
   justify-content: center;
 }
 .exit-button {
-  margin-left: 90vw;
+  margin-left: 90%;
   font-size: 24px;
 }
 @keyframes fade {
@@ -555,6 +555,8 @@
 }
 #player-health {
   background-color: red;
+  color: #fdf6d8;
+  /* color: transparent; */
   box-shadow: 1px 1px 2px black;
 }
 #player-xp {
@@ -571,7 +573,6 @@
   margin-left: 7.5%;
   height: 7.5%;
   width: 35%;
-  /* left: -0.75%; */
 }
 #story {
   max-width: 34%;
@@ -586,14 +587,15 @@
 }
 .progress-bar {
   font-size: 16px;
-  color: #fdf6d8;
+  /* color: #fdf6d8; */
   font-weight: 900;
 }
 .progress-text {
+  color: #fdf6d8;
   margin-left: auto;
   margin-right: auto;
   margin-top: -3.5%;
-  z-index: 99;
+  z-index: 999;
   text-shadow: 1.5px 1.5px 1.5px black;
 }
 .progressxp {
@@ -610,7 +612,6 @@
   margin-top: -9%;
   -webkit-text-stroke-width: 0.7px;
   -webkit-text-stroke-color: black;
-
 }
 #damage-options {
   background-color: rgb(0, 0, 0);
@@ -744,8 +745,7 @@
   text-decoration: none;
   text-shadow: 2px 2px 2px black;
 }
-.game-block-top, .opponent-block-top {
-  /* margin-top: -15%; */
+.game-block-top, .opponent-block-top { 
   height: 80%;
   text-align: center;
 }
@@ -908,7 +908,7 @@
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
 
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 1001px) {
   #game-container {
     background-size: cover;
     border: purple 10px solid;
@@ -1106,8 +1106,7 @@
   }
   #player-health {
     height: 30%;
-    box-shadow: 3px 3px 3px black;
-    /* margin-top: -10%; */
+    box-shadow: 3px 3px 3px black; 
   }
   #player-xp {
     height: 25%;
@@ -1216,168 +1215,11 @@
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
 
-@media screen and (min-width: 800px) and (max-width: 1000px) {
-  #game-block {
-    transform: scale(1.25);
-    margin-left: 15%;
-    top: -15%;
-  }
-  #opponent-block {
-    transform: scale(1.25);
-    left: 35%;
-    top: 35%;
-  }
-  #computer-animation {
-    margin-left: 10%;
-  }
-  #player-animation {
-    margin-left: 45%;
-  }
 
-  .joystick-outer {
-    width: 150px;
-    height: 150px;
-    border: 4px solid gold;
-    
-  }
-  .joystick-inner {
-    width: 75px;
-    height: 75px;
-    border: 3px solid gold;
-  }
-  #console {
-    transform: scale(1.25);
-    margin-top: 7.5%;
-    border-radius: 6px;
-    font-size: 12px;
-  }
-  #textarea {
-    grid-column-start: 3;
-    grid-column-end: 5;
-  }
-  .action-reader {
-    padding-top: 8%;
-    font-size: 20px;
-    margin-top: -40%;
-    height: 20%;
-  }
-  #auto-engage {
-    font-size: 20px;
-    margin-top: -45%;
-    height: 75%;
-  }
-  #attack-options {
-    font-size: 20px;
-    margin-top: -45%;
-    height: 75%;
-  }
-  #action-buttons {
-    margin-top: -6.5%;
-  }
-  .actionButtons{
-    height: 15%;
-  }
-  #action-button, #initiate-button, #dodge-button {
-    font-size: 16px;
-  }
-  .combat-settings {
-    font-size: 18px;
-  }
-  .text-box {
-    height: 20%;
-    width: 80%;
-    font-size: 7.5px;
-    margin-left: 10%;
-  }
-  .dialog-buttons {
-    font-size: 14px;
-  }
-  .inventory-bag {
-    grid-template-columns: repeat(6, 9%);
-    width: 75vw;
-    margin-top: 1%;
-    margin-left: 12%;
-  }
-  .inventory-bag-settings {
-    width: 100%;
-  }
-  .gameplayername {
-    font-size: 18px;
-  }
-  .quest-buttons {
-    font-size: 14px;
-  }
-  .city-button {
-    border: 3px solid purple;
-    font-size: 22px;
-    height: 75%;
-    margin-top: -15%;
-    font-weight: 600;
-  }
-  .dialog-button {
-    border: 3px solid purple;
-    font-size: 22px;
-    height: 75%;
-    margin-top: -15%;
-    font-weight: 600;
-  }
-  .inventory-button {
-    border: 3px solid purple;
-    font-size: 22px;
-    height: 75%;
-    margin-top: -15%;
-    font-weight: 600;
-  }
-  .dialog-box, .city-box {
-    margin-top: -3%;
-    border: 5px solid purple;
-  }
-  .dialog-box, .dialog-text, .dialog-options, .city-box {
-    font-size: 20px;
-    height: 450px;
-  }
-  .story-box {
-    border: 3px solid purple;
-    font-size: 18px;
-  }
-  #player-xp {
-    height: 25%;
-    margin-top: 6.5%;
-  }
-  .progressxp-text {
-    margin-top: 8.5%;
-    margin-left: -50%;
-    font-size: 16px;
-  }
-  .progress {
-    height: 32.5%;
-    margin-top: -4%;
-  }
-  .progress-text {
-    font-size: 20px;
-    margin-top: -2.5%;
-  }
-  .settings-button {
-    margin-left: -1.75%;
-    margin-top: -0.25%;
-  }
-  .settings-accordion {
-    font-size: 18px;
-  }
-  .map-button {
-    left: -1%;
-    top: 1.35%;
-  }
-  .journal-button {
-    left: -8%;
-    top: 1.1%;
-  }
-}
-@media screen and (max-width: 380px) {
-  
+
+@media screen and (max-width: 380px) { 
   #game-container {
-    transform: scale(1);
-  
+    transform: scale(1); 
   }
   #game-block {
     transform: scale(1.05);
@@ -1650,6 +1492,163 @@
     margin-top: -1%;
   }
 }
+
+
+/* ============================================================== PHASER 640x960 PHASER  ==================================================================================== */
+
+@media screen and (min-width: 800px) and (max-width: 1001px) and (min-height: 600px) and (max-height: 900px) {
+  #game-container { background: 5px solid purple; }
+  #game-block {
+    width: 100%;
+    height: 100%;
+    grid-column-start: 1;
+    grid-row-start: 6;
+    top: 65%;
+    margin-left: 30%;
+    transform: scale(1.25);
+  }
+  #opponent-block { width: 100%; transform: scale(1.25); left: 30%; top: 75%; }
+  .opponent-block-top { margin-bottom: 10%; }
+  .opponent-block-top > div > #player-health { height: 50%; }
+  .prayers { margin-left: -5%; margin-top: 10%; }
+  .status-effects { background: black; padding-top: 5%; width: 20%; height: 50%; }
+  .status-effects img { transform: scale(1.5); }
+  #opponent-block .status-effects { max-width: 15%; margin-top: 7.5%; margin-left: 17.5%; }
+  #opponent-block .status-effects img { transform: scale(2.5); padding-bottom: 50%; }
+  .game-underlay { width: 75%; margin-left: 12.5%; }
+  #computer-animation { margin-left: 0%; grid-column-start: 4 }
+  #player-animation { margin-left: -50%; grid-column-start: 2 }
+  /* 
+    #computer-animation {
+    grid-column-start: 4;
+    margin-left: 15%;
+  }
+  #player-animation {
+    grid-column-start: 2;
+    margin-left: -45%;
+  }
+  */
+  .joystick-outer { width: 120px; height: 120px; border: 4px solid purple; }
+  .joystick-inner { width: 60px; height: 60px; border: 3px solid purple; }
+  #console {
+    transform: scale(1.25);
+    margin-top: 7.5%;
+    border-radius: 6px;
+    font-size: 12px;
+    background-color: black;
+    border: 3px solid purple;
+    color: #fdf6d8;
+    text-align: center;
+    box-shadow: 2px 2px 2px black;
+  }
+  #textarea { grid-column-start: 3; grid-column-end: 5; }
+  .action-reader {
+    padding-top: 5%;
+    font-size: 20px;
+    margin-top: -40%;
+    height: 20%;
+  }
+  #auto-engage {
+    font-size: 14px;
+    margin-top: -45%;
+    height: 75%;
+    width: 50%;
+  }
+  #attack-options { font-size: 20px; margin-top: -45%; height: 75%; }
+  #action-buttons { margin-top: -6.5%; }
+  #action-button, #dodge-button { font-size: 16px; margin-left: 1% }
+  #initiate-button { font-size: 20px; margin-top: -1% }
+  .actionButtons { height: 20%; }
+  .invoke {
+    height: 100%;
+    font-size: 1.25rem;
+    grid-column-start: 3;
+    grid-row-start: 6;
+    margin-top: 1%;
+    margin-left: 42.5%;
+  }
+  .instant-button {
+    max-width: 40%;
+    max-height: 100%;
+    background-color: black;
+    grid-column-start: 3;
+    grid-row-start: 7;
+    margin-top: -20%;
+    margin-left: 35%;
+    font-size: 1.1rem;
+    border-radius: 50%;
+    text-shadow: 1.5px 1.5px 1.5px black;
+  }
+  .combat-settings { font-size: 18px; }
+  .text-box {
+    height: 20%;
+    width: 80%;
+    font-size: 7.5px;
+    margin-left: 10%;
+  }
+  .dialog-buttons { font-size: 14px; }
+  .inventory-bag {
+    grid-template-columns: repeat(6, 9%);
+    grid-template-rows: repeat(36, 20%);
+    padding: 1%;
+    z-index: 99;
+    color: #fdf6d8;
+    background-color: black;
+    border: 3px solid purple;
+    box-shadow: 2px 2px 2px black;
+    margin-top: 1%;
+    margin-left: 12.5%;
+    width: 75vw;
+  }
+  .inventory-bag-settings { width: 100%; }
+  .gameplayername { margin-top: -25%; font-size: 18px; }
+  .quest-buttons { font-size: 14px; }
+  .city-button, .dialog-button, .inventory-button {
+    border: 3px solid purple;
+    font-size: 22px;
+    height: 75%;
+    margin-top: -25%;
+    font-weight: 600;
+  }
+  .dialog-box, .city-box { margin-top: -3%; border: 5px solid purple; width: 75vw; }
+  .dialog-box, .dialog-text, .dialog-options, .city-box { font-size: 20px; height: 450px; }
+  .story-box { border: 3px solid purple; font-size: 18px; }
+  #player-xp { height: 25%; margin-top: 6.5%; } 
+  .progressxp-text { margin-top: 3.5%; font-size: 18px; }
+  .progress-text { font-size: 20px; margin-top: -3%; }
+  .progress { height: 35%; margin-top: -2%; border: 2px solid black; }
+  .settings-button { margin-left: -1.75%; margin-top: -0.25%; }
+  .settings-accordion { font-size: 18px; }
+  .map-button { left: -1%; top: 1.85%; }
+  .journal-button { left: -8%; top: 1.6%; } 
+  .firewater { grid-column-start: 3; grid-row-start: 7; margin-top: 25%; } 
+  .save-inventory-outer {
+    grid-column-start: 3;
+    grid-row-start: 7;
+    margin-left: 35%;
+    margin-top: 25%;
+    height: 110%;
+  }
+  .save-inventory { height: 70%; text-shadow: 1px 1px 1px black;
+  }
+  #level-up {
+    grid-column-start: 4;
+    margin-top: -15%;
+    margin-left: 65%;
+    z-index: 99;
+  }
+  .level-up {
+    font-size: 18px;
+    color: goldenrod;
+  }
+  #ascean-pic {
+    max-width: 25%;
+  }
+}
+
+/* ============================================================== PHASER 640x960 PHASER  ==================================================================================== */
+
+
 .game-stat h4,
 .game-stat p{
       display: inline;

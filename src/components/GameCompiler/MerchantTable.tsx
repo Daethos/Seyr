@@ -91,34 +91,34 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
             const chance = Math.floor(Math.random() * 100) + 1 + weight[purchaseSetting.item.rarity as keyof typeof weight];
             const successChance = ascean.agility + ascean.achre;
             console.log(successChance, 'Success Chance', chance, 'Chance');
-            if (chance > successChance) { // Failure
-                const statistic = {
-                    asceanID: ascean._id, 
-                    successes: 0,
-                    failures: 1,
-                    total: 1,
-                    totalValue: 0,
-                };
-                const fineCost = getFine(purchaseSetting.item.rarity); 
-                gameDispatch({ 
-                    type: GAME_ACTIONS.SET_STORY_CONTENT, 
-                    payload: `You were caught stealing. The merchant protested your censure, and simply have been fined ${fineCost}. \n\n The item has been pulled from the table.` 
-                });
-                const response = await asceanAPI.recordThievery(statistic);
-                console.log(response, "Thievery Failure Response Recorded");
-                gameDispatch({
-                    type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT,
-                    payload: table.filter((i: any) => i._id !== purchaseSetting.item._id)
-                });
-                const fine = await asceanAPI.asceanTax({ tax: checkStatisticalValue(purchaseSetting.item.rarity), id: ascean._id });
-                setTimeout(() => {
-                    gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-                    dispatch({ type: 'SET_CURRENCY', payload: fine });
-                    gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_CURRENCY, payload: fine });
-                    setThievery(false);
-                }, 1500);
-                return;
-            };
+            // if (chance > successChance) { // Failure
+            //     const statistic = {
+            //         asceanID: ascean._id, 
+            //         successes: 0,
+            //         failures: 1,
+            //         total: 1,
+            //         totalValue: 0,
+            //     };
+            //     const fineCost = getFine(purchaseSetting.item.rarity); 
+            //     gameDispatch({ 
+            //         type: GAME_ACTIONS.SET_STORY_CONTENT, 
+            //         payload: `You were caught stealing. The merchant protested your censure, and simply have been fined ${fineCost}. \n\n The item has been pulled from the table.` 
+            //     });
+            //     const response = await asceanAPI.recordThievery(statistic);
+            //     console.log(response, "Thievery Failure Response Recorded");
+            //     gameDispatch({
+            //         type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT,
+            //         payload: table.filter((i: any) => i._id !== purchaseSetting.item._id)
+            //     });
+            //     const fine = await asceanAPI.asceanTax({ tax: checkStatisticalValue(purchaseSetting.item.rarity), id: ascean._id });
+            //     setTimeout(() => {
+            //         gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
+            //         dispatch({ type: 'SET_CURRENCY', payload: fine });
+            //         gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_CURRENCY, payload: fine });
+            //         setThievery(false);
+            //     }, 1500);
+            //     return;
+            // };
             const res = await asceanAPI.purchaseToInventory(purchaseSetting);
             console.log(res, 'Stole Item!');
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });

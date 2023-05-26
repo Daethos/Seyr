@@ -4,19 +4,17 @@ const Schema = mongoose.Schema;
 const likeSchema = new Schema({
     username: String,
     userId: { type: mongoose.Schema.Types.Object }
-})
+});
 
 const dislikeSchema = new Schema({
     username: String,
     userId: { type: mongoose.Schema.Types.Object }
-})
+});
 
 const doubleDislikeSchema = new Schema({
     username: String,
     userId: { type: mongoose.Schema.Types.Object }
-})
-
-
+});
 
 const asceanSchema = new Schema(
     {
@@ -254,10 +252,19 @@ const asceanSchema = new Schema(
                 attacks: { 
                     magical: { type: Number, default: 0 }, 
                     physical: { type: Number, default: 0 }, 
-                },
-                damage: { 
                     total: { type: Number, default: 0 },
-                    type: { type: Array, default: [] }, 
+                    blunt: { type: Number, default: 0 },
+                    pierce: { type: Number, default: 0 },
+                    slash: { type: Number, default: 0 },
+                    earth: { type: Number, default: 0 },
+                    fire: { type: Number, default: 0 },
+                    frost: { type: Number, default: 0 },
+                    lightning: { type: Number, default: 0 },
+                    righteous: { type: Number, default: 0 },
+                    spooky: { type: Number, default: 0 },
+                    sorcery: { type: Number, default: 0 },
+                    wild: { type: Number, default: 0 },
+                    wind: { type: Number, default: 0 },
                 },
                 deities: { type: Array, default: [] }, // Deities Invoked via Prayer
                 prayers: { 

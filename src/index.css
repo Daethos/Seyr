@@ -503,7 +503,6 @@ html, body {
 }
 
 .story-block {
-  /* margin-top: 10%; */
   position: absolute;
   margin-top: 33%;
   margin-left: -12%;
@@ -512,7 +511,6 @@ html, body {
 }
 #ui-hud {
   position: absolute;
-  /* top: 6.5%; */
   justify-content: space-evenly;
   width: 100%;
 }
@@ -531,18 +529,7 @@ html, body {
   width: 50%;
   height: 115%;
   margin-left: 25%;
-  /* margin-top: -5%; */
-}
-#story-healthbar {
-  display: grid;
-  grid-column-start: 3;
-  grid-row-start: 1;
-  text-align: center; 
-  background-color: red;
-  width: 50%;
-  height: 10%;
-  margin-top: 1%;
-}
+} 
 .story-inventory-bag {
   position: absolute;
   display: grid;
@@ -563,9 +550,7 @@ html, body {
   margin-top: 33%;
   scrollbar-width: none;
 } 
-.story-inventory-bag-settings {
-  width: 100%;
-} 
+.story-inventory-bag-settings { width: 100%; } 
 .story-inventory {
   display: inline-block;
   width: 80px;
@@ -575,62 +560,35 @@ html, body {
   font-weight: 600;
   padding: 2.5%;
 }; 
-#level-up {
-  /* float: right; */
-  position: absolute;
-  grid-column-start: 3;
-  margin-left: 65%;
-  margin-top: -0.5%;
-  font-variant: small-caps;
-  font-weight: 700;
-  color: goldenrod;
-  font-size: 25px;
-  z-index: 50;
-}
+#level-up { position: absolute; grid-column-start: 3; margin-left: 65%; margin-top: -0.5%; font-variant: small-caps; font-weight: 700; color: goldenrod; font-size: 25px; z-index: 50; }
 .settings-button {
   position: absolute;
   grid-column-start: 1;
   grid-row-start: 1;
   margin-left: -5%;
   margin-top: -1%;
-  z-index: 50;
-
+  z-index: 50; 
 }
 .settings-style { color: goldenrod; }
 #story-health {
   background-color: red;
-  background: green;
   height: 10%;
   width: 40%;
   margin-left: 4.5%;
   margin-top: 3%;
   border: 2px solid purple;
 }
-
+.story-progressxp-text { margin-top: 8.25%; font-size: 16px; margin-left: 15%; }
 .story-progress {
-  /* justify-content: center;
-  align-items: center; */
   position: absolute;
   overflow: hidden;
-  /* width: 25%; */
   margin-left: 12.5%;
-  margin-top: 3%;
-  font-size: 16px;
+  margin-top: 2.75%;
+  font-size: 18px;
   color: white;
-  font-weight: 700;
+  font-weight: 600;
   background: transparent;
 }
-.story-progress-text {
-  align-items: center;
-  color: black;
-}
-
-#story-pic {
-  width: 5.5vw;
-  border: 1px solid #fdf6d8;
-  border-radius: 50%;
-}
-#story-popover-image {
-  margin-top: 4%;
-  transform: scale(1.75);
-}
+.story-progress-text { align-items: center; color: black; } 
+#story-pic { width: 5.5vw; border: 1px solid #fdf6d8; border-radius: 50%; }
+#story-popover-image {  margin-top: 4%; transform: scale(1.75); }

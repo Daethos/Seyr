@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Player from './Player';
+import Enemy from './Enemy';
 import NewText from './NewText.js'
 import stick from './images/stick.png';
 import base from './images/base.png';
@@ -60,24 +61,27 @@ export default class Play extends Phaser.Scene {
         
         this.player = new Player({scene: this, x: 200, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
 
+        this.enemy = new Enemy({scene: this, x: 400, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
+
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP,SPACE'),
             down: this.input.keyboard.addKeys('S,DOWN'),
             left: this.input.keyboard.addKeys('A,LEFT'),
             right: this.input.keyboard.addKeys('D,RIGHT'),
             attack: this.input.keyboard.addKeys('ONE,SHIFT-ONE'),
-            counter: this.input.keyboard.addKeys('FIVE'),
+            counter: this.input.keyboard.addKeys('FIVE,SHIFT-FIVE'),
             dodge: this.input.keyboard.addKeys('FOUR,SHIFT-FOUR'),
             posture: this.input.keyboard.addKeys('TWO,SHIFT-TWO'),
             roll: this.input.keyboard.addKeys('THREE,SHIFT-THREE'),
             crouch: this.input.keyboard.addKeys('C'),
             hurt: this.input.keyboard.addKeys('H'),
+            consume: this.input.keyboard.addKeys('F'),
             pray: this.input.keyboard.addKeys('R'),
             strafe: this.input.keyboard.addKeys('E,Q'),
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 2;
+        camera.zoom = 1.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 960, 640);
@@ -156,8 +160,8 @@ export default class Play extends Phaser.Scene {
  
 
     update() {
+        this.enemy.update(this);
         this.player.update(this); 
-        
         // const boundaryTiles = this.map.filterTiles((tile) => {
         //     return tile.properties.collides;
         //   }, this, 0, 0, this.map.width, this.map.height);
