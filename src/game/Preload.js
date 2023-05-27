@@ -20,6 +20,9 @@ export default class Preload extends Phaser.Scene {
         this.width = 800;
         this.height = 36;
         this.ascean = {};
+        this.state = {};
+        this.gameState = {};
+
     };
 
     init(data) {
@@ -54,21 +57,39 @@ export default class Preload extends Phaser.Scene {
             delay: 1000,
             callback: () => { this.scene.start('Menu', {
                 gameData: {
-                    ascean: this.ascean
+                    ascean: this.ascean,
+                    state: this.state,
+                    gameState: this.gameState
                 }
             }); 
         },
             callbackScope: this
         });
-        console.log(this.ascean, 'Creating Ascean in Preload Scene');
-        window.addEventListener('get-ascean', this.asceanFinishedEventListener)
+        window.addEventListener('get-ascean', this.asceanFinishedEventListener);
+        window.addEventListener('get-combat-data', this.stateFinishedEventListener);
+        window.addEventListener('get-game-data', this.gameStateFinishedEventListener);
         const getAscean = new CustomEvent('request-ascean');
+        const getState = new CustomEvent('request-combat-data');
+        const getGameData = new CustomEvent('request-game-data');
         window.dispatchEvent(getAscean);
+        window.dispatchEvent(getState);
+        window.dispatchEvent(getGameData);
+        console.log(this.ascean, 'Creating Ascean in Preload Scene');
     };
     
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
+    };
+
+    stateFinishedEventListener = (e) => {
+        this.state = e.detail;
+        window.removeEventListener('get-combat-data', this.stateFinishedEventListener);
+    };
+
+    gameStateFinishedEventListener = (e) => {
+        this.gameState = e.detail;
+        window.removeEventListener('get-game-data', this.gameStateFinishedEventListener);
     };
 
     createLoadingBar() {

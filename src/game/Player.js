@@ -37,6 +37,8 @@ export default class Player extends Entity {
         this.isHealing = false;
         this.isPraying = false;
         this.dodgeCooldown = 0;
+        this.playerBlessing = '';
+        this.prayerConsuming = '';
         this.rollCooldown = 0;
         this.playerSensor = null;
         this.touching = [];
@@ -97,9 +99,7 @@ export default class Player extends Entity {
         // }); 
         
         // Collision handler for the hanging mechanic
-        this.checkHanging();
-         
-        // this.scene.input.on('pointermove', (pointer) => { if (!this.dead) this.setFlipX(pointer.worldX < this.x)});
+        this.checkHanging(); 
     };
 
     checkHanging() {
@@ -202,41 +202,57 @@ export default class Player extends Entity {
         };
 
         // =================== ACTIONS ================== \\
-        
+    
+        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+            scene.setState('action', 'counter');
+            scene.setState('counter_attack', 'attack');
+            this.isAttacking = true;
+        };
+        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+            scene.setState('action', 'counter');
+            scene.setState('counter_attack', 'posture');
+            this.isPosturing = true;
+        };
+        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+            scene.setState('action', 'counter');
+            scene.setState('counter_attack', 'roll'); 
+        };
+    
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+            scene.setState('action', 'attack');
+            if (scene.state.counter_attack !== '') scene.setState('counter_attack', '');
             this.isAttacking = true;
         };
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+            scene.setState('action', 'posture');
+            if (scene.state.counter_attack !== '') scene.setState('counter_attack', '');
             this.isPosturing = true;
         };
-        if ((Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) || Phaser.Input.Keyboard.JustUp(this.inputKeys.roll.THREE)) && !this.isCrouching) {
+        if ((Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) || Phaser.Input.Keyboard.JustUp(this.inputKeys.roll.THREE))) {
             this.isRolling = this.isRolling ? false : true;
             const sensorDisp = 12;
             const colliderDisp = 16;
             if (this.isRolling) {
+                if (scene.state.action !== 'roll') scene.setState('action', 'roll');
+                if (scene.state.counter_attack !== '') scene.setState('counter_attack', '');
                 this.body.parts[2].position.y += sensorDisp;
                 this.body.parts[2].circleRadius = 21;
                 this.body.parts[1].vertices[0].y += colliderDisp;
                 this.body.parts[1].vertices[1].y += colliderDisp; 
             } else {    
+                if (scene.state.action !== '') scene.setState('action', '');
                 this.body.parts[2].position.y -= sensorDisp;
                 this.body.parts[2].circleRadius = 28;
                 this.body.parts[1].vertices[0].y -= colliderDisp;
                 this.body.parts[1].vertices[1].y -= colliderDisp;
             }
-        };
-        // if (Phaser.Input.Keyboard.JustUp(this.inputKeys.roll.THREE) && !this.isCrouching) {
-        //     this.isRolling = false; 
-        //     const displacement = 16;
-        //     this.body.parts[2].position.y -= displacement;
-        //     this.body.parts[2].circleRadius = 28;
-        //     this.body.parts[1].vertices[0].y -= displacement;
-        //     this.body.parts[1].vertices[1].y -= displacement;
-        // };
+        }; 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR)) {
             this.isDodging = true;
         };
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE)) {
+            scene.setState('action', 'counter');
+            scene.setState('counter_action', 'counter');
             this.isCountering = true;
         };
 
@@ -245,26 +261,38 @@ export default class Player extends Entity {
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R)) {
             console.log('Praying')
             this.isPraying = this.isPraying ? false : true;
-            // Invoke / Switching Prayers
+            if (scene.state.playerBlessing === '') return;
+            if (this.playerBlessing === '' || this.playerBlessing !== scene.state.playerBlessing) {
+                this.playerBlessing = scene.state.playerBlessing;
+            };
+            // TODO:FIXME: addListener for invoking(this.playerBlessing);
+            // Invoke / Switching Prayers triggers a prayer animation
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.hurt.H)) {
             this.isHealing = this.isHealing ? false : true;
             // Flaskwater Charge
+            // May not do this
+            scene.drinkFlask();
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
             this.isConsuming = this.isConsuming ? false : true;
-            // Consume Prayer
+            if (scene.state.playerEffects.length === 0) return;
+            this.prayerConsuming = scene.state.playerEffects[0].prayer;
+            // TODO:FIXME: addListener for consuming(this.prayerConsuming);
+            // Consume Prayer triggers the charge crush animation
         };
 
         // =================== MOVEMENT ================== \\
 
         if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
+            if (scene.state.action !== 'attack') scene.setState('action', 'attack');
             this.setVelocityX(speed);
             if (this.flipX) this.flipX = false;
         };
         if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
+            if (scene.state.action !== 'attack') scene.setState('action', 'attack');
             this.setVelocityX(-speed);
             this.flipX = true;
         }; 
@@ -295,6 +323,7 @@ export default class Player extends Entity {
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
             this.setVelocityX(this.body.velocity.x * 0.85);
+            if (scene.state.action !== 'posture') scene.setState('action', 'posture');
             // This will be a +% Defense from Shield. 
             // Counter-Posturing gets +damage bonus against this tactic
         };
@@ -327,10 +356,10 @@ export default class Player extends Entity {
                 this.setStatic(false);
                 this.setVelocityY(2);
             };
-            if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) { // MOVING LEFT
+            if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown || this.inputKeys.strafe.Q.isDown) { // MOVING LEFT
                 this.x -= 3;
             };
-            if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) { // MOVING RIGHT
+            if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown || this.inputKeys.strafe.E.isDown) { // MOVING RIGHT
                 this.x += 3;
             };
         } else if (this.isJumping && (this.isAttacking || this.isPosturing || this.isCountering)) { // ATTACKING IN THE AIR
@@ -347,16 +376,16 @@ export default class Player extends Entity {
             }; 
             this.anims.play('player_roll', true);
         } else if (this.isCrouching && (this.isAttacking || this.isPosturing || this.isCountering)) { // ATTACKING WHILE CROUCHING
-            console.log("Pinging ATTACKING WHILE CROUCHING")
+            console.log("Pinging ATTACKING WHILE CROUCHING");
             this.anims.play('player_crouch_attacks', true).on('animationcomplete', () => {
                 this.isAttacking = false;
                 this.isPosturing = false;
                 this.isCountering = false;
             });
         } else if (this.isCountering) { // COUNTERING
-            console.log("Pinging COUNTERING")
-            this.anims.play('player_attack_2', true).on('animationcomplete', () => {
-                this.isCountering = false;
+            console.log("Pinging COUNTERING") 
+            this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
+                this.isCountering = false; 
             });
         } else if (this.isDodging && !this.inCombat) { // DODGING AKA SLIDING OUTSIDE COMBAT
             console.log("Pinging DODGING AKA SLIDING")
@@ -402,6 +431,7 @@ export default class Player extends Entity {
                     if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
                         clearInterval(rollIntervalId);
                         this.rollCooldown = 0;
+                        // This is where the roll is changed in the scene back to ''
                         return;
                     };
                     const direction = this.flipX ? -(rollDistance / (rollDuration / rollInterval)) : (rollDistance / (rollDuration / rollInterval));
@@ -412,30 +442,27 @@ export default class Player extends Entity {
                 
                 const rollIntervalId = setInterval(rollLoop, rollInterval);  
             };
-        } else if (this.isRolling && this.inCombbat) { // ROLLING IN COMBAT
-            console.log("Pinging ROLLING IN COMBAT") 
-            this.anims.play('player_roll', true).on('animationcomplete', () => { 
+        } else if (this.isRolling && this.inCombat) { // ROLLING IN COMBAT
+            console.log("Pinging ROLLING IN COMBAT");
+            this.anims.play('player_roll', true).on('animationcomplete', () => {
                 this.isRolling = false;
             }); 
             if (this.body.velocity.x > 0) {
                 this.setVelocityX(this.body.velocity.x * 1.25);
             }; 
         } else if (this.isPosturing) { // POSTURING
-            console.log("Pinging POSTURING")
+            console.log("Pinging POSTURING");
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {
                 this.isPosturing = false;
             });
         } else if (this.isAttacking) { // ATTACKING
-            console.log("Pinging ATTACKING")
+            console.log("Pinging ATTACKING");
             this.anims.play('player_attack_1', true).on('animationcomplete', () => {
                 this.isAttacking = false;
             });
         } else if (this.isJumping) { // JUMPING
-            console.log("Pinging JUMPING")
-            this.anims.play('player_jump', true)
-            // .on('animationcomplete', () => {
-            //     this.isJumping = false;
-            // });
+            console.log("Pinging JUMPING");
+            this.anims.play('player_jump', true);
         } else if (this.isCrouching && Math.abs(this.body.velocity.x) > 0.1) { // CROUCHING AND MOVING
             console.log("Pinging CROUCHING AND MOVING")
             this.anims.play('player_roll', true);
@@ -450,12 +477,12 @@ export default class Player extends Entity {
         } else if (this.isHealing) { // HEALING
             console.log("Pinging HEALING")
             this.anims.play('player_health', true).on('animationcomplete', () => {
+                scene.drinkFlask();
                 this.isHealing = false;
             });
         } else if (this.isPraying) { // PRAYING
             console.log("Pinging PRAYING")
             this.anims.play('player_pray', true).on('animationcomplete', () => {
-                console.log('Animation Complete')
                 this.isPraying = false;
             });
         } else if (this.isCrouching) { // CROUCHING IDLE
@@ -469,7 +496,6 @@ export default class Player extends Entity {
  
 
     isAtEdgeOfLedge(scene) {
-        const edgeThreshold = 0.9; // Adjust this value as needed
         const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body
         const rayStart = { x: playerSensor.position.x - playerSensor.circleRadius, y: playerSensor.position.y }; // Starting point of the ray
         const rayEnd = { x: playerSensor.position.x + playerSensor.circleRadius, y: playerSensor.position.y - playerSensor.circleRadius }; // Ending point of the ray

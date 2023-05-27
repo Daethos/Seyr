@@ -16,6 +16,7 @@ export default class Menu extends Phaser.Scene {
 
     init(data) {
         this.gameData = data;
+        console.log(data, "Menu Scene Init Data")
     };
 
     create() {
@@ -80,9 +81,7 @@ export default class Menu extends Phaser.Scene {
 
     goPlay() {
         this.scene.start('Play', {
-            gameData: {
-                ascean: this.gameData
-            }
+            gameData: this.gameData
         });
     };
 };

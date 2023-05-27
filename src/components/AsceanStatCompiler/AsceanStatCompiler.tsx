@@ -39,13 +39,6 @@ const AsceanStatCompiler = ({ ascean, communityFocus }: Props) => {
             setMagicalDefense(response.data.data.defense.magicalDefenseModifier);
             setPhysicalPosture(response.data.data.defense.physicalPosture);
             setMagicalPosture(response.data.data.defense.magicalPosture);
-            console.log(typeof response.data.data.combat_weapon_one.physical_damage, 'Physical Damage ONE', 
-                        typeof response.data.data.combat_weapon_one.magical_damage, 'Magical Damage ONE',
-                        typeof response.data.data.combat_weapon_two.physical_damage, 'Physical Damage TWO',
-                        typeof response.data.data.combat_weapon_one.magical_damage, 'Magical Damage TWO',
-                        typeof response.data.data.combat_weapon_three.physical_damage, 'Physical Damage THREE',
-                        typeof response.data.data.combat_weapon_one.magical_damage, 'Magical Damage THREE'
-                        )
             setLoading(false);
         } catch (err: any) {
             setLoading(false);

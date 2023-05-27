@@ -11,9 +11,10 @@ interface CombatSettingModalProps {
     prayers: any;
     weapons: any;
     state: any;
+    story?: boolean;
 };
 
-const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons }: CombatSettingModalProps) => { 
+const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons, story }: CombatSettingModalProps) => { 
     const [combatModalShow, setCombatModalShow] = useState<boolean>(false); 
     return (
         <>
@@ -44,7 +45,7 @@ const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessin
             </Form.Select><br />
         </Modal.Body>
         </Modal>
-        <Button variant='' id='attack-options' onClick={() => setCombatModalShow(true)}>Combat Settings</Button>
+        <Button variant='' id={story ? 'story-attack-options' : 'attack-options'} onClick={() => setCombatModalShow(true)}>Combat Settings</Button>
         </>
     );
 };

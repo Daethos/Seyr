@@ -33,9 +33,7 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
         try {
             setLoadingChat(true);
             const response = await chatAPI.accessChat(userId);
-            console.log(response, 'Response Accessing or Creating Chat');
             if (!chats.find((c: { _id: any; }) => c._id === response._id)) setChats([response.data, ...chats]);
-            console.log(response, 'Response in Accessing Chat');
             setSelectedChat(response);
             setLoadingChat(false);
             handleClose();

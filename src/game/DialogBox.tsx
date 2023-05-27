@@ -418,12 +418,12 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
                 payload: `Success. Your ${luck} nature was irresistible to ${namedEnemy ? '' : ` ${article}`} ${enemy.name}. What is it they say, ${luckoutTrait.luckout.description} \n\n Congratulations, ${ascean.name}, your words ensured you needn't a single strike to win the day.` });
             const statistic = {
-                   asceanID: ascean._id,
-                   name: 'luckout',
-                   type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
-                   successes: 1,
-                   failures: 0,
-                   total: 1,
+                asceanID: ascean._id,
+                name: 'luckout',
+                type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
+                successes: 1,
+                failures: 0,
+                total: 1,
             };
             const response = await asceanAPI.recordNonCombatStatistic(statistic);
             console.log(response, "Luckout Response Recorded");
@@ -447,13 +447,13 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
             gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
                 payload: `Failure. ${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
             const statistic = {
-                   asceanID: ascean._id,
-                   name: 'luckout',
-                   type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
-                   successes: 0,
-                   failures: 1,
-                   total: 1,
-            }
+                asceanID: ascean._id,
+                name: 'luckout',
+                type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
+                successes: 0,
+                failures: 1,
+                total: 1,
+            };
             const response = await asceanAPI.recordNonCombatStatistic(statistic);
             console.log(response, "Luckout Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
@@ -544,13 +544,17 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         <Modal show={luckoutModalShow} onHide={() => setLuckoutModalShow(false)} centered id='modal-weapon'>
             <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
             <Modal.Body style={{ textAlign: 'center' }}>
-                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement. Named Enemies are 50% more difficult to defeat with this method.<br /><br />
-                <p style={{ fontSize: "18px", color: "gold" }}>
-                Arbituous - Rhetoric (Convince the enemy to cease hostility) <br /><br />
-                Chiomic - Shatter (Mental seizure of the enemy) <br /><br />
-                Kyr'naic - Apathy (Unburden the enemy to acquiesce and die) <br /><br /> 
-                Lilosian - Peace (Allow the enemy to let go of their human failures) <br /><br />
-                </p>
+                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement. Named Enemies are 25% more difficult to defeat with this method.<br /><br />
+                <div style={{ fontSize: "18px", color: "gold" }}>
+                {luckoutTraits.map((trait: any, index: number) => {
+                    return (
+                        <div key={index}>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} 
+                            onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
+                        </div>
+                    )
+                })}
+                </div>
                 [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
             </Modal.Body>
         </Modal>
@@ -560,15 +564,15 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
                 These offer a unique opportunity to entreat with your enemies without the need for combat. 
                 However, failure may result anywhere from stymied conversation to hostile engagement. 
                 Named Enemies are 25% more difficult to persuade. Perhaps with more notoriety this can change.<br /><br />
-                <p style={{ fontSize: "18px", color: "gold" }}>
-                Arbituous - Ethos (Affects all enemies within the Ley) <br /><br />
-                Chiomic - Humor (This affects enemies of lesser Chiomism) <br /><br />
-                Fyeran - Seer (Affects all enemies who are more mystic than martial) <br /><br />
-                Ilian - Heroism (This can affect all potential enemies) <br /><br />
-                Kyr'naic - Apathy (Affects all enemies of lesser conviction) <br /><br /> 
-                Lilosian - Pathos (Affects all enemies of the same faith) <br /><br />
-                Shaorahi - Awe (Affects all enemies of lesser conviction) <br /><br />
-                </p>
+                <div style={{ fontSize: "18px", color: "gold" }}>
+                {persuasionTraits.map((trait: any, index: number) => {
+                    return (
+                        <div key={index}>
+                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.modal.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
+                    </div>
+                    )
+                })}
+                </div>
                 [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
             </Modal.Body>
         </Modal>

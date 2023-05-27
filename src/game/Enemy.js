@@ -1,8 +1,5 @@
 import Phaser from "phaser";
-import Entity from "./Entity";
-import playerPng  from './images/player.png'
-import playerJSON from './images/player_atlas.json';
-import playerAnim from './images/player_anim.json';  
+import Entity from "./Entity"; 
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
 import playerActionsOneAnim from './images/player_actions_anim.json';
@@ -14,9 +11,7 @@ import playerActionsThreeJSON from './images/player_actions_three_atlas.json';
 import playerActionsThreeAnim from './images/player_actions_three_anim.json';
 import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
-import playerAttacksAnim from './images/player_attacks_anim.json';
-
-const equipment = { png: playerPng, json: playerJSON, anim: playerAnim };
+import playerAttacksAnim from './images/player_attacks_anim.json'; 
 export default class Player extends Entity {
     constructor(data) {
         let { scene, x, y, texture, frame } = data;
@@ -42,7 +37,7 @@ export default class Player extends Entity {
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let enemyCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'enemyCollider' });
-        let enemySensor = Bodies.circle(this.x, this.y + 2, 32, { isSensor: true, label: 'enemySensor' });
+        let enemySensor = Bodies.circle(this.x, this.y, 48, { isSensor: true, label: 'enemySensor' });
         const compoundBody = Body.create({
             parts: [enemyCollider, enemySensor],
             frictionAir: 0.01, // Adjust the air friction for smoother movement
@@ -59,6 +54,7 @@ export default class Player extends Entity {
             callback: other => {
                 if (other.gameObjectB && other.gameObjectB.name === 'player') {
                     this.attacking = other.gameObjectB;
+                    other.gameObjectB.inCombat = true;
                 };
             },
             context: this.scene,
@@ -71,8 +67,8 @@ export default class Player extends Entity {
             let direction = this.attacking.position.subtract(this.position);
             if (direction.length() > 24) {
                 let v = direction.normalize();
-                this.setVelocityX(direction.x);
-                this.setVelocityY(direction.y);
+                this.setVelocityX(direction.x * 1.5);
+                this.setVelocityY(direction.y * 1.5);
                 if (this.attackTimer) {
                     clearInterval(this.attackTimer);
                     this.attackTimer = null;

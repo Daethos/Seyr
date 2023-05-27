@@ -21,6 +21,7 @@ import PhaserSettings from '../PhaserSettings';
 import StatusEffects from '../../components/GameCompiler/StatusEffects';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
+import StoryActions from '../StoryActions';
 
 export const useDocumentEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -51,6 +52,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [fullScreen, setFullScreen] = useState<boolean>(false);
     const [messages, setMessages] = useState<any>([]); 
     const [loading, setLoading] = useState<boolean>(false);
+    const [combatHud, setCombatHud] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const gameRef = useRef<any>({});
@@ -96,7 +98,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 'VirtualJoysticks/plugin/src/DPad.js',
             ],
         },
-        backgroundColor: '#000',
+        backgroundColor: 'transparent',
     });
  
     useEffect(() => { 
@@ -160,6 +162,22 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             detail: state.player
         });
         window.dispatchEvent(asceanData);
+    };
+
+    const sendCombatData = async () => {
+        console.log('Event Listener Added');
+        const combatData = new CustomEvent('get-combat-data', {
+            detail: state
+        });
+        window.dispatchEvent(combatData);
+    };
+
+    const sendGameData = async () => {
+        console.log('Event Listener Added');
+        const gameData = new CustomEvent('get-game-data', {
+            detail: gameState
+        });
+        window.dispatchEvent(gameData);
     };
 
     const createDialog = async (e: any) => {
@@ -397,11 +415,56 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    async function setWeaponOrder(weapon: any) {
+        try {
+            const findWeapon = state.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
+            const newWeaponOrder = async () => state?.weapons.sort((a: any, b: any) => {
+                return ( a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0 )
+            });
+            const response = await newWeaponOrder();
+            playWO();
+            dispatch({
+                type: ACTIONS.SET_WEAPON_ORDER,
+                payload: response
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Weapon Order');
+        };
+    };
+
+    async function setDamageType(damageType: any) {
+        try {    
+            playWO();
+            dispatch({
+                type: ACTIONS.SET_DAMAGE_TYPE,
+                payload: damageType.target.value
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Damage Type');
+        };
+    };
+
+    async function setPrayerBlessing(prayer: any) {
+        try {
+            playWO();
+            dispatch({
+                type: ACTIONS.SET_PRAYER_BLESSING,
+                payload: prayer.target.value
+            });
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Prayer');
+        };
+    };
+
     useEffect(() => {
         window.addEventListener('request-ascean', sendAscean);
+        window.addEventListener('request-combat-data', sendCombatData);
+        window.addEventListener('request-game-data', sendGameData);
         window.addEventListener('dialog-box', createDialog);
         return () => {
             window.removeEventListener('request-ascean', sendAscean);
+            window.removeEventListener('request-combat-data', sendCombatData);
+            window.removeEventListener('request-game-data', sendGameData);
             window.removeEventListener('dialog-box', createDialog);
         };
     }, [asceanID]);
@@ -423,10 +486,18 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         canvas.style.height = newHeight + 'px';
     };
 
+    const toggleCombatHud = (e: { preventDefault: () => void; key: string; }) => {
+        e.preventDefault();
+        if (e.key === 'v' || e.key === 'V') setCombatHud((prev: boolean) => !prev);
+        if (e.key === 'z' || e.key === 'Z') setShowPlayer((prev: boolean) => !prev);
+    };
+
     useEffect(() => {
         window.addEventListener('resize', resizeGame);
+        window.addEventListener('keydown',  toggleCombatHud);
         return () => {
             window.removeEventListener('resize', resizeGame);
+            window.removeEventListener('keydown',  toggleCombatHud);
         };
     }, []);
 
@@ -521,13 +592,16 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} key={index} /> )
                 })) : '' }
             </div>
+            { combatHud ? (
+                <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} />
+            ) : ( '' ) }
             { showPlayer ?
-                ( <StoryAscean ascean={state.player} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                (  <StoryAscean ascean={state.player} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( '' ) }
             { gameState.showInventory ?
                 <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
             : ""}
-            <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}>
+            <div id='story-game' style={{ textAlign: 'center', maxWidth: '960px', maxHeight: '640px', margin: '0 auto' }} className='my-5' ref={gameRef}>
             </div>
         </>
     );

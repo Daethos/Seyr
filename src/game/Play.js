@@ -16,7 +16,9 @@ export default class Play extends Phaser.Scene {
     init(data) {
         console.log(data, "Data in Play")
         this.data = data;
-        this.gameData = this.data.gameData.ascean.gameData.ascean;
+        this.ascean = this.data.gameData.gameData.ascean;
+        this.state = this.data.gameData.gameData.state;
+        this.gameState = this.data.gameData.gameData.gameState;
         this.CONFIG = this.sys.game.config;
         this.isFullScren = this.scale.isFullscreen;
         this.DEPTH = {
@@ -78,6 +80,7 @@ export default class Play extends Phaser.Scene {
             consume: this.input.keyboard.addKeys('F'),
             pray: this.input.keyboard.addKeys('R'),
             strafe: this.input.keyboard.addKeys('E,Q'),
+            shift: this.input.keyboard.addKeys('SHIFT'),
         };
           
         let camera = this.cameras.main;
@@ -108,11 +111,24 @@ export default class Play extends Phaser.Scene {
 
     };
 
-    setPlayerOnGround = function(value) {
+    drinkFlask = async function() {
+        // Handle Event Listener to Dispatch Drinking a Flask
+    };
+
+    setState = async function(key, value) {
+        console.log("Setting: " + key + " to " + value);
+        this.state[key] = value;
+    };
+
+    setGameState = async function(key, value) {
+        this.gameState[key] = value;
+    };
+
+    setPlayerOnGround = async function(value) {
         this.isPlayerOnGround = value;
     };
 
-    setPlayerHanging = function(value) {
+    setPlayerHanging = async function(value) {
         this.isPlayerHanging = value;
     };
 
@@ -139,7 +155,7 @@ export default class Play extends Phaser.Scene {
                     this,
                     this.centerX,
                     this.centerY + 150,
-                    `Welcome to the Seyr of Daethos, ${this.gameData.name}! What do you do when you don't know what to do?`,
+                    `Welcome to the Seyr of Daethos, ${this.ascean.name}! What do you do when you don't know what to do?`,
                     'play',
                     0.5,
                     this.game,
@@ -157,17 +173,10 @@ export default class Play extends Phaser.Scene {
             callbackScope: this
         });
     };
- 
-
     update() {
         this.enemy.update(this);
         this.player.update(this); 
-        // const boundaryTiles = this.map.filterTiles((tile) => {
-        //     return tile.properties.collides;
-        //   }, this, 0, 0, this.map.width, this.map.height);
-           
     };
-
     pause() {
         this.scene.pause();
     };

@@ -18,23 +18,7 @@ const Notifications = ({ user, notification, setSelectedChat, setNotification }:
         <Popover className='text-info' id='popover'>
             <Popover.Header id='popover-header' as='h3'>
                 Notifications <span id="popover-image"><img src={user.photoUrl} alt={user.username} style={{ width: 25 + 'px', height: 25 + 'px', borderRadius: 50 + '%'}} /></span>
-            </Popover.Header>
-            {/* <Popover.Body id='popover-body'>
-                { !notification.length 
-                ? <p style={{ color: 'purple' }}>No New Messages</p> 
-                : notification?.map((note: any, index: number) => { 
-                    return ( 
-                    <Dropdown.Item key={index} style={{ color: 'purple' }} onClick={() => {
-                        setSelectedChat(note.chat);
-                        setNotification(notification.filter((n: any) => n !== note));
-                    }}>
-                    { note.chat.isGroupChat 
-                        ? `New Message in ${note.chat.chatName}` 
-                        : `New Message from ${chatLogic.getSender(user, note.chat.users)}`}
-                    </Dropdown.Item>
-                  )})
-                }
-            </Popover.Body> */}
+            </Popover.Header> 
             
             <Popover.Body id='popover-body'>
             {notification.length === 0 ? (

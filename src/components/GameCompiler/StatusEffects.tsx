@@ -52,7 +52,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     };
 
     const effectPopover = (
-        <Popover className='text-info' id='popover' style={ spectator ? { zIndex: 9999 } :  { } }>
+        <Popover className='text-info' id='popover' style={ spectator ? { zIndex: 9999 } : { } }>
             <Popover.Header id='popover-header' as='h2'>{effect?.name}</Popover.Header>
             <Popover.Body id='popover-body'>
                 <p>Prayer: {effect?.prayer} {effect?.refreshes ? `[Refreshes]` : `[Stacks]`}
@@ -84,6 +84,19 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     );
 
 
+    const getInnerWidth = () => {
+        const width = window.innerWidth;
+        if (width > 1200) {
+            return '-30%';
+        } else if (width > 900) {
+            return '-25%';
+        } else if (width > 50) {
+            return '-12.5%';
+        } else {
+            return '-10%';
+        };
+    };
+
     const borderColor = (prayer: string) => {
         switch (prayer) {
             case 'Buff': return 'gold';
@@ -95,7 +108,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     };
 
     const getEffectStyle = {
-        marginTop: player ? '-10%' : '',
+        marginTop: player ? getInnerWidth() : '',
         border: 2 + 'px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
     };

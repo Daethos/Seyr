@@ -6,8 +6,7 @@ interface AccordionProps {
     accordionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
-const AccordionForm = ({ accordionState, accordionChange }: AccordionProps) => {
-    
+const AccordionForm = ({ accordionState, accordionChange }: AccordionProps) => { 
     return (
         <>
         <p style={{ color: '#fdf6d8', textAlign: 'center' }}>
@@ -20,7 +19,7 @@ const AccordionForm = ({ accordionState, accordionChange }: AccordionProps) => {
             <option>Full</option>
         </Form.Select>
         </>
-    )
-}
+    );
+};
 
-export default AccordionForm
+export default AccordionForm;

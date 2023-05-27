@@ -29,6 +29,17 @@ html, body {
 .signup-button {
   width: 75%;
 }
+#popover, #popover-header, #popover-body {
+  font-family: 'Cinzel';
+  /* background: #fafafa;
+  color: purple; */
+  background-color: rgb(0, 0, 0);
+  border: 1.5px solid purple;
+  color: #fdf6d8;
+  box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.55), 3px 3px 6px 0 rgba(0, 0, 0, 0.55);
+  font-weight: 900;
+  z-index: 1000;
+}
 #ascean-home-pic {
   display: block;
   margin-left: auto;

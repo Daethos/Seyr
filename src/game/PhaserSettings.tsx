@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Accordion from 'react-bootstrap/Accordion';
-import InventoryBag from '../components/GameCompiler/InventoryBag';
+import Accordion from 'react-bootstrap/Accordion'; 
 import Form from 'react-bootstrap/Form';
 import { GAME_ACTIONS } from '../components/GameCompiler/GameStore';
 import * as settingsAPI from '../utils/settingsApi';
@@ -19,7 +18,6 @@ interface Props {
 
 const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState<boolean>(false);
-    const [showInventory, setShowInventory] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const settingsStyle = {
@@ -53,16 +51,6 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
         };
     };
 
-    function handleCombatTimer(e: React.ChangeEvent<HTMLInputElement>) {
-        let timer = parseFloat(e.target.value);
-        gameDispatch({ type: GAME_ACTIONS.SET_TIME_LEFT, payload: timer });
-    };
-
-    function handleMoveTimer(e: React.ChangeEvent<HTMLInputElement>) {
-        let timer = parseFloat(e.target.value);
-        gameDispatch({ type: GAME_ACTIONS.SET_MOVE_TIMER, payload: timer });
-    };
-
     function handleShakeDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
         let duration = parseFloat(e.target.value);
         gameDispatch({ type: GAME_ACTIONS.SET_SHAKE_DURATION, payload: duration });
@@ -76,12 +64,7 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
     function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
         let volume = parseFloat(e.target.value);
         gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: volume });
-    };
-
-    function handleJoystickChange(e: React.ChangeEvent<HTMLInputElement>) {
-        let speed = parseFloat(e.target.value);
-        gameDispatch({ type: GAME_ACTIONS.SET_JOYSTICK_SPEED, payload: speed });
-    };
+    }; 
 
     function handleVibrationChange(e: React.ChangeEvent<HTMLInputElement>) {
         let speed = parseFloat(e.target.value);
@@ -98,11 +81,9 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
         <Modal show={settingsModalShow} onHide={() => setSettingsModalShow(false)} centered>
         <Modal.Header>
         <h3 style={{ fontSize: '24px' }}>Gameplay Settings</h3>
-        { multiplayer ? ( '' ) : (
-            <Button variant='' onClick={saveGameSettings}>
-                <span style={{ float: "right", color: "gold", fontSize: "20px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
-            </Button>
-        ) }
+        <Button variant='' onClick={saveGameSettings}>
+            <span style={{ float: "right", color: "gold", fontSize: "20px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
+        </Button>
         </Modal.Header>
         <Modal.Body style={settingsStyle}>
         <Accordion flush >
@@ -112,27 +93,7 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
                 Gameplay Controls
                 </h5>
             </Accordion.Header>
-            <Accordion.Body className='settings-accordion'>
-            <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
-            <span style={{ float: "left" }}></span>
-            Combat Timer: ({gameState.timeLeft})
-            <span style={{ float: "right" }}></span>
-        </h6>
-        <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={12} step={1} /><br />
-        { multiplayer ? ( '' ) : (
-        <><h6 style={{ marginLeft: 'auto', color: 'gold' }}>
-            <span style={{ float: "left" }}></span>
-            Movement Timer: ({gameState.moveTimer})
-            <span style={{ float: "right" }}></span>
-        </h6>
-        <Form.Range value={gameState.moveTimer} onChange={handleMoveTimer} min={2} max={12} step={1} /><br /></>
-        ) }
-        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
-            <span style={{ float: "left" }}></span>
-            Joystick Delay ({gameState.joystickSpeed})
-            <span style={{ float: "right" }}></span>
-        </h6>
-        <Form.Range value={gameState.joystickSpeed} onChange={handleJoystickChange} min={0} max={500} step={50} /><br />
+            <Accordion.Body className='settings-accordion'> 
         <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Screen Shake Duration ({gameState.shake.duration})
@@ -158,48 +119,6 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
         </h6>
         <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} />
                 </Accordion.Body>
-        </Accordion.Item>
-        <Accordion.Item eventKey="5">
-        <Accordion.Header>
-            <h5 style={{ marginLeft: 30 + '%', color: 'gold' }}>
-            Map Legend
-            </h5>
-        </Accordion.Header>
-        <Accordion.Body className='settings-accordion'>
-        <p style={{ color: 'sienna', display: "inline-block" }}>
-            Cave 
-        </p>{' | '}
-        <p style={{ color: 'purple', display: "inline-block" }}>
-            City 
-        </p>{' | '}
-        <p style={{ color: 'brown', display: "inline-block" }}>
-            Dungeon
-        </p>{' | '}
-        <p style={{ color: 'red', display: "inline-block" }}>
-            Enemy
-        </p>{' | '}
-        <p style={{ color: 'green', display: "inline-block" }}>
-            Envrionment 
-        </p>{' | '}
-        <p style={{ color: 'darkorange', display: "inline-block" }}>
-            Hazard 
-        </p>{' | '}
-        <p style={{ color: 'blue', display: "inline-block" }}>
-            NPC 
-        </p>{' | '}
-        <p style={{ color: 'pink', display: "inline-block" }}>
-            Phenomena 
-        </p>{' | '}
-        <p style={{ color: 'grey', display: "inline-block" }}>
-            Ruins 
-        </p>{' | '}
-        <p style={{ color: 'gold', display: "inline-block" }}>
-            Treasure
-        </p>{' | '}
-        <p style={{ color: 'white', display: "inline-block" }}>
-            Wonder 
-        </p>
-        </Accordion.Body>
         </Accordion.Item>
 
         <Accordion.Item eventKey="6">
