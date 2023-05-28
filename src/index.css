@@ -4,7 +4,7 @@ html, body {
   width: 100vw;
   height: 100vh;
   background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
-  overflow: scroll;
+  overflow: hidden;
   font-family: 'Cinzel';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -529,7 +529,7 @@ html, body {
   width: 100%;
 }
 #story-ascean {
-  top: 12.5%;
+  /* margin-top: 12.5%; */
   pointer-events: visible;
 }
 .story-ascean {
@@ -538,14 +538,14 @@ html, body {
   box-shadow: 2px 2px 2px black;
   border-radius: 6px;
   width: 50%;
-  height: 115%;
+  height: 135%;
   margin-left: 25%;
 } 
 .story-inventory-bag {
   position: absolute;
   display: grid;
   grid-template-columns: repeat(6, 16%);
-  grid-template-rows: repeat(12, 32.5%);
+  grid-template-rows: repeat(12, 35%);
   justify-content: space-evenly;
   padding: 1%;
   z-index: 99;
@@ -553,8 +553,8 @@ html, body {
   background-color: black;
   border: 3px solid purple;
   box-shadow: 2px 2px 2px black;
-  width: 65vw;
-  height: 40.25vh;
+  width: 65%;
+  height: 47.25%;
   overflow-y: scroll;
   border-radius: 6px;
   margin-left: 32.5%;
@@ -564,8 +564,8 @@ html, body {
 .story-inventory-bag-settings { width: 100%; } 
 .story-inventory {
   display: inline-block;
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   background-color: black;
   color: #fdf6d8;
   font-weight: 600;

@@ -657,13 +657,13 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('request-game-data', sendGameData);
     usePhaserEvent('dialog-box', createDialog);
     usePhaserEvent('keydown', toggleCombatHud);
-    usePhaserEvent('resize', resizeGame);
+    // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
 
     return (
-        <>
+        <div style={{ position: "relative", maxWidth: '960px', maxHeight: '640px', margin: '0 auto', border: "2px soild black" }}>
             <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
                 <Modal.Body>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => toggleFullscreen()}>
@@ -693,11 +693,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 </Button>
                 <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
                 {state.playerEffects.length > 0 ? (
-                    <div style={{ marginLeft: "10%", marginTop: "50%" }}>
-                    {state.playerEffects.map((effect: any, index: number) => {
-                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
-                    })}
-                    </div>
+                <div className='combat-effects'>
+                {state.playerEffects.map((effect: any, index: number) => {
+                    return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
+                })}
+                </div>
                 ) : ( '' ) }
             </div>
             <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
@@ -733,9 +733,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             { gameState.showInventory ?
                 <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
             : ""}
-            <div id='story-game' style={{ textAlign: 'center', maxWidth: '960px', maxHeight: '640px', margin: '0 auto' }} className='my-5' ref={gameRef}>
-            </div>
-        </>
+            <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}></div>
+        </div>
     );
 };
 

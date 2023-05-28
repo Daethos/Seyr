@@ -30,12 +30,14 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                 { asceanState.experience === asceanState.experienceNeeded ? (
                     <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( '' ) }
-                <div style={{ textAlign: 'center', marginBottom: "17.5%" }}>
+                <div style={{ textAlign: "center" }}>
                 <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} />
+                </div>
+                <div style={{ textAlign: 'center', marginTop: "-5%" }}>
                 <GamePlayerStats 
                     attributes={state.player_attributes} player={ascean} magicalDefense={state.player_defense.magicalDefenseModifier} magicalPosture={state.player_defense.magicalPosture} 
                     physicalDefense={state.player_defense.physicalDefenseModifier} physicalPosture={state.player_defense.physicalPosture} 
-                    />
+                />
                 </div>
                 <AsceanImageCard
                     weapon_one={state.weapons[0]}

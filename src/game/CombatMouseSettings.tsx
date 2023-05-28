@@ -69,7 +69,7 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
     usePhaserEvent('wheel', handleWheelRotation);
 
     return (
-        <div style={{ position: "absolute", width: "40vw", height: "30vw", textAlign: "center", marginLeft: "30vw", marginTop: "45vh", background: 'transparent', alignItems: "center" }} onMouseDown={handleToggleScroll}>
+        <div style={{ position: "absolute", width: "40%", height: "30%", textAlign: "center", marginLeft: "30%", marginTop: "40%", background: 'transparent', alignItems: "center" }} onMouseDown={handleToggleScroll}>
             { scrollEnabled ? (
                 selectedHighlight === 'Weapon' ? (
                     <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700 }}>Current Main Weapon: {weapons[0]?.name}</p>
