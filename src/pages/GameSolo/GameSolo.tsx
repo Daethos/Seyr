@@ -430,13 +430,13 @@ const GameSolo = ({ user }: GameProps) => {
                     dangerMeter = 6;
                     break;
                 case 'dungeon':
-                    dangerMeter = 10;
-                    break;
-                case 'ruins':
                     dangerMeter = 8;
                     break;
-                case 'weather':
+                case 'ruins':
                     dangerMeter = 4;
+                    break;
+                case 'weather':
+                    dangerMeter = 2;
                     break;
                 default:
                     break;

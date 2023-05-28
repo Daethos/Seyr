@@ -3,7 +3,7 @@
         {
             "key": "player_roll",
             "type": "frames",
-            "repeat": 1,
+            "repeat": 2,
             "frameRate": 12,
             "frames": [
                 {

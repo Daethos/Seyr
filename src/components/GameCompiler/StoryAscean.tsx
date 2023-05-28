@@ -14,9 +14,10 @@ interface Props {
   asceanState: any;
   setAsceanState: any;
   levelUpAscean: any;
+  damaged?: boolean;
 };
 
-const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean }: Props) => {
+const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean, damaged }: Props) => {
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -25,11 +26,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     return (
         <>
         <div className="story-block">
-            <div className='story-ascean'>
-                {state.playerEffects.length > 0 ?
-                (state.playerEffects.map((effect: any, index: number) => {
-                    return ( <StatusEffects state={state} dispatch={dispatch} ascean={ascean} effect={effect} player={true} key={index} /> )
-                })) : '' }
+            <div className='story-ascean'> 
                 { asceanState.experience === asceanState.experienceNeeded ? (
                     <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( '' ) }
@@ -54,6 +51,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                     trinket={ascean.trinket}
                     gameDisplay={true}
                     loading={loading}
+                    damage={damaged}
                     key={ascean._id}
                 />
                 <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} story={true} />

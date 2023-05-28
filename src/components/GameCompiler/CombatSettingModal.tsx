@@ -16,8 +16,10 @@ interface CombatSettingModalProps {
 
 const CombatSettingModal = ({ state, damageType, setDamageType, setPrayerBlessing, setWeaponOrder, prayers, weapons, story }: CombatSettingModalProps) => { 
     const [combatModalShow, setCombatModalShow] = useState<boolean>(false); 
+
     return (
         <>
+        
         <Modal show={combatModalShow} onHide={() => setCombatModalShow(false)} centered id='modal-weapon'>
         <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', color: "gold", fontSize: "18px" }}>Settings For Weapons, Damage, Prayer</Modal.Header>
         <Modal.Body id='weapon-modal'>

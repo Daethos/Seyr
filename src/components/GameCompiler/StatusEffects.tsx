@@ -43,9 +43,10 @@ interface StatusEffectProps {
     enemy?: boolean;
     state: any;
     dispatch: any;
+    story?: boolean;
 };
 
-const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch }: StatusEffectProps) => {
+const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story }: StatusEffectProps) => {
 
     const consumeEnemyPrayer = (name: string, prayer: string): void => {
         console.log('Consume Enemy Prayer', name, prayer);
@@ -87,13 +88,13 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     const getInnerWidth = () => {
         const width = window.innerWidth;
         if (width > 1200) {
-            return '-30%';
-        } else if (width > 900) {
-            return '-25%';
+            return '30%';
+        } else if (width > 800) {
+            return '1%';
         } else if (width > 50) {
-            return '-12.5%';
+            return '12.5%';
         } else {
-            return '-10%';
+            return -'10%';
         };
     };
 
@@ -108,7 +109,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     };
 
     const getEffectStyle = {
-        marginTop: player ? getInnerWidth() : '',
+        marginTop: player && !story ? getInnerWidth() : story ? getInnerWidth() : '',
         border: 2 + 'px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
     };
@@ -120,7 +121,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
 
     return (
         <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
-            <Button variant='' style={getEffectStyle} className={ enemy ? 'status-effects enemy' : spectator ? 'status-effects spectator' : 'status-effects'}>
+            <Button variant='' style={getEffectStyle} className={ enemy ? 'status-effects enemy' : spectator ? 'status-effects spectator' : story ? 'story-effects' : 'status-effects'}>
                 <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/>
             </Button>
         </OverlayTrigger>

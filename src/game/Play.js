@@ -17,6 +17,7 @@ export default class Play extends Phaser.Scene {
         console.log(data, "Data in Play")
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
+        this.enemy = this.data.gameData.gameData.enemy;
         this.state = this.data.gameData.gameData.state;
         this.gameState = this.data.gameData.gameData.gameState;
         this.CONFIG = this.sys.game.config;
@@ -33,10 +34,9 @@ export default class Play extends Phaser.Scene {
         this.map = null;
         this.isPlayerOnGround = true;
         this.isPlayerHanging = false;
-    };
+    }; 
     
     create() { 
- 
         const map = this.make.tilemap({ key: 'castle_map' });
         const tileSet = map.addTilesetImage('castle_tiles', 'castle_tiles', 32, 32, 0, 0);
         const backgroundSet = map.addTilesetImage('layer_1', 'layer_1', 32, 32, 0, 0);
@@ -44,25 +44,13 @@ export default class Play extends Phaser.Scene {
         const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
         console.log(layer1, layer2, map, "Layers");
         layer1.setCollisionByProperty({ collides: true });
-        // layer2.setCollisionByProperty({ collides: true });
         this.matter.world.convertTilemapLayer(layer1);
         this.matter.world.convertTilemapLayer(layer2);
         this.map = map;
-        // const tileSet = map.addTilesetImage('Tileset', 'tiles', 32, 32, 0, 0);
-        // const atlasTerrain = map.addTilesetImage('Atlas Terrain', 'terrain', 32, 32, 0, 0);
-        // const layer1 = map.createLayer('Tile Layer 1', atlasTerrain, 0, 0);
-        // const layer2 = map.createLayer('Tile Layer 2', atlasTerrain, 0, 0);
-        // layer1.setCollisionByProperty({ collides: true });
-        // layer2.setCollisionByProperty({ collides: true });
-        // this.matter.world.convertTilemapLayer(layer1);
-        // this.matter.world.convertTilemapLayer(layer2);
-        // this.map = map;
-
         this.matter.world.setBounds(0, 0, 960, 640);
         this.matter.world.createDebugGraphic();
         
         this.player = new Player({scene: this, x: 200, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
-
         this.enemy = new Enemy({scene: this, x: 400, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
 
         this.player.inputKeys = {
@@ -84,7 +72,7 @@ export default class Play extends Phaser.Scene {
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 2;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 960, 640);
@@ -105,11 +93,64 @@ export default class Play extends Phaser.Scene {
         // this.player.joystick = joystick; 
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
         // this.stick.alignBottomLeft(20);
-
         this.createWelcome(); 
-          
-
+        this.createStateListener();
+        // this.stateAddlistener(); // Figuring out a way to have the ability to always 'listen' in on state changes
     };
+
+    createStateListener = async function() {
+        console.log("State Listener Added");
+        // Handle Event Listener to Dispatch State
+        window.addEventListener('update-combat-data', (e) => {
+            console.log(e.detail, "State Updated");
+            this.state = e.detail;
+        });
+
+        window.addEventListener('update-game-data', (e) => {
+            console.log(e.detail, "Game State Updated");
+            this.gameState = e.detail;
+        });
+        
+    };
+
+    sendStateActionListener = async function() {
+        // Handle Event Listener to Dispatch State
+        const sendState = new CustomEvent('update-state-action', { detail: this.state });
+        window.dispatchEvent(sendState);
+    };
+
+    sendStateSpecialListener = async function(special) {
+        // Handle Event Listener to Dispatch State
+        switch (special) {
+            case 'consume':
+                // Ping handleConsume
+                const sendInvoke = new CustomEvent('update-state-invoke', { detail: this.state });
+                window.dispatchEvent(sendInvoke);
+                break;
+            case 'invoke':
+                // Ping handleInstant
+                const sendConsume = new CustomEvent('update-state-consume', { detail: this.state });
+                window.dispatchEvent(sendConsume);
+                break;
+            default:
+                break;
+        };
+    };
+
+    stateAddlistener = async function() {
+        console.log("State Listener Added");
+        // Handle Event Listener to Dispatch State
+        window.addEventListener('update-combat-data', this.stateFinishedListener.bind(this));
+        
+    };
+    
+    stateFinishedListener = async function(e) {
+        console.log(e.detail, "State Finished");
+        this.state = e.detail;
+        window.removeEventListener('update-combat-data', this.stateFinishedListener);
+    };
+
+    
 
     drinkFlask = async function() {
         // Handle Event Listener to Dispatch Drinking a Flask

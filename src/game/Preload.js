@@ -1,8 +1,7 @@
 import Phaser from "phaser";
 import NewText from './NewText.js' 
 import Player from "./Player.js";
-import sky from '../game/images/sky.png';
-import ground from '../game/images/platform.png';
+import Enemy from './Enemy.js';
 import Tileset from '../game/images/Tileset.png';
 import AtlasTerrain from '../game/images/Atlas Terrain.png';
 import TileJson from '../game/images/map.json';
@@ -20,6 +19,7 @@ export default class Preload extends Phaser.Scene {
         this.width = 800;
         this.height = 36;
         this.ascean = {};
+        this.enemy = {};
         this.state = {};
         this.gameState = {};
 
@@ -35,12 +35,10 @@ export default class Preload extends Phaser.Scene {
         this.bg.fillStyle('0x2A0134', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         // this.load.script('generic', 'phaser-virtual-joystick.min.js');
-        // this.load.atlas('generic', joystickPng, joystickJson);
-        // this.load.image("sky", sky);
-        // this.load.image("ground", ground);
-        
+        // this.load.atlas('generic', joystickPng, joystickJson);  
 
         Player.preload(this);
+        Enemy.preload(this);
         // this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
         // this.load.image('tiles', Tileset);
         // this.load.image('terrain', AtlasTerrain);
@@ -58,6 +56,7 @@ export default class Preload extends Phaser.Scene {
             callback: () => { this.scene.start('Menu', {
                 gameData: {
                     ascean: this.ascean,
+                    enemy: this.enemy,
                     state: this.state,
                     gameState: this.gameState
                 }
@@ -66,20 +65,27 @@ export default class Preload extends Phaser.Scene {
             callbackScope: this
         });
         window.addEventListener('get-ascean', this.asceanFinishedEventListener);
+        window.addEventListener('get-enemy', this.enemyFinishedEventListener)
         window.addEventListener('get-combat-data', this.stateFinishedEventListener);
         window.addEventListener('get-game-data', this.gameStateFinishedEventListener);
         const getAscean = new CustomEvent('request-ascean');
+        const getEnemy = new CustomEvent('request-enemy');
         const getState = new CustomEvent('request-combat-data');
         const getGameData = new CustomEvent('request-game-data');
         window.dispatchEvent(getAscean);
+        window.dispatchEvent(getEnemy);
         window.dispatchEvent(getState);
         window.dispatchEvent(getGameData);
-        console.log(this.ascean, 'Creating Ascean in Preload Scene');
+        console.log(this.enemy, 'Creating ENEMY in PRELOAD Scene');
     };
     
     asceanFinishedEventListener = (e) => {
         this.ascean = e.detail;
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
+    };
+    enemyFinishedEventListener = (e) => {
+        this.enemy = e.detail;
+        window.removeEventListener('get-enemy', this.enemyFinishedEventListener);
     };
 
     stateFinishedEventListener = (e) => {

@@ -12,10 +12,11 @@ import playerActionsThreeAnim from './images/player_actions_three_anim.json';
 import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json'; 
+
 export default class Player extends Entity {
     constructor(data) {
         let { scene, x, y, texture, frame } = data;
-        super({ ...data }); 
+        super({ ...data, name: "enemy", ascean: data.gameData }); 
         this.scene.add.existing(this);
         this.setScale(0.75);
         this.isAttacking = false;

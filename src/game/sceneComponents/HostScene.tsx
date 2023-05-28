@@ -11,7 +11,6 @@ import Menu from '../Menu';
 import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
-import * as settingsAPI from '../../utils/settingsApi';
 import * as gameAPI from '../../utils/gameApi';
 import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
@@ -22,13 +21,20 @@ import StatusEffects from '../../components/GameCompiler/StatusEffects';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import StoryActions from '../StoryActions';
+import CombatMouseSettings from '../CombatMouseSettings';
+import StoryHealthBar from '../../components/GameCompiler/StoryHealthBar';
+import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
 
-export const useDocumentEvent = (event: string, callback: any) => {
+export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
-        document.addEventListener(event, callback);
-        return () => document.removeEventListener(event, callback);
+        const eventListener = (event: Event) => callback(event);
+        window.addEventListener(event, eventListener);
+        return () => {
+            window.removeEventListener(event, eventListener);
+        };
     }, [event, callback]);
 };
+  
 
 interface Props {
     user: any; 
@@ -102,7 +108,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     });
  
     useEffect(() => { 
-        startGame(); 
+        startGame();
     }, []);
 
     const startGame = useCallback(async () => {
@@ -113,9 +119,10 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 setLoading(false);
             }, 1000);
         } catch (err: any) {
-            console.log(err.message, 'Error Starting Game')
+            console.log(err.message, 'Error Starting Game');
         };
     }, [asceanID]);
+
 
     const getAsceanLeveled = async () => {
         try {
@@ -155,6 +162,13 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    const sendEnemyData = async () => { 
+        console.log('SEND ENEMY DATA', state.computer);
+        const enemyData = new CustomEvent('get-enemy', {
+            detail: state.computer
+        });
+        window.dispatchEvent(enemyData);
+    };
 
     const sendAscean = async () => {
         console.log('Event Listener Added');
@@ -165,7 +179,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const sendCombatData = async () => {
-        console.log('Event Listener Added');
+        console.log('sendCombatData Pinged');
         const combatData = new CustomEvent('get-combat-data', {
             detail: state
         });
@@ -178,6 +192,36 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             detail: gameState
         });
         window.dispatchEvent(gameData);
+    };
+
+    const updateStateAction = async (e: { detail: any; }) => {
+        console.log('Event Listener Added');
+        try {
+            const state = e.detail;
+            await handleInitiate(state);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating State');
+        };
+    };
+
+    const updateStateInvoke = async (e: { detail: any; }) => {
+        console.log('Event Listener Added');
+        try {
+            const state = e.detail;
+            await handleInstant(state);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating State');
+        };
+    };
+
+    const updateStateConsume = async (e: { detail: any; }) => {
+        console.log('Event Listener Added');
+        try {
+            const state = e.detail;
+            await handlePrayer(state);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating State');
+        };
     };
 
     const createDialog = async (e: any) => {
@@ -315,6 +359,50 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    async function soundEffects(effects: CombatData) {
+        try {
+            if (effects.critical_success === true) {
+                const soundEffectMap = {
+                    Spooky: playDaethic,
+                    Righteous: playDaethic,
+                    Wild: playWild,
+                    Earth: playEarth,
+                    Fire: playFire,
+                    Frost: playFrost,
+                    Lightning: playLightning,
+                    Sorcery: playSorcery,
+                    Wind: playWind,
+                    Pierce: (weapons: any[]) =>
+                      weapons[0].type === "Bow" ? playBow() : playPierce(),
+                    Slash: playSlash,
+                    Blunt: playBlunt,
+                };
+            
+                const { player_damage_type, weapons } = effects;
+                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
+                if (soundEffectFn) {
+                    soundEffectFn(weapons);
+                };
+            };
+            if (effects.religious_success === true) {
+                playReligion();
+            };
+            if (effects.roll_success === true || effects.computer_roll_success === true) {
+                playRoll();
+            };
+            if (effects.counter_success === true || effects.computer_counter_success === true) {
+                playCounter();
+            };
+            setTimeout(() => {
+                if (effects.player_win !== true && effects.computer_win !== true) {
+                    playCombatRound();
+                };
+            }, 500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Sound Effects')
+        };
+    };
+
     async function handlePlayerWin(combatData: CombatData) {
         try {
             playReligion();
@@ -377,13 +465,33 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
-    async function handleInstant(e: { preventDefault: () => void; }) {
-        e.preventDefault();
+    async function handleInitiate(combatData: CombatData) {
+        try { 
+            const response = await gameAPI.initiateAction(combatData);
+            console.log(response.data, "Initiate Response")
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            await updateCombatListener(response.data);
+            dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
+            await soundEffects(response.data);
+            shakeScreen(gameState.shake);
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            // eventListener to update the Phaser Scene
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Initiating Combat')
+        };
+    };
+
+    async function handleInstant(state: CombatData) {
         try {
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             const response = await gameAPI.instantAction(state);
             console.log(response.data, "Instant Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            await updateCombatListener(response.data);
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
@@ -396,13 +504,13 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
-    async function handlePrayer(e: { preventDefault: () => void; }) {
-        e.preventDefault();
+    async function handlePrayer(state: CombatData) {
         try {
             if (state.prayerSacrifice === '') return;
             const response = await gameAPI.consumePrayer(state);
             console.log(response.data, "Prayer Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            await updateCombatListener(response.data);
             dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
@@ -417,6 +525,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     async function setWeaponOrder(weapon: any) {
         try {
+            console.log(weapon, "Weapon In Weapon Order")
             const findWeapon = state.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
             const newWeaponOrder = async () => state?.weapons.sort((a: any, b: any) => {
                 return ( a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0 )
@@ -454,29 +563,22 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
         };
-    };
+    }; 
 
-    useEffect(() => {
-        window.addEventListener('request-ascean', sendAscean);
-        window.addEventListener('request-combat-data', sendCombatData);
-        window.addEventListener('request-game-data', sendGameData);
-        window.addEventListener('dialog-box', createDialog);
-        return () => {
-            window.removeEventListener('request-ascean', sendAscean);
-            window.removeEventListener('request-combat-data', sendCombatData);
-            window.removeEventListener('request-game-data', sendGameData);
-            window.removeEventListener('dialog-box', createDialog);
+    const updateCombatListener = async (combatData: CombatData) => {
+        try {
+            const updateCombatData = new CustomEvent('update-combat-data', { detail: combatData });
+            window.dispatchEvent(updateCombatData);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating Combat Listener');
         };
-    }, [asceanID]);
+    };
 
     const resizeGame = () => {
         let game_ratio = 960 / 640;
-    
         let canvas = document.getElementsByTagName('canvas')[0];
-
         let newWidth = window.innerWidth;
         let newHeight = newWidth / game_ratio;
-
         if (newHeight > window.innerHeight) {
             newHeight = window.innerHeight;
             newWidth = newHeight * game_ratio;
@@ -492,14 +594,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         if (e.key === 'z' || e.key === 'Z') setShowPlayer((prev: boolean) => !prev);
     };
 
-    useEffect(() => {
-        window.addEventListener('resize', resizeGame);
-        window.addEventListener('keydown',  toggleCombatHud);
-        return () => {
-            window.removeEventListener('resize', resizeGame);
-            window.removeEventListener('keydown',  toggleCombatHud);
-        };
-    }, []);
 
     const toggleFullscreen = () => {
         if (document.fullscreenElement) {
@@ -557,6 +651,17 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    usePhaserEvent('request-ascean', sendAscean);
+    usePhaserEvent('request-enemy', sendEnemyData);
+    usePhaserEvent('request-combat-data', sendCombatData);
+    usePhaserEvent('request-game-data', sendGameData);
+    usePhaserEvent('dialog-box', createDialog);
+    usePhaserEvent('keydown', toggleCombatHud);
+    usePhaserEvent('resize', resizeGame);
+    usePhaserEvent('update-state-action', updateStateAction);
+    usePhaserEvent('update-state-invoke', updateStateInvoke);
+    usePhaserEvent('update-state-consume', updateStateConsume);
+
     return (
         <>
             <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
@@ -587,17 +692,44 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
                 </Button>
                 <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
-                {state.playerEffects.length > 0 ?
-                (state.playerEffects.map((effect: any, index: number) => {
-                    return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} key={index} /> )
-                })) : '' }
+                {state.playerEffects.length > 0 ? (
+                    <div style={{ marginLeft: "10%", marginTop: "50%" }}>
+                    {state.playerEffects.map((effect: any, index: number) => {
+                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
+                    })}
+                    </div>
+                ) : ( '' ) }
             </div>
+            <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
             { combatHud ? (
                 <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} />
             ) : ( '' ) }
             { showPlayer ?
-                (  <StoryAscean ascean={state.player} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
-            ) : ( '' ) }
+                (  <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+            ) : ( 
+                <div style={{ transform: "scale(.65)", marginTop: "52.5%", position: "absolute", marginLeft: "-20%" }}>
+                <div style={{ marginTop: "-15%", marginLeft: "25%", marginBottom: "10%" }}>
+                <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} />
+                </div>
+                <AsceanImageCard
+                    weapon_one={state.weapons[0]}
+                    weapon_two={state.weapons[1]}
+                    weapon_three={state.weapons[2]}
+                    shield={state.player.shield}
+                    helmet={state.player.helmet}
+                    chest={state.player.chest}
+                    legs={state.player.legs}
+                    amulet={state.player.amulet}
+                    ring_one={state.player.ring_one}
+                    ring_two={state.player.ring_two}
+                    trinket={state.player.trinket}
+                    gameDisplay={true}
+                    loading={loading}
+                    damage={state.playerDamaged}
+                    key={state.player._id}
+                />
+                </div>
+             ) }
             { gameState.showInventory ?
                 <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
             : ""}
