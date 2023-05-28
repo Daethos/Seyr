@@ -193,6 +193,10 @@
 #console {
   margin-top: 30%;
   border-radius: 6px;
+  background-color: black;
+  border: 3px solid purple;
+  color: #fdf6d8;
+  text-align: center;
 }
 #textarea {
   grid-column-start: 3;
