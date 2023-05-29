@@ -22,8 +22,11 @@ import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import StoryActions from '../StoryActions';
 import CombatMouseSettings from '../CombatMouseSettings';
+import playerHealthbar from '../images/player-healthbar.png';
 import StoryHealthBar from '../../components/GameCompiler/StoryHealthBar';
 import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
+import CombatUI from '../CombatUI';
+import EnemyUI from '../EnemyUI';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -713,27 +716,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             { showPlayer ?
                 (  <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( 
-                <div style={{ transform: "scale(1.65)", marginTop: "20.5%", position: "absolute", marginLeft: "20%" }}>
-                {/* <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} /> */}
-                <div style={{ marginTop: "-15%", marginLeft: "25%", marginBottom: "10%" }}>
-                </div>
-                {/* <AsceanImageCard
-                    weapon_one={state.weapons[0]}
-                    weapon_two={state.weapons[1]}
-                    weapon_three={state.weapons[2]}
-                    shield={state.player.shield}
-                    helmet={state.player.helmet}
-                    chest={state.player.chest}
-                    legs={state.player.legs}
-                    amulet={state.player.amulet}
-                    ring_one={state.player.ring_one}
-                    ring_two={state.player.ring_two}
-                    trinket={state.player.trinket}
-                    gameDisplay={true}
-                    loading={loading}
-                    damage={state.playerDamaged}
-                    key={state.player._id}
-                /> */}
+                <div style={{ position: "absolute" }}>
+                <CombatUI currentPlayerHealth={state.new_player_health} totalPlayerHealth={state.player_health} />
+                <EnemyUI currentEnemyHealth={state.new_computer_health} totalEnemyHealth={state.computer_health} />
                 </div>
              ) }
             { gameState.showInventory ?

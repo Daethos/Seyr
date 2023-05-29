@@ -145,14 +145,14 @@ const Story = ({ user }: Props) => {
     };
         
     return (
-        <>
+        <div style={{ overflow: "hidden" }}>
         { gameChange ? ( '' )
         : ( <HostScene 
                 user={user} setGameChange={setGameChange} gameChange={gameChange} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch}
                 asceanState={asceanState} setAsceanState={setAsceanState}
             />
         )}
-        </>
+        </div>
     );
 };
 

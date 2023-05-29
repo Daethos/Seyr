@@ -30,7 +30,6 @@
 *::-webkit-scrollbar {
   width: 0px;
   background: transparent;
-  
 } 
 #game-block {
   margin-left: 7.5%;
@@ -44,6 +43,15 @@
   margin-left: 25%;
   transform: scale(1.1);
   margin-top: -10%;
+}
+.settings-button {
+  position: absolute;
+  grid-column-start: 1;
+  grid-row-start: 1;
+  margin-left: -5%;
+  margin-top: -1%;
+  z-index: 99; 
+  color: goldenrod;
 }
 .overlay-content {
   color: gold;
@@ -843,6 +851,17 @@
 }
 .dialog-buttons.inner {
   font-size: 16px;
+}
+#level-up { 
+  position: absolute; 
+  grid-column-start: 3; 
+  margin-left: 65%; 
+  margin-top: -0.5%; 
+  font-variant: small-caps; 
+  font-weight: 700; 
+  color: goldenrod; 
+  font-size: 25px; 
+  z-index: 50; 
 }
 .level-up {
   font-size: 12.5px;
