@@ -55,6 +55,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                     loading={loading}
                     damage={damaged}
                     key={ascean._id}
+                    story={true}
                 />
                 <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} story={true} />
             </div>

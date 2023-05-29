@@ -34,6 +34,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
     const [inventoryRingType, setInventoryRingType] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [loadingContent, setLoadingContent] = useState<string>('');
+    const [deskTop, setDeskTop] = useState<boolean>(false);
     const targetRef = useRef(null);
     const location = useLocation();
     
@@ -62,6 +63,12 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         new_shield: '',
         _id: ascean._id,
     });
+
+    useEffect(() => {
+        if (window.innerWidth > 768) {
+            setDeskTop(true);
+        };
+    }, [])
 
     useEffect(() => {
       checkInventory();
@@ -466,7 +473,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             margin: blacksmith ? '0 2% 10% 2%' : story ? '5% 0 0 15%' : '0 0 0 0',
             background: 'black',
             border: getBorderStyle(rarity),
-            display: "inline-block"
+            display: "inline-block",
+            // transform: window.innerWidth > 1000 ? 'scale(3)' : '',
         };
     };
 
@@ -508,7 +516,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 style={{ color: 'red', fontWeight: 600 }} onClick={() => handleRemoveItem()}>Destroy</Button>    
             </Modal.Body>
         </Modal>
-        <Modal show={inventoryModalShow} onHide={() => setInventoryModalShow(false)} centered id='modal-weapon' style={{ marginTop: story ? 15 : 30 + '%', overflow: 'auto', maxHeight: story ? '90vh' : '70vh', zIndex: 9999 }}>
+        <Modal show={inventoryModalShow} onHide={() => setInventoryModalShow(false)} centered id='modal-weapon' style={{ marginTop: story ? 15 : deskTop ? 10 : 30 + '%', overflow: 'auto', maxHeight: story ? '90vh' : '70vh', zIndex: 9999 }}>
             <Modal.Header style={{ color: 'blueviolet', fontSize: "20px" }}>
                 Do You Wish To Change Your {editState[inventoryType as keyof typeof editState]?.name} to {inventory?.name}?
             </Modal.Header>
@@ -742,7 +750,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
 
         { blacksmith ?
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
-                <Button variant="" className={`inventory-icon`} style={getItemStyle(inventory?.rarity)} >
+                <Button variant="" className={story ? 'story-inventory' : 'inventory-icon'} style={getItemStyle(inventory?.rarity)} >
                     <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} />
                 </Button>
             </OverlayTrigger>   
@@ -758,7 +766,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             </Draggable>
         } 
         { blacksmith ?  
-            <Button variant='outline' className='mb-2' style={{ color: 'gold', fontWeight: 600, marginLeft: "-22.5%", marginTop: "20%" }} onClick={() => setForgeModalShow(true)}>Forge</Button>
+            <Button variant='outline' className='blacksmith-forge' onClick={() => setForgeModalShow(true)}>Forge</Button>
         : '' }
         <Overlay target={targetRef} show={isLoading}>
             <div className='d-flex align-items-center justify-content-center' style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.65)', zIndex: 99999 }}>

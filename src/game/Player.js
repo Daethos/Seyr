@@ -17,7 +17,7 @@ export default class Player extends Entity {
     constructor(data) {
         console.log(data, "Player Data");
         let { scene, x, y, texture, frame } = data;
-        super({ ...data, name: 'player', ascean: scene.gameData }); 
+        super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health  }); 
         this.scene.add.existing(this);
         this.setScale(0.8);
         this.isAttacking = false;
@@ -55,13 +55,23 @@ export default class Player extends Entity {
         this.setFixedRotation();   
         this.checkHanging(); 
         this.checkEnemyAttackCollision();
+        this.playerStateListener();
+    };
+
+    playerStateListener() {
+        window.addEventListener('update-combat-data', (e) => {
+            console.log(e.detail, "State Updated");
+            this.health = e.detail.new_player_health;
+            if (e.detail.new_player_health <= 0) {
+                this.scene.scene.start('GameOver');
+            }
+        });
     };
 
     checkEnemyAttackCollision() {
         this.scene.matterCollision.addOnCollideStart({
             objectA: this.playerSensor,
             callback: other => {
-                console.log(other, "other");
                 if (other.gameObjectB && other.gameObjectB.name === 'enemy') { 
                     if (this.scene.state.action !== '' && this.scene.state.computer.name) {
                         this.scene.sendStateActionListener();
@@ -340,7 +350,6 @@ export default class Player extends Entity {
         // =================== ANIMATIONS IF-ELSE CHAIN ================== \\
 
         if (this.isHanging && scene.isPlayerHanging) { // HANGING
-            console.log("Pinging HANGING")
             if (!this.isCollidingWithPlayer()) {
                 this.isHanging = false;
                 scene.setPlayerHanging(false);
@@ -386,12 +395,10 @@ export default class Player extends Entity {
                 this.isCountering = false;
             });
         } else if (this.isCountering) { // COUNTERING
-            console.log("Pinging COUNTERING") 
             this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
                 this.isCountering = false; 
             });
         } else if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
-            console.log("Pinging DODGING")
             this.anims.play('player_slide', true);
             if (this.dodgeCooldown === 0) {
                 this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
@@ -418,7 +425,6 @@ export default class Player extends Entity {
             };
             
         } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
-            console.log("Pinging ROLLING");
             this.anims.play('player_roll', true);
             if (this.rollCooldown === 0) {
                 const sensorDisp = 12;
@@ -470,12 +476,10 @@ export default class Player extends Entity {
         //         this.setVelocityX(this.body.velocity.x * 1.25);
         //     }; 
         } else if (this.isPosturing) { // POSTURING
-            console.log("Pinging POSTURING");
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {
                 this.isPosturing = false;
             });
         } else if (this.isAttacking) { // ATTACKING
-            console.log("Pinging ATTACKING");
             this.anims.play('player_attack_1', true).on('animationcomplete', () => {
                 this.isAttacking = false;
             });
@@ -483,10 +487,8 @@ export default class Player extends Entity {
             console.log("Pinging JUMPING");
             this.anims.play('player_jump', true);
         } else if (this.isCrouching && Math.abs(this.body.velocity.x) > 0.1) { // CROUCHING AND MOVING
-            console.log("Pinging CROUCHING AND MOVING")
             this.anims.play('player_roll', true);
         } else if (Math.abs(this.body.velocity.x) > 0.1) { // RUNNING
-            console.log("Pinging RUNNING")
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
             console.log("Pinging CONSUMING")
@@ -505,10 +507,8 @@ export default class Player extends Entity {
                 this.isPraying = false;
             });
         } else if (this.isCrouching) { // CROUCHING IDLE
-            console.log("Pinging CROUCHING IDLE")
             this.anims.play('player_crouch_idle', true);
         } else { // IDLE
-            console.log("Pinging IDLE")
             this.anims.play('player_idle', true);
         };
     };

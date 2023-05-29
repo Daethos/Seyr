@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { usePhaserEvent } from './sceneComponents/HostScene';
 
 interface CombatMouseSettingsProps {
@@ -17,17 +17,12 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
     const [selectedPrayerIndex, setSelectedPrayerIndex] = useState<number>(0);
     const [selectedHighlight, setSelectedHighlight] = useState<string>('');
     const [scrollEnabled, setScrollEnabled] = useState(false);
-
-    const handleWheelClick = () => {
-      setScrollEnabled((prev) => !prev);
-    }; 
   
     const handleWheelRotation = (event: WheelEvent) => {
         event.preventDefault();
         if (!scrollEnabled) return;
         const direction = event.deltaY > 0 ? 1 : -1; // Check the deltaY value of the wheel event to determine the rotation direction
     
-        // Update the selected index based on the direction and handle boundary cases
         if (selectedHighlight === 'Prayer') {
             const newIndex = (selectedPrayerIndex + direction + prayers.length) % prayers.length;
             setSelectedPrayerIndex(newIndex);
@@ -40,7 +35,6 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
             setSelectedHighlight('Damage');
         } else {
             const newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
-            console.log(weapons[newIndex]);
             setSelectedWeaponIndex(newIndex);
             setWeaponOrder( { target: { value: weapons[newIndex].name }} );
             setSelectedHighlight('Weapon');
@@ -49,7 +43,6 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
 
     const handleShiftKey = (event: KeyboardEvent) => {
         event.preventDefault();
-        console.log(event, "shift key pressed");
         if (event.shiftKey) {
             if (selectedHighlight === 'Weapon') {
                 setSelectedHighlight('Damage');

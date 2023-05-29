@@ -111,6 +111,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         startGame();
     }, []);
 
+    useEffect(() => {
+        // if (!state.combatEngaged) return;
+        updateCombatListener(state);
+    }, [state]);
+
     const startGame = useCallback(async () => {
         try {
             setLoading(true); 
@@ -592,6 +597,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         e.preventDefault();
         if (e.key === 'v' || e.key === 'V') setCombatHud((prev: boolean) => !prev);
         if (e.key === 'z' || e.key === 'Z') setShowPlayer((prev: boolean) => !prev);
+        if (e.key === 'x' || e.key === 'X') handleInventoryMiddleware();
     };
 
 
@@ -707,11 +713,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             { showPlayer ?
                 (  <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( 
-                <div style={{ transform: "scale(.65)", marginTop: "52.5%", position: "absolute", marginLeft: "-20%" }}>
+                <div style={{ transform: "scale(1.65)", marginTop: "20.5%", position: "absolute", marginLeft: "20%" }}>
+                {/* <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} /> */}
                 <div style={{ marginTop: "-15%", marginLeft: "25%", marginBottom: "10%" }}>
-                <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} />
                 </div>
-                <AsceanImageCard
+                {/* <AsceanImageCard
                     weapon_one={state.weapons[0]}
                     weapon_two={state.weapons[1]}
                     weapon_three={state.weapons[2]}
@@ -727,7 +733,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     loading={loading}
                     damage={state.playerDamaged}
                     key={state.player._id}
-                />
+                /> */}
                 </div>
              ) }
             { gameState.showInventory ?

@@ -72,7 +72,7 @@ export default class Play extends Phaser.Scene {
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 1;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 960, 640);
@@ -104,6 +104,8 @@ export default class Play extends Phaser.Scene {
         window.addEventListener('update-combat-data', (e) => {
             console.log(e.detail, "State Updated");
             this.state = e.detail;
+            if (this.state.action !== '') this.state.action = '';
+            if (this.state.counter_action !== '') this.state.counter_action = '';
         });
 
         window.addEventListener('update-game-data', (e) => {
@@ -122,13 +124,15 @@ export default class Play extends Phaser.Scene {
     sendStateSpecialListener = async function(special) {
         // Handle Event Listener to Dispatch State
         switch (special) {
-            case 'consume':
-                // Ping handleConsume
+            case 'invoke':
+                // Ping handleInstant
                 const sendInvoke = new CustomEvent('update-state-invoke', { detail: this.state });
                 window.dispatchEvent(sendInvoke);
                 break;
-            case 'invoke':
-                // Ping handleInstant
+            case 'consume':
+                // Ping handleConsume
+                this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
+                this.state.prayerSacrificeName = this.state.playerEffects[0].name;
                 const sendConsume = new CustomEvent('update-state-consume', { detail: this.state });
                 window.dispatchEvent(sendConsume);
                 break;

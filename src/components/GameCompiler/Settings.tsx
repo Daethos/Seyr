@@ -24,6 +24,7 @@ interface Props {
 const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, saveAsceanCoords, gameState, mapState, multiplayer }: Props) => {
     const [settingsModalShow, setSettingsModalShow] = useState<boolean>(false);
     const [showInventory, setShowInventory] = useState<boolean>(false);
+    const [fullScreen, setFullScreen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const settingsStyle = {
@@ -54,6 +55,16 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
             setLoading(false);
         } catch (err: any) {
             console.log(err, "Error Saving Map Settings")
+        };
+    };
+
+    const toggleFullscreen = () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+            setFullScreen(false);
+        } else {
+            document.documentElement.requestFullscreen();
+            setFullScreen(true);
         };
     };
 
@@ -128,10 +139,12 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
                 </h5>
             </Accordion.Header>
             <Accordion.Body className='settings-accordion'>
-            <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
-            <span style={{ float: "left" }}></span>
-            Combat Timer: ({gameState.timeLeft})
-            <span style={{ float: "right" }}></span>
+        <Button variant='' className='mb-3' style={{ color: 'gold' }} onClick={toggleFullscreen}>Full Screen - {fullScreen ? 'Enabled' : 'Disabled'}</Button>
+
+        <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
+        <span style={{ float: "left" }}></span>
+        Combat Timer: ({gameState.timeLeft})
+        <span style={{ float: "right" }}></span>
         </h6>
         <Form.Range value={gameState.timeLeft} onChange={handleCombatTimer} min={2} max={12} step={1} /><br />
         { multiplayer ? ( '' ) : (

@@ -396,6 +396,13 @@
   font-weight: 600;
   display: inline-block;
 }; 
+.blacksmith-forge {
+  margin-bottom: 2%;
+  margin-left: -22.5%;
+  margin-top: 20%;
+  color: gold;
+  font-weight: 600;
+}
 .text-box {
   font-family: monospace;
   border: 2px solid purple;
@@ -561,8 +568,7 @@
 }
 #player-health {
   background-color: red;
-  color: #fdf6d8;
-  /* color: transparent; */
+  color: #fdf6d8; 
   box-shadow: 1px 1px 2px black;
 }
 #player-xp {
@@ -593,8 +599,7 @@
   text-shadow: 1.5px 1.5px 1.5px black;
 }
 .progress-bar {
-  font-size: 16px;
-  /* color: #fdf6d8; */
+  font-size: 16px; 
   font-weight: 900;
 }
 .progress-text {
@@ -915,7 +920,7 @@
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
 
-@media screen and (min-width: 1001px) {
+@media screen and (min-width: 1000px) {
   #game-container {
     background-size: cover;
     border: purple 10px solid;
@@ -955,12 +960,12 @@
   .map-button {
     transform: scale(1.75);
     grid-row-start: 1;
-    margin-top: 0.25%;
+    margin-top: 0.15%;
   }
   .journal-button {
     transform: scale(2);
     left: -8%;
-    top: 4%;
+    top: 4.25%;
   }
   .game-map {
     border: 5px solid purple;
@@ -977,11 +982,13 @@
     margin-left: -45%;
   }
   .joystick-outer {
+    visibility: hidden;
     width: 200px;
     height: 200px;
     border: 5px solid gold; 
   }
   .joystick-inner {
+    visibility: hidden;
     width: 100px;
     height: 100px;
     border: 4px solid gold;
@@ -1114,6 +1121,7 @@
   #player-health {
     height: 30%;
     box-shadow: 3px 3px 3px black; 
+    border: 2px solid black;
   }
   #player-xp {
     height: 25%;
@@ -1147,15 +1155,24 @@
     margin-left: 10%;
   }
   .inventory-bag {
-    grid-template-columns: repeat(20, 5%);
+    grid-template-columns: repeat(15, 5%);
+    grid-template-rows: repeat(15, 17.5%);
     width: 75vw;
-    margin-top: 1%;
-    margin-left: 12%;
+    margin-top: 0.5%;
+    margin-left: 12.5%;
     border: 7.5px solid purple;
   }
   .inventory-bag-settings {
     width: 100%;
   }
+  .inventory-icon{
+    width: 96px;
+    height: 96px;
+    background-color: black;
+    color: #fdf6d8;
+    font-weight: 600;
+    display: inline-block;
+  }; 
   .quest-buttons {
     font-size: 20px;
   }
@@ -1218,9 +1235,19 @@
     height: 75%;
     margin-top: 5%;
   }
+  .blacksmith-forge {
+    margin-top: -2%;
+    margin-left: -7.25%;
+    color: gold;
+    font-weight: 700;
+  }
+  #popover-inv, #popover-header-inv, #popover-body-inv {
+    transform: scale(2);
+  }
 }
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
+
 
 
 
@@ -1503,7 +1530,7 @@
 
 /* ============================================================== PHASER 640x960 PHASER  ==================================================================================== */
 
-@media screen and (min-width: 800px) and (max-width: 1001px) and (min-height: 600px) and (max-height: 900px) {
+@media screen and (min-width: 800px) and (max-width: 1201px) and (min-height: 600px) and (max-height: 900px) {
   #game-container { background: 5px solid purple; }
   #game-block {
     width: 100%;
@@ -1584,7 +1611,7 @@
   }
   .inventory-icon { transform: scale(1.25); }
   .inventory-bag-settings { width: 100%; }
-  .gameplayername { margin-top: -25%; font-size: 18px; }
+  /* .gameplayername { margin-top: -25%; font-size: 18px; } */
   .quest-buttons { font-size: 14px; }
   .city-button, .dialog-button, .inventory-button {
     border: 3px solid purple;
@@ -1616,6 +1643,7 @@
   #level-up { grid-column-start: 4; margin-top: -15%; margin-left: 65%; z-index: 99; }
   .level-up { font-size: 18px; color: goldenrod; }
   #ascean-pic { max-width: 25%; }
+
 }
 
 /* ============================================================== PHASER 640x960 PHASER  ==================================================================================== */
@@ -1764,5 +1792,6 @@
   width: 100%;
   height: 100%;
   margin-left: 40%;
-  margin-top: -33%;
+  margin-top: -4%;
 }
+.game-ascean.story { margin-top: 0vh; }

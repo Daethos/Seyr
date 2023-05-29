@@ -88,7 +88,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     const getInnerWidth = () => {
         const width = window.innerWidth;
         if (width > 1200) {
-            return '30%';
+            return '-10%';
         } else if (width > 800) {
             return '1%';
         } else if (width > 50) {

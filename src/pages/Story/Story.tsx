@@ -17,7 +17,7 @@ const Story = ({ user }: Props) => {
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [gameChange, setGameChange] = useState<boolean>(true);
     const [asceanState, setAsceanState] = useState({
-        ascean: gameState.player,
+        ascean: {},
         currentHealth: 0,
         constitution: 0,
         strength: 0,
@@ -25,13 +25,13 @@ const Story = ({ user }: Props) => {
         achre: 0,
         caeren: 0,
         kyosir: 0,
-        level: gameState.player.level,
+        level: 0,
         opponent: 0,
         opponentExp: 0,
-        experience: gameState.player.experience,
-        experienceNeeded: gameState.player.level * 1000,
-        mastery: gameState.player.mastery,
-        faith: gameState.player.faith,
+        experience: 0,
+        experienceNeeded: 0,
+        mastery: '',
+        faith: '',
     });
 
     useEffect(() => {

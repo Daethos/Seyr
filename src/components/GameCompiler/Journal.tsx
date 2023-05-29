@@ -134,7 +134,7 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
             <div className='dialog-box'>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
-            <img src={process.env.PUBLIC_URL + `/images/` + ascean?.origin + '-' + ascean?.sex + '.jpg'} alt={ascean?.name} style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
+            <img src={process.env.PUBLIC_URL + `/images/` + ascean?.origin + '-' + ascean?.sex + '.jpg'} alt={ascean?.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
             {' '}{ascean.name} (Level {ascean.level})<br />
             { journalEntries?.length > 0 ? (
                 <JournalEntry entry={entry} />

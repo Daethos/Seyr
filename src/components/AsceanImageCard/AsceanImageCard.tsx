@@ -22,9 +22,10 @@ interface Props {
     loading?: boolean;
     damage?: boolean;
     spectator?: boolean;
+    story?: boolean;
 };
 
-const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay, loading, damage, spectator }: Props) => {
+const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, gameDisplay, loading, damage, spectator, story }: Props) => {
     const [damaged, setDamaged] = useState<boolean>(false);
 
     useEffect(() => {
@@ -116,7 +117,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     return (
         <>
         { gameDisplay ? 
-            <Row className={spectator ? "game-ascean spectator" : "game-ascean"}>
+            <Row className={spectator ? "game-ascean spectator" : story ? 'game-ascean story' : "game-ascean"}>
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col 
             style={{marginLeft: -62 + 'px', marginRight: 10 + 'px'}}

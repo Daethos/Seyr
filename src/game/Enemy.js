@@ -16,7 +16,7 @@ import playerAttacksAnim from './images/player_attacks_anim.json';
 export default class Player extends Entity {
     constructor(data) {
         let { scene, x, y, texture, frame } = data;
-        super({ ...data, name: "enemy", ascean: data.gameData }); 
+        super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
         this.scene.add.existing(this);
         this.setScale(0.75);
         this.isAttacking = false;
