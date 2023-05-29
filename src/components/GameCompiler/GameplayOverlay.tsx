@@ -41,6 +41,8 @@ const GameplayOverlay = ({ ascean, mapState, gameDispatch, mapDispatch, loadingO
                 left: 0,
                 width: '100%',
                 height: '100%',
+                overflow: "scroll",
+                scrollbarWidth: "none",
                 backgroundColor: 'rgba(0, 0, 0, 1)',
                 zIndex: 9999,
                 border: "0.2em solid purple",

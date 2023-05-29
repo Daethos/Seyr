@@ -76,7 +76,7 @@ export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps
   const handleRevealTwo = () => setShowTwo(!showTwo);
 
   return (
-    <Col className="stat-block wide" id="signup" >
+    <Col className="stat-block wide" id="signup">
         <Form onSubmit={handleSubmit} className="signup-form">
             <hr className="orange-border" />
             <div className="section-left">
