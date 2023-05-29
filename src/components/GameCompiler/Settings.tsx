@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import { GAME_ACTIONS } from './GameStore';
 import * as settingsAPI from '../../utils/settingsApi';
 import Loading from '../Loading/Loading';
+import screenfull from 'screenfull';
 
 interface Props {
     inventory: any;
@@ -59,13 +60,8 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
     };
 
     const toggleFullscreen = () => {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-            setFullScreen(false);
-        } else {
-            document.documentElement.requestFullscreen();
-            setFullScreen(true);
-        };
+        setFullScreen((prev: boolean) => !prev);
+        screenfull.toggle();
     };
 
     function handleCombatTimer(e: React.ChangeEvent<HTMLInputElement>) {
