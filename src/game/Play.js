@@ -72,7 +72,7 @@ export default class Play extends Phaser.Scene {
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1;
+        camera.zoom = 1.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 960, 640);
@@ -99,17 +99,17 @@ export default class Play extends Phaser.Scene {
     };
 
     createStateListener = async function() {
-        console.log("State Listener Added");
+        // console.log("State Listener Added");
         // Handle Event Listener to Dispatch State
         window.addEventListener('update-combat-data', (e) => {
-            console.log(e.detail, "State Updated");
+            // console.log(e.detail, "State Updated");
             this.state = e.detail;
             if (this.state.action !== '') this.state.action = '';
             if (this.state.counter_action !== '') this.state.counter_action = '';
         });
 
         window.addEventListener('update-game-data', (e) => {
-            console.log(e.detail, "Game State Updated");
+            // console.log(e.detail, "Game State Updated");
             this.gameState = e.detail;
         });
         
@@ -142,14 +142,14 @@ export default class Play extends Phaser.Scene {
     };
 
     stateAddlistener = async function() {
-        console.log("State Listener Added");
+        // console.log("State Listener Added");
         // Handle Event Listener to Dispatch State
         window.addEventListener('update-combat-data', this.stateFinishedListener.bind(this));
         
     };
     
     stateFinishedListener = async function(e) {
-        console.log(e.detail, "State Finished");
+        // console.log(e.detail, "State Finished");
         this.state = e.detail;
         window.removeEventListener('update-combat-data', this.stateFinishedListener);
     };

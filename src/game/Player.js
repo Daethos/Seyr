@@ -39,6 +39,10 @@ export default class Player extends Entity {
         this.rollCooldown = 0;
         this.playerSensor = null;
         this.touching = [];
+        this.knockbackActive = false;
+        this.knockbackForce = 0.1;
+        this.knockbackDirection = {};
+        this.knockbackDuration = 250;
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'playerCollider' });
@@ -60,11 +64,11 @@ export default class Player extends Entity {
 
     playerStateListener() {
         window.addEventListener('update-combat-data', (e) => {
-            console.log(e.detail, "State Updated");
+            // console.log(e.detail, "State Updated");
             this.health = e.detail.new_player_health;
-            if (e.detail.new_player_health <= 0) {
-                this.scene.scene.start('GameOver');
-            }
+            // if (e.detail.new_player_health <= 0) {
+            //     this.scene.scene.start('GameOver');
+            // }
         });
     };
 
@@ -72,12 +76,31 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: this.playerSensor,
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy') { 
+                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider') {
+                    console.log(other, "Other Is The Enemy ?") 
                     if (this.scene.state.action !== '' && this.scene.state.computer.name) {
+                        this.knockback(other);
                         this.scene.sendStateActionListener();
+                        switch (this.scene.state.action) {
+                            case 'attack':
+                                this.isAttacking = true;
+                                break;
+                            case 'counter':
+                                this.isCountering = true;
+                                break;
+                            case 'posture':
+                                this.isPosturing = true;
+                                break;
+                            case 'roll':
+                                this.isRolling = true;
+                                break;
+                            default:
+                                break;
+                        };
                     };
                 };
-            }
+            },
+            context: this.scene,
         });
     };
 
@@ -113,6 +136,83 @@ export default class Player extends Entity {
         });
     };
 
+    knockback(other) { 
+        this.anims.play('player_hurt', true);
+
+        const bodyPosition = other.pair.bodyA.position; 
+        const offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
+        const collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(bodyPosition, offset);
+        this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.sub(this.body.position, collisionPoint);
+        this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection);
+        console.log(collisionPoint, "Collision Point", this.knockbackDirection, "Knockback Direction");
+ 
+        const accelerationFrames = 12; // Number of frames for acceleration
+        const accelerationStep = this.knockbackForce / accelerationFrames; // Force increment per frame
+        let currentForce = 0; // Current force value 
+   
+        const knockbackDistance = 96; // Maximum knockback distance
+        let distanceTravelled = 0; // Distance travelled
+ 
+        const dampeningFactor = 0.9; // Force dampening factor
+   
+        this.knockbackActive = true;
+        // this.knockbackTimer = this.scene.time.delayedCall(this.knockbackDuration, this.stopKnockback, [], this);
+
+            const knockbackDuration = 12; // Total duration for the roll animation (in frames)
+            const knockbackInterval = 196 / 16; // Interval between each frame update (in milliseconds)
+            let elapsedTime = 0;
+            let currentDistance = 0;
+        
+            const knockbackLoop = () => {
+                if (elapsedTime >= knockbackDuration || currentDistance >= knockbackDistance) {
+                    console.log("Cleared due to time or distance traditionally");
+                    clearInterval(knockbackIntervalId);
+                    this.knockbackActive = false;
+                    return;
+                }; 
+
+                currentDistance += Math.abs(knockbackDistance / knockbackDuration); 
+
+                if (currentForce < this.knockbackForce) {
+                    // Increase the force gradually
+                    currentForce += accelerationStep;
+                };
+ 
+                Phaser.Physics.Matter.Matter.Body.applyForce(this.body, this.body.position, {
+                    x: -this.knockbackDirection.x * currentForce,
+                    y: -this.knockbackDirection.y * currentForce
+                });
+ 
+                distanceTravelled += currentForce;
+
+
+
+                if (distanceTravelled >= knockbackDistance) { 
+                    console.log("Cleared due to dynamic knockback");
+                    currentForce = 0;
+                    distanceTravelled = 0;
+                    clearInterval(knockbackIntervalId);
+                    this.knockbackActive = false;
+                    return;
+                };
+ 
+                currentForce *= dampeningFactor;
+
+                console.log(elapsedTime, "Current Frame", distanceTravelled, "Distance Traveled", currentForce, "Current Force Applied")
+
+                elapsedTime++;
+            };
+        
+            const knockbackIntervalId = setInterval(knockbackLoop, knockbackInterval);  
+
+    };
+
+    // stopKnockback() {
+    //     console.log("Stopping Knockback");
+    //     this.knockbackActive = false;
+    //     this.knockbackTimer = null;
+    // };
+
     static preload(scene) { 
         scene.load.atlas(`player_actions`, playerActionsOnePNG, playerActionsOneJSON);
         scene.load.animation(`player_actions_anim`, playerActionsOneAnim);
@@ -125,18 +225,20 @@ export default class Player extends Entity {
     };
 
     update(scene) {
-        // IF COLLISION WITH ENEMY, THEN DEAL RESOLVE COMBAT
-        // IF COLLISION WITH ITEM, THEN PICK UP ITEM
-        // IF COLLISION WITH DOOR, THEN OPEN DOOR
-        
-
         // =================== MOVEMENT VARIABLES ================== \\
         const speed = 4;
         const jumpVelocity = 15;
-        // let playerVelocity = new Phaser.Math.Vector2();
-        // playerVelocity.normalize();
-        // playerVelocity.scale(speed);
 
+        // =================== COMBAT CONCERNS ====================== \\
+
+        // if (this.knockbackActive) {
+        //     console.log("X: ", this.knockbackDirection.x * this.knockbackForce, "Y: ", this.knockbackDirection.y * this.knockbackForce, "Knockback Force Equated");
+        //     Phaser.Physics.Matter.Matter.Body.applyForce(this.body, this.body.position, {
+        //         x: -this.knockbackDirection.x * this.knockbackForce,
+        //         y: -this.knockbackDirection.y * this.knockbackForce
+        //     });
+        // };
+            
         // =================== CROUCHING ================== \\
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.crouch.C)) {
@@ -202,36 +304,21 @@ export default class Player extends Entity {
             if (scene.state.counter_attack !== '') scene.setState('counter_attack', '');
             this.isAttacking = true;
         };
+
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
             scene.setState('action', 'posture');
             if (scene.state.counter_attack !== '') scene.setState('counter_attack', '');
             this.isPosturing = true;
         };
+
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
             this.isRolling = true;
         };
-        // if ((Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) || Phaser.Input.Keyboard.JustUp(this.inputKeys.roll.THREE)) && !this.isCrouching) {
-        //     this.isRolling = this.isRolling ? false : true;
-        //     const sensorDisp = 12;
-        //     const colliderDisp = 16;
-        //     if (this.isRolling) {
-        //         if (scene.state.action !== 'roll') scene.setState('action', 'roll');
-        //         if (scene.state.counter_attack !== '') scene.setState('counter_attack', '');
-        //         this.body.parts[2].position.y += sensorDisp;
-        //         this.body.parts[2].circleRadius = 21;
-        //         this.body.parts[1].vertices[0].y += colliderDisp;
-        //         this.body.parts[1].vertices[1].y += colliderDisp; 
-        //     } else {    
-        //         if (scene.state.action !== '') scene.setState('action', '');
-        //         this.body.parts[2].position.y -= sensorDisp;
-        //         this.body.parts[2].circleRadius = 28;
-        //         this.body.parts[1].vertices[0].y -= colliderDisp;
-        //         this.body.parts[1].vertices[1].y -= colliderDisp;
-        //     }
-        // }; 
+
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR)) {
             this.isDodging = true;
         };
+
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE)) {
             scene.setState('action', 'counter');
             scene.setState('counter_action', 'counter');
@@ -261,24 +348,6 @@ export default class Player extends Entity {
                 elapsedTime++;
             };
             const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
-
-            // const dodgeLoop = () => {
-            //     if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
-            //         clearInterval(dodgeIntervalId);
-            //         this.dodgeCooldown = 0;
-            //         this.isDodging = false;
-            //         return;
-            //     };
-            //     const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
-            //     this.setVelocityX(direction);
-            //     currentDistance += Math.abs(dodgeDistance / dodgeDuration);
-            //     elapsedTime++;
-            // };
-        
-            // const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
-
-            // TODO:FIXME: addListener for invoking(this.playerBlessing);
-            // Invoke / Switching Prayers triggers a prayer animation
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.hurt.H)) {
@@ -293,25 +362,22 @@ export default class Player extends Entity {
             this.isConsuming = true;
             this.prayerConsuming = scene.state.playerEffects[0].prayer;
             this.scene.sendStateSpecialListener('consume');
-            // TODO:FIXME: addListener for consuming(this.prayerConsuming);
-            // Consume Prayer triggers the charge crush animation
         };
 
         // =================== MOVEMENT ================== \\
 
         if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
-            if (scene.state.action !== '') scene.setState('action', '');
+            // if (scene.state.action !== '') scene.setState('action', '');
             this.setVelocityX(speed);
             if (this.flipX) this.flipX = false;
         };
+
         if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
-            if (scene.state.action !== '') scene.setState('action', '');
+            // if (scene.state.action !== '') scene.setState('action', '');
             this.setVelocityX(-speed);
             this.flipX = true;
-        }; 
-        // if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-        //     this.setVelocityY(2);
-        // };
+        };
+
         if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown || this.inputKeys.up.SPACE.isDown) && scene.isPlayerOnGround && this.isJumping === false) {
             this.setVelocityY(-jumpVelocity);
             scene.setPlayerOnGround(false);
@@ -319,16 +385,13 @@ export default class Player extends Entity {
             this.anims.play('player_jump', true);
         }; 
 
-
         // =================== IDLE ================== \\
 
-        if (
-            !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && 
+        if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && 
             !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && 
             !this.inputKeys.up.SPACE.isDown && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.roll.THREE.isDown &&
             !this.inputKeys.attack.ONE.isDown && !this.inputKeys.counter.FIVE.isDown && !this.inputKeys.dodge.FOUR.isDown && !this.inputKeys.posture.TWO.isDown &&
-            !this.inputKeys.pray.R.isDown && !this.inputKeys.hurt.H.isDown && !this.inputKeys.consume.F.isDown
-            ) {
+            !this.inputKeys.pray.R.isDown && !this.inputKeys.hurt.H.isDown && !this.inputKeys.consume.F.isDown) {
             this.setVelocityX(0); 
         };
 
@@ -451,12 +514,14 @@ export default class Player extends Entity {
                         clearInterval(rollIntervalId);
                         this.rollCooldown = 0;
                         this.isRolling = false;
-                        if (scene.state.action !== '') scene.setState('action', '');
                         this.body.parts[2].position.y -= sensorDisp;
                         this.body.parts[2].circleRadius = 28;
                         this.body.parts[1].vertices[0].y -= colliderDisp;
                         this.body.parts[1].vertices[1].y -= colliderDisp;
                         // This is where the roll is changed in the scene back to ''
+                        // setTimeout(() => {
+                        //     if (scene.state.action !== '') scene.setState('action', '');
+                        // }, 3000);
                         return;
                     };
                     const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
@@ -464,17 +529,8 @@ export default class Player extends Entity {
                     currentDistance += Math.abs(rollDistance / rollDuration);
                     elapsedTime += rollInterval;
                 };
-                
                 const rollIntervalId = setInterval(rollLoop, rollInterval);  
             };
-        // } else if (this.isRolling && this.inCombat) { // ROLLING IN COMBAT
-        //     console.log("Pinging ROLLING IN COMBAT");
-        //     this.anims.play('player_roll', true).on('animationcomplete', () => {
-        //         this.isRolling = false;
-        //     }); 
-        //     if (this.body.velocity.x > 0) {
-        //         this.setVelocityX(this.body.velocity.x * 1.25);
-        //     }; 
         } else if (this.isPosturing) { // POSTURING
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {
                 this.isPosturing = false;

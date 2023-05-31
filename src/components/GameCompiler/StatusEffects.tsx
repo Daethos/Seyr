@@ -112,11 +112,15 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
         marginTop: player && !story ? getInnerWidth() : story ? getInnerWidth() : '',
         border: 2 + 'px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
+        borderRadius: story ? '6px' : '',
+        marginLeft: story ? '5%' : '',
     };
 
     const getIconStyle = {
-        width: 100 + '%',
-        marginTop: -17.5 + 'px',
+        width: story ? '' : '100%',
+        marginTop: story ? '-5px' : '-17.5px',
+        marginLeft: story ? '-17.5px' : '',
+        transform: story ? 'scale(0.65)' : '',
     };
 
     return (

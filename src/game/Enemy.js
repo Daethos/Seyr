@@ -18,7 +18,7 @@ export default class Player extends Entity {
         let { scene, x, y, texture, frame } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
         this.scene.add.existing(this);
-        this.setScale(0.75);
+        this.setScale(0.8);
         this.isAttacking = false;
         this.isCountering = false;
         this.isDodging = false;
@@ -38,7 +38,7 @@ export default class Player extends Entity {
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let enemyCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'enemyCollider' });
-        let enemySensor = Bodies.circle(this.x, this.y, 48, { isSensor: true, label: 'enemySensor' });
+        let enemySensor = Bodies.circle(this.x, this.y + 4, 48, { isSensor: true, label: 'enemySensor' });
         const compoundBody = Body.create({
             parts: [enemyCollider, enemySensor],
             frictionAir: 0.01, // Adjust the air friction for smoother movement
@@ -89,7 +89,7 @@ export default class Player extends Entity {
     };
 
     attack = (target) => {
-        console.log(this, target, 'Attacking')
+        // console.log(this, target, 'Attacking')
         if (target.dead || this.dead) {
             clearInterval(this.attackTimer);
             return;
@@ -100,7 +100,7 @@ export default class Player extends Entity {
     };
 
     evaluateCombat = (player, target) => {
-        console.log(player, target, 'Evaluating Combat')
+        // console.log(player, target, 'Evaluating Combat')
         // if (player.health < (player.maxHealth / 2) && player.stamina > 0) {
         //     this.isHealing = true;
         //     this.heal(player);
@@ -431,13 +431,9 @@ export default class Player extends Entity {
     //     } else { // IDLE
     //         this.anims.play('player_idle', true);
     //     };
-    // };
+    // }; 
 
-
- 
-
-    isAtEdgeOfLedge(scene) {
-        const edgeThreshold = 0.9; // Adjust this value as needed
+    isAtEdgeOfLedge(scene) { 
         const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body
         const rayStart = { x: playerSensor.position.x - playerSensor.circleRadius, y: playerSensor.position.y }; // Starting point of the ray
         const rayEnd = { x: playerSensor.position.x + playerSensor.circleRadius, y: playerSensor.position.y - playerSensor.circleRadius }; // Ending point of the ray

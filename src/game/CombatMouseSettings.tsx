@@ -19,7 +19,6 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
     const [scrollEnabled, setScrollEnabled] = useState(false);
   
     const handleWheelRotation = (event: WheelEvent) => {
-        event.preventDefault();
         if (!scrollEnabled) return;
         const direction = event.deltaY > 0 ? 1 : -1; // Check the deltaY value of the wheel event to determine the rotation direction
     
@@ -36,7 +35,7 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
         } else {
             const newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
             setSelectedWeaponIndex(newIndex);
-            setWeaponOrder( { target: { value: weapons[newIndex].name }} );
+            setWeaponOrder( { target: { value: weapons[newIndex].name } } );
             setSelectedHighlight('Weapon');
         };
     };
@@ -62,7 +61,7 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
     usePhaserEvent('wheel', handleWheelRotation);
 
     return (
-        <div style={{ position: "absolute", width: "40%", height: "30%", textAlign: "center", marginLeft: "30%", marginTop: "40%", background: 'transparent', alignItems: "center" }} onMouseDown={handleToggleScroll}>
+        <div style={{ position: "absolute", width: "40%", height: "5%", textAlign: "center", left: "30%", top: "40%", background: 'transparent' }} onMouseDown={handleToggleScroll}>
             { scrollEnabled ? (
                 selectedHighlight === 'Weapon' ? (
                     <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700 }}>Current Main Weapon: {weapons[0]?.name}</p>

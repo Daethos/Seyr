@@ -701,13 +701,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
                 </Button>
                 <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
-                {state.playerEffects.length > 0 ? (
-                <div className='combat-effects'>
-                {state.playerEffects.map((effect: any, index: number) => {
-                    return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
-                })}
-                </div>
-                ) : ( '' ) }
+
             </div>
             <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
             { combatHud ? (
@@ -717,8 +711,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 (  <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             ) : ( 
                 <div style={{ position: "absolute" }}>
-                <CombatUI currentPlayerHealth={state.new_player_health} totalPlayerHealth={state.player_health} />
-                <EnemyUI currentEnemyHealth={state.new_computer_health} totalEnemyHealth={state.computer_health} />
+                <CombatUI state={state} dispatch={dispatch} />
+                <EnemyUI state={state} dispatch={dispatch} />
                 </div>
              ) }
             { gameState.showInventory ?

@@ -533,8 +533,7 @@ html, body {
 #ascean-stats {
   width: 100%;
 }
-#story-ascean {
-  /* margin-top: 12.5%; */
+#story-ascean { 
   pointer-events: visible;
 }
 .story-ascean {
@@ -587,17 +586,19 @@ html, body {
   margin-top: 3%;
   border: 2px solid purple;
 }
-.story-progressxp-text { margin-top: 8.25%; font-size: 16px; margin-left: 15%; }
+.story-progressxp-text { margin-top: 8.25%; font-size: 16px; margin-left: 4.5%; width: 40%; text-align: center; }
 .story-progress {
   position: absolute;
   overflow: hidden;
-  margin-left: 12.5%;
+  text-align: center;
+  width: 40%;
+  margin-left: 4.5%;
   margin-top: 2.75%;
   font-size: 18px;
   color: white;
   font-weight: 600;
   background: transparent;
 }
-.story-progress-text { align-items: center; color: black; } 
+.story-progress-text { text-align: center; color: black; } 
 #story-pic { width: 5.5vw; border: 1px solid #fdf6d8; border-radius: 50%; }
 #story-popover-image {  margin-top: 4%; transform: scale(1.75); }
