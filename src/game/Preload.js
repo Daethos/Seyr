@@ -32,7 +32,7 @@ export default class Preload extends Phaser.Scene {
 
     preload() {
         this.bg = this.add.graphics({ x: 0, y: 0 });
-        this.bg.fillStyle('0x2A0134', 1);
+        this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         // this.load.script('generic', 'phaser-virtual-joystick.min.js');
         // this.load.atlas('generic', joystickPng, joystickJson);  
@@ -124,11 +124,11 @@ export default class Preload extends Phaser.Scene {
     };
     onProgress(val) {
         this.progress.clear();
-        this.progress.fillStyle('0xFDF6D8', 1);
+        this.progress.fillStyle('0x000000', 1);
         this.progress.fillRect(0, 0, this.width * val, this.height);
 
         this.border.clear();
-        this.border.lineStyle(4, '0x000000', 1);
+        this.border.lineStyle(4, '0xFDF6D8', 1);
         this.border.strokeRect(0, 0, this.width * val, this.height, 2);
 
         this.txt_progress.setText(Math.round(val * 100) + '%');

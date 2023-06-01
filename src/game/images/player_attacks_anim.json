@@ -4,7 +4,7 @@
             "key": "player_attack_4",
             "type": "frames",
             "repeat": 0,
-            "frameRate": 12,
+            "frameRate": 18,
             "frames": [
                 {
                     "key": "player_attacks",
@@ -52,7 +52,7 @@
             "key": "player_attack_3",
             "type": "frames",
             "repeat": 0,
-            "frameRate": 12,
+            "frameRate": 18,
             "frames": [
                 {
                     "key": "player_attacks",
@@ -80,7 +80,7 @@
             "key": "player_attack_2",
             "type": "frames",
             "repeat": 0,
-            "frameRate": 12,
+            "frameRate": 18,
             "frames": [
                 {
                     "key": "player_attacks",
@@ -104,7 +104,7 @@
             "key": "player_attack_1",
             "type": "frames",
             "repeat": 0,
-            "frameRate": 12,
+            "frameRate": 18,
             "frames": [
                 {
                     "key": "player_attacks",

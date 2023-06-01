@@ -34,6 +34,9 @@ export default class Play extends Phaser.Scene {
         this.map = null;
         this.isPlayerOnGround = true;
         this.isPlayerHanging = false;
+
+        this.isEnemyHanging = false;
+        this.isEnemyOnGround = true;
     }; 
     
     create() { 
@@ -72,7 +75,7 @@ export default class Play extends Phaser.Scene {
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 2;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 960, 640);
@@ -98,6 +101,11 @@ export default class Play extends Phaser.Scene {
         // this.stateAddlistener(); // Figuring out a way to have the ability to always 'listen' in on state changes
     };
 
+    combatEngaged = async function() {
+        const combatEngaged = new CustomEvent('combat-engaged', { detail: true });
+        window.dispatchEvent(combatEngaged);
+    };
+
     createStateListener = async function() {
         // console.log("State Listener Added");
         // Handle Event Listener to Dispatch State
@@ -106,13 +114,14 @@ export default class Play extends Phaser.Scene {
             this.state = e.detail;
             if (this.state.action !== '') this.state.action = '';
             if (this.state.counter_action !== '') this.state.counter_action = '';
+            if (this.state.computer_action !== '') this.state.computer_action = '';
+            if (this.state.computer_counter_action !== '') this.state.computer_counter_action = '';
         });
 
         window.addEventListener('update-game-data', (e) => {
             // console.log(e.detail, "Game State Updated");
             this.gameState = e.detail;
         });
-        
     };
 
     sendStateActionListener = async function() {
@@ -165,16 +174,29 @@ export default class Play extends Phaser.Scene {
         this.state[key] = value;
     };
 
+    setStateAdd = async function(key, value) { 
+        console.log("Adding: " + key + " to " + value);
+        this.state[key] += value;
+    };
+
     setGameState = async function(key, value) {
         this.gameState[key] = value;
     };
 
-    setPlayerOnGround = async function(value) {
-        this.isPlayerOnGround = value;
+    setOnGround = async function(key, value) {
+        if (key === 'player') {
+            this.isPlayerOnGround = value;
+        } else if (key === 'enemy') {
+            this.isEnemyOnGround = value;
+        };
     };
 
-    setPlayerHanging = async function(value) {
-        this.isPlayerHanging = value;
+    setHanging = async function(key, value) {
+        if (key === 'player') {
+            this.isPlayerHanging = value;
+        } else if (key === 'enemy') {
+            this.isEnemyHanging = value;
+        };
     };
 
     createTextBorder(text) {

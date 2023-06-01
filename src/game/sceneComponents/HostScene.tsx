@@ -660,6 +660,20 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    const combatEngaged = async (e: { detail: any; }) => {
+        try {
+            if (e.detail) {
+                dispatch({ type: ACTIONS.SET_DUEL, payload: true });
+            } else {
+                dispatch({ type: ACTIONS.CLEAR_DUEL, payload: false });
+            }
+        } catch (err: any) {
+            console.log(err, "Error Handling Dialog Middleware");
+        };
+        // const combatEngaged = new CustomEvent('combat-engaged', { detail: true });
+        // window.dispatchEvent(combatEngaged);
+    };
+
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
@@ -667,6 +681,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('dialog-box', createDialog);
     usePhaserEvent('keydown', toggleCombatHud);
     // usePhaserEvent('resize', resizeGame);
+    usePhaserEvent('combat-engaged', combatEngaged);
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
@@ -712,7 +727,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             ) : ( 
                 <div style={{ position: "absolute" }}>
                 <CombatUI state={state} dispatch={dispatch} />
-                <EnemyUI state={state} dispatch={dispatch} />
+                { state.combatEngaged ? (
+                    <EnemyUI state={state} dispatch={dispatch} />
+                ) : ( '' ) }
                 </div>
              ) }
             { gameState.showInventory ?

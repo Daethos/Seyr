@@ -44,7 +44,7 @@ export default class Menu extends Phaser.Scene {
 
     createBackground() {
         this.bg = this.add.graphics({ x: 0, y: 0 });
-        this.bg.fillStyle('0x2A0134', 1);
+        this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         // Need to create a black border around the backgrounds for the text boxes
         
@@ -72,6 +72,9 @@ export default class Menu extends Phaser.Scene {
         function handleKeyUp(e) {
             switch(e.code) {
                 case 'Enter':
+                    this.goPlay();
+                    break;
+                case 'Space':
                     this.goPlay();
                     break;
             };
