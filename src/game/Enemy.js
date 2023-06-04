@@ -13,7 +13,7 @@ import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json'; 
 
-export default class Player extends Entity {
+export default class Enemy extends Entity {
     constructor(data) {
         let { scene, x, y, texture, frame } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
@@ -34,22 +34,25 @@ export default class Player extends Entity {
         this.rollCooldown = 0;
         this.dodgeCooldown = 0;
         this.enemySensor = null;
-        this.attacking = null;
-
+        this.waiting = 30;
+        this.attackSensor = null;
+        this.attackIsLive = false;
+        
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let enemyCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'enemyCollider' });
-        let enemySensor = Bodies.circle(this.x, this.y + 4, 48, { isSensor: true, label: 'enemySensor' });
+        let enemySensor = Bodies.circle(this.x, this.y + 2, 48, { isSensor: true, label: 'enemySensor' });
+        // let attackSensor = Bodies.circle(this.x, this.y + 2, 36, { isSensor: true, label: 'attackSensor' });
         const compoundBody = Body.create({
             parts: [enemyCollider, enemySensor],
-            frictionAir: 0.01, // Adjust the air friction for smoother movement
-            restitution: 0.2, // Set the restitution to reduce bounce
-            mass: 2, // Increase the mass for a heavier feel
-            gravity: { y: 0.075 }, // Increase gravity for a faster fall
-            friction: 1,
+            frictionAir: 0.1, // Adjust the air friction for smoother movement
+            restitution: 0.3, // Set the restitution to reduce bounce 
+            friction: 0.15,
         });
         this.enemySensor = enemySensor;
+        // this.attackSensor = attackSensor;
         this.setExistingBody(compoundBody);                                    
-        this.setFixedRotation(); 
+        this.setFixedRotation();
+        this.enemyStateListener(); 
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
@@ -57,38 +60,73 @@ export default class Player extends Entity {
                     this.attacking = other.gameObjectB;
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
+                    other.gameObjectB.attacking = this;
                     this.scene.combatEngaged();
                 };
             },
             context: this.scene,
         }); 
     };
+ 
+
+    enemyStateListener() {
+        window.addEventListener('update-combat-data', (e) => {
+            // console.log(e.detail, "State Updated");
+            // if (this.health > e.detail.new_player_health) this.isHurt = true;
+            this.health = e.detail.new_computer_health;
+            if (e.detail.new_computer_health <= 0) {
+                this.isDead = true;
+                this.anims.play('player_dead', true);
+                this.inCombat = false;
+                this.attacking = null;
+            };
+            // if (this.isDead) this.anims.play('player_dead', true);
+            // if (this.isHurt) this.anims.play('player_hurt', true);
+            if (e.detail.new_player_health <= 0) {
+                this.inCombat = false;
+                this.attacking = null;
+            };
+        });
+    };
 
     update(scene) {
-        if (this.attacking) {
+        if (this.attacking) {  
             let direction = this.attacking.position.subtract(this.position);
-            if (direction.length() > 24) {
-                let v = direction.normalize();
-                this.setVelocityX(direction.x * 1.5);
-                // this.setVelocityY(direction.y * 1.5);
-                // if the direction.y is less than < -1, then jump
-                if (direction.y < -0.5) {
-                    this.isJumping = true;
-                    this.setVelocityY(-10);
+            if (direction.length() >=  162) {
+                this.isRolling = true;
+                direction.normalize();
+                this.setVelocityX(direction.x * 3);
+                this.setVelocityY(direction.y * 3);
+            } else if (direction.length() > 81) { 
+                if (this.waiting > 0) {
+                        this.waiting--;
+                    // console.log("Psyching the player out.")
+                    this.setVelocityX(0);
+                    this.setVelocityY(0);
                 } else {
-                    this.isJumping = false;
+                    // console.log("Rushing The Player Instead")
+                    direction.normalize();
+                    this.setVelocityX(direction.x * 2.5);
+                    this.setVelocityY(direction.y * 2.5);    
                 };
+            } else if (direction.length() > 54) {
+                direction.normalize();
+                this.setVelocityX(direction.x * 2.5);
+                this.setVelocityY(direction.y * 2.5);
                 if (this.attackTimer) {
                     clearInterval(this.attackTimer);
                     this.attackTimer = null;
                 };
             } else {
                 if (this.attackTimer == null) {
-                    const intervalTime = this.scene.state.computer_weapons[0].grip === 'Two-Hand' ? 3000 : 1500;
+                    const intervalTime = this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 1500 : 1000;
                     this.attackTimer = setInterval(this.attack, intervalTime, this.attacking);
                 };
+                const times = [10, 20, 30, 40, 50, 60];
+                this.waiting = times[Math.floor(Math.random() * times.length)];
             };
         };
+        
         this.setFlipX(this.velocity.x < 0);
 
         if (this.isCountering) { // COUNTERING
@@ -99,9 +137,9 @@ export default class Player extends Entity {
             this.anims.play('player_slide', true);
             if (this.dodgeCooldown === 0) {
                 this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
-                const dodgeDistance = 96;  
-                const dodgeDuration = 12; // Total duration for the roll animation (in frames)
-                const dodgeInterval = 196 / 16; // Interval between each frame update (in milliseconds)
+                const dodgeDistance = 126;  
+                const dodgeDuration = 18; // Total duration for the roll animation (in frames)
+                const dodgeInterval = 1; // Interval between each frame update (in milliseconds)
                 let elapsedTime = 0;
                 let currentDistance = 0;
             
@@ -128,14 +166,14 @@ export default class Player extends Entity {
                 const colliderDisp = 16;
                 if (this.isRolling) {
                     if (scene.state.action !== 'roll') scene.setState('computer_action', 'roll');
-                    if (scene.state.counter_attack !== '') scene.setState('computer_counter_attack', '');
+                    if (scene.state.counter_guess !== '') scene.setState('computer_counter_guess', '');
                     this.body.parts[2].position.y += sensorDisp;
                     this.body.parts[2].circleRadius = 21;
                     this.body.parts[1].vertices[0].y += colliderDisp;
                     this.body.parts[1].vertices[1].y += colliderDisp; 
                 };
                 this.rollCooldown = 50; 
-                const rollDistance = 120; 
+                const rollDistance = 140; 
                 
                 const rollDuration = 20; // Total duration for the roll animation
                 const rollInterval = 1; // Interval between each movement update
@@ -149,13 +187,15 @@ export default class Player extends Entity {
                         this.rollCooldown = 0;
                         this.isRolling = false;
                         this.body.parts[2].position.y -= sensorDisp;
-                        this.body.parts[2].circleRadius = 28;
+                        this.body.parts[2].circleRadius = 48;
                         this.body.parts[1].vertices[0].y -= colliderDisp;
                         this.body.parts[1].vertices[1].y -= colliderDisp; 
                         return;
                     };
                     const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
-                    this.setVelocityX(direction);
+                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+                    if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+                    if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
                     currentDistance += Math.abs(rollDistance / rollDuration);
                     elapsedTime += rollInterval;
                 };
@@ -169,9 +209,9 @@ export default class Player extends Entity {
             this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
                 this.isAttacking = false;
             });
-        } else if (this.isJumping) { // JUMPING
-            console.log("Pinging JUMPING");
-            this.anims.play('player_jump', true);
+        // } else if (this.isJumping) { // JUMPING
+        //     console.log("Pinging JUMPING");
+        //     this.anims.play('player_jump', true);
         } else if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
             this.anims.play(`player_running`, true);
         } else {
@@ -180,21 +220,17 @@ export default class Player extends Entity {
     };
 
     attack = (target) => {
-        // console.log(this, target, 'Attacking')
         if (target.dead || this.dead) {
             clearInterval(this.attackTimer);
             return;
         };
-        // this.evaluateCombat(this, target);
-        const specials = ['pray', 'consume', 'jump'];
+        const specials = ['pray', 'consume'];
         const action = this.evaluateCombat(this, target);
         switch (action) {
             case 'attack':
-                // this.attackOne(target);
                 this.isAttacking = true;
                 break;
             case 'counter':
-                // this.counter(target);
                 this.isCountering = true;
                 break;
             case 'dodge':
@@ -206,9 +242,9 @@ export default class Player extends Entity {
             case 'posture':
                 this.isPosturing = true;
                 break;
-            case 'jump':
-                this.isJumping = true;
-                break;
+            // case 'jump':
+            //     this.isJumping = true;
+            //     break;
             case 'pray':
                 this.isPraying = true;
                 break;
@@ -218,11 +254,14 @@ export default class Player extends Entity {
             default:
                 break;                        
         };
+        // if (!this.attackIsLive) return; // this.isTouching is not a function
+        let direction = target.position.subtract(this.position);
+        // console.log(direction.length(), "Direction Length");
+        if (direction.length() > 50) return;
         this.knockback(this.actionTarget);
     };
 
-    evaluateCombat = (player, target) => {
-        // use gameServices method to determine action.
+    evaluateCombat = (player, target) => { 
         let computerAction;
         let computerCounter;
         let actionNumber = Math.floor(Math.random() * 101);

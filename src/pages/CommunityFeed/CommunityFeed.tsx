@@ -154,7 +154,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
               <tr>
                 <td>
                 <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                  style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: 1 + 'px solid purple', marginLeft: -0 + 'px' }} />
+                  style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: '1px solid purple', marginLeft: '0px' }} />
                 </td>
                 <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
                   <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id}>{ascean[0].ascean}</Nav.Link>

@@ -26,7 +26,6 @@ export default class Boot extends Phaser.Scene {
         window.dispatchEvent(getEnemy);
         window.dispatchEvent(getState);
         window.dispatchEvent(getGameData);
-        console.log(this.enemy, 'Creating ENEMY in Boot Scene');
         this.scene.start('Preload', {
             gameData: {
                 ascean: this.ascean,
@@ -43,7 +42,6 @@ export default class Boot extends Phaser.Scene {
     };
     enemyFinishedEventListener = (e) => {
         this.enemy = e.detail;
-        console.log(e.detail, "ENEMY FINISHED EVENT LISTENER")
         window.removeEventListener('get-enemy', this.enemyFinishedEventListener);
     };
     stateFinishedEventListener = (e) => {

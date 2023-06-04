@@ -579,7 +579,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDisp
         <div className='dialog-box'>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
-            <img src={process.env.PUBLIC_URL + `/images/` + enemy?.origin + '-' + enemy?.sex + '.jpg'} alt={enemy?.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />
+            <img src={process.env.PUBLIC_URL + `/images/` + enemy?.origin + '-' + enemy?.sex + '.jpg'} alt={enemy?.name} className='dialog-picture' />
             {' '}{enemy?.name} (Level {enemy?.level}) {!enemy?.alive ? '[Deceased]' : ''}<br />
                 { currentIntent === 'combat' ?
                     <>

@@ -17,14 +17,10 @@ import Button from 'react-bootstrap/Button';
 import PhaserInventoryBag from '../PhaserInventoryBag';
 import { GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
 import PhaserSettings from '../PhaserSettings';
-import StatusEffects from '../../components/GameCompiler/StatusEffects';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import StoryActions from '../StoryActions';
 import CombatMouseSettings from '../CombatMouseSettings';
-import playerHealthbar from '../images/player-healthbar.png';
-import StoryHealthBar from '../../components/GameCompiler/StoryHealthBar';
-import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
 import CombatUI from '../CombatUI';
 import EnemyUI from '../EnemyUI';
 
@@ -36,8 +32,7 @@ export const usePhaserEvent = (event: string, callback: any) => {
             window.removeEventListener(event, eventListener);
         };
     }, [event, callback]);
-};
-  
+}; 
 
 interface Props {
     user: any; 
@@ -54,7 +49,7 @@ interface Props {
 const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState }: Props) => {
     const { asceanID } = useParams();
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
-    const [currentGame, setCurrentGame] = useState<any>({})
+    const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
@@ -84,7 +79,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             default: 'matter',
             matter: {
                 debug: true,
-                gravity: { y: 2 },
+                gravity: { y: 0 },
             }
         }, 
         plugins: {
@@ -171,7 +166,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const sendEnemyData = async () => { 
-        console.log('SEND ENEMY DATA', state.computer);
         const enemyData = new CustomEvent('get-enemy', {
             detail: state.computer
         });
@@ -179,7 +173,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const sendAscean = async () => {
-        console.log('Event Listener Added');
         const asceanData = new CustomEvent('get-ascean', {
             detail: state.player
         });
@@ -187,7 +180,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const sendCombatData = async () => {
-        console.log('sendCombatData Pinged');
         const combatData = new CustomEvent('get-combat-data', {
             detail: state
         });
@@ -195,7 +187,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const sendGameData = async () => {
-        console.log('Event Listener Added');
         const gameData = new CustomEvent('get-game-data', {
             detail: gameState
         });
@@ -203,7 +194,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const updateStateAction = async (e: { detail: any; }) => {
-        console.log('Event Listener Added');
         try {
             const state = e.detail;
             await handleInitiate(state);
@@ -213,7 +203,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const updateStateInvoke = async (e: { detail: any; }) => {
-        console.log('Event Listener Added');
         try {
             const state = e.detail;
             await handleInstant(state);
@@ -223,7 +212,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const updateStateConsume = async (e: { detail: any; }) => {
-        console.log('Event Listener Added');
         try {
             const state = e.detail;
             await handlePrayer(state);
@@ -232,14 +220,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
-    const createDialog = async (e: any) => {
-        // I need to create a dialog box here
-        console.log('Dialog Box Event Listener Added');
-        setMessages({
-            author: e.detail.author,
-            message: e.detail.message,
-        });
-    };
+    const createDialog = async (e: any) => { };
 
     useEffect(() => {
         if (!gameState.itemSaved) return;
@@ -674,6 +655,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         // window.dispatchEvent(combatEngaged);
     };
 
+    const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
+
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
@@ -681,13 +664,14 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('dialog-box', createDialog);
     usePhaserEvent('keydown', toggleCombatHud);
     // usePhaserEvent('resize', resizeGame);
+    usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
 
     return (
-        <div style={{ position: "relative", maxWidth: '960px', maxHeight: '640px', margin: '0 auto', border: "2px soild black" }}>
+        <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>
             <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
                 <Modal.Body>
                 <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => toggleFullscreen()}>
@@ -708,34 +692,35 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
                 </Modal.Body>
             </Modal>
-            <div id='ui-hud'>
-                <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>{state.player.name}</h3>
-                </Button>
-                <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
-                    <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
-                </Button>
-                <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
-
-            </div>
-            <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
-            { combatHud ? (
-                <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} />
-            ) : ( '' ) }
-            { showPlayer ?
-                (  <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
-            ) : ( 
-                <div style={{ position: "absolute" }}>
-                <CombatUI state={state} dispatch={dispatch} />
-                { state.combatEngaged ? (
-                    <EnemyUI state={state} dispatch={dispatch} />
-                ) : ( '' ) }
+            { currentGame ? ( <>
+                <div id='ui-hud'>
+                    <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
+                        <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>{state.player.name}</h3>
+                    </Button>
+                    <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
+                        <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
+                    </Button>
+                    <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
                 </div>
-             ) }
-            { gameState.showInventory ?
-                <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
-            : ""}
-            <div id='story-game' style={{ textAlign: 'center' }} className='my-5' ref={gameRef}></div>
+                <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
+                { combatHud ? (
+                    <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} />
+                ) : ( '' ) }
+                { showPlayer ? (  
+                    <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                ) : ( 
+                    <div style={{ position: "absolute" }}>
+                        <CombatUI state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} />
+                        { state.combatEngaged ? (
+                            <EnemyUI state={state} dispatch={dispatch} />
+                        ) : ( '' ) }
+                    </div>
+                ) }
+                { gameState.showInventory ? (
+                    <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
+                ) : ( '' ) }
+            </> ) : ( '' ) }
+            <div id='story-game' style={{ textAlign: 'center' }} ref={gameRef}></div>
         </div>
     );
 };

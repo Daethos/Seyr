@@ -87,7 +87,7 @@ const GameActions = ({ state, dispatch, gameState, gameDispatch, handleInstant, 
           payload: false,
         });
       }, gameState?.miniGameCambiren ? invokeTime.cambiren : invokeTime.instant);
-    }
+    };
     return () => {
       clearTimeout(instantTimer);
     };

@@ -2,14 +2,15 @@ import Phaser from "phaser";
 import NewText from './NewText.js' 
 import Player from "./Player.js";
 import Enemy from './Enemy.js';
-import Tileset from '../game/images/Tileset.png';
-import AtlasTerrain from '../game/images/Atlas Terrain.png';
-import TileJson from '../game/images/map.json';
+import Treasure from './Treasure.js';
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
 import castle_tiles from '../game/images/castle_tiles.png';
 import castle_map from '../game/images/castle_map.json';
 import layer_1 from '../game/images/layer_1.png';
+// Top-Down Attempt
+import MainLev2 from '../game/images/MainLev2.0.png';
+import top_down from '../game/images/top_down.json';
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -26,7 +27,6 @@ export default class Preload extends Phaser.Scene {
     };
 
     init(data) {
-        console.log(data.gameData, 'Preload Scene')
         this.gameData = data.gameData;
     };
 
@@ -39,14 +39,17 @@ export default class Preload extends Phaser.Scene {
 
         Player.preload(this);
         Enemy.preload(this);
-        // this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
-        // this.load.image('tiles', Tileset);
-        // this.load.image('terrain', AtlasTerrain);
-        // this.load.tilemapTiledJSON('map', TileJson);
+        Treasure.preload(this);
+        // this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.image('castle_tiles', castle_tiles);
         this.load.image('layer_1', layer_1);
         this.load.tilemapTiledJSON('castle_map', castle_map);
- 
+
+        // Top-Down Attempt
+        this.load.image('MainLev2.0', MainLev2);
+        console.log(MainLev2, 'MainLev2');
+        this.load.tilemapTiledJSON('top_down', top_down);
+        
         this.createLoadingBar();
     };
 
@@ -76,7 +79,6 @@ export default class Preload extends Phaser.Scene {
         window.dispatchEvent(getEnemy);
         window.dispatchEvent(getState);
         window.dispatchEvent(getGameData);
-        console.log(this.enemy, 'Creating ENEMY in PRELOAD Scene');
     };
     
     asceanFinishedEventListener = (e) => {
@@ -107,7 +109,7 @@ export default class Preload extends Phaser.Scene {
             'preload',
             0.5
         );
-        this.border = this.createTextBorder(this.title.obj);
+        // this.border = this.createTextBorder(this.title.obj);
         this.txt_progress = new NewText(
             this,
             this.centerX,

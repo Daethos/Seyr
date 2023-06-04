@@ -16,7 +16,6 @@ export default class Menu extends Phaser.Scene {
 
     init(data) {
         this.gameData = data;
-        console.log(data, "Menu Scene Init Data")
     };
 
     create() {
@@ -25,7 +24,8 @@ export default class Menu extends Phaser.Scene {
             this,
             this.centerX,
             150,
-            'The Land of Hush and Tendril',
+            // 'The Land of Hush and Tendril',
+            'The Ascean',
             'title'
         );
         this.border = this.createMenuBorder(this.title.obj);
@@ -36,7 +36,7 @@ export default class Menu extends Phaser.Scene {
             'Click or Press Enter to Play',
             'standard'
         );
-        this.border = this.createMenuBorder(this.text.obj);
+        // this.border = this.createMenuBorder(this.text.obj);
         this.createMoustInput();
         this.createKeyboardInput();
 
@@ -46,8 +46,7 @@ export default class Menu extends Phaser.Scene {
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
-        // Need to create a black border around the backgrounds for the text boxes
-        
+        // Need to create a black border around the backgrounds for the text boxes 
     };
 
     createMenuBorder(text) {
@@ -86,5 +85,7 @@ export default class Menu extends Phaser.Scene {
         this.scene.start('Play', {
             gameData: this.gameData
         });
+        const launchGame = new CustomEvent('launch-game', { detail: true });
+        window.dispatchEvent(launchGame)
     };
 };

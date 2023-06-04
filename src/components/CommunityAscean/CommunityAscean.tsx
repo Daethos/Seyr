@@ -25,8 +25,10 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             <h2>{ascean.description}</h2>
             <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}>
                 <img 
-                src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
-                id="ascean-pic" />
+                    src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
+                    // id="ascean-pic"
+                    className='dialog-picture' 
+                />
             </Link>
             <h4 className='my-1' style={{ color: "red", fontFamily: "Cinzel", fontWeight: 700 }}> 
                 {ascean.hardcore ? "Hardcore" : ""}</h4><br />

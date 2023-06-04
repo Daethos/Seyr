@@ -9,6 +9,7 @@ import Form from 'react-bootstrap/Form'
 import * as messageAPI from '../../utils/chatMessageApi';
 import * as chatAPI from '../../utils/chatMessageApi';
 import ScrollableChat from './ScrollableChat';
+import ToastAlert from '../ToastAlert/ToastAlert';
 
 let selectedChatCompare: { _id: any };
 
@@ -31,6 +32,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
     const [typing, setTyping] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState({ title: '', content: '' })
 
     const fetchMessages = async () => {
         if (!selectedChat)  return;
@@ -69,6 +71,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
 
     const sendMessage = async () => {
         socket.emit('stop_typing', selectedChat._id);
+        if (newMessage === "") {
+            const errorMessage = {
+                title: "Error Sending Message",
+                content: "You forgot to type a message!",
+            };
+            setError(errorMessage);
+            return;
+        };
         try {
             setLoading(true);
             const response = await messageAPI.sendMessage({
@@ -108,7 +118,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
     return (
         <>
         { selectedChat ? (
-                <>
+            <>
                 <h3 style={{ justifyContent: 'space-between' }}>
                 <Button variant='' style={{ color: '#fdf6d8', float: 'left' }} 
                 onClick={() => setSelectedChat("")}>
@@ -154,17 +164,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                     />
                 { loading 
                     ? <Loading Modal={true} />
-                    : <Button variant="" style={{ float: 'right', background: 'black', fontSize: 18 + 'px', marginLeft: 5 + 'px', marginTop: '-10%', color: 'red', border: 2 + 'px' + ' solid ' + 'red' }} onClick={sendMessage}>Submit</Button>
+                    : <Button variant="" id='message-button' onClick={sendMessage}>Submit</Button>
                 }
+                <div style={{ marginLeft: "25%" }}>
+                <ToastAlert error={error} setError={setError} />
+                </div>
                 </div>
                 </div>
                 </>
-                ) : (
-                    ''
-                )
-            }
+        ) : ( '' ) }
         </>
-    )
-}
+    );
+};
 
-export default SingleChat
+export default SingleChat;

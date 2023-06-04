@@ -826,6 +826,8 @@
 
 .dialog-picture {
   width: 15vw;
+  border: 2px solid purple;
+  border-radius: 50%;
 }
 .firewater {
   float: right;
@@ -1778,6 +1780,11 @@
 }
 .story-instant-button:disabled {
   display: none;
+}
+.story-invoke {
+  position: absolute;
+  bottom: -14px;
+  left: 131px;
 }
 .story-effects {
   /* display: inline-block; */

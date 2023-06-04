@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Player from './Player';
 import Enemy from './Enemy';
+import Treasure from './Treasure';
 import NewText from './NewText.js'
 import stick from './images/stick.png';
 import base from './images/base.png';
@@ -14,18 +15,17 @@ export default class Play extends Phaser.Scene {
     };
     
     init(data) {
-        console.log(data, "Data in Play")
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
         this.enemy = this.data.gameData.gameData.enemy;
+
+        this.enemies = [];
+
         this.state = this.data.gameData.gameData.state;
         this.gameState = this.data.gameData.gameData.gameState;
         this.CONFIG = this.sys.game.config;
         this.isFullScren = this.scale.isFullscreen;
-        this.DEPTH = {
-            floor: 0
-        };
-        
+        this.DEPTH = { floor: 0 }; 
         this.allow_input = false;
         this.is_pause = false;
         this.is_gameover = false;
@@ -40,21 +40,42 @@ export default class Play extends Phaser.Scene {
     }; 
     
     create() { 
-        const map = this.make.tilemap({ key: 'castle_map' });
-        const tileSet = map.addTilesetImage('castle_tiles', 'castle_tiles', 32, 32, 0, 0);
-        const backgroundSet = map.addTilesetImage('layer_1', 'layer_1', 32, 32, 0, 0);
-        const layer2 = map.createLayer('Tile Layer 2', backgroundSet, 0, 0);
-        const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
-        console.log(layer1, layer2, map, "Layers");
-        layer1.setCollisionByProperty({ collides: true });
-        this.matter.world.convertTilemapLayer(layer1);
-        this.matter.world.convertTilemapLayer(layer2);
-        this.map = map;
-        this.matter.world.setBounds(0, 0, 960, 640);
-        this.matter.world.createDebugGraphic();
+        this.input.setDefaultCursor('url(' + process.env.PUBLIC_URL + '/images/cursor.png), pointer');
+        // "url(" + getBackgroundStyle(gameState?.player.origin) + ")",
+        // process.env.PUBLIC_URL + `/images/astralands_${num}.jpg`;
+
+
+        // const map = this.make.tilemap({ key: 'castle_map' });
+        // const tileSet = map.addTilesetImage('castle_tiles', 'castle_tiles', 32, 32, 0, 0);
+        // const backgroundSet = map.addTilesetImage('layer_1', 'layer_1', 32, 32, 0, 0);
+        // const layer2 = map.createLayer('Tile Layer 2', backgroundSet, 0, 0);
+        // const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
+        // console.log(layer1, layer2, map, "Layers");
+        // layer1.setCollisionByProperty({ collides: true });
+        // this.matter.world.convertTilemapLayer(layer1);
+        // this.matter.world.convertTilemapLayer(layer2);
+        // this.map = map;
+        // this.matter.world.setBounds(0, 0, 960, 640);
+        // this.matter.world.createDebugGraphic();
         
-        this.player = new Player({scene: this, x: 200, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
-        this.enemy = new Enemy({scene: this, x: 400, y: 100, texture: 'player_actions', frame: 'player_idle_0'});
+        const map = this.make.tilemap({ key: 'top_down' });
+        const tileSet = map.addTilesetImage('MainLev2.0', 'MainLev2.0', 32, 32, 0, 0);
+        console.log(tileSet, map, "Tile Set ?")
+        const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
+        const layer2 = map.createLayer('Tile Layer 2', tileSet, 0, 0);
+        layer2.setCollisionByProperty({ collides: true });
+        this.matter.world.convertTilemapLayer(layer2);
+        this.matter.world.convertTilemapLayer(layer1);
+        this.map = map;
+        // this.matter.world.setBounds(0, 0, 960, 640); // Platformer
+        this.matter.world.setBounds(0, 0, 2048, 2048); // Top Down
+        this.matter.world.createDebugGraphic(); 
+
+        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
+
+        this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+        // this.enemy = new Enemy({scene: this, x: 400, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
 
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP,SPACE'),
@@ -75,10 +96,11 @@ export default class Play extends Phaser.Scene {
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 2;
+        camera.zoom = 1.25;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
-        camera.setBounds(0, 0, 960, 640);
+        // camera.setBounds(0, 0, 960, 640); // Platformer
+        camera.setBounds(0, 0, 2048, 2048); // Top Down
         // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
         //     x: 50,
         //     y: 400,
@@ -106,9 +128,7 @@ export default class Play extends Phaser.Scene {
         window.dispatchEvent(combatEngaged);
     };
 
-    createStateListener = async function() {
-        // console.log("State Listener Added");
-        // Handle Event Listener to Dispatch State
+    createStateListener = async function() { 
         window.addEventListener('update-combat-data', (e) => {
             // console.log(e.detail, "State Updated");
             this.state = e.detail;
@@ -131,15 +151,12 @@ export default class Play extends Phaser.Scene {
     };
 
     sendStateSpecialListener = async function(special) {
-        // Handle Event Listener to Dispatch State
         switch (special) {
             case 'invoke':
-                // Ping handleInstant
                 const sendInvoke = new CustomEvent('update-state-invoke', { detail: this.state });
                 window.dispatchEvent(sendInvoke);
                 break;
             case 'consume':
-                // Ping handleConsume
                 this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
                 this.state.prayerSacrificeName = this.state.playerEffects[0].name;
                 const sendConsume = new CustomEvent('update-state-consume', { detail: this.state });
@@ -170,7 +187,7 @@ export default class Play extends Phaser.Scene {
     };
 
     setState = async function(key, value) {
-        console.log("Setting: " + key + " to " + value);
+        // console.log("Setting: " + key + " to " + value);
         this.state[key] = value;
     };
 
@@ -241,7 +258,8 @@ export default class Play extends Phaser.Scene {
         });
     };
     update() {
-        this.enemy.update(this);
+        // this.enemy.update(this);
+        this.enemies.forEach((enemy) => enemy.update(this));
         this.player.update(this); 
     };
     pause() {

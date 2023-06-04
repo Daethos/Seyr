@@ -43,7 +43,6 @@ const Story = ({ user }: Props) => {
                     settingsAPI.getSettings(),
                     getOpponent(),
                 ]);
-                console.log(enemyResponse, "Enemy Response")
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
@@ -64,10 +63,7 @@ const Story = ({ user }: Props) => {
                     'opponent': enemyResponse?.game.level,
                 });
                 dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: enemyResponse?.combat }); 
-                gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse });
-                if (gameStateResponse.data.tutorial.firstBoot === true) {
-                    gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                }; // Extra Code Temporary 
+                gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse }); 
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 setGameChange(false);
             } catch (err: any) {
@@ -78,7 +74,6 @@ const Story = ({ user }: Props) => {
     }, [asceanID]); 
 
     const getOpponent = async () => {
-        // gameDispatch({ type: GAME_ACTIONS.GET_OPPONENT, payload: true });
         try { 
             const player = await asceanAPI.getCleanAscean(asceanID);
             console.log(player, "Player ??")
@@ -123,29 +118,17 @@ const Story = ({ user }: Props) => {
             const secondResponse = await userService.getRandomEnemy(enemyData);
             const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
             const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
-            console.log(selectedOpponent, response, "Enemy ??")
             return {
                 game: selectedOpponent.data,
                 combat: response.data.data
-            } 
-            // setAsceanState({
-            //     ...asceanState,
-            //     'opponent': selectedOpponent.data.level,
-            // });
-
-            // gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: selectedOpponent.data })
-            // dispatch({
-            //     type: ACTIONS.SET_NEW_COMPUTER,
-            //     payload: response.data.data
-            // });
-            // gameDispatch({ type: GAME_ACTIONS.LOADING_OPPONENT, payload: false });
+            };
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         };
     };
         
     return (
-        <div style={{ overflow: "hidden" }}>
+        <div style={{  }}>
         { gameChange ? ( '' )
         : ( <HostScene 
                 user={user} setGameChange={setGameChange} gameChange={gameChange} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch}
