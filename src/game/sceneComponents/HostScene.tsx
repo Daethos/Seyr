@@ -12,6 +12,7 @@ import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as gameAPI from '../../utils/gameApi';
+import userService from "../../utils/userService";
 import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
 import PhaserInventoryBag from '../PhaserInventoryBag';
@@ -218,6 +219,73 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         } catch (err: any) {
             console.log(err.message, 'Error Updating State');
         };
+    };
+
+    const fetchEnemy = async (e: { detail: any; }) => {
+        const getOpponent = async () => {
+            try { 
+                let minLevel: number = 0;
+                let maxLevel: number = 0; 
+                if (state.player.level < 3) {
+                    minLevel = 1;
+                    maxLevel = 2;
+                } else  if (state.player.level <= 4) { // 3-4 
+                    minLevel = 2;
+                    maxLevel = 4;
+                } else if (state.player.level === 5) { 
+                    minLevel = 4;
+                    maxLevel = 6;
+                } else if (state.player.level === 6) {
+                    minLevel = 4;
+                    maxLevel = 8;
+                } else if (state.player.level === 7) {
+                    minLevel = 5;
+                    maxLevel = 9;
+                } else if (state.player.level === 8) {
+                    minLevel = 6;
+                    maxLevel = 10;
+                } else if (state.player.level <= 10) { // 9-10
+                    minLevel = 7;
+                    maxLevel = 12;
+                } else if (state.player.level <= 14) { // 11-14
+                    minLevel = 8;
+                    maxLevel = 16;
+                } else if (state.player.level <= 18) { // 15-18
+                    minLevel = 12;
+                    maxLevel = 18;
+                } else if (state.player.level <= 20) {
+                    minLevel = 16;
+                    maxLevel = 20;
+                };
+                const enemyData = {
+                    username: 'mirio',
+                    minLevel: minLevel,
+                    maxLevel: maxLevel
+                };
+                const secondResponse = await userService.getRandomEnemy(enemyData);
+                const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
+                const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
+                return {
+                    game: selectedOpponent.data,
+                    combat: response.data.data,
+                    enemyID: e.detail.enemyID
+                };
+            } catch (err: any) {
+                console.log(err.message, 'Error retrieving Enemies')
+            };
+        };
+        const opponent = await getOpponent();
+        const opponentData = new CustomEvent('enemy-fetched', {
+            detail: opponent
+        });
+        window.dispatchEvent(opponentData);
+    };
+
+    const setupEnemy = async (e: { detail: any; }) => {
+        console.log(e.detail, "This is the setup enemy function")
+        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
+        setAsceanState({ ...asceanState, 'opponent': e.detail.game.level });
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health } }); 
     };
 
     const createDialog = async (e: any) => { };
@@ -656,6 +724,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
+
+    usePhaserEvent('fetch-enemy', fetchEnemy);
+    usePhaserEvent('setup-enemy', setupEnemy);
 
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);

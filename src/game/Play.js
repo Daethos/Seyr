@@ -63,7 +63,7 @@ export default class Play extends Phaser.Scene {
         console.log(tileSet, map, "Tile Set ?")
         const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
         const layer2 = map.createLayer('Tile Layer 2', tileSet, 0, 0);
-        layer2.setCollisionByProperty({ collides: true });
+        // layer2.setCollisionByProperty({ collides: true });
         this.matter.world.convertTilemapLayer(layer2);
         this.matter.world.convertTilemapLayer(layer1);
         this.map = map;
@@ -71,11 +71,13 @@ export default class Play extends Phaser.Scene {
         this.matter.world.setBounds(0, 0, 2048, 2048); // Top Down
         this.matter.world.createDebugGraphic(); 
 
-        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
-        this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
-        // this.enemy = new Enemy({scene: this, x: 400, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+        
+        this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
+        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        
+        this.enemy = new Enemy({scene: this, x: 400, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+
 
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP,SPACE'),
@@ -121,6 +123,11 @@ export default class Play extends Phaser.Scene {
         this.createWelcome(); 
         this.createStateListener();
         // this.stateAddlistener(); // Figuring out a way to have the ability to always 'listen' in on state changes
+    };
+
+    setupEnemy = async function(data) {
+        const setup = new CustomEvent('setup-enemy', { detail: data });
+        window.dispatchEvent(setup);
     };
 
     combatEngaged = async function() {
@@ -257,10 +264,11 @@ export default class Play extends Phaser.Scene {
             callbackScope: this
         });
     };
+
     update() {
-        // this.enemy.update(this);
-        this.enemies.forEach((enemy) => enemy.update(this));
-        this.player.update(this); 
+        this.enemy.update();
+        this.enemies.forEach((enemy) => enemy.update());
+        this.player.update(); 
     };
     pause() {
         this.scene.pause();

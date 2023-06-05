@@ -37,11 +37,11 @@ const Story = ({ user }: Props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [gameStateResponse, combatStateResponse, gameSettingResponse, enemyResponse] = await Promise.all([
+                const [gameStateResponse, combatStateResponse, gameSettingResponse] = await Promise.all([
                     asceanAPI.getOneAscean(asceanID),
                     asceanAPI.getAsceanStats(asceanID),
                     settingsAPI.getSettings(),
-                    getOpponent(),
+                    // getOpponent(),
                 ]);
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
@@ -50,7 +50,7 @@ const Story = ({ user }: Props) => {
                     payload: combatStateResponse.data.data
                 });
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_TRAITS, payload: traitResponse });
-                gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: enemyResponse?.game });
+                // gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: enemyResponse?.game });
                 setAsceanState({
                     ...asceanState,
                     'ascean': combatStateResponse.data.data.ascean,
@@ -60,9 +60,9 @@ const Story = ({ user }: Props) => {
                     'experienceNeeded': combatStateResponse.data.data.ascean.level * 1000,
                     'mastery': combatStateResponse.data.data.ascean.mastery,
                     'faith': combatStateResponse.data.data.ascean.faith,
-                    'opponent': enemyResponse?.game.level,
+                    // 'opponent': enemyResponse?.game.level,
                 });
-                dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: enemyResponse?.combat }); 
+                // dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: enemyResponse?.combat }); 
                 gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse }); 
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 setGameChange(false);

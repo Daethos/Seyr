@@ -128,6 +128,7 @@ export const ACTIONS = {
     RESET_COMPUTER: 'RESET_COMPUTER',
     RESET_DUEL: 'RESET_DUEL',
     SET_NEW_COMPUTER: 'SET_NEW_COMPUTER',
+    SET_PHASER_COMPUTER_ENEMY: 'SET_PHASER_COMPUTER_ENEMY',
     SET_ACTION_STATUS: 'SET_ACTION_STATUS',
     SET_COMBAT_ACTION: 'SET_COMBAT_ACTION',
     SET_COMBAT_COUNTER: 'SET_COMBAT_COUNTER',
@@ -385,6 +386,23 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_win: false,
                 computer_win: false,
                 combatRound: 1,
+            };
+        case 'SET_PHASER_COMPUTER_ENEMY':
+            return {
+                ...state, 
+                computer: action.payload.enemy.ascean,
+                computer_health: action.payload.enemy.attributes.healthTotal,
+                current_computer_health: action.payload.health,
+                new_computer_health: action.payload.health,
+                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                computer_weapon_one: action.payload.enemy.combat_weapon_one,
+                computer_weapon_two: action.payload.enemy.combat_weapon_two,
+                computer_weapon_three: action.payload.enemy.combat_weapon_three,
+                computer_defense: action.payload.enemy.defense,
+                computer_attributes: action.payload.enemy.attributes,
+                player_win: false,
+                computer_win: false,
+                // combatRound: 1,
             };
         case 'SET_NEW_COMPUTER_GUEST':
             return {

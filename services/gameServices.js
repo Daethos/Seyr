@@ -2815,18 +2815,16 @@ const prayerSplitter = async (combatData, prayer) => {
     let originalPrayer = combatData.playerBlessing;
     combatData.playerBlessing = prayer === '' ? 'Buff' : prayer;
 
-    
-        // actionData: combatData.actionData, 
-    // prayerData: combatData.prayerData,
-
     // ==================== STATISTIC LOGIC ==================== 
     // combatData.actionData.push('prayer');
     combatData.prayerData.push(prayer);
     combatData.deityData.push(combatData.weapons[0].influences[0]);
     // ==================== STATISTIC LOGIC ====================
 
-
-    let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+    console.log(combatData.playerEffects, "Player Effects")
+    let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing 
+        && effect.enemyName === combatData.computer.name // Added For Phaser ??
+    );   
     // Handles the creation of a new Status Effect if it doesn't already exist
     if (!existingEffect) {
         existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
@@ -2932,7 +2930,7 @@ const instantActionSplitter = async (combatData) => {
 
 const instantEffectCheck = async (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
-        if (effect.tick.start !== combatData.combatRound) return true;
+        if (effect.tick.start !== combatData.combatRound || effect.enemyName !== combatData.computer.name) return true;
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
             switch (effect.prayer) {
@@ -3019,7 +3017,7 @@ combatData.prayerData.push(combatData.prayerSacrifice);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
-        if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName) return true;
+        if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName || effect.enemyName !== combatData.computer.name) return true;
         switch (combatData.prayerSacrifice) {
             case 'Heal':
                 console.log("Healing for :", effect.effect.healing * 0.165);

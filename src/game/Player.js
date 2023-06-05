@@ -25,7 +25,7 @@ export default class Player extends Entity {
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
     };
     constructor(data) {
-        let { scene, x, y, texture, frame } = data;
+        let { scene } = data;
         super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health  }); 
         this.scene.add.existing(this);
         this.setScale(0.8);   
@@ -34,16 +34,14 @@ export default class Player extends Entity {
         let playerSensor = Bodies.circle(this.x, this.y, 36, { isSensor: true, label: 'playerSensor' }); // Y + 2 For Platformer
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
-            frictionAir: 0.35, // Adjust the air friction for smoother movement
-            restitution: 0.2, // Add some bounce, remove for no bounce
-            gravity: { y: 0.075 },
+            frictionAir: 0.35, 
+            restitution: 0.2,  
         });
+        this.setExistingBody(compoundBody);                                    
         this.sensor = playerSensor;
         this.knocking = false;
         this.currentRound = 0;
-        this.setExistingBody(compoundBody);                                    
         this.setFixedRotation();   
-        // this.checkHanging(); 
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
     };
@@ -64,8 +62,6 @@ export default class Player extends Entity {
                 this.inCombat = false;
                 this.attacking = null;
             };
-            // if (this.isDead) this.anims.play('player_dead', true);
-            // if (this.isHurt) this.anims.play('player_hurt', true);
             if (e.detail.new_computer_health <= 0) {
                 this.inCombat = false;
                 this.attacking = null;
@@ -78,13 +74,14 @@ export default class Player extends Entity {
             objectA: [playerSensor],
             callback: (other) => {
                 if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider') {
-                    // console.log(other, "This MUST be the enemy collider");
                     const collisionPoint = this.calculateCollisionPoint(other);
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
-                        // console.log(other, "This is the Other being set to Action Target AT THE START OF THE COLLISION")
                         this.actionTarget = other;
+                        // this.touching.push(other.gameObjectB);
+                        this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
+                        this.scene.combatEngaged();
                     };
                 };
             },
@@ -100,7 +97,6 @@ export default class Player extends Entity {
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
-                        // console.log(other.gameObjectB.name, other.bodyB.label, "This is the ENEMY during COLLISION ??");
                         this.actionTarget = other;
                     };
                 };
@@ -114,6 +110,7 @@ export default class Player extends Entity {
                 if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider') {
                     this.actionAvailable = false;
                     this.actionTarget = null;
+                    // this.touching = this.touching.filter(gameObject => gameObject !== other.gameObjectB);
                 };
             },
             context: this.scene,
@@ -133,15 +130,9 @@ export default class Player extends Entity {
         return collisionPoint.x < sensorPosition.x;
     };
     
-    update(scene) {
-        // if (this.actionTarget && this.actionTarget.gameObjectB.name === 'enemy') {
-        //     console.log("The Enemy Collider Is the Action Target!")
-        // } else {
-        //     console.log("Mutated Magically")
-        // }
+    update() {
         // =================== MOVEMENT VARIABLES ================== \\
         const speed = 4;
-        const jumpVelocity = 15;
             
         // =================== CROUCHING ================== \\
 
@@ -163,7 +154,7 @@ export default class Player extends Entity {
 
         // =================== JUMPING ================== \\
 
-        if (scene.isPlayerOnGround && this.isJumping) {
+        if (this.scene.isPlayerOnGround && this.isJumping) {
             this.isJumping = false;
         };
 
@@ -171,7 +162,7 @@ export default class Player extends Entity {
 
         if (!this.isCollidingWithPlayer()) {
             this.isHanging = false;
-            scene.setHanging('player', false);
+            this.scene.setHanging('player', false);
             this.setStatic(false); 
         };
 
@@ -189,64 +180,62 @@ export default class Player extends Entity {
         // =================== ACTIONS ================== \\
     
         if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
-            scene.setState('action', 'counter');
-            scene.setState('counter_guess', 'attack');
+            this.scene.setState('action', 'counter');
+            this.scene.setState('counter_guess', 'attack');
             this.isAttacking = true;           
             if (this.actionAvailable) {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
         if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
-            scene.setState('action', 'counter');
-            scene.setState('counter_guess', 'posture');
+            this.scene.setState('action', 'counter');
+            this.scene.setState('counter_guess', 'posture');
             this.isPosturing = true;
             if (this.actionAvailable) {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
                 // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
         if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
-            scene.setState('action', 'counter');
-            scene.setState('counter_guess', 'roll');
+            this.scene.setState('action', 'counter');
+            this.scene.setState('counter_guess', 'roll');
             this.isRolling = true; 
             if (this.actionAvailable) {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
                 // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
     
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
-            scene.setState('action', 'attack');
-            if (scene.state.counter_guess !== '') scene.setState('counter_guess', '');
+            this.scene.setState('action', 'attack');
+            if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isAttacking = true;
             if (this.actionAvailable) {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
-            scene.setState('action', 'posture');
-            if (scene.state.counter_guess !== '') scene.setState('counter_guess', '');
+            this.scene.setState('action', 'posture');
+            if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isPosturing = true;
             if (this.actionAvailable) {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
                 // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
@@ -257,7 +246,7 @@ export default class Player extends Entity {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
                 // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
@@ -269,14 +258,14 @@ export default class Player extends Entity {
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE)) {
-            scene.setState('action', 'counter');
-            scene.setState('counter_action', 'counter');
+            this.scene.setState('action', 'counter');
+            this.scene.setState('counter_action', 'counter');
             this.isCountering = true;
             if (this.actionAvailable) {
                 console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
                 // this.newKnockback(this.actionTarget);
                 this.knockback(this.actionTarget);
-                // scene.sendStateActionListener();
+                // this.scene.sendStateActionListener();
                 // this.actionAvailable = false;
             };
         };
@@ -284,12 +273,12 @@ export default class Player extends Entity {
         // =================== OPTIONS ================== \\
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {
-            if (scene.state.playerBlessing === '') return;
+            if (this.scene.state.playerBlessing === '') return;
             console.log('Praying');
             this.isPraying = true;
             this.invokeCooldown = 30;
-            if (this.playerBlessing === '' || this.playerBlessing !== scene.state.playerBlessing) {
-                this.playerBlessing = scene.state.playerBlessing;
+            if (this.playerBlessing === '' || this.playerBlessing !== this.scene.state.playerBlessing) {
+                this.playerBlessing = this.scene.state.playerBlessing;
             };
             this.scene.sendStateSpecialListener('invoke');
             screenShake(this.scene);
@@ -314,13 +303,13 @@ export default class Player extends Entity {
             this.isHealing = this.isHealing ? false : true;
             // Flaskwater Charge
             // May not do this
-            scene.drinkFlask();
+            this.scene.drinkFlask();
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
-            if (scene.state.playerEffects.length === 0) return;
+            if (this.scene.state.playerEffects.length === 0) return;
             this.isConsuming = true;
-            this.prayerConsuming = scene.state.playerEffects[0].prayer;
+            this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
             this.scene.sendStateSpecialListener('consume');
             screenShake(this.scene);
             pauseGame(20).then(() => {
@@ -345,13 +334,13 @@ export default class Player extends Entity {
         if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown || this.inputKeys.up.SPACE.isDown)) {
         // if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown || this.inputKeys.up.SPACE.isDown) && scene.isPlayerOnGround && this.isJumping === false) {
             this.setVelocityY(-speed); // Was Jump Velocity When Platformer
-            scene.setOnGround('player', false);
+            this.scene.setOnGround('player', false);
             // this.isJumping = true; 
             // this.anims.play('player_jump', true);
         }; 
 
         if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-            // if (scene.state.action !== '') scene.setState('action', '');
+            // if (this.scene.state.action !== '') this.scene.setState('action', '');
             this.setVelocityY(speed);
         };
 
@@ -369,7 +358,7 @@ export default class Player extends Entity {
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
             this.setVelocityX(this.body.velocity.x * 0.85);
-            if (scene.state.action !== 'posture') scene.setState('action', 'posture');
+            if (this.scene.state.action !== 'posture') this.scene.setState('action', 'posture');
             // This will be a +% Defense from Shield. 
             // Counter-Posturing gets +damage bonus against this tactic
         };
@@ -386,15 +375,15 @@ export default class Player extends Entity {
             this.anims.play('player_hurt', true).on('animationcomplete', () => {
                 this.isHurt = false;
             });
-        // } else  if (this.isHanging && scene.isPlayerHanging) { // HANGING
+        // } else  if (this.isHanging && this.scene.isPlayerHanging) { // HANGING
         //     if (!this.isCollidingWithPlayer()) {
         //         this.isHanging = false;
-        //         scene.setHanging('player', false);
+        //         this.scene.setHanging('player', false);
         //         this.setStatic(false);
         //     };
         //     this.anims.play('player_hanging', true);
         //     if (this.inputKeys.up.SPACE.isDown) {
-        //         if (this.isAtEdgeOfLedge(scene)) {
+        //         if (this.isAtEdgeOfLedge(this.scene)) {
         //             this.setStatic(false);
         //             this.setVelocityY(-jumpVelocity);
         //             this.isHanging = false;
@@ -403,7 +392,7 @@ export default class Player extends Entity {
         //         };
         //     };
         //     if (this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown) { // CLIMBING UP
-        //         if (this.isAtEdgeOfLedge(scene)) {
+        //         if (this.isAtEdgeOfLedge(this.scene)) {
         //             this.setStatic(false);
         //             this.anims.play('player_climb', true);
         //             this.setVelocityY(-7.5);
@@ -477,8 +466,8 @@ export default class Player extends Entity {
                 const sensorDisp = 12;
                 const colliderDisp = 16;
                 if (this.isRolling) {
-                    if (scene.state.action !== 'roll') scene.setState('action', 'roll');
-                    if (scene.state.counter_guess !== '') scene.setState('counter_guess', '');
+                    if (this.scene.state.action !== 'roll') this.scene.setState('action', 'roll');
+                    if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
                     this.body.parts[2].position.y += sensorDisp;
                     this.body.parts[2].circleRadius = 21;
                     this.body.parts[1].vertices[0].y += colliderDisp;
@@ -537,7 +526,7 @@ export default class Player extends Entity {
         } else if (this.isHealing) { // HEALING
             console.log("Pinging HEALING")
             this.anims.play('player_health', true).on('animationcomplete', () => {
-                scene.drinkFlask();
+                this.scene.drinkFlask();
                 this.isHealing = false;
             });
         } else if (this.isPraying) { // PRAYING
@@ -552,13 +541,13 @@ export default class Player extends Entity {
         };
     };
 
-    // isAtEdgeOfLedge(scene) {
+    // isAtEdgeOfLedge(this.scene) {
     //     const playerSensor = this.body.parts[2];
     //     const rayStart = { x: playerSensor.position.x - playerSensor.circleRadius, y: playerSensor.position.y };
     //     const rayEnd = { x: playerSensor.position.x + playerSensor.circleRadius, y: playerSensor.position.y - playerSensor.circleRadius };
-    //     const bodies = scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
+    //     const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
         
-    //     const intersections = scene.matter.intersectRay(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y, 32, bodies).filter(intersection => intersection.id !== playerSensor.id);
+    //     const intersections = this.scene.matter.intersectRay(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y, 32, bodies).filter(intersection => intersection.id !== playerSensor.id);
     //     console.log(intersections, "Intersections");
     //     const rayLength = Phaser.Math.Distance.Between(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y);
     //     const totalIntersectionLength = intersections.reduce((totalLength, intersection) => totalLength + intersection.length, 0);

@@ -131,24 +131,14 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     knockback(other) {
-        // console.log(other, this.actionTarget, "Other Object In Knockback"); 
-        console.log(`Is the ${this.name} looking left? ${this.flipX}`);
-        // this.attacking.knockedBack = true;
-        // this.setVelocity(0, 0);
+        console.log(`Is the ${this.name} looking left? ${this.flipX}`); 
         let bodyPosition = other.pair.gameObjectB.body.position;
         let body = other.pair.gameObjectB.body; 
         let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
         let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
         this.knockbackDirection = this.flipX ? Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition) : Phaser.Physics.Matter.Matter.Vector.sub(bodyPosition, collisionPoint);
-        // this.knockbackDirection =  Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition);
         this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection);
        
-        // if (this.flipX && this.knockbackDirection.x === 0) { 
-        //     this.knockbackDirection.x = 0.5; 
-        // } else if (!this.flipX && this.knockbackDirection === 0) {
-        //     this.knockbackDirection.x = -0.5;
-        // };
-
         const accelerationFrames = 12; 
         const accelerationStep = this.knockbackForce / accelerationFrames; 
         const dampeningFactor = 0.9; 
@@ -156,49 +146,49 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         const knockbackInterval = 16;
         let currentForce = 0; 
         let elapsedTime = 0; 
-        
-        // console.log(`Knocked Back: ${this.attacking?.name}`);
+ 
 
         const knockbackLoop = () => {
-            if (elapsedTime >= knockbackDuration) {
-                clearInterval(knockbackIntervalId);
-                this.attacking.knockedBack = false;
+            if (elapsedTime >= knockbackDuration) { 
+                knockbackEvent.remove();
                 return;
-            };  
-            if (currentForce < this.knockbackForce) { 
-                currentForce += accelerationStep;
-            }; 
-            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -10 : 10);
-            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -10 : 10);
+            };
+            
+            if (currentForce < this.knockbackForce) currentForce += accelerationStep; 
+            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -15 : 15);
+            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -15 : 15);
             Phaser.Physics.Matter.Matter.Body.applyForce(body, bodyPosition, {
-                // x: this.attacking?.name === 'enemy' ? forceX * 10 : forceX,
-                // y: this.attacking?.name === 'enemy' ? forceY * 10 : forceY
                 x: forceX,
                 y: forceY
             });
-            // this.attacking?.setVelocity(forceX * 10, forceY * 10);
-            currentForce *= dampeningFactor; 
+            currentForce *= dampeningFactor;
             elapsedTime++;
-        }; 
-        const knockbackIntervalId = setInterval(knockbackLoop, knockbackInterval);
-
-        // screenShake(this.scene);
-        // pauseGame(20).then(() => {
-        //     this.setVelocityX(0);
-        // });
+        };
+           
+        const knockbackEvent = this.scene.time.addEvent({
+            delay: knockbackInterval,
+            callback: knockbackLoop,
+            callbackScope: this,
+            loop: true
+        });
+        
+        if ("vibrate" in navigator) {
+            navigator.vibrate(40);
+        };
+        screenShake(this.scene);
+        pauseGame(20).then(() => {
+            this.setVelocityX(0);
+        });
     };
-    knockedBack(other) { 
+    
+    knockbackPlayer(other) { 
         let bodyPosition = other.gameObjectB.body.position;
-        let body = other.pair.gameObjectB.body; 
+        let body = this.scene.player.body; 
         let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
         let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
         this.knockbackDirection = this.flipX ? Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition) : Phaser.Physics.Matter.Matter.Vector.sub(bodyPosition, collisionPoint);
         this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection);
-        if (this.flipX && this.knockbackDirection.x === 0) { 
-            this.knockbackDirection.x = 0.5; 
-        } else if (!this.flipX && this.knockbackDirection === 0) {
-            this.knockbackDirection.x = -0.5;
-        };
+ 
         const accelerationFrames = 12; 
         const accelerationStep = this.knockbackForce / accelerationFrames; 
         const dampeningFactor = 0.9; 
@@ -206,8 +196,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         const knockbackInterval = 16;
         let currentForce = 0; 
         let elapsedTime = 0; 
-        
-        console.log(`Knocked Back: ${this.knocking?.name}`); 
         
         const knockbackLoop = () => {
             if (elapsedTime >= knockbackDuration) { 
@@ -226,32 +214,30 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             elapsedTime++;
         };
           
-          // Create the knockback time event
         const knockbackEvent = this.scene.time.addEvent({
             delay: knockbackInterval,
             callback: knockbackLoop,
             callbackScope: this,
             loop: true
         });
-          
     
-    
-        // screenShake(this.scene);
-        // pauseGame(20).then(() => {
-        //     this.setVelocityX(0);
-        // });
+        if ("vibrate" in navigator) {
+            navigator.vibrate(40);
+        };
+        screenShake(this.scene);
+        pauseGame(20).then(() => {
+            this.setVelocityX(0);
+        });
     };
 };
 
-
-// Create a screen shake effect
+ 
 export function screenShake(scene) {
-    const duration = 20; // Duration of the shake in milliseconds
-    const intensity = 0.005; // Intensity of the shake
+    const duration = 20;  
+    const intensity = 0.0075;  
     scene.cameras.main.shake(duration, intensity);
 };
-
-// Pause the game for a specific duration
+ 
 export function pauseGame(duration) {
     return new Promise((resolve) => {
         setTimeout(() => {

@@ -14,10 +14,24 @@ import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json'; 
 
 export default class Enemy extends Entity {
+
+    static preload(scene) { 
+        scene.load.atlas(`player_actions`, playerActionsOnePNG, playerActionsOneJSON);
+        scene.load.animation(`player_actions_anim`, playerActionsOneAnim);
+        scene.load.atlas(`player_actions_two`, playerActionsTwoPNG, playerActionsTwoJSON);
+        scene.load.animation(`player_actions_two_anim`, playerActionsTwoAnim);
+        scene.load.atlas(`player_actions_three`, playerActionsThreePNG, playerActionsThreeJSON);
+        scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
+        scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
+        scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
+    };
+
     constructor(data) {
         let { scene, x, y, texture, frame } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
         this.scene.add.existing(this);
+        this.enemyID = new Date().getTime();
+        this.createEnemy(); 
         this.setScale(0.8);
         this.isAttacking = false;
         this.isCountering = false;
@@ -37,42 +51,55 @@ export default class Enemy extends Entity {
         this.waiting = 30;
         this.attackSensor = null;
         this.attackIsLive = false;
-        
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let enemyCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'enemyCollider' });
         let enemySensor = Bodies.circle(this.x, this.y + 2, 48, { isSensor: true, label: 'enemySensor' });
-        // let attackSensor = Bodies.circle(this.x, this.y + 2, 36, { isSensor: true, label: 'attackSensor' });
         const compoundBody = Body.create({
             parts: [enemyCollider, enemySensor],
-            frictionAir: 0.1, // Adjust the air friction for smoother movement
-            restitution: 0.3, // Set the restitution to reduce bounce 
+            frictionAir: 0.1, 
+            restitution: 0.3,
             friction: 0.15,
         });
-        this.enemySensor = enemySensor;
-        // this.attackSensor = attackSensor;
         this.setExistingBody(compoundBody);                                    
         this.setFixedRotation();
-        this.enemyStateListener(); 
-        this.scene.matterCollision.addOnCollideStart({
-            objectA: [enemySensor],
-            callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player') {
-                    this.attacking = other.gameObjectB;
-                    this.actionTarget = other;
-                    other.gameObjectB.inCombat = true;
-                    other.gameObjectB.attacking = this;
-                    this.scene.combatEngaged();
-                };
-            },
-            context: this.scene,
-        }); 
+        this.enemyStateListener();
+        this.enemySensor = enemySensor;
+        // this.scene.matterCollision.addOnCollideStart({
+        //     objectA: [enemySensor],
+        //     callback: other => {
+        //         if (other.gameObjectB && other.gameObjectB.name === 'player') {
+        //             this.attacking = other.gameObjectB;
+        //             this.actionTarget = other;
+        //             other.gameObjectB.inCombat = true;
+        //             this.scene.combatEngaged();
+        //         };
+        //     },
+        //     context: this.scene,
+        // }); 
     };
- 
 
+    createEnemy() {
+        const fetch = new CustomEvent('fetch-enemy', { detail: { enemyID: this.enemyID } });
+        window.dispatchEvent(fetch); 
+        window.addEventListener('enemy-fetched', this.enemyFetchedFinishedListener.bind(this));
+    };
+
+    enemyFetchedFinishedListener(e) {
+        if (this.enemyID !== e.detail.enemyID) return;
+        console.log(e.detail, "Enemy Fetched")
+        this.ascean = e.detail.game;
+        this.health = e.detail.game.health.total;
+        this.combatData = e.detail.combat;
+        window.removeEventListener('enemy-fetched', this.enemyFetchedFinishedListener);
+    }
+ 
     enemyStateListener() {
         window.addEventListener('update-combat-data', (e) => {
             // console.log(e.detail, "State Updated");
             // if (this.health > e.detail.new_player_health) this.isHurt = true;
+            if (this.ascean.name !== e.detail.computer.name) return;
+            console.log(e.detail.computer.name, this.ascean.name, "Is This The Same Ascean ?");
+            console.log(this.health, "Current Health Pre Update", e.detail.new_computer_health, "New Health Post Update For: ", e.detail.computer.name);
             this.health = e.detail.new_computer_health;
             if (e.detail.new_computer_health <= 0) {
                 this.isDead = true;
@@ -89,40 +116,38 @@ export default class Enemy extends Entity {
         });
     };
 
-    update(scene) {
-        if (this.attacking) {  
+    update() {
+        if (this.attacking) { 
             let direction = this.attacking.position.subtract(this.position);
-            if (direction.length() >=  162) {
+            if (direction.length() >=  150) {
                 this.isRolling = true;
                 direction.normalize();
-                this.setVelocityX(direction.x * 3);
-                this.setVelocityY(direction.y * 3);
-            } else if (direction.length() > 81) { 
+                this.setVelocityX(direction.x * 3.25);
+                this.setVelocityY(direction.y * 3.25);
+            } else if (direction.length() > 90) { 
                 if (this.waiting > 0) {
-                        this.waiting--;
-                    // console.log("Psyching the player out.")
+                    this.waiting--; 
                     this.setVelocityX(0);
                     this.setVelocityY(0);
                 } else {
-                    // console.log("Rushing The Player Instead")
                     direction.normalize();
-                    this.setVelocityX(direction.x * 2.5);
-                    this.setVelocityY(direction.y * 2.5);    
+                    this.setVelocityX(direction.x * 2.75);
+                    this.setVelocityY(direction.y * 2.75);    
                 };
-            } else if (direction.length() > 54) {
+            } else if (direction.length() > 60) {
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.5);
-                this.setVelocityY(direction.y * 2.5);
+                this.setVelocityX(direction.x * 2.75);
+                this.setVelocityY(direction.y * 2.75);
                 if (this.attackTimer) {
                     clearInterval(this.attackTimer);
                     this.attackTimer = null;
                 };
             } else {
                 if (this.attackTimer == null) {
-                    const intervalTime = this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 1500 : 1000;
+                    const intervalTime = this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 1250 : 750;
                     this.attackTimer = setInterval(this.attack, intervalTime, this.attacking);
                 };
-                const times = [10, 20, 30, 40, 50, 60];
+                const times = [10, 20, 30, 40];
                 this.waiting = times[Math.floor(Math.random() * times.length)];
             };
         };
@@ -138,8 +163,8 @@ export default class Enemy extends Entity {
             if (this.dodgeCooldown === 0) {
                 this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
                 const dodgeDistance = 126;  
-                const dodgeDuration = 18; // Total duration for the roll animation (in frames)
-                const dodgeInterval = 1; // Interval between each frame update (in milliseconds)
+                const dodgeDuration = 18; 
+                const dodgeInterval = 1; 
                 let elapsedTime = 0;
                 let currentDistance = 0;
             
@@ -165,8 +190,8 @@ export default class Enemy extends Entity {
                 const sensorDisp = 12;
                 const colliderDisp = 16;
                 if (this.isRolling) {
-                    if (scene.state.action !== 'roll') scene.setState('computer_action', 'roll');
-                    if (scene.state.counter_guess !== '') scene.setState('computer_counter_guess', '');
+                    if (this.scene.state.action !== 'roll') this.scene.setState('computer_action', 'roll');
+                    if (this.scene.state.counter_guess !== '') this.scene.setState('computer_counter_guess', '');
                     this.body.parts[2].position.y += sensorDisp;
                     this.body.parts[2].circleRadius = 21;
                     this.body.parts[1].vertices[0].y += colliderDisp;
@@ -175,8 +200,8 @@ export default class Enemy extends Entity {
                 this.rollCooldown = 50; 
                 const rollDistance = 140; 
                 
-                const rollDuration = 20; // Total duration for the roll animation
-                const rollInterval = 1; // Interval between each movement update
+                const rollDuration = 20;  
+                const rollInterval = 1;  
                 
                 let elapsedTime = 0;
                 let currentDistance = 0;
@@ -208,10 +233,7 @@ export default class Enemy extends Entity {
         } else if (this.isAttacking) {
             this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
                 this.isAttacking = false;
-            });
-        // } else if (this.isJumping) { // JUMPING
-        //     console.log("Pinging JUMPING");
-        //     this.anims.play('player_jump', true);
+            }); 
         } else if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
             this.anims.play(`player_running`, true);
         } else {
@@ -241,10 +263,7 @@ export default class Enemy extends Entity {
                 break;
             case 'posture':
                 this.isPosturing = true;
-                break;
-            // case 'jump':
-            //     this.isJumping = true;
-            //     break;
+                break; 
             case 'pray':
                 this.isPraying = true;
                 break;
@@ -253,12 +272,10 @@ export default class Enemy extends Entity {
                 break;
             default:
                 break;                        
-        };
-        // if (!this.attackIsLive) return; // this.isTouching is not a function
-        let direction = target.position.subtract(this.position);
-        // console.log(direction.length(), "Direction Length");
-        if (direction.length() > 50) return;
-        this.knockback(this.actionTarget);
+        }; 
+        let direction = target.position.subtract(this.position); 
+        if (direction.length() > 54) return; 
+        this.knockbackPlayer(this.actionTarget);
     };
 
     evaluateCombat = (player, target) => { 
@@ -311,16 +328,7 @@ export default class Enemy extends Entity {
         return computerAction;
     };
 
-    static preload(scene) { 
-        scene.load.atlas(`player_actions`, playerActionsOnePNG, playerActionsOneJSON);
-        scene.load.animation(`player_actions_anim`, playerActionsOneAnim);
-        scene.load.atlas(`player_actions_two`, playerActionsTwoPNG, playerActionsTwoJSON);
-        scene.load.animation(`player_actions_two_anim`, playerActionsTwoAnim);
-        scene.load.atlas(`player_actions_three`, playerActionsThreePNG, playerActionsThreeJSON);
-        scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
-        scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
-        scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
-    };
+
 
     isAtEdgeOfLedge(scene) { 
         const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body
@@ -333,8 +341,7 @@ export default class Enemy extends Entity {
             isAtEdge = true;
         }; 
         return isAtEdge;
-    }; 
-      
+    };  
 
     isCollidingWithPlayer() {
         const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);

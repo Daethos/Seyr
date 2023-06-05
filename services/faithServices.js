@@ -1,6 +1,7 @@
 class StatusEffect {
     constructor(combatData, player, enemy, weapon, attributes, prayer) {
         this.name = this.setName(weapon.influences[0]);
+        this.enemyName = enemy.name;
         this.deity = weapon.influences[0];
         this.weapon = weapon.name;
         this.debuffTarget = this.setDebuffTarget(combatData, player, prayer);
