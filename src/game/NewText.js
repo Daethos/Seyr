@@ -36,7 +36,7 @@ export default class NewText {
         };
         switch (key.toLowerCase()) {
             case 'title':
-                style.fontSize = 84;
+                style.fontSize = 96;
                 style.strokeThickness = 4;
                 style.shadow.blur = 4;
                 break;

@@ -27,7 +27,7 @@ export default class Enemy extends Entity {
     };
 
     constructor(data) {
-        let { scene, x, y, texture, frame } = data;
+        let { scene } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
         this.scene.add.existing(this);
         this.enemyID = new Date().getTime();
@@ -103,11 +103,11 @@ export default class Enemy extends Entity {
             this.health = e.detail.new_computer_health;
             if (e.detail.new_computer_health <= 0) {
                 this.isDead = true;
-                this.anims.play('player_dead', true);
+                this.anims.play('player_death', true);
                 this.inCombat = false;
                 this.attacking = null;
             };
-            // if (this.isDead) this.anims.play('player_dead', true);
+            // if (this.isDead) this.anims.play('player_death', true);
             // if (this.isHurt) this.anims.play('player_hurt', true);
             if (e.detail.new_player_health <= 0) {
                 this.inCombat = false;

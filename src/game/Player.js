@@ -23,11 +23,27 @@ export default class Player extends Entity {
         scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
         scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
+
+        const spriteNameOne = scene?.gameData?.ascean?.weapon_one.imgURL.split('/')[2].split('.')[0];
+        const spriteNameTwo = scene?.gameData?.ascean?.weapon_two.imgURL.split('/')[2].split('.')[0];
+        const spriteNameThree = scene?.gameData?.ascean?.weapon_three.imgURL.split('/')[2].split('.')[0];
+
+        scene.load.spritesheet(`${spriteNameOne}`, process.env.PUBLIC_URL + scene?.gameData?.ascean.weapon_one.imgURL, { frameWidth: 32, frameHeight: 32 });
+        scene.load.spritesheet(`${spriteNameTwo}`, process.env.PUBLIC_URL + scene?.gameData?.ascean.weapon_two.imgURL, { frameWidth: 32, frameHeight: 32 });
+        scene.load.spritesheet(`${spriteNameThree}`, process.env.PUBLIC_URL + scene?.gameData?.ascean.weapon_three.imgURL, { frameWidth: 32, frameHeight: 32 });
     };
     constructor(data) {
         let { scene } = data;
-        super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health  }); 
+        super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health }); 
+        const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
+        this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
+        this.spriteWeapon.setScale(0.6);
+        this.spriteWeapon.setOrigin(0.25, 1);
         this.scene.add.existing(this);
+        this.scene.add.existing(this.spriteWeapon);
+        this.spriteWeapon.setDepth(this + 1);
+        this.spriteWeapon.setAngle(-195);
+        this.currentWeaponSprite = spriteName;
         this.setScale(0.8);   
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
@@ -46,6 +62,10 @@ export default class Player extends Entity {
         this.playerStateListener();
     };
 
+    weaponSprite(weapon) {
+        return weapon.imgURL.split('/')[2].split('.')[0];
+    };
+
     playerStateListener() {
         window.addEventListener('update-combat-data', (e) => {
             // console.log(e.detail, "State Updated");
@@ -58,7 +78,7 @@ export default class Player extends Entity {
             this.health = e.detail.new_player_health;
             if (e.detail.new_player_health <= 0) {
                 this.isDead = true;
-                this.anims.play('player_dead', true);
+                this.anims.play('player_death', true);
                 this.inCombat = false;
                 this.attacking = null;
             };
@@ -124,13 +144,16 @@ export default class Player extends Entity {
         return Phaser.Physics.Matter.Matter.Vector.add(bodyPosition, offset);
     };
     
-    
     getAttackDirection(collisionPoint) {
         const sensorPosition = this.sensor.position;
         return collisionPoint.x < sensorPosition.x;
     };
     
     update() {
+        if (this.currentWeaponSprite !== this.weaponSprite(this.scene.state.weapons[0])) {
+            this.currentWeaponSprite = this.weaponSprite(this.scene.state.weapons[0]);
+            this.spriteWeapon.setTexture(this.currentWeaponSprite);
+        };
         // =================== MOVEMENT VARIABLES ================== \\
         const speed = 4;
             
@@ -430,22 +453,25 @@ export default class Player extends Entity {
                 this.isCountering = false;
             });
         } else if (this.isCountering) { // COUNTERING
+
             this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
-                this.isCountering = false; 
+                this.isCountering = false;  
             });
         } else if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
             this.anims.play('player_slide', true);
+            this.spriteWeapon.setVisible(false);
             if (this.dodgeCooldown === 0) {
                 this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
                 const dodgeDistance = 126;  
-                const dodgeDuration = 18; // Total duration for the roll animation (in frames)
-                const dodgeInterval = 1; // Interval between each frame update (in milliseconds)
+                const dodgeDuration = 18;  
+                const dodgeInterval = 1;  
                 let elapsedTime = 0;
                 let currentDistance = 0;
             
                 const dodgeLoop = () => {
                     if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
                         clearInterval(dodgeIntervalId);
+                        this.spriteWeapon.setVisible(true);
                         this.dodgeCooldown = 0;
                         this.isDodging = false;
                         return;
@@ -462,6 +488,7 @@ export default class Player extends Entity {
             
         } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
             this.anims.play('player_roll', true);
+            this.spriteWeapon.setVisible(false);
             if (this.rollCooldown === 0) {
                 const sensorDisp = 12;
                 const colliderDisp = 16;
@@ -485,6 +512,7 @@ export default class Player extends Entity {
                 const rollLoop = () => {
                     if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
                         clearInterval(rollIntervalId);
+                        this.spriteWeapon.setVisible(true);
                         this.rollCooldown = 0;
                         this.isRolling = false;
                         this.body.parts[2].position.y -= sensorDisp;
@@ -539,25 +567,28 @@ export default class Player extends Entity {
         } else { // IDLE
             this.anims.play('player_idle', true);
         };
+
+        this.spriteWeapon.setPosition(this.x, this.y);
+        this.weaponRotation();
     };
 
-    // isAtEdgeOfLedge(this.scene) {
-    //     const playerSensor = this.body.parts[2];
-    //     const rayStart = { x: playerSensor.position.x - playerSensor.circleRadius, y: playerSensor.position.y };
-    //     const rayEnd = { x: playerSensor.position.x + playerSensor.circleRadius, y: playerSensor.position.y - playerSensor.circleRadius };
-    //     const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
-        
-    //     const intersections = this.scene.matter.intersectRay(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y, 32, bodies).filter(intersection => intersection.id !== playerSensor.id);
-    //     console.log(intersections, "Intersections");
-    //     const rayLength = Phaser.Math.Distance.Between(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y);
-    //     const totalIntersectionLength = intersections.reduce((totalLength, intersection) => totalLength + intersection.length, 0);
-        
-    //     console.log(rayLength, "Ray Length", totalIntersectionLength, "Total Intersection Length");
-    //     const isAtEdge = totalIntersectionLength >= rayLength * 0.9; // Check if total intersection length is at least 90% of the ray length
-        
-    //     return isAtEdge;
-    //   };
-      
+    weaponRotation() { 
+
+
+        if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isCrouching && !this.isRolling && !this.flipX) {
+            this.spriteWeapon.setOrigin(-0.25, 0.5);
+            this.spriteWeapon.setAngle(107.5);
+        } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isCrouching && !this.isRolling && this.flipX) { 
+            this.spriteWeapon.setOrigin(0.5, 1.2);
+            this.spriteWeapon.setAngle(-194.5);
+        } else if (this.flipX) { // X Origin More Right
+            this.spriteWeapon.setOrigin(-0.25, 1.2);
+            this.spriteWeapon.setAngle(-250);
+        } else {
+            this.spriteWeapon.setOrigin(-0.15, 1.3);
+            this.spriteWeapon.setAngle(-195);
+        }
+    };
 
     isAtEdgeOfLedge(scene) {
         const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body

@@ -16,9 +16,10 @@ interface Props {
     emergencyText: any[] | (() => any[]);
     combatRoundText: string | number;
     spectator?: boolean;
+    story?: boolean;
 };
 
-const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
+const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
     const [combatText, setCombatText] = useState<any>('');
     const [combatRound, setCombatRound] = useState<number>(0);
     // useEffect(() => {
@@ -26,10 +27,18 @@ const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeath
     //         text();
     //     };
     // }, [combatRoundText, combatRound]);
+ 
+    const storyStyle = {
+        height: "80px",
+        width: "450px",  
+        fontSize: "12px",
+        borderRadius: "3px",
+        border: "2px solid purple"
+    };
 
     const text = () => {
         let result = "";
-        if (emergencyText) result += emergencyText + "\n";
+        if (emergencyText && !story) result += emergencyText + "\n";
         if (playerActionText) result += playerActionText + "\n";
         if (computerActionText) result += computerActionText + "\n";
         if (playerSpecialText) result += playerSpecialText + "\n";
@@ -48,9 +57,10 @@ const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeath
         return result;
     };
     return (
-        <div id={spectator ? 'spectator-textarea' : "textarea"}>
+        <div id={spectator ? 'spectator-textarea' : story ? "" : "textarea"}>
             <textarea 
-                className="text-box" id="console" 
+                style={story ? storyStyle : {}}
+                className={story ? "" : "text-box"} id="console" 
                 value={text()}
                 readOnly>
             </textarea>

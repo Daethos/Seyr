@@ -98,7 +98,8 @@ const statusEffectCheck = async (combatData) => {
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.computer_weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computer_weapons.indexOf(matchingDebuffTarget);
-        if (effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.computer_win === true) { // The Effect Expires
+        if ((effect.tick.end === combatData.combatRound || combatData.player_win === true || combatData.computer_win === true) && effect.enemyName === combatData.computer.name) { // The Effect Expires, Now checking for Nmae too
+            console.log(effect, "Effect Expiring")
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
                 for (let key in effect.effect) {
                     if (key in combatData.weapons[matchingWeaponIndex]) {

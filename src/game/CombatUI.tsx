@@ -3,6 +3,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import playerHealthbar from './images/player-healthbar.png';
+import playerPortrait from './images/player-portrait.png';
 import { CombatData } from '../components/GameCompiler/CombatStore';
 import { Equipment, GAME_ACTIONS, GameData } from '../components/GameCompiler/GameStore';
 import StatusEffects from '../components/GameCompiler/StatusEffects';
@@ -191,13 +192,14 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
                 </>
             ) : ( '' ) } 
             {state.playerEffects.length > 0 ? (
-                <div className='combat-effects'>
+                <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {
                         return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) }
-            <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '125px', height: '35px' }} />
+            {/* <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '20px', height: '20px', top: "-20px", left: "0px"  }} /> */}
+            <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '125px', height: '35px'}} />
             <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "125px", top: "-9px", left: "22px", fontFamily: "Cinzel" }}>
                 {state.player.name}
             </p>

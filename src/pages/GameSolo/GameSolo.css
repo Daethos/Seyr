@@ -205,6 +205,8 @@
   border: 3px solid purple;
   color: #fdf6d8;
   text-align: center;
+  scrollbar-width: none;
+  z-index: -1;
 }
 #textarea {
   grid-column-start: 3;

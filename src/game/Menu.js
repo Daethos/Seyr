@@ -28,7 +28,7 @@ export default class Menu extends Phaser.Scene {
             'The Ascean',
             'title'
         );
-        this.border = this.createMenuBorder(this.title.obj);
+        // this.border = this.createMenuBorder(this.title.obj);
         this.text = new NewText(
             this,
             this.centerX,

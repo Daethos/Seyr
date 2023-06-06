@@ -40,23 +40,7 @@ export default class Play extends Phaser.Scene {
     }; 
     
     create() { 
-        this.input.setDefaultCursor('url(' + process.env.PUBLIC_URL + '/images/cursor.png), pointer');
-        // "url(" + getBackgroundStyle(gameState?.player.origin) + ")",
-        // process.env.PUBLIC_URL + `/images/astralands_${num}.jpg`;
-
-
-        // const map = this.make.tilemap({ key: 'castle_map' });
-        // const tileSet = map.addTilesetImage('castle_tiles', 'castle_tiles', 32, 32, 0, 0);
-        // const backgroundSet = map.addTilesetImage('layer_1', 'layer_1', 32, 32, 0, 0);
-        // const layer2 = map.createLayer('Tile Layer 2', backgroundSet, 0, 0);
-        // const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
-        // console.log(layer1, layer2, map, "Layers");
-        // layer1.setCollisionByProperty({ collides: true });
-        // this.matter.world.convertTilemapLayer(layer1);
-        // this.matter.world.convertTilemapLayer(layer2);
-        // this.map = map;
-        // this.matter.world.setBounds(0, 0, 960, 640);
-        // this.matter.world.createDebugGraphic();
+        this.input.setDefaultCursor('url(' + process.env.PUBLIC_URL + '/images/cursor.png), pointer'); 
         
         const map = this.make.tilemap({ key: 'top_down' });
         const tileSet = map.addTilesetImage('MainLev2.0', 'MainLev2.0', 32, 32, 0, 0);
@@ -98,7 +82,7 @@ export default class Play extends Phaser.Scene {
         };
           
         let camera = this.cameras.main;
-        camera.zoom = 1.25;
+        camera.zoom = 1;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer

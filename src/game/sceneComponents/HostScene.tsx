@@ -24,6 +24,7 @@ import StoryActions from '../StoryActions';
 import CombatMouseSettings from '../CombatMouseSettings';
 import CombatUI from '../CombatUI';
 import EnemyUI from '../EnemyUI';
+import GameCombatText from '../../components/GameCompiler/GameCombatText';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -780,10 +781,23 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 { showPlayer ? (  
                     <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( 
-                    <div style={{ position: "absolute" }}>
+                    <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} />
                         { state.combatEngaged ? (
+                            <>
+                            <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>
+                            <GameCombatText 
+                                emergencyText={['']} combatRoundText={state.combatRound} story={true}
+                                playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
+                                playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
+                                playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
+                                playerSpecialText={state.player_special_description} computerSpecialText={state.computer_special_description}
+                                playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
+                                playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
+                                />
+                            </div>
                             <EnemyUI state={state} dispatch={dispatch} />
+                            </>
                         ) : ( '' ) }
                     </div>
                 ) }
