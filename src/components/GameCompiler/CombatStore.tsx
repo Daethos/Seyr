@@ -106,6 +106,7 @@ export interface CombatData {
     deityData: [];
 
     weather: string;
+    phaser: boolean;
 };
 
 interface Action {
@@ -157,6 +158,7 @@ export const ACTIONS = {
     PLAYER_REST: 'PLAYER_REST',
     TOGGLED_DAMAGED: 'TOGGLED_DAMAGED',
     SET_GRAPPLING_WIN: 'SET_GRAPPLING_WIN',
+    SET_PHASER: 'SET_PHASER',
 };
 
 export const initialCombatData: CombatData = {
@@ -258,10 +260,16 @@ export const initialCombatData: CombatData = {
     prayerData: [],
     deityData: [],
     weather: '',
+    phaser: false,
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
+        case 'SET_PHASER':
+            return {
+                ...state,
+                phaser: action.payload,
+            };
         case 'SET_GUEST':
             return {
                 ...state,

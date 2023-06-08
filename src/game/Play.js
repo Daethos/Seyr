@@ -18,6 +18,7 @@ export default class Play extends Phaser.Scene {
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
         this.enemy = this.data.gameData.gameData.enemy;
+        this.focus = {};
 
         this.enemies = [];
 
@@ -37,6 +38,8 @@ export default class Play extends Phaser.Scene {
 
         this.isEnemyHanging = false;
         this.isEnemyOnGround = true;
+        this.previousSpeedX = 0;
+        this.previousSpeedY = 0;
     }; 
     
     create() { 
@@ -64,7 +67,7 @@ export default class Play extends Phaser.Scene {
 
 
         this.player.inputKeys = {
-            up: this.input.keyboard.addKeys('W,UP,SPACE'),
+            up: this.input.keyboard.addKeys('W,UP'),
             down: this.input.keyboard.addKeys('S,DOWN'),
             left: this.input.keyboard.addKeys('A,LEFT'),
             right: this.input.keyboard.addKeys('D,RIGHT'),
@@ -79,7 +82,13 @@ export default class Play extends Phaser.Scene {
             pray: this.input.keyboard.addKeys('R'),
             strafe: this.input.keyboard.addKeys('E,Q'),
             shift: this.input.keyboard.addKeys('SHIFT'),
+            pause: this.input.keyboard.addKeys('T'),
+            twist: this.input.mousePointer.rightButtonDown(), 
+            target: this.input.keyboard.addKeys('TAB'),
         };
+ 
+
+
           
         let camera = this.cameras.main;
         camera.zoom = 1;
@@ -87,31 +96,93 @@ export default class Play extends Phaser.Scene {
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
         camera.setBounds(0, 0, 2048, 2048); // Top Down
-        // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
-        //     x: 50,
-        //     y: 400,
-        //     radius: 50,
-        //     // base: this.baseSprite,
-        //     // thumb: this.thumbSprite
-        //     base: this.add.circle(0, 0, 25, 0x800080),
-        //     thumb: this.add.circle(0, 0, 12.5, 0xfdf6d8),
-        //     dir: 2,
-        //     // forceMin: 16,
-        //     // fixed: true,
-        //     // enable: true
-        // });
-        // joystick.setScrollFactor(0);
-        // this.player.joystick = joystick; 
+        var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
+            x: 860,
+            y: 500,
+            radius: 50,
+            // base: this.add.circle(0, 0, 50, 0x800080),
+            // // How to add border to the base ?
+            // thumb: this.add.circle(0, 0, 25, 0xfdf6d8),
+            base: this.add.graphics()
+                .lineStyle(2, 0x000000)
+                .fillStyle(0xfdf6d8) // Set fill style before filling the circle
+                .fillCircle(0, 0, 50)
+                .fillStyle(0x000000) // Set fill style before filling the inner circle
+                .fillCircle(0, 0, 47),
+        
+            thumb: this.add.graphics()
+                .lineStyle(2, 0x000000)
+                .fillStyle(0xfdf6d8) // Set fill style before filling the circle
+                .fillCircle(0, 0, 25)
+                .fillStyle(0x000000) // Set fill style before filling the inner circle
+                .fillCircle(0, 0, 23),
+        
+            dir: '8dir',
+            forceMin: 16,
+            fixed: true,
+            enable: true
+        });
+        joystick.setScrollFactor(0);
+        this.player.joystick = joystick; 
+        // this.player.joystick.on('update', this.handleJoystickUpdate, this);
+            
+        this.player.joystick.on('pointerdown', this.startJoystick, this);
+        this.player.joystick.on('pointerup', this.stopJoystick, this);
+
         // this.stick = this.pad.addStick(0, 0, 200, 'generic');
-        // this.stick.alignBottomLeft(20);
+        // this.stick.alignBottomRight(20);
         this.createWelcome(); 
         this.createStateListener();
         // this.stateAddlistener(); // Figuring out a way to have the ability to always 'listen' in on state changes
     };
 
+    startJoystick(pointer) {
+        // Start tracking joystick movement when the left mouse button is pressed
+        if (pointer.leftButtonDown()) {
+            console.log("Joystick Active")
+            this.player.joystick.isActive = true;
+        };
+    };
+    
+    stopJoystick(pointer) {
+        // Stop tracking joystick movement when the left mouse button is released
+        if (!pointer.leftButtonDown()) {
+            this.player.joystick.isActive = false;
+        };
+    };
+
+    handleJoystickUpdate() {
+        const force = this.player.joystick.force;
+        const angle = this.player.joystick.angle;
+
+        // console.log(`Force: ${Math.floor(force * 100) / 100} Angle: ${Math.floor(angle * 100) / 100}`);
+        if (force > 16) {
+
+            let speedX = 0;
+            let speedY = 0;
+            if (angle > -60 && angle < 60) {
+                if (this.player.flipX) this.player.flipX = false;
+                speedX = 3;
+            };
+            if (angle > 30 && angle < 150) {
+                speedY = 3;
+            };
+            if (angle > 120 || angle < -120) {
+                speedX = -3;
+                if (!this.player.flipX) this.player.flipX = true;
+            };
+            if (angle > -150 && angle < -30) {
+                speedY = -3;
+            };
+              
+            this.player.setVelocity(speedX, speedY); 
+        };
+    };
+
     setupEnemy = async function(data) {
         const setup = new CustomEvent('setup-enemy', { detail: data });
         window.dispatchEvent(setup);
+        this.focus = data;
     };
 
     combatEngaged = async function() {
@@ -253,6 +324,7 @@ export default class Play extends Phaser.Scene {
         this.enemy.update();
         this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
+        if (this.player.joystick.isActive) this.handleJoystickUpdate();
     };
     pause() {
         this.scene.pause();

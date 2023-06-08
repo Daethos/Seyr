@@ -122,6 +122,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             gameRef.current = new Phaser.Game(config); 
             setTimeout(() => {
                 setLoading(false);
+                dispatch({ type: ACTIONS.SET_PHASER, payload: true });
             }, 1000);
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game');

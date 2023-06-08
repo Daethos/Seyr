@@ -119,6 +119,8 @@ const statusEffectCheck = async (combatData) => {
             };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
                 for (let key in effect.effect) {
+                    console.log(key, combatData.computer_weapons, matchingDebuffTargetIndex, effect.effect[key], effect.activeStacks, "Debuff Effect");
+                    if (matchingDebuffTargetIndex === -1) return false;
                     if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
@@ -2543,6 +2545,7 @@ const actionSplitter = async (combatData) => {
         prayerData: combatData.prayerData,
         deityData: combatData.deityData,
         weather: combatData.weather,
+        phaser: combatData.phaser,
     };
     // ==================== STATISTIC LOGIC ====================
     newData.actionData.push(newData.action);
@@ -3076,6 +3079,8 @@ combatData.prayerData.push(combatData.prayerSacrifice);
                 };
 
                 for (let key in effect.effect) {
+                    console.log(matchingDebuffTargetIndex, combatData.computer_weapons[matchingDebuffTargetIndex], key, "Index, Weapon, Key")
+                    if (matchingDebuffTargetIndex === -1) return false;
                     if (key in combatData.computer_weapons[matchingDebuffTargetIndex]) {
                         if (key !== 'dodge') {
                             combatData.computer_weapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
