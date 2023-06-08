@@ -5,6 +5,7 @@ import '../PhaserGame.css'
 import Modal from 'react-bootstrap/Modal';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
+import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin.js';
 import Boot from '../Boot';
 import Preload from '../Preload';
 import Menu from '../Menu';
@@ -85,11 +86,18 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             }
         }, 
         plugins: {
-            global: [{
-                key: 'rexVirtualJoystick',
-                plugin: VirtualJoystickPlugin,
-                start: true
-            }],
+            global: [
+                {
+                    key: 'rexVirtualJoystick',
+                    plugin: VirtualJoystickPlugin,
+                    start: true
+                },
+                {
+                    key: 'rexGlowFilterPipeline',
+                    plugin: GlowFilterPipelinePlugin,
+                    start: true
+                }
+            ],
             scene: [
                 {
                     plugin: PhaserMatterCollisionPlugin,
@@ -420,7 +428,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     async function soundEffects(effects: CombatData) {
         try {
-            if (effects.critical_success === true) {
+            if (effects.realized_player_damage > 0) {
                 const soundEffectMap = {
                     Spooky: playDaethic,
                     Righteous: playDaethic,
@@ -431,8 +439,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     Lightning: playLightning,
                     Sorcery: playSorcery,
                     Wind: playWind,
-                    Pierce: (weapons: any[]) =>
-                      weapons[0].type === "Bow" ? playBow() : playPierce(),
+                    Pierce: (weapons: any[]) => weapons[0].type === "Bow" ? playBow() : playPierce(),
                     Slash: playSlash,
                     Blunt: playBlunt,
                 };
@@ -591,10 +598,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             });
             const response = await newWeaponOrder();
             playWO();
-            dispatch({
-                type: ACTIONS.SET_WEAPON_ORDER,
-                payload: response
-            });
+            dispatch({ type: ACTIONS.SET_WEAPON_ORDER, payload: response });
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order');
         };
@@ -603,10 +607,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     async function setDamageType(damageType: any) {
         try {    
             playWO();
-            dispatch({
-                type: ACTIONS.SET_DAMAGE_TYPE,
-                payload: damageType.target.value
-            });
+            dispatch({ type: ACTIONS.SET_DAMAGE_TYPE, payload: damageType.target.value });
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type');
         };
@@ -615,10 +616,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     async function setPrayerBlessing(prayer: any) {
         try {
             playWO();
-            dispatch({
-                type: ACTIONS.SET_PRAYER_BLESSING,
-                payload: prayer.target.value
-            });
+            dispatch({ type: ACTIONS.SET_PRAYER_BLESSING, payload: prayer.target.value });
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
         };
@@ -647,11 +645,12 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         canvas.style.height = newHeight + 'px';
     };
 
-    const toggleCombatHud = (e: { preventDefault: () => void; key: string; }) => {
+    const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
         e.preventDefault();
         if (e.key === 'v' || e.key === 'V') setCombatHud((prev: boolean) => !prev);
-        if (e.key === 'z' || e.key === 'Z') setShowPlayer((prev: boolean) => !prev);
+        if (e.key === 'c' || e.key === 'C') setShowPlayer((prev: boolean) => !prev);
         if (e.key === 'x' || e.key === 'X') handleInventoryMiddleware();
+        if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
 
 

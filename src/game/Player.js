@@ -12,6 +12,7 @@ import playerActionsThreeAnim from './images/player_actions_three_anim.json';
 import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json';
+import highlightPNG from './images/highlight.png';
  
 export default class Player extends Entity {
     static preload(scene) { 
@@ -23,6 +24,7 @@ export default class Player extends Entity {
         scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
         scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
+        scene.load.image(`highlight`, highlightPNG);
 
         const spriteNameOne = scene?.gameData?.ascean?.weapon_one.imgURL.split('/')[2].split('.')[0];
         const spriteNameTwo = scene?.gameData?.ascean?.weapon_two.imgURL.split('/')[2].split('.')[0];
@@ -46,6 +48,7 @@ export default class Player extends Entity {
         this.frameCount = 0;
         this.currentWeaponSprite = spriteName;
         this.targetIndex = 0;
+        this.currentTarget = null;
         this.setScale(0.8);   
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
@@ -63,9 +66,28 @@ export default class Player extends Entity {
         this.autorunUp = false;
         this.autorunLeft = false;
         this.autorunRight = false;
+        
+        // this.highlight = this.scene.add.sprite(0, 0, 'highlight');
+        this.highlight = this.scene.add.graphics()
+            .lineStyle(1, 0xFFD700) // Set the border color and thickness as per your preference
+            .strokeCircle(0, 0, 10); // Set the radius as per your requirement
+        this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
+            intensity: 0.02,
+        });
+        this.highlight.setVisible(false);
+
         this.setFixedRotation();   
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
+    };
+
+    highlightTarget(sprite) {
+        this.highlight.setVisible(true);
+        this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
+    };
+
+    removeHighlight() {
+        this.highlight.setVisible(false);
     };
 
     weaponSprite(weapon) {
@@ -107,7 +129,7 @@ export default class Player extends Entity {
                         this.actionTarget = other;
                         const isNewEnemy = !this.touching.some(obj => obj.ascean._id === other.gameObjectB.ascean._id);
                         if (isNewEnemy) this.touching.push(other.gameObjectB);
-                          
+                        this.currentTarget = other.gameObjectB;
                         // if (!other.gameObject.ascean._id ) this.touching.push(other.gameObjectB);
                         this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
                         this.scene.combatEngaged();
@@ -171,31 +193,37 @@ export default class Player extends Entity {
         // =================== TARGETING ================== \\
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB)) {
+            if (this.currentTarget) this.currentTarget.clearTint();
             console.log(this.touching, this.targetIndex);
             const newTarget = this.touching[this.targetIndex];
             this.targetIndex = this.targetIndex + 1 === this.touching.length ? 0 : this.targetIndex + 1;
-            this.scene.setupEnemy({ game: newTarget.ascean, enemy: newTarget.combatData, health: newTarget.health });
-
-            // this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
+            this.scene.setupEnemy({ game: newTarget.ascean, enemy: newTarget.combatData, health: newTarget.health }); 
+            this.currentTarget = newTarget;
+            this.highlightTarget(newTarget);
         };
 
-        // =================== CROUCHING ================== \\
-
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.crouch.C)) {
-            this.isCrouching = this.isCrouching ? false : true;
-            const displacement = 16;
-            if (this.isCrouching) {
-                this.body.parts[2].position.y += displacement;
-                this.body.parts[2].circleRadius = 21;
-                this.body.parts[1].vertices[0].y += displacement;
-                this.body.parts[1].vertices[1].y += displacement; 
-            } else {
-                this.body.parts[2].position.y -= displacement;
-                this.body.parts[2].circleRadius = 36;
-                this.body.parts[1].vertices[0].y -= displacement;
-                this.body.parts[1].vertices[1].y -= displacement;
+        // let targetInterval;
+        if (this.currentTarget) {
+            this.highlightTarget(this.currentTarget);
+            // targetInterval = this.scene.time.addEvent({
+            //     delay: 1000,
+            //     callback: () => {
+            //         if (!this.currentTarget.isTinted) {
+            //             this.currentTarget.setTint(0xFF0000); // Apply red tint
+            //         } else {
+            //             this.currentTarget.clearTint(); // Remove tint
+            //         };
+            //     },
+            //     callbackScope: this,
+            //     loop: true,
+            // });
+        } else {
+            if (this.highlight.visible) {
+                this.removeHighlight();
+                // clearInterval(targetInterval);
             };
         };
+ 
 
         // =================== JUMPING ================== \\
 
@@ -449,13 +477,13 @@ export default class Player extends Entity {
             this.anims.play('player_hurt', true).on('animationcomplete', () => {
                 this.isHurt = false;
             }); 
-        } else if (this.isCrouching && (this.isAttacking || this.isPosturing || this.isCountering)) { // ATTACKING WHILE CROUCHING
-            console.log("Pinging ATTACKING WHILE CROUCHING");
-            this.anims.play('player_crouch_attacks', true).on('animationcomplete', () => {
-                this.isAttacking = false;
-                this.isPosturing = false;
-                this.isCountering = false;
-            });
+        // } else if (this.isCrouching && (this.isAttacking || this.isPosturing || this.isCountering)) { // ATTACKING WHILE CROUCHING
+        //     console.log("Pinging ATTACKING WHILE CROUCHING");
+        //     this.anims.play('player_crouch_attacks', true).on('animationcomplete', () => {
+        //         this.isAttacking = false;
+        //         this.isPosturing = false;
+        //         this.isCountering = false;
+        //     });
         } else if (this.isCountering) { // COUNTERING
 
             this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
@@ -543,8 +571,8 @@ export default class Player extends Entity {
             this.anims.play('player_attack_1', true).on('animationcomplete', () => {
                 this.isAttacking = false;
             }); 
-        } else if (this.isCrouching && (Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // CROUCHING AND MOVING
-            this.anims.play('player_roll', true);
+        // } else if (this.isCrouching && (Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // CROUCHING AND MOVING
+        //     this.anims.play('player_roll', true);
         } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // RUNNING
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
@@ -554,7 +582,7 @@ export default class Player extends Entity {
             });
         } else if (this.isHealing) { // HEALING
             console.log("Pinging HEALING")
-            this.anims.play('player_health', true).on('animationcomplete', () => {
+            this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.scene.drinkFlask();
                 this.isHealing = false;
             });
@@ -563,8 +591,8 @@ export default class Player extends Entity {
             this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.isPraying = false;
             });
-        } else if (this.isCrouching) { // CROUCHING IDLE
-            this.anims.play('player_crouch_idle', true);
+        // } else if (this.isCrouching) { // CROUCHING IDLE
+        //     this.anims.play('player_crouch_idle', true);
         } else { // IDLE
             this.anims.play('player_idle', true);
         }; 
@@ -575,7 +603,29 @@ export default class Player extends Entity {
 
     weaponRotation() { 
 
-        if (this.isCountering) { 
+        if (this.isPraying) { // Change to isPraying for Live
+            if (this.spriteWeapon.depth < 3) this.spriteWeapon.setDepth(3);
+            if (this.flipX) {
+                if (this.frameCount === 0) {
+                    this.spriteWeapon.setOrigin(0.65, 1.5);
+                    this.spriteWeapon.setAngle(-175);
+                };
+                if (this.frameCount === 8) {
+                    this.spriteWeapon.setOrigin(-0.3, 0.65);
+                    this.spriteWeapon.setAngle(-225);
+                };
+            } else {
+                if (this.frameCount === 0) {
+                    this.spriteWeapon.setOrigin(-0.75, 0.65);
+                    this.spriteWeapon.setAngle(-275);
+                };
+                if (this.frameCount === 8) {
+                    this.spriteWeapon.setOrigin(0.35, 1.3);
+                    this.spriteWeapon.setAngle(-225);
+                }; 
+            };
+            this.frameCount += 1;
+        } else if (this.isCountering) { 
             if (this.flipX) {
                 this.spriteWeapon.setOrigin(-0.4, 1.6);
                 this.spriteWeapon.setAngle(-135);
@@ -738,40 +788,33 @@ export default class Player extends Entity {
                     this.spriteWeapon.setOrigin(0, 0.5);
                     this.spriteWeapon.setAngle(-165);
                 };
-                // if (this.frameCount === 3) {
-                //     this.spriteWeapon.setAngle(-90);
-                // };
+                if (this.frameCount === 3) {
+                    this.spriteWeapon.setOrigin(0, 1);
+                    this.spriteWeapon.setAngle(-45);
+                };
                 if (this.frameCount === 5) {
-                    this.spriteWeapon.setAngle(0);
+                    this.spriteWeapon.setOrigin(-0.25, 1.1);
+                    this.spriteWeapon.setAngle(15);
                 }; 
                 if (this.frameCount === 7) {
-                    this.spriteWeapon.setOrigin(-0.1, 1.3);
-                    this.spriteWeapon.setAngle(-165);
+                    this.spriteWeapon.setOrigin(-0.1, 1.2);
+                    this.spriteWeapon.setAngle(-205);
                 };
                 if (this.frameCount === 9) {
-                    this.spriteWeapon.setOrigin(-0.2, 1.3);
-                    this.spriteWeapon.setAngle(-180);
+                    this.spriteWeapon.setAngle(-190);
                 };
                 if (this.frameCount === 11) {
-                    this.spriteWeapon.setOrigin(-0.3, 1.3);
-                    this.spriteWeapon.setAngle(-195);
-                };
-                if (this.frameCount === 13) {
-                    this.spriteWeapon.setOrigin(-0.4, 1.3);
-                };
-                if (this.frameCount === 15) {
-                    this.spriteWeapon.setOrigin(-0.5, 1.3);
+                    this.spriteWeapon.setAngle(-175);
                 };
             };
-            console.log(this.frameCount, "FRAME COUNT"); 
             this.frameCount += 1;
-        } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isCrouching && !this.isRolling && !this.flipX) {
-            this.spriteWeapon.setDepth(this + 1);
+        } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && !this.flipX) {
+            this.spriteWeapon.setDepth(3);
             this.spriteWeapon.setOrigin(-0.25, 0.5);
             this.spriteWeapon.setAngle(107.5);
             this.frameCount = 0;
-        } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isCrouching && !this.isRolling && this.flipX) { 
-            this.spriteWeapon.setDepth(this + 1);
+        } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && this.flipX) { 
+            this.spriteWeapon.setDepth(3);
             this.spriteWeapon.setOrigin(0.5, 1.2);
             this.spriteWeapon.setAngle(-194.5);
             this.frameCount = 0;

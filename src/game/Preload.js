@@ -41,6 +41,7 @@ export default class Preload extends Phaser.Scene {
         Enemy.preload(this);
         Treasure.preload(this);
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
+        this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
         this.load.image('castle_tiles', castle_tiles);
         this.load.image('layer_1', layer_1);
         this.load.tilemapTiledJSON('castle_map', castle_map);

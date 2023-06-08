@@ -71,12 +71,11 @@ export default class Play extends Phaser.Scene {
             down: this.input.keyboard.addKeys('S,DOWN'),
             left: this.input.keyboard.addKeys('A,LEFT'),
             right: this.input.keyboard.addKeys('D,RIGHT'),
-            attack: this.input.keyboard.addKeys('ONE,SHIFT-ONE'),
-            counter: this.input.keyboard.addKeys('FIVE,SHIFT-FIVE'),
-            dodge: this.input.keyboard.addKeys('FOUR,SHIFT-FOUR'),
-            posture: this.input.keyboard.addKeys('TWO,SHIFT-TWO'),
-            roll: this.input.keyboard.addKeys('THREE,SHIFT-THREE'),
-            crouch: this.input.keyboard.addKeys('C'),
+            attack: this.input.keyboard.addKeys('ONE'),
+            counter: this.input.keyboard.addKeys('FIVE'),
+            dodge: this.input.keyboard.addKeys('FOUR'),
+            posture: this.input.keyboard.addKeys('TWO'),
+            roll: this.input.keyboard.addKeys('THREE'), 
             hurt: this.input.keyboard.addKeys('H'),
             consume: this.input.keyboard.addKeys('F'),
             pray: this.input.keyboard.addKeys('R'),
@@ -85,13 +84,10 @@ export default class Play extends Phaser.Scene {
             pause: this.input.keyboard.addKeys('T'),
             twist: this.input.mousePointer.rightButtonDown(), 
             target: this.input.keyboard.addKeys('TAB'),
-        };
- 
-
-
+        }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 1;
+        camera.zoom = 2;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
@@ -100,21 +96,18 @@ export default class Play extends Phaser.Scene {
             x: 860,
             y: 500,
             radius: 50,
-            // base: this.add.circle(0, 0, 50, 0x800080),
-            // // How to add border to the base ?
-            // thumb: this.add.circle(0, 0, 25, 0xfdf6d8),
             base: this.add.graphics()
                 .lineStyle(2, 0x000000)
-                .fillStyle(0xfdf6d8) // Set fill style before filling the circle
+                .fillStyle(0xfdf6d8) 
                 .fillCircle(0, 0, 50)
-                .fillStyle(0x000000) // Set fill style before filling the inner circle
+                .fillStyle(0x000000)
                 .fillCircle(0, 0, 47),
         
             thumb: this.add.graphics()
                 .lineStyle(2, 0x000000)
-                .fillStyle(0xfdf6d8) // Set fill style before filling the circle
+                .fillStyle(0xfdf6d8) 
                 .fillCircle(0, 0, 25)
-                .fillStyle(0x000000) // Set fill style before filling the inner circle
+                .fillStyle(0x000000)
                 .fillCircle(0, 0, 23),
         
             dir: '8dir',
