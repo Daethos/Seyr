@@ -65,18 +65,18 @@ export default class Enemy extends Entity {
         this.setFixedRotation();
         this.enemyStateListener();
         this.enemySensor = enemySensor;
-        // this.scene.matterCollision.addOnCollideStart({
-        //     objectA: [enemySensor],
-        //     callback: other => {
-        //         if (other.gameObjectB && other.gameObjectB.name === 'player') {
-        //             this.attacking = other.gameObjectB;
-        //             this.actionTarget = other;
-        //             other.gameObjectB.inCombat = true;
-        //             this.scene.combatEngaged();
-        //         };
-        //     },
-        //     context: this.scene,
-        // }); 
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [enemySensor],
+            callback: other => {
+                if (other.gameObjectB && other.gameObjectB.name === 'player') {
+                    this.attacking = other.gameObjectB;
+                    this.actionTarget = other;
+                    other.gameObjectB.inCombat = true;
+                    this.scene.combatEngaged();
+                };
+            },
+            context: this.scene,
+        }); 
     };
 
     createEnemy() {
@@ -92,13 +92,21 @@ export default class Enemy extends Entity {
         this.health = e.detail.game.health.total;
         this.combatData = e.detail.combat; 
         
-        const spriteNameOne = e.detail.game.weapon_one.imgURL.split('/')[2].split('.')[0];
+        const weaponName = e.detail.game.weapon_one.imgURL.split('/')[2].split('.')[0];
         
-        this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteNameOne);
+        this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, weaponName);
         this.spriteWeapon.setScale(0.6);
         this.spriteWeapon.setOrigin(0.25, 1);
         this.scene.add.existing(this.spriteWeapon);
         this.spriteWeapon.setAngle(-195);
+
+        const shieldName = e.detail.game.shield.imgURL.split('/')[2].split('.')[0];
+
+        this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
+        this.spriteShield.setScale(0.6);
+        this.spriteShield.setOrigin(0.5, 0.5);
+        this.scene.add.existing(this.spriteShield);
+        this.spriteShield.setVisible(false);
 
         window.removeEventListener('enemy-fetched', this.enemyFetchedFinishedListener);
     };
@@ -125,6 +133,21 @@ export default class Enemy extends Entity {
                 this.attacking = null;
             };
         });
+    };
+
+    attackInterval() {
+        if (this.scene.state.computer_weapons[0]) {
+            console.log("THere is a weapon in computer_weapons", this.scene.state.computer_weapons[0].name);
+            return this.scene.state.computer_weapons[0].grip;
+        } else if (this.currentWeaponSprite !== '') {
+            console.log("There is no weapon in computer_weapons, but there is a currentWeaponSprite", this.currentWeaponSprite);
+            const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
+            const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
+            return weapon.grip;
+        } else {
+            console.log("There is no weapon in computer_weapons, and no currentWeaponSprite, using weapon_one", this.ascean.weapon_one.name);
+            return this.ascean.weapon_one.grip;
+        };
     };
 
     update() {
@@ -159,7 +182,8 @@ export default class Enemy extends Entity {
                 };
             } else {
                 if (this.attackTimer == null) {
-                    const intervalTime = this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 1250 : 750;
+                    console.log(this.scene.state, "The State of Combat", this.currentWeaponSprite);
+                    const intervalTime = this.attackInterval() === 'Two Hand' ? 1250 : 750;
                     this.attackTimer = setInterval(this.attack, intervalTime, this.attacking);
                 };
                 const times = [10, 20, 30, 40];
@@ -259,8 +283,9 @@ export default class Enemy extends Entity {
             this.anims.play(`player_idle`, true);
         };
 
-        if (this.spriteWeapon) {
+        if (this.spriteWeapon && this.spriteShield) {
             this.spriteWeapon.setPosition(this.x, this.y);
+            this.spriteShield.setPosition(this.x, this.y);
             this.weaponRotation();
         }; 
     };
@@ -351,8 +376,6 @@ export default class Enemy extends Entity {
 
         return computerAction;
     };
-
-
 
     isAtEdgeOfLedge(scene) { 
         const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body

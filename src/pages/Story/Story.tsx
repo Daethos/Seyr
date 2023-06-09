@@ -66,7 +66,7 @@ const Story = ({ user }: Props) => {
                     // 'opponent': enemyResponse?.game.level,
                 });
                 // dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: enemyResponse?.combat }); 
-                const sanitizedAssets = await sanitizeAssets(assetResponse.data.weapons);
+                const sanitizedAssets = await sanitizeAssets(assetResponse.data);
                 setAssets(sanitizedAssets);
                 console.log(sanitizedAssets, "Sanitized Assets ?")
                 gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse }); 
@@ -80,17 +80,22 @@ const Story = ({ user }: Props) => {
     }, [asceanID]); 
 
     const sanitizeAssets = async (assets: any) => {
+        const fields = [ 'weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets' ];
         const newAssets: any = [];
-        const weaponSprite = async (weapon: any) => {
-            return weapon.imgURL.split('/')[2].split('.')[0];
+        const imageSprite = async (image: any) => {
+            return image.imgURL.split('/')[2].split('.')[0];
         };
-        await assets.forEach(async (asset: any, index: number) => {
-            const sprite = await weaponSprite(asset);
-            newAssets.push({
-                sprite: sprite,
-                imgURL: asset.imgURL,
-            });
-        });
+
+        await Promise.all(fields.map(async (field: string) => {
+            await Promise.all(assets[field].map(async (item: any) => {
+                const sprite = await imageSprite(item);
+                newAssets.push({
+                    sprite: sprite,
+                    imgURL: item.imgURL,
+                });
+            })); 
+        }));
+        
         return newAssets;
     };
 
@@ -149,7 +154,7 @@ const Story = ({ user }: Props) => {
     };
         
     return (
-        <div style={{  }}>
+        <div>
         { gameChange ? ( '' )
         : ( <HostScene 
                 user={user} setGameChange={setGameChange} gameChange={gameChange} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch}

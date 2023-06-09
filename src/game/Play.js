@@ -86,28 +86,28 @@ export default class Play extends Phaser.Scene {
         }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 2;
+        camera.zoom = 5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
         camera.setBounds(0, 0, 2048, 2048); // Top Down
         var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
-            x: 860,
-            y: 500,
-            radius: 50,
+            x: 860,// 750 for 1.5
+            y: 500, // 440 for 1.5
+            radius: 35,
             base: this.add.graphics()
                 .lineStyle(2, 0x000000)
                 .fillStyle(0xfdf6d8) 
-                .fillCircle(0, 0, 50)
+                .fillCircle(0, 0, 35)
                 .fillStyle(0x000000)
-                .fillCircle(0, 0, 47),
+                .fillCircle(0, 0, 33),
         
             thumb: this.add.graphics()
                 .lineStyle(2, 0x000000)
                 .fillStyle(0xfdf6d8) 
-                .fillCircle(0, 0, 25)
+                .fillCircle(0, 0, 17)
                 .fillStyle(0x000000)
-                .fillCircle(0, 0, 23),
+                .fillCircle(0, 0, 15),
         
             dir: '8dir',
             forceMin: 16,
@@ -133,8 +133,7 @@ export default class Play extends Phaser.Scene {
         });
 
         this.createWelcome(); 
-        this.createStateListener();
-        // this.stateAddlistener(); // Figuring out a way to have the ability to always 'listen' in on state changes
+        this.createStateListener(); 
     };
 
     startJoystick(pointer) {
@@ -155,8 +154,7 @@ export default class Play extends Phaser.Scene {
     handleJoystickUpdate() {
         const force = this.player.joystick.force;
         const angle = this.player.joystick.angle;
-
-        // console.log(`Force: ${Math.floor(force * 100) / 100} Angle: ${Math.floor(angle * 100) / 100}`);
+ 
         if (force > 16) {
 
             let speedX = 0;
@@ -229,20 +227,7 @@ export default class Play extends Phaser.Scene {
                 break;
         };
     };
-
-    stateAddlistener = async function() {
-        // console.log("State Listener Added");
-        // Handle Event Listener to Dispatch State
-        window.addEventListener('update-combat-data', this.stateFinishedListener.bind(this));
-        
-    };
-    
-    stateFinishedListener = async function(e) {
-        // console.log(e.detail, "State Finished");
-        this.state = e.detail;
-        window.removeEventListener('update-combat-data', this.stateFinishedListener);
-    };
-
+ 
     
 
     drinkFlask = async function() {

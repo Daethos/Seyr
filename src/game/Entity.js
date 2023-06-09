@@ -47,6 +47,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.knockbackDirection = {};
         this.knockbackDuration = 250;
 
+        this.spriteShield = null;
         this.spriteWeapon = null;
         this.frameCount = 0;
         this.currentWeaponSprite = '';
@@ -235,7 +236,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     weaponRotation() { 
-
+        if (!this.isPosturing && this.spriteShield) this.spriteShield.setVisible(false);
         if (this.isPraying) { // Change to isPraying for Live
             if (this.spriteWeapon.depth < 3) this.spriteWeapon.setDepth(3);
             if (this.flipX) {
@@ -393,51 +394,64 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isPosturing) {
+            this.spriteShield.setVisible(true);
             if (this.flipX) {
                 if (this.frameCount === 0) {
                     this.spriteWeapon.setOrigin(0.25, 1.1);
                     this.spriteWeapon.setAngle(55);
+                    this.spriteShield.setOrigin(1, 0.15);
                 };
                 if (this.frameCount === 3) {
                     this.spriteWeapon.setOrigin(0.5, 0.75);
                     this.spriteWeapon.setAngle(40);
+                    this.spriteShield.setOrigin(1.05, 0.15)
                 };
                 if (this.frameCount === 5) {
                     this.spriteWeapon.setAngle(25);
+                    this.spriteShield.setOrigin(1.1, 0.15);
                 }; 
                 if (this.frameCount === 7) {
                     this.spriteWeapon.setOrigin(0, 1.2);
                     this.spriteWeapon.setAngle(-220);
+                    this.spriteShield.setOrigin(1.15, 0.15);
                 };
                 if (this.frameCount === 9) {
                     this.spriteWeapon.setOrigin(0, 1.4);
                     this.spriteWeapon.setAngle(-235);
+                    this.spriteShield.setOrigin(1.2, 0.15);
                 };
                 if (this.frameCount === 11) {
                     this.spriteWeapon.setAngle(-250);
+                    this.spriteShield.setOrigin(1, 0.15);
                 }; 
             } else {
                 if (this.frameCount === 0) {
                     this.spriteWeapon.setOrigin(0, 0.5);
                     this.spriteWeapon.setAngle(-165);
+                    this.spriteShield.setOrigin(0, 0.25);
                 };
                 if (this.frameCount === 3) {
                     this.spriteWeapon.setOrigin(0, 1);
                     this.spriteWeapon.setAngle(-45);
+                    this.spriteShield.setOrigin(-0.05, 0.15);
                 };
                 if (this.frameCount === 5) {
                     this.spriteWeapon.setOrigin(-0.25, 1.1);
                     this.spriteWeapon.setAngle(15);
+                    this.spriteShield.setOrigin(-0.1, 0.15);
                 }; 
                 if (this.frameCount === 7) {
                     this.spriteWeapon.setOrigin(-0.1, 1.2);
                     this.spriteWeapon.setAngle(-205);
+                    this.spriteShield.setOrigin(-0.15, 0.15);
                 };
                 if (this.frameCount === 9) {
                     this.spriteWeapon.setAngle(-190);
+                    this.spriteShield.setOrigin(-0.2, 0.15);
                 };
                 if (this.frameCount === 11) {
                     this.spriteWeapon.setAngle(-175);
+                    this.spriteShield.setOrigin(0, 0.15);
                 };
             };
             this.frameCount += 1;
@@ -467,7 +481,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
  
 export function screenShake(scene) {
-    const duration = 20;  
+    const duration = 40;  
     const intensity = 0.0075;  
     scene.cameras.main.shake(duration, intensity);
 };
