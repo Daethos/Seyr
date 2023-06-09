@@ -208,6 +208,17 @@
   scrollbar-width: none;
   z-index: -1;
 }
+#story-console {
+  position: absolute;
+  text-align: center;
+  top: 140px;
+  background-color: black;
+  border: 3px solid purple;
+  border-radius: 6px;
+  color: #fdf6d8;
+  scrollbar-width: none;
+  z-index: -1;
+}
 #textarea {
   grid-column-start: 3;
   grid-column-end: 5;

@@ -60,7 +60,7 @@ const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, play
         <div id={spectator ? 'spectator-textarea' : story ? "" : "textarea"}>
             <textarea 
                 style={story ? storyStyle : {}}
-                className={story ? "" : "text-box"} id="console" 
+                className={story ? "" : "text-box"} id={story ? "story-console" : "console"} 
                 value={text()}
                 readOnly>
             </textarea>

@@ -38,8 +38,7 @@ export default class Play extends Phaser.Scene {
 
         this.isEnemyHanging = false;
         this.isEnemyOnGround = true;
-        this.previousSpeedX = 0;
-        this.previousSpeedY = 0;
+        this.minimap = null;
     }; 
     
     create() { 
@@ -117,13 +116,22 @@ export default class Play extends Phaser.Scene {
         });
         joystick.setScrollFactor(0);
         this.player.joystick = joystick; 
-        // this.player.joystick.on('update', this.handleJoystickUpdate, this);
-            
         this.player.joystick.on('pointerdown', this.startJoystick, this);
         this.player.joystick.on('pointerup', this.stopJoystick, this);
+        this.minimap = this.cameras.add(725, 10, 225, 150).setName('mini')
+        this.minimap.scrollX = 2048;
+        this.minimap.scrollY = 2048;
+        this.minimap.zoom = 0.25;
+        this.minimap.startFollow(this.player);
+        this.minimap.setLerp(0.1, 0.1);
+        this.input.keyboard.on('keydown-Z', () => {
+            if (this.minimap.visible) {
+                this.minimap.visible = false;
+            } else {
+                this.minimap.visible = true;
+            };
+        });
 
-        // this.stick = this.pad.addStick(0, 0, 200, 'generic');
-        // this.stick.alignBottomRight(20);
         this.createWelcome(); 
         this.createStateListener();
         // this.stateAddlistener(); // Figuring out a way to have the ability to always 'listen' in on state changes
@@ -318,6 +326,7 @@ export default class Play extends Phaser.Scene {
         this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
         if (this.player.joystick.isActive) this.handleJoystickUpdate();
+        // this.minimap.update();
     };
     pause() {
         this.scene.pause();

@@ -58,22 +58,22 @@ async function getTestEquipment(req, res) {
 async function indexEquipment(req, res) {
     try {
         const weapons = await Weapon.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
-        const shields = await Shield.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
-        const helmets = await Helmet.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
-        const chests = await Chest.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
-        const legs = await Legs.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
-        const rings = await Ring.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
-        const amulets = await Amulet.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
-        const trinkets = await Trinket.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
+        // const shields = await Shield.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        // const helmets = await Helmet.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        // const chests = await Chest.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        // const legs = await Legs.find({ rarity: { $in: [ 'Epic', 'Legendary' ] } }).populate().exec();
+        // const rings = await Ring.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
+        // const amulets = await Amulet.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
+        // const trinkets = await Trinket.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
         res.status(200).json({ data: {
             weapons,
-            shields,
-            helmets,
-            chests,
-            legs,
-            rings,
-            amulets,
-            trinkets
+            // shields,
+            // helmets,
+            // chests,
+            // legs,
+            // rings,
+            // amulets,
+            // trinkets
         } 
     });
     } catch (err) {

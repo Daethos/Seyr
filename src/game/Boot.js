@@ -7,6 +7,7 @@ export default class Boot extends Phaser.Scene {
         this.enemy = {};
         this.state = {};
         this.gameState = {};
+        this.assets = {};
     };
     
     init() { };
@@ -18,10 +19,13 @@ export default class Boot extends Phaser.Scene {
         window.addEventListener('get-enemy', this.enemyFinishedEventListener);
         window.addEventListener('get-combat-data', this.stateFinishedEventListener);
         window.addEventListener('get-game-data', this.gameStateFinishedEventListener);
+        window.addEventListener('send-assets', this.assetsFinishedEventListener);
+        const sendAssets = new CustomEvent('retrieve-assets');
         const getAscean = new CustomEvent('request-ascean');
         const getEnemy = new CustomEvent('request-enemy');
         const getState = new CustomEvent('request-combat-data');
         const getGameData = new CustomEvent('request-game-data');
+        window.dispatchEvent(sendAssets);
         window.dispatchEvent(getAscean);
         window.dispatchEvent(getEnemy);
         window.dispatchEvent(getState);
@@ -31,9 +35,15 @@ export default class Boot extends Phaser.Scene {
                 ascean: this.ascean,
                 enemy: this.enemy,
                 state: this.state,
-                gameState: this.gameState
+                gameState: this.gameState,
+                assets: this.assets,
             } 
         });
+    };
+
+    assetsFinishedEventListener = (e) => {
+        this.assets = e.detail;
+        window.removeEventListener('send-assets', this.assetsFinishedEventListener);
     };
 
     asceanFinishedEventListener = (e) => {

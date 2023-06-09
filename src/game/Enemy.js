@@ -24,6 +24,7 @@ export default class Enemy extends Entity {
         scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
         scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
+
     };
 
     constructor(data) {
@@ -89,16 +90,28 @@ export default class Enemy extends Entity {
         console.log(e.detail, "Enemy Fetched")
         this.ascean = e.detail.game;
         this.health = e.detail.game.health.total;
-        this.combatData = e.detail.combat;
+        this.combatData = e.detail.combat; 
+        
+        const spriteNameOne = e.detail.game.weapon_one.imgURL.split('/')[2].split('.')[0];
+        
+        this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteNameOne);
+        this.spriteWeapon.setScale(0.6);
+        this.spriteWeapon.setOrigin(0.25, 1);
+        this.scene.add.existing(this.spriteWeapon);
+        this.spriteWeapon.setAngle(-195);
+
         window.removeEventListener('enemy-fetched', this.enemyFetchedFinishedListener);
-    }
+    };
+
+    weaponSprite(weapon) {
+        return weapon.imgURL.split('/')[2].split('.')[0];
+    };
  
     enemyStateListener() {
         window.addEventListener('update-combat-data', (e) => {
             // console.log(e.detail, "State Updated");
-            // if (this.health > e.detail.new_player_health) this.isHurt = true;
             if (this.ascean.name !== e.detail.computer.name) return;
-            console.log(e.detail.computer.name, this.ascean.name, "Is This The Same Ascean ?");
+            if (this.health > e.detail.new_computer_health) this.isHurt = true;
             console.log(this.health, "Current Health Pre Update", e.detail.new_computer_health, "New Health Post Update For: ", e.detail.computer.name);
             this.health = e.detail.new_computer_health;
             if (e.detail.new_computer_health <= 0) {
@@ -107,9 +120,7 @@ export default class Enemy extends Entity {
                 this.inCombat = false;
                 this.attacking = null;
             };
-            // if (this.isDead) this.anims.play('player_death', true);
-            // if (this.isHurt) this.anims.play('player_hurt', true);
-            if (e.detail.new_player_health <= 0) {
+            if (e.detail.new_computer_health <= 0) {
                 this.inCombat = false;
                 this.attacking = null;
             };
@@ -117,6 +128,10 @@ export default class Enemy extends Entity {
     };
 
     update() {
+        if (this.scene.state.computer_weapons[0] && this.currentWeaponSprite !== this.weaponSprite(this.scene.state.computer_weapons[0]) && this.ascean._id === this.scene.state.computer._id) {
+            this.currentWeaponSprite = this.weaponSprite(this.scene.state.computer_weapons[0]);
+            this.spriteWeapon.setTexture(this.currentWeaponSprite);
+        };
         if (this.attacking) { 
             let direction = this.attacking.position.subtract(this.position);
             if (direction.length() >=  150) {
@@ -154,7 +169,11 @@ export default class Enemy extends Entity {
         
         this.setFlipX(this.velocity.x < 0);
 
-        if (this.isCountering) { // COUNTERING
+        if (this.isHurt) {
+            this.anims.play('player_hurt', true).on('animationcomplete', () => {
+                this.isHurt = false;
+            }); 
+        } else if (this.isCountering) { // COUNTERING
             this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
                 this.isCountering = false; 
             });
@@ -239,6 +258,11 @@ export default class Enemy extends Entity {
         } else {
             this.anims.play(`player_idle`, true);
         };
+
+        if (this.spriteWeapon) {
+            this.spriteWeapon.setPosition(this.x, this.y);
+            this.weaponRotation();
+        }; 
     };
 
     attack = (target) => {

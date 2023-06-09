@@ -34,23 +34,23 @@ export default class Preload extends Phaser.Scene {
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
-        // this.load.script('generic', 'phaser-virtual-joystick.min.js');
-        // this.load.atlas('generic', joystickPng, joystickJson);  
-
         Player.preload(this);
         Enemy.preload(this);
         Treasure.preload(this);
+
+        this.gameData.assets.forEach(asset => {
+            this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
+        });
+
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
-        this.load.image('castle_tiles', castle_tiles);
-        this.load.image('layer_1', layer_1);
-        this.load.tilemapTiledJSON('castle_map', castle_map);
+        // this.load.image('castle_tiles', castle_tiles);
+        // this.load.image('layer_1', layer_1);
+        // this.load.tilemapTiledJSON('castle_map', castle_map);
 
         // Top-Down Attempt
         this.load.image('MainLev2.0', MainLev2);
-        console.log(MainLev2, 'MainLev2');
         this.load.tilemapTiledJSON('top_down', top_down);
-        
         this.createLoadingBar();
     };
 

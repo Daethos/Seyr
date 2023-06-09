@@ -85,6 +85,8 @@ export default class Menu extends Phaser.Scene {
         this.scene.start('Play', {
             gameData: this.gameData
         });
+
+        
         const launchGame = new CustomEvent('launch-game', { detail: true });
         window.dispatchEvent(launchGame)
     };

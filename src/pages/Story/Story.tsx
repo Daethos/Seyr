@@ -2,6 +2,7 @@ import { useEffect, useState, useReducer } from 'react'
 import { useParams } from 'react-router-dom';
 import * as asceanAPI from '../../utils/asceanApi';  
 import * as settingsAPI from '../../utils/settingsApi';
+import * as eqpAPI from '../../utils/equipmentApi';
 import HostScene from '../../game/sceneComponents/HostScene';
 import { GAME_ACTIONS, GameStore, initialGameData, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
@@ -15,6 +16,7 @@ const Story = ({ user }: Props) => {
     const { asceanID } = useParams();
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
+    const [assets, setAssets] = useState([]);
     const [gameChange, setGameChange] = useState<boolean>(true);
     const [asceanState, setAsceanState] = useState({
         ascean: {},
@@ -37,12 +39,13 @@ const Story = ({ user }: Props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [gameStateResponse, combatStateResponse, gameSettingResponse] = await Promise.all([
+                const [gameStateResponse, combatStateResponse, gameSettingResponse, assetResponse] = await Promise.all([
                     asceanAPI.getOneAscean(asceanID),
                     asceanAPI.getAsceanStats(asceanID),
                     settingsAPI.getSettings(),
-                    // getOpponent(),
+                    eqpAPI.index(),
                 ]);
+                console.log(assetResponse, "Weapon Assets ?")
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
@@ -63,6 +66,9 @@ const Story = ({ user }: Props) => {
                     // 'opponent': enemyResponse?.game.level,
                 });
                 // dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: enemyResponse?.combat }); 
+                const sanitizedAssets = await sanitizeAssets(assetResponse.data.weapons);
+                setAssets(sanitizedAssets);
+                console.log(sanitizedAssets, "Sanitized Assets ?")
                 gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse }); 
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 setGameChange(false);
@@ -72,6 +78,21 @@ const Story = ({ user }: Props) => {
         };
         fetchData();
     }, [asceanID]); 
+
+    const sanitizeAssets = async (assets: any) => {
+        const newAssets: any = [];
+        const weaponSprite = async (weapon: any) => {
+            return weapon.imgURL.split('/')[2].split('.')[0];
+        };
+        await assets.forEach(async (asset: any, index: number) => {
+            const sprite = await weaponSprite(asset);
+            newAssets.push({
+                sprite: sprite,
+                imgURL: asset.imgURL,
+            });
+        });
+        return newAssets;
+    };
 
     const getOpponent = async () => {
         try { 
@@ -132,7 +153,7 @@ const Story = ({ user }: Props) => {
         { gameChange ? ( '' )
         : ( <HostScene 
                 user={user} setGameChange={setGameChange} gameChange={gameChange} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch}
-                asceanState={asceanState} setAsceanState={setAsceanState}
+                asceanState={asceanState} setAsceanState={setAsceanState} assets={assets}
             />
         )}
         </div>

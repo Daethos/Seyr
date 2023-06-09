@@ -47,9 +47,10 @@ interface Props {
     gameDispatch: any;
     asceanState: any;
     setAsceanState: React.Dispatch<React.SetStateAction<any>>;
+    assets: any;
 };
 
-const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState }: Props) => {
+const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState, assets }: Props) => {
     const { asceanID } = useParams();
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
@@ -174,6 +175,13 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up');
         };
+    };
+
+    const retrieveAssets = async () => {
+        const assetPackage = new CustomEvent('send-assets', {
+            detail: assets
+        });
+        window.dispatchEvent(assetPackage);
     };
 
     const sendEnemyData = async () => { 
@@ -726,6 +734,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
 
+
+
+    usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('fetch-enemy', fetchEnemy);
     usePhaserEvent('setup-enemy', setupEnemy);
 
