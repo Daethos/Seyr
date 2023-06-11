@@ -342,7 +342,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 gameIsLive: false,
                 combatEngaged: true,
-                combatRound: 1,
+                combatRound: 1, // Figure this out later TODO:FIXME: For Phaser
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
             };
         case 'RESET_PLAYER':

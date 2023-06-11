@@ -45,7 +45,6 @@ const Story = ({ user }: Props) => {
                     settingsAPI.getSettings(),
                     eqpAPI.index(),
                 ]);
-                console.log(assetResponse, "Weapon Assets ?")
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
@@ -53,7 +52,6 @@ const Story = ({ user }: Props) => {
                     payload: combatStateResponse.data.data
                 });
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_TRAITS, payload: traitResponse });
-                // gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: enemyResponse?.game });
                 setAsceanState({
                     ...asceanState,
                     'ascean': combatStateResponse.data.data.ascean,
@@ -63,12 +61,9 @@ const Story = ({ user }: Props) => {
                     'experienceNeeded': combatStateResponse.data.data.ascean.level * 1000,
                     'mastery': combatStateResponse.data.data.ascean.mastery,
                     'faith': combatStateResponse.data.data.ascean.faith,
-                    // 'opponent': enemyResponse?.game.level,
                 });
-                // dispatch({ type: ACTIONS.SET_NEW_COMPUTER, payload: enemyResponse?.combat }); 
                 const sanitizedAssets = await sanitizeAssets(assetResponse.data);
                 setAssets(sanitizedAssets);
-                console.log(sanitizedAssets, "Sanitized Assets ?")
                 gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse }); 
                 gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 setGameChange(false);

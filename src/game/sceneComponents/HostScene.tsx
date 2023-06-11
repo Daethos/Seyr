@@ -26,6 +26,7 @@ import CombatMouseSettings from '../CombatMouseSettings';
 import CombatUI from '../CombatUI';
 import EnemyUI from '../EnemyUI';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
+import screenfull from 'screenfull';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -662,14 +663,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
 
-    const toggleFullscreen = () => {
-        if (document.fullscreenElement) {
-            document.exitFullscreen();
-            setFullScreen(false);
-        } else {
-            gameRef.current.scale.startFullscreen();
-            setFullScreen(true);
-        };
+    const toggleFullscreen = () => { 
+        screenfull.toggle();
     };
 
     const toggleMute = () => {
@@ -724,12 +719,10 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 dispatch({ type: ACTIONS.SET_DUEL, payload: true });
             } else {
                 dispatch({ type: ACTIONS.CLEAR_DUEL, payload: false });
-            }
+            };
         } catch (err: any) {
             console.log(err, "Error Handling Dialog Middleware");
-        };
-        // const combatEngaged = new CustomEvent('combat-engaged', { detail: true });
-        // window.dispatchEvent(combatEngaged);
+        }; 
     };
 
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
@@ -780,9 +773,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                         <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>{state.player.name}</h3>
                     </Button>
-                    <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
+                    {/* <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
                         <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
-                    </Button>
+                    </Button> */}
                     <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
                 </div>
                 <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />

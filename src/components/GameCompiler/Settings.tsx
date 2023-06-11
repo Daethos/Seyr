@@ -135,7 +135,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
                 </h5>
             </Accordion.Header>
             <Accordion.Body className='settings-accordion'>
-        <Button variant='' className='mb-3' style={{ color: 'gold' }} onClick={toggleFullscreen}>Full Screen - {fullScreen ? 'Enabled' : 'Disabled'}</Button>
+        <Button variant='' className='mb-3' style={{ color: 'gold' }} onClick={toggleFullscreen}>Full Screen Enabler</Button>
 
         <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
         <span style={{ float: "left" }}></span>

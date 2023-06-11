@@ -105,6 +105,7 @@ const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
                 return 'grey';
         };
     };
+
     const getItemStyle = (rarity: string) => {
         return {
             border: '0.15em solid ' + getShadowStyle(state.computerBlessing),
@@ -115,7 +116,7 @@ const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
     };
 
     return (
-        <div style={{ position: "absolute", top: "585px", left: "790px", transform: "scale(1.25)" }} id={state.computerDamaged ? 'flicker' : ''}>
+        <div style={{ position: "absolute", top: "15px", left: "790px", transform: "scale(1.25)" }} id={state.computerDamaged ? 'flicker' : ''}>
             {state.computerEffects.length > 0 ? (
                 <div className='combat-effects'>
                     {state.computerEffects.map((effect: any, index: number) => {

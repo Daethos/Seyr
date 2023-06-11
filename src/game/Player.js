@@ -111,8 +111,8 @@ export default class Player extends Entity {
         this.highlight.setVisible(false);
     };
 
-    weaponSprite(weapon) {
-        return weapon.imgURL.split('/')[2].split('.')[0];
+    assetSprite(asset) {
+        return asset.imgURL.split('/')[2].split('.')[0];
     };
 
     playerStateListener() {
@@ -152,8 +152,8 @@ export default class Player extends Entity {
                         if (isNewEnemy) this.touching.push(other.gameObjectB);
                         this.currentTarget = other.gameObjectB;
                         // if (!other.gameObject.ascean._id ) this.touching.push(other.gameObjectB);
-                        this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
-                        this.scene.combatEngaged();
+                        if (this.scene.state.computer._id !== other.gameObjectB.ascean._id) this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
+                        if (!this.scene.state.combatEngaged) this.scene.combatEngaged();
                         this.inCombat = true;
                     };
                 };
@@ -203,9 +203,13 @@ export default class Player extends Entity {
     };
     
     update() {
-        if (this.currentWeaponSprite !== this.weaponSprite(this.scene.state.weapons[0])) {
-            this.currentWeaponSprite = this.weaponSprite(this.scene.state.weapons[0]);
+        if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
+            this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
+        };
+        if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
+            this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
+            this.spriteShield.setTexture(this.currentShieldSprite);
         };
         this.touching.filter(gameObject => gameObject !== null);
         // =================== MOVEMENT VARIABLES ================== \\

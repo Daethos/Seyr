@@ -120,7 +120,7 @@ export default class Preload extends Phaser.Scene {
             { x: 0.5, y: 1 }
         );
         let x = this.centerX - (this.width / 2);
-        let y = this.centerY + 5;
+        let y = this.centerY + 75;
         this.progress = this.add.graphics({ x: x, y: y });
         this.border = this.add.graphics({ x: x, y: y });
         this.load.on('progress', this.onProgress, this);

@@ -60,7 +60,7 @@ export default class Play extends Phaser.Scene {
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         
         this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         
         this.enemy = new Enemy({scene: this, x: 400, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
 
@@ -86,7 +86,7 @@ export default class Play extends Phaser.Scene {
         }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 5;
+        camera.zoom = 1.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
@@ -118,7 +118,7 @@ export default class Play extends Phaser.Scene {
         this.player.joystick = joystick; 
         this.player.joystick.on('pointerdown', this.startJoystick, this);
         this.player.joystick.on('pointerup', this.stopJoystick, this);
-        this.minimap = this.cameras.add(725, 10, 225, 150).setName('mini')
+        this.minimap = this.cameras.add(725, 480, 225, 150).setName('mini')
         this.minimap.scrollX = 2048;
         this.minimap.scrollY = 2048;
         this.minimap.zoom = 0.25;
@@ -308,7 +308,7 @@ export default class Play extends Phaser.Scene {
 
     update() {
         this.enemy.update();
-        this.enemies.forEach((enemy) => enemy.update());
+        // this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
         if (this.player.joystick.isActive) this.handleJoystickUpdate();
         // this.minimap.update();

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Entity from "./Entity"; 
+import StateMachine, { States } from "./StateMachine";
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
 import playerActionsOneAnim from './images/player_actions_anim.json';
@@ -33,6 +34,40 @@ export default class Enemy extends Entity {
         this.scene.add.existing(this);
         this.enemyID = new Date().getTime();
         this.createEnemy(); 
+        this.stateMachine = new StateMachine(this, 'enemy');
+        this.stateMachine
+            .addState(States.IDLE, {
+                onEnter: this.onIdleEnter.bind(this),
+                onUpdate: this.onIdleUpdate.bind(this),
+                onExit: this.onIdleExit.bind(this),
+            })
+            .addState(States.PATROL, {
+                onEnter: this.onPatrolEnter.bind(this),
+                onUpdate: this.onPatrolUpdate.bind(this),
+                onExit: this.onPatrolExit.bind(this),
+            })
+            // .addState(States.AWARE, {
+            //     onEnter: this.onAwarenessEnter.bind(this),
+            //     onUpdate: this.onAwarenessUpdate.bind(this),
+            //     onExit: this.onAwarenessExit.bind(this),
+            // })
+            // .addState(States.CHASE, {
+            //     onEnter: this.onChasingEnter.bind(this),
+            //     onUpdate: this.onChasingUpdate.bind(this),
+            //     onExit: this.onChasingExit.bind(this),
+            // })
+            // .addState(States.COMBAT, {
+            //     onEnter: this.onCombatEnter.bind(this),
+            //     onUpdate: this.onCombatUpdate.bind(this),
+            //     onExit: this.onCombatExit.bind(this),
+            // })
+            // .addState(States.LEASH, {
+            //     onEnter: this.onLeashingEnter.bind(this),
+            //     onUpdate: this.onLeashingUpdate.bind(this),
+            //     onExit: this.onLeashingExit.bind(this),
+            // })
+
+        this.stateMachine.setState(States.IDLE);
         this.setScale(0.8);
         this.isAttacking = false;
         this.isCountering = false;
@@ -50,6 +85,9 @@ export default class Enemy extends Entity {
         this.dodgeCooldown = 0;
         this.enemySensor = null;
         this.waiting = 30;
+        this.idleWait = 500;
+        this.patrolWait = 500;
+        this.patrolVelocity = 1;
         this.attackSensor = null;
         this.attackIsLive = false;
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -65,18 +103,19 @@ export default class Enemy extends Entity {
         this.setFixedRotation();
         this.enemyStateListener();
         this.enemySensor = enemySensor;
-        this.scene.matterCollision.addOnCollideStart({
-            objectA: [enemySensor],
-            callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player') {
-                    this.attacking = other.gameObjectB;
-                    this.actionTarget = other;
-                    other.gameObjectB.inCombat = true;
-                    this.scene.combatEngaged();
-                };
-            },
-            context: this.scene,
-        }); 
+        // this.scene.matterCollision.addOnCollideStart({
+        //     objectA: [enemySensor],
+        //     callback: other => {
+        //         if (other.gameObjectB && other.gameObjectB.name === 'player') {
+        //             this.attacking = other.gameObjectB;
+        //             this.stateMachine.setState(States.CHASE); // TODO:FIXME: State Machine Combat
+        //             this.actionTarget = other;
+        //             other.gameObjectB.inCombat = true;
+        //             this.scene.combatEngaged();
+        //         };
+        //     },
+        //     context: this.scene,
+        // }); 
     };
 
     createEnemy() {
@@ -120,7 +159,6 @@ export default class Enemy extends Entity {
             // console.log(e.detail, "State Updated");
             if (this.ascean.name !== e.detail.computer.name) return;
             if (this.health > e.detail.new_computer_health) this.isHurt = true;
-            console.log(this.health, "Current Health Pre Update", e.detail.new_computer_health, "New Health Post Update For: ", e.detail.computer.name);
             this.health = e.detail.new_computer_health;
             if (e.detail.new_computer_health <= 0) {
                 this.isDead = true;
@@ -137,54 +175,94 @@ export default class Enemy extends Entity {
 
     attackInterval() {
         if (this.scene.state.computer_weapons[0]) {
-            console.log("THere is a weapon in computer_weapons", this.scene.state.computer_weapons[0].name);
             return this.scene.state.computer_weapons[0].grip;
         } else if (this.currentWeaponSprite !== '') {
-            console.log("There is no weapon in computer_weapons, but there is a currentWeaponSprite", this.currentWeaponSprite);
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
             return weapon.grip;
         } else {
-            console.log("There is no weapon in computer_weapons, and no currentWeaponSprite, using weapon_one", this.ascean.weapon_one.name);
             return this.ascean.weapon_one.grip;
         };
     };
 
+    onIdleEnter = () => {
+        console.log("Idle Enter");
+        this.anims.play('player_idle', true);
+    };
+    onIdleUpdate = (dt) => {
+        this.idleWait -= dt;
+        if (this.idleWait <= 0) {
+            this.idleWait = 500;
+            console.log("Idle Exit");
+            this.stateMachine.setState('patrol');
+        };
+    };
+    onIdleExit = () => {
+        this.anims.stop('player_idle');
+    };
+    onPatrolEnter = () => {
+        console.log("Patrolling");
+        this.anims.play('player_running', true);
+        const patrolDirection = new Phaser.Math.Vector2(Math.random() - 0.5, Math.random() - 0.5).normalize();
+        const patrolSpeed = 1;  
+        this.patrolVelocity = { x: patrolDirection.x * patrolSpeed, y: patrolDirection.y * patrolSpeed };
+        console.log(this.patrolVelocity, "Patrol Velocity")
+        const delay = Phaser.Math.RND.between(1500, 3000); 
+        this.scene.time.addEvent({
+            delay: delay,
+            callback: () => {
+                this.setVelocity(0, 0);
+                this.stateMachine.setState(States.IDLE);
+            },
+            callbackScope: this,
+            loop: false,
+        }); 
+    };
+    onPatrolUpdate = (dt) => { 
+        this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
+    };
+    onPatrolExit = () => {
+        this.anims.stop('player_running');
+    };
+ 
     update() {
+        this.stateMachine.update(this.scene.sys.game.loop.delta);
+
         if (this.scene.state.computer_weapons[0] && this.currentWeaponSprite !== this.weaponSprite(this.scene.state.computer_weapons[0]) && this.ascean._id === this.scene.state.computer._id) {
             this.currentWeaponSprite = this.weaponSprite(this.scene.state.computer_weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
         };
         if (this.attacking) { 
             let direction = this.attacking.position.subtract(this.position);
-            if (direction.length() >=  150) {
+            if (direction.length() >=  180) {
                 this.isRolling = true;
                 direction.normalize();
                 this.setVelocityX(direction.x * 3.25);
                 this.setVelocityY(direction.y * 3.25);
-            } else if (direction.length() > 90) { 
-                if (this.waiting > 0) {
-                    this.waiting--; 
-                    this.setVelocityX(0);
-                    this.setVelocityY(0);
-                } else {
+            } else if (direction.length() > 120) {  // 90
+                // if (this.waiting > 0) { // 96-64 is the Danger Zone ?
+                //     this.waiting--; 
+                //     this.setVelocityX(0);
+                //     this.setVelocityY(0);
+                // } else {
                     direction.normalize();
                     this.setVelocityX(direction.x * 2.75);
                     this.setVelocityY(direction.y * 2.75);    
-                };
-            } else if (direction.length() > 60) {
+                // };
+            } else if (direction.length() > 80) { // 60
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.75);
-                this.setVelocityY(direction.y * 2.75);
+                this.setVelocityX(direction.x * 2.5);
+                this.setVelocityY(direction.y * 2.5);
                 if (this.attackTimer) {
                     clearInterval(this.attackTimer);
                     this.attackTimer = null;
                 };
             } else {
+                // This needs revision, There needs to be a radius where the enemy contemplates its choices based on the player's position, and action(s)
                 if (this.attackTimer == null) {
-                    console.log(this.scene.state, "The State of Combat", this.currentWeaponSprite);
                     const intervalTime = this.attackInterval() === 'Two Hand' ? 1250 : 750;
                     this.attackTimer = setInterval(this.attack, intervalTime, this.attacking);
+                    console.log("Attack Timer Started, Distance: ", direction.length(), "px");
                 };
                 const times = [10, 20, 30, 40];
                 this.waiting = times[Math.floor(Math.random() * times.length)];
@@ -193,95 +271,95 @@ export default class Enemy extends Entity {
         
         this.setFlipX(this.velocity.x < 0);
 
-        if (this.isHurt) {
-            this.anims.play('player_hurt', true).on('animationcomplete', () => {
-                this.isHurt = false;
-            }); 
-        } else if (this.isCountering) { // COUNTERING
-            this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
-                this.isCountering = false; 
-            });
-        } else if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
-            this.anims.play('player_slide', true);
-            if (this.dodgeCooldown === 0) {
-                this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
-                const dodgeDistance = 126;  
-                const dodgeDuration = 18; 
-                const dodgeInterval = 1; 
-                let elapsedTime = 0;
-                let currentDistance = 0;
+        // if (this.isHurt) {
+        //     this.anims.play('player_hurt', true).on('animationcomplete', () => {
+        //         this.isHurt = false;
+        //     }); 
+        // } else if (this.isCountering) { // COUNTERING
+        //     this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
+        //         this.isCountering = false; 
+        //     });
+        // } else if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
+        //     this.anims.play('player_slide', true);
+        //     if (this.dodgeCooldown === 0) {
+        //         this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
+        //         const dodgeDistance = 126;  
+        //         const dodgeDuration = 18; 
+        //         const dodgeInterval = 1; 
+        //         let elapsedTime = 0;
+        //         let currentDistance = 0;
             
-                const dodgeLoop = () => {
-                    if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
-                        clearInterval(dodgeIntervalId);
-                        this.dodgeCooldown = 0;
-                        this.isDodging = false;
-                        return;
-                    };
-                    const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
-                    this.setVelocityX(direction);
-                    currentDistance += Math.abs(dodgeDistance / dodgeDuration);
-                    elapsedTime++;
-                };
+        //         const dodgeLoop = () => {
+        //             if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
+        //                 clearInterval(dodgeIntervalId);
+        //                 this.dodgeCooldown = 0;
+        //                 this.isDodging = false;
+        //                 return;
+        //             };
+        //             const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+        //             this.setVelocityX(direction);
+        //             currentDistance += Math.abs(dodgeDistance / dodgeDuration);
+        //             elapsedTime++;
+        //         };
             
-                const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
-            };
+        //         const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
+        //     };
             
-        } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
-            this.anims.play('player_roll', true);
-            if (this.rollCooldown === 0) {
-                const sensorDisp = 12;
-                const colliderDisp = 16;
-                if (this.isRolling) {
-                    if (this.scene.state.action !== 'roll') this.scene.setState('computer_action', 'roll');
-                    if (this.scene.state.counter_guess !== '') this.scene.setState('computer_counter_guess', '');
-                    this.body.parts[2].position.y += sensorDisp;
-                    this.body.parts[2].circleRadius = 21;
-                    this.body.parts[1].vertices[0].y += colliderDisp;
-                    this.body.parts[1].vertices[1].y += colliderDisp; 
-                };
-                this.rollCooldown = 50; 
-                const rollDistance = 140; 
+        // } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
+        //     this.anims.play('player_roll', true);
+        //     if (this.rollCooldown === 0) {
+        //         const sensorDisp = 12;
+        //         const colliderDisp = 16;
+        //         if (this.isRolling) {
+        //             if (this.scene.state.action !== 'roll') this.scene.setState('computer_action', 'roll');
+        //             if (this.scene.state.counter_guess !== '') this.scene.setState('computer_counter_guess', '');
+        //             this.body.parts[2].position.y += sensorDisp;
+        //             this.body.parts[2].circleRadius = 21;
+        //             this.body.parts[1].vertices[0].y += colliderDisp;
+        //             this.body.parts[1].vertices[1].y += colliderDisp; 
+        //         };
+        //         this.rollCooldown = 50; 
+        //         const rollDistance = 140; 
                 
-                const rollDuration = 20;  
-                const rollInterval = 1;  
+        //         const rollDuration = 20;  
+        //         const rollInterval = 1;  
                 
-                let elapsedTime = 0;
-                let currentDistance = 0;
+        //         let elapsedTime = 0;
+        //         let currentDistance = 0;
                 
-                const rollLoop = () => {
-                    if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
-                        clearInterval(rollIntervalId);
-                        this.rollCooldown = 0;
-                        this.isRolling = false;
-                        this.body.parts[2].position.y -= sensorDisp;
-                        this.body.parts[2].circleRadius = 48;
-                        this.body.parts[1].vertices[0].y -= colliderDisp;
-                        this.body.parts[1].vertices[1].y -= colliderDisp; 
-                        return;
-                    };
-                    const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
-                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
-                    if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
-                    if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
-                    currentDistance += Math.abs(rollDistance / rollDuration);
-                    elapsedTime += rollInterval;
-                };
-                const rollIntervalId = setInterval(rollLoop, rollInterval);  
-            };
-        } else if (this.isPosturing) { // POSTURING
-            this.anims.play('player_attack_3', true).on('animationcomplete', () => {
-                this.isPosturing = false;
-            });
-        } else if (this.isAttacking) {
-            this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
-                this.isAttacking = false;
-            }); 
-        } else if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
-            this.anims.play(`player_running`, true);
-        } else {
-            this.anims.play(`player_idle`, true);
-        };
+        //         const rollLoop = () => {
+        //             if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
+        //                 clearInterval(rollIntervalId);
+        //                 this.rollCooldown = 0;
+        //                 this.isRolling = false;
+        //                 this.body.parts[2].position.y -= sensorDisp;
+        //                 this.body.parts[2].circleRadius = 48;
+        //                 this.body.parts[1].vertices[0].y -= colliderDisp;
+        //                 this.body.parts[1].vertices[1].y -= colliderDisp; 
+        //                 return;
+        //             };
+        //             const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
+        //             if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+        //             if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+        //             if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
+        //             currentDistance += Math.abs(rollDistance / rollDuration);
+        //             elapsedTime += rollInterval;
+        //         };
+        //         const rollIntervalId = setInterval(rollLoop, rollInterval);  
+        //     };
+        // } else if (this.isPosturing) { // POSTURING
+        //     this.anims.play('player_attack_3', true).on('animationcomplete', () => {
+        //         this.isPosturing = false;
+        //     });
+        // } else if (this.isAttacking) {
+        //     this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
+        //         this.isAttacking = false;
+        //     }); 
+        // } else if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
+        //     this.anims.play(`player_running`, true);
+        // } else {
+        //     this.anims.play(`player_idle`, true);
+        // };
 
         if (this.spriteWeapon && this.spriteShield) {
             this.spriteWeapon.setPosition(this.x, this.y);
@@ -294,6 +372,13 @@ export default class Enemy extends Entity {
         if (target.dead || this.dead) {
             clearInterval(this.attackTimer);
             return;
+        };
+        let direction = target.position.subtract(this.position); 
+        if (direction.length() > 50) {
+            console.log("Enemy Attacking, Player out of Range, Moving to Player, Current Distance: ", direction.length(), "px");
+            direction.normalize();
+            this.setVelocityX(direction.x * 2.75);
+            this.setVelocityY(direction.y * 2.75);  
         };
         const specials = ['pray', 'consume'];
         const action = this.evaluateCombat(this, target);
@@ -322,12 +407,19 @@ export default class Enemy extends Entity {
             default:
                 break;                        
         }; 
-        let direction = target.position.subtract(this.position); 
-        if (direction.length() > 54) return; 
-        this.knockbackPlayer(this.actionTarget);
+        if (direction.length() > 52) {
+            console.log("Enemy attack unsuccessful in initiation, distance: ", direction.length(), "px");
+        } else {
+            console.log("Enemy attack successful in initiation, distance: ", direction.length(), "px");
+            this.knockbackPlayer(this.actionTarget);
+        };
     };
 
     evaluateCombat = (player, target) => { 
+
+        // TODO:FIXME: Add section to 'check' if there is a state.action i.e. player action that is 'live', and if so, augment the computer action to counter it.
+        console.log(this.scene.state.action, this.scene.state.counter_guess, "The Potential Actions of the Player");
+
         let computerAction;
         let computerCounter;
         let actionNumber = Math.floor(Math.random() * 101);

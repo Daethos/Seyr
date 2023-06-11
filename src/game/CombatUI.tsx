@@ -150,6 +150,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
         border: 'none',
         // boxShadow: '0 0 1em ' + borderColor(state?.player?.mastery),  
         backgroundColor: "transparent",
+        top: "20px",
         // borderRadius: "25%",
     };
 
@@ -161,7 +162,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
     };
 
     return (
-        <div style={{ position: "absolute", transform: "scale(1.25)", top: "585px", left: "10px" }} id={state.playerDamaged ? 'flicker' : ''}> 
+        <div style={{ position: "absolute", transform: "scale(1.25)", top: "15px", left: "10px" }} id={state.playerDamaged ? 'flicker' : ''}> 
             { !gameState.instantStatus ? (
                 <>
                 <Modal show={invokeModal} onHide={() => setInvokeModal(false)} centered id="modal-weapon" style={{ top: "-25%" }}>
@@ -184,20 +185,12 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
                 </Modal.Body>
                 </Modal>
                 <button className='story-invoke' style={getEffectStyle} onClick={() => setInvokeModal(true)}>
-                    {/* <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} /> */}
                     <p style={getInvokeStyle}>
                         Invoke
                     </p> 
                 </button> 
                 </>
             ) : ( '' ) } 
-            {state.playerEffects.length > 0 ? (
-                <div className='combat-effects' style={{ zIndex: 2 }}>
-                    {state.playerEffects.map((effect: any, index: number) => {
-                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
-                    })}
-                </div>
-            ) : ( '' ) }
             {/* <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '20px', height: '20px', top: "-20px", left: "0px"  }} /> */}
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '125px', height: '35px'}} />
             <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "125px", top: "-9px", left: "22px", fontFamily: "Cinzel" }}>
@@ -222,11 +215,18 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
             }}>
                 {`${Math.round(state.new_player_health)} / ${state.player_health} [${playerHealthPercentage}%]`}
             </p>
-            <div style={{ position: "absolute", left: "130px", top: "-10px", transform: "scale(0.75)" }}>
+            <div style={{ position: "absolute", left: "130px", top: "-15px", transform: "scale(0.75)" }}>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
                 <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle(state.weapons[0]?.rarity)} />
             </OverlayTrigger>
             </div>
+            {state.playerEffects.length > 0 ? (
+                <div className='combat-effects' style={{ zIndex: 2 }}>
+                    {state.playerEffects.map((effect: any, index: number) => {
+                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
+                    })}
+                </div>
+            ) : ( '' ) }
         </div> 
     );
 };

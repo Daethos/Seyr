@@ -10,9 +10,9 @@ export default class Boot extends Phaser.Scene {
         this.assets = {};
     };
     
-    init() { };
+    init() {};
     
-    preload() { };
+    preload() {};
     
     create() {
         window.addEventListener('get-ascean', this.asceanFinishedEventListener);
@@ -50,14 +50,17 @@ export default class Boot extends Phaser.Scene {
         this.ascean = e.detail;
         window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
     };
+
     enemyFinishedEventListener = (e) => {
         this.enemy = e.detail;
         window.removeEventListener('get-enemy', this.enemyFinishedEventListener);
     };
+
     stateFinishedEventListener = (e) => {
         this.state = e.detail;
         window.removeEventListener('get-combat-data', this.stateFinishedEventListener);
     };
+
     gameStateFinishedEventListener = (e) => {
         this.gameState = e.detail;
         window.removeEventListener('get-game-data', this.gameStateFinishedEventListener);

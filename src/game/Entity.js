@@ -478,7 +478,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         };
     };
 };
-
  
 export function screenShake(scene) {
     const duration = 40;  

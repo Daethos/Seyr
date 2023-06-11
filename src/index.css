@@ -549,7 +549,8 @@ html, body {
 #ui-hud {
   position: absolute;
   justify-content: space-evenly;
-  width: 100%; 
+  width: 100%;
+  top: 95%; 
 }
 #ascean-stats {
   width: 100%;

@@ -37,7 +37,7 @@ export default class Menu extends Phaser.Scene {
             'standard'
         );
         // this.border = this.createMenuBorder(this.text.obj);
-        this.createMoustInput();
+        this.createMouseInput();
         this.createKeyboardInput();
 
     };
@@ -63,7 +63,7 @@ export default class Menu extends Phaser.Scene {
         return border;
     };
 
-    createMoustInput() {
+    createMouseInput() {
         this.input.on('pointerup', this.goPlay, this);
     };
 
@@ -82,12 +82,8 @@ export default class Menu extends Phaser.Scene {
     };
 
     goPlay() {
-        this.scene.start('Play', {
-            gameData: this.gameData
-        });
-
-        
+        this.scene.start('Play', { gameData: this.gameData }); 
         const launchGame = new CustomEvent('launch-game', { detail: true });
-        window.dispatchEvent(launchGame)
+        window.dispatchEvent(launchGame);
     };
 };

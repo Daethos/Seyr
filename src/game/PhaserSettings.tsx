@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import { GAME_ACTIONS } from '../components/GameCompiler/GameStore';
 import * as settingsAPI from '../utils/settingsApi';
 import Loading from '../components/Loading/Loading';
+import screenfull from 'screenfull';
 
 interface Props {
     ascean: any;
@@ -49,6 +50,10 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
         } catch (err: any) {
             console.log(err, "Error Saving Map Settings")
         };
+    };
+
+    const toggleFullscreen = () => {
+        screenfull.toggle();
     };
 
     function handleShakeDurationChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -94,6 +99,7 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
                 </h5>
             </Accordion.Header>
             <Accordion.Body className='settings-accordion'> 
+            <Button variant='' className='mb-3' style={{ color: 'gold' }} onClick={toggleFullscreen}>Full Screen Enabler</Button>
         <h6 style={{ marginLeft: 'auto', color: 'gold' }}>
             <span style={{ float: "left" }}></span>
             Screen Shake Duration ({gameState.shake.duration})
