@@ -69,4 +69,10 @@ export const States = {
     CHASE: "chase",
     COMBAT: "combat",
     LEASH: "leash",
+    ATTACK: "attack",
+    COUNTER: "counter",
+    DODGE: "dodge",
+    POSTURE: "posture",
+    ROLL: "roll",
+    DEATH: "death",
 };

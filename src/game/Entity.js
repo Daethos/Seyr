@@ -52,6 +52,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.frameCount = 0;
         this.currentWeaponSprite = '';
 
+        this.currentAction = '';
         this.currentActionFrame = 0;
         this.interruptCondition = false;
     };
@@ -69,6 +70,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         console.log("Attacking")
         this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
             this.isAttacking = false;
+            this.currentAction = '';
         }); 
     };
 
@@ -76,6 +78,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         console.log("Countering")
         this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
             this.isCountering = false; 
+            this.currentAction = '';
         });
     };
 
@@ -94,6 +97,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     clearInterval(dodgeIntervalId);
                     this.dodgeCooldown = 0;
                     this.isDodging = false;
+                    this.currentAction = '';
                     return;
                 };
                 const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
@@ -109,6 +113,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         console.log("Posturing")
         this.anims.play('player_attack_3', true).on('animationcomplete', () => {
             this.isPosturing = false;
+            this.currentAction = '';
         }); 
     };
 
@@ -139,7 +144,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
                     clearInterval(rollIntervalId);
                     this.rollCooldown = 0;
+                    this.spriteWeapon.setVisible(true);
                     this.isRolling = false;
+                    this.currentAction = '';
                     this.body.parts[2].position.y -= sensorDisp;
                     this.body.parts[2].circleRadius = 48;
                     this.body.parts[1].vertices[0].y -= colliderDisp;
@@ -338,6 +345,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     weaponRotation() { 
         if (!this.isPosturing && this.spriteShield) this.spriteShield.setVisible(false);
+        if (this.isRolling) this.spriteWeapon.setVisible(false);
         if (this.isPraying) { // Change to isPraying for Live
             if (this.spriteWeapon.depth < 3) this.spriteWeapon.setDepth(3);
             if (this.flipX) {
@@ -369,6 +377,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setAngle(45);
             };
         } else if (this.isAttacking) {
+            if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             if (this.flipX) {
                 if (this.frameCount === 0) {
                     this.spriteWeapon.setOrigin(-0.25, 1.2);
@@ -494,6 +503,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isPosturing) {
+            if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             this.spriteShield.setVisible(true);
             if (this.flipX) {
                 if (this.frameCount === 0) {

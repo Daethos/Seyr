@@ -169,7 +169,30 @@ async function recordCombatStatistic(req, res) {
         statistic.attacks.wild += typeDamageData.reduce((count, type) => type === 'Wild' ? count + 1 : count, 0);
         statistic.attacks.wind += typeDamageData.reduce((count, type) => type === 'Wind' ? count + 1 : count, 0);
         statistic.attacks.total = Math.max(totalDamageData, statistic.attacks.total);
-        statistic.deities = statistic.deities.concat(...deityData).flat();
+        // statistic.deities = statistic.deities.concat(...deityData).flat();
+        statistic.deities.Daethos += deityData.reduce((count, deity) => deity === 'Daethos' ? count + 1 : count, 0);
+        statistic.deities.Achreo += deityData.reduce((count, deity) => deity === 'Achreo' ? count + 1 : count, 0);
+        statistic.deities.Ahnve += deityData.reduce((count, deity) => deity === "Ahn've" ? count + 1 : count, 0);
+        statistic.deities.Astra += deityData.reduce((count, deity) => deity === 'Astra' ? count + 1 : count, 0);
+        statistic.deities.Cambire += deityData.reduce((count, deity) => deity === 'Cambire' ? count + 1 : count, 0);
+        statistic.deities.Chiomyr += deityData.reduce((count, deity) => deity === 'Chiomyr' ? count + 1 : count, 0);
+        statistic.deities.Fyer += deityData.reduce((count, deity) => deity === 'Fyer' ? count + 1 : count, 0);
+        statistic.deities.Ilios += deityData.reduce((count, deity) => deity === 'Ilios' ? count + 1 : count, 0);
+        statistic.deities.Kyngi += deityData.reduce((count, deity) => deity === "Kyn'gi" ? count + 1 : count, 0);
+        statistic.deities.Kyrisos += deityData.reduce((count, deity) => deity === 'Kyrisos' ? count + 1 : count, 0);
+        statistic.deities.Kyrna += deityData.reduce((count, deity) => deity === "Kyr'na" ? count + 1 : count, 0);
+        statistic.deities.Lilos += deityData.reduce((count, deity) => deity === 'Lilos' ? count + 1 : count, 0);
+        statistic.deities.Maanre += deityData.reduce((count, deity) => deity === "Ma'anre" ? count + 1 : count, 0);
+        statistic.deities.Nyrolus += deityData.reduce((count, deity) => deity === 'Nyrolus' ? count + 1 : count, 0);
+        statistic.deities.Quorei += deityData.reduce((count, deity) => deity === "Quor'ei" ? count + 1 : count, 0);
+        statistic.deities.Rahvre += deityData.reduce((count, deity) => deity === 'Rahvre' ? count + 1 : count, 0);
+        statistic.deities.Senari += deityData.reduce((count, deity) => deity === 'Senari' ? count + 1 : count, 0);
+        statistic.deities.Sedyro += deityData.reduce((count, deity) => deity === "Se'dyro" ? count + 1 : count, 0);
+        statistic.deities.Sevas += deityData.reduce((count, deity) => deity === "Se'vas" ? count + 1 : count, 0);
+        statistic.deities.Shrygei += deityData.reduce((count, deity) => deity === "Shrygei" ? count + 1 : count, 0);
+        statistic.deities.Tshaer += deityData.reduce((count, deity) => deity === 'Tshaer' ? count + 1 : count, 0);
+
+
         if (wins > losses && ascean.statistics.relationships.deity.name !== '') {
             const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, 'combat', 'value');
             ascean.statistics = newStats;

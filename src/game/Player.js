@@ -152,11 +152,12 @@ export default class Player extends Entity {
                         this.actionTarget = other;
                         const isNewEnemy = !this.touching.some(obj => obj.ascean._id === other.gameObjectB.ascean._id);
                         if (isNewEnemy) this.touching.push(other.gameObjectB);
-                        this.currentTarget = other.gameObjectB;
-                        // if (!other.gameObject.ascean._id ) this.touching.push(other.gameObjectB);
+                        this.currentTarget = other.gameObjectB; 
                         if (this.scene.state.computer._id !== other.gameObjectB.ascean._id) this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
-                        if (!this.scene.state.combatEngaged) this.scene.combatEngaged();
-                        this.inCombat = true;
+                        if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
+                            this.scene.combatEngaged();
+                            this.inCombat = true;
+                        };
                     };
                 };
             },
@@ -203,6 +204,17 @@ export default class Player extends Entity {
         const sensorPosition = this.sensor.position;
         return collisionPoint.x < sensorPosition.x;
     };
+
+    playerActionSuccess = () => {
+        console.log("Knocked Back ", this.actionTarget.gameObjectB.ascean.name);
+        // this.scene.sendStateActionListener();
+        // this.actionAvailable = false;
+        this.knockback(this.actionTarget);
+        screenShake(this.scene);
+        pauseGame(20).then(() => {
+            this.setVelocityX(0);
+        });
+    };
     
     update() {
         if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
@@ -215,7 +227,7 @@ export default class Player extends Entity {
         };
         this.touching.filter(gameObject => gameObject !== null);
         // =================== MOVEMENT VARIABLES ================== \\
-        const speed = 3;
+        const speed = 2;
         
         // =================== TARGETING ================== \\
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB)) {
@@ -270,10 +282,7 @@ export default class Player extends Entity {
             this.scene.setState('counter_guess', 'attack');
             this.isAttacking = true;           
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
         if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
@@ -281,11 +290,7 @@ export default class Player extends Entity {
             this.scene.setState('counter_guess', 'posture');
             this.isPosturing = true;
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
         if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
@@ -293,11 +298,7 @@ export default class Player extends Entity {
             this.scene.setState('counter_guess', 'roll');
             this.isRolling = true; 
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
     
@@ -306,10 +307,7 @@ export default class Player extends Entity {
             if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isAttacking = true;
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
 
@@ -318,22 +316,14 @@ export default class Player extends Entity {
             if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isPosturing = true;
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
             this.isRolling = true;
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
 
@@ -348,11 +338,7 @@ export default class Player extends Entity {
             this.scene.setState('counter_action', 'counter');
             this.isCountering = true;
             if (this.actionAvailable) {
-                console.log("Knocked Back!", this.actionTarget.gameObjectB.name);
-                // this.newKnockback(this.actionTarget);
-                this.knockback(this.actionTarget);
-                // this.scene.sendStateActionListener();
-                // this.actionAvailable = false;
+                this.playerActionSuccess();
             };
         };
 

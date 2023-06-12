@@ -157,8 +157,8 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
     const getInvokeStyle = {
         textShadow: '0 0 1em ' + borderColor(state?.player?.mastery),
         color: borderColor(state?.player?.mastery),
-        fontSize: "12px",
-        fontFamily: "fantasy",
+        fontSize: "10px",
+        fontFamily: "Cinzel",
     };
 
     return (
