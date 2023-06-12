@@ -118,17 +118,25 @@ export default class Play extends Phaser.Scene {
         this.player.joystick = joystick; 
         this.player.joystick.on('pointerdown', this.startJoystick, this);
         this.player.joystick.on('pointerup', this.stopJoystick, this);
-        this.minimap = this.cameras.add(725, 480, 225, 150).setName('mini')
+        this.minimap = this.cameras.add(725, 480, 225, 150).setName('mini');
+        this.minimap.setBounds(0, 0, 2048, 2048);
         this.minimap.scrollX = 2048;
         this.minimap.scrollY = 2048;
         this.minimap.zoom = 0.25;
         this.minimap.startFollow(this.player);
         this.minimap.setLerp(0.1, 0.1);
+        this.minimapBorder = this.add.rectangle(this.minimap.x - 6, this.minimap.y - 3, this.minimap.width + 4, this.minimap.height + 2);
+        this.minimapBorder.setStrokeStyle(2, 0x000000);
+        this.minimapBorder.setScrollFactor(0);
+        this.minimapBorder.setScale(2/3);
+
         this.input.keyboard.on('keydown-Z', () => {
             if (this.minimap.visible) {
                 this.minimap.visible = false;
+                this.minimapBorder.visible = false;
             } else {
                 this.minimap.visible = true;
+                this.minimapBorder.visible = true;
             };
         });
 
@@ -310,8 +318,8 @@ export default class Play extends Phaser.Scene {
         this.enemy.update();
         // this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
-        if (this.player.joystick.isActive) this.handleJoystickUpdate();
-        // this.minimap.update();
+        if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
+        
     };
     pause() {
         this.scene.pause();

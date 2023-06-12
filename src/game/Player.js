@@ -118,7 +118,9 @@ export default class Player extends Entity {
     playerStateListener() {
         window.addEventListener('update-combat-data', (e) => {
             // console.log(e.detail, "State Updated");
-            // if (this.health > e.detail.new_player_health) this.isHurt = true;
+            if (this.health > e.detail.new_player_health) {
+                this.isHurt = true;
+            } 
             if (this.currentRound !== e.detail.combatRound) {
                 if (e.detail.realized_player_damage > 0) this.knockback(this.actionTarget);
                 this.currentRound = e.detail.combatRound;

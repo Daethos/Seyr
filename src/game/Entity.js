@@ -51,6 +51,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.spriteWeapon = null;
         this.frameCount = 0;
         this.currentWeaponSprite = '';
+
+        this.currentActionFrame = 0;
+        this.interruptCondition = false;
     };
 
     get position() {
@@ -60,6 +63,104 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     get velocity() {
         return this.body.velocity;
+    };
+
+    attack = () => {
+        console.log("Attacking")
+        this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
+            this.isAttacking = false;
+        }); 
+    };
+
+    counter = () => {
+        console.log("Countering")
+        this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
+            this.isCountering = false; 
+        });
+    };
+
+    dodge = () => {
+        console.log("Dodging")
+        this.anims.play('player_slide', true);
+        if (this.dodgeCooldown === 0) {
+            this.dodgeCooldown = 1; 
+            const dodgeDistance = 126;  
+            const dodgeDuration = 18; 
+            const dodgeInterval = 1; 
+            let elapsedTime = 0;
+            let currentDistance = 0; 
+            const dodgeLoop = () => {
+                if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
+                    clearInterval(dodgeIntervalId);
+                    this.dodgeCooldown = 0;
+                    this.isDodging = false;
+                    return;
+                };
+                const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+                this.setVelocityX(direction);
+                currentDistance += Math.abs(dodgeDistance / dodgeDuration);
+                elapsedTime++;
+            }; 
+            const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
+        };
+    };
+
+    posture = () => {
+        console.log("Posturing")
+        this.anims.play('player_attack_3', true).on('animationcomplete', () => {
+            this.isPosturing = false;
+        }); 
+    };
+
+    roll = () => {
+        console.log("Rolling")
+        this.anims.play('player_roll', true);
+        if (this.rollCooldown === 0) {
+            const sensorDisp = 12;
+            const colliderDisp = 16;
+            if (this.isRolling) {
+                if (this.scene.state.action !== 'roll') this.scene.setState('computer_action', 'roll');
+                if (this.scene.state.counter_guess !== '') this.scene.setState('computer_counter_guess', '');
+                this.body.parts[2].position.y += sensorDisp;
+                this.body.parts[2].circleRadius = 21;
+                this.body.parts[1].vertices[0].y += colliderDisp;
+                this.body.parts[1].vertices[1].y += colliderDisp; 
+            };
+            this.rollCooldown = 50; 
+            const rollDistance = 140; 
+            
+            const rollDuration = 20;  
+            const rollInterval = 1;  
+            
+            let elapsedTime = 0;
+            let currentDistance = 0;
+            
+            const rollLoop = () => {
+                if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
+                    clearInterval(rollIntervalId);
+                    this.rollCooldown = 0;
+                    this.isRolling = false;
+                    this.body.parts[2].position.y -= sensorDisp;
+                    this.body.parts[2].circleRadius = 48;
+                    this.body.parts[1].vertices[0].y -= colliderDisp;
+                    this.body.parts[1].vertices[1].y -= colliderDisp; 
+                    return;
+                };
+                const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
+                if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+                if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+                if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
+                currentDistance += Math.abs(rollDistance / rollDuration);
+                elapsedTime += rollInterval;
+            };
+            const rollIntervalId = setInterval(rollLoop, rollInterval);  
+        };
+    };
+
+    hurt = () => {
+        this.anims.play('player_hurt', true).on('animationcomplete', () => {
+            this.isHurt = false;
+        }); 
     };
 
     checkHanging() {
@@ -329,8 +430,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 if (this.frameCount === 42) {
                     this.spriteWeapon.setAngle(-267.5);
                 };
-            } else {
-
+            } else { 
                 if (this.frameCount === 0) {
                     this.spriteWeapon.setOrigin(-0.15, 1.25);
                     this.spriteWeapon.setAngle(-185);
