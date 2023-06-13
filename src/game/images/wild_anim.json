@@ -1,0 +1,132 @@
+{
+    "anims": [
+        {
+            "key": "wild_effect",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 30,
+            "frames": [
+                {
+                    "key": "wild_effect",
+                    "frame": "1.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "2.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "3.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "4.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "5.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "6.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "7.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "8.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "9.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "10.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "11.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "12.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "13.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "14.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "15.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "16.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "17.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "18.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "19.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "20.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "21.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "22.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "23.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "24.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "25.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "26.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "27.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "28.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "29.png"
+                },
+                {
+                    "key": "wild_effect",
+                    "frame": "30.png"
+                }
+            ]
+        }
+    ]
+}

@@ -51,6 +51,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.spriteWeapon = null;
         this.frameCount = 0;
         this.currentWeaponSprite = '';
+        this.weaponEffect = null;
 
         this.currentAction = '';
         this.currentActionFrame = 0;
@@ -343,6 +344,23 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         });
     };
 
+    checkDamageType = (type, concern) => {
+        console.log("Damage Type: ", type, "Checking If It's: ", concern)
+        const magicTypes = ['Earth', 'Fire', 'Frost', 'Lightning', 'Wind', 'Righteous', 'Spooky', 'Sorcery', 'Wild'];
+        const physicalTypes = ['Blunt', 'Pierce', 'Slash'];
+        switch (concern) {
+            case 'magic':
+                if (magicTypes.includes(type)) return true;
+                break;
+            case 'physical':
+                if (physicalTypes.includes(type)) return true;
+                break;
+            default:
+                break;
+        };
+        return false;
+    };
+
     weaponRotation() { 
         if (!this.isPosturing && this.spriteShield) this.spriteShield.setVisible(false);
         if (this.isRolling) this.spriteWeapon.setVisible(false);
@@ -369,14 +387,26 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isCountering) { 
+            console.log(this.scene.state, "Combat State")
+            if (this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
+                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.player_damage_type.toLowerCase());
+            };
+            
             if (this.flipX) {
                 this.spriteWeapon.setOrigin(-0.4, 1.6);
                 this.spriteWeapon.setAngle(-135);
+                // if (this.particleEffect && this.frameCount === 10) this.scene.particleManager.startEffect(this.particleEffect.id);
             } else {
                 this.spriteWeapon.setOrigin(-0.4, 1.2);
                 this.spriteWeapon.setAngle(45);
+                // console.log(this.particleEffect, "particleEffect");
+                // if (this.particleEffect && this.frameCount === 10) this.scene.particleManager.startEffect(this.particleEffect.id);
             };
+            this.frameCount += 1;
         } else if (this.isAttacking) {
+            if (this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
+                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.player_damage_type.toLowerCase());
+            };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             if (this.flipX) {
                 if (this.frameCount === 0) {
@@ -428,7 +458,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 };
                 if (this.frameCount === 39) {
                     this.spriteWeapon.setAngle(-170);
-                    
+                    // if (this.particleEffect) this.scene.particleManager.startEffect(this.particleEffect.id);
+                    // TODO:FIXME: Issue is I am updating in the player update(), so it's not waiting to start the animation cause the animation plays in the update() function
                 };
                 if (this.frameCount === 40) {
                     this.spriteWeapon.setAngle(-210);
@@ -489,6 +520,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 };
                 if (this.frameCount === 39) {
                     this.spriteWeapon.setAngle(90);
+                    // if (this.particleEffect) this.scene.particleManager.startEffect(this.particleEffect.id);
                     
                 };
                 if (this.frameCount === 40) {
@@ -570,21 +602,45 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.spriteWeapon.setOrigin(-0.25, 0.5);
             this.spriteWeapon.setAngle(107.5);
             this.frameCount = 0;
+            if (this.particleEffect) {
+                this.scene.particleManager.removeEffect(this.particleEffect.id);
+                this.particleEffect.effect.destroy();
+                this.particleEffect = null;
+
+            };
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && this.flipX) { 
             this.spriteWeapon.setDepth(3);
             this.spriteWeapon.setOrigin(0.5, 1.2);
             this.spriteWeapon.setAngle(-194.5);
             this.frameCount = 0;
+            if (this.particleEffect) {
+                this.scene.particleManager.removeEffect(this.particleEffect.id);
+                this.particleEffect.effect.destroy();
+                this.particleEffect = null;
+
+            };
         } else if (this.flipX) { // X Origin More Right
             this.spriteWeapon.setDepth(1);
             this.spriteWeapon.setOrigin(-0.25, 1.2);
             this.spriteWeapon.setAngle(-250);
             this.frameCount = 0;
+            if (this.particleEffect) {
+                this.scene.particleManager.removeEffect(this.particleEffect.id);
+                this.particleEffect.effect.destroy();
+                this.particleEffect = null;
+
+            };
         } else {
             this.spriteWeapon.setDepth(1);
             this.spriteWeapon.setOrigin(-0.15, 1.3);
             this.spriteWeapon.setAngle(-195);
             this.frameCount = 0;
+            if (this.particleEffect) {
+                this.scene.particleManager.removeEffect(this.particleEffect.id);
+                this.particleEffect.effect.destroy();
+                this.particleEffect = null;
+
+            };
         };
     };
 };

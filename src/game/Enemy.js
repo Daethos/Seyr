@@ -143,7 +143,7 @@ export default class Enemy extends Entity {
                     this.stateMachine.setState(States.CHASE); // TODO:FIXME: State Machine Combat
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
-                    this.scene.combatEngaged();
+                    this.scene.combatEngaged(true);
                 };
             },
             context: this.scene,
@@ -317,6 +317,7 @@ export default class Enemy extends Entity {
     };
     onChaseUpdate = (dt) => {
         if (Math.abs(this.originPoint.x - this.x) > 500 || Math.abs(this.originPoint.y - this.y) > 500) {
+            console.log("Chase transitioning to Leash")
             this.stateMachine.setState(States.LEASH);
             return;
         }; 
@@ -402,8 +403,10 @@ export default class Enemy extends Entity {
     };
 
     onLeashEnter = () => {
-        console.log("Leashing Enemy to Origin Point of Encounter")
+        console.log("Leashing Enemy to Origin Point of Encounter");
         this.anims.play('player_running', true);
+        this.attacking.inCombat = false;
+        this.scene.combatEngaged(false);
         this.attacking = null;
     };
     onLeashUpdate = (dt) => {
@@ -525,7 +528,6 @@ export default class Enemy extends Entity {
         let computerAction;
         let computerCounter;
         let actionNumber = Math.floor(Math.random() * 101);
-        console.log(this.scene.state.computer_weapons, "The Computer's Weapons");
         const computerActions = {
             attack: 50 + this.scene.state.attack_weight,
             counter: 10 + this.scene.state.counter_weight,

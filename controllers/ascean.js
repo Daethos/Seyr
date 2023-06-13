@@ -168,8 +168,7 @@ async function recordCombatStatistic(req, res) {
         statistic.attacks.sorcery += typeDamageData.reduce((count, type) => type === 'Sorcery' ? count + 1 : count, 0);
         statistic.attacks.wild += typeDamageData.reduce((count, type) => type === 'Wild' ? count + 1 : count, 0);
         statistic.attacks.wind += typeDamageData.reduce((count, type) => type === 'Wind' ? count + 1 : count, 0);
-        statistic.attacks.total = Math.max(totalDamageData, statistic.attacks.total);
-        // statistic.deities = statistic.deities.concat(...deityData).flat();
+        statistic.attacks.total = Math.max(totalDamageData, statistic.attacks.total); 
         statistic.deities.Daethos += deityData.reduce((count, deity) => deity === 'Daethos' ? count + 1 : count, 0);
         statistic.deities.Achreo += deityData.reduce((count, deity) => deity === 'Achreo' ? count + 1 : count, 0);
         statistic.deities.Ahnve += deityData.reduce((count, deity) => deity === "Ahn've" ? count + 1 : count, 0);
@@ -191,8 +190,7 @@ async function recordCombatStatistic(req, res) {
         statistic.deities.Sevas += deityData.reduce((count, deity) => deity === "Se'vas" ? count + 1 : count, 0);
         statistic.deities.Shrygei += deityData.reduce((count, deity) => deity === "Shrygei" ? count + 1 : count, 0);
         statistic.deities.Tshaer += deityData.reduce((count, deity) => deity === 'Tshaer' ? count + 1 : count, 0);
-
-
+ 
         if (wins > losses && ascean.statistics.relationships.deity.name !== '') {
             const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, 'combat', 'value');
             ascean.statistics = newStats;

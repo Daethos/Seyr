@@ -1,0 +1,252 @@
+{
+    "anims": [
+        {
+            "key": "lightning_effect",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 60,
+            "frames": [
+                {
+                    "key": "lightning_effect",
+                    "frame": "1.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "2.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "3.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "4.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "5.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "6.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "7.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "8.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "9.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "10.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "11.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "12.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "13.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "14.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "15.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "16.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "17.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "18.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "19.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "20.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "21.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "22.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "23.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "24.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "25.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "26.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "27.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "28.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "29.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "30.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "31.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "32.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "33.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "34.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "35.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "36.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "37.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "38.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "39.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "40.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "41.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "42.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "43.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "44.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "45.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "46.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "47.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "48.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "49.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "50.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "51.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "52.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "53.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "54.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "55.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "56.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "57.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "58.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "59.png"
+                },
+                {
+                    "key": "lightning_effect",
+                    "frame": "60.png"
+                }
+            ]
+        }
+    ]
+}

@@ -5,6 +5,7 @@ import Treasure from './Treasure';
 import NewText from './NewText.js'
 import stick from './images/stick.png';
 import base from './images/base.png';
+import ParticleManager from './ParticleManager';
 
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -18,10 +19,9 @@ export default class Play extends Phaser.Scene {
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
         this.enemy = this.data.gameData.gameData.enemy;
-        this.focus = {};
-
+        this.focus = {}; 
         this.enemies = [];
-
+        this.particleManager = {};
         this.state = this.data.gameData.gameData.state;
         this.gameState = this.data.gameData.gameData.gameState;
         this.CONFIG = this.sys.game.config;
@@ -139,7 +139,9 @@ export default class Play extends Phaser.Scene {
                 this.minimapBorder.visible = true;
             };
         });
-
+        this.particleManager = new ParticleManager(this);
+        // const particles = ['fire', 'earth', 'wind', 'frost', 'spooky', 'righteous', 'wild', 'sorcery', 'lightning'];
+        // particles.forEach(particle => this.particleManager.addEmitter(particle));
         this.createWelcome(); 
         this.createStateListener(); 
     };
@@ -192,8 +194,8 @@ export default class Play extends Phaser.Scene {
         this.focus = data;
     };
 
-    combatEngaged = async function() {
-        const combatEngaged = new CustomEvent('combat-engaged', { detail: true });
+    combatEngaged = async (engagement) => {
+        const combatEngaged = new CustomEvent('combat-engaged', { detail: engagement });
         window.dispatchEvent(combatEngaged);
     };
 
@@ -319,7 +321,6 @@ export default class Play extends Phaser.Scene {
         // this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
         if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
-        
     };
     pause() {
         this.scene.pause();

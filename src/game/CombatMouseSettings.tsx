@@ -64,11 +64,11 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
         <div style={{ position: "absolute", width: "40%", height: "32.5%", textAlign: "center", left: "30%", top: "65%", background: 'transparent', zIndex: 99 }} onMouseDown={handleToggleScroll}>
             { scrollEnabled ? (
                 selectedHighlight === 'Weapon' ? (
-                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700 }}>Current Main Weapon: {weapons[0]?.name}</p>
+                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Main Weapon: {weapons[0]?.name}</p>
                 ) : selectedHighlight === 'Damage' ? (
-                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700 }}>Current Damage Style: {damageType[selectedDamageTypeIndex]}</p>
+                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Damage Style: {damageType[selectedDamageTypeIndex]}</p>
                 ) : ( selectedHighlight === 'Prayer' ) ? (
-                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700 }}>Current Prayer: {prayers[selectedPrayerIndex]}</p>
+                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Prayer: {prayers[selectedPrayerIndex]}</p>
                 ) : ( '' )
             ) : ( '' ) }
         </div>

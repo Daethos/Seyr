@@ -1,0 +1,132 @@
+{
+    "anims": [
+        {
+            "key": "spooky_effect",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 60,
+            "frames": [
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_0"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_1"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_2"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_3"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_4"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_5"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_6"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_7"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_8"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_9"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_10"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_11"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_12"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_13"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_14"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_15"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_16"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_17"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_18"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_19"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_20"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_21"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_22"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_23"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_24"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_25"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_26"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_27"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_28"
+                },
+                {
+                    "key": "spooky_effect",
+                    "frame": "1_29"
+                }
+            ]
+        }
+    ]
+}

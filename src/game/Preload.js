@@ -3,6 +3,7 @@ import NewText from './NewText.js'
 import Player from "./Player.js";
 import Enemy from './Enemy.js';
 import Treasure from './Treasure.js';
+import ParticleManager from "./ParticleManager.js";
 import joystickPng from './images/generic-joystick.png';
 import joystickJson from './images/generic-joystick.json';
 import castle_tiles from '../game/images/castle_tiles.png';
@@ -37,6 +38,7 @@ export default class Preload extends Phaser.Scene {
         Player.preload(this);
         Enemy.preload(this);
         Treasure.preload(this);
+        ParticleManager.preload(this);
 
         this.gameData.assets.forEach(asset => {
             this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
@@ -44,6 +46,8 @@ export default class Preload extends Phaser.Scene {
 
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
+ 
+
         // this.load.image('castle_tiles', castle_tiles);
         // this.load.image('layer_1', layer_1);
         // this.load.tilemapTiledJSON('castle_map', castle_map);

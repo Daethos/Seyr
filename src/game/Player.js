@@ -155,7 +155,7 @@ export default class Player extends Entity {
                         this.currentTarget = other.gameObjectB; 
                         if (this.scene.state.computer._id !== other.gameObjectB.ascean._id) this.scene.setupEnemy({ game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatData, health: other.gameObjectB.health });
                         if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
-                            this.scene.combatEngaged();
+                            this.scene.combatEngaged(true);
                             this.inCombat = true;
                         };
                     };
@@ -226,6 +226,7 @@ export default class Player extends Entity {
             this.spriteShield.setTexture(this.currentShieldSprite);
         };
         this.touching.filter(gameObject => gameObject !== null);
+        if (this.particleEffect) this.scene.particleManager.update(this, this.particleEffect);
         // =================== MOVEMENT VARIABLES ================== \\
         const speed = 2;
         
