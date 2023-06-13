@@ -10,6 +10,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.name = name;
         this.ascean = ascean;
         this.health = health;
+        this.stamina = 0;
         this._position = new Phaser.Math.Vector2(this.x, this.y);
         this.scene.add.existing(this);
 
@@ -29,6 +30,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.isHealing = false;
         this.isHurt = false;
         this.isPraying = false;
+        this.isStrafing = false;
+        this.isStalwart = false;
 
         this.actionAvailable = false;
         this.actionTarget = null;
@@ -51,7 +54,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.spriteWeapon = null;
         this.frameCount = 0;
         this.currentWeaponSprite = '';
-        this.weaponEffect = null;
+        this.particleEffect = null;
 
         this.currentAction = '';
         this.currentActionFrame = 0;
@@ -245,8 +248,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     knockback(other) {
-        console.log(`Is the ${this.name} looking left? ${this.flipX}`); 
-        let bodyPosition = other.pair.gameObjectB.body.position;
+        if (!other.pair.gameObjectB || !other.pair.gameObjectB.body) return;
+        let bodyPosition = other.pair.gameObjectB.body.position; // TODO:FIXME: other.pair.gameObjectB is undefined sometimes =[]
         let body = other.pair.gameObjectB.body; 
         let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
         let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
@@ -345,7 +348,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     checkDamageType = (type, concern) => {
-        console.log("Damage Type: ", type, "Checking If It's: ", concern)
         const magicTypes = ['Earth', 'Fire', 'Frost', 'Lightning', 'Wind', 'Righteous', 'Spooky', 'Sorcery', 'Wild'];
         const physicalTypes = ['Blunt', 'Pierce', 'Slash'];
         switch (concern) {
@@ -361,8 +363,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         return false;
     };
 
-    weaponRotation() { 
-        if (!this.isPosturing && this.spriteShield) this.spriteShield.setVisible(false);
+    weaponRotation(entity) { 
+        if (!this.isPosturing && !this.isStrafing && !this.isStalwart && this.spriteShield) this.spriteShield.setVisible(false);
         if (this.isRolling) this.spriteWeapon.setVisible(false);
         if (this.isPraying) { // Change to isPraying for Live
             if (this.spriteWeapon.depth < 3) this.spriteWeapon.setDepth(3);
@@ -387,25 +389,36 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isCountering) { 
-            console.log(this.scene.state, "Combat State")
-            if (this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
                 this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.player_damage_type.toLowerCase());
+            };
+            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 0) {
+                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
             };
             
             if (this.flipX) {
                 this.spriteWeapon.setOrigin(-0.4, 1.6);
                 this.spriteWeapon.setAngle(-135);
-                // if (this.particleEffect && this.frameCount === 10) this.scene.particleManager.startEffect(this.particleEffect.id);
             } else {
                 this.spriteWeapon.setOrigin(-0.4, 1.2);
                 this.spriteWeapon.setAngle(45);
-                // console.log(this.particleEffect, "particleEffect");
-                // if (this.particleEffect && this.frameCount === 10) this.scene.particleManager.startEffect(this.particleEffect.id);
             };
             this.frameCount += 1;
+        // } else if (this.isRolling) {
+            // if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
+            //     this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.player_damage_type.toLowerCase());
+            // };
+            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 0) {
+                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
+            };
+            // this.spriteWeapon.setVisible(false);
+            // this.frameCount += 1;
         } else if (this.isAttacking) {
-            if (this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.player_damage_type.toLowerCase());
+            };
+            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 0) {
+                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             if (this.flipX) {
@@ -535,6 +548,17 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isPosturing) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
+                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.player_damage_type.toLowerCase());
+                // if (this.flipX) {
+                    if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 0) {
+                        this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
+                    };
+                //     this.particleEffect.effect.setOrigin(-0.5, 0.5);
+                // } else {
+                //     this.particleEffect.effect.setOrigin(1.5, 0.5);
+                // }
+            };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             this.spriteShield.setVisible(true);
             if (this.flipX) {
@@ -598,6 +622,12 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && !this.flipX) {
+            if (this.isStrafing || this.isStalwart) {
+                this.spriteShield.setOrigin(-0.2, 0.25);
+            };
+            // if (this.isStalwart) {
+            //     this.spriteShield.setOrigin(-0.2, 0);
+            // };
             this.spriteWeapon.setDepth(3);
             this.spriteWeapon.setOrigin(-0.25, 0.5);
             this.spriteWeapon.setAngle(107.5);
@@ -609,6 +639,12 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
             };
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && this.flipX) { 
+            if (this.isStrafing || this.isStalwart) {
+                this.spriteShield.setOrigin(1.2, 0.25);
+            };
+            // if (this.isStalwart) {
+            //     this.spriteShield.setOrigin(1.2, 0);
+            // };
             this.spriteWeapon.setDepth(3);
             this.spriteWeapon.setOrigin(0.5, 1.2);
             this.spriteWeapon.setAngle(-194.5);
@@ -647,7 +683,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
  
 export function screenShake(scene) {
     const duration = 40;  
-    const intensity = 0.0075;  
+    const intensity = 0.01;  
     scene.cameras.main.shake(duration, intensity);
 };
  

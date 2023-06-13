@@ -4,7 +4,7 @@
             "key": "sorcery_effect",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 30,
+            "frameRate": 60,
             "frames": [
                 {
                     "key": "sorcery_effect",

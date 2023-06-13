@@ -14,9 +14,11 @@ interface CombatUIProps {
     dispatch: any;
     gameState: GameData;
     gameDispatch: any;
+    staminaPercentage: number;
+    setStaminaPercentage: any;
 };
 
-const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) => {
+const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage, setStaminaPercentage }: CombatUIProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
 
@@ -150,7 +152,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
         border: 'none',
         // boxShadow: '0 0 1em ' + borderColor(state?.player?.mastery),  
         backgroundColor: "transparent",
-        top: "20px",
+        top: "22.5px",
         // borderRadius: "25%",
     };
 
@@ -191,23 +193,22 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
                 </button> 
                 </>
             ) : ( '' ) } 
-            {/* <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '20px', height: '20px', top: "-20px", left: "0px"  }} /> */}
-            <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '125px', height: '35px'}} />
-            <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "125px", top: "-9px", left: "22px", fontFamily: "Cinzel" }}>
+            <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
+            <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "150px", top: "-9px", left: "27px", fontFamily: "Cinzel", fontWeight: 600 }}>
                 {state.player.name}
             </p>
             <ProgressBar 
                 variant="info"
                 now={playerHealthPercentage}
-                style={{ position: "absolute", top: "9px", left: "9px", width: "106px", height: "15px", backgroundColor: "red" }} 
+                style={{ position: "absolute", top: "11px", left: "10px", width: "130px", height: "15px", backgroundColor: "red" }} 
             />
             <p style={{ 
                 position: "absolute", 
                 color: "#fdf6d8", 
                 textShadow: "1px 1px 1px black", 
-                top: "8px", 
+                top: "9px", 
                 left: "8px",
-                width: "105px", 
+                width: "130px", 
                 fontSize: "12px", 
                 textAlign: "center", 
                 fontFamily: "Cinzel", 
@@ -215,11 +216,29 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch }: CombatUIProps) =
             }}>
                 {`${Math.round(state.new_player_health)} / ${state.player_health} [${playerHealthPercentage}%]`}
             </p>
-            <div style={{ position: "absolute", left: "130px", top: "-15px", transform: "scale(0.75)" }}>
+            <div style={{ position: "absolute", left: "185px", top: "-12.5px", transform: "scale(0.75)" }}>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
                 <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle(state.weapons[0]?.rarity)} />
             </OverlayTrigger>
             </div>
+            <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '37.5px', height: '37.5px', top: "-5px", left: "150px", borderRadius: "50%"  }} />
+            <ProgressBar 
+                variant="success"
+                now={staminaPercentage}
+                style={{ position: "absolute", top: "-1.5px", left: "153.5px", width: "30px", height: "30px", backgroundColor: "red", borderRadius: "50%" }} 
+            />
+            <p style={{ 
+                position: "absolute", 
+                color: "#fdf6d8", 
+                textShadow: "1px 1px 1px black", 
+                top: "4px", 
+                left: "148px",
+                width: "40px", 
+                fontSize: "12px", 
+                textAlign: "center", 
+                fontFamily: "Cinzel", 
+                fontWeight: 700 
+            }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
             {state.playerEffects.length > 0 ? (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {

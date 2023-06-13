@@ -45,6 +45,7 @@ const Story = ({ user }: Props) => {
                     settingsAPI.getSettings(),
                     eqpAPI.index(),
                 ]);
+                console.log(combatStateResponse.data.data, "Ascean Response")
                 const traitResponse = await getAsceanTraits(gameStateResponse.data);
                 gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
                 dispatch({
@@ -57,7 +58,7 @@ const Story = ({ user }: Props) => {
                     'ascean': combatStateResponse.data.data.ascean,
                     'currentHealth': combatStateResponse.data.data.ascean.health.current === -10 ? combatStateResponse.data.data.attributes.healthTotal : combatStateResponse.data.data.ascean.health.current,
                     'level': combatStateResponse.data.data.ascean.level,
-                    'experience': 0,
+                    'experience': combatStateResponse.data.data.ascean.experience,
                     'experienceNeeded': combatStateResponse.data.data.ascean.level * 1000,
                     'mastery': combatStateResponse.data.data.ascean.mastery,
                     'faith': combatStateResponse.data.data.ascean.faith,

@@ -144,6 +144,7 @@ export default class Play extends Phaser.Scene {
         // particles.forEach(particle => this.particleManager.addEmitter(particle));
         this.createWelcome(); 
         this.createStateListener(); 
+        this.staminaListener();
     };
 
     startJoystick(pointer) {
@@ -215,6 +216,12 @@ export default class Play extends Phaser.Scene {
         });
     };
 
+    staminaListener = async () => {
+        window.addEventListener('updated-stamina', (e) => {
+            this.player.stamina = e.detail;
+        });
+    };
+
     sendStateActionListener = async function() {
         // Handle Event Listener to Dispatch State
         const sendState = new CustomEvent('update-state-action', { detail: this.state });
@@ -238,7 +245,32 @@ export default class Play extends Phaser.Scene {
         };
     };
  
-    
+    checkStamina = (value) => {
+        switch (value) {
+            case 'attack':
+                const stamina = new CustomEvent('update-stamina', { detail: 30 });
+                window.dispatchEvent(stamina);
+                break;
+            case 'counter':
+                const counterStamina = new CustomEvent('update-stamina', { detail: 10 });
+                window.dispatchEvent(counterStamina);
+                break;
+            case 'posture':
+                const postureStamina = new CustomEvent('update-stamina', { detail: 20 });
+                window.dispatchEvent(postureStamina);
+                break;
+            case 'roll':
+                const rollStamina = new CustomEvent('update-stamina', { detail: 20 });
+                window.dispatchEvent(rollStamina);
+                break;
+            case 'dodge':
+                const dodgeStamina = new CustomEvent('update-stamina', { detail: 20 });
+                window.dispatchEvent(dodgeStamina);
+                break;
+            default:
+                break;
+        };   
+    };
 
     drinkFlask = async function() {
         // Handle Event Listener to Dispatch Drinking a Flask
@@ -247,6 +279,7 @@ export default class Play extends Phaser.Scene {
     setState = async function(key, value) {
         // console.log("Setting: " + key + " to " + value);
         this.state[key] = value;
+        if (key === 'action') this.checkStamina(value);
     };
 
     setStateAdd = async function(key, value) { 
@@ -286,8 +319,7 @@ export default class Play extends Phaser.Scene {
           
         this.add.existing(border);
         return border;
-    };
-      
+    };   
 
     createWelcome() {
         this.time.addEvent({

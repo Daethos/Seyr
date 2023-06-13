@@ -9,14 +9,19 @@ interface Props {
     asceanState?: any;
     setAsceanState: React.Dispatch<any>;
     levelUpAscean?: any;
+    story?: boolean;
 };
 
-const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => {
+const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean, story }: Props) => {
     const [levelUpModalShow, setLevelUpModalShow] = useState<boolean>(false);
 
     const finishLevelUp = () => {
         setLevelUpModalShow(false);
         levelUpAscean(asceanState);
+    };
+
+    const storyLevelStyle = {
+        
     };
 
     return (
@@ -44,8 +49,8 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean }: Props) => 
             </Button>
             </Modal.Body>
         </Modal>
-        <Button variant='outline' id='level-up' onClick={() => setLevelUpModalShow(true)}>
-            <h3 className='level-up'>Level++!!</h3>
+        <Button variant='outline' id={story ? 'story-levelup' : 'level-up'} onClick={() => setLevelUpModalShow(true)}>
+            <h3 className={story ? 'story-levelup' : 'level-up'}>Level++</h3>
         </Button>
         </>
     );

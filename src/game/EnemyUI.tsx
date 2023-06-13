@@ -116,7 +116,7 @@ const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
     };
 
     return (
-        <div style={{ position: "absolute", top: "15px", left: "790px", transform: "scale(1.25)" }} id={state.computerDamaged ? 'flicker' : ''}>
+        <div style={{ position: "absolute", top: "15px", left: "765px", transform: "scale(1.25)" }} id={state.computerDamaged ? 'flicker' : ''}>
             {state.computerEffects.length > 0 ? (
                 <div className='combat-effects'>
                     {state.computerEffects.map((effect: any, index: number) => {
@@ -124,22 +124,22 @@ const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
                     })}
                 </div>
             ) : ( '' ) }
-            <img src={enemyHealthBar} alt="Health Bar" style={{ position: "absolute", width: '125px', height: '35px' }} />
-            <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "125px", top: "-9px", left: "-20px", fontFamily: "Cinzel", textAlign: "center" }}>
+            <img src={enemyHealthBar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
+            <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "150px", top: "-9px", left: "0px", fontFamily: "Cinzel", textAlign: "center" }}>
             {state.computer.name}
             </p>
             <ProgressBar 
                 variant="info"
                 now={playerEnemyPercentage}
-                style={{ position: "absolute", left: "9px", top: "9px", width: "106px", height: "15px", backgroundColor: "red" }} 
+                style={{ position: "absolute", left: "10px", top: "11px", width: "130px", height: "15px", backgroundColor: "red" }} 
             />
             <p style={{ 
                 position: "absolute", 
                 color: "#fdf6d8", 
                 textShadow: "1px 1px 1px black", 
-                top: "8px", 
+                top: "9px", 
                 left: "8px",
-                width: "105px", 
+                width: "130px", 
                 fontSize: "12px", 
                 textAlign: "center", 
                 fontFamily: "Cinzel", 
@@ -147,7 +147,7 @@ const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
             }}>
                 {`${Math.round(state.new_computer_health)} / ${state.computer_health} [${playerEnemyPercentage}%]`}
             </p>
-            <div style={{ position: "absolute", left: "-50px", top: "-10px", transform: "scale(0.75)" }}>
+            <div style={{ position: "absolute", left: "-40px", top: "-10px", transform: "scale(0.75)" }}>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.computer_weapons[0])}>
                 <img src={state.computer_weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.computer_weapons[0]?.name} style={getItemStyle(state.computer_weapons[0]?.rarity)} />
             </OverlayTrigger>

@@ -5,6 +5,7 @@ import LevelUpModal from '../../game/LevelUpModal';
 import GamePlayerStats from './GamePlayerStats';
 import StatusEffects from './StatusEffects';
 import ExperienceBar from './ExperienceBar';
+import { useEffect } from 'react';
 
 interface Props {
   ascean: any;
@@ -18,6 +19,9 @@ interface Props {
 };
 
 const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean, damaged }: Props) => {
+    useEffect(() => {
+        console.log(asceanState)
+    }, [asceanState])
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -28,7 +32,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         <div className="story-block">
             <div className='story-ascean'> 
                 { asceanState.experience === asceanState.experienceNeeded ? (
-                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} story={true} />
                 ) : ( '' ) }
                 <div style={{ textAlign: "center" }}>
                 <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} story={true} />

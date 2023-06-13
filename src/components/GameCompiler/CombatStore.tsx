@@ -16,7 +16,7 @@ export interface CombatData {
     playerEffects: any[];
     player_damage_type: string;
     player_defense: object;
-    player_attributes: object;
+    player_attributes: any;
     player_defense_default: object;
     realized_player_damage: number;
     playerDamaged: boolean;

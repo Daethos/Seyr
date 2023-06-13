@@ -876,6 +876,16 @@
   font-size: 12.5px;
   text-align: center;
 }
+#story-levelup { 
+  position: absolute;
+  font-weight: 700;
+  color: gold;
+  text-align: center; 
+}
+.story-levelup {
+  font-size: 12.5px;
+  /* text-align: center; */
+}
 .save-inventory-outer {
   display: flex;
   z-index: 999;
@@ -1797,7 +1807,7 @@
 .story-invoke {
   position: absolute;
   bottom: -14px;
-  left: 131px;
+  left: 185px;
 }
 .story-effects {
   /* display: inline-block; */
@@ -1830,7 +1840,7 @@
 .combat-effects {
   position: absolute;
   display: inline-flex;
-  top: 30px;
+  top: 35px;
   left: -10px;
   height: 30px;
   transform: scale(0.75);

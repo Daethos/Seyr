@@ -237,6 +237,7 @@ export default class Enemy extends Entity {
         this.idleWait -= dt;
         if (this.idleWait <= 0) {
             this.idleWait = 500;
+            console.log("Idle Transitioning to Patrol");
             this.stateMachine.setState(States.PATROL);
         };
     };
@@ -445,6 +446,7 @@ export default class Enemy extends Entity {
     };
 
     evaluateEnemyState = () => {
+        if (this.particleEffect) this.scene.particleManager.update(this, this.particleEffect);
         if (this.attacking) {
             let direction = this.attacking.position.subtract(this.position);
             if (direction.x < 0) {
@@ -463,7 +465,7 @@ export default class Enemy extends Entity {
         if (this.spriteWeapon && this.spriteShield) {
             this.spriteWeapon.setPosition(this.x, this.y);
             this.spriteShield.setPosition(this.x, this.y);
-            this.weaponRotation();
+            this.weaponRotation('enemy');
         };
         if (this.isHurt) {
             this.anims.play('player_hurt', true).on('animationcomplete', () => {

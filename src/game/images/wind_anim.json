@@ -4,7 +4,7 @@
             "key": "wind_effect",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 10,
+            "frameRate": 20,
             "frames": [
                 {
                     "key": "wind_effect",

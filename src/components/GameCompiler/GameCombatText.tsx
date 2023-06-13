@@ -20,22 +20,13 @@ interface Props {
 };
 
 const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
-    const [combatText, setCombatText] = useState<any>('');
-    const [combatRound, setCombatRound] = useState<number>(0);
-    // useEffect(() => {
-    //     if (Number(combatRoundText) > combatRound) {
-    //         text();
-    //     };
-    // }, [combatRoundText, combatRound]);
- 
     const storyStyle = {
         height: "80px",
         width: "450px",  
         fontSize: "12px",
         borderRadius: "3px",
-        border: "2px solid purple"
+        border: "2px solid #2A0134"
     };
-
     const text = () => {
         let result = "";
         if (emergencyText && !story) result += emergencyText + "\n";
@@ -52,8 +43,6 @@ const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, play
         if (playerDeathText) result += playerDeathText + "\n";
         if (computerDeathText) result += computerDeathText + "\n";
         if (combatRoundText) result += `Combat Round: ${combatRoundText} \n`;
-        // setCombatText((prevText: any) => prevText + result + "\n");
-        // setCombatRound(Number(combatRoundText));
         return result;
     };
     return (

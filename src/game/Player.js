@@ -40,6 +40,7 @@ export default class Player extends Entity {
         this.currentWeaponSprite = spriteName;
         this.targetIndex = 0;
         this.currentTarget = null;
+        this.stamina = scene.state.player_attributes.stamina;
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -140,6 +141,10 @@ export default class Player extends Entity {
         });
     };
 
+
+    // TODO:FIXME: Figure out why sometimes you get an actionTarget that has an other.pair.gameObjectB that is undefined. Something is happening that's allowing this behavior.
+
+    // TODO:FIXME: Add isStrafing to weaponRotation() so that your spriteShield is visible.
     checkEnemyAttackCollision(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
@@ -206,7 +211,6 @@ export default class Player extends Entity {
     };
 
     playerActionSuccess = () => {
-        console.log("Knocked Back ", this.actionTarget.gameObjectB.ascean.name);
         // this.scene.sendStateActionListener();
         // this.actionAvailable = false;
         this.knockback(this.actionTarget);
@@ -237,6 +241,7 @@ export default class Player extends Entity {
             }; 
             console.log(this.touching, this.targetIndex);
             const newTarget = this.touching[this.targetIndex];
+            if (!newTarget) return;
             this.targetIndex = this.targetIndex + 1 === this.touching.length ? 0 : this.targetIndex + 1;
             this.scene.setupEnemy({ game: newTarget.ascean, enemy: newTarget.combatData, health: newTarget.health }); 
             this.currentTarget = newTarget;
@@ -276,69 +281,77 @@ export default class Player extends Entity {
             if (this.flipX) this.flipX = false;
         };
 
+        // =================== STALWART ================== \\
+
+        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.strafe.E) || Phaser.Input.Keyboard.JustDown(this.inputKeys.strafe.Q))) {
+            this.isStalwart = this.isStalwart ? false : true;
+        };
+
         // =================== ACTIONS ================== \\
     
-        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+        if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'attack');
             this.isAttacking = true;           
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
-        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+        if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'posture');
             this.isPosturing = true;
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
-        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+        if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'roll');
             this.isRolling = true; 
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
     
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 30) {
             this.scene.setState('action', 'attack');
             if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isAttacking = true;
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 20) {
             this.scene.setState('action', 'posture');
             if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isPosturing = true;
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 20) {
+            this.scene.setState('action', 'roll');
             this.isRolling = true;
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR)) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 20) {
             this.isDodging = true;
+            this.scene.checkStamina('dodge');
             // Will need to learn how to mask filter for the enemy
             
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE)) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 10) {
+            this.scene.setState('counter_guess', 'counter');
             this.scene.setState('action', 'counter');
-            this.scene.setState('counter_action', 'counter');
             this.isCountering = true;
-            if (this.actionAvailable) {
+            if (this.actionAvailable && this.actionTarget) {
                 this.playerActionSuccess();
             };
         };
@@ -452,10 +465,15 @@ export default class Player extends Entity {
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
             this.setVelocityX(this.body.velocity.x * 0.85);
-            if (this.scene.state.action !== 'posture') this.scene.setState('action', 'posture');
+            // if (this.scene.state.action !== 'posture') this.scene.setState('action', 'posture');
+            if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
+            this.isStrafing = true;
             // This will be a +% Defense from Shield. 
             // Counter-Posturing gets +damage bonus against this tactic
+        } else {
+            this.isStrafing = false;
         };
+
         if (this.inputKeys.roll.THREE.isDown) {
             // this.setVelocityX(this.body.velocity.x * 1.25);
             // Flagged to have its weapons[0].roll added as an avoidance buff
@@ -508,8 +526,8 @@ export default class Player extends Entity {
                 const sensorDisp = 12;
                 const colliderDisp = 16;
                 if (this.isRolling) {
-                    if (this.scene.state.action !== 'roll') this.scene.setState('action', 'roll');
-                    if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
+                    // if (this.scene.state.action !== 'roll') this.scene.setState('action', 'roll');
+                    // if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
                     this.body.parts[2].position.y += sensorDisp;
                     this.body.parts[2].circleRadius = 21;
                     this.body.parts[1].vertices[0].y += colliderDisp;
@@ -534,6 +552,8 @@ export default class Player extends Entity {
                         this.body.parts[2].circleRadius = 36;
                         this.body.parts[1].vertices[0].y -= colliderDisp;
                         this.body.parts[1].vertices[1].y -= colliderDisp; 
+                        if (this.scene.state.action !== 'roll') this.scene.setState('action', '');
+                        if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
                         return;
                     };
                     const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
@@ -585,7 +605,7 @@ export default class Player extends Entity {
         // this.spriteChest.setPosition(this.x, this.y);
         // this.spriteLegs.setPosition(this.x, this.y);
         // this.spriteHealth.setPosition(this.x, this.y - 20);
-        this.weaponRotation();
+        this.weaponRotation('player');
     };
  
 

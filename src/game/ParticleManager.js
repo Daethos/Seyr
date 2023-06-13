@@ -59,19 +59,34 @@ export default class ParticleManager extends Phaser.Scene {
         return new Phaser.Physics.Matter.Sprite(scene.matter.world, player.x, player.y, key).setScale(0.5).setOrigin(0.5, 0.5).setDepth(player.depth + 1).setVisible(false);    
     };
 
+    sensorListener(player, effect, effectSensor) {
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [effectSensor],
+            callback: (other) => {
+                if (other.gameObjectB && (other.gameObjectB.name === 'enemy' && player.name === 'player' || other.gameObjectB.name === 'player' && player.name === 'enemy')) {
+                    console.log(other.gameObjectB, "Enemy in Sensor Listener");
+                    player.particleEffect.success = true; 
+                };
+            },
+            context: this.scene,
+        });
+    };
+
     addEffect(action, player, key) { 
+        console.log(action, "Action in Particle Manager");
         let particle = {
             action: action,
             id: player.ascean._id + '_' + key,
-            cleanKey: key,
             key: key + '_effect',
             effect: this.spriteMaker(this.scene, player, key + '_effect'), 
+            success: false,
+            velocity: action === 'attack' ? 5 : action === 'counter' ? 8 : action === 'posture' ? 6.5 : 5,
         };
-        console.log(particle, "Particle Created", this.scene); 
         const { Bodies } = Phaser.Physics.Matter.Matter; // Import the Matter module 
-        const circleCollider = Bodies.circle(player.x, player.y, 16, { isSensor: true }); // Create a circular body
-        particle.effect.setExistingBody(circleCollider); 
+        const effectSensor = Bodies.circle(player.x, player.y, 12, { isSensor: true, label: "effectSensor" }); 
+        particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
+        this.sensorListener(player, particle.effect, effectSensor);
         this.particles.push(particle);
         return particle;
     };
@@ -92,7 +107,7 @@ export default class ParticleManager extends Phaser.Scene {
         if (particle) {
             const direction = player.flipX ? -1 : 1;
             particle.effect.play(particle.key, true);
-            particle.setVelocity(6 * direction, 0);
+            particle.setVelocity(7 * direction, 0);
         };
     };
 
@@ -106,27 +121,29 @@ export default class ParticleManager extends Phaser.Scene {
     };
 
     update(player) {
-        console.log(player.particleEffect.effect.visible, player.particleEffect, "Visible ??")
+        if (player.particleEffect.success) {
+            console.log("Particle Effect Success!")
+            this.scene.sendStateActionListener();
+            player.particleEffect.success = false;
+            // this.scene.particleManager.removeEffect(player.particleEffect.id);
+            return;
+        };
         switch (player.particleEffect.action) {
             case 'attack':
                 if (player.frameCount < 16) return;
                 break;
             case 'counter':
-                if (player.frameCount < 4) return;
+                if (player.frameCount < 3) return;
                 break;
             case 'posture':
-                
-                break;
-            case 'roll':
-                
-                break;
-
+                if (player.frameCount < 6) return;
+                break; 
             default:
                 break;
         };
         if (!player.particleEffect.effect.visible) player.particleEffect.effect.setVisible(true); 
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
         player.particleEffect.effect.play(player.particleEffect.key, true);
-        player.particleEffect.effect.setVelocity(player.flipX ? -7 : 7, 0);
+        player.particleEffect.effect.setVelocity(player.flipX ? -player.particleEffect.velocity : player.particleEffect.velocity, 0);
     };
 };

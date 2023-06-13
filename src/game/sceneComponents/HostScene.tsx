@@ -64,6 +64,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [combatHud, setCombatHud] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
+    const [staminaPercentage, setStaminaPercentage] = useState<number>(100);
+
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
     scenes.push(Boot);
@@ -398,7 +400,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 'kyosir': 0,
                 'level': cleanRes.data.level,
                 'opponent': gameState.opponent.level,
-                'experience': 0,
+                'experience': cleanRes.data.experience,
                 'experienceNeeded': cleanRes.data.level * 1000,
                 'mastery': cleanRes.data.mastery,
                 'faith': cleanRes.data.faith,
@@ -725,9 +727,24 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         }; 
     };
 
+    useEffect(() => {
+        if (staminaPercentage < 100) {
+            const timer = setTimeout(() => {
+                setStaminaPercentage(staminaPercentage + (state.player_attributes.stamina / 100));
+                const updatedStamina = new CustomEvent('updated-stamina', { detail: Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina) });
+                window.dispatchEvent(updatedStamina);
+            }, 200 - state.player_attributes.stamina);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }; 
+    }, [staminaPercentage]);
+
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
-
-
+    const updateStamina = async (e: { detail: number }) => {
+        setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
+    };
 
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('fetch-enemy', fetchEnemy);
@@ -742,6 +759,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
+    usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
@@ -786,7 +804,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
-                        <CombatUI state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} />
+                        <CombatUI state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} staminaPercentage={staminaPercentage} setStaminaPercentage={setStaminaPercentage} />
                         { state.combatEngaged ? (
                             <>
                             <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>

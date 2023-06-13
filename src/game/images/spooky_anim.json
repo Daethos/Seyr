@@ -4,7 +4,7 @@
             "key": "spooky_effect",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 60,
+            "frameRate": 120,
             "frames": [
                 {
                     "key": "spooky_effect",
