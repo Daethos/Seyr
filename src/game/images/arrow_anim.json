@@ -1,0 +1,36 @@
+{
+    "anims": [
+        {
+            "key": "arrow_effect",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "arrow_effect",
+                    "frame": "arrow_effect"
+                },
+                {
+                    "key": "arrow_effect",
+                    "frame": "arrow_effect"
+                },
+                {
+                    "key": "arrow_effect",
+                    "frame": "arrow_effect"
+                },
+                {
+                    "key": "arrow_effect",
+                    "frame": "arrow_effect"
+                },
+                {
+                    "key": "arrow_effect",
+                    "frame": "arrow_effect"
+                },
+                {
+                    "key": "arrow_effect",
+                    "frame": "arrow_effect"
+                }
+            ]
+        }
+    ]
+}

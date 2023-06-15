@@ -622,7 +622,7 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: -3.5%;
-  z-index: 999;
+  z-index: 99;
   text-shadow: 1.5px 1.5px 1.5px black;
 }
 .progressxp {
@@ -1845,4 +1845,4 @@
   height: 30px;
   transform: scale(0.75);
 } 
-.game-ascean.story { margin-top: 0vh; }
+.game-ascean.story { margin-top: 0vh; z-index: 99999; }

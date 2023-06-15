@@ -86,7 +86,7 @@ export default class Play extends Phaser.Scene {
         }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 4;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
@@ -198,6 +198,11 @@ export default class Play extends Phaser.Scene {
     combatEngaged = async (engagement) => {
         const combatEngaged = new CustomEvent('combat-engaged', { detail: engagement });
         window.dispatchEvent(combatEngaged);
+    };
+
+    stalwart = async (update) => {
+        const stalwart = new CustomEvent('update-stalwart', { detail: update });
+        window.dispatchEvent(stalwart);
     };
 
     createStateListener = async function() { 

@@ -20,6 +20,7 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
   
     const handleWheelRotation = (event: WheelEvent) => {
         if (!scrollEnabled) return;
+        console.log(event.deltaY, "deltaY");
         const direction = event.deltaY > 0 ? 1 : -1; // Check the deltaY value of the wheel event to determine the rotation direction
     
         if (selectedHighlight === 'Prayer') {
@@ -32,8 +33,9 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
             setSelectedDamageTypeIndex(newIndex);
             setDamageType( { target: { value: damageType[newIndex] } } );
             setSelectedHighlight('Damage');
-        } else {
-            const newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
+        } else if (selectedHighlight === 'Weapon') {
+            let newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
+            newIndex = direction === 1 ? 2 : 1;
             setSelectedWeaponIndex(newIndex);
             setWeaponOrder( { target: { value: weapons[newIndex].name } } );
             setSelectedHighlight('Weapon');
@@ -64,11 +66,21 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
         <div style={{ position: "absolute", width: "40%", height: "32.5%", textAlign: "center", left: "30%", top: "65%", background: 'transparent', zIndex: 99 }} onMouseDown={handleToggleScroll}>
             { scrollEnabled ? (
                 selectedHighlight === 'Weapon' ? (
-                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Main Weapon: {weapons[0]?.name}</p>
+                    <>
+                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>{weapons[1]?.name}</p>
+                    <p style={{ color: 'gold', fontSize: "18px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Main Weapon: {weapons[0]?.name}</p>
+                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>{weapons[2]?.name}</p>
+                    </>
                 ) : selectedHighlight === 'Damage' ? (
-                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Damage Style: {damageType[selectedDamageTypeIndex]}</p>
+                    <>
+                    <p style={{ color: 'gold', fontSize: "18px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Damage Style: {damageType[selectedDamageTypeIndex]}</p>
+                    <div style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Options: {damageType.map((type: string, index: number) => <div style={{ display: "inline" }} key={index}>{type}{' '}</div>)}</div>
+                    </>
                 ) : ( selectedHighlight === 'Prayer' ) ? (
-                    <p style={{ color: 'gold', fontSize: "20px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Prayer: {prayers[selectedPrayerIndex]}</p>
+                    <>
+                    <p style={{ color: 'gold', fontSize: "18px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Prayer: {prayers[selectedPrayerIndex]}</p>
+                    <div style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Options: {prayers.map((type: string, index: number) => <div style={{ display: "inline" }} key={index}>{type}{' '}</div>)}</div>
+                    </>
                 ) : ( '' )
             ) : ( '' ) }
         </div>

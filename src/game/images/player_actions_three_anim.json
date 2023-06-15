@@ -3,7 +3,7 @@
         {
             "key": "player_hurt",
             "type": "frames",
-            "repeat": 3,
+            "repeat": 1,
             "frameRate": 12,
             "frames": [
                 {

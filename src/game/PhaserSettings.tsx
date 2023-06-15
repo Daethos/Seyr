@@ -316,7 +316,7 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
         </Modal.Body>
         </Modal>
         <Button variant='' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' id='world-status' onClick={() => setSettingsModalShow(true)}>
-        <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Settings</h3>
+        <h3 style={{ fontSize: '12px', textAlign: 'center' }} className=''>Settings</h3>
         </Button>
         </>
     );

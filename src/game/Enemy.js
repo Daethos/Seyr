@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import Entity, { screenShake, pauseGame } from "./Entity"; 
 import StateMachine, { States } from "./StateMachine";
+import HealthBar from "./HealthBar";
+import ScrollingCombatText from "./ScrollingCombatText";
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
 import playerActionsOneAnim from './images/player_actions_anim.json';
@@ -136,6 +138,7 @@ export default class Enemy extends Entity {
             callback: other => {
                 if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead) {
                     this.attacking = other.gameObjectB;
+                    this.healthbar.setVisible(true);
                     if (this.scene.state.computer._id !== this.ascean._id && !other.gameObjectB.touching.find((touched) => touched.ascean._id === this.ascean._id)) {
                         this.scene.setupEnemy({ game: this.ascean, enemy: this.combatData, health: this.health });
                     };
@@ -179,7 +182,18 @@ export default class Enemy extends Entity {
         this.scene.add.existing(this.spriteShield);
         this.spriteShield.setVisible(false);
 
+        this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health);
+        this.checkEnemyMeleeOrRanged();
+
         window.removeEventListener('enemy-fetched', this.enemyFetchedFinishedListener);
+    };
+
+    checkEnemyMeleeOrRanged = () => {
+        if (this.scene.state.computer_weapons?.[0]?.attack_type === 'Magic' || this.scene.state.computer_weapons?.[0]?.type === 'Bow' || this.scene.state.computer_weapons?.[0]?.type === 'Greatbow') {
+            this.isRanged = true;
+        } else {
+            this.isRanged = false;
+        };
     };
 
     weaponSprite(weapon) {
@@ -188,17 +202,21 @@ export default class Enemy extends Entity {
  
     enemyStateListener() {
         window.addEventListener('update-combat-data', (e) => {
-            // console.log(e.detail, "State Updated");
             if (this.ascean.name !== e.detail.computer.name) return;
+            this.combatData = e.detail;
             if (this.health > e.detail.new_computer_health) {
-                // this.hurt();
-                // screenShake(this.scene);
-                // pauseGame(20).then(() => {
-                //     this.setVelocityX(0);
-                // });
                 this.isHurt = true;
+                let damage = Math.round(this.health - e.detail.new_computer_health);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage');
+                console.log(damage, "Damage")
+            };
+            if (this.health < e.detail.new_computer_health) {
+                let heal = Math.round(e.detail.new_computer_health - this.health);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
+                console.log(heal, "Heal")
             };
             this.health = e.detail.new_computer_health;
+            this.updateHealthBar(this.health);
             if (e.detail.new_computer_health <= 0) {
                 this.stateMachine.setState(States.DEATH);
             };
@@ -206,6 +224,7 @@ export default class Enemy extends Entity {
                 this.inCombat = false;
                 this.attacking = null;
             };
+            this.checkEnemyMeleeOrRanged();
         });
     };
 
@@ -221,13 +240,18 @@ export default class Enemy extends Entity {
         };
     };
 
+    updateHealthBar(health) {
+        this.healthbar.setValue(health);
+    };
+
     onDeathEnter = () => {
         this.isDead = true;
         this.anims.play('player_death', true);
         this.inCombat = false;
         this.attacking = null;
-        this.spriteWeapon.setVisible(false);
-        this.spriteShield.setVisible(false);
+        this.spriteWeapon.destroy();
+        this.spriteShield.destroy();
+        this.healthbar.destroy();
     };
 
     onIdleEnter = () => {
@@ -238,7 +262,7 @@ export default class Enemy extends Entity {
         if (this.idleWait <= 0) {
             this.idleWait = 500;
             console.log("Idle Transitioning to Patrol");
-            this.stateMachine.setState(States.PATROL);
+            if (this.stateMachine.isCurrentState(States.IDLE)) this.stateMachine.setState(States.PATROL);
         };
     };
     onIdleExit = () => {
@@ -268,7 +292,7 @@ export default class Enemy extends Entity {
                     },
                     onComplete: () => { 
                         this.setVelocity(0, 0);
-                        this.stateMachine.setState(States.IDLE);
+                        if (this.stateMachine.isCurrentState(States.PATROL)) this.stateMachine.setState(States.IDLE);
                     }
                 });
             },
@@ -314,21 +338,21 @@ export default class Enemy extends Entity {
     onChaseEnter = () => {
         console.log("Chasing Player Initiated")
         this.anims.play('player_running', true);
-
     };
     onChaseUpdate = (dt) => {
-        if (Math.abs(this.originPoint.x - this.x) > 500 || Math.abs(this.originPoint.y - this.y) > 500) {
+        const rangeMultiplier = this.isRanged ? 2 : 1;
+        if (Math.abs(this.originPoint.x - this.x) > 500 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 500 * rangeMultiplier) {
             console.log("Chase transitioning to Leash")
             this.stateMachine.setState(States.LEASH);
             return;
         }; 
         let direction = this.attacking.position.subtract(this.position);
-        if (direction.length() >= 205) {
+        if (direction.length() >= 205 * rangeMultiplier) {
             this.isRolling = true;
             this.roll();
             direction.normalize();
             this.setVelocity(direction.x * 3.25, direction.y * 3.25);
-        } else if (direction.length() >= 135) {
+        } else if (direction.length() >= 135 * rangeMultiplier) {
             direction.normalize();
             this.setVelocity(direction.x * 2.75, direction.y * 2.75);
         } else {
@@ -426,15 +450,31 @@ export default class Enemy extends Entity {
         this.setVelocity(0, 0);
     };
 
+    enemyActionSuccess = () => {
+        this.scene.sendStateActionListener();
+        if (this.particleEffect) {
+            this.scene.particleManager.removeEffect(this.particleEffect.id);
+            this.particleEffect.effect.destroy();
+            this.particleEffect = null;
+        };
+        // this.actionAvailable = false;
+        // this.knockback(this.actionTarget);
+        screenShake(this.scene);
+        pauseGame(20).then(() => {
+            this.setVelocityX(0);
+        });
+    };
+
     evaluateCombatDistance = () => {
         if (!this.attacking) return;
         let direction = this.attacking.position.subtract(this.position);
-        if (direction.length() >= 135) {
+        const rangeMultiplier = this.isRanged ? 3 : 1;
+        if (direction.length() >= 135 * rangeMultiplier) {
             console.log("Enemy Transitioning from Attacking to Chasing Player");
             this.stateMachine.setState(States.CHASE);
         } else {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            if (direction.length() > 60) {
+            if (direction.length() > 55 * rangeMultiplier) {
                 this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityX(direction.x * 2.5);
@@ -446,7 +486,20 @@ export default class Enemy extends Entity {
     };
 
     evaluateEnemyState = () => {
-        if (this.particleEffect) this.scene.particleManager.update(this, this.particleEffect);
+        // if (this.particleEffect) this.scene.particleManager.update(this, this.particleEffect);
+        if (this.particleEffect) {
+            if (!this.particleEffect.triggered) {
+                this.scene.particleManager.update(this, this.particleEffect);
+            };
+            if (this.particleEffect.success) {
+                console.log("Enemy Spell Success!");
+                this.particleEffect.triggered = true;
+                this.particleEffect.success = false;
+                this.enemyActionSuccess();
+            };
+        };
+        if (this.healthbar) this.healthbar.update(this);
+        if (this.scrollingCombatText) this.scrollingCombatText.update(this);
         if (this.attacking) {
             let direction = this.attacking.position.subtract(this.position);
             if (direction.x < 0) {
@@ -512,15 +565,18 @@ export default class Enemy extends Entity {
         const specials = ['pray', 'consume'];
         const action = this.evaluateCombat(this, target);
         this.currentAction = action; 
-        if (direction.length() > 52) {
-            console.log("Enemy UNSUCCESSFUL, distance: ", direction.length(), "px");
-        } else {
-            console.log("Enemy SUCCESSFUL, distance: ", direction.length(), "px");
-            screenShake(this.scene);
-            pauseGame(20).then(() => {
-                this.setVelocityX(0);
-            });
-            // this.knockbackPlayer(this.actionTarget); TODO:FIXME: Knockback applied on poise threshold met
+        // if (direction.length() > 52) {
+        //     console.log("Enemy UNSUCCESSFUL, distance: ", direction.length(), "px");
+        // } else {
+        //     console.log("Enemy SUCCESSFUL, distance: ", direction.length(), "px");
+        //     screenShake(this.scene);
+        //     pauseGame(20).then(() => {
+        //         this.setVelocityX(0);
+        //     });
+        //     // this.knockbackPlayer(this.actionTarget); TODO:FIXME: Knockback applied on poise threshold met
+        // };
+        if (!this.isRanged && direction.length() <= 55) {
+            this.enemyActionSuccess();
         };
     };
 
@@ -571,8 +627,7 @@ export default class Enemy extends Entity {
                 computerCounter = 'roll';
             }; 
             this.scene.setState('computer_counter_guess', computerCounter);
-        };
-
+        }; 
         return computerAction;
     };
 

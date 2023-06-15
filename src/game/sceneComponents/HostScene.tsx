@@ -27,6 +27,7 @@ import CombatUI from '../CombatUI';
 import EnemyUI from '../EnemyUI';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import screenfull from 'screenfull';
+import StoryJournal from '../../components/GameCompiler/StoryJournal';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -547,13 +548,12 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             const response = await gameAPI.initiateAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            await updateCombatListener(response.data);
+            // await updateCombatListener(response.data);
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
             shakeScreen(gameState.shake);
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             if (response.data.computer_win === true) await handleComputerWin(response.data);
-            // eventListener to update the Phaser Scene
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
             }, 1500);
@@ -568,7 +568,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             const response = await gameAPI.instantAction(state);
             console.log(response.data, "Instant Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            await updateCombatListener(response.data);
+            // await updateCombatListener(response.data);
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
@@ -587,7 +587,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             const response = await gameAPI.consumePrayer(state);
             console.log(response.data, "Prayer Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            await updateCombatListener(response.data);
+            // await updateCombatListener(response.data);
             dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
@@ -602,7 +602,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     async function setWeaponOrder(weapon: any) {
         try {
-            console.log(weapon, "Weapon In Weapon Order")
+            // console.log(weapon, "Weapon In Weapon Order")
             const findWeapon = state.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
             const newWeaponOrder = async () => state?.weapons.sort((a: any, b: any) => {
                 return ( a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0 )
@@ -745,6 +745,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const updateStamina = async (e: { detail: number }) => {
         setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
     };
+    const updateStalwart = async (e: { detail: number }) => {
+        dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
+    };
 
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('fetch-enemy', fetchEnemy);
@@ -759,6 +762,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
+    usePhaserEvent('update-stalwart', updateStalwart);
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
@@ -789,11 +793,14 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             { currentGame ? ( <>
                 <div id='ui-hud'>
                     <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                        <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>{state.player.name}</h3>
+                        <h3 style={{ fontSize: '12px', textAlign: 'center' }} className=''>{state.player.name}</h3>
                     </Button>
                     {/* <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
                         <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
                     </Button> */}
+                    { gameState.player.journal.entries.length > 0 ?
+                        <StoryJournal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} ascean={gameState.player} />
+                    : '' }
                     <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
                 </div>
                 <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />

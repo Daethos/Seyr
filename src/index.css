@@ -608,7 +608,7 @@ html, body {
   margin-top: 3%;
   border: 2px solid purple;
 }
-.story-progressxp-text { margin-top: 8.25%; font-size: 16px; margin-left: 4.5%; width: 40%; text-align: center; }
+.story-progressxp-text { position: absolute; top: 45px; font-size: 16px; left: 4.5%; width: 40%; text-align: center; }
 .story-progress {
   position: absolute;
   overflow: hidden;

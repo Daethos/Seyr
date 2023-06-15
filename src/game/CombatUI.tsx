@@ -90,11 +90,18 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 <p style={{ color: getBorderStyle(item?.rarity) }}>
                 {item?.rarity}
                 </p>
+                { state.isStalwart ? (
+                    <p style={{ color: "gold" }}>
+                        Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. You receive 50% less poise damage. You receive 10% less damage. You cannot dodge or roll.
+                        {/*  Perhaps you cannot dodge or roll in the future This slows your movement by 15%. */}
+                    </p>
+                ) : ( '' ) }
                 </>}
             </Popover.Body>
         </Popover>
         );
     };
+
 
     function getShadowStyle(prayer: string) {
         switch (prayer) {
@@ -133,6 +140,19 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
             background: 'black',
             boxShadow: '0 0 2em ' + getShadowStyle(state.playerBlessing),
             borderRadius: '50%',
+        };
+    };
+
+    const getItemRarityStyle = (rarity: string) => {
+        return {
+            border: '0.15em solid ' + getBorderStyle(rarity),
+            background: 'black',
+            boxShadow: '0 0 2em ' + getBorderStyle(rarity),
+            // borderRadius: '50%', // This I actually need to shape like a shield instead of a circle
+            borderRadius: '0 0 50% 50% / 50% 50% 50% 50%', // Custom border radius values
+            // transform: 'rotate(90deg)',
+            // padding: "1%",
+            // borderRadius: '0 0 50% 50% / 50% 50% 50% 50%s',
         };
     };
 
@@ -213,14 +233,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 textAlign: "center", 
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
-            }}>
-                {`${Math.round(state.new_player_health)} / ${state.player_health} [${playerHealthPercentage}%]`}
-            </p>
-            <div style={{ position: "absolute", left: "185px", top: "-12.5px", transform: "scale(0.75)" }}>
-            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
-                <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle(state.weapons[0]?.rarity)} />
-            </OverlayTrigger>
-            </div>
+            }}>{`${Math.round(state.new_player_health)} / ${state.player_health} [${playerHealthPercentage}%]`}</p>
             <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '37.5px', height: '37.5px', top: "-5px", left: "150px", borderRadius: "50%"  }} />
             <ProgressBar 
                 variant="success"
@@ -239,6 +252,18 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
             }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
+            <div style={{ position: "absolute", left: "185px", top: "-12.5px", transform: "scale(0.75)" }}>
+            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
+                <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle(state.weapons[0]?.rarity)} />
+            </OverlayTrigger>
+            </div>
+            <div style={{ position: "absolute", left: "230px", top: "-10px" }}>
+            { state.isStalwart ? (
+                <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield)}>
+                    <img src={state.player.shield.imgURL} className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />
+                </OverlayTrigger>
+            ) : ( '' )}
+            </div>
             {state.playerEffects.length > 0 ? (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {

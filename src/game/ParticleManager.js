@@ -26,6 +26,9 @@ import righteousAnim from './images/righteous_anim.json';
 import spookyPNG from './images/spooky_effect.png';
 import spookyJSON from './images/spooky_json.json';
 import spookyAnim from './images/spooky_anim.json';
+import arrowPNG from './images/arrow_effect.png';
+import arrowJSON from './images/arrow_json.json';
+import arrowAnim from './images/arrow_anim.json';
 
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
@@ -47,6 +50,8 @@ export default class ParticleManager extends Phaser.Scene {
         scene.load.animation('righteous_anim', righteousAnim);
         scene.load.atlas('spooky_effect', spookyPNG, spookyJSON);
         scene.load.animation('spooky_anim', spookyAnim);
+        scene.load.atlas('arrow_effect', arrowPNG, arrowJSON);
+        scene.load.animation('arrow_anim', arrowAnim);    
     };
 
     constructor(scene) {
@@ -66,6 +71,8 @@ export default class ParticleManager extends Phaser.Scene {
                 if (other.gameObjectB && (other.gameObjectB.name === 'enemy' && player.name === 'player' || other.gameObjectB.name === 'player' && player.name === 'enemy')) {
                     console.log(other.gameObjectB, "Enemy in Sensor Listener");
                     player.particleEffect.success = true; 
+                    // this.scene.sendStateActionListener();
+                    // this.removeEffect(player.particleEffect.id);
                 };
             },
             context: this.scene,
@@ -80,10 +87,12 @@ export default class ParticleManager extends Phaser.Scene {
             key: key + '_effect',
             effect: this.spriteMaker(this.scene, player, key + '_effect'), 
             success: false,
-            velocity: action === 'attack' ? 5 : action === 'counter' ? 8 : action === 'posture' ? 6.5 : 5,
+            triggered: false,
+            velocity: action === 'attack' ? 5.5 : action === 'counter' ? 9 : action === 'posture' ? 7 : 5,
         };
+
         const { Bodies } = Phaser.Physics.Matter.Matter; // Import the Matter module 
-        const effectSensor = Bodies.circle(player.x, player.y, 12, { isSensor: true, label: "effectSensor" }); 
+        const effectSensor = Bodies.circle(player.x, player.y, 10, { isSensor: true, label: "effectSensor" }); 
         particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
         this.sensorListener(player, particle.effect, effectSensor);
@@ -120,14 +129,7 @@ export default class ParticleManager extends Phaser.Scene {
         };
     };
 
-    update(player) {
-        if (player.particleEffect.success) {
-            console.log("Particle Effect Success!")
-            this.scene.sendStateActionListener();
-            player.particleEffect.success = false;
-            // this.scene.particleManager.removeEffect(player.particleEffect.id);
-            return;
-        };
+    update(player) { 
         switch (player.particleEffect.action) {
             case 'attack':
                 if (player.frameCount < 16) return;
@@ -136,14 +138,15 @@ export default class ParticleManager extends Phaser.Scene {
                 if (player.frameCount < 3) return;
                 break;
             case 'posture':
-                if (player.frameCount < 6) return;
+                if (player.frameCount < 7) return;
                 break; 
             default:
                 break;
         };
         if (!player.particleEffect.effect.visible) player.particleEffect.effect.setVisible(true); 
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
+        if (player.particleEffect.key === 'arrow_effect') player.particleEffect.effect.setAngle(player.flipX ? 225 : -225);    
         player.particleEffect.effect.play(player.particleEffect.key, true);
-        player.particleEffect.effect.setVelocity(player.flipX ? -player.particleEffect.velocity : player.particleEffect.velocity, 0);
+        player.particleEffect.effect.setVelocity(player.flipX ? -player.particleEffect.velocity : player.particleEffect.velocity, player.body.velocity.y);
     };
 };

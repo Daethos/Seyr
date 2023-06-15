@@ -72,7 +72,9 @@ const Story = ({ user }: Props) => {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };
         };
+
         fetchData();
+
     }, [asceanID]); 
 
     const sanitizeAssets = async (assets: any) => {
@@ -93,61 +95,7 @@ const Story = ({ user }: Props) => {
         }));
         
         return newAssets;
-    };
-
-    const getOpponent = async () => {
-        try { 
-            const player = await asceanAPI.getCleanAscean(asceanID);
-            console.log(player, "Player ??")
-            let minLevel: number = 0;
-            let maxLevel: number = 0; 
-            if (player.data.level < 3) {
-                minLevel = 1;
-                maxLevel = 2;
-            } else  if (player.data.level <= 4) { // 3-4 
-                minLevel = 2;
-                maxLevel = 4;
-            } else if (player.data.level === 5) { 
-                minLevel = 4;
-                maxLevel = 6;
-            } else if (player.data.level === 6) {
-                minLevel = 4;
-                maxLevel = 8;
-            } else if (player.data.level === 7) {
-                minLevel = 5;
-                maxLevel = 9;
-            } else if (player.data.level === 8) {
-                minLevel = 6;
-                maxLevel = 10;
-            } else if (player.data.level <= 10) { // 9-10
-                minLevel = 7;
-                maxLevel = 12;
-            } else if (player.data.level <= 14) { // 11-14
-                minLevel = 8;
-                maxLevel = 16;
-            } else if (player.data.level <= 18) { // 15-18
-                minLevel = 12;
-                maxLevel = 18;
-            } else if (player.data.level <= 20) {
-                minLevel = 16;
-                maxLevel = 20;
-            };
-            const enemyData = {
-                username: 'mirio',
-                minLevel: minLevel,
-                maxLevel: maxLevel
-            };
-            const secondResponse = await userService.getRandomEnemy(enemyData);
-            const selectedOpponent = await asceanAPI.getCleanAscean(secondResponse.data.ascean._id);
-            const response = await asceanAPI.getAsceanStats(secondResponse.data.ascean._id);
-            return {
-                game: selectedOpponent.data,
-                combat: response.data.data
-            };
-        } catch (err: any) {
-            console.log(err.message, 'Error retrieving Enemies')
-        };
-    };
+    }; 
         
     return (
         <div>

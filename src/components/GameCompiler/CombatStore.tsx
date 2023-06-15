@@ -107,6 +107,7 @@ export interface CombatData {
 
     weather: string;
     phaser: boolean;
+    isStalwart: boolean; // +10% Defense, -5% Movement
 };
 
 interface Action {
@@ -159,6 +160,7 @@ export const ACTIONS = {
     TOGGLED_DAMAGED: 'TOGGLED_DAMAGED',
     SET_GRAPPLING_WIN: 'SET_GRAPPLING_WIN',
     SET_PHASER: 'SET_PHASER',
+    SET_STALWART: 'SET_STALWART',
 };
 
 export const initialCombatData: CombatData = {
@@ -261,10 +263,16 @@ export const initialCombatData: CombatData = {
     deityData: [],
     weather: '',
     phaser: false,
+    isStalwart: false,
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
+        case 'SET_STALWART':
+            return {
+                ...state,
+                isStalwart: action.payload,
+            };
         case 'SET_PHASER':
             return {
                 ...state,

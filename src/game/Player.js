@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Entity, { screenShake, pauseGame } from "./Entity";  
+import ScrollingCombatText from "./ScrollingCombatText";
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
 import playerActionsOneAnim from './images/player_actions_anim.json';
@@ -41,7 +42,7 @@ export default class Player extends Entity {
         this.targetIndex = 0;
         this.currentTarget = null;
         this.stamina = scene.state.player_attributes.stamina;
-
+        this.isMoving = false;
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
         this.spriteShield.setScale(0.6);
@@ -121,12 +122,18 @@ export default class Player extends Entity {
             // console.log(e.detail, "State Updated");
             if (this.health > e.detail.new_player_health) {
                 this.isHurt = true;
-            } 
-            if (this.currentRound !== e.detail.combatRound) {
-                if (e.detail.realized_player_damage > 0) this.knockback(this.actionTarget);
-                this.currentRound = e.detail.combatRound;
+                let damage = Math.round(this.health - e.detail.new_player_health);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage');
+                console.log(damage, "Damage Taken");
             };
-
+            if (this.health < e.detail.new_player_health) {
+                let heal = Math.round(e.detail.new_player_health - this.health);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
+                console.log(heal, "Heal Taken");
+            };
+            if (this.currentRound !== e.detail.combatRound) {
+                this.currentRound = e.detail.combatRound;
+            }; 
             this.health = e.detail.new_player_health;
             if (e.detail.new_player_health <= 0) {
                 this.isDead = true;
@@ -140,11 +147,7 @@ export default class Player extends Entity {
             };
         });
     };
-
-
-    // TODO:FIXME: Figure out why sometimes you get an actionTarget that has an other.pair.gameObjectB that is undefined. Something is happening that's allowing this behavior.
-
-    // TODO:FIXME: Add isStrafing to weaponRotation() so that your spriteShield is visible.
+ 
     checkEnemyAttackCollision(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
@@ -211,9 +214,14 @@ export default class Player extends Entity {
     };
 
     playerActionSuccess = () => {
-        // this.scene.sendStateActionListener();
+        this.scene.sendStateActionListener();
+        if (this.particleEffect) {
+            this.scene.particleManager.removeEffect(this.particleEffect.id);
+            this.particleEffect.effect.destroy();
+            this.particleEffect = null;
+        };
         // this.actionAvailable = false;
-        this.knockback(this.actionTarget);
+        // this.knockback(this.actionTarget);
         screenShake(this.scene);
         pauseGame(20).then(() => {
             this.setVelocityX(0);
@@ -230,9 +238,20 @@ export default class Player extends Entity {
             this.spriteShield.setTexture(this.currentShieldSprite);
         };
         this.touching.filter(gameObject => gameObject !== null);
-        if (this.particleEffect) this.scene.particleManager.update(this, this.particleEffect);
+        if (this.particleEffect) {
+            if (!this.particleEffect.triggered) {
+                this.scene.particleManager.update(this, this.particleEffect);
+            };
+            if (this.particleEffect.success) {
+                this.particleEffect.triggered = true;
+                this.particleEffect.success = false;
+                this.playerActionSuccess();
+            };
+        };
+        if (this.scrollingCombatText) this.scrollingCombatText.update(this);
         // =================== MOVEMENT VARIABLES ================== \\
         const speed = 2;
+        let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB)) {
@@ -255,6 +274,17 @@ export default class Player extends Entity {
                 this.removeHighlight();
             };
         };
+
+        // =================== STALWART ================== \\
+
+        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.strafe.E) || Phaser.Input.Keyboard.JustDown(this.inputKeys.strafe.Q))) {
+            this.isStalwart = this.isStalwart ? false : true;
+            if (this.isStalwart) {
+                this.scene.stalwart(true);
+            } else {
+                this.scene.stalwart(false);
+            };
+        };
  
         // =================== JUMPING ================== \\
 
@@ -270,22 +300,142 @@ export default class Player extends Entity {
             this.setStatic(false); 
         };
 
-        // =================== STRAFING ================== \\
+        // =================== MOVEMENT ================== \\
 
-        if (this.inputKeys.strafe.E.isDown) {
-            this.setVelocityX(speed);
-            this.flipX = true;
-        };
-        if (this.inputKeys.strafe.Q.isDown) {
-            this.setVelocityX(-speed);
+        if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
+            playerVelocity.x = 1;
+            // this.setVelocityX(speed);
             if (this.flipX) this.flipX = false;
         };
 
-        // =================== STALWART ================== \\
-
-        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.strafe.E) || Phaser.Input.Keyboard.JustDown(this.inputKeys.strafe.Q))) {
-            this.isStalwart = this.isStalwart ? false : true;
+        if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
+            playerVelocity.x = -1;
+            // this.setVelocityX(-speed);
+            this.flipX = true;
         };
+
+        if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
+            playerVelocity.y = -1;    
+            // this.setVelocityY(-speed); // Was Jump Velocity When Platformer
+        }; 
+
+        if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
+            playerVelocity.y = 1;    
+            // this.setVelocityY(speed);
+        };
+
+        playerVelocity.normalize();
+        playerVelocity.scale(speed);
+
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.down.S) || Phaser.Input.Keyboard.JustDown(this.inputKeys.down.DOWN))) {
+        //     this.autorunDown = this.autorunDown ? false : true;
+        //     console.log('AutorunDown: ', this.autorunDown);
+        // };
+
+        // if (this.autorunDown) {
+        //     if (this.autorunUp) this.autorunUp = false;
+        //     // this.setVelocityY(speed);
+        //     playerVelocity.y = 1;
+            
+        //     this.setVelocity(0, playerVelocity.y);
+        // };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.left.A) || Phaser.Input.Keyboard.JustDown(this.inputKeys.left.LEFT))) {
+        //     this.autorunLeft = this.autorunLeft ? false : true;
+        //     console.log('AutorunLeft: ', this.autorunLeft);
+        // };
+
+        // if (this.autorunLeft) {
+        //     if (this.autorunRight) this.autorunRight = false;
+        //     // this.setVelocityX(speed);
+        //     playerVelocity.x = -1;
+            
+        //     this.setVelocity(playerVelocity.x, 0);
+        //     if (!this.flipX) this.flipX = true;
+        // };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.right.D) || Phaser.Input.Keyboard.JustDown(this.inputKeys.right.RIGHT))) {
+        //     this.autorunRight = this.autorunRight ? false : true;
+        //     console.log('AutorunRight: ', this.autorunRight);
+        // };
+
+        // if (this.autorunRight) {
+        //     if (this.autorunLeft) this.autorunLeft = false;
+        //     // this.setVelocityX(playerVelocity.x);
+        //     playerVelocity.x = 1;
+            
+        //     this.setVelocity(playerVelocity.x, 0);    
+        //     if (this.flipX) this.flipX = false;
+        // };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.up.W) || Phaser.Input.Keyboard.JustDown(this.inputKeys.up.UP))) {
+        //     this.autorunUp = this.autorunUp ? false : true;
+        //     console.log('AutorunUp: ', this.autorunUp);
+        // };
+
+        // if (this.autorunUp) {
+        //     if (this.autorunDown) this.autorunDown = false;
+        //     // this.setVelocityY(-playerVelocity.y);
+        //     playerVelocity.y = -1;
+            
+        //     this.setVelocity(0, playerVelocity.y);
+        // }; 
+
+        // =================== STRAFING ================== \\
+
+        if (this.inputKeys.strafe.E.isDown) {
+            // this.setVelocityX(playerVelocity.x);
+            // if (!this.isStalwart) {
+                // playerVelocity.x = 0.85;
+            // } else {
+                playerVelocity.x = 1;
+            // };
+            // this.setVelocity(playerVelocity.x, 0);
+            if (!this.flipX) this.flipX = true;
+            this.setVelocity(playerVelocity.x, 0);
+        };
+        if (this.inputKeys.strafe.Q.isDown) {
+            // this.setVelocityX(-playerVelocity.x);
+            // if (!this.isStalwart) {
+                // playerVelocity.x = -0.85;
+            // } else {
+                playerVelocity.x = -1;
+            // };
+            // this.setVelocity(playerVelocity.x, 0);
+            if (this.flipX) this.flipX = false;
+            this.setVelocity(playerVelocity.x, 0);
+        };
+
+        // =================== VARIABLES IN MOTION ================== \\
+
+        // if (this.isStalwart && this.isMoving) { 
+        //     playerVelocity.x *= 0.85;
+        //     playerVelocity.y *= 0.85;
+        //     this.setVelocity(playerVelocity.x, playerVelocity.y);
+        // };
+
+        if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
+            // this.setVelocity(playerVelocity.x * 0.85, playerVelocity.y * 0.85);
+            // if (this.scene.state.action !== 'posture') this.scene.setState('action', 'posture');
+            if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
+            if (!this.isStrafing) this.isStrafing = true;
+            // This will be a +% Defense from Shield. 
+            // Counter-Posturing gets +damage bonus against this tactic
+        } else {
+            this.isStrafing = false;
+        };
+
+        if (this.inputKeys.roll.THREE.isDown) {
+            // this.setVelocityX(this.body.velocity.x * 1.25);
+            // Flagged to have its weapons[0].roll added as an avoidance buff
+            // Counter-Roll gets +damage bonus against this tactic
+        };
+
+        // playerVelocity.normalize();
+        // playerVelocity.scale(speed);
+
+        this.setVelocity(playerVelocity.x, playerVelocity.y);
 
         // =================== ACTIONS ================== \\
     
@@ -305,7 +455,7 @@ export default class Player extends Entity {
                 this.playerActionSuccess();
             };
         };
-        if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+        if (this.stamina >= 10 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'roll');
             this.isRolling = true; 
@@ -332,7 +482,7 @@ export default class Player extends Entity {
             };
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 20) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 20 && !this.isStalwart) {
             this.scene.setState('action', 'roll');
             this.isRolling = true;
             if (this.actionAvailable && this.actionTarget) {
@@ -340,7 +490,7 @@ export default class Player extends Entity {
             };
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 20) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 20 && !this.isStalwart) {
             this.isDodging = true;
             this.scene.checkStamina('dodge');
             // Will need to learn how to mask filter for the enemy
@@ -401,83 +551,6 @@ export default class Player extends Entity {
             pauseGame(20).then(() => {
                 this.setVelocityX(0);
             });
-        };
-
-        // =================== MOVEMENT ================== \\
-
-        if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
-            this.setVelocityX(speed);
-            if (this.flipX) this.flipX = false;
-        };
-
-        if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
-            this.setVelocityX(-speed);
-            this.flipX = true;
-        };
-
-        if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
-            this.setVelocityY(-speed); // Was Jump Velocity When Platformer
-        }; 
-
-        if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-            this.setVelocityY(speed);
-        };
-
-        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.down.S) || Phaser.Input.Keyboard.JustDown(this.inputKeys.down.DOWN))) {
-            this.autorunDown = this.autorunDown ? false : true;
-            console.log('AutorunDown: ', this.autorunDown);
-        };
-        if (this.autorunDown) {
-            if (this.autorunUp) this.autorunUp = false;
-            this.setVelocityY(speed);
-        };
-
-        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.left.A) || Phaser.Input.Keyboard.JustDown(this.inputKeys.left.LEFT))) {
-            this.autorunLeft = this.autorunLeft ? false : true;
-            console.log('AutorunLeft: ', this.autorunLeft);
-        };
-        if (this.autorunLeft) {
-            if (this.autorunRight) this.autorunRight = false;
-            this.setVelocityX(-speed);
-            if (!this.flipX) this.flipX = true;
-        };
-
-        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.right.D) || Phaser.Input.Keyboard.JustDown(this.inputKeys.right.RIGHT))) {
-            this.autorunRight = this.autorunRight ? false : true;
-            console.log('AutorunRight: ', this.autorunRight);
-        };
-        if (this.autorunRight) {
-            if (this.autorunLeft) this.autorunLeft = false;
-            this.setVelocityX(speed);
-            if (this.flipX) this.flipX = false;
-        };
-
-        if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.up.W) || Phaser.Input.Keyboard.JustDown(this.inputKeys.up.UP))) {
-            this.autorunUp = this.autorunUp ? false : true;
-            console.log('AutorunUp: ', this.autorunUp);
-        };
-        if (this.autorunUp) {
-            if (this.autorunDown) this.autorunDown = false;
-            this.setVelocityY(-speed);
-        }; 
-
-        // =================== VARIABLES IN MOTION ================== \\
-
-        if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
-            this.setVelocityX(this.body.velocity.x * 0.85);
-            // if (this.scene.state.action !== 'posture') this.scene.setState('action', 'posture');
-            if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
-            this.isStrafing = true;
-            // This will be a +% Defense from Shield. 
-            // Counter-Posturing gets +damage bonus against this tactic
-        } else {
-            this.isStrafing = false;
-        };
-
-        if (this.inputKeys.roll.THREE.isDown) {
-            // this.setVelocityX(this.body.velocity.x * 1.25);
-            // Flagged to have its weapons[0].roll added as an avoidance buff
-            // Counter-Roll gets +damage bonus against this tactic
         };
  
         // =================== ANIMATIONS IF-ELSE CHAIN ================== \\
@@ -576,6 +649,7 @@ export default class Player extends Entity {
         // } else if (this.isCrouching && (Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // CROUCHING AND MOVING
         //     this.anims.play('player_roll', true);
         } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // RUNNING
+            if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
             console.log("Pinging CONSUMING")
@@ -596,6 +670,7 @@ export default class Player extends Entity {
         // } else if (this.isCrouching) { // CROUCHING IDLE
         //     this.anims.play('player_crouch_idle', true);
         } else { // IDLE
+            if (this.isMoving) this.isMoving = false;
             this.anims.play('player_idle', true);
         }; 
 
