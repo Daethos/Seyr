@@ -83,10 +83,11 @@ export default class Play extends Phaser.Scene {
             pause: this.input.keyboard.addKeys('T'),
             twist: this.input.mousePointer.rightButtonDown(), 
             target: this.input.keyboard.addKeys('TAB'),
+            stalwart: this.input.keyboard.addKeys('G'),
         }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 4;
+        camera.zoom = 1.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
@@ -140,15 +141,12 @@ export default class Play extends Phaser.Scene {
             };
         });
         this.particleManager = new ParticleManager(this);
-        // const particles = ['fire', 'earth', 'wind', 'frost', 'spooky', 'righteous', 'wild', 'sorcery', 'lightning'];
-        // particles.forEach(particle => this.particleManager.addEmitter(particle));
         this.createWelcome(); 
         this.createStateListener(); 
         this.staminaListener();
     };
 
     startJoystick(pointer) {
-        // Start tracking joystick movement when the left mouse button is pressed
         if (pointer.leftButtonDown()) {
             console.log("Joystick Active")
             this.player.joystick.isActive = true;
@@ -156,7 +154,6 @@ export default class Play extends Phaser.Scene {
     };
     
     stopJoystick(pointer) {
-        // Stop tracking joystick movement when the left mouse button is released
         if (!pointer.leftButtonDown()) {
             this.player.joystick.isActive = false;
         };
@@ -165,9 +162,7 @@ export default class Play extends Phaser.Scene {
     handleJoystickUpdate() {
         const force = this.player.joystick.force;
         const angle = this.player.joystick.angle;
- 
         if (force > 16) {
-
             let speedX = 0;
             let speedY = 0;
             if (angle > -60 && angle < 60) {
@@ -184,7 +179,6 @@ export default class Play extends Phaser.Scene {
             if (angle > -150 && angle < -30) {
                 speedY = -3;
             };
-              
             this.player.setVelocity(speedX, speedY); 
         };
     };
@@ -207,16 +201,13 @@ export default class Play extends Phaser.Scene {
 
     createStateListener = async function() { 
         window.addEventListener('update-combat-data', (e) => {
-            // console.log(e.detail, "State Updated");
             this.state = e.detail;
             if (this.state.action !== '') this.state.action = '';
-            if (this.state.counter_action !== '') this.state.counter_action = '';
-            if (this.state.computer_action !== '') this.state.computer_action = '';
-            if (this.state.computer_counter_action !== '') this.state.computer_counter_action = '';
+            // if (this.state.counter_action !== '') this.state.counter_action = '';
+            // if (this.state.computer_counter_guess !== '') this.state.computer_counter_guess = '';
         });
 
         window.addEventListener('update-game-data', (e) => {
-            // console.log(e.detail, "Game State Updated");
             this.gameState = e.detail;
         });
     };
@@ -228,7 +219,6 @@ export default class Play extends Phaser.Scene {
     };
 
     sendStateActionListener = async function() {
-        // Handle Event Listener to Dispatch State
         const sendState = new CustomEvent('update-state-action', { detail: this.state });
         window.dispatchEvent(sendState);
     };
@@ -282,7 +272,7 @@ export default class Play extends Phaser.Scene {
     };
 
     setState = async function(key, value) {
-        // console.log("Setting: " + key + " to " + value);
+        console.log("Setting: " + key + " to " + value);
         this.state[key] = value;
         if (key === 'action') this.checkStamina(value);
     };

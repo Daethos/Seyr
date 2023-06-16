@@ -63,16 +63,17 @@ export default class StateMachine {
 };
 
 export const States = {
+    DEATH: "death",
     IDLE: "idle",
     PATROL: "patrol",
     AWARE: "aware",
     CHASE: "chase",
     COMBAT: "combat",
+    EVADE: "evade",
     LEASH: "leash",
     ATTACK: "attack",
     COUNTER: "counter",
     DODGE: "dodge",
     POSTURE: "posture",
     ROLL: "roll",
-    DEATH: "death",
 };

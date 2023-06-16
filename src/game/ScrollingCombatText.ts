@@ -7,9 +7,9 @@ export default class ScrollingCombatText extends Phaser.GameObjects.Container {
     private timerTime: number;
     private context: string;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, text: string, duration: number, context: string) {
+    constructor(scene: Phaser.Scene, x: number, y: number, text: string, duration: number, context: string, critical?: boolean) {
         super(scene, x, y);
-        this.text = new Phaser.GameObjects.Text(scene, 0, 0, text, { color: context === 'damage' ? '#FF0000' : 'green', fontSize: '12px' });
+        this.text = new Phaser.GameObjects.Text(scene, 0, 0, text, { color: context === 'damage' ? '#FF0000' : 'green', fontSize: critical ? '24px' : '12px', fontFamily: 'Cinzel' });
         this.visible = false;
         this.add(this.text);
         scene.add.existing(this);

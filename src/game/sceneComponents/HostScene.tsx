@@ -451,7 +451,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     Lightning: playLightning,
                     Sorcery: playSorcery,
                     Wind: playWind,
-                    Pierce: (weapons: any[]) => weapons[0].type === "Bow" ? playBow() : playPierce(),
+                    Pierce: (weapons: any[]) => (weapons[0].type === "Bow" || weapons[0].type === "Greatbow") ? playBow() : playPierce(),
                     Slash: playSlash,
                     Blunt: playBlunt,
                 };
@@ -460,6 +460,28 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
                 if (soundEffectFn) {
                     soundEffectFn(weapons);
+                };
+            };
+            if (effects.realized_computer_damage > 0) {
+                const soundEffectMap = {
+                    Spooky: playDaethic,
+                    Righteous: playDaethic,
+                    Wild: playWild,
+                    Earth: playEarth,
+                    Fire: playFire,
+                    Frost: playFrost,
+                    Lightning: playLightning,
+                    Sorcery: playSorcery,
+                    Wind: playWind,
+                    Pierce: (computer_weapons: any[]) => (computer_weapons[0].type === "Bow" || computer_weapons[0].type === 'Greatbow') ? playBow() : playPierce(),
+                    Slash: playSlash,
+                    Blunt: playBlunt,
+                };
+            
+                const { computer_damage_type, computer_weapons } = effects;
+                const soundEffectFn = soundEffectMap[computer_damage_type as keyof typeof soundEffectMap];
+                if (soundEffectFn) {
+                    soundEffectFn(computer_weapons);
                 };
             };
             if (effects.religious_success === true) {
@@ -471,11 +493,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             if (effects.counter_success === true || effects.computer_counter_success === true) {
                 playCounter();
             };
-            setTimeout(() => {
-                if (effects.player_win !== true && effects.computer_win !== true) {
-                    playCombatRound();
-                };
-            }, 500);
+            // setTimeout(() => {
+            //     if (effects.player_win !== true && effects.computer_win !== true) {
+            //         playCombatRound();
+            //     };
+            // }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         };
@@ -545,7 +567,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     async function handleInitiate(combatData: CombatData) {
         try { 
-            const response = await gameAPI.initiateAction(combatData);
+            // const response = await gameAPI.initiateAction(combatData);
+            console.log(combatData.action, "Player Action", combatData.computer_action, "Computer Action", "Inside Combat Initiate")
+            const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             // await updateCombatListener(response.data);

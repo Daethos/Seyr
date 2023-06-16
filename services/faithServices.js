@@ -21,14 +21,13 @@ class StatusEffect {
         return this.deity;
     };
     static updateEffectStack(statusEffect, combatData, player, weapon, attributes, prayer) {
-        console.log(statusEffect, 'Status Effect in Update Effect Stack');
+        // console.log(statusEffect, 'Status Effect in Update Effect Stack');
         let intensity = {
             initial: statusEffect.intensity.initial,
             value: statusEffect.intensity.value,
             magnitude: statusEffect.intensity.magnitude,
         };
-        let playerIntensity = intensity.value * intensity.magnitude;
-        // TODO:FIXME: This is a fix for enemy/computer variables
+        let playerIntensity = intensity.value * intensity.magnitude; 
         let enemyFaith = combatData.computer === undefined ? combatData.enemy : combatData.computer;
         let playerFaith = combatData.player.name === player.name ? combatData.player.faith : enemyFaith.faith;
         if (weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') {
@@ -330,7 +329,7 @@ class StatusEffect {
                 cleanSlate[key] = realizedModifiers[key];
             };
         };
-        console.log(cleanSlate, 'Realized Modifiers From De-Buff');
+        // console.log(cleanSlate, 'Realized Modifiers From De-Buff');
         return cleanSlate;
     };
     static updateHeal(potentialModifiers, realizedModifiers) {

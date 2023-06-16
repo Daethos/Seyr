@@ -57,29 +57,42 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
 
     const handleToggleScroll = () => {
         setScrollEnabled((prevScrollEnabled) => !prevScrollEnabled);
-    }; 
+    };
+    
+    const mapTypes = (types: any[]) => {
+        let newTypes: any[] = []; 
+        for (let i = 0; i < types.length; i++) {
+            newTypes.push(
+                <div key={i} style={{ display: "inline" }}>
+                    {/* {types[i]}{' <--> '}{types[i] === types[types.length - 1] ? types[0] : types[i + 1]}{' | '} */}
+                    {types[i]}{' <-> '}{types[i] === types[types.length - 1] ? types[0] : ''}
+                </div>
+            );
+        };
+        return newTypes;
+    };
 
     usePhaserEvent('keydown', handleShiftKey);
     usePhaserEvent('wheel', handleWheelRotation);
 
     return (
-        <div style={{ position: "absolute", width: "40%", height: "32.5%", textAlign: "center", left: "30%", top: "65%", background: 'transparent', zIndex: 99 }} onMouseDown={handleToggleScroll}>
+        <div style={{ position: "absolute", width: "50%", height: "25%", textAlign: "center", left: "24.5%", top: "60%", background: 'transparent', zIndex: 99 }} onMouseDown={handleToggleScroll}>
             { scrollEnabled ? (
                 selectedHighlight === 'Weapon' ? (
                     <>
-                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>{weapons[1]?.name}</p>
-                    <p style={{ color: 'gold', fontSize: "18px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Main Weapon: {weapons[0]?.name}</p>
-                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>{weapons[2]?.name}</p>
+                    <p style={{ color: 'gold', fontSize: "22px", fontWeight: 700, fontFamily: "Cinzel" }}>Main Weapon: {weapons[0]?.name}</p>
+                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Up{' ->> '} {weapons[1]?.name} {' <<- '}Up</p>
+                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Down{' ->> '} {weapons[2]?.name} {' <<- '}Down</p>
                     </>
                 ) : selectedHighlight === 'Damage' ? (
                     <>
-                    <p style={{ color: 'gold', fontSize: "18px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Damage Style: {damageType[selectedDamageTypeIndex]}</p>
-                    <div style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Options: {damageType.map((type: string, index: number) => <div style={{ display: "inline" }} key={index}>{type}{' '}</div>)}</div>
+                    <p style={{ color: 'gold', fontSize: "22px", fontWeight: 700, fontFamily: "Cinzel" }}>Damage Style: {damageType[selectedDamageTypeIndex]}</p>
+                    <div style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>[Options]: {mapTypes(damageType)}</div>
                     </>
                 ) : ( selectedHighlight === 'Prayer' ) ? (
                     <>
-                    <p style={{ color: 'gold', fontSize: "18px", fontWeight: 700, fontFamily: "Cinzel" }}>Current Prayer: {prayers[selectedPrayerIndex]}</p>
-                    <div style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Options: {prayers.map((type: string, index: number) => <div style={{ display: "inline" }} key={index}>{type}{' '}</div>)}</div>
+                    <p style={{ color: 'gold', fontSize: "22px", fontWeight: 700, fontFamily: "Cinzel" }}>Prayer: {prayers[selectedPrayerIndex]}</p>
+                    <div style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>[Options]: {mapTypes(prayers)}</div>
                     </>
                 ) : ( '' )
             ) : ( '' ) }

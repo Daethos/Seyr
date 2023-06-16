@@ -234,20 +234,20 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
             }}>{`${Math.round(state.new_player_health)} / ${state.player_health} [${playerHealthPercentage}%]`}</p>
-            <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '37.5px', height: '37.5px', top: "-5px", left: "150px", borderRadius: "50%"  }} />
+            <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '40px', height: '40px', top: "-4px", left: "149px", borderRadius: "50%"  }} />
             <ProgressBar 
                 variant="success"
                 now={staminaPercentage}
-                style={{ position: "absolute", top: "-1.5px", left: "153.5px", width: "30px", height: "30px", backgroundColor: "red", borderRadius: "50%" }} 
+                style={{ position: "absolute", top: "-1.5px", left: "151px", width: "35px", height: "35px", backgroundColor: "red", borderRadius: "50%", transform: "rotate(-90deg)" }} 
             />
             <p style={{ 
                 position: "absolute", 
                 color: "#fdf6d8", 
                 textShadow: "1px 1px 1px black", 
-                top: "4px", 
-                left: "148px",
+                top: "6px", 
+                left: "149px",
                 width: "40px", 
-                fontSize: "12px", 
+                fontSize: "13px", 
                 textAlign: "center", 
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
