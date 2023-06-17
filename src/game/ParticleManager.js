@@ -91,20 +91,14 @@ export default class ParticleManager extends Phaser.Scene {
             success: false,
             triggered: false,
             // velocity: action === 'attack' ? 5.5 : action === 'counter' ? 9 : action === 'posture' ? 7 : 5,
-            velocity: action === 'attack' ? 4 : action === 'counter' ? 7 : action === 'posture' ? 5.5 : 4,
+            velocity: action === 'attack' ? (player.flipX ? -4 : 4) : action === 'counter' ? (player.flipX ? -7 : 7) : action === 'posture' ? (player.flipX ? -5.5 : 5.5) : 4,
         };
         const { Bodies } = Phaser.Physics.Matter.Matter; // Import the Matter module 
         const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: "effectSensor" }); 
         particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
         this.sensorListener(player, particle.effect, effectSensor);
-        this.particles.push(particle);
-        // this.scene.time.addEvent({
-        //     delay: 1500,
-        //     callback: () => {
-        //         this.removeEffect(particle.id);
-        //     },
-        // })
+        this.particles.push(particle); 
         return particle;
     };
 
@@ -135,6 +129,7 @@ export default class ParticleManager extends Phaser.Scene {
     };
 
     update(player) { 
+        if (!player.particleEffect) return;
         switch (player.particleEffect.action) {
             case 'attack':
                 if (player.frameCount < 16) return;
@@ -150,8 +145,8 @@ export default class ParticleManager extends Phaser.Scene {
         };
         if (!player.particleEffect.effect.visible) player.particleEffect.effect.setVisible(true); 
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
-        if (player.particleEffect.effect && player.particleEffect.key === 'arrow_effect') player.particleEffect.effect.setAngle(player.flipX ? 225 : -225);    
         player.particleEffect.effect.play(player.particleEffect.key, true);
-        player.particleEffect.effect.setVelocity(player.flipX ? -player.particleEffect.velocity : player.particleEffect.velocity, player.body.velocity.y);
+        // player.particleEffect.effect.setVelocity(player.flipX ? -player.particleEffect.velocity : player.particleEffect.velocity, player.body.velocity.y);
+        player.particleEffect.effect.setVelocity(player.particleEffect.velocity, player.body.velocity.y);
     };
 };

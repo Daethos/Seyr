@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Entity, { screenShake, pauseGame } from "./Entity";  
+import StateMachine, { States } from "./StateMachine";
 import ScrollingCombatText from "./ScrollingCombatText";
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
@@ -50,6 +51,46 @@ export default class Player extends Entity {
         this.scene.add.existing(this.spriteShield);
         this.spriteShield.setDepth(this + 1);
         this.spriteShield.setVisible(false);
+
+        // this.stateMachine = new StateMachine(this, 'player');
+        // this.stateMachine
+        //     .addState(States.NONCOMBAT, {
+        //         onEnter: this.onNonCombatEnter.bind(this),
+        //         onUpdate: this.onNonCombatUpdate.bind(this),
+        //         onExit: this.onNonCombatExit.bind(this),
+        //     })
+        //     .addState(States.COMBAT, {
+        //         onEnter: this.onCombatEnter.bind(this),
+        //         onUpdate: this.onCombatUpdate.bind(this),
+        //         onExit: this.onCombatExit.bind(this),
+        //     })
+        //     .addState(States.ATTACK, {
+        //         onEnter: this.onAttackEnter.bind(this),
+        //         onUpdate: this.onAttackUpdate.bind(this),
+        //         onExit: this.onAttackExit.bind(this),
+        //     })
+        //     .addState(States.COUNTER, {
+        //         onEnter: this.onCounterEnter.bind(this),
+        //         onUpdate: this.onCounterUpdate.bind(this),
+        //         onExit: this.onCounterExit.bind(this),
+        //     })
+        //     .addState(States.DODGE, {
+        //         onEnter: this.onDodgeEnter.bind(this),
+        //         onUpdate: this.onDodgeUpdate.bind(this),
+        //         onExit: this.onDodgeExit.bind(this),
+        //     })
+        //     .addState(States.POSTURE, {
+        //         onEnter: this.onPostureEnter.bind(this),
+        //         onUpdate: this.onPostureUpdate.bind(this),
+        //         onExit: this.onPostureExit.bind(this),
+        //     })
+        //     .addState(States.ROLL, {
+        //         onEnter: this.onRollEnter.bind(this),
+        //         onUpdate: this.onRollUpdate.bind(this),
+        //         onExit: this.onRollExit.bind(this),
+        //     })
+        
+        // this.stateMachine.setState(States.NONCOMBAT);
 
         // const helmetName = scene?.state?.player?.helmet.imgURL.split('/')[2].split('.')[0];
         // const chestName = scene?.state?.player?.chest.imgURL.split('/')[2].split('.')[0];
@@ -226,8 +267,331 @@ export default class Player extends Entity {
             this.setVelocityX(0);
         });
     };
+
+    evaluatePlayerState = () => {
+        if (this.inCombat && !this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
+        if (!this.inCombat && !this.stateMachine.isCurrentState(States.NONCOMBAT)) this.stateMachine.setState(States.NONCOMBAT);
+        if (this.actionSuccess) {
+            this.actionSuccess = false;
+            this.playerActionSuccess();
+        };
+        if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
+            this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
+            this.spriteWeapon.setTexture(this.currentWeaponSprite);
+        };
+        if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
+            this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
+            this.spriteShield.setTexture(this.currentShieldSprite);
+        };
+        this.touching.filter(gameObject => gameObject !== null);
+        if (this.particleEffect) {
+            if (!this.particleEffect.triggered && this.particleEffect.effect) {
+                this.scene.particleManager.update(this, this.particleEffect);
+            };
+            if (this.particleEffect.success) {
+                this.particleEffect.triggered = true;
+                this.particleEffect.success = false;
+                this.playerActionSuccess();
+            };
+        };
+        if (this.scrollingCombatText) this.scrollingCombatText.update(this);
+
+        // =================== TARGETING ================== \\
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB)) {
+            if (this.currentTarget) {
+                this.currentTarget.clearTint();
+            }; 
+            console.log(this.touching, this.targetIndex);
+            const newTarget = this.touching[this.targetIndex];
+            if (!newTarget) return;
+            this.targetIndex = this.targetIndex + 1 === this.touching.length ? 0 : this.targetIndex + 1;
+            this.scene.setupEnemy({ game: newTarget.ascean, enemy: newTarget.combatData, health: newTarget.health }); 
+            this.currentTarget = newTarget;
+            this.highlightTarget(newTarget);
+        };
+
+        if (this.currentTarget) {
+            this.highlightTarget(this.currentTarget); 
+        } else {
+            if (this.highlight.visible) {
+                this.removeHighlight();
+            };
+        };
+
+        // =================== STALWART ================== \\
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
+            this.isStalwart = this.isStalwart ? false : true;
+            if (this.isStalwart) {
+                this.scene.stalwart(true);
+            } else {
+                this.scene.stalwart(false);
+            };
+        }; 
+
+        this.spriteWeapon.setPosition(this.x, this.y);
+        this.spriteShield.setPosition(this.x, this.y);
+        // this.spriteHelmet.setPosition(this.x, this.y);
+        // this.spriteChest.setPosition(this.x, this.y);
+        // this.spriteLegs.setPosition(this.x, this.y);
+        this.weaponRotation('player', this.currentTarget);
+    };
+
+    onNonCombatEnter = () => {
+        console.log("Entering Non Combat");
+        this.anims.play('player_idle', true);
+    };
+    onNonCombatUpdate = (dt) => {
+        if (this.isMoving) this.isMoving = false;
+        if (this.inCombat) this.stateMachine.setState(States.COMBAT);
+    };
+    onNonCombatExit = () => {
+        this.anims.stop('player_idle');
+    };
+
+    onCombatEnter = () => {
+        console.log("Entering Combat");
+    };
+    onCombatUpdate = (dt) => { 
+        // =================== ACTIONS ================== \\
+
+        if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+            this.scene.setState('counter_guess', 'attack');
+            this.stateMachine.setState(States.COUNTER);           
+        };
+        if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+            this.scene.setState('counter_guess', 'posture');
+            this.stateMachine.setState(States.COUNTER);
+        };
+        if (this.stamina >= 10 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+            this.scene.setState('counter_guess', 'roll');
+            this.stateMachine.setState(States.COUNTER);
+        };
+    
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 30) {
+            this.stateMachine.setState(States.ATTACK);
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 20) {
+            this.stateMachine.setState(States.POSTURE);
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 20 && !this.isStalwart) {
+            this.stateMachine.setState(States.ROLL);
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 20 && !this.isStalwart) {
+            this.stateMachine.setState(States.DODGE);
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 10) {
+            this.scene.setState('counter_guess', 'counter');
+            this.stateMachine.setState(States.COUNTER);
+        };
+
+        // =================== OPTIONS ================== \\
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {
+            if (this.scene.state.playerBlessing === '') return;
+            console.log('Praying');
+            this.isPraying = true;
+            this.invokeCooldown = 30;
+            if (this.playerBlessing === '' || this.playerBlessing !== this.scene.state.playerBlessing) {
+                this.playerBlessing = this.scene.state.playerBlessing;
+            };
+            this.scene.sendStateSpecialListener('invoke');
+            screenShake(this.scene);
+            pauseGame(20).then(() => {
+                this.setVelocityX(0);
+            });
+            const invokeInterval = 1000;
+            let elapsedTime = 0;
+            const invokeLoop = () => {
+                if (elapsedTime >= this.invokeCooldown || !this.inCombat) {
+                    clearInterval(invokeIntervalId);
+                    this.invokeCooldown = 0;
+                    this.isPraying = false;
+                    return;
+                };
+                elapsedTime++;
+            };
+            const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.hurt.H)) {
+            this.isHealing = this.isHealing ? false : true;
+            this.scene.drinkFlask();
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
+            if (this.scene.state.playerEffects.length === 0) return;
+            this.isConsuming = true;
+            this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
+            this.scene.sendStateSpecialListener('consume');
+            screenShake(this.scene);
+            pauseGame(20).then(() => {
+                this.setVelocityX(0);
+            });
+        };
+    };
+    onCombatExit = () => {
+        if (this.invokeCooldown !== 0) this.invokeCooldown = 0;
+        if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
+        if (this.scene.state.action !== '') this.scene.setState('action', '');
+        if (this.scene.state.computer_action !== '') this.scene.setState('computer_action', '');
+        if (this.scene.state.computer_counter_guess !== '') this.scene.setState('computer_counter_guess', '');
+    };
+
+    onAttackEnter = () => {
+        this.scene.setState('action', 'attack');
+        if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
+        this.isAttacking = true;
+    }; 
+    onAttackUpdate = (dt) => {
+        this.anims.play('player_attack_1', true).on('animationcomplete', () => {
+            this.isAttacking = false;
+            if (this.inCombat) { 
+                this.stateMachine.setState(States.COMBAT); 
+            } else { 
+                this.stateMachine.setState(States.NONCOMBAT); 
+            };
+        });
+    }; 
+    onAttackExit = () => {
+        this.scene.setState('action', '');
+    };
+
+    onCounterEnter = () => {
+        this.scene.setState('action', 'counter');
+        this.isCountering = true;    
+    };
+    onCounterUpdate = (dt) => {
+        this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
+            this.isCountering = false;  
+            if (this.inCombat) { 
+                this.stateMachine.setState(States.COMBAT); 
+            } else { 
+                this.stateMachine.setState(States.NONCOMBAT); 
+            };
+        });
+    };
+    onCounterExit = () => {
+        this.scene.setState('action', '');
+        this.scene.setState('counter_guess', '');
+    };
+
+    onPostureEnter = () => {
+        this.scene.setState('action', 'posture');
+        if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
+        this.isPosturing = true;
+    };
+    onPostureUpdate = (dt) => {
+        this.anims.play('player_attack_3', true).on('animationcomplete', () => {
+            this.isPosturing = false;
+            if (this.inCombat) { 
+                this.stateMachine.setState(States.COMBAT); 
+            } else { 
+                this.stateMachine.setState(States.NONCOMBAT); 
+            };
+        });
+    };
+    onPostureExit = () => {
+        this.scene.setState('action', '');
+    };
+
+    onRollEnter = () => {
+        this.scene.setState('action', 'roll');
+        this.isRolling = true;
+    };
+    onRollUpdate = (dt) => {
+        this.anims.play('player_roll', true);
+        this.spriteWeapon.setVisible(false);
+        if (this.rollCooldown === 0) {
+            const sensorDisp = 12;
+            const colliderDisp = 16;
+            if (this.isRolling) {
+                this.body.parts[2].position.y += sensorDisp;
+                this.body.parts[2].circleRadius = 21;
+                this.body.parts[1].vertices[0].y += colliderDisp;
+                this.body.parts[1].vertices[1].y += colliderDisp; 
+            };
+            this.rollCooldown = 50; 
+            const rollDistance = 140; 
+            
+            const rollDuration = 20; 
+            const rollInterval = 1;
+            
+            let elapsedTime = 0;
+            let currentDistance = 0;
+            
+            const rollLoop = () => {
+                if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
+                    clearInterval(rollIntervalId);
+                    this.body.parts[2].position.y -= sensorDisp;
+                    this.body.parts[2].circleRadius = 36;
+                    this.body.parts[1].vertices[0].y -= colliderDisp;
+                    this.body.parts[1].vertices[1].y -= colliderDisp;
+                    if (this.inCombat) { this.stateMachine.setState(States.COMBAT); } else { this.stateMachine.setState(States.NONCOMBAT); };  
+                    return;
+                };
+                const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
+                if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+                if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+                if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
+                currentDistance += Math.abs(rollDistance / rollDuration);
+                elapsedTime += rollInterval;
+            };
+            const rollIntervalId = setInterval(rollLoop, rollInterval);  
+        };
+    };
+    onRollExit = () => {
+        this.spriteWeapon.setVisible(true);
+        this.rollCooldown = 0;
+        this.isRolling = false;
+        if (this.scene.state.action !== 'roll') this.scene.setState('action', '');
+        if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
+    };
+
+    onDodgeEnter = () => {
+        this.isDodging = true;
+        this.scene.checkStamina('dodge');
+    };
+    onDodgeUpdate = (dt) => {
+        this.anims.play('player_slide', true);
+        this.spriteWeapon.setVisible(false);
+        if (this.dodgeCooldown === 0) {
+            this.dodgeCooldown = this.inCombat ? 30000 : 2000; 
+            const dodgeDistance = 126;  
+            const dodgeDuration = 18;  
+            const dodgeInterval = 1;  
+            let elapsedTime = 0;
+            let currentDistance = 0;
+        
+            const dodgeLoop = () => {
+                if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
+                    clearInterval(dodgeIntervalId);
+                    if (this.inCombat) { this.stateMachine.setState(States.COMBAT); } else { this.stateMachine.setState(States.NONCOMBAT); };
+                    return;
+                };
+                const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+                this.setVelocityX(direction);
+                currentDistance += Math.abs(dodgeDistance / dodgeDuration);
+                elapsedTime += dodgeInterval;
+            };
+        
+            const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
+        };
+    };
+    onDodgeExit = () => {
+        this.spriteWeapon.setVisible(true);
+        this.dodgeCooldown = 0;
+        this.isDodging = false;
+    };
     
     update() {
+        // this.evaluatePlayerState();
+        // this.stateMachine.update(this.scene.sys.game.loop.delta);
         if (this.actionSuccess) {
             this.actionSuccess = false;
             this.playerActionSuccess();
@@ -294,24 +658,20 @@ export default class Player extends Entity {
 
         if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
             playerVelocity.x = 1;
-            // this.setVelocityX(speed);
             if (this.flipX) this.flipX = false;
         };
 
         if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
             playerVelocity.x = -1;
-            // this.setVelocityX(-speed);
             this.flipX = true;
         };
 
         if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
             playerVelocity.y = -1;    
-            // this.setVelocityY(-speed); // Was Jump Velocity When Platformer
         }; 
 
         if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
             playerVelocity.y = 1;    
-            // this.setVelocityY(speed);
         };
 
         // =================== STRAFING ================== \\
@@ -319,74 +679,16 @@ export default class Player extends Entity {
         if (this.inputKeys.strafe.E.isDown) {
             playerVelocity.x = 1;
             if (!this.flipX) this.flipX = true;
-            // this.setVelocity(playerVelocity.x, 0);
         };
         if (this.inputKeys.strafe.Q.isDown) {
             playerVelocity.x = -1;
             if (this.flipX) this.flipX = false;
-            // this.setVelocity(playerVelocity.x, 0);
         };
 
         playerVelocity.normalize();
         playerVelocity.scale(speed);
 
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.down.S) || Phaser.Input.Keyboard.JustDown(this.inputKeys.down.DOWN))) {
-        //     this.autorunDown = this.autorunDown ? false : true;
-        //     console.log('AutorunDown: ', this.autorunDown);
-        // };
-
-        // if (this.autorunDown) {
-        //     if (this.autorunUp) this.autorunUp = false;
-        //     // this.setVelocityY(speed);
-        //     playerVelocity.y = 1;
-            
-        //     this.setVelocity(0, playerVelocity.y);
-        // };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.left.A) || Phaser.Input.Keyboard.JustDown(this.inputKeys.left.LEFT))) {
-        //     this.autorunLeft = this.autorunLeft ? false : true;
-        //     console.log('AutorunLeft: ', this.autorunLeft);
-        // };
-
-        // if (this.autorunLeft) {
-        //     if (this.autorunRight) this.autorunRight = false;
-        //     // this.setVelocityX(speed);
-        //     playerVelocity.x = -1;
-            
-        //     this.setVelocity(playerVelocity.x, 0);
-        //     if (!this.flipX) this.flipX = true;
-        // };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.right.D) || Phaser.Input.Keyboard.JustDown(this.inputKeys.right.RIGHT))) {
-        //     this.autorunRight = this.autorunRight ? false : true;
-        //     console.log('AutorunRight: ', this.autorunRight);
-        // };
-
-        // if (this.autorunRight) {
-        //     if (this.autorunLeft) this.autorunLeft = false;
-        //     // this.setVelocityX(playerVelocity.x);
-        //     playerVelocity.x = 1;
-            
-        //     this.setVelocity(playerVelocity.x, 0);    
-        //     if (this.flipX) this.flipX = false;
-        // };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.up.W) || Phaser.Input.Keyboard.JustDown(this.inputKeys.up.UP))) {
-        //     this.autorunUp = this.autorunUp ? false : true;
-        //     console.log('AutorunUp: ', this.autorunUp);
-        // };
-
-        // if (this.autorunUp) {
-        //     if (this.autorunDown) this.autorunDown = false;
-        //     // this.setVelocityY(-playerVelocity.y);
-        //     playerVelocity.y = -1;
-            
-        //     this.setVelocity(0, playerVelocity.y);
-        // }; 
-
         // =================== VARIABLES IN MOTION ================== \\
-
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
             if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
@@ -394,12 +696,10 @@ export default class Player extends Entity {
             // Counter-Posturing gets +damage bonus against this tactic
         } else {
             this.isStrafing = false;
-        };
-
-        if (this.inputKeys.roll.THREE.isDown) { 
-            // Flagged to have its weapons[0].roll added as an avoidance buff
-            // Counter-Roll gets +damage bonus against this tactic
         }; 
+
+        // ==================== SETTING VELOCITY ==================== \\
+        
         this.setVelocity(playerVelocity.x, playerVelocity.y);
 
         // =================== ACTIONS ================== \\
@@ -408,57 +708,38 @@ export default class Player extends Entity {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'attack');
             this.isAttacking = true;           
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
         if (this.stamina >= 10 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'posture');
             this.isPosturing = true;
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
         if (this.stamina >= 10 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
             this.scene.setState('action', 'counter');
             this.scene.setState('counter_guess', 'roll');
             this.isRolling = true; 
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
     
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 30) {
             this.scene.setState('action', 'attack');
             if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isAttacking = true;
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 20) {
             this.scene.setState('action', 'posture');
             if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
             this.isPosturing = true;
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 20 && !this.isStalwart) {
             this.scene.setState('action', 'roll');
             this.isRolling = true;
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 20 && !this.isStalwart) {
             this.isDodging = true;
             this.scene.checkStamina('dodge');
-            // Will need to learn how to mask filter for the enemy
             
         };
 
@@ -466,9 +747,6 @@ export default class Player extends Entity {
             this.scene.setState('counter_guess', 'counter');
             this.scene.setState('action', 'counter');
             this.isCountering = true;
-            if (this.actionAvailable && this.actionTarget) {
-                // this.playerActionSuccess();
-            };
         };
 
         // =================== OPTIONS ================== \\
@@ -564,8 +842,6 @@ export default class Player extends Entity {
                 const sensorDisp = 12;
                 const colliderDisp = 16;
                 if (this.isRolling) {
-                    // if (this.scene.state.action !== 'roll') this.scene.setState('action', 'roll');
-                    // if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
                     this.body.parts[2].position.y += sensorDisp;
                     this.body.parts[2].circleRadius = 21;
                     this.body.parts[1].vertices[0].y += colliderDisp;
@@ -611,9 +887,7 @@ export default class Player extends Entity {
             this.anims.play('player_attack_1', true).on('animationcomplete', () => {
                 this.isAttacking = false;
             }); 
-        // } else if (this.isCrouching && (Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // CROUCHING AND MOVING
-        //     this.anims.play('player_roll', true);
-        } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // RUNNING
+        } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) && !this.isRolling) { // RUNNING
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
@@ -632,8 +906,6 @@ export default class Player extends Entity {
             this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.isPraying = false;
             });
-        // } else if (this.isCrouching) { // CROUCHING IDLE
-        //     this.anims.play('player_crouch_idle', true);
         } else { // IDLE
             if (this.isMoving) this.isMoving = false;
             this.anims.play('player_idle', true);
@@ -644,10 +916,8 @@ export default class Player extends Entity {
         // this.spriteHelmet.setPosition(this.x, this.y);
         // this.spriteChest.setPosition(this.x, this.y);
         // this.spriteLegs.setPosition(this.x, this.y);
-        // this.spriteHealth.setPosition(this.x, this.y - 20);
         this.weaponRotation('player', this.currentTarget);
     };
- 
 
     isAtEdgeOfLedge(scene) {
         const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body
@@ -661,7 +931,6 @@ export default class Player extends Entity {
         }; 
         return isAtEdge;
     }; 
-      
 
     isCollidingWithPlayer() {
         const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
@@ -669,3 +938,57 @@ export default class Player extends Entity {
         return this.scene.matter.overlap(playerSensor, bodies);
     };   
 };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.down.S) || Phaser.Input.Keyboard.JustDown(this.inputKeys.down.DOWN))) {
+        //     this.autorunDown = this.autorunDown ? false : true;
+        //     console.log('AutorunDown: ', this.autorunDown);
+        // };
+
+        // if (this.autorunDown) {
+        //     if (this.autorunUp) this.autorunUp = false;
+        //     // this.setVelocityY(speed);
+        //     playerVelocity.y = 1;
+            
+        //     this.setVelocity(0, playerVelocity.y);
+        // };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.left.A) || Phaser.Input.Keyboard.JustDown(this.inputKeys.left.LEFT))) {
+        //     this.autorunLeft = this.autorunLeft ? false : true;
+        //     console.log('AutorunLeft: ', this.autorunLeft);
+        // };
+
+        // if (this.autorunLeft) {
+        //     if (this.autorunRight) this.autorunRight = false;
+        //     // this.setVelocityX(speed);
+        //     playerVelocity.x = -1;
+            
+        //     this.setVelocity(playerVelocity.x, 0);
+        //     if (!this.flipX) this.flipX = true;
+        // };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.right.D) || Phaser.Input.Keyboard.JustDown(this.inputKeys.right.RIGHT))) {
+        //     this.autorunRight = this.autorunRight ? false : true;
+        //     console.log('AutorunRight: ', this.autorunRight);
+        // };
+
+        // if (this.autorunRight) {
+        //     if (this.autorunLeft) this.autorunLeft = false;
+        //     // this.setVelocityX(playerVelocity.x);
+        //     playerVelocity.x = 1;
+            
+        //     this.setVelocity(playerVelocity.x, 0);    
+        //     if (this.flipX) this.flipX = false;
+        // };
+
+        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.up.W) || Phaser.Input.Keyboard.JustDown(this.inputKeys.up.UP))) {
+        //     this.autorunUp = this.autorunUp ? false : true;
+        //     console.log('AutorunUp: ', this.autorunUp);
+        // };
+
+        // if (this.autorunUp) {
+        //     if (this.autorunDown) this.autorunDown = false;
+        //     // this.setVelocityY(-playerVelocity.y);
+        //     playerVelocity.y = -1;
+            
+        //     this.setVelocity(0, playerVelocity.y);
+        // }; 

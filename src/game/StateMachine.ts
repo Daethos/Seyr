@@ -76,4 +76,5 @@ export const States = {
     DODGE: "dodge",
     POSTURE: "posture",
     ROLL: "roll",
+    NONCOMBAT: "noncombat",
 };
