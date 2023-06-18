@@ -817,6 +817,7 @@ async function drinkFirewater(req, res) {
         const healing = ascean.health.total * 0.4;
         ascean.health.current += healing;
         ascean.health.current = ascean.health.current > ascean.health.total ? ascean.health.total : ascean.health.current;
+        ascean.firewater.charges = ascean.firewater.charges < 0 ? 0 : ascean.firewater.charges;
         await ascean.save(); 
         res.status(201).json(ascean);
     } catch (err) {

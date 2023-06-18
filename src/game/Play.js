@@ -60,7 +60,7 @@ export default class Play extends Phaser.Scene {
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         
         this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         
         this.enemy = new Enemy({scene: this, x: 400, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
 
@@ -80,7 +80,7 @@ export default class Play extends Phaser.Scene {
             pray: this.input.keyboard.addKeys('R'),
             strafe: this.input.keyboard.addKeys('E,Q'),
             shift: this.input.keyboard.addKeys('SHIFT'),
-            pause: this.input.keyboard.addKeys('T'),
+            firewater: this.input.keyboard.addKeys('T'),
             twist: this.input.mousePointer.rightButtonDown(), 
             target: this.input.keyboard.addKeys('TAB'),
             stalwart: this.input.keyboard.addKeys('G'),
@@ -126,10 +126,13 @@ export default class Play extends Phaser.Scene {
         this.minimap.zoom = 0.25;
         this.minimap.startFollow(this.player);
         this.minimap.setLerp(0.1, 0.1);
-        this.minimapBorder = this.add.rectangle(this.minimap.x - 6, this.minimap.y - 3, this.minimap.width + 4, this.minimap.height + 2);
+        this.minimapBorder = this.add.rectangle(this.minimap.x - 8, this.minimap.y - 3, this.minimap.width + 4, this.minimap.height + 2);
         this.minimapBorder.setStrokeStyle(2, 0x000000);
         this.minimapBorder.setScrollFactor(0);
-        this.minimapBorder.setScale(2/3);
+        this.minimapBorder.setScale(1 / camera.zoom);
+        // this.minimapBorder.setPosition(this.minimap.x - 8, this.minimap.y - 3);
+        // this.minimapBorder.setSize(this.minimap.width + 4, this.minimap.height + 2);
+        
 
         this.input.keyboard.on('keydown-Z', () => {
             if (this.minimap.visible) {
@@ -219,6 +222,11 @@ export default class Play extends Phaser.Scene {
     };
 
     sendStateActionListener = async function() {
+        // console.log(this.state.action, this.state.computer_action, "This is the State");
+        if (this.state.action === '' && this.state.computer_action === '') { 
+            console.log("--- ERROR --- Neither Player Nor Computer Have Live Actions --- ERROR ---");
+            return; 
+        };
         const sendState = new CustomEvent('update-state-action', { detail: this.state });
         window.dispatchEvent(sendState);
     };
@@ -267,12 +275,13 @@ export default class Play extends Phaser.Scene {
         };   
     };
 
-    drinkFlask = async function() {
-        // Handle Event Listener to Dispatch Drinking a Flask
+    drinkFlask = async () => {
+        const drinkFlask = new CustomEvent('drink-firewater');
+        window.dispatchEvent(drinkFlask);
     };
 
     setState = async function(key, value) {
-        console.log("Setting: " + key + " to " + value);
+        // console.log("Setting: " + key + " to " + value);
         this.state[key] = value;
         if (key === 'action') this.checkStamina(value);
     };
@@ -345,7 +354,7 @@ export default class Play extends Phaser.Scene {
 
     update() {
         this.enemy.update();
-        // this.enemies.forEach((enemy) => enemy.update());
+        this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
         if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };

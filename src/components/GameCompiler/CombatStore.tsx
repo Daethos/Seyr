@@ -108,6 +108,7 @@ export interface CombatData {
     weather: string;
     phaser: boolean;
     isStalwart: boolean; // +10% Defense, -5% Movement
+    enemyID: string;
 };
 
 interface Action {
@@ -264,6 +265,7 @@ export const initialCombatData: CombatData = {
     weather: '',
     phaser: false,
     isStalwart: false,
+    enemyID: '',
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {
@@ -411,6 +413,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 current_computer_health: action.payload.health,
                 new_computer_health: action.payload.health,
                 computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
                 computer_weapon_one: action.payload.enemy.combat_weapon_one,
                 computer_weapon_two: action.payload.enemy.combat_weapon_two,
                 computer_weapon_three: action.payload.enemy.combat_weapon_three,
@@ -418,6 +421,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_attributes: action.payload.enemy.attributes,
                 player_win: false,
                 computer_win: false,
+                enemyID: action.payload.enemyID,
                 // combatRound: 1,
             };
         case 'SET_NEW_COMPUTER_GUEST':
@@ -428,6 +432,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 current_computer_health: action.payload.attributes.healthTotal,
                 new_computer_health: action.payload.attributes.healthTotal,
                 computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
                 computer_weapon_one: action.payload.combat_weapon_one,
                 computer_weapon_two: action.payload.combat_weapon_two,
                 computer_weapon_three: action.payload.combat_weapon_three,
@@ -637,6 +642,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 totalDamageData: 0,
                 prayerData: [],
                 deityData: [],
+                playerEffects: [],
+                computerEffects: [],
             };
         case 'SET_PLAYER_QUICK':
             return {

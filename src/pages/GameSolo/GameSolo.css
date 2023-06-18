@@ -1754,21 +1754,20 @@
 .story-action-reader {
   position: absolute;
   text-align: center;
-  border: 2px solid purple;
-  padding: 10px;
+  border: 2px solid #2A0134;
+  padding-top: 10px;
   background: black;
-  font-size: 10px;
   color: #fdf6d8;
-  margin-top: 1%;
-  margin-left: 72.5%;
-  padding-top: 2%;
-  height: 10%;
-  width: 26%;
+  top: 432.5px;
+  left: -5px; 
+  scrollbar-width: none;
+  height: 45px;
+  width: 190px;
   box-shadow: 2px 2px 2px black;
-  border-radius: 6px;
+  border-radius: 1px;
 }
 #story-action-reader {
-  font-size: 18px;
+  font-size: 12px;
 }
 #story-attack-options {
   position: absolute;
@@ -1806,7 +1805,6 @@
 }
 .story-invoke {
   position: absolute;
-  bottom: -14px;
   left: 185px;
 }
 .story-effects {
@@ -1834,8 +1832,9 @@
 .story-prayers {
   position: absolute;
   text-align: center;
-  margin-top: 45%;
-  margin-left: 40%;
+  font-family: 'Cinzel';
+  top: 32.5px;
+  left: 170px;
 }
 .combat-effects {
   position: absolute;

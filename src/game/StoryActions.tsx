@@ -39,7 +39,6 @@ const StoryActions = ({ state, dispatch, gameState, gameDispatch, handleInstant,
         setDisplayedAction(`Weapon: ${state.weapons[0]?.name}`);
     }, [state.weapons[0]]);
 
-
     useEffect(() => {
         setDisplayedAction(`Prayer: ${state.playerBlessing}`);
     }, [state.playerBlessing]);
@@ -149,9 +148,9 @@ const StoryActions = ({ state, dispatch, gameState, gameDispatch, handleInstant,
         };
     };
     return (
-        <div className='story-actions-container'>
+        <div className='story-actions-container' style={{ position: "absolute" }}>
         <textarea  className='story-action-reader' id='story-action-reader' value={displayedAction} readOnly></textarea>
-        <CombatSettingModal story={true} state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} prayers={prayers} />
+        {/* <CombatSettingModal story={true} state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} prayers={prayers} /> */}
         {state.playerEffects.length > 0 ?
         <div className='story-prayers'>
             <Modal show={prayerModal} onHide={() => setPrayerModal(false)} centered id="modal-weapon">
@@ -179,18 +178,18 @@ const StoryActions = ({ state, dispatch, gameState, gameDispatch, handleInstant,
             </Modal.Body>
             </Modal>
             <Button variant='' onClick={() => setPrayerModal(true)} style={{ color: "gold", fontSize: "20px", textShadow: "2.5px 2.5px 2.5px black", fontWeight: 600 }}>Consume Prayers </Button><br />
-            { state.playerEffects.map((effect: any, index: number) => {
+            {/* { state.playerEffects.map((effect: any, index: number) => {
             return (
                 <button key={index} className='story-prayer-button' style={prayerColor(effect?.prayer, effect?.tick?.end, state?.combatRound)} onClick={() => handlePrayerMiddleware(effect)}>
                 <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} />
                 </button> 
             )
-            })} 
+            })}  */}
         </div>
         : '' }
-            <button className='story-instant-button' style={getEffectStyle} onClick={() => handleInstant(state)} disabled={gameState.instantStatus ? true : false}>
+            {/* <button className='story-instant-button' style={getEffectStyle} onClick={() => handleInstant(state)} disabled={gameState.instantStatus ? true : false}>
                 <img src={process.env.PUBLIC_URL + state?.weapons[0]?.imgURL} alt={state?.weapons[0]?.name} />
-            </button>
+            </button> */}
         </div>
     );
 };

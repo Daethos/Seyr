@@ -66,6 +66,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100);
+    const [prayerModal, setPrayerModal] = useState<boolean>(false);
+    const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage' ]);
 
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
@@ -307,7 +309,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         console.log(e.detail, "This is the setup enemy function")
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
         setAsceanState({ ...asceanState, 'opponent': e.detail.game.level });
-        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health } }); 
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id } }); 
     };
 
     const createDialog = async (e: any) => { };
@@ -366,6 +368,18 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
         } catch (err: any) {
             console.log(err.message, 'Error Getting Ascean Quickly');
+        };
+    };
+
+    const drinkFirewater = async () => {
+        if (gameState.player?.firewater?.charges === 0) return;
+        try {
+            dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
+            const response = await asceanAPI.drinkFirewater(state.player._id);
+            gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+        } catch (err: any) {
+            console.log(err, "Error Drinking Firewater");
         };
     };
 
@@ -568,7 +582,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     async function handleInitiate(combatData: CombatData) {
         try { 
             // const response = await gameAPI.initiateAction(combatData);
-            console.log(combatData.action, "Player Action", combatData.computer_action, "Computer Action", "Inside Combat Initiate")
+            // console.log(combatData.action, "Player Action", combatData.computer_action, "Computer Action", "Inside Combat Initiate")
+            console.log(`%c ${combatData.player.name} with ${combatData.action} has initiated combat with ${combatData.computer.name} with action ${combatData.computer_action}`, 'color: red; font-size: 20px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -786,6 +801,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
+    usePhaserEvent('drink-firewater', drinkFirewater);
     usePhaserEvent('update-stalwart', updateStalwart);
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-state-action', updateStateAction);
@@ -828,9 +844,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
                 </div>
                 <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
-                { combatHud ? (
+                {/* { !state.combatEngaged ? (
                     <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} />
-                ) : ( '' ) }
+                ) : ( '' ) } */}
                 { showPlayer ? (  
                     <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( 
@@ -839,6 +855,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                         { state.combatEngaged ? (
                             <>
                             <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>
+                            {/* <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} /> */}
                             <GameCombatText 
                                 emergencyText={['']} combatRoundText={state.combatRound} story={true}
                                 playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 

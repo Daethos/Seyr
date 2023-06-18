@@ -2409,43 +2409,45 @@ const actionSplitter = async (combatData) => {
     const player_counter = newData.counter_guess;
     let computer_counter = newData.computer_counter_guess;
     let computer_action = newData.computer_action;
-    let possible_choices = ['attack', 'posture', 'roll'];
-    let postureRating = ((combatData.player_defense.physicalPosture + combatData.player_defense.magicalPosture) / 4) + 5;
-    let rollRating = combatData.weapons[0].roll;
-    let posture = 'posture';
-    let roll = 'roll';
-    // console.log(computer_action, "Computer Action In NewData");
 
-    if (rollRating >= 100) {
-        possible_choices.push(roll);
-    } else  if (postureRating >= 100) {
-        possible_choices.push(posture);
-    } else if (postureRating >= rollRating) { 
-        possible_choices.push(posture);
-    } else { 
-        possible_choices.push(roll);
-    };
-    let new_choice = Math.floor(Math.random() * possible_choices.length)
     if (player_action === '' && !newData.phaser) {
+        let possible_choices = ['attack', 'posture', 'roll'];
+        let postureRating = ((combatData.player_defense.physicalPosture + combatData.player_defense.magicalPosture) / 4) + 5;
+        let rollRating = combatData.weapons[0].roll;
+        let posture = 'posture';
+        let roll = 'roll';
+        // console.log(computer_action, "Computer Action In NewData");
+
+        if (rollRating >= 100) {
+            possible_choices.push(roll);
+        } else  if (postureRating >= 100) {
+            possible_choices.push(posture);
+        } else if (postureRating >= rollRating) { 
+            possible_choices.push(posture);
+        } else { 
+            possible_choices.push(roll);
+        };
+        let new_choice = Math.floor(Math.random() * possible_choices.length);
         newData.action = possible_choices[new_choice];
         newData.player_action = possible_choices[new_choice];
         player_action = possible_choices[new_choice];
     };
-    let newComputerWeaponOrder = newData.computer_weapons.sort(function() {
-        return Math.random() - 0.5;
-    });
-    newData.computer_weapons = newComputerWeaponOrder;
+    await computerWeaponMaker(newData);
+    // let newComputerWeaponOrder = newData.computer_weapons.sort(function() {
+    //     return Math.random() - 0.5;
+    // });
+    // newData.computer_weapons = newComputerWeaponOrder;
 
-    let new_damage_type = Math.floor(Math.random() * newData.computer_weapons[0].damage_type.length);
-    newData.computer_damage_type = newData.computer_weapons[0].damage_type[new_damage_type];
+    // let new_damage_type = Math.floor(Math.random() * newData.computer_weapons[0].damage_type.length);
+    // newData.computer_damage_type = newData.computer_weapons[0].damage_type[new_damage_type];
 
     await computerActionCompiler(newData, player_action, computer_action, computer_counter);
     computer_counter = newData.computer_counter_guess;
     computer_action = newData.computer_action;
     // console.log(computer_action, "Computer Action After Compiler");
-    let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
-    let new_prayer = Math.floor(Math.random() * prayers.length);
-    newData.computerBlessing = prayers[new_prayer];
+    // let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
+    // let new_prayer = Math.floor(Math.random() * prayers.length);
+    // newData.computerBlessing = prayers[new_prayer];
 
     newData.computer_start_description = 
         `${newData.computer.name} sets to ${computer_action === '' ? 'defend' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1)}${computer_counter ? '-' + computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1) : ''} against you.`
@@ -2720,14 +2722,16 @@ const phaserActionSplitter = async (combatData) => {
     const playerActionLive = cleanData.action !== '' ? true : false;
     const computerActionLive = cleanData.computer_action !== '' ? true : false;
     if (playerActionLive && computerActionLive) {
-        cleanData.actionData.push(cleanData.action);
-        cleanData = await actionCompiler(cleanData);
+        console.log("Dual Actions");
+        // cleanData.actionData.push(cleanData.action);
+        // await computerActionCompiler(cleanData, cleanData.action, cleanData.computer_action, cleanData.computer_counter_guess);
+        cleanData = await actionSplitter(cleanData);
     } else if (playerActionLive && !computerActionLive) {
         await computerActionCompiler(cleanData, cleanData.action, cleanData.computer_action, cleanData.computer_counter_guess);
-        cleanData = await attackCompiler(cleanData, cleanData.action);
+        await attackCompiler(cleanData, cleanData.action);
     } else if (!playerActionLive && computerActionLive) {
         await computerWeaponMaker(cleanData);
-        cleanData = await computerAttackCompiler(cleanData, cleanData.computer_action);
+        await computerAttackCompiler(cleanData, cleanData.computer_action);
     };
     await faithFinder(cleanData);
     await statusEffectCheck(cleanData);
@@ -2846,6 +2850,7 @@ const newDataCompiler = async (combatData) => {
         deityData: combatData.deityData,
         weather: combatData.weather,
         phaser: combatData.phaser,
+        enemyID: combatData.enemyID,
     };
     return newData;
 };
@@ -3054,10 +3059,10 @@ const instantEffectCheck = async (combatData) => {
 
 const consumePrayerSplitter = async (combatData) => { 
 
-// ==================== STATISTIC LOGIC ==================== 
-combatData.actionData.push('consume');
-combatData.prayerData.push(combatData.prayerSacrifice);
-// ==================== STATISTIC LOGIC ====================
+    // ==================== STATISTIC LOGIC ==================== 
+    combatData.actionData.push('consume');
+    combatData.prayerData.push(combatData.prayerSacrifice);
+    // ==================== STATISTIC LOGIC ====================
 
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);

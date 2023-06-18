@@ -15,6 +15,7 @@ import playerActionsThreeAnim from './images/player_actions_three_anim.json';
 import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json'; 
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Enemy extends Entity {
 
@@ -34,7 +35,7 @@ export default class Enemy extends Entity {
         let { scene } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
         this.scene.add.existing(this);
-        this.enemyID = new Date().getTime();
+        this.enemyID = uuidv4();
         this.createEnemy(); 
         this.stateMachine = new StateMachine(this, 'enemy');
         this.stateMachine
@@ -126,6 +127,7 @@ export default class Enemy extends Entity {
         this.patrolVelocity = 1;
         this.attackSensor = null;
         this.attackTimer = null;
+        this.combatThreshold = 0;
         this.attackIsLive = false;
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
@@ -149,7 +151,7 @@ export default class Enemy extends Entity {
                     this.attacking = other.gameObjectB;
                     this.healthbar.setVisible(true);
                     if (this.scene.state.computer._id !== this.ascean._id && !other.gameObjectB.touching.find((touched) => touched.ascean._id === this.ascean._id)) {
-                        this.scene.setupEnemy({ game: this.ascean, enemy: this.combatData, health: this.health });
+                        this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health });
                     };
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); // TODO:FIXME: State Machine Combat
@@ -173,7 +175,7 @@ export default class Enemy extends Entity {
         console.log(e.detail, "Enemy Fetched")
         this.ascean = e.detail.game;
         this.health = e.detail.game.health.total;
-        this.combatData = e.detail.combat; 
+        this.combatStats = e.detail.combat; 
         
         const weaponName = e.detail.game.weapon_one.imgURL.split('/')[2].split('.')[0];
         
@@ -203,18 +205,18 @@ export default class Enemy extends Entity {
  
     enemyStateListener() {
         window.addEventListener('update-combat-data', (e) => {
-            if (this.ascean.name !== e.detail.computer.name) return;
+            if (this.enemyID !== e.detail.enemyID) return;
             this.combatData = e.detail;
             if (this.health > e.detail.new_computer_health) {
                 this.isHurt = true;
                 let damage = Math.round(this.health - e.detail.new_computer_health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.detail.critical_success);
-                console.log(damage, "Damage")
+                // console.log(damage, "Damage")
             };
             if (this.health < e.detail.new_computer_health) {
                 let heal = Math.round(e.detail.new_computer_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
-                console.log(heal, "Heal")
+                // console.log(heal, "Heal")
             };
             this.health = e.detail.new_computer_health;
             this.updateHealthBar(this.health);
@@ -232,13 +234,13 @@ export default class Enemy extends Entity {
 
     attackInterval() {
         if (this.scene.state.computer_weapons[0]) {
-            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 1250 : 750;
+            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 1000 : 750;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.grip === 'Two Hand' ? 1250 : 750;
+            return weapon.grip === 'Two Hand' ? 1000 : 750;
         } else {
-            return this.ascean.weapon_one.grip === 'Two Hand' ? 1250 : 750;
+            return this.ascean.weapon_one.grip === 'Two Hand' ? 1000 : 750;
         };
     };
 
@@ -263,7 +265,7 @@ export default class Enemy extends Entity {
         this.idleWait -= dt;
         if (this.idleWait <= 0) {
             this.idleWait = 500;
-            console.log("Idle Transitioning to Patrol");
+            // console.log("Idle Transitioning to Patrol");
             if (this.stateMachine.isCurrentState(States.IDLE)) this.stateMachine.setState(States.PATROL);
         };
     };
@@ -272,7 +274,7 @@ export default class Enemy extends Entity {
     };
  
     onPatrolEnter = () => {
-        console.log("Entering Patrol State");
+        // console.log("Entering Patrol State");
         this.anims.play('player_running', true); 
         const patrolDirection = new Phaser.Math.Vector2(Math.random() - 0.5, Math.random() - 0.5).normalize();
         if (patrolDirection.x < 0) { this.flipX = true };
@@ -306,7 +308,7 @@ export default class Enemy extends Entity {
         this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
     };
     onPatrolExit = () => {
-        console.log("Exiting Patrol State")
+        // console.log("Exiting Patrol State")
         this.anims.stop('player_running');
         this.patrolTimer.destroy();
     };
@@ -338,23 +340,24 @@ export default class Enemy extends Entity {
     };
 
     onChaseEnter = () => {
-        console.log("Chasing Player Initiated")
+        // console.log("Chasing Player Initiated")
         this.anims.play('player_running', true);
     };
     onChaseUpdate = (dt) => {
         const rangeMultiplier = this.isRanged ? 2 : 1;
-        if (Math.abs(this.originPoint.x - this.x) > 500 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 500 * rangeMultiplier) {
+        if (Math.abs(this.originPoint.x - this.x) > 400 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 400 * rangeMultiplier) {
             console.log("Chase transitioning to Leash")
             this.stateMachine.setState(States.LEASH);
             return;
         }; 
         let direction = this.attacking.position.subtract(this.position);
-        if (direction.length() >= 205 * rangeMultiplier) {
-            this.isRolling = true;
-            this.roll();
-            direction.normalize();
-            this.setVelocity(direction.x * 3.5, direction.y * 3.5);
-        } else if (direction.length() >= 135 * rangeMultiplier) {
+        // if (direction.length() >= 205 * rangeMultiplier) {
+        //     this.isRolling = true;
+        //     this.roll();
+        //     direction.normalize();
+        //     this.setVelocity(direction.x * 3.5, direction.y * 3.5);
+        // } else 
+        if (direction.length() >= 150 * rangeMultiplier) {
             direction.normalize();
             this.setVelocity(direction.x * 3, direction.y * 3);
         } else {
@@ -363,7 +366,7 @@ export default class Enemy extends Entity {
         };
     };
     onChaseExit = () => {
-        console.log("Chasing Player Exited")
+        // console.log("Chasing Player Exited")
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
     };
@@ -383,11 +386,10 @@ export default class Enemy extends Entity {
         this.evaluateCombatDistance();
     };
     onCombatExit = () => { 
-        this.attackTimer.destroy(); 
+        this.attackTimer.destroy();
     };
 
     onEvasionEnter = () => {
-        console.log("Player Is Ranged And Attacking, Attempting to Evade");
         this.evasionTimer = this.scene.time.addEvent({
             delay: 0, // Was 50
             callback: () => {
@@ -415,7 +417,6 @@ export default class Enemy extends Entity {
     };
 
     onEvasionExit = () => {
-        console.log("Exiting Evasion State");
         this.evasionTimer.destroy();
     };
 
@@ -499,6 +500,7 @@ export default class Enemy extends Entity {
     };
 
     enemyActionSuccess = () => {
+        if (this.scene.state.computer_action === '') return;
         this.scene.sendStateActionListener();
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
@@ -518,30 +520,36 @@ export default class Enemy extends Entity {
         let direction = this.attacking.position.subtract(this.position);
         const distanceY = Math.abs(direction.y);
         const rangeMultiplier = this.isRanged ? 3 : 1;
-        if (direction.length() >= 150 * rangeMultiplier) {
+        if (direction.length() >= 175 * rangeMultiplier) {
             console.log("Enemy Transitioning from Attacking to Chasing Player");
             this.stateMachine.setState(States.CHASE);
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (distanceY > 10) {
                 direction.normalize();
-                this.setVelocityY(direction.y * 3.25);
+                this.setVelocityY(direction.y * 5);
             };
-            if (direction.length() > 55 * rangeMultiplier) {
+            if ((this.attacking.position.subtract(this.position)).length() > 75 * rangeMultiplier) {
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.75);
-            } else if (this.body.velocity === 0) {
+                this.setVelocityX(direction.x * 3);
+            } else if ((this.attacking.position.subtract(this.position)).length() < 75 && !this.attacking.isRanged) {
+                this.anims.play('player_running', true);
+                direction.normalize();
+                this.setVelocityX(direction.x * -2.5);
+                this.setVelocityY(direction.y * -1.5);
+            } else {
+                this.setVelocity(0);
                 this.anims.play('player_idle', true);
             };
         } else {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            if (direction.length() > 55 * rangeMultiplier) {
+            if (direction.length() > 55) {
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.75);
-                this.setVelocityY(direction.y * 2.75);  
-            } else if (this.anims.currentAnim.key === 'player_running') {
+                this.setVelocityX(direction.x * 3);
+                this.setVelocityY(direction.y * 3);  
+            } else if (this.body.velocity === 0) {
                 this.anims.play('player_idle', true);
             };
         };

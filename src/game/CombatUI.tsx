@@ -8,6 +8,7 @@ import { CombatData } from '../components/GameCompiler/CombatStore';
 import { Equipment, GAME_ACTIONS, GameData } from '../components/GameCompiler/GameStore';
 import StatusEffects from '../components/GameCompiler/StatusEffects';
 import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 interface CombatUIProps {
     state: CombatData;
@@ -21,10 +22,24 @@ interface CombatUIProps {
 const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage, setStaminaPercentage }: CombatUIProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
+    const [prayerModal, setPrayerModal] = useState<boolean>(false);
+    const [displayedAction, setDisplayedAction] = useState<any>([]);
 
     useEffect(() => {
         updatePlayerHealthPercentage();
     }, [state.new_player_health]);
+
+    useEffect(() => {
+        setDisplayedAction(`Damage: ${state.player_damage_type}`);
+    }, [state.player_damage_type]);
+
+    useEffect(() => {
+        setDisplayedAction(`Weapon: ${state.weapons[0]?.name}`);
+    }, [state.weapons[0]]);
+
+    useEffect(() => {
+        setDisplayedAction(`Prayer: ${state.playerBlessing}`);
+    }, [state.playerBlessing]);
 
     useEffect(() => {
         let instantTimer: ReturnType<typeof setTimeout>;
@@ -140,6 +155,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
             background: 'black',
             boxShadow: '0 0 2em ' + getShadowStyle(state.playerBlessing),
             borderRadius: '50%',
+            fontWeight: 700,
         };
     };
 
@@ -172,7 +188,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
         border: 'none',
         // boxShadow: '0 0 1em ' + borderColor(state?.player?.mastery),  
         backgroundColor: "transparent",
-        top: "22.5px",
+        top: "-10px", // Was 22.5px
         // borderRadius: "25%",
     };
 
@@ -191,9 +207,9 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 <Modal.Header closeButton closeVariant='white' style={{ color: "gold", fontSize: "24px", fontWeight: 600 }}>Invoke Prayer</Modal.Header>
                 <Modal.Body style={{ textAlign: "center", fontSize: "16px" }}>
                     <p style={{ color: "#fdf6d8" }}>
-                    Sages ruminate achreic methods of contacting and corresponding with their creators, seeking and separating belief, ritual, and experience. As the Ancients used humans as a form
-                    {' '} to enhance themself, those keen to the Ancients were able to hold tethers to their caer in the fade of their adherence and communion with the beings. Some believe this was nothing more meditation to mend the mind.
-                    {' '} Perhaps they were right, unwilling or unable to experience warping and willowing .
+                    Sages ruminate achreic methods of contacting and corresponding with their creators, seeking and separating belief, ritual, and experience. As the Ancients used humans
+                    {' '} to enhance their caer, those keen to the Ancients were able to hold tethers to their caer in the fade of their adherence and communion with the beings. Some believe this was nothing more than meditation to mend the mind.
+                    {' '} Perhaps they were right, unwilling or unable to experience the warping and the willowing.
                     {' '} Others sought to channel it through their achre and sieve.<br /><br />
                     </p>
                     <p style={{ color: 'gold' }}> 
@@ -213,6 +229,35 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 </button> 
                 </>
             ) : ( '' ) } 
+        {state.playerEffects.length > 0 ?
+            <div className='story-prayers' style={{ position: "absolute" }}>
+                <Modal show={prayerModal} onHide={() => setPrayerModal(false)} centered id="modal-weapon">
+                <Modal.Header closeButton closeVariant='white' style={{ color: "gold" }}>Consume Prayer</Modal.Header>
+                <Modal.Body style={{ textAlign: "center", fontSize: "14px" }}>
+                    <p style={{ color: "#fdf6d8" }}>
+                    Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
+                    {' '} to enhance themself, those favored to the Ancients were granted strength in the glow of their adherence. Some believe this was nothing more than a boost to one's disposition.
+                    {' '} Perhaps they were right, willing themselves inert and ineffectual.
+                    {' '} Others sought to channel it through their caer into a single burst.<br /><br />
+                    Consume a prayer to experience a burst of caerenic beauty.
+                    </p><br />
+                    <p style={{ color: "gold" }}>
+                    <b>Damage</b> - Burst Tick for <b>50%</b> Round Damage<br />
+                    </p>
+                    <p style={{ color: "gold" }}>
+                    <b>Debuff</b> - Damage Opponent With <b>50%</b> of <b>Opponent's</b> Last Attack<br />
+                    </p>
+                    <p style={{ color: "gold" }}>
+                    <b>Buff</b> - Damage Opponent With <b>50%</b> of <b>Your</b> Last Attack<br />
+                    </p>
+                    <p style={{ color: "gold" }}>
+                    <b>Heal</b> - Burst Tick for <b>50%</b> Round Heal
+                    </p>
+                </Modal.Body>
+                </Modal>
+                <Button variant='' onClick={() => setPrayerModal(true)} style={getInvokeStyle}>Consume </Button><br />
+            </div>
+        : ( '' )}
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
             <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "150px", top: "-9px", left: "27px", fontFamily: "Cinzel", fontWeight: 600 }}>
                 {state.player.name}
@@ -252,7 +297,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
             }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
-            <div style={{ position: "absolute", left: "185px", top: "-12.5px", transform: "scale(0.75)" }}>
+            <div style={{ position: "absolute", left: "185px", top: "0px", transform: "scale(0.75)" }}>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
                 <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle(state.weapons[0]?.rarity)} />
             </OverlayTrigger>
@@ -271,6 +316,9 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                     })}
                 </div>
             ) : ( '' ) }
+            {/* { state.combatEngaged ? (
+                <textarea  className='story-action-reader' id='story-action-reader' value={displayedAction} readOnly></textarea>
+            ) : ( '' ) } */}
         </div> 
     );
 };

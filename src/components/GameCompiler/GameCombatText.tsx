@@ -25,7 +25,8 @@ const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, play
         width: "450px",  
         fontSize: "12px",
         borderRadius: "3px",
-        border: "2px solid #2A0134"
+        border: "2px solid #2A0134",
+        boxShadow: "2px 2px 2px black"
     };
     const text = () => {
         let result = "";

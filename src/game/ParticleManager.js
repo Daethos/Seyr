@@ -29,6 +29,7 @@ import spookyAnim from './images/spooky_anim.json';
 import arrowPNG from './images/arrow_effect.png';
 import arrowJSON from './images/arrow_json.json';
 import arrowAnim from './images/arrow_anim.json';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
@@ -69,7 +70,18 @@ export default class ParticleManager extends Phaser.Scene {
             objectA: [effectSensor],
             callback: (other) => {
                 if (other.gameObjectB && (other.gameObjectB.name === 'enemy' && player.name === 'player' || other.gameObjectB.name === 'player' && player.name === 'enemy')) {
-                    player.particleEffect.success = true; 
+                    if (player.name === 'player') {
+                        if (this.scene.action !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.action + " Due to Collision Success For PLAYER");
+                            this.scene.setState('action', effect.action);
+                        };
+                    } else if (player.name === 'enemy') {
+                        if (this.scene.computer_action !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.computer_action + " Due to Collision Success For ENEMY");
+                            this.scene.setState('computer_action', effect.action);
+                        };
+                    };
+                    if (player.particleEffect && this.particles.find((particle) => particle.id === player.particleEffect.id)) player.particleEffect.success = true;
                 };
             },
             context: this.scene,
@@ -79,7 +91,7 @@ export default class ParticleManager extends Phaser.Scene {
     addEffect(action, player, key) { 
         let particle = {
             action: action,
-            id: player.ascean._id + '_' + key,
+            id: player.ascean._id + '_' + key + uuidv4(),
             key: key + '_effect',
             effect: this.spriteMaker(this.scene, player, key + '_effect'), 
             timer: this.scene.time.addEvent({
@@ -97,8 +109,9 @@ export default class ParticleManager extends Phaser.Scene {
         const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: "effectSensor" }); 
         particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
-        this.sensorListener(player, particle.effect, effectSensor);
+        this.sensorListener(player, particle, effectSensor);
         this.particles.push(particle); 
+        console.log(particle.id, "Particle ID")
         return particle;
     };
 
@@ -145,8 +158,9 @@ export default class ParticleManager extends Phaser.Scene {
         };
         if (!player.particleEffect.effect.visible) player.particleEffect.effect.setVisible(true); 
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
-        player.particleEffect.effect.play(player.particleEffect.key, true);
-        // player.particleEffect.effect.setVelocity(player.flipX ? -player.particleEffect.velocity : player.particleEffect.velocity, player.body.velocity.y);
-        player.particleEffect.effect.setVelocity(player.particleEffect.velocity, player.body.velocity.y);
+        if (player.particleEffect && player.particleEffect.effect && this.particles.find((particle) => particle.id === player.particleEffect.id)) {
+            player.particleEffect.effect.play(player.particleEffect.key, true);
+            player.particleEffect.effect.setVelocity(player.particleEffect.velocity, player.body.velocity.y);
+        };
     };
 };
