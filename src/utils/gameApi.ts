@@ -18,6 +18,20 @@ export async function initiateAction(combatData: any) {
     console.log(response, '<- Response in Game Utility API');
 };
 
+export async function effectTick(data: any) {
+    const res = await fetch(BASE_URL + 'effect-tick', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken(),
+        },
+    });
+    if (res.ok) return res.json();
+    const response = await res.json();
+    console.log(response, '<- Response in Game Utility API');
+};
+
 export async function phaserAction(combatData: any) {
     const res = await fetch(BASE_URL + 'phaser', {
         method: 'PUT',

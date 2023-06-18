@@ -9,11 +9,21 @@ module.exports = {
     pvpInstant,
     pvpPrayer,
     phaser,
+    phaserEffect,
 };
 
 async function phaser(req, res) {
     try {
         const data = await gameService.phaserActionCompiler(req.body);
+        res.status(200).json({ data });
+    } catch (err) {
+        res.status(400).json({ err });
+    };
+};
+
+async function phaserEffect(req, res) {
+    try {
+        const data = await gameService.phaserEffectTick(req.body);
         res.status(200).json({ data });
     } catch (err) {
         res.status(400).json({ err });

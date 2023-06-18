@@ -5,19 +5,22 @@ import Popover from 'react-bootstrap/Popover';
 import enemyHealthBar from './images/enemy-healthbar.png';
 import { CombatData } from '../components/GameCompiler/CombatStore';
 import { Equipment } from '../components/GameCompiler/GameStore';
-import StatusEffects from '../components/GameCompiler/StatusEffects';
+import StatusEffects, { StatusEffect } from '../components/GameCompiler/StatusEffects';
 
 interface EnemyUIProps {
     state: CombatData;
     dispatch: any;
+    pauseState: boolean;  
+    handleCallback: (state: CombatData, effect: StatusEffect) => Promise<void>;
 };
 
-const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
-    const [playerEnemyPercentage, setEnemyrHealthPercentage] = useState<number>(0);
+const EnemyUI = ({ state, dispatch, pauseState, handleCallback }: EnemyUIProps) => {
+    const [playerEnemyPercentage, setEnemyrHealthPercentage] = useState<number>(0); 
 
     useEffect(() => {
         updateEnemyHealthPercentage();
     }, [state.new_computer_health]);
+    
 
     const updateEnemyHealthPercentage = async () => {
         try {
@@ -120,7 +123,7 @@ const EnemyUI = ({ state, dispatch }: EnemyUIProps) => {
             {state.computerEffects.length > 0 ? (
                 <div className='combat-effects'>
                     {state.computerEffects.map((effect: any, index: number) => {
-                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.computer} effect={effect} player={true} story={true} key={index} /> )
+                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.computer} effect={effect} player={true} story={true} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) }

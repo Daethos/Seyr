@@ -8,6 +8,7 @@ router.put('/initiate', gameCtrl.initiate);
 router.put('/instant', gameCtrl.instant);
 router.put('/prayer', gameCtrl.prayer);
 router.put('/phaser', gameCtrl.phaser);
+router.put('/effect-tick', gameCtrl.phaserEffect);
 router.put('/pvp', gameCtrl.pvpInitiate);
 
 

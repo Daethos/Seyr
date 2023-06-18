@@ -643,6 +643,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             combatData.player_influence_description = existingEffect.description;
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
             existingEffect.tick.end += 2;
+            existingEffect.endTime += 6;
             existingEffect.activeStacks += 1;
             existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
             combatData.player_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
@@ -676,6 +677,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
+            existingEffect.endTime += (existingEffect.duration + 1) * 3;
             existingEffect.activeRefreshes += 1;
             combatData.player_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         };
@@ -696,6 +698,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                 combatData.player_influence_description_two = existingEffect.description;
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
+                existingEffect.endTime += 6;
                 existingEffect.activeStacks += 1;
                 existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
                 combatData.player_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
@@ -729,6 +732,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
+                existingEffect.endTime += (existingEffect.duration + 1) * 3;
                 existingEffect.activeRefreshes += 1;
                 combatData.player_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             };
@@ -743,6 +747,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             combatData.computer_influence_description = existingEffect.description;
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
             existingEffect.tick.end += 2;
+            existingEffect.endTime += 6;
             existingEffect.activeStacks += 1;
             existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
             combatData.computer_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
@@ -776,6 +781,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
+            existingEffect.endTime += (existingEffect.duration + 1) * 3;
             existingEffect.activeRefreshes += 1;
             combatData.computer_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         };    
@@ -790,6 +796,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                 combatData.computer_influence_description_two = existingEffect.description;
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
+                existingEffect.endTime += 6;
                 existingEffect.activeStacks += 1;
                 existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
                 combatData.computer_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
@@ -823,6 +830,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
+                existingEffect.endTime += (existingEffect.duration + 1) * 3;
                 existingEffect.activeRefreshes += 1;
                 combatData.computer_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             };    
@@ -2299,8 +2307,7 @@ const counterCompiler = async (combatData, player_action, computer_action) => {
     );
 };
 
-const playerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => {
-    
+const playerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => { 
     const playerRoll = combatData.weapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
     if (combatData.weather === 'Alluring Isles') {
@@ -2315,20 +2322,12 @@ const playerRollCompiler = async (combatData, player_initiative, computer_initia
     if (playerRoll > rollCatch) {
         combatData.roll_success = true;
         combatData.player_special_description = 
-                `You successfully roll against ${combatData.computer.name}, avoiding their ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`;
+                `You successfully roll against ${combatData.computer.name}, avoiding their ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack.`;
         await attackCompiler(combatData, player_action);
     } else {
-        // if (player_initiative > computer_initiative) {
         combatData.player_special_description =
-        `You failed to roll against ${combatData.computer.name}'s ${ combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
-            //     await attackCompiler(combatData, player_action)
-        //     await computerAttackCompiler(combatData, computer_action)
-        // } else {
-        //     combatData.player_special_description =
-        //     `You failed to roll against ${combatData.computer.name}'s ${  combatData.computer_action === 'attack' ? 'Focused' : combatData.computer_action.charAt(0).toUpperCase() + combatData.computer_action.slice(1) } Attack.`
-        //     await computerAttackCompiler(combatData, computer_action)
-        //     await attackCompiler(combatData, player_action)
-        // }
+        `You failed to roll against ${combatData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack.`
+         
     };
     return (
         combatData
@@ -2397,7 +2396,6 @@ const doubleRollCompiler = async (combatData, player_initiative, computer_initia
     );
 };
 
-// Action Splitter Determines the Action Payload and Sorts the Resolution of the Action Round
 const actionSplitter = async (combatData) => {
     let newData = await newDataCompiler(combatData);
     // ==================== STATISTIC LOGIC ====================
@@ -2416,7 +2414,6 @@ const actionSplitter = async (combatData) => {
         let rollRating = combatData.weapons[0].roll;
         let posture = 'posture';
         let roll = 'roll';
-        // console.log(computer_action, "Computer Action In NewData");
 
         if (rollRating >= 100) {
             possible_choices.push(roll);
@@ -2433,21 +2430,10 @@ const actionSplitter = async (combatData) => {
         player_action = possible_choices[new_choice];
     };
     await computerWeaponMaker(newData);
-    // let newComputerWeaponOrder = newData.computer_weapons.sort(function() {
-    //     return Math.random() - 0.5;
-    // });
-    // newData.computer_weapons = newComputerWeaponOrder;
-
-    // let new_damage_type = Math.floor(Math.random() * newData.computer_weapons[0].damage_type.length);
-    // newData.computer_damage_type = newData.computer_weapons[0].damage_type[new_damage_type];
 
     await computerActionCompiler(newData, player_action, computer_action, computer_counter);
     computer_counter = newData.computer_counter_guess;
     computer_action = newData.computer_action;
-    // console.log(computer_action, "Computer Action After Compiler");
-    // let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
-    // let new_prayer = Math.floor(Math.random() * prayers.length);
-    // newData.computerBlessing = prayers[new_prayer];
 
     newData.computer_start_description = 
         `${newData.computer.name} sets to ${computer_action === '' ? 'defend' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1)}${computer_counter ? '-' + computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1) : ''} against you.`
@@ -2717,15 +2703,208 @@ const computerWeaponMaker = async (combatData) => {
     return combatData;
 };
 
+const phaserDualActionSplitter = async (combatData) => {
+    let newData = await newDataCompiler(combatData);
+    // ==================== STATISTIC LOGIC ====================
+    newData.actionData.push(newData.action);
+    // ==================== STATISTIC LOGIC ====================
+    const player_initiative = newData.player_attributes.initiative;
+    const computer_initiative = newData.computer_attributes.initiative;
+    const player_action = newData.action;
+    const player_counter = newData.counter_guess;
+    const computer_action = newData.computer_action;
+    const computer_counter = newData.computer_counter_guess;
+
+    await computerWeaponMaker(newData);
+    await computerActionCompiler(newData, player_action, computer_action, computer_counter);
+
+    newData.computer_start_description = 
+        `${newData.computer.name} sets to ${computer_action === '' ? 'defend' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1)}${computer_counter ? '-' + computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1) : ''} against you.`
+
+    newData.player_start_description = 
+        `You attempt to ${player_action === '' ? 'defend' : player_action.charAt(0).toUpperCase() + player_action.slice(1)}${player_counter ? '-' + player_counter.charAt(0).toUpperCase() + player_counter.slice(1) : ''} against ${newData.computer.name}.`
+    
+    if (player_action === 'counter' && computer_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
+        if (player_counter === computer_counter && player_counter === 'counter') {
+            if (player_initiative > computer_initiative) {
+                newData.counter_success = true;
+                newData.player_special_description = 
+                    `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`;
+                await attackCompiler(newData, player_action);
+                await faithFinder(newData); 
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
+                return newData
+            } else {
+                newData.computer_counter_success = true;
+                newData.computer_special_description = 
+                    `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`;
+                await computerAttackCompiler(newData, computer_action);
+                await faithFinder(newData);
+
+                newData.combatRound += 1;
+                newData.sessionRound += 1;
+                return newData
+            };
+        };
+        if (player_counter === computer_action && computer_counter !== player_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`;
+            await attackCompiler(newData, player_action)
+            await faithFinder(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData;
+        };
+    
+        if (computer_counter === player_action && player_counter !== computer_action) {
+            newData.computer_counter_success = true;
+            newData.computer_special_description = 
+                `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`;
+            await computerAttackCompiler(newData, computer_action);
+            await faithFinder(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData;
+        };
+    
+        if (player_counter !== computer_action && computer_counter !== player_action) {
+            newData.player_special_description = 
+                `You failed to Counter ${newData.computer.name}'s Counter! Heartbreaking`;
+            newData.computer_special_description = 
+                `${newData.computer.name} fails to Counter your Counter! Heartbreaking`;
+                if (player_initiative > computer_initiative) {
+                    await attackCompiler(newData, player_action);
+                    await computerAttackCompiler(newData, computer_action);
+                } else {
+                    await computerAttackCompiler(newData, computer_action);
+                    await attackCompiler(newData, player_action);
+                };
+        };
+    };
+
+    if (player_action === 'counter' && computer_action !== 'counter') {
+        if (player_counter === computer_action) {
+            newData.counter_success = true;
+            newData.player_special_description = 
+                `You successfully Countered ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack.`;
+            await attackCompiler(newData, player_action);
+            await faithFinder(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData
+        } else {
+            newData.player_special_description = 
+                `You failed to Counter ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack. Heartbreaking!`;
+        };
+    };
+
+    if (computer_action === 'counter' && player_action !== 'counter') {
+        if (computer_counter === player_action) {
+            newData.computer_counter_success = true;
+            newData.computer_special_description = 
+                `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`;
+            await computerAttackCompiler(newData, computer_action);
+            await faithFinder(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData
+        } else {
+            newData.computer_special_description = 
+                `${newData.computer.name} fails to Counter your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack. Heartbreaking!`;
+        };
+    };
+    
+    if (player_action === 'dodge' && computer_action === 'dodge') { // If both choose Dodge
+        if (player_initiative > computer_initiative) {
+            newData.player_special_description = 
+                `You successfully Dodge ${newData.computer.name}'s ${  computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack`;
+            await attackCompiler(newData, player_action);
+        } else {
+            `${newData.computer.name} successfully Dodges your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack`;
+            await computerAttackCompiler(newData, computer_action);
+        };
+    };
+
+    if (player_action === 'dodge' && computer_action !== 'dodge') {
+        newData.player_special_description = 
+            `You successfully Dodge ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack`;
+        await attackCompiler(newData, player_action);
+        await faithFinder(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
+        return newData;
+    };
+
+    if (computer_action === 'dodge' && player_action !== 'dodge') {
+        `${newData.computer.name} successfully Dodges your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack`;
+        await computerAttackCompiler(newData, computer_action);
+        await faithFinder(newData);
+        newData.combatRound += 1;
+        newData.sessionRound += 1;
+        return newData;
+    };
+
+    if (player_action === 'roll' && computer_action === 'roll') { // If both choose Roll
+        await doubleRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
+    };
+
+    if (player_action === 'roll' && computer_action !== 'roll') {
+        await playerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
+        if (newData.roll_success === true) {
+            await faithFinder(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData;
+        };
+    };
+
+    if (computer_action === 'roll' && player_action !== 'roll') {
+        await computerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
+        if (newData.computer_roll_success === true) {
+            await faithFinder(newData);
+            await statusEffectCheck(newData);
+            newData.combatRound += 1;
+            newData.sessionRound += 1;
+            return newData;
+        };
+    };
+
+    if (player_action === 'attack' || player_action === 'posture' || computer_action === 'attack' || computer_action === 'posture') { // If both choose Attack
+        if (player_initiative > computer_initiative) {
+            await attackCompiler(newData, player_action);
+            await computerAttackCompiler(newData, computer_action);
+        } else {
+            await computerAttackCompiler(newData, computer_action);
+            await attackCompiler(newData, player_action);
+        };
+    };
+
+    await faithFinder(newData);
+    
+    if (newData.player_win === true) {
+        newData.computer_death_description = 
+        `${newData.computer.name} has been defeated. Hail ${newData.player.name}, you have won.`;
+    };
+    if (newData.computer_win === true) {
+        newData.player_death_description = 
+        `You have been defeated. Hail ${newData.computer.name}, they have won.`;
+    };
+
+    newData.combatRound += 1;
+    newData.sessionRound += 1;
+
+    return newData;
+};
+
 const phaserActionSplitter = async (combatData) => {
     let cleanData = await newDataCompiler(combatData);
     const playerActionLive = cleanData.action !== '' ? true : false;
     const computerActionLive = cleanData.computer_action !== '' ? true : false;
     if (playerActionLive && computerActionLive) {
         console.log("Dual Actions");
-        // cleanData.actionData.push(cleanData.action);
-        // await computerActionCompiler(cleanData, cleanData.action, cleanData.computer_action, cleanData.computer_counter_guess);
-        cleanData = await actionSplitter(cleanData);
+        cleanData = await phaserDualActionSplitter(cleanData);
     } else if (playerActionLive && !computerActionLive) {
         await computerActionCompiler(cleanData, cleanData.action, cleanData.computer_action, cleanData.computer_counter_guess);
         await attackCompiler(cleanData, cleanData.action);
@@ -2734,7 +2913,6 @@ const phaserActionSplitter = async (combatData) => {
         await computerAttackCompiler(cleanData, cleanData.computer_action);
     };
     await faithFinder(cleanData);
-    await statusEffectCheck(cleanData);
     
     if (cleanData.player_win === true) {
         cleanData.computer_death_description = 
@@ -2851,6 +3029,7 @@ const newDataCompiler = async (combatData) => {
         weather: combatData.weather,
         phaser: combatData.phaser,
         enemyID: combatData.enemyID,
+        combatTimer: combatData.combatTimer,
     };
     return newData;
 };
@@ -2868,7 +3047,6 @@ const prayerSplitter = async (combatData, prayer) => {
     combatData.playerBlessing = prayer === '' ? 'Buff' : prayer;
 
     // ==================== STATISTIC LOGIC ==================== 
-    // combatData.actionData.push('prayer');
     combatData.prayerData.push(prayer);
     combatData.deityData.push(combatData.weapons[0].influences[0]);
     // ==================== STATISTIC LOGIC ====================
@@ -2877,12 +3055,10 @@ const prayerSplitter = async (combatData, prayer) => {
     let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[0].influences[0]}` && effect.prayer === combatData.playerBlessing 
         && effect.enemyName === combatData.computer.name // Added For Phaser ??
     );   
-    // Handles the creation of a new Status Effect if it doesn't already exist
     if (!existingEffect) {
         existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
         combatData.playerEffects.push(existingEffect);
         combatData.player_influence_description = existingEffect.description;
-        // console.log(existingEffect, 'New Status Effect in Game Services');
     } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
         existingEffect.tick.end += 2;
         existingEffect.activeStacks += 1;
@@ -2967,7 +3143,6 @@ const instantActionSplitter = async (combatData) => {
             break;
         };
     await instantEffectCheck(combatData);
-
     
     // ==================== STATISTIC LOGIC ==================== 
     combatData.actionData.push('invoke'); 
@@ -3058,7 +3233,6 @@ const instantEffectCheck = async (combatData) => {
 };
 
 const consumePrayerSplitter = async (combatData) => { 
-
     // ==================== STATISTIC LOGIC ==================== 
     combatData.actionData.push('consume');
     combatData.prayerData.push(combatData.prayerSacrifice);
@@ -3159,6 +3333,68 @@ const consumePrayerSplitter = async (combatData) => {
     return combatData;
 };
 
+const phaserEffectTickSplitter = async (data) => { 
+    let { combatData, effect } = data;
+    if (effect.playerName === combatData.player.name) { 
+        switch (effect.prayer) { 
+            case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+                combatData.new_computer_health -= effect.effect.damage * 0.33;
+                combatData.current_computer_health -= effect.effect.damage * 0.33; 
+                if (combatData.current_computer_health < 0 || combatData.new_computer_health < 0) {
+                    combatData.new_computer_health = 0;
+                    combatData.current_computer_health = 0;
+                    combatData.computer_win = false;
+                    combatData.player_win = true;
+                };
+                if (combatData.combatTimer >= effect.endTime) {
+                    combatData.playerEffects.filter(playerEffect => playerEffect.id === effect.id);
+                };
+                break;
+            };
+            case 'Heal': { // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+                combatData.new_player_health += effect.effect.healing * 0.33;
+                combatData.current_player_health += effect.effect.healing * 0.33;
+                if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
+                    combatData.computer_win = false;
+                };
+                if (combatData.combatTimer >= effect.endTime) {
+                    combatData.playerEffects.filter(playerEffect => playerEffect.id === effect.id);
+                };
+                break;
+            };
+        };  
+    } else if (effect.playerName === combatData.computer.name) {
+        switch (effect.prayer) {
+            case 'Damage': {
+                combatData.new_player_health -= effect.effect.damage * 0.33;
+                combatData.current_player_health -= effect.effect.damage * 0.33;
+                if (combatData.current_player_health < 0 || combatData.new_player_health < 0) {
+                    combatData.new_player_health = 0;
+                    combatData.current_player_health = 0;
+                    combatData.computer_win = true;
+                    combatData.player_win = false;
+                };
+                if (combatData.combatTimer >= effect.endTime) {
+                    combatData.computerEffects.filter(computerEffect => computerEffect.id === effect.id);
+                };
+                break;
+            };
+            case 'Heal': {
+                combatData.new_computer_health += effect.effect.healing * 0.33;
+                combatData.current_computer_health += effect.effect.healing * 0.33;
+                if (combatData.current_computer_health > 0 || combatData.new_computer_health > 0) {
+                    combatData.player_win = false;
+                };
+                if (combatData.combatTimer >= effect.endTime) {
+                    combatData.computerEffects.filter(computerEffect => computerEffect.id === effect.id);
+                };
+                break;
+            };
+        };
+    };
+    return combatData; 
+};
+
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
 const actionCompiler = async (combatData) => {
@@ -3215,9 +3451,23 @@ const phaserActionCompiler = async (combatData) => {
     };
 };
 
+const phaserEffectTick = async (data) => {
+    try {
+        let result = await phaserEffectTickSplitter(data);
+        if (result.player_win === true || result.computer_win === true) {
+            await statusEffectCheck(result);
+        };
+        return result;
+    } catch (err) {
+        console.log(err, 'Error in the Phaser Effect Tick of Game Services');
+        res.status(400).json({ err });
+    };
+};
+
 module.exports = {
     actionCompiler,
     instantActionCompiler,
     consumePrayer,
-    phaserActionCompiler
+    phaserActionCompiler,
+    phaserEffectTick
 };

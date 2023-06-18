@@ -297,11 +297,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             loop: true
         });
         
-        if ("vibrate" in navigator) {
-            navigator.vibrate(40);
-        };
         screenShake(this.scene);
-        pauseGame(20).then(() => {
+        pauseGame(100).then(() => {
             this.setVelocityX(0);
         });
     };
@@ -350,7 +347,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             navigator.vibrate(40);
         };
         screenShake(this.scene);
-        pauseGame(20).then(() => {
+        pauseGame(50).then(() => {
             this.setVelocityX(0);
         });
     };
@@ -531,6 +528,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(45);
                     };
                     if (this.frameCount === 39) {
+                        console.log("Frame Success: Attack");
                         this.spriteWeapon.setAngle(60);
                         this.actionCounterable = false;
                         if (this.actionAvailable) this.actionSuccess = true;
@@ -585,6 +583,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(45);
                     };
                     if (this.frameCount === 39) {
+                        console.log("Frame Success: Attack");
                         this.spriteWeapon.setAngle(30);
                         this.actionCounterable = false;
                         if (this.actionAvailable) this.actionSuccess = true;
@@ -734,7 +733,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 };
             };
 
-
+            if (this.frameCount === 39) console.log(this.frameCount, this.actionSuccess, "Frame Count Success!!")
             this.frameCount += 1;
         } else if (this.isPosturing) {
             if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 0) {
@@ -919,10 +918,24 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 };
  
+let totalTrauma = 0;
+ 
 export function screenShake(scene) {
-    const duration = 40;  
-    const intensity = 0.01;  
+    totalTrauma += 1.1;
+    const duration = 100;
+    const intensity = 0.01 * Math.pow(totalTrauma, 2);
+    
+    if ("vibrate" in navigator) { navigator.vibrate(duration); };
     scene.cameras.main.shake(duration, intensity);
+    pauseGame(duration);
+
+    const decayInterval = setInterval(() => {
+        totalTrauma -= 1.1 / duration;
+        if (totalTrauma <= 0) {
+            totalTrauma = 0;
+            clearInterval(decayInterval);
+        };
+    }, 1);
 };
  
 export function pauseGame(duration) {

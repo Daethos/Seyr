@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 interface Props {
     playerCombatText: string;
     computerCombatText: string;
@@ -17,9 +15,10 @@ interface Props {
     combatRoundText: string | number;
     spectator?: boolean;
     story?: boolean;
+    combatTimer?: number;
 };
 
-const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
+const GameCombatText = ({ combatTimer, story, spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
     const storyStyle = {
         height: "80px",
         width: "450px",  
@@ -43,7 +42,8 @@ const GameCombatText = ({ story, spectator, emergencyText, combatRoundText, play
         if (computerReligiousTextTwo) result += computerReligiousTextTwo + "\n";
         if (playerDeathText) result += playerDeathText + "\n";
         if (computerDeathText) result += computerDeathText + "\n";
-        if (combatRoundText) result += `Combat Round: ${combatRoundText} \n`;
+        if (combatRoundText && !story) result += `Combat Round: ${combatRoundText} \n`;
+        if (combatTimer) result += `Combat Timer: ${combatTimer} \n`;
         return result;
     };
     return (

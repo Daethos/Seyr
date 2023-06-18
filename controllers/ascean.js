@@ -1197,22 +1197,26 @@ async function create(req, res) {
             req.body.helmet = '63f413a4acef90a6e298a3c4';
             req.body.chest = '63f413a5acef90a6e298a3cf';
             req.body.legs = '63f413a5acef90a6e298a429';
-        }
+            req.body.shield = '63b31f89ce6a30ffab854aae';
+        };
         if (req.body.preference === 'Chain-Mail') {
             req.body.helmet = '63f413a4acef90a6e298a3c5';
             req.body.chest = '63f413a5acef90a6e298a3d0';
             req.body.legs = '63f413a5acef90a6e298a42a';
-        }
+            req.body.shield = '63b31f89ce6a30ffab854ab0';
+        };
         if (req.body.preference === 'Leather-Mail') {
             req.body.helmet = '63f413a4acef90a6e298a3c6';
             req.body.chest = '63f413a5acef90a6e298a3d1';
             req.body.legs = '63f413a5acef90a6e298a42b';
-        }
+            req.body.shield = '63b31f89ce6a30ffab854aaf';
+        };
         if (req.body.preference === 'Leather-Cloth') {
             req.body.helmet = '63f413a4acef90a6e298a3c7'
             req.body.chest = '63f413a5acef90a6e298a3d2';
             req.body.legs = '63f413a5acef90a6e298a42c';
-        }
+            req.body.shield = '63b31f89ce6a30ffab854aad';
+        };
 
         if (req.body.faith === 'devoted') { // Devoted to Daethos
             if (parseInt(req.body.strength) + parseInt(req.body.agility) >= parseInt(req.body.achre) + parseInt(req.body.caeren)) {
@@ -1271,6 +1275,8 @@ async function create(req, res) {
         await seedDB([firstWeapon], firstWeapon.rarity);
         const secondWeapon = await Weapon.findById(req.body.weapon_two);
         await seedDB([secondWeapon], secondWeapon.rarity);
+        const firstShield = await Shield.findById(req.body.shield);
+        await seedDB([firstShield], firstShield.rarity);
 
         try {
             const ascean = await Ascean.create({
@@ -1290,7 +1296,7 @@ async function create(req, res) {
                 weapon_one: firstWeapon._id,
                 weapon_two: secondWeapon._id,
                 weapon_three: '63b34b5ed5326753b191846c',
-                shield: '63b34b5fd5326753b191846f',
+                shield: req.body.shield,
                 helmet: req.body.helmet,
                 chest: req.body.chest,
                 legs: req.body.legs,

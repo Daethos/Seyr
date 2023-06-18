@@ -39,6 +39,8 @@ export default class Play extends Phaser.Scene {
         this.isEnemyHanging = false;
         this.isEnemyOnGround = true;
         this.minimap = null;
+        this.combatTime = 0;
+        this.combatTimer = null;
     }; 
     
     create() { 
@@ -350,6 +352,30 @@ export default class Play extends Phaser.Scene {
             },
             callbackScope: this
         });
+    };
+
+    startCombatTimer = async () => {
+        console.log("Starting Combat Timer");
+        this.combatTimer = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                if (this.scene.isPaused()) return;
+                this.combatTime += 1;
+                const combatTimer = new CustomEvent('update-combat-timer', { detail: this.combatTime });
+                window.dispatchEvent(combatTimer);
+            },
+            callbackScope: this,
+            loop: true
+        });
+    };
+
+    stopCombatTimer = async () => {
+        console.log("Stopping Combat Timer");
+        this.combatTimer.destroy();
+        this.combatTimer = null;
+        this.combatTime = 0;
+        const resetTimer = new CustomEvent('update-combat-timer', { detail: this.combatTime });
+        window.dispatchEvent(resetTimer);
     };
 
     update() {

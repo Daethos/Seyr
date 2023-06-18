@@ -270,9 +270,9 @@ export default class Player extends Entity {
         };
         // this.knockback(this.actionTarget);
         screenShake(this.scene);
-        pauseGame(20).then(() => {
-            this.setVelocityX(0);
-        });
+        // pauseGame(40).then(() => {
+        //     this.setVelocityX(0);
+        // });
     };
 
     // evaluatePlayerState = () => {
@@ -348,6 +348,7 @@ export default class Player extends Entity {
     onNonCombatEnter = () => {
         console.log("Entering Non Combat");
         this.anims.play('player_idle', true);
+        if (this.scene.combatTimer) this.scene.stopCombatTimer();
     };
     onNonCombatUpdate = (dt) => {
         if (this.isMoving) this.isMoving = false;
@@ -415,6 +416,7 @@ export default class Player extends Entity {
         };
     }; 
     onAttackExit = () => {
+        console.log("Player Exiting Attack State")
         this.scene.setState('action', '');
     };
 
@@ -512,6 +514,9 @@ export default class Player extends Entity {
     update() {
         // this.evaluatePlayerState();
         this.stateMachine.update(this.scene.sys.game.loop.delta);
+        if (this.inCombat && !this.scene.combatTimer) this.scene.startCombatTimer();
+        // if (!this.inCombat && this.scene.combatTimer) this.scene.stopCombatTimer();
+
         if (this.actionSuccess) {
             this.actionSuccess = false;
             this.playerActionSuccess();
@@ -537,7 +542,7 @@ export default class Player extends Entity {
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const speed = 2.25;
+        const speed = 1.75;
         let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\
@@ -696,9 +701,9 @@ export default class Player extends Entity {
             };
             this.scene.sendStateSpecialListener('invoke');
             screenShake(this.scene);
-            pauseGame(20).then(() => {
-                this.setVelocityX(0);
-            });
+            // pauseGame(40).then(() => {
+            //     this.setVelocityX(0);
+            // });
             const invokeInterval = 1000;
             let elapsedTime = 0;
             const invokeLoop = () => {
@@ -719,9 +724,9 @@ export default class Player extends Entity {
             this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
             this.scene.sendStateSpecialListener('consume');
             screenShake(this.scene);
-            pauseGame(20).then(() => {
-                this.setVelocityX(0);
-            });
+            // pauseGame(40).then(() => {
+            //     this.setVelocityX(0);
+            // });
         };
  
         // =================== ANIMATIONS IF-ELSE CHAIN ================== \\

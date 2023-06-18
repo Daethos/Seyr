@@ -1,9 +1,15 @@
+import { useEffect, useState } from 'react';
+import { ACTIONS } from './CombatStore';
+import * as gameAPI from '../../utils/gameApi';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
 export interface StatusEffect {
+    id: string;
     name: string;
+    playerName: string;
+    enemyName: string;
     prayer: string;
     description: string;
     debuffTarget?: string;
@@ -33,6 +39,8 @@ export interface StatusEffect {
     };
     imgURL: string;
     weapon: string;
+    startTime: number;
+    endTime: number;
 };
 
 interface StatusEffectProps {
@@ -44,9 +52,49 @@ interface StatusEffectProps {
     state: any;
     dispatch: any;
     story?: boolean;
+    pauseState?: boolean;
+    handleCallback?: (state: any, effect: StatusEffect) => Promise<void>;
 };
 
-const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story }: StatusEffectProps) => {
+const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story, pauseState, handleCallback }: StatusEffectProps) => {
+    const [endTime, setEndTime] = useState(effect.endTime);
+    const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
+
+    useEffect(() => {
+        setEffectTimer(effect.endTime - effect.startTime);
+    }, [])
+
+    useEffect(() => {
+        if (!story && !pauseState) return;
+        const intervalTimer = setInterval(() => {
+            setEffectTimer((effectTimer: number) => effectTimer - 1);
+        }, 1000);
+        if (endTime < effect.endTime) {
+            setEndTime(effect.endTime); // This is for when the effect is refreshed
+        };
+        if ((effectTimer % 3 === 0 && effectTimer !== (effect.endTime - effect.startTime)) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) {
+            console.log('Effect Tick');
+            effectTick(state, effect);
+        };
+        
+        if (endTime === state.combatTimer || effectTimer <= 0) {
+            dispatch({ type: ACTIONS.REMOVE_EFFECT, payload: effect.id });
+            clearInterval(intervalTimer);
+        };
+        if (pauseState) clearInterval(intervalTimer);
+    
+        return () => clearInterval(intervalTimer); // Clean up the interval on unmount
+    }, [effectTimer, story, pauseState]); 
+
+    const effectTick = async (state: any, effect: StatusEffect): Promise<void> => {
+        try {
+            if (handleCallback) await handleCallback(state, effect);
+        } catch (err: any) {
+            console.log(err, "Error In Effect Tick");
+        };
+    };
+
+
 
     const consumeEnemyPrayer = (name: string, prayer: string): void => {
         console.log('Consume Enemy Prayer', name, prayer);
@@ -118,7 +166,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
 
     const getIconStyle = {
         width: story ? '' : '100%',
-        marginTop: story ? '-5px' : '-17.5px',
+        marginTop: story ? '-10px' : '-17.5px',
         marginLeft: story ? '-17.5px' : '',
         transform: story ? 'scale(0.65)' : '',
     };
@@ -127,6 +175,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
         <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
             <Button variant='' style={getEffectStyle} className={ enemy ? 'status-effects enemy' : spectator ? 'status-effects spectator' : story ? 'story-effects' : 'status-effects'}>
                 <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/>
+                { story ? ( <p style={{ color: "gold", fontSize: "10px", marginLeft: "-8px", top: "-10px",  display: "inline" }}>{effectTimer}s</p> ) : ( '' ) }
             </Button>
         </OverlayTrigger>
     );

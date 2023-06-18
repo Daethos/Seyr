@@ -78,5 +78,6 @@ export const States = {
     ROLL: "roll",
     NONCOMBAT: "noncombat",
     HEAL: "heal",
+    HURT: "hurt",
     STUNNED: "stunned",
 };

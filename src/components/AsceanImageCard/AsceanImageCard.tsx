@@ -42,7 +42,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
 
     const itemPopover = (item: Equipment) => {
         return (
-            <Popover className="text-info" id="popover" style={ spectator ? { zIndex: 9999 } :  { zIndex: 999 } }>
+            <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
             <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
                 { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? '' : 

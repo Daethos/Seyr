@@ -71,13 +71,13 @@ export default class ParticleManager extends Phaser.Scene {
             callback: (other) => {
                 if (other.gameObjectB && (other.gameObjectB.name === 'enemy' && player.name === 'player' || other.gameObjectB.name === 'player' && player.name === 'enemy')) {
                     if (player.name === 'player') {
-                        if (this.scene.action !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + this.scene.action + " Due to Collision Success For PLAYER");
+                        if (this.scene.state.action !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.action + " Due to Collision Success For PLAYER");
                             this.scene.setState('action', effect.action);
                         };
                     } else if (player.name === 'enemy') {
-                        if (this.scene.computer_action !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + this.scene.computer_action + " Due to Collision Success For ENEMY");
+                        if (this.scene.state.computer_action !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.computer_action + " Due to Collision Success For ENEMY");
                             this.scene.setState('computer_action', effect.action);
                         };
                     };

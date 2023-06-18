@@ -109,6 +109,7 @@ export interface CombatData {
     phaser: boolean;
     isStalwart: boolean; // +10% Defense, -5% Movement
     enemyID: string;
+    combatTimer: number;
 };
 
 interface Action {
@@ -162,6 +163,9 @@ export const ACTIONS = {
     SET_GRAPPLING_WIN: 'SET_GRAPPLING_WIN',
     SET_PHASER: 'SET_PHASER',
     SET_STALWART: 'SET_STALWART',
+    SET_COMBAT_TIMER: 'SET_COMBAT_TIMER',
+    EFFECT_RESPONSE: 'EFFECT_RESPONSE',
+    REMOVE_EFFECT: 'REMOVE_EFFECT',
 };
 
 export const initialCombatData: CombatData = {
@@ -266,10 +270,22 @@ export const initialCombatData: CombatData = {
     phaser: false,
     isStalwart: false,
     enemyID: '',
+    combatTimer: 0,
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
+        case 'REMOVE_EFFECT':
+            return {
+                ...state,
+                playerEffects: state.playerEffects.filter((effect) => effect.id !== action.payload),
+                computerEffects: state.computerEffects.filter((effect) => effect.id !== action.payload),
+            };
+        case 'SET_COMBAT_TIMER':
+            return {
+                ...state,
+                combatTimer: action.payload,
+            };
         case 'SET_STALWART':
             return {
                 ...state,
@@ -520,6 +536,10 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 action: '',
                 combatInitiated: true,
                 instantStatus: true,
+            };
+        case 'EFFECT_RESPONSE':
+            return {
+                ...action.payload,
             };
         case 'CONSUME_PRAYER':
             return {

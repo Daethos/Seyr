@@ -1,6 +1,7 @@
 class StatusEffect {
     constructor(combatData, player, enemy, weapon, attributes, prayer) {
         this.name = this.setName(weapon.influences[0]);
+        this.playerName = player.name;
         this.enemyName = enemy.name;
         this.deity = weapon.influences[0];
         this.weapon = weapon.name;
@@ -16,7 +17,40 @@ class StatusEffect {
         this.effect = this.setEffect(combatData, player, weapon, attributes, prayer);
         this.description = this.setDescription(combatData, player, enemy, weapon, attributes, prayer);
         this.imgURL = this.setImgURL(weapon);
+        this.startTime = combatData.combatTimer;
+        this.endTime = this.startTime + (this.duration * 3);
+        this.defined = this.getDefinition();
+        this.id = this.setID();
     };
+
+    getDefinition = () => {
+        let definition = {
+            name: this.name,
+            // deity: this.deity,
+            // weapon: this.weapon,
+            // debuffTarget: this.debuffTarget,
+            // duration: this.duration,
+            // tick: this.tick,
+            // intensity: this.intensity,
+            // refreshes: this.refreshes,
+            // stacks: this.stacks,
+            // activeStacks: this.activeStacks,
+            // activeRefreshes: this.activeRefreshes,
+            // prayer: this.prayer,
+            // effect: this.effect,
+            // description: this.description,
+            // imgURL: this.imgURL,
+            startTime: this.startTime,
+            endTime: this.endTime,
+        };
+        console.log(definition);
+    };
+
+    setID = () => {
+        let id = this.name + '_' + this.startTime + '_' + this.endTime;
+        return id;
+    };
+
     static getDeity() {
         return this.deity;
     };

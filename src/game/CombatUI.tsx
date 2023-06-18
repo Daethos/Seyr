@@ -6,7 +6,7 @@ import playerHealthbar from './images/player-healthbar.png';
 import playerPortrait from './images/player-portrait.png';
 import { CombatData } from '../components/GameCompiler/CombatStore';
 import { Equipment, GAME_ACTIONS, GameData } from '../components/GameCompiler/GameStore';
-import StatusEffects from '../components/GameCompiler/StatusEffects';
+import StatusEffects, { StatusEffect } from '../components/GameCompiler/StatusEffects';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
@@ -17,9 +17,11 @@ interface CombatUIProps {
     gameDispatch: any;
     staminaPercentage: number;
     setStaminaPercentage: any;
+    pauseState: boolean;    
+    handleCallback: (state: CombatData, effect: StatusEffect) => Promise<void>;
 };
 
-const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage, setStaminaPercentage }: CombatUIProps) => {
+const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage, setStaminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
@@ -312,13 +314,10 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
             {state.playerEffects.length > 0 ? (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {
-                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} key={index} /> )
+                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
                     })}
                 </div>
-            ) : ( '' ) }
-            {/* { state.combatEngaged ? (
-                <textarea  className='story-action-reader' id='story-action-reader' value={displayedAction} readOnly></textarea>
-            ) : ( '' ) } */}
+            ) : ( '' ) } 
         </div> 
     );
 };

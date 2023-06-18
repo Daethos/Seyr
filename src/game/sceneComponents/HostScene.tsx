@@ -28,6 +28,7 @@ import EnemyUI from '../EnemyUI';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import screenfull from 'screenfull';
 import StoryJournal from '../../components/GameCompiler/StoryJournal';
+import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -60,14 +61,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
     const [fullScreen, setFullScreen] = useState<boolean>(false);
-    const [messages, setMessages] = useState<any>([]); 
     const [loading, setLoading] = useState<boolean>(false);
     const [combatHud, setCombatHud] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
-    const [staminaPercentage, setStaminaPercentage] = useState<number>(100);
-    const [prayerModal, setPrayerModal] = useState<boolean>(false);
-    const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage' ]);
+    const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
 
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
@@ -216,6 +214,10 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             detail: gameState
         });
         window.dispatchEvent(gameData);
+    };
+
+    const updateCombatTimer = async (e: { detail: any; }) => {
+        dispatch({ type: ACTIONS.SET_COMBAT_TIMER, payload: e.detail });
     };
 
     const updateStateAction = async (e: { detail: any; }) => {
@@ -579,11 +581,27 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    async function handleEffectTick(state: CombatData, effect: StatusEffect): Promise<void> {
+        try {
+            const data = { combatData: state, effect };
+            const response = await gameAPI.effectTick(data);
+            console.log(response, "Response From Effect Tick");
+            dispatch({ type: ACTIONS.EFFECT_RESPONSE, payload: response.data });
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err, "Error In Effect Tick");
+        };
+    };
+
     async function handleInitiate(combatData: CombatData) {
         try { 
             // const response = await gameAPI.initiateAction(combatData);
             // console.log(combatData.action, "Player Action", combatData.computer_action, "Computer Action", "Inside Combat Initiate")
-            console.log(`%c ${combatData.player.name} with ${combatData.action} has initiated combat with ${combatData.computer.name} with action ${combatData.computer_action}`, 'color: red; font-size: 20px; font-weight: bold;` ')
+            console.log(`%c Player: "${combatData.action}" | Computer: "${combatData.computer_action}"`, 'color: red; font-size: 20px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -807,6 +825,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
+    usePhaserEvent('update-combat-timer', updateCombatTimer);
 
     return (
         <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>
@@ -835,29 +854,22 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                         <h3 style={{ fontSize: '12px', textAlign: 'center' }} className=''>{state.player.name}</h3>
                     </Button>
-                    {/* <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={handleInventoryMiddleware}>
-                        <h3 style={{ fontSize: '14px', textAlign: 'center' }} className=''>Inventory</h3>
-                    </Button> */}
                     { gameState.player.journal.entries.length > 0 ?
                         <StoryJournal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} ascean={gameState.player} />
                     : '' }
                     <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
                 </div>
-                <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons} />
-                {/* { !state.combatEngaged ? (
-                    <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} />
-                ) : ( '' ) } */}
+                <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
                     <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
-                        <CombatUI state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} staminaPercentage={staminaPercentage} setStaminaPercentage={setStaminaPercentage} />
+                        <CombatUI state={state} dispatch={dispatch} handleCallback={handleEffectTick} gameState={gameState} gameDispatch={gameDispatch} staminaPercentage={staminaPercentage} setStaminaPercentage={setStaminaPercentage} pauseState={pauseState} />
                         { state.combatEngaged ? (
                             <>
                             <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>
-                            {/* <StoryActions state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} handleInstant={handleInstant} handlePrayer={handlePrayer} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} /> */}
                             <GameCombatText 
-                                emergencyText={['']} combatRoundText={state.combatRound} story={true}
+                                emergencyText={['']} combatRoundText={state.combatRound} story={true} combatTimer={state.combatTimer}
                                 playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
                                 playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
                                 playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
@@ -866,7 +878,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
                                 />
                             </div>
-                            <EnemyUI state={state} dispatch={dispatch} />
+                            <EnemyUI state={state} dispatch={dispatch} pauseState={pauseState} handleCallback={handleEffectTick} />
                             </>
                         ) : ( '' ) }
                     </div>
