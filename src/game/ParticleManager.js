@@ -90,22 +90,22 @@ export default class ParticleManager extends Phaser.Scene {
 
     addEffect(action, player, key) { 
         let particle = {
-            action: action,
             id: player.ascean._id + '_' + key + uuidv4(),
-            key: key + '_effect',
+            action: action,
             effect: this.spriteMaker(this.scene, player, key + '_effect'), 
+            key: key + '_effect',
+            success: false,
+            target: player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position),
             timer: this.scene.time.addEvent({
                 delay: action === 'attack' ? 1500 : action === 'counter' ? 750 : action === 'posture' ? 1000 : 1500,
                 callback: () => {
                     this.removeEffect(particle.id);
                 },
             }),
-            success: false,
             triggered: false,
-            // velocity: action === 'attack' ? 5.5 : action === 'counter' ? 9 : action === 'posture' ? 7 : 5,
-            velocity: action === 'attack' ? (player.flipX ? -4 : 4) : action === 'counter' ? (player.flipX ? -7 : 7) : action === 'posture' ? (player.flipX ? -5.5 : 5.5) : 4,
+            velocity: action === 'attack' ? 4 : action === 'counter' ? 7 : action === 'posture' ? 5.5 : 4,
         };
-        const { Bodies } = Phaser.Physics.Matter.Matter; // Import the Matter module 
+        const { Bodies } = Phaser.Physics.Matter.Matter;
         const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: "effectSensor" }); 
         particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
@@ -160,7 +160,10 @@ export default class ParticleManager extends Phaser.Scene {
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
         if (player.particleEffect && player.particleEffect.effect && this.particles.find((particle) => particle.id === player.particleEffect.id)) {
             player.particleEffect.effect.play(player.particleEffect.key, true);
-            player.particleEffect.effect.setVelocity(player.particleEffect.velocity, player.body.velocity.y);
+            console.log(player.particleEffect.target, "Target ?")
+            player.particleEffect.target.normalize();
+            console.log(player.particleEffect.target, "Target Normalized ?")
+            player.particleEffect.effect.setVelocity(player.particleEffect.velocity * player.particleEffect.target.x, player.particleEffect.target.y * player.particleEffect.velocity);
         };
     };
 };

@@ -162,6 +162,7 @@ export default class Enemy extends Entity {
                     this.stateMachine.setState(States.CHASE); // TODO:FIXME: State Machine Combat
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
+                    other.gameObjectB.attacking = this;
                     this.scene.combatEngaged(true);
                 };
             },
