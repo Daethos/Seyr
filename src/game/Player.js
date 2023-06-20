@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Entity, { screenShake, pauseGame, walk } from "./Entity";  
 import StateMachine, { States } from "./StateMachine";
 import ScrollingCombatText from "./ScrollingCombatText";
+import HealthBar from "./HealthBar";
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
 import playerActionsOneAnim from './images/player_actions_anim.json';
@@ -154,7 +155,7 @@ export default class Player extends Entity {
             intensity: 0.02,
         });
         this.highlight.setVisible(false);
-
+        this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health, 'player');
         this.setFixedRotation();   
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
@@ -184,13 +185,12 @@ export default class Player extends Entity {
                 let heal = Math.round(e.detail.new_player_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
-            if (e.detail.computer_counter_success) {
-                this.stateMachine.setState(States.STUN);
-            };
+
             if (this.currentRound !== e.detail.combatRound) {
                 this.currentRound = e.detail.combatRound;
             }; 
             this.health = e.detail.new_player_health;
+            if (this.healthbar) this.healthbar.setValue(this.health);
             if (e.detail.new_player_health <= 0) {
                 this.isDead = true;
                 this.anims.play('player_death', true);
@@ -204,7 +204,14 @@ export default class Player extends Entity {
             };
             this.checkMeleeOrRanged(e.detail.weapons[0]);
         });
-    };
+
+        window.addEventListener('update-combat', (e) => {
+            if (e.detail.computer_counter_success) {
+                this.stateMachine.setState(States.STUN);
+                this.scene.setState('computer_counter_success', false);
+            };
+        });
+    }; 
  
     checkEnemyAttackCollision(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
@@ -333,11 +340,15 @@ export default class Player extends Entity {
     };
 
     onAttackEnter = () => {
-        this.scene.setState('action', 'attack');
+        // this.scene.setState('action', 'attack');
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isAttacking = true;
     }; 
     onAttackUpdate = (dt) => {
+        if (this.frameCount === 16 && !this.isRanged) {
+            this.scene.setState('action', 'attack');
+            console.log("Attack LIVE");
+        };
         if (!this.isAttacking) { 
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
@@ -351,10 +362,14 @@ export default class Player extends Entity {
     };
 
     onCounterEnter = () => {
-        this.scene.setState('action', 'counter');
+        // this.scene.setState('action', 'counter');
         this.isCountering = true;    
     };
     onCounterUpdate = (dt) => {
+        if (this.frameCount === 5) {
+            this.scene.setState('action', 'counter');
+            console.log("Counter LIVE");
+        };
         if (!this.isCountering && this.inCombat) { 
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
@@ -369,11 +384,15 @@ export default class Player extends Entity {
     };
 
     onPostureEnter = () => {
-        this.scene.setState('action', 'posture');
+        // this.scene.setState('action', 'posture');
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isPosturing = true;
     };
     onPostureUpdate = (dt) => {
+        if (this.frameCount === 3 && !this.isRanged) {
+            this.scene.setState('action', 'posture');
+            console.log("Posture LIVE");
+        };
         if (!this.isPosturing) { 
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
@@ -387,10 +406,11 @@ export default class Player extends Entity {
     };
 
     onRollEnter = () => {
-        this.scene.setState('action', 'roll');
+        // this.scene.setState('action', 'roll');
         this.isRolling = true;
     };
     onRollUpdate = (dt) => {
+        if (this.frameCount === 10) this.scene.setState('action', 'roll');
         if (!this.isRolling) { 
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
@@ -464,21 +484,24 @@ export default class Player extends Entity {
 
     onStunEnter = () => {
         this.isStunned = true;
+        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect');
+        this.scene.input.keyboard.enabled = false;
+        this.stunDuration = 1500;
         this.setTint(0x888888);
-        this.stunTimer = this.scene.time.addEvent({
-            delay: 1500,
-            callback: () => {
-                this.isStunned = false;
-            },
-            callbackScope: this,
-            loop: false
-        });
+        // this.stunTimer = this.scene.time.addEvent({
+        //     delay: 1500,
+        //     callback: () => {
+        //         this.isStunned = false;
+        //     },
+        //     callbackScope: this,
+        //     loop: false
+        // });
     };
     onStunUpdate = (dt) => {
-        if (this.isStunned) {
-            this.setVelocity(0);
-            this.scene.input.keyboard.enabled = false;
-        } else {
+        this.setVelocity(0);
+        this.stunDuration -= dt;
+        if (this.stunDuration <= 0) this.isStunned = false;
+        if (!this.isStunned) {
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
             } else {
@@ -487,11 +510,12 @@ export default class Player extends Entity {
         };
     };
     onStunExit = () => {
+        this.stunDuration = 1500;
         this.scene.input.keyboard.enabled = true;
-        this.stunTimer.destroy();
-        this.stunTimer = null;    
+        // this.stunTimer.destroy();
+        // this.stunTimer = null;    
         this.clearTint();
-        this.scene.setState('computer_counter_success', false);
+        
     };
     
     update() {
@@ -501,7 +525,7 @@ export default class Player extends Entity {
         };
         this.stateMachine.update(this.scene.sys.game.loop.delta);
         if (this.inCombat && !this.scene.combatTimer) this.scene.startCombatTimer();
-
+        if (this.inCombat && !this.healthbar.visible) this.healthbar.setVisible(true);
         if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
@@ -520,6 +544,7 @@ export default class Player extends Entity {
                 this.scene.particleManager.update(this, this.particleEffect);
             };
         }; 
+        if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
@@ -648,6 +673,9 @@ export default class Player extends Entity {
  
         // =================== ANIMATIONS IF-ELSE CHAIN ================== \\
 
+        if (this.isStunned) {
+            this.setVelocity(0);
+        } else
         if (this.isHurt) {
             this.anims.play('player_hurt', true).on('animationcomplete', () => {
                 this.isHurt = false;
@@ -734,7 +762,7 @@ export default class Player extends Entity {
                 this.isAttacking = false;
             }); 
         } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) && !this.isRolling) { // RUNNING
-            walk(this.scene);
+            // walk(this.scene);
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING

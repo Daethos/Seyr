@@ -225,17 +225,15 @@ export default class Enemy extends Entity {
                 let damage = Math.round(this.health - e.detail.new_computer_health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.detail.critical_success);
                 this.stateMachine.setState(States.HURT);
-                // console.log(damage, "Damage")
             };
             if (this.health < e.detail.new_computer_health) {
                 let heal = Math.round(e.detail.new_computer_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
-                // console.log(heal, "Heal")
             };
             if (e.detail.counter_success) {
                 console.log("Player Counter Success, Enemy Is Now Stunned");
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect');
                 this.isStunned = true;
-                // this.stateMachine.setState(States.STUN);
             };
             this.health = e.detail.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
@@ -248,6 +246,15 @@ export default class Enemy extends Entity {
                 this.attacking = null;
             };
             this.checkMeleeOrRanged(e.detail.computer_weapons?.[0]);
+        });
+
+        window.addEventListener('update-combat-data', (e) => {
+            if (this.enemyID !== e.detail.enemyID) return; 
+            this.health = e.detail.new_computer_health;
+            if (this.healthbar) this.updateHealthBar(this.health);
+            if (e.detail.new_computer_health <= 0) {
+                this.stateMachine.setState(States.DEATH);
+            };
         });
     };
 
@@ -454,6 +461,7 @@ export default class Enemy extends Entity {
         this.attack();
     };
     onAttackUpdate = (dt) => {
+        if (this.frameCount === 16 && !this.isRanged) this.scene.setState('computer_action', 'attack');
         if (!this.isAttacking) this.evaluateCombatDistance(); 
     };
     onAttackExit = () => {
@@ -465,6 +473,7 @@ export default class Enemy extends Entity {
         this.counter();
     };
     onCounterUpdate = (dt) => {
+        if (this.frameCount === 10) this.scene.setState('computer_action', 'counter');
         if (!this.isCountering) this.evaluateCombatDistance();
     };
     onCounterExit = () => {
@@ -485,6 +494,7 @@ export default class Enemy extends Entity {
         this.posture();
     };
     onPostureUpdate = (dt) => {
+        if (this.frameCount === 3 && !this.isRanged) this.scene.setState('computer_action', 'posture');
         if (!this.isPosturing) this.evaluateCombatDistance();
     };
     onPostureExit = () => {
@@ -528,14 +538,10 @@ export default class Enemy extends Entity {
     };
 
     onStunEnter = () => {
-        console.log("Enemy Stunned");
-        // this.isStunned = true;
         this.stunDuration = 1500;
         this.setTint(0x888888); 
     };
     onStunUpdate = (dt) => {
-        console.log(this.stunDuration, dt, this.stunDuration - dt, "Stun Duration");
-        // this.setVelocity(0);
         this.evaluateCombatDistance();
         this.stunDuration -= dt;
         if (this.stunDuration <= 0) {
@@ -543,8 +549,6 @@ export default class Enemy extends Entity {
         };
     };
     onStunExit = () => {
-        console.log("Enemy Stun Ending") 
-        // this.isStunned = false;
         this.stunDuration = 1500;
         this.clearTint();
     };
@@ -603,8 +607,8 @@ export default class Enemy extends Entity {
             if (direction.length() > 55) { // Outside melee range
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.5);
-                this.setVelocityY(direction.y * 2.5);  
+                this.setVelocityX(direction.x * 2.75);
+                this.setVelocityY(direction.y * 2.75);  
             } else { // Inside melee range
                 this.setVelocityX(0);
                 this.setVelocityY(0);
@@ -683,7 +687,6 @@ export default class Enemy extends Entity {
             default:
                 break;                        
         }; 
-        // if (this.isStunned && !this.stateMachine.isCurrentState(States.STUN)) this.stateMachine.setState(States.STUN); 
     };
  
     update() {
@@ -726,7 +729,7 @@ export default class Enemy extends Entity {
         } else {
             computerAction = 'roll';
         };
-        if (computerAction !== 'dodge') this.scene.setState('computer_action', computerAction);
+        // if (computerAction !== 'dodge') this.scene.setState('computer_action', computerAction);
 
         if (computerAction === 'counter') {
             let counterNumber = Math.floor(Math.random() * 101);

@@ -97,13 +97,13 @@ export default class ParticleManager extends Phaser.Scene {
             success: false,
             target: player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position),
             timer: this.scene.time.addEvent({
-                delay: action === 'attack' ? 1500 : action === 'counter' ? 750 : action === 'posture' ? 1000 : 1500,
+                delay: action === 'attack' ? 1500 : action === 'counter' ? 750 : (action === 'posture' || action === 'roll') ? 1000 : 1500,
                 callback: () => {
                     this.removeEffect(particle.id);
                 },
             }),
             triggered: false,
-            velocity: action === 'attack' ? 4 : action === 'counter' ? 6 : action === 'posture' ? 5 : 4,
+            velocity: action === 'attack' ? 5 : action === 'counter' ? 6 : (action === 'posture' || action === 'roll') ? 4 : 4,
         };
         const { Bodies } = Phaser.Physics.Matter.Matter;
         const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: "effectSensor" }); 
