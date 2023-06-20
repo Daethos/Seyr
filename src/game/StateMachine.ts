@@ -54,6 +54,13 @@ export default class StateMachine {
     };
 
     update(dt: number) {
+        if (this.isCurrentState(States.STUN)) {
+            console.log("Stunned in State Machine Update");
+            if (this.currentState && this.currentState.onUpdate) {
+                this.currentState.onUpdate(dt);
+            };
+            return;
+        };
         if (this.changeStateQueue.length > 0) {
             this.setState(this.changeStateQueue.shift()!);
             return;
@@ -79,5 +86,6 @@ export const States = {
     NONCOMBAT: "noncombat",
     HEAL: "heal",
     HURT: "hurt",
-    STUNNED: "stunned",
+    STUN: "stun",
+    INVOKE: "invoke",
 };

@@ -2307,7 +2307,7 @@ const counterCompiler = async (combatData, player_action, computer_action) => {
     );
 };
 
-const playerRollCompiler = async (combatData, player_initiative, computer_initiative, player_action, computer_action) => { 
+const playerRollCompiler = async (combatData, player_action, computer_action) => { 
     const playerRoll = combatData.weapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.computer_attributes.kyosirMod;
     if (combatData.weather === 'Alluring Isles') {
@@ -2351,7 +2351,6 @@ const doubleRollCompiler = async (combatData, player_initiative, computer_initia
         playerRoll += 5;
         computerRoll += 5;
     };
-    // console.log(playerRoll, 'Player Roll %', computerRoll, 'Computer Roll %', rollCatch, 'Number to Beat')
     if (player_initiative > computer_initiative) { // You have Higher Initiative
         if (playerRoll > rollCatch) { // The Player Succeeds the Roll
             combatData.player_special_description = 
@@ -2581,7 +2580,7 @@ const actionSplitter = async (combatData) => {
     };
 
     if (player_action === 'roll' && computer_action !== 'roll') {
-        await playerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
+        await playerRollCompiler(newData, player_action, computer_action);
         if (newData.roll_success === true) {
             await faithFinder(newData);
             await statusEffectCheck(newData);
@@ -2724,76 +2723,42 @@ const phaserDualActionSplitter = async (combatData) => {
     newData.player_start_description = 
         `You attempt to ${player_action === '' ? 'defend' : player_action.charAt(0).toUpperCase() + player_action.slice(1)}${player_counter ? '-' + player_counter.charAt(0).toUpperCase() + player_counter.slice(1) : ''} against ${newData.computer.name}.`
     
-    if (player_action === 'counter' && computer_action === 'counter') { // This is if COUNTER: 'ACTION' Is the Same for Both
+    // This is if COUNTER: 'ACTION' Is the Same for Both
+    if (player_action === 'counter' && computer_action === 'counter') { 
         if (player_counter === computer_counter && player_counter === 'counter') {
             if (player_initiative > computer_initiative) {
                 newData.counter_success = true;
-                newData.player_special_description = 
-                    `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`;
-                await attackCompiler(newData, player_action);
-                await faithFinder(newData); 
-                newData.combatRound += 1;
-                newData.sessionRound += 1;
-                return newData
+                newData.player_special_description = `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`;
             } else {
                 newData.computer_counter_success = true;
-                newData.computer_special_description = 
-                    `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`;
-                await computerAttackCompiler(newData, computer_action);
-                await faithFinder(newData);
-
-                newData.combatRound += 1;
-                newData.sessionRound += 1;
-                return newData
+                newData.computer_special_description = `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`; 
             };
+            return newData;
         };
         if (player_counter === computer_action && computer_counter !== player_action) {
             newData.counter_success = true;
-            newData.player_special_description = 
-                `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`;
-            await attackCompiler(newData, player_action)
-            await faithFinder(newData);
-            newData.combatRound += 1;
-            newData.sessionRound += 1;
-            return newData;
+            newData.player_special_description = `You successfully Countered ${newData.computer.name}'s Counter-${computer_counter.charAt(0).toUpperCase() + computer_counter.slice(1)}! Absolutely Brutal`;
+            return newData; 
         };
     
         if (computer_counter === player_action && player_counter !== computer_action) {
             newData.computer_counter_success = true;
-            newData.computer_special_description = 
-                `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`;
-            await computerAttackCompiler(newData, computer_action);
-            await faithFinder(newData);
-            newData.combatRound += 1;
-            newData.sessionRound += 1;
-            return newData;
+            newData.computer_special_description = `${newData.computer.name} successfully Countered your Counter-${player_counter.charAt(0).toUpperCase() + player_counter.slice(1)}! Absolutely Brutal`;
+            return newData; 
         };
     
         if (player_counter !== computer_action && computer_counter !== player_action) {
-            newData.player_special_description = 
-                `You failed to Counter ${newData.computer.name}'s Counter! Heartbreaking`;
-            newData.computer_special_description = 
-                `${newData.computer.name} fails to Counter your Counter! Heartbreaking`;
-                if (player_initiative > computer_initiative) {
-                    await attackCompiler(newData, player_action);
-                    await computerAttackCompiler(newData, computer_action);
-                } else {
-                    await computerAttackCompiler(newData, computer_action);
-                    await attackCompiler(newData, player_action);
-                };
+            newData.player_special_description = `You failed to Counter ${newData.computer.name}'s Counter! Heartbreaking`;
+            newData.computer_special_description = `${newData.computer.name} fails to Counter your Counter! Heartbreaking`;
+            return newData;
         };
     };
 
     if (player_action === 'counter' && computer_action !== 'counter') {
         if (player_counter === computer_action) {
             newData.counter_success = true;
-            newData.player_special_description = 
-                `You successfully Countered ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack.`;
-            await attackCompiler(newData, player_action);
-            await faithFinder(newData);
-            newData.combatRound += 1;
-            newData.sessionRound += 1;
-            return newData
+            newData.player_special_description = `You successfully Countered ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack.`;
+            return newData;
         } else {
             newData.player_special_description = 
                 `You failed to Counter ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack. Heartbreaking!`;
@@ -2803,99 +2768,53 @@ const phaserDualActionSplitter = async (combatData) => {
     if (computer_action === 'counter' && player_action !== 'counter') {
         if (computer_counter === player_action) {
             newData.computer_counter_success = true;
-            newData.computer_special_description = 
-                `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`;
-            await computerAttackCompiler(newData, computer_action);
-            await faithFinder(newData);
-            newData.combatRound += 1;
-            newData.sessionRound += 1;
-            return newData
+            newData.computer_special_description = `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack.`;
+            return newData;    
         } else {
-            newData.computer_special_description = 
-                `${newData.computer.name} fails to Counter your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack. Heartbreaking!`;
+            newData.computer_special_description = `${newData.computer.name} fails to Counter your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack. Heartbreaking!`;
         };
-    };
-    
-    if (player_action === 'dodge' && computer_action === 'dodge') { // If both choose Dodge
-        if (player_initiative > computer_initiative) {
-            newData.player_special_description = 
-                `You successfully Dodge ${newData.computer.name}'s ${  computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack`;
-            await attackCompiler(newData, player_action);
-        } else {
-            `${newData.computer.name} successfully Dodges your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack`;
-            await computerAttackCompiler(newData, computer_action);
-        };
-    };
-
-    if (player_action === 'dodge' && computer_action !== 'dodge') {
-        newData.player_special_description = 
-            `You successfully Dodge ${newData.computer.name}'s ${ computer_action === 'attack' ? 'Focused' : computer_action.charAt(0).toUpperCase() + computer_action.slice(1) } Attack`;
-        await attackCompiler(newData, player_action);
-        await faithFinder(newData);
-        newData.combatRound += 1;
-        newData.sessionRound += 1;
-        return newData;
-    };
-
-    if (computer_action === 'dodge' && player_action !== 'dodge') {
-        `${newData.computer.name} successfully Dodges your ${ player_action === 'attack' ? 'Focused' : player_action.charAt(0).toUpperCase() + player_action.slice(1) } Attack`;
-        await computerAttackCompiler(newData, computer_action);
-        await faithFinder(newData);
-        newData.combatRound += 1;
-        newData.sessionRound += 1;
-        return newData;
     };
 
     if (player_action === 'roll' && computer_action === 'roll') { // If both choose Roll
         await doubleRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
+        return newData;
     };
 
     if (player_action === 'roll' && computer_action !== 'roll') {
-        await playerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
-        if (newData.roll_success === true) {
-            await faithFinder(newData);
-            newData.combatRound += 1;
-            newData.sessionRound += 1;
-            return newData;
-        };
+        await playerRollCompiler(newData, player_action, computer_action);
     };
 
     if (computer_action === 'roll' && player_action !== 'roll') {
         await computerRollCompiler(newData, player_initiative, computer_initiative, player_action, computer_action);
-        if (newData.computer_roll_success === true) {
-            await faithFinder(newData);
-            await statusEffectCheck(newData);
-            newData.combatRound += 1;
-            newData.sessionRound += 1;
-            return newData;
-        };
     };
 
-    if (player_action === 'attack' || player_action === 'posture' || computer_action === 'attack' || computer_action === 'posture') { // If both choose Attack
+    if (phaserSuccessConcerns(newData.counter_success, newData.roll_success, newData.computer_counter_success, newData.computer_roll_success) === false) { // If both choose Attack
         if (player_initiative > computer_initiative) {
-            await attackCompiler(newData, player_action);
-            await computerAttackCompiler(newData, computer_action);
+            if (phaserActionConcerns(newData.action)) await attackCompiler(newData, player_action);
+            if (phaserActionConcerns(newData.computer_action)) await computerAttackCompiler(newData, computer_action);
         } else {
-            await computerAttackCompiler(newData, computer_action);
-            await attackCompiler(newData, player_action);
+            if (phaserActionConcerns(newData.computer_action)) await computerAttackCompiler(newData, computer_action);
+            if (phaserActionConcerns(newData.action)) await attackCompiler(newData, player_action);
         };
     };
-
-    await faithFinder(newData);
-    
-    if (newData.player_win === true) {
-        newData.computer_death_description = 
-        `${newData.computer.name} has been defeated. Hail ${newData.player.name}, you have won.`;
-    };
-    if (newData.computer_win === true) {
-        newData.player_death_description = 
-        `You have been defeated. Hail ${newData.computer.name}, they have won.`;
-    };
-
-    newData.combatRound += 1;
-    newData.sessionRound += 1;
 
     return newData;
+};
+
+const phaserActionConcerns =  (action) => {
+    console.log(action, "Action In Concern");
+    if (action === 'attack' || action === 'posture' || action === 'roll') {
+        return true;
+    };
+    return false;
+};
+
+const phaserSuccessConcerns = (counter_success, roll_success, computer_counter_success, computer_roll_success) => {
+    console.log(counter_success, roll_success, computer_counter_success, computer_roll_success, "Success Concerns");
+    if (counter_success || roll_success || computer_counter_success || computer_roll_success) {
+        return true;
+    };
+    return false;
 };
 
 const phaserActionSplitter = async (combatData) => {
@@ -2914,14 +2833,9 @@ const phaserActionSplitter = async (combatData) => {
     };
     await faithFinder(cleanData);
     
-    if (cleanData.player_win === true) {
-        cleanData.computer_death_description = 
-        `${cleanData.computer.name} has been defeated. Hail ${cleanData.player.name}, you have won.`;
-    };
-    if (cleanData.computer_win === true) {
-        cleanData.player_death_description = 
-        `You have been defeated. Hail ${cleanData.computer.name}, they have won.`;
-    };
+    if (cleanData.player_win === true) cleanData.computer_death_description = `${cleanData.computer.name} has been defeated. Hail ${cleanData.player.name}, you have won.`;
+    if (cleanData.computer_win === true) cleanData.player_death_description = `You have been defeated. Hail ${cleanData.computer.name}, they have won.`;
+    
 
     cleanData.combatRound += 1;
     cleanData.sessionRound += 1;

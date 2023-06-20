@@ -207,9 +207,6 @@ export default class Play extends Phaser.Scene {
     createStateListener = async function() { 
         window.addEventListener('update-combat-data', (e) => {
             this.state = e.detail;
-            if (this.state.action !== '') this.state.action = '';
-            // if (this.state.counter_action !== '') this.state.counter_action = '';
-            // if (this.state.computer_counter_guess !== '') this.state.computer_counter_guess = '';
         });
 
         window.addEventListener('update-game-data', (e) => {
@@ -225,8 +222,8 @@ export default class Play extends Phaser.Scene {
 
     sendStateActionListener = async function() {
         // console.log(this.state.action, this.state.computer_action, "This is the State");
-        if (this.state.action === '' && this.state.computer_action === '') { 
-            console.log("--- ERROR --- Neither Player Nor Computer Have Live Actions --- ERROR ---");
+        if ((this.state.action === 'counter' && this.state.computer_action === '') || (this.state.action === '' && this.state.computer_action === 'counter')) { 
+            console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
             return; 
         };
         const sendState = new CustomEvent('update-state-action', { detail: this.state });
@@ -253,23 +250,23 @@ export default class Play extends Phaser.Scene {
     checkStamina = (value) => {
         switch (value) {
             case 'attack':
-                const stamina = new CustomEvent('update-stamina', { detail: 30 });
+                const stamina = new CustomEvent('update-stamina', { detail: 25 });
                 window.dispatchEvent(stamina);
                 break;
             case 'counter':
-                const counterStamina = new CustomEvent('update-stamina', { detail: 10 });
+                const counterStamina = new CustomEvent('update-stamina', { detail: 15 });
                 window.dispatchEvent(counterStamina);
                 break;
             case 'posture':
-                const postureStamina = new CustomEvent('update-stamina', { detail: 20 });
+                const postureStamina = new CustomEvent('update-stamina', { detail: 15 });
                 window.dispatchEvent(postureStamina);
                 break;
             case 'roll':
-                const rollStamina = new CustomEvent('update-stamina', { detail: 20 });
+                const rollStamina = new CustomEvent('update-stamina', { detail: 15 });
                 window.dispatchEvent(rollStamina);
                 break;
             case 'dodge':
-                const dodgeStamina = new CustomEvent('update-stamina', { detail: 20 });
+                const dodgeStamina = new CustomEvent('update-stamina', { detail: 15 });
                 window.dispatchEvent(dodgeStamina);
                 break;
             default:
@@ -282,9 +279,9 @@ export default class Play extends Phaser.Scene {
         window.dispatchEvent(drinkFlask);
     };
 
-    setState = async function(key, value) {
-        // console.log("Setting: " + key + " to " + value);
-        this.state[key] = value;
+    setState = (key, value) => {
+        const state = new CustomEvent('update-state', { detail: { key, value } });
+        window.dispatchEvent(state);
         if (key === 'action') this.checkStamina(value);
     };
 

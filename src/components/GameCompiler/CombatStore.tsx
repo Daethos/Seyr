@@ -166,6 +166,7 @@ export const ACTIONS = {
     SET_COMBAT_TIMER: 'SET_COMBAT_TIMER',
     EFFECT_RESPONSE: 'EFFECT_RESPONSE',
     REMOVE_EFFECT: 'REMOVE_EFFECT',
+    SET_UPDATE_STATE: 'SET_UPDATE_STATE',
 };
 
 export const initialCombatData: CombatData = {
@@ -275,6 +276,13 @@ export const initialCombatData: CombatData = {
 
 export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
+        case 'SET_UPDATE_STATE':
+            const { key, value } = action.payload;
+            console.log(`key: ${key}, value: ${value}`);
+            return {
+                ...state,
+                [key]: value,
+            };
         case 'REMOVE_EFFECT':
             return {
                 ...state,

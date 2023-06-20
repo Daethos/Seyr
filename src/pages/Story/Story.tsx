@@ -77,6 +77,10 @@ const Story = ({ user }: Props) => {
 
     }, [asceanID]); 
 
+    useEffect(() => {
+        console.log(asceanState, 'Ascean State')
+    }, [asceanState]);
+
     const sanitizeAssets = async (assets: any) => {
         const fields = [ 'weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets' ];
         const newAssets: any = [];

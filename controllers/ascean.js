@@ -832,13 +832,14 @@ async function replenishFirewater(req, res) {
         let cost = ascean.level * 100;
         ascean.firewater.charges = 5;
         ascean.experience -= cost < 0 ? ascean.experience : cost;
+        if (ascean.experience < 0) ascean.experience = 0;
         await ascean.save();
         console.log(ascean.firewater, "Firewater After Saving Replenish")
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Replenish Firewater!')
         res.status(400).json(err);
-    }
+    };
 };
 
 async function updateHealth(req, res) {
@@ -903,8 +904,8 @@ async function restoreFirewater(req, res) {
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Restore Firewater!')
         res.status(400).json(err);
-    }
-}
+    };
+};
 
 async function saveCoordinates(req, res) {
     try {
@@ -1083,7 +1084,7 @@ async function updateLevel(req, res) {
 async function saveExperience(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
-        console.log(req.body.opponent, 'Opponent Level in Save Experience');
+        console.log(req.body.opponent, req.body.experience, 'Opponent Level + Experience in Save Experience');
         let silver = 0;
         let gold = 0;
         let currencyValue = req.body.opponent;

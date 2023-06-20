@@ -125,9 +125,22 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     }, []);
 
     useEffect(() => {
-        // if (!state.combatEngaged) return;
         updateCombatListener(state);
     }, [state]);
+
+    useEffect(() => {
+        if (staminaPercentage < 100) {
+            const timer = setTimeout(() => {
+                setStaminaPercentage(staminaPercentage + (state.player_attributes.stamina / 100));
+                const updatedStamina = new CustomEvent('updated-stamina', { detail: Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina) });
+                window.dispatchEvent(updatedStamina);
+            }, 200 - state.player_attributes.stamina);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }; 
+    }, [staminaPercentage]);
 
     const startGame = useCallback(async () => {
         try {
@@ -218,6 +231,10 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     const updateCombatTimer = async (e: { detail: any; }) => {
         dispatch({ type: ACTIONS.SET_COMBAT_TIMER, payload: e.detail });
+    };
+
+    const updateState = async (e: { detail: any; }) => {
+        dispatch({ type: ACTIONS.SET_UPDATE_STATE, payload: e.detail });
     };
 
     const updateStateAction = async (e: { detail: any; }) => {
@@ -416,7 +433,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 'caeren': 0,
                 'kyosir': 0,
                 'level': cleanRes.data.level,
-                'opponent': gameState.opponent.level,
+                'opponent': 0,
+                'opponentExp': 0,
                 'experience': cleanRes.data.experience,
                 'experienceNeeded': cleanRes.data.level * 1000,
                 'mastery': cleanRes.data.mastery,
@@ -599,13 +617,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     async function handleInitiate(combatData: CombatData) {
         try { 
-            // const response = await gameAPI.initiateAction(combatData);
-            // console.log(combatData.action, "Player Action", combatData.computer_action, "Computer Action", "Inside Combat Initiate")
-            console.log(`%c Player: "${combatData.action}" | Computer: "${combatData.computer_action}"`, 'color: red; font-size: 20px; font-weight: bold;` ')
+            console.log(`%c Player: "${combatData.action}" ${combatData.counter_guess} | Computer: "${combatData.computer_action} ${combatData.computer_counter_guess}"`, 'color: red; font-size: 20px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // await updateCombatListener(response.data);
+            await updateCombat(response.data);
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
             shakeScreen(gameState.shake);
@@ -625,7 +641,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             const response = await gameAPI.instantAction(state);
             console.log(response.data, "Instant Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // await updateCombatListener(response.data);
+            await updateCombat(response.data);
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
@@ -644,7 +660,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             const response = await gameAPI.consumePrayer(state);
             console.log(response.data, "Prayer Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // await updateCombatListener(response.data);
+            await updateCombat(response.data);
             dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
             if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
@@ -659,7 +675,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     async function setWeaponOrder(weapon: any) {
         try {
-            // console.log(weapon, "Weapon In Weapon Order")
             const findWeapon = state.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
             const newWeaponOrder = async () => state?.weapons.sort((a: any, b: any) => {
                 return ( a.name === findWeapon[0].name ? -1 : b.name === findWeapon[0].name ? 1 : 0 )
@@ -699,6 +714,15 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    const updateCombat = async (combatData: CombatData) => {
+        try {
+            const updateCombat = new CustomEvent('update-combat', { detail: combatData });
+            window.dispatchEvent(updateCombat);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating Combat Listener');
+        };
+    };
+
     const resizeGame = () => {
         let game_ratio = 960 / 640;
         let canvas = document.getElementsByTagName('canvas')[0];
@@ -721,10 +745,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
 
-
-    const toggleFullscreen = () => { 
-        screenfull.toggle();
-    };
+    const toggleFullscreen = () => screenfull.toggle();
 
     const toggleMute = () => {
         const mute = () => {
@@ -784,44 +805,26 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         }; 
     };
 
-    useEffect(() => {
-        if (staminaPercentage < 100) {
-            const timer = setTimeout(() => {
-                setStaminaPercentage(staminaPercentage + (state.player_attributes.stamina / 100));
-                const updatedStamina = new CustomEvent('updated-stamina', { detail: Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina) });
-                window.dispatchEvent(updatedStamina);
-            }, 200 - state.player_attributes.stamina);
-
-            return () => {
-                clearTimeout(timer);
-            };
-        }; 
-    }, [staminaPercentage]);
-
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
-    const updateStamina = async (e: { detail: number }) => {
-        setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
-    };
-    const updateStalwart = async (e: { detail: number }) => {
-        dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
-    };
-
+    const updateStamina = async (e: { detail: number }) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
+    const updateStalwart = async (e: { detail: number }) => dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
+    
+    // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('fetch-enemy', fetchEnemy);
     usePhaserEvent('setup-enemy', setupEnemy);
-
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
     usePhaserEvent('request-game-data', sendGameData);
     usePhaserEvent('dialog-box', createDialog);
     usePhaserEvent('keydown', toggleCombatHud);
-    // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
     usePhaserEvent('drink-firewater', drinkFirewater);
     usePhaserEvent('update-stalwart', updateStalwart);
     usePhaserEvent('update-stamina', updateStamina);
+    usePhaserEvent('update-state', updateState);
     usePhaserEvent('update-state-action', updateStateAction);
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);

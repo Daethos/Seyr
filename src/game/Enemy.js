@@ -98,6 +98,11 @@ export default class Enemy extends Entity {
                 onUpdate: this.onRollUpdate.bind(this),
                 onExit: this.onRollExit.bind(this),    
             })
+            .addState(States.STUN, {
+                onEnter: this.onStunEnter.bind(this),
+                onUpdate: this.onStunUpdate.bind(this),
+                onExit: this.onStunExit.bind(this),
+            })
             .addState(States.HURT, {
                 onEnter: this.onHurtEnter.bind(this),
                 onUpdate: this.onHurtUpdate.bind(this),
@@ -200,7 +205,7 @@ export default class Enemy extends Entity {
         this.spriteShield.setVisible(false);
 
         this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health);
-        this.checkMeleeOrRanged(this.scene.state.computer_weapons?.[0] || this.ascean.weapon_one);
+        this.checkMeleeOrRanged(this.ascean.weapon_one);
 
         window.removeEventListener('enemy-fetched', this.enemyFetchedFinishedListener);
     };
@@ -210,8 +215,9 @@ export default class Enemy extends Entity {
     };
  
     enemyStateListener() {
-        window.addEventListener('update-combat-data', (e) => {
+        window.addEventListener('update-combat', (e) => {
             if (this.enemyID !== e.detail.enemyID) return;
+            console.log("Enemy Updating Combat Data")
             this.combatData = e.detail;
             if (this.health > e.detail.new_computer_health) {
                 // this.isHurt = true;
@@ -226,6 +232,11 @@ export default class Enemy extends Entity {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
                 // console.log(heal, "Heal")
             };
+            if (e.detail.counter_success) {
+                console.log("Player Counter Success, Enemy Is Now Stunned");
+                this.isStunned = true;
+                // this.stateMachine.setState(States.STUN);
+            };
             this.health = e.detail.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
             if (e.detail.new_computer_health <= 0) {
@@ -236,19 +247,19 @@ export default class Enemy extends Entity {
                 this.inCombat = false;
                 this.attacking = null;
             };
-            this.checkMeleeOrRanged(this.scene.state.computer_weapons?.[0] || this.ascean.weapon_one);
+            this.checkMeleeOrRanged(e.detail.computer_weapons?.[0]);
         });
     };
 
     attackInterval() {
         if (this.scene.state.computer_weapons[0]) {
-            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 750 : 500;
+            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 900 : 650;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.grip === 'Two Hand' ? 750 : 500;
+            return weapon.grip === 'Two Hand' ? 900 : 650;
         } else {
-            return this.ascean.weapon_one.grip === 'Two Hand' ? 750 : 500;
+            return this.ascean.weapon_one.grip === 'Two Hand' ? 900 : 650;
         };
     };
 
@@ -362,7 +373,6 @@ export default class Enemy extends Entity {
     };
 
     onChaseEnter = () => {
-        // console.log("Chasing Player Initiated")
         this.anims.play('player_running', true);
     };
     onChaseUpdate = (dt) => {
@@ -388,7 +398,6 @@ export default class Enemy extends Entity {
         };
     };
     onChaseExit = () => {
-        // console.log("Chasing Player Exited")
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
     };
@@ -428,7 +437,6 @@ export default class Enemy extends Entity {
             loop: false, // Was true
         });
     };
-
     onEvasionUpdate = (dt) => {
         if (this.flipX) {
             this.setVelocityY(5); // Was 3
@@ -437,11 +445,9 @@ export default class Enemy extends Entity {
         };
         if (!this.isDodging && !this.isRolling) this.evaluateCombatDistance();
     };
-
     onEvasionExit = () => {
         this.evasionTimer.destroy();
     };
-
 
     onAttackEnter = () => {
         this.isAttacking = true;
@@ -521,6 +527,28 @@ export default class Enemy extends Entity {
         this.setVelocity(0, 0);
     };
 
+    onStunEnter = () => {
+        console.log("Enemy Stunned");
+        // this.isStunned = true;
+        this.stunDuration = 1500;
+        this.setTint(0x888888); 
+    };
+    onStunUpdate = (dt) => {
+        console.log(this.stunDuration, dt, this.stunDuration - dt, "Stun Duration");
+        // this.setVelocity(0);
+        this.evaluateCombatDistance();
+        this.stunDuration -= dt;
+        if (this.stunDuration <= 0) {
+            this.isStunned = false;
+        };
+    };
+    onStunExit = () => {
+        console.log("Enemy Stun Ending") 
+        // this.isStunned = false;
+        this.stunDuration = 1500;
+        this.clearTint();
+    };
+
     enemyActionSuccess = () => {
         if (this.scene.state.computer_action === '') return;
         this.scene.sendStateActionListener();
@@ -529,12 +557,7 @@ export default class Enemy extends Entity {
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         };
-        // this.actionAvailable = false;
-        // this.knockback(this.actionTarget);
         screenShake(this.scene);
-        // pauseGame(100).then(() => {
-        //     this.setVelocityX(0);
-        // });
     };
 
     evaluateCombatDistance = () => {
@@ -545,6 +568,9 @@ export default class Enemy extends Entity {
         let direction = this.attacking.position.subtract(this.position);
         const distanceY = Math.abs(direction.y);
         const rangeMultiplier = this.isRanged ? 3 : 1;
+        if (this.isStunned) {
+            this.setVelocity(0);
+        } else
         if (direction.length() >= 175 * rangeMultiplier) { // > 525
             console.log("Enemy Transitioning from Attacking to Chasing Player");
             this.stateMachine.setState(States.CHASE);
@@ -588,6 +614,10 @@ export default class Enemy extends Entity {
     };
 
     evaluateEnemyState = () => {
+        if (this.isStunned && !this.stateMachine.isCurrentState(States.STUN)) {
+            this.stateMachine.setState(States.STUN);
+            return; // Exit early to avoid other state changes
+        };
         if (this.actionSuccess) {
             this.actionSuccess = false;
             this.enemyActionSuccess();
@@ -653,6 +683,7 @@ export default class Enemy extends Entity {
             default:
                 break;                        
         }; 
+        // if (this.isStunned && !this.stateMachine.isCurrentState(States.STUN)) this.stateMachine.setState(States.STUN); 
     };
  
     update() {
@@ -667,8 +698,7 @@ export default class Enemy extends Entity {
         this.currentAction = action;
     };
 
-    evaluateCombat = () => { 
-
+    evaluateCombat = () => {  
         let computerAction;
         let computerCounter;
         let actionNumber = Math.floor(Math.random() * 101);
@@ -678,11 +708,10 @@ export default class Enemy extends Entity {
             dodge: 10 + this.scene.state.dodge_weight,
             posture: 15 + this.scene.state.posture_weight,
             roll: 15 + this.scene.state.roll_weight,
-            counter_attack: 20 + this.scene.state.counter_attack_weight,
-            counter_counter: 20 + this.scene.state.counter_counter_weight,
-            counter_dodge: 20 + this.scene.state.counter_dodge_weight,
-            counter_posture: 20 + this.scene.state.counter_posture_weight,
-            counter_roll: 20 + this.scene.state.counter_roll_weight,
+            counter_attack: 25 + this.scene.state.counter_attack_weight,
+            counter_counter: 25 + this.scene.state.counter_counter_weight,
+            counter_posture: 25 + this.scene.state.counter_posture_weight,
+            counter_roll: 25 + this.scene.state.counter_roll_weight,
             roll_rating: !this.scene.state.computer_weapons.length ? this.ascean.weapon_one.roll : this.scene.state.computer_weapons?.[0].roll,
             armor_rating: (this.scene.state.computer_defense.physicalPosture + this.scene.state.computer_defense.magicalPosture)  /  4,
         };
@@ -705,8 +734,6 @@ export default class Enemy extends Entity {
                 computerCounter = 'attack';
             } else if (counterNumber > (100 - computerActions.counter_attack - computerActions.counter_counter)) {
                 computerCounter = 'counter';
-            } else if (counterNumber > (100 - computerActions.counter_attack - computerActions.counter_counter - computerActions.counter_dodge)) {
-                computerCounter = 'dodge';
             } else if (counterNumber > (100 - computerActions.counter_attack - computerActions.counter_counter - computerActions.counter_dodge - computerActions.counter_posture)) {
                 computerCounter = 'posture';
             } else {
