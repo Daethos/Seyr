@@ -94,33 +94,33 @@ export default class Play extends Phaser.Scene {
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
         camera.setBounds(0, 0, 2048, 2048); // Top Down
-        var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
-            x: 860,// 750 for 1.5
-            y: 500, // 440 for 1.5
-            radius: 35,
-            base: this.add.graphics()
-                .lineStyle(2, 0x000000)
-                .fillStyle(0xfdf6d8) 
-                .fillCircle(0, 0, 35)
-                .fillStyle(0x000000)
-                .fillCircle(0, 0, 33),
+        // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
+        //     x: 860,// 750 for 1.5
+        //     y: 500, // 440 for 1.5
+        //     radius: 35,
+        //     base: this.add.graphics()
+        //         .lineStyle(2, 0x000000)
+        //         .fillStyle(0xfdf6d8) 
+        //         .fillCircle(0, 0, 35)
+        //         .fillStyle(0x000000)
+        //         .fillCircle(0, 0, 33),
         
-            thumb: this.add.graphics()
-                .lineStyle(2, 0x000000)
-                .fillStyle(0xfdf6d8) 
-                .fillCircle(0, 0, 17)
-                .fillStyle(0x000000)
-                .fillCircle(0, 0, 15),
+        //     thumb: this.add.graphics()
+        //         .lineStyle(2, 0x000000)
+        //         .fillStyle(0xfdf6d8) 
+        //         .fillCircle(0, 0, 17)
+        //         .fillStyle(0x000000)
+        //         .fillCircle(0, 0, 15),
         
-            dir: '8dir',
-            forceMin: 16,
-            fixed: true,
-            enable: true
-        });
-        joystick.setScrollFactor(0);
-        this.player.joystick = joystick; 
-        this.player.joystick.on('pointerdown', this.startJoystick, this);
-        this.player.joystick.on('pointerup', this.stopJoystick, this);
+        //     dir: '8dir',
+        //     forceMin: 16,
+        //     fixed: true,
+        //     enable: true
+        // });
+        // joystick.setScrollFactor(0);
+        // this.player.joystick = joystick; 
+        // this.player.joystick.on('pointerdown', this.startJoystick, this);
+        // this.player.joystick.on('pointerup', this.stopJoystick, this);
         this.minimap = this.cameras.add(725, 480, 225, 150).setName('mini');
         this.minimap.setBounds(0, 0, 2048, 2048);
         this.minimap.scrollX = 2048;
@@ -128,7 +128,7 @@ export default class Play extends Phaser.Scene {
         this.minimap.zoom = 0.25;
         this.minimap.startFollow(this.player);
         this.minimap.setLerp(0.1, 0.1);
-        this.minimapBorder = this.add.rectangle(this.minimap.x - 8, this.minimap.y - 3, this.minimap.width + 4, this.minimap.height + 2);
+        this.minimapBorder = this.add.rectangle(this.minimap.x - 6, this.minimap.y - 3, this.minimap.width + 4, this.minimap.height + 2);
         this.minimapBorder.setStrokeStyle(2, 0x000000);
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
@@ -379,7 +379,7 @@ export default class Play extends Phaser.Scene {
         this.enemy.update();
         this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
-        if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
+        // if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };
     pause() {
         this.scene.pause();

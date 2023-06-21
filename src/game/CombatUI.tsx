@@ -130,6 +130,14 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 return 'purple';
             case 'Heal':
                 return 'green';
+            case 'Avarice':
+                return 'greenyellow';
+            case 'Denial':
+                return '#0cf';
+            case 'Dispel':
+                return '#fdf6d8';
+            case 'Silence':
+                return 'black';
             default:
                 return 'white';
         };

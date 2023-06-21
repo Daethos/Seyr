@@ -5,6 +5,7 @@ class StatusEffect {
         this.enemyName = enemy.name;
         this.deity = weapon.influences[0];
         this.weapon = weapon.name;
+        this.special = this.setSpecial(prayer);
         this.debuffTarget = this.setDebuffTarget(combatData, player, prayer);
         this.duration = this.setDuration(player);
         this.tick = this.setTick(combatData);
@@ -25,6 +26,11 @@ class StatusEffect {
     setID = () => {
         let id = this.name + '_' + this.startTime + '_' + this.endTime;
         return id;
+    };
+
+    setSpecial = (prayer) => {
+        const specials = ['Avarice', 'Denial', 'Dispel', 'Silence'];
+        return specials.includes(prayer) ? true : false;
     };
 
     static getDeity() {
@@ -345,34 +351,7 @@ class StatusEffect {
     static updateHeal(potentialModifiers, realizedModifiers) {
         realizedModifiers.healing = potentialModifiers.healing;
         return realizedModifiers;
-    };
-    getEffect() {
-        return this.effect;
-    };
-    getDuration() {
-        return this.duration;
-    };
-    getTick() {
-        return this.tick;
-    };
-    getPrayer() {
-        return this.prayer;
-    };
-    getIntensity() {
-        return this.intensity;
-    };
-    getActiveStacks() {
-        return this.activeStacks;
-    };
-    getEffect() {
-        return this.effect;
-    };
-    getDescription() {
-        return this.description;
-    };
-    getImgURL() {
-        return this.imgURL;
-    };
+    }; 
 
     setName(deity) {
         return this.name = `Gift of ${deity}`;
@@ -397,7 +376,7 @@ class StatusEffect {
         };
     };
     setRefreshes(prayer) {
-        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' ? true : false;
+        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || 'Avarice' || 'Denial' || 'Dispel' || 'Silence' ? true : false;
     };
     setStacks(prayer) {
         return this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
@@ -464,6 +443,7 @@ class StatusEffect {
         return this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
     };
     setEffect(combatData, player, weapon, attributes, prayer) {
+        if (this.setSpecial(prayer)) return;
         let intensity = {};
         intensity = this.setIntensity(weapon, weapon.influences[0], attributes, player)
         let playerIntensity = intensity.value * intensity.magnitude;
@@ -782,6 +762,9 @@ class StatusEffect {
         let duration = this.setDuration(player);
         let effect = this.setEffect(combatData, player, weapon, attributes, prayer);
         const article = ['a','e','i','o','u'].includes(weapon.name[0].toLowerCase()) ? "an" : "a";
+        if (this.setSpecial(prayer)) {
+            return this.description = `${weapon.influences[0]} has channeled an old, lost prayer through their sigil, ${article} ${weapon.name}.`
+        };
         let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing ${player.name} for ${Math.round(effect.healing * 0.33)} per round` : prayer === 'Damage' ? `damaging ${enemy.name} for ${Math.round(effect.damage * 0.33)} per round` : `blessing ${player.name}`} for ${duration} combat rounds [Initial].`;
         return this.description = description;
     };

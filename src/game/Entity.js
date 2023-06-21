@@ -49,6 +49,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
         this.attacking = null;
         this.sensor = null;
+        this.interacting = [];
         this.touching = [];
         this.knockbackActive = false;
         this.knocedBack = false;

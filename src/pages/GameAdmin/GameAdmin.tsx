@@ -750,7 +750,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const [treeData, setTreeData] = useState<any>([]);
 
     useEffect(() => {
-        if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
+        // if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
     }, [user]);
 
     useEffect(() => {

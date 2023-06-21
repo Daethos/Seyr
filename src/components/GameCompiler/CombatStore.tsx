@@ -102,7 +102,7 @@ export interface CombatData {
     typeAttackData: [];
     typeDamageData: [];
     totalDamageData: number;
-    prayerData: [];
+    prayerData: string[];
     deityData: [];
 
     weather: string;
@@ -174,7 +174,7 @@ export const initialCombatData: CombatData = {
     action: '',
     player_action: '',
     counter_guess: '',
-    playerBlessing: '',
+    playerBlessing: 'Buff',
     prayerSacrifice: '',
     prayerSacrificeName: '',
     player_health: 0,

@@ -59,7 +59,13 @@ interface StatusEffectProps {
 const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story, pauseState, handleCallback }: StatusEffectProps) => {
     const [endTime, setEndTime] = useState(effect.endTime);
     const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
-
+    const specials = ['Avarice', 'Dispel', 'Denial', 'Silence'];
+    const specialDescription = {
+        'Avarice': 'Increases the amount of experience and gold gained.',
+        'Dispel': 'Removes the last prayer affecting the enemy.',
+        'Denial': 'Prevents the enemy from killing you.',
+        'Silence': 'Prevents the enemy from praying.'
+    };
     useEffect(() => {
         setEffectTimer(effect.endTime - effect.startTime);
     }, [])
@@ -108,10 +114,25 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
                 {effect?.debuffTarget ? <><br />Debuff Target: {effect.debuffTarget} <br /></> : ''}
                 </p>
                 <p>{effect?.description}</p>
+                { story ? (
+                    <p>
+                    Duration: {effectTimer}s <br />
+                    Start: {effect?.startTime}s | End: {effect?.endTime}s <br />
+                    {effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
+                    </p>
+                ) : (
+                    <>
                     Duration: {effect?.duration} <br />
-                <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
-                Round Start: {effect?.tick?.start} | End: {effect?.tick?.end}</p>
+                    <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
+                    Round Start: {effect?.tick?.start} | End: {effect?.tick?.end}</p>
+                    </>        
+                )}
                 <p>Effect(s): <br />
+                { specials.includes(effect.prayer) ? (
+                    <>
+                    {specialDescription[effect.prayer as keyof typeof specialDescription]} <br />
+                    </>
+                ) : ( '' ) }
                     {effect?.effect?.physical_damage ? <>Physical Damage: {effect?.effect?.physical_damage} <br /> </> : ''}
                     {effect?.effect?.magical_damage ? <>Magical Damage: {effect?.effect?.magical_damage} <br /> </> : ''}
                     {effect?.effect?.physical_penetration ? <>Physical Penetration: {effect?.effect?.physical_penetration} <br /> </> : ''}
@@ -126,6 +147,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
                     {effect?.effect?.dodge ? <>Dodge: {effect?.effect?.dodge} <br /> </> : ''}
                     {effect?.effect?.healing ? <>Heal (per Round): {Math.round(effect?.effect?.healing * 0.33)} <br /> </> : ''}
                     {effect?.effect?.damage ? <>Damage (per Round): {Math.round(effect?.effect?.damage * 0.33)} <br /> </> : ''}
+
                 </p>
                 { !player && ascean.capable.enemyConsume && !state.enemyPrayerConsumed ? <><Button variant='' style={{ color: 'purple' }} onClick={() => consumeEnemyPrayer(effect.name, effect.prayer)}>Consume</Button></> : '' }
             </Popover.Body>
@@ -152,7 +174,10 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
             case 'Debuff': return 'purple';
             case 'Heal': return 'green';
             case 'Damage': return 'red';
-            default: return 'black';
+            case 'Avarice' : return 'greenyellow';
+            case 'Denial' : return '#0cf';
+            case 'Silence' : return 'black';
+            default: return 'white';
         };
     };
 

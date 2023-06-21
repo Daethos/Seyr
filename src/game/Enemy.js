@@ -219,12 +219,11 @@ export default class Enemy extends Entity {
             if (this.enemyID !== e.detail.enemyID) return;
             console.log("Enemy Updating Combat Data")
             this.combatData = e.detail;
-            if (this.health > e.detail.new_computer_health) {
-                // this.isHurt = true;
-
+            if (this.health > e.detail.new_computer_health) { 
                 let damage = Math.round(this.health - e.detail.new_computer_health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.detail.critical_success);
                 this.stateMachine.setState(States.HURT);
+                if (this.isStunned) this.isStunned = false;
             };
             if (this.health < e.detail.new_computer_health) {
                 let heal = Math.round(e.detail.new_computer_health - this.health);

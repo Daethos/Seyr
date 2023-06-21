@@ -1088,6 +1088,7 @@ async function saveExperience(req, res) {
         let silver = 0;
         let gold = 0;
         let currencyValue = req.body.opponent;
+        if (req.body.avarice) currencyValue += 2;
         let health = req.body.currentHealth > ascean.health.total ? ascean.health.total : req.body.currentHealth;
         
         if (currencyValue === 1) { // Opponent Level 1, 1-2 Silver

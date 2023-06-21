@@ -628,8 +628,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
         computer_faith_mod_two += 5;
     };
 
-    if (faith_number > 90) {
-         
+    if (faith_number > 90) { 
         // ==================== STATISTIC LOGIC ==================== 
         combatData.actionData.push('prayer');
         combatData.prayerData.push(combatData.playerBlessing);
@@ -640,6 +639,10 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
         if (!existingEffect) {
             existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
             combatData.playerEffects.push(existingEffect);
+            if (existingEffect.prayer === 'Dispel' && combatData.computerEffects.length > 0) {
+                combatData.computerEffects.pop();  
+                combatData.playerEffects.pop();
+            };
             combatData.player_influence_description = existingEffect.description;
         } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
             existingEffect.tick.end += 2;
@@ -695,6 +698,10 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             if (!existingEffect) {
                 existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
                 combatData.playerEffects.push(existingEffect);
+                if (existingEffect.prayer === 'Dispel' && combatData.computerEffects.length > 0) {
+                    combatData.computerEffects.pop();  
+                    combatData.playerEffects.pop();
+                };
                 combatData.player_influence_description_two = existingEffect.description;
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
@@ -738,79 +745,32 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             };
         };
     };
-    if (computer_faith_number > 90) {
-        combatData.computer_religious_success = true;
-        let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[0].influences[0]}` && effect.prayer === combatData.computerBlessing);   
-        if (!existingEffect) {
-            existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
-            combatData.computerEffects.push(existingEffect);
-            combatData.computer_influence_description = existingEffect.description;
-        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-            existingEffect.tick.end += 2;
-            existingEffect.endTime += 6;
-            existingEffect.activeStacks += 1;
-            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
-            combatData.computer_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
-            switch (existingEffect.prayer) {
-                case 'Buff': {
-                    for (let key in existingEffect.effect) {
-                        if (existingEffect.effect[key] && key !== 'dodge') {
-                            let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[0][key];
-                            modifiedValue = roundToTwoDecimals(modifiedValue);
-                            combatData.computer_weapons[0][key] = modifiedValue;
-                        } else {
-                            let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[0][key];
-                            modifiedValue = roundToTwoDecimals(modifiedValue);
-                            combatData.computer_weapons[0][key] = modifiedValue;
-                        };
-                    };
-                    for (let key in combatData.computer_defense) {
-                        if (existingEffect.effect[key]) {
-                            let modifiedValue = existingEffect.effect[key] + combatData.computer_defense[key];
-                            modifiedValue = roundToTwoDecimals(modifiedValue);
-                            combatData.computer_defense[key] = modifiedValue;
-                        };
-                    };
-                    break;
-                };
-                case 'Damage': {
-                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
-                    break;
-                };
-            };
-        } else if (existingEffect.refreshes) {
-            existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
-            existingEffect.tick.end += existingEffect.duration + 1;
-            existingEffect.endTime += (existingEffect.duration + 1) * 3;
-            existingEffect.activeRefreshes += 1;
-            combatData.computer_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
-        };    
-    };
-    if (combatData.computer_dual_wielding === true) {
-        if (computer_faith_number_two > 90) {
+
+    if (!combatData.playerEffects.find(effect => effect.prayer === 'Silence')) {
+        if (computer_faith_number > 90) {
             combatData.computer_religious_success = true;
-            let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
+            let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[0].influences[0]}` && effect.prayer === combatData.computerBlessing);   
             if (!existingEffect) {
-                existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
+                existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
                 combatData.computerEffects.push(existingEffect);
-                combatData.computer_influence_description_two = existingEffect.description;
+                combatData.computer_influence_description = existingEffect.description;
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
                 existingEffect.tick.end += 2;
                 existingEffect.endTime += 6;
                 existingEffect.activeStacks += 1;
-                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
-                combatData.computer_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[0], combatData.computer_attributes, combatData.computerBlessing);
+                combatData.computer_influence_description = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
                 switch (existingEffect.prayer) {
                     case 'Buff': {
                         for (let key in existingEffect.effect) {
                             if (existingEffect.effect[key] && key !== 'dodge') {
-                                let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[1][key];
+                                let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[0][key];
                                 modifiedValue = roundToTwoDecimals(modifiedValue);
-                                combatData.computer_weapons[1][key] = modifiedValue;
+                                combatData.computer_weapons[0][key] = modifiedValue;
                             } else {
-                                let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[1][key];
+                                let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[0][key];
                                 modifiedValue = roundToTwoDecimals(modifiedValue);
-                                combatData.computer_weapons[1][key] = modifiedValue;
+                                combatData.computer_weapons[0][key] = modifiedValue;
                             };
                         };
                         for (let key in combatData.computer_defense) {
@@ -832,8 +792,58 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                 existingEffect.tick.end += existingEffect.duration + 1;
                 existingEffect.endTime += (existingEffect.duration + 1) * 3;
                 existingEffect.activeRefreshes += 1;
-                combatData.computer_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+                combatData.computer_influence_description = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             };    
+        };
+        if (combatData.computer_dual_wielding === true) {
+            if (computer_faith_number_two > 90) {
+                combatData.computer_religious_success = true;
+                let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computer_weapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
+                if (!existingEffect) {
+                    existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
+                    combatData.computerEffects.push(existingEffect);
+                    combatData.computer_influence_description_two = existingEffect.description;
+                } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+                    existingEffect.tick.end += 2;
+                    existingEffect.endTime += 6;
+                    existingEffect.activeStacks += 1;
+                    existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computer_weapons[1], combatData.computer_attributes, combatData.computerBlessing);
+                    combatData.computer_influence_description_two = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+                    switch (existingEffect.prayer) {
+                        case 'Buff': {
+                            for (let key in existingEffect.effect) {
+                                if (existingEffect.effect[key] && key !== 'dodge') {
+                                    let modifiedValue = existingEffect.effect[key] + combatData.computer_weapons[1][key];
+                                    modifiedValue = roundToTwoDecimals(modifiedValue);
+                                    combatData.computer_weapons[1][key] = modifiedValue;
+                                } else {
+                                    let modifiedValue = existingEffect.effect[key] - combatData.computer_weapons[1][key];
+                                    modifiedValue = roundToTwoDecimals(modifiedValue);
+                                    combatData.computer_weapons[1][key] = modifiedValue;
+                                };
+                            };
+                            for (let key in combatData.computer_defense) {
+                                if (existingEffect.effect[key]) {
+                                    let modifiedValue = existingEffect.effect[key] + combatData.computer_defense[key];
+                                    modifiedValue = roundToTwoDecimals(modifiedValue);
+                                    combatData.computer_defense[key] = modifiedValue;
+                                };
+                            };
+                            break;
+                        };
+                        case 'Damage': {
+                            existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                            break;
+                        };
+                    };
+                } else if (existingEffect.refreshes) {
+                    existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
+                    existingEffect.tick.end += existingEffect.duration + 1;
+                    existingEffect.endTime += (existingEffect.duration + 1) * 3;
+                    existingEffect.activeRefreshes += 1;
+                    combatData.computer_influence_description_two = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+                };    
+            };
         };
     };
 
@@ -1066,13 +1076,26 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     if (combatData.action === 'posture') {
         combatData.realized_computer_damage *= 0.95;
     };
+    if (combatData.prayerData.includes('Avarice')) {
+        combatData.realized_computer_damage *= 1.1;
+    };
+    // ================== PHASER EFFECTS ================== \\
+    if (combatData.isStalwart) {
+        combatData.realized_computer_damage *= 0.85;
+    };
+
 
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-        combatData.new_player_health = 0;
-        combatData.computer_win = true;
+        if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
+            combatData.new_player_health = 1;
+            combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
+        } else {
+            combatData.new_player_health = 0;
+            combatData.computer_win = true;
+        };
     };
     
     combatData.computer_action_description = 
@@ -1253,6 +1276,15 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         combatData.realized_computer_damage *= 0.95;
     };
 
+    if (combatData.prayerData.includes('Avarice')) {
+        combatData.realized_computer_damage *= 1.1;
+    };
+
+    // =============== PHASER EFFECTS ================ \\
+    if (combatData.isStalwart) {
+        combatData.realized_computer_damage *= 0.85;
+    };
+
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
 
@@ -1260,8 +1292,13 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         `${combatData.computer.name} attacks you with their ${combatData.computer_weapons[0].name} for ${Math.round(computer_total_damage)} ${combatData.computer_damage_type} ${combatData.computer_critical_success === true ? 'Critical Strike Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
     if (combatData.new_player_health < 0 || combatData.current_player_health <= 0) {
-        combatData.new_player_health = 0;
-        combatData.computer_win = true;
+        if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
+            combatData.new_player_health = 1;
+            combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
+        } else {
+            combatData.new_player_health = 0;
+            combatData.computer_win = true;
+        };
     };
 
     if (combatData.new_player_health > 0) {
@@ -3283,10 +3320,15 @@ const phaserEffectTickSplitter = async (data) => {
                 combatData.new_player_health -= effect.effect.damage * 0.33;
                 combatData.current_player_health -= effect.effect.damage * 0.33;
                 if (combatData.current_player_health < 0 || combatData.new_player_health < 0) {
-                    combatData.new_player_health = 0;
-                    combatData.current_player_health = 0;
-                    combatData.computer_win = true;
-                    combatData.player_win = false;
+                    if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
+                        combatData.new_player_health = 1;
+                        combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
+                    } else {
+                        combatData.new_player_health = 0;
+                        combatData.current_player_health = 0;
+                        combatData.computer_win = true;
+                        combatData.player_win = false;
+                    };
                 };
                 if (combatData.combatTimer >= effect.endTime) {
                     combatData.computerEffects.filter(computerEffect => computerEffect.id === effect.id);

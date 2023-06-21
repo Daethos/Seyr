@@ -155,10 +155,11 @@ export default class Player extends Entity {
             intensity: 0.02,
         });
         this.highlight.setVisible(false);
-        this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health, 'player');
+        this.healthbar = new HealthBar(this.scene, this.x, this.y, scene.state.player_health, 'player');
         this.setFixedRotation();   
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
+        this.checkTreasureCollision(playerSensor);
     };
 
     highlightTarget(sprite) {
@@ -190,7 +191,7 @@ export default class Player extends Entity {
                 this.currentRound = e.detail.combatRound;
             }; 
             this.health = e.detail.new_player_health;
-            if (this.healthbar) this.healthbar.setValue(this.health);
+            this.healthbar.setValue(this.health);
             if (e.detail.new_player_health <= 0) {
                 this.isDead = true;
                 this.anims.play('player_death', true);
@@ -264,6 +265,28 @@ export default class Player extends Entity {
             context: this.scene,
         });
 
+    };
+
+    checkTreasureCollision(playerSensor) {
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [playerSensor],
+            callback: (other) => {
+                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'treasureCollider') {
+                    this.interacting.push(other.gameObjectB);
+                };
+            },
+            context: this.scene,
+        }); 
+
+        this.scene.matterCollision.addOnCollideEnd({
+            objectA: [playerSensor],
+            callback: (other) => {
+                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'treasureCollider') {
+                    this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
+                };
+            },
+            context: this.scene,
+        });
     };
 
     calculateCollisionPoint(other) {

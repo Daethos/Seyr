@@ -11,7 +11,7 @@ interface CombatMouseSettingsProps {
 };
 
 const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, setWeaponOrder, weapons, state }: CombatMouseSettingsProps) => {
-    const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage' ]);
+    const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage', 'Avarice', 'Denial', 'Dispel', 'Silence']);
     const [selectedWeaponIndex, setSelectedWeaponIndex] = useState<number>(0);
     const [selectedDamageTypeIndex, setSelectedDamageTypeIndex] = useState<number>(0);
     const [selectedPrayerIndex, setSelectedPrayerIndex] = useState<number>(0);

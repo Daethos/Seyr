@@ -446,15 +446,17 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
     
-    const gainExperience = async () => {
+    const gainExperience = async (data: CombatData) => {
         try {
             let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
+            if (data.prayerData.includes('Avarice')) opponentExp = Math.round(opponentExp * 1.2);
             if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
                     'currentHealth': state.new_player_health,
                     'experience': asceanState.experienceNeeded,
+                    'avarice': data.prayerData.includes('Avarice') ? true : false,
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
             };
@@ -464,11 +466,12 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     'opponentExp': opponentExp,
                     'currentHealth': state.new_player_health,
                     'experience': Math.round(asceanState.experience + opponentExp),
+                    'avarice': data.prayerData.includes('Avarice') ? true : false,
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
             };
         } catch (err: any) {
-            console.log(err.message, 'Error Gaining Experience')
+            console.log(err.message, 'Error Gaining Experience');
         };
     };
 
@@ -540,7 +543,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     async function handlePlayerWin(combatData: CombatData) {
         try {
             playReligion();
-            await gainExperience();
+            await gainExperience(combatData);
             const statistic = {
                 asceanID: combatData.player._id,
                 wins: 1,

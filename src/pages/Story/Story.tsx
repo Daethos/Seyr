@@ -34,6 +34,7 @@ const Story = ({ user }: Props) => {
         experienceNeeded: 0,
         mastery: '',
         faith: '',
+        avarice: false,
     });
 
     useEffect(() => {

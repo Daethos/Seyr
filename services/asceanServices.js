@@ -188,8 +188,15 @@ async function penetrationCompiler(weapon, attributes, combatStats) {
 };
 
 async function critCompiler(weapon, attributes, combatStats) { 
-    weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 3);
-    weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.strength + weapon.caeren) / 2)) / 50);
+    if (weapon.attack_type === 'Physical') {
+        weapon.critical_chance += combatStats.criticalChance + attributes.agilityMod + (weapon.agility / 2);
+        weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + ((weapon.strength) / 2)) / 50);
+    } else {
+        weapon.critical_chance += combatStats.criticalChance + attributes.achreMod + (weapon.achre / 2);
+        weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.caerenMod + ((weapon.caeren) / 2)) / 50);
+    };
+    // weapon.critical_chance += combatStats.criticalChance + ((attributes.agilityMod + attributes.achreMod + ((weapon.agility + weapon.achre) / 2)) / 3);
+    // weapon.critical_damage += (combatStats.criticalDamage / 10) + ((attributes.constitutionMod + attributes.strengthMod + attributes.caerenMod + ((weapon.strength + weapon.caeren) / 2)) / 50);
     weapon.critical_chance = Math.round(weapon.critical_chance * 100) / 100;
     weapon.critical_damage = Math.round(weapon.critical_damage * 100) / 100;
 };
@@ -384,11 +391,11 @@ const asceanCompiler = async (ascean) => {
             (ascean.ring_one.critical_damage * rarities.ring_one) * (ascean.ring_two.critical_damage * rarities.ring_two) * (ascean.amulet.critical_damage * rarities.amulet) * (ascean.trinket.critical_damage * rarities.trinket);
         const dodgeModifier = 
             Math.round((ascean.shield.dodge * rarities.shield) + (ascean.helmet.dodge * rarities.helmet) + (ascean.chest.dodge * rarities.chest) + (ascean.legs.dodge * rarities.legs) + 
-            (ascean.ring_one.dodge * rarities.ring_one) + (ascean.ring_two.dodge * rarities.ring_two) + (ascean.amulet.dodge * rarities.amulet) + (ascean.trinket.dodge * rarities.trinket) - Math.round(((attributes.agilityMod + attributes.achreMod) / 3)));
+            (ascean.ring_one.dodge * rarities.ring_one) + (ascean.ring_two.dodge * rarities.ring_two) + (ascean.amulet.dodge * rarities.amulet) + (ascean.trinket.dodge * rarities.trinket) - Math.round(((attributes.agilityMod + attributes.achreMod) / 4))); // Was 3
         const rollModifier = 
             Math.round((ascean.shield.roll * rarities.shield) + (ascean.helmet.roll * rarities.helmet) + (ascean.chest.roll * rarities.chest) + (ascean.legs.roll * rarities.legs) + 
             (ascean.ring_one.roll * rarities.ring_one) + (ascean.ring_two.roll * rarities.ring_two) + (ascean.amulet.roll * rarities.amulet) + (ascean.trinket.roll * rarities.trinket) + 
-            Math.round(((attributes.agilityMod + attributes.achreMod) / 3)));
+            Math.round(((attributes.agilityMod + attributes.achreMod) / 4))); // Was 3
         const originPhysPenMod = (ascean.origin === 'Fyers' || ascean.origin === 'Notheo' ? 3 : 0)
         const originMagPenMod = (ascean.origin === 'Fyers' || ascean.origin === 'Nothos' ? 3 : 0)
         const physicalPenetration = 
