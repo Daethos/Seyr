@@ -9,6 +9,7 @@ import Update from '../AsceanBuilder/Update';
 import Play from '../AsceanBuilder/Play';
 import Save from '../AsceanBuilder/Save';
 import Ascea from '../AsceanBuilder/Ascea';
+import Phaser from '../AsceanBuilder/Phaser';
 
 interface Props {
     ascean: any;
@@ -31,6 +32,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
         { userProfile ? 
             <>
                 <Play ascean={ascean} />
+                <Phaser ascean={ascean} />
                 {/* <Save ascean={ascean} handleAsceanCreate={handleAsceanCreate} /> */}
                 <Update ascean={ascean} NavBar={false} />
                 <Delete ascean={ascean} deleteAscean={deleteAscean} />

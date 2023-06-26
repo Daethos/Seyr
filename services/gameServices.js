@@ -639,8 +639,8 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
         if (!existingEffect) {
             existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
             combatData.playerEffects.push(existingEffect);
-            if (existingEffect.prayer === 'Dispel' && combatData.computerEffects.length > 0) {
-                combatData.computerEffects.pop();  
+            if (existingEffect.prayer === 'Dispel') {
+                if (combatData.computerEffects.length > 0) await computerDispel(combatData); 
                 combatData.playerEffects.pop();
             };
             combatData.player_influence_description = existingEffect.description;
@@ -698,8 +698,8 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
             if (!existingEffect) {
                 existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[1], combatData.player_attributes, combatData.playerBlessing);
                 combatData.playerEffects.push(existingEffect);
-                if (existingEffect.prayer === 'Dispel' && combatData.computerEffects.length > 0) {
-                    combatData.computerEffects.pop();  
+                if (existingEffect.prayer === 'Dispel') {
+                    if (combatData.computerEffects.length > 0) await computerDispel(combatData); 
                     combatData.playerEffects.pop();
                 };
                 combatData.player_influence_description_two = existingEffect.description;
@@ -1115,7 +1115,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     let player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalDefenseModifier / 100);
 
     // This is for Players's who are Posturing
-    if (combatData.action === 'posture' && combatData.computer_counter_success !== true && combatData.computer_roll_success !== true) {
+    if ((combatData.action === 'posture' || combatData.isStalwart) && combatData.computer_counter_success !== true && combatData.computer_roll_success !== true) {
         player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
     };
@@ -2981,6 +2981,7 @@ const newDataCompiler = async (combatData) => {
         phaser: combatData.phaser,
         enemyID: combatData.enemyID,
         combatTimer: combatData.combatTimer,
+        isStalwart: combatData.isStalwart,
     };
     return newData;
 };
@@ -2991,6 +2992,49 @@ function roundToTwoDecimals(num) {
         return parseFloat(roundedNum);
     };
     return roundedNum;
+};
+
+const computerDispel = async (combatData) => {
+    const effect = combatData.computerEffects.pop();
+    const matchingWeapon = combatData.computer_weapons.find(weapon => weapon.name === effect.weapon);
+    const matchingWeaponIndex = combatData.computer_weapons.indexOf(matchingWeapon);
+    const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
+    const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
+    if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+        for (let key in effect.effect) {
+            if (effect.effect[key] && key !== 'dodge') {
+                combatData.computer_weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                combatData.computer_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingWeaponIndex][key]);
+            } else {
+                combatData.computer_weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                combatData.computer_weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computer_weapons[matchingWeaponIndex][key]);
+            };
+        };
+        for (let key in combatData.computer_defense) {
+            if (effect.effect[key]) {
+                combatData.computer_defense[key] -= effect.effect[key] * effect.activeStacks;
+                combatData.computer_defense[key] = roundToTwoDecimals(combatData.computer_defense[key]);
+            };
+        };
+    };
+    if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+        for (let key in effect.effect) {
+            if (effect.effect[key] && key !== 'dodge') {
+                combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+                combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
+            } else {
+                combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
+                combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
+            };
+        };
+        for (let key in combatData.player_defense) {
+            if (effect.effect[key]) {
+                combatData.player_defense[key] += effect.effect[key];
+                combatData.player_defense[key] = roundToTwoDecimals(combatData.player_defense[key]);
+            };
+        };
+    };
+    return combatData;
 };
 
 const prayerSplitter = async (combatData, prayer) => {
@@ -3009,6 +3053,10 @@ const prayerSplitter = async (combatData, prayer) => {
     if (!existingEffect) {
         existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[0], combatData.player_attributes, combatData.playerBlessing);
         combatData.playerEffects.push(existingEffect);
+        if (existingEffect.prayer === 'Dispel') {
+            if (combatData.computerEffects.length > 0) await computerDispel(combatData);
+            combatData.playerEffects.pop();
+        };
         combatData.player_influence_description = existingEffect.description;
     } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
         existingEffect.tick.end += 2;

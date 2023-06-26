@@ -46,25 +46,55 @@ export default class Play extends Phaser.Scene {
     create() { 
         this.input.setDefaultCursor('url(' + process.env.PUBLIC_URL + '/images/cursor.png), pointer'); 
         
-        const map = this.make.tilemap({ key: 'top_down' });
-        const tileSet = map.addTilesetImage('MainLev2.0', 'MainLev2.0', 32, 32, 0, 0);
-        console.log(tileSet, map, "Tile Set ?")
-        const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
-        const layer2 = map.createLayer('Tile Layer 2', tileSet, 0, 0);
+        // const map = this.make.tilemap({ key: 'top_down' });
+        // const tileSet = map.addTilesetImage('MainLev2.0', 'MainLev2.0', 32, 32, 0, 0);
+        // console.log(tileSet, map, "Tile Set ?")
+        // const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
+        // const layer2 = map.createLayer('Tile Layer 2', tileSet, 0, 0);
         // layer2.setCollisionByProperty({ collides: true });
-        this.matter.world.convertTilemapLayer(layer2);
-        this.matter.world.convertTilemapLayer(layer1);
-        this.map = map;
+        // this.matter.world.convertTilemapLayer(layer2);
+        // this.matter.world.convertTilemapLayer(layer1);
+        // this.map = map;
         // this.matter.world.setBounds(0, 0, 960, 640); // Platformer
-        this.matter.world.setBounds(0, 0, 2048, 2048); // Top Down
+        // this.matter.world.setBounds(0, 0, 2048, 2048); // Top Down
+        
+        // ================== Ascean Test Map ================== \\
+        const map = this.make.tilemap({ key: 'ascean_test' });
+        const decorations = map.addTilesetImage('AncientForestDecorative', 'AncientForestDecorative', 32, 32, 0, 0);
+        const tileSet = map.addTilesetImage('AncientForestMain', 'AncientForestMain', 32, 32, 0, 0);
+        const layer0 = map.createLayer('Tile Layer 0 - Base', tileSet, 0, 0);
+        const layer1 = map.createLayer('Tile Layer 1 - Top', tileSet, 0, 0);
+        const layer2 = map.createLayer('Tile Layer 2 - Flowers', decorations, 0, 0);
+        const layer3 = map.createLayer('Tile Layer 3 - Plants', decorations, 0, 0);
+        const layer4 = map.createLayer('Tile Layer 4 - Primes', decorations, 0, 0);
+        const layer5 = map.createLayer('Tile Layer 5 - Snags', decorations, 0, 0);
+
+        // layer0.setCollisionFromCollisionGroup();
+        layer0.setCollisionByProperty({ collides: true });
+        layer1.setCollisionByProperty({ collides: true });
+        layer2.setCollisionByProperty({ collides: true });
+        layer3.setCollisionByProperty({ collides: true });
+        layer4.setCollisionByProperty({ collides: true });
+        layer5.setCollisionByProperty({ collides: true });
+        console.log(layer0, "Layer 0")
+        this.matter.world.convertTilemapLayer(layer0);
+        this.matter.world.convertTilemapLayer(layer1);
+        this.matter.world.convertTilemapLayer(layer2);
+        this.matter.world.convertTilemapLayer(layer3);
+        this.matter.world.convertTilemapLayer(layer4);
+        this.matter.world.convertTilemapLayer(layer5);
+        
         this.matter.world.createDebugGraphic(); 
+        this.map = map;
+
+        this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         
-        this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
+        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         
-        this.enemy = new Enemy({scene: this, x: 400, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+        this.enemy = new Enemy({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
 
 
         this.player.inputKeys = {
@@ -93,7 +123,7 @@ export default class Play extends Phaser.Scene {
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         // camera.setBounds(0, 0, 960, 640); // Platformer
-        camera.setBounds(0, 0, 2048, 2048); // Top Down
+        camera.setBounds(0, 0, 4096, 4096); // Top Down
         // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
         //     x: 860,// 750 for 1.5
         //     y: 500, // 440 for 1.5
@@ -122,9 +152,9 @@ export default class Play extends Phaser.Scene {
         // this.player.joystick.on('pointerdown', this.startJoystick, this);
         // this.player.joystick.on('pointerup', this.stopJoystick, this);
         this.minimap = this.cameras.add(725, 480, 225, 150).setName('mini');
-        this.minimap.setBounds(0, 0, 2048, 2048);
-        this.minimap.scrollX = 2048;
-        this.minimap.scrollY = 2048;
+        this.minimap.setBounds(0, 0, 4096, 4096);
+        this.minimap.scrollX = 4096;
+        this.minimap.scrollY = 4096;
         this.minimap.zoom = 0.25;
         this.minimap.startFollow(this.player);
         this.minimap.setLerp(0.1, 0.1);
@@ -376,9 +406,9 @@ export default class Play extends Phaser.Scene {
     };
 
     update() {
-        this.enemy.update();
-        this.enemies.forEach((enemy) => enemy.update());
         this.player.update(); 
+        this.enemy.update();
+        // this.enemies.forEach((enemy) => enemy.update());
         // if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };
     pause() {

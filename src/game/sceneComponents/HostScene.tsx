@@ -6,6 +6,8 @@ import Modal from 'react-bootstrap/Modal';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin.js';
+// @ts-ignore
+import { PhaserNavMeshPlugin } from 'phaser-navmesh';
 import Boot from '../Boot';
 import Preload from '../Preload';
 import Menu from '../Menu';
@@ -108,7 +110,13 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     plugin: PhaserMatterCollisionPlugin,
                     key: 'matterCollision',
                     mapping: 'matterCollision'
-                }
+                },
+                {
+                    key: "PhaserNavMeshPlugin", // Key to store the plugin class under in cache
+                    plugin: PhaserNavMeshPlugin, // Class that constructs plugins
+                    mapping: "navMeshPlugin", // Property mapping to use for the scene, e.g. this.navMeshPlugin
+                    start: true
+                },
             ],
             src: [
                 'VirtualJoysticks/plugin/src/Pad.js',

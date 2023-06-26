@@ -12,6 +12,9 @@ import layer_1 from '../game/images/layer_1.png';
 // Top-Down Attempt
 import MainLev2 from '../game/images/MainLev2.0.png';
 import top_down from '../game/images/top_down.json';
+import ascean_test from '../game/images/ascean_test.json';
+import AncientForestDecorative from '../game/images/AncientForestDecorative.png';
+import AncientForestMain from '../game/images/AncientForestMainLev.png';
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -53,8 +56,12 @@ export default class Preload extends Phaser.Scene {
         // this.load.tilemapTiledJSON('castle_map', castle_map);
 
         // Top-Down Attempt
-        this.load.image('MainLev2.0', MainLev2);
-        this.load.tilemapTiledJSON('top_down', top_down);
+        // this.load.image('MainLev2.0', MainLev2);
+        // this.load.tilemapTiledJSON('top_down', top_down);
+
+        this.load.image('AncientForestMain', AncientForestMain);
+        this.load.image('AncientForestDecorative', AncientForestDecorative);
+        this.load.tilemapTiledJSON('ascean_test', ascean_test);
         this.createLoadingBar();
     };
 

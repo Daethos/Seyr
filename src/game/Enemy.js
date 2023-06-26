@@ -259,13 +259,13 @@ export default class Enemy extends Entity {
 
     attackInterval() {
         if (this.scene.state.computer_weapons[0]) {
-            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 900 : 650;
+            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 900 : 600;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.grip === 'Two Hand' ? 900 : 650;
+            return weapon.grip === 'Two Hand' ? 900 : 600;
         } else {
-            return this.ascean.weapon_one.grip === 'Two Hand' ? 900 : 650;
+            return this.ascean.weapon_one.grip === 'Two Hand' ? 900 : 600;
         };
     };
 

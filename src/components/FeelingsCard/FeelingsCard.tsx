@@ -23,7 +23,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
         { likeStat.length > 0 ?
           likeStat?.map((like: any, index: number) => 
-            <> { index <= 3 ? (likeStat?.length) === (index + 1) ? likeStat?.length === 1 ? 
+            <div key={index}> { index <= 3 ? (likeStat?.length) === (index + 1) ? likeStat?.length === 1 ? 
                 <>{like}</> 
             : likeStat?.length === 2 ? 
                 <> and {like}</> 
@@ -36,7 +36,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
             : index > 3 ? 
                 <>{like} and {likeStat?.length - index} more</> 
             : <>and {like}</>
-            }</>
+            }</div>
           )
           : 'No Likes Yet!'
         }
@@ -48,7 +48,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
     <Tooltip id="button-tooltip" {...props}>
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
         { dislikeStat.length > 0 ?
-       dislikeStat?.map((like: any, index: number) => <>{index < 3 ? (dislikeStat?.length) === (index + 1) ? dislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {dislikeStat?.length - index} more</> : <>and {like}</>}</>
+       dislikeStat?.map((like: any, index: number) => <div key={index}>{index < 3 ? (dislikeStat?.length) === (index + 1) ? dislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {dislikeStat?.length - index} more</> : <>and {like}</>}</div>
       )
         : 'No Dislikes Yet!'
          }
@@ -60,7 +60,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
     <Tooltip id="button-tooltip" {...props} show={doubleDislikeStat > 0 ? true : false}>
       <div style={{ fontVariant: 'small-caps', color: 'yellow' }}>
         { doubleDislikeStat.length > 0 ? 
-       doubleDislikeStat?.map((like: any, index: number) => <>{index < 3 ? (doubleDislikeStat?.length) === (index + 1) ? doubleDislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {doubleDislikeStat?.length - index} more</> : <>and {like}</>}</>
+       doubleDislikeStat?.map((like: any, index: number) => <div key={index}>{index < 3 ? (doubleDislikeStat?.length) === (index + 1) ? doubleDislikeStat?.length === 1 ? <>{like}</> : <>and {like}</> : <>{like},{' '}</> : index > 4 ? <>{like} and {doubleDislikeStat?.length - index} more</> : <>and {like}</>}</div>
       )
       : 'No Double Dislikes Yet!'
       }

@@ -109,7 +109,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 </p>
                 { state.isStalwart ? (
                     <p style={{ color: "gold" }}>
-                        Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. You receive 50% less poise damage. You receive 10% less damage. You cannot dodge or roll.
+                        Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. You receive 50% less poise damage. You receive 15% less damage. You cannot dodge or roll.
                         {/*  Perhaps you cannot dodge or roll in the future This slows your movement by 15%. */}
                     </p>
                 ) : ( '' ) }
