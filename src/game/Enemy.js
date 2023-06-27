@@ -380,32 +380,76 @@ export default class Enemy extends Entity {
 
     onChaseEnter = () => {
         this.anims.play('player_running', true);
+        this.chaseTimer = this.scene.time.addEvent({
+            delay: 250,
+            callback: () => {
+                this.path = this.scene.navMesh.findPath(this.position, this.attacking.position);
+                console.log(this.path, "Path");
+                if (this.path && this.path.length > 1) {
+                    this.nextPoint = this.path[0];
+                    console.log(this.path, "Paths", this.nextPoint, "Next Point", this.position, "Enemy Position");
+                    this.pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
+                    console.log(this.pathDirection, "Path Direction");
+                    this.pathDirection.normalize();
+                    console.log(this.pathDirection, "Path Direction Normalized");
+                    
+                    const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
+                    console.log(distanceToNextPoint, "Distance to Next Point");
+                    if (distanceToNextPoint < 10) {
+                        console.log("Enemy Reached Next Point");
+                        this.path.shift();
+                        this.nextPoint = this.path[0];
+                    };
+                };
+            },
+            callbackScope: this,
+            loop: true
+        });
     };
+    // onChaseUpdate = (dt) => {
+    //     const rangeMultiplier = this.isRanged ? 2 : 1;
+    //     if (Math.abs(this.originPoint.x - this.x) > 400 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 400 * rangeMultiplier || !this.inCombat) {
+    //         console.log("Chase transitioning to Leash")
+    //         this.stateMachine.setState(States.LEASH);
+    //         return;
+    //     }; 
+    //     let direction = this.attacking.position.subtract(this.position); 
+    //     if (direction.length() >= 150 * rangeMultiplier) {
+    //         direction.normalize();
+    //         this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+    //     } else {
+    //         console.log("Enemy Transitioning to Attacking Player");
+    //         this.stateMachine.setState(States.COMBAT);
+    //     };
+    // };
     onChaseUpdate = (dt) => {
         const rangeMultiplier = this.isRanged ? 2 : 1;
-        if (Math.abs(this.originPoint.x - this.x) > 400 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 400 * rangeMultiplier || !this.inCombat) {
-            console.log("Chase transitioning to Leash")
+        if ( Math.abs(this.originPoint.x - this.x) > 400 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 400 * rangeMultiplier || !this.inCombat ) {
+            console.log("Chase transitioning to Leash");
             this.stateMachine.setState(States.LEASH);
             return;
         }; 
-        let direction = this.attacking.position.subtract(this.position);
-        // if (direction.length() >= 205 * rangeMultiplier) {
-        //     this.isRolling = true;
-        //     this.roll();
-        //     direction.normalize();
-        //     this.setVelocity(direction.x * 3.5, direction.y * 3.5);
-        // } else 
-        if (direction.length() >= 150 * rangeMultiplier) {
-            direction.normalize();
-            this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+        const direction = this.attacking.position.subtract(this.position);
+        const distance = direction.length();
+      
+        if (distance >= 150 * rangeMultiplier) {
+            if (this.path && this.path.length > 1) {
+                this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
+            } else {
+                direction.normalize();
+                this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+            };
         } else {
             console.log("Enemy Transitioning to Attacking Player");
             this.stateMachine.setState(States.COMBAT);
         };
     };
+      
     onChaseExit = () => {
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
+        this.chaseTimer.destroy();
+        this.chaseTimer = null;
     };
 
     onCombatEnter = () => {

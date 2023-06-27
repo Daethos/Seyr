@@ -33,6 +33,7 @@ export default class Play extends Phaser.Scene {
         this.baseSprite = this.add.sprite(0, 0, base);
         this.thumbSprite = this.add.sprite(0, 0, stick);
         this.map = null;
+        this.navMesh = null;
         this.isPlayerOnGround = true;
         this.isPlayerHanging = false;
 
@@ -60,41 +61,52 @@ export default class Play extends Phaser.Scene {
         
         // ================== Ascean Test Map ================== \\
         const map = this.make.tilemap({ key: 'ascean_test' });
+        this.map = map;
         const decorations = map.addTilesetImage('AncientForestDecorative', 'AncientForestDecorative', 32, 32, 0, 0);
         const tileSet = map.addTilesetImage('AncientForestMain', 'AncientForestMain', 32, 32, 0, 0);
         const layer0 = map.createLayer('Tile Layer 0 - Base', tileSet, 0, 0);
         const layer1 = map.createLayer('Tile Layer 1 - Top', tileSet, 0, 0);
+        const layerC = map.createLayer('Tile Layer - Construction', tileSet, 0, 0);
         const layer2 = map.createLayer('Tile Layer 2 - Flowers', decorations, 0, 0);
         const layer3 = map.createLayer('Tile Layer 3 - Plants', decorations, 0, 0);
         const layer4 = map.createLayer('Tile Layer 4 - Primes', decorations, 0, 0);
         const layer5 = map.createLayer('Tile Layer 5 - Snags', decorations, 0, 0);
 
-        // layer0.setCollisionFromCollisionGroup();
+        const collisionLayers = [];
+
         layer0.setCollisionByProperty({ collides: true });
         layer1.setCollisionByProperty({ collides: true });
-        layer2.setCollisionByProperty({ collides: true });
-        layer3.setCollisionByProperty({ collides: true });
-        layer4.setCollisionByProperty({ collides: true });
-        layer5.setCollisionByProperty({ collides: true });
-        console.log(layer0, "Layer 0")
+        layerC.setCollisionByProperty({ collides: true });
+        // layer2.setCollisionByProperty({ collides: true });
+        // layer3.setCollisionByProperty({ collides: true });
+        // layer4.setCollisionByProperty({ collides: true });
+        // layer5.setCollisionByProperty({ collides: true }); 
+        
+        collisionLayers.push(layer0);
+        collisionLayers.push(layer1);
+        collisionLayers.push(layerC);
+
         this.matter.world.convertTilemapLayer(layer0);
         this.matter.world.convertTilemapLayer(layer1);
-        this.matter.world.convertTilemapLayer(layer2);
-        this.matter.world.convertTilemapLayer(layer3);
-        this.matter.world.convertTilemapLayer(layer4);
-        this.matter.world.convertTilemapLayer(layer5);
-        
+        this.matter.world.convertTilemapLayer(layerC);
+        // this.matter.world.convertTilemapLayer(layer2);
+        // this.matter.world.convertTilemapLayer(layer3);
+        // this.matter.world.convertTilemapLayer(layer4);
+        // this.matter.world.convertTilemapLayer(layer5);
+        this.navMesh = this.navMeshPlugin.buildMeshFromTilemap("mesh", this.map, collisionLayers);
+
         this.matter.world.createDebugGraphic(); 
-        this.map = map;
 
         this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         
         this.enemy = new Enemy({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+
+        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => console.log(enemy, "Enemy"));
+        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
 
         this.player.inputKeys = {
