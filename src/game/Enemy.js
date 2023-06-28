@@ -383,13 +383,20 @@ export default class Enemy extends Entity {
         this.chaseTimer = this.scene.time.addEvent({
             delay: 250,
             callback: () => {
+                this.scene.navMesh.debugDrawClear();
                 this.path = this.scene.navMesh.findPath(this.position, this.attacking.position);
                 console.log(this.path, "Path");
                 if (this.path && this.path.length > 1) {
-                    this.nextPoint = this.path[0];
+                    if (!this.isPathing) this.isPathing = true;
+                    const nextPoint = this.path[1];
+                    console.log(nextPoint, "Next Point In Path");
+                    this.nextPoint = nextPoint;
+                    this.scene.navMesh.debugDrawPath(this.path, 0xffd900);
                     console.log(this.path, "Paths", this.nextPoint, "Next Point", this.position, "Enemy Position");
-                    this.pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
-                    console.log(this.pathDirection, "Path Direction");
+                    const pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
+                    this.pathDirection = pathDirection;
+                    this.pathDirection.subtract(this.position);
+                    console.log(this.pathDirection, pathDirection, "Path Direction");
                     this.pathDirection.normalize();
                     console.log(this.pathDirection, "Path Direction Normalized");
                     
@@ -398,44 +405,27 @@ export default class Enemy extends Entity {
                     if (distanceToNextPoint < 10) {
                         console.log("Enemy Reached Next Point");
                         this.path.shift();
-                        this.nextPoint = this.path[0];
                     };
                 };
             },
             callbackScope: this,
             loop: true
         });
-    };
-    // onChaseUpdate = (dt) => {
-    //     const rangeMultiplier = this.isRanged ? 2 : 1;
-    //     if (Math.abs(this.originPoint.x - this.x) > 400 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 400 * rangeMultiplier || !this.inCombat) {
-    //         console.log("Chase transitioning to Leash")
-    //         this.stateMachine.setState(States.LEASH);
-    //         return;
-    //     }; 
-    //     let direction = this.attacking.position.subtract(this.position); 
-    //     if (direction.length() >= 150 * rangeMultiplier) {
-    //         direction.normalize();
-    //         this.setVelocity(direction.x * 2.5, direction.y * 2.5);
-    //     } else {
-    //         console.log("Enemy Transitioning to Attacking Player");
-    //         this.stateMachine.setState(States.COMBAT);
-    //     };
-    // };
+    }; 
     onChaseUpdate = (dt) => {
-        const rangeMultiplier = this.isRanged ? 2 : 1;
-        if ( Math.abs(this.originPoint.x - this.x) > 400 * rangeMultiplier || Math.abs(this.originPoint.y - this.y) > 400 * rangeMultiplier || !this.inCombat ) {
+        const rangeMultiplier = this.isRanged ? 1.75 : 1;
+        const direction = this.attacking.position.subtract(this.position);
+        const distance = direction.length();
+        if ( Math.abs(this.originPoint.x - this.position.x) > 350 * rangeMultiplier || Math.abs(this.originPoint.y - this.position.y) > 400 * rangeMultiplier || !this.inCombat || distance > 500 * rangeMultiplier ) {
             console.log("Chase transitioning to Leash");
             this.stateMachine.setState(States.LEASH);
             return;
-        }; 
-        const direction = this.attacking.position.subtract(this.position);
-        const distance = direction.length();
-      
+        };  
         if (distance >= 150 * rangeMultiplier) {
             if (this.path && this.path.length > 1) {
                 this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
             } else {
+                if (this.isPathing) this.isPathing = false;
                 direction.normalize();
                 this.setVelocity(direction.x * 2.5, direction.y * 2.5);
             };
@@ -443,10 +433,10 @@ export default class Enemy extends Entity {
             console.log("Enemy Transitioning to Attacking Player");
             this.stateMachine.setState(States.COMBAT);
         };
-    };
-      
+    }; 
     onChaseExit = () => {
         this.anims.stop('player_running');
+        this.scene.navMesh.debugDrawClear();
         this.setVelocity(0, 0);
         this.chaseTimer.destroy();
         this.chaseTimer = null;
@@ -468,6 +458,7 @@ export default class Enemy extends Entity {
     };
     onCombatExit = () => { 
         this.attackTimer.destroy();
+        this.attackTimer = null;
     };
 
     onEvasionEnter = () => {
@@ -563,13 +554,53 @@ export default class Enemy extends Entity {
             this.attacking = null;
         };
         this.scene.combatEngaged(false);
+        this.leashTimer = this.scene.time.addEvent({
+            delay: 250,
+            callback: () => {
+                let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
+                this.scene.navMesh.debugDrawClear();
+                this.path = this.scene.navMesh.findPath(this.position, originPoint);
+                console.log(this.path, "Path");
+                if (this.path && this.path.length > 1) {
+                    if (!this.isPathing) this.isPathing = true;
+                    const nextPoint = this.path[1];
+                    console.log(nextPoint, "Next Point In Path");
+                    this.nextPoint = nextPoint;
+                    this.scene.navMesh.debugDrawPath(this.path, 0xffd900);
+                    console.log(this.path, "Paths", this.nextPoint, "Next Point", this.position, "Enemy Position");
+                    const pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
+                    this.pathDirection = pathDirection;
+                    this.pathDirection.subtract(this.position);
+                    console.log(this.pathDirection, pathDirection, "Path Direction");
+                    this.pathDirection.normalize();
+                    console.log(this.pathDirection, "Path Direction Normalized");
+                    
+                    const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
+                    console.log(distanceToNextPoint, "Distance to Next Point");
+                    if (distanceToNextPoint < 10) {
+                        console.log("Enemy Reached Next Point");
+                        this.path.shift();
+                    };
+                };
+            },
+            callbackScope: this,
+            loop: true
+        });
     };
     onLeashUpdate = (dt) => {
+        this.scene.navMesh.debugDrawClear();
+        
         let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
         let direction = originPoint.subtract(this.position);
+        
         if (direction.length() >= 10) {
-            direction.normalize();
-            this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+            if (this.path && this.path.length > 1) {
+                this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
+            } else {
+                if (this.isPathing) this.isPathing = false;
+                direction.normalize();
+                this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+            };
         } else {
             this.stateMachine.setState(States.IDLE);
         };
@@ -578,6 +609,8 @@ export default class Enemy extends Entity {
         console.log("Enemy Leashed to Origin Point of Encounter")
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
+        this.leashTimer.destroy();
+        this.leashTimer = null;
     };
 
     onStunEnter = () => {
@@ -617,8 +650,7 @@ export default class Enemy extends Entity {
         const rangeMultiplier = this.isRanged ? 3 : 1;
         if (this.isStunned) {
             this.setVelocity(0);
-        } else
-        if (direction.length() >= 175 * rangeMultiplier) { // > 525
+        } else if (direction.length() >= 175 * rangeMultiplier) { // > 525
             console.log("Enemy Transitioning from Attacking to Chasing Player");
             this.stateMachine.setState(States.CHASE);
         } else if (this.isRanged) {
@@ -647,7 +679,7 @@ export default class Enemy extends Entity {
             };
         } else { // Melee
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            if (direction.length() > 55) { // Outside melee range
+            if (direction.length() > 52) { // Outside melee range
                 this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityX(direction.x * 2.75);
@@ -739,7 +771,6 @@ export default class Enemy extends Entity {
     };
 
     combat = (target) => { 
-        const specials = ['pray', 'consume'];
         const action = this.evaluateCombat();
         this.currentAction = action;
     };
@@ -772,7 +803,6 @@ export default class Enemy extends Entity {
         } else {
             computerAction = 'roll';
         };
-        // if (computerAction !== 'dodge') this.scene.setState('computer_action', computerAction);
 
         if (computerAction === 'counter') {
             let counterNumber = Math.floor(Math.random() * 101);

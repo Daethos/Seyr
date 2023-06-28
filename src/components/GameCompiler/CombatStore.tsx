@@ -278,7 +278,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
     switch (action.type) {
         case 'SET_UPDATE_STATE':
             const { key, value } = action.payload;
-            console.log(`key: ${key}, value: ${value}`);
             return {
                 ...state,
                 [key]: value,

@@ -94,7 +94,8 @@ export default class Play extends Phaser.Scene {
         // this.matter.world.convertTilemapLayer(layer4);
         // this.matter.world.convertTilemapLayer(layer5);
         this.navMesh = this.navMeshPlugin.buildMeshFromTilemap("mesh", this.map, collisionLayers);
-
+        const debugGraphics = this.add.graphics().setAlpha(0.75);
+        this.navMesh.enableDebug(debugGraphics);
         this.matter.world.createDebugGraphic(); 
 
         this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
@@ -106,7 +107,7 @@ export default class Play extends Phaser.Scene {
         this.enemy = new Enemy({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
 
         // this.map.getObjectLayer('Enemies').objects.forEach(enemy => console.log(enemy, "Enemy"));
-        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
 
         this.player.inputKeys = {
@@ -420,7 +421,7 @@ export default class Play extends Phaser.Scene {
     update() {
         this.player.update(); 
         this.enemy.update();
-        // this.enemies.forEach((enemy) => enemy.update());
+        this.enemies.forEach((enemy) => enemy.update());
         // if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };
     pause() {

@@ -69,10 +69,14 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.currentActionFrame = 0;
         this.interruptCondition = false;
         this.scrollingCombatText = null;
+        this.winningCombatText = null;
 
         this.path = [];
         this.nextPoint = {};
         this.pathDirection = {};
+        this.isPathing = false;
+        this.chaseTimer = null;
+        this.leashTimer = null;
     };
 
     get position() {

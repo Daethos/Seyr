@@ -77,7 +77,6 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
     };
 
     function returnHome() {
-        // Clear Potential Loot
         navigate('/');
     };
 

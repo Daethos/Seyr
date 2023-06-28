@@ -203,6 +203,7 @@ export default class Player extends Entity {
                 this.attacking = null;
                 this.touching = this.touching.filter(obj => obj.enemyID !== e.detail.enemyID);
             };
+
             this.checkMeleeOrRanged(e.detail.weapons[0]);
         });
 
@@ -210,6 +211,10 @@ export default class Player extends Entity {
             if (e.detail.computer_counter_success) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.setState('computer_counter_success', false);
+            };
+            if (e.detail.player_win) {
+                let damage = Math.round(e.detail.realized_player_damage) + ' - Victory!';
+                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'effect', e.detail.critical_success);    
             };
         });
     }; 
@@ -569,6 +574,7 @@ export default class Player extends Entity {
         }; 
         if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
+        if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
         const speed = 1.75;
@@ -698,8 +704,7 @@ export default class Player extends Entity {
 
         if (this.isStunned) {
             this.setVelocity(0);
-        } else
-        if (this.isHurt) {
+        } else if (this.isHurt) {
             this.anims.play('player_hurt', true).on('animationcomplete', () => {
                 this.isHurt = false;
             });  
