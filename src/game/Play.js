@@ -200,7 +200,7 @@ export default class Play extends Phaser.Scene {
         // });
         window.addEventListener('enemyLootDrop', (e) => {
             console.log(e.detail, "e From Loot Drops");
-            e.detail.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemy:e.detail.enemy, drop: drop })));
+            e.detail.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID:e.detail.enemyID, drop: drop })));
         });
     };
 

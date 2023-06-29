@@ -33,6 +33,7 @@ import screenfull from 'screenfull';
 import StoryJournal from '../../components/GameCompiler/StoryJournal';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import LootDrop from '../../components/GameCompiler/LootDrop';
+import { LootDropUI } from '../LootDropUI';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -511,7 +512,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             } else {
                 const dispatchLoot = new CustomEvent('enemyLootDrop', { 
                     detail: {
-                        enemy: state.computer,
+                        enemyID: state.enemyID,
                         drops: response.data
                     } 
                 });
@@ -862,7 +863,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
     const updateStamina = async (e: { detail: number }) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
     const updateStalwart = async (e: { detail: number }) => dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
-    const interactingLoot = async (e: { detail: any }) => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e.detail });
+    const interactingLoot = async (e: { detail: any }) =>
+        {
+            console.log(e.detail, "Interacing With Loot")
+            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e.detail });
+        }
 
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('retrieve-assets', retrieveAssets);
@@ -885,6 +890,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
+
+    // TODO:FIXME: Setup console.log trail for debugging lootdrop pop-up trigger. Will define whether i go that route or not for all component pop-ups.
 
     return (
         <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>
@@ -942,52 +949,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                         ) : ( '' ) }
                     </div>
                 ) }
-                { gameState?.showLootOne && gameState?.showLootTwo ? (
-                    <div style={{ 
-                        position: "absolute", 
-                        top: "415px", 
-                        left: "350px", 
-                        zIndex: 0,  
-                        height: "80px",
-                        width: "250px",  
-                        fontSize: "12px",
-                        borderRadius: "3px",
-                        border: "2px solid #2A0134",
-                        boxShadow: "2px 2px 2px black" 
-                    }}>
-                    <LootDrop lootDrop={gameState.lootDrop}  ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-                    <LootDrop lootDrop={gameState.lootDropTwo} ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-                    </div>
-                ) : gameState?.showLootOne ? (
-                    <div style={{ 
-                        position: "absolute", 
-                        top: "415px", 
-                        left: "350px", 
-                        zIndex: 0,  
-                        height: "80px",
-                        width: "250px",  
-                        fontSize: "12px",
-                        borderRadius: "3px",
-                        border: "2px solid #2A0134",
-                        boxShadow: "2px 2px 2px black" 
-                    }}>
-                    <LootDrop lootDrop={gameState.lootDrop}  ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-                    </div>
-                ) : gameState?.showLootTwo ? (
-                    <div style={{ 
-                        position: "absolute", 
-                        top: "415px", 
-                        left: "350px", 
-                        zIndex: 0,  
-                        height: "80px",
-                        width: "250px",  
-                        fontSize: "12px",
-                        borderRadius: "3px",
-                        border: "2px solid #2A0134",
-                        boxShadow: "2px 2px 2px black" 
-                    }}>
-                    <LootDrop lootDrop={gameState.lootDropTwo} ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-                    </div>    
+                { gameState?.showLootOne || gameState?.showLootTwo ? (
+                    <LootDropUI gameState={gameState} gameDispatch={gameDispatch} state={state} />   
                 ) : ( '' ) }
                 { gameState.showInventory ? (
                     <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />

@@ -276,9 +276,10 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'lootdropCollider') {
+                if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
                     this.interacting.push(other.gameObjectB);
-                    const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB } });
+                    console.log(other.gameObjectB, "Interacting With Loot");
+                    const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB._id, interacting: true } });
                     window.dispatchEvent(interactingLoot);
                 };
             },
@@ -288,8 +289,11 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'lootdropCollider') {
+                if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
+                    console.log(other.gameObjectB, "No Longer Interacting With Loot")
                     this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
+                    const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB._id, interacting: false } });
+                    window.dispatchEvent(interactingLoot);
                 };
             },
             context: this.scene,

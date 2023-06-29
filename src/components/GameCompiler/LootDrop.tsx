@@ -11,9 +11,10 @@ interface Props {
     ascean: any;
     itemSaved: boolean;
     gameDispatch: React.Dispatch<any>;
+    story?: boolean;
 };
 
-const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
+const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) => {
     const article = ['a','e','i','o','u'].includes(lootDrop?.name?.[0].toLowerCase()) ? "an" : "a";
     
     const saveItem = async () => {
@@ -23,6 +24,10 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
             console.log(res, 'Saved Item to Inventory!');
             gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
+            if (story) {
+                const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
+                window.dispatchEvent(storyLoot);
+            };
         } catch (err: any) {
             console.log(err.message, 'Error Saving Item to Inventory!');
         };
@@ -30,7 +35,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch }: Props) => {
 
     const lootDropPopover = (
         <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
-            <Popover.Header id="popover-header" className="" as="h2">{lootDrop?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + lootDrop.imgURL} alt={lootDrop?.name} /></span></Popover.Header>
+            <Popover.Header id="popover-header" className="" as="h2">{lootDrop?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + lootDrop?.imgURL} alt={lootDrop?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
             { lootDrop?.type && lootDrop?.grip ?
                 <>

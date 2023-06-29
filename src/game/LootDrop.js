@@ -9,11 +9,11 @@ export default class LootDrop extends Entity {
     };
 
     constructor(data) {
-        let { scene, enemy, drop } = data;
-        console.log(scene, enemy, drop, "Scene, Enemy, Drop");
-        const enemyBody = scene.enemies.find((e) => e.id === enemy);
-        console.log(enemyBody, "Enemy Body");
-        super ({ scene, x: enemyBody.position.x, y: enemyBody.position.y, texture: 'treasures', frame: 'treasure-chest', depth: 2, health: 0, name: drop.name });
+        let { scene, enemyID, drop } = data;
+        console.log(scene, enemyID, drop, "Scene, Enemy, Drop");
+        const enemy = scene.enemies.find((e) => e.enemyID === enemyID);
+        console.log(enemy.body, "Enemy Body");
+        super ({ scene, x: enemy.body.position.x, y: enemy.body.position.y, texture: 'treasures', frame: 'treasure-chest', depth: 2, health: 0, name: drop.name });
         const { Bodies } = Phaser.Physics.Matter.Matter;
         let circleCollider = Bodies.circle(this.x, this.y, 12, { isSensor: false, label: 'lootdropCollider' });
         this.setExistingBody(circleCollider);
@@ -21,14 +21,19 @@ export default class LootDrop extends Entity {
         this.setStatic(true);
         this._id = drop._id;
         this.drop = drop;
+        this.lootDropListener();
     };
 
-    inspectLootDrop = () => {
-        // this.scene.events.emit('lootdrop-inspected', this); 
-    };
+    lootDropListener = () => {
+        window.addEventListener('destroy-lootdrop', (e) => {
+            if (e.detail === this._id) {
+                this.destroyLootDrop();
+            };
+        });
+    }; 
 
     destroyLootDrop = () => {
-        // this.scene.events.emit('lootdrop-destroyed', this);
+        this.destroy();
     };
 
     get id() {

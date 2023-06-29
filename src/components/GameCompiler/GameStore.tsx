@@ -1224,15 +1224,15 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 lootDropTwo: action.payload,
             };
         case 'SET_SHOW_LOOT':   
-            if (game.lootDrop && game.lootDrop._id === action.payload._id) {
+            if (game.lootDrop && game.lootDrop._id === action.payload.loot) {
                 return {
                     ...game,
-                    showLootOne: true,
+                    showLootOne: action.payload.interacting,
                 };
             } else {
                 return {
                     ...game,
-                    showLootTwo: true,
+                    showLootTwo: action.payload.interacting,
                 };
             };
         case 'SET_MERCHANT_EQUIPMENT':
@@ -1308,11 +1308,13 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 return {
                     ...game,
                     lootDrop: null,
+                    showLootOne: false,
                 };
             } else {
                 return {
                     ...game,
                     lootDropTwo: null,
+                    showLootTwo: false,
                 };
             };
         case 'SET_GAME_SETTINGS':
