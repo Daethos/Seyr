@@ -701,6 +701,9 @@ export interface GameData {
     currentNode: DialogNode | undefined;
     renderedOptions: DialogNodeOption[];
     renderedText: string;
+
+    showLootOne: boolean;
+    showLootTwo: boolean;
 };
 
 interface Game_Action {
@@ -778,6 +781,7 @@ export const GAME_ACTIONS = {
     SET_CITY_BUTTON: 'SET_CITY_BUTTON',
     SET_LOOT_DROP: 'SET_LOOT_DROP',
     SET_LOOT_DROP_TWO: 'SET_LOOT_DROP_TWO',
+    SET_SHOW_LOOT: 'SET_SHOW_LOOT',
     SET_MERCHANT_EQUIPMENT: 'SET_MERCHANT_EQUIPMENT',
 
     SET_CITY_OPTION: 'SET_CITY_OPTION',
@@ -880,6 +884,8 @@ export const initialGameData: GameData = {
     currentNode: { id: '', text: '', options: [], npcIds: [] },
     renderedOptions: [],
     renderedText: '',
+    showLootOne: false,
+    showLootTwo: false,
 };
 
 export const GameStore = (game: GameData, action: Game_Action) => {
@@ -1216,6 +1222,18 @@ export const GameStore = (game: GameData, action: Game_Action) => {
             return {
                 ...game,
                 lootDropTwo: action.payload,
+            };
+        case 'SET_SHOW_LOOT':   
+            if (game.lootDrop && game.lootDrop._id === action.payload._id) {
+                return {
+                    ...game,
+                    showLootOne: true,
+                };
+            } else {
+                return {
+                    ...game,
+                    showLootTwo: true,
+                };
             };
         case 'SET_MERCHANT_EQUIPMENT':
             return {

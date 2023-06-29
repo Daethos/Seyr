@@ -15,6 +15,7 @@ import Play from '../Play';
 import StoryAscean from '../../components/GameCompiler/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as gameAPI from '../../utils/gameApi';
+import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
@@ -31,6 +32,7 @@ import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import screenfull from 'screenfull';
 import StoryJournal from '../../components/GameCompiler/StoryJournal';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
+import LootDrop from '../../components/GameCompiler/LootDrop';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -483,6 +485,46 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
     };
 
+    useEffect(() => {
+        if (gameState.lootRoll === false || state.player_win === false) return;
+        getOneLootDrop(state.computer.level);
+        return () => {
+            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: false });
+        };
+    }, [gameState.lootRoll, state.player_win]);
+    
+    const getOneLootDrop = async (level: number) => {
+        try {
+            let response = await eqpAPI.getLootDrop(level);
+            gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: response.data[0] });
+            let roll = Math.floor(Math.random() * 100) + 1;
+            if (roll <= 25) {
+                let second = await eqpAPI.getLootDrop(level);
+                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: second.data[0] });
+                const dispatchLoot = new CustomEvent('enemyLootDrop', { 
+                    detail: {
+                        enemyID: state.enemyID,
+                        drops: [response.data[0], second.data[0]]
+                    } 
+                });
+                window.dispatchEvent(dispatchLoot);
+            } else {
+                const dispatchLoot = new CustomEvent('enemyLootDrop', { 
+                    detail: {
+                        enemy: state.computer,
+                        drops: response.data
+                    } 
+                });
+                window.dispatchEvent(dispatchLoot);
+                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
+            };
+            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
+            // if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);
+        } catch (err: any) {
+            console.log(err.message, 'Error Getting Loot Drop');
+        };
+    };
+
     async function soundEffects(effects: CombatData) {
         try {
             if (effects.realized_player_damage > 0) {
@@ -569,6 +611,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             console.log(response, "Player Win Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
             setTimeout(() => {
                 dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
@@ -819,7 +862,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
     const updateStamina = async (e: { detail: number }) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
     const updateStalwart = async (e: { detail: number }) => dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
-    
+    const interactingLoot = async (e: { detail: any }) => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e.detail });
+
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('fetch-enemy', fetchEnemy);
@@ -829,6 +873,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('request-combat-data', sendCombatData);
     usePhaserEvent('request-game-data', sendGameData);
     usePhaserEvent('dialog-box', createDialog);
+    usePhaserEvent('interacting-loot', interactingLoot);
     usePhaserEvent('keydown', toggleCombatHud);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
@@ -897,6 +942,53 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                         ) : ( '' ) }
                     </div>
                 ) }
+                { gameState?.showLootOne && gameState?.showLootTwo ? (
+                    <div style={{ 
+                        position: "absolute", 
+                        top: "415px", 
+                        left: "350px", 
+                        zIndex: 0,  
+                        height: "80px",
+                        width: "250px",  
+                        fontSize: "12px",
+                        borderRadius: "3px",
+                        border: "2px solid #2A0134",
+                        boxShadow: "2px 2px 2px black" 
+                    }}>
+                    <LootDrop lootDrop={gameState.lootDrop}  ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
+                    <LootDrop lootDrop={gameState.lootDropTwo} ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
+                    </div>
+                ) : gameState?.showLootOne ? (
+                    <div style={{ 
+                        position: "absolute", 
+                        top: "415px", 
+                        left: "350px", 
+                        zIndex: 0,  
+                        height: "80px",
+                        width: "250px",  
+                        fontSize: "12px",
+                        borderRadius: "3px",
+                        border: "2px solid #2A0134",
+                        boxShadow: "2px 2px 2px black" 
+                    }}>
+                    <LootDrop lootDrop={gameState.lootDrop}  ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
+                    </div>
+                ) : gameState?.showLootTwo ? (
+                    <div style={{ 
+                        position: "absolute", 
+                        top: "415px", 
+                        left: "350px", 
+                        zIndex: 0,  
+                        height: "80px",
+                        width: "250px",  
+                        fontSize: "12px",
+                        borderRadius: "3px",
+                        border: "2px solid #2A0134",
+                        boxShadow: "2px 2px 2px black" 
+                    }}>
+                    <LootDrop lootDrop={gameState.lootDropTwo} ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
+                    </div>    
+                ) : ( '' ) }
                 { gameState.showInventory ? (
                     <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
                 ) : ( '' ) }

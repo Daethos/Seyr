@@ -128,7 +128,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
                     </>        
                 )}
                 <p>Effect(s): <br />
-                { specials.includes(effect.prayer) ? (
+                { specials.includes(effect.prayer) && story ? (
                     <>
                     {specialDescription[effect.prayer as keyof typeof specialDescription]} <br />
                     </>
@@ -149,7 +149,7 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
                     {effect?.effect?.damage ? <>Damage (per Round): {Math.round(effect?.effect?.damage * 0.33)} <br /> </> : ''}
 
                 </p>
-                { !player && ascean.capable.enemyConsume && !state.enemyPrayerConsumed ? <><Button variant='' style={{ color: 'purple' }} onClick={() => consumeEnemyPrayer(effect.name, effect.prayer)}>Consume</Button></> : '' }
+                {/* { !player && ascean?.capable.enemyConsume && !state.enemyPrayerConsumed ? <><Button variant='' style={{ color: 'purple' }} onClick={() => consumeEnemyPrayer(effect.name, effect.prayer)}>Consume</Button></> : '' } */}
             </Popover.Body>
         </Popover>
     );

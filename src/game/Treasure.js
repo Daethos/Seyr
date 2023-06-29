@@ -11,7 +11,7 @@ export default class Treasure extends Entity {
 
     constructor(data) {
         let { scene, treasure } = data;
-        let depth = treasure?.properties?.find((p) => p?.name === 'depth')?.value;
+        let depth = treasure?.properties?.find((p) => p?.name === 'depth')?.value || 2;
         super ({ scene, x: treasure.x, y: treasure.y, texture: 'treasures', frame: 'treasure-chest', depth, health: 0, name: 'treasure' }); // removed drops
 
         // let yOrigin = treasure?.properties?.find((p) => p?.name === 'yOrigin')?.value;

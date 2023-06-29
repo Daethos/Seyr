@@ -131,7 +131,7 @@ export default class Player extends Entity {
 
         this.setScale(0.8);   
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
+        let playerCollider = Bodies.rectangle(this.x, this.y + 10, 20, 36, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
         let playerSensor = Bodies.circle(this.x, this.y, 36, { isSensor: true, label: 'playerSensor' }); // Y + 2 For Platformer
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
@@ -159,7 +159,7 @@ export default class Player extends Entity {
         this.setFixedRotation();   
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
-        this.checkTreasureCollision(playerSensor);
+        this.checkLootdropCollision(playerSensor);
     };
 
     highlightTarget(sprite) {
@@ -272,12 +272,14 @@ export default class Player extends Entity {
 
     };
 
-    checkTreasureCollision(playerSensor) {
+    checkLootdropCollision(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'treasureCollider') {
+                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'lootdropCollider') {
                     this.interacting.push(other.gameObjectB);
+                    const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB } });
+                    window.dispatchEvent(interactingLoot);
                 };
             },
             context: this.scene,
@@ -286,7 +288,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'treasureCollider') {
+                if (other.gameObjectB && other.gameObjectB.name === 'treasure' && other.bodyB.label === 'lootdropCollider') {
                     this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
                 };
             },

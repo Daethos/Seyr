@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import EasyStar from 'easystarjs';
 import Player from './Player';
 import Enemy from './Enemy';
 import Treasure from './Treasure';
@@ -6,6 +7,7 @@ import NewText from './NewText.js'
 import stick from './images/stick.png';
 import base from './images/base.png';
 import ParticleManager from './ParticleManager';
+import LootDrop from './LootDrop';
 
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -42,6 +44,7 @@ export default class Play extends Phaser.Scene {
         this.minimap = null;
         this.combatTime = 0;
         this.combatTimer = null;
+        this.lootDrops = [];
     }; 
     
     create() { 
@@ -71,31 +74,26 @@ export default class Play extends Phaser.Scene {
         const layer3 = map.createLayer('Tile Layer 3 - Plants', decorations, 0, 0);
         const layer4 = map.createLayer('Tile Layer 4 - Primes', decorations, 0, 0);
         const layer5 = map.createLayer('Tile Layer 5 - Snags', decorations, 0, 0);
-
-        const collisionLayers = [];
-
+ 
         layer0.setCollisionByProperty({ collides: true });
         layer1.setCollisionByProperty({ collides: true });
         layerC.setCollisionByProperty({ collides: true });
         // layer2.setCollisionByProperty({ collides: true });
         // layer3.setCollisionByProperty({ collides: true });
         // layer4.setCollisionByProperty({ collides: true });
-        // layer5.setCollisionByProperty({ collides: true }); 
-        
-        collisionLayers.push(layer0);
-        collisionLayers.push(layer1);
-        collisionLayers.push(layerC);
-
+        // layer5.setCollisionByProperty({ collides: true });  
         this.matter.world.convertTilemapLayer(layer0);
         this.matter.world.convertTilemapLayer(layer1);
         this.matter.world.convertTilemapLayer(layerC);
         // this.matter.world.convertTilemapLayer(layer2);
         // this.matter.world.convertTilemapLayer(layer3);
         // this.matter.world.convertTilemapLayer(layer4);
-        // this.matter.world.convertTilemapLayer(layer5);
-        this.navMesh = this.navMeshPlugin.buildMeshFromTilemap("mesh", this.map, collisionLayers);
+        // this.matter.world.convertTilemapLayer(layer5); 
+        const objectLayer = map.getObjectLayer('navmesh');
+        const navMesh = this.navMeshPlugin.buildMeshFromTiled("navmesh", objectLayer, 32);
+        this.navMesh = navMesh;
         const debugGraphics = this.add.graphics().setAlpha(0.75);
-        this.navMesh.enableDebug(debugGraphics);
+        this.navMesh.enableDebug(debugGraphics); 
         this.matter.world.createDebugGraphic(); 
 
         this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
@@ -192,6 +190,18 @@ export default class Play extends Phaser.Scene {
         this.createWelcome(); 
         this.createStateListener(); 
         this.staminaListener();
+        this.enemyLootDropListener();
+    };
+
+    enemyLootDropListener = () => {
+        // this.events.on('enemyLootDrop', (data) => {
+        //     console.log(data, "Data From Loot Drops");
+        //     data.drops.forEach(drop => this.lootDrops.push(new LootDrop(this, data.enemy, drop)));
+        // });
+        window.addEventListener('enemyLootDrop', (e) => {
+            console.log(e.detail, "e From Loot Drops");
+            e.detail.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemy:e.detail.enemy, drop: drop })));
+        });
     };
 
     startJoystick(pointer) {
@@ -422,6 +432,7 @@ export default class Play extends Phaser.Scene {
         this.player.update(); 
         this.enemy.update();
         this.enemies.forEach((enemy) => enemy.update());
+        // this.lootDrops.forEach((lootDrop) => lootDrop.update());
         // if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };
     pause() {
@@ -432,3 +443,7 @@ export default class Play extends Phaser.Scene {
     };
  
 };
+
+export const worldToTile = (tile) => Math.floor(tile / 32);
+export const tileToWorld = (tile) => tile * 32 + 16;
+export const alignToGrid = (tile) => tileToWorld(worldToTile(tile));

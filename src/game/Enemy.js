@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Entity, { screenShake, pauseGame } from "./Entity"; 
+import { worldToTile, tileToWorld } from "./Play";
 import StateMachine, { States } from "./StateMachine";
 import HealthBar from "./HealthBar";
 import ScrollingCombatText from "./ScrollingCombatText";
@@ -141,7 +142,16 @@ export default class Enemy extends Entity {
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let enemyCollider = Bodies.rectangle(this.x, this.y + 10, 24, 40, { isSensor: false, label: 'enemyCollider' });
+        const colliderWidth = 20; // Original width of the collider
+        const colliderHeight = 36; // Original height of the collider
+        const paddingWidth = 10; // Padding to be added to the width
+        const paddingHeight = 10; // Padding to be added to the height
+
+        // Calculate the new width and height with padding
+        const paddedWidth = colliderWidth + 2 * paddingWidth;
+        const paddedHeight = colliderHeight + 2 * paddingHeight;
+        let enemyCollider = Bodies.rectangle(this.x, this.y + 10, colliderWidth, colliderHeight, { isSensor: false, label: 'enemyCollider' });
+        enemyCollider.boundsPadding = { x: paddedWidth, y: paddedHeight };
         let enemySensor = Bodies.circle(this.x, this.y + 2, 48, { isSensor: true, label: 'enemySensor' });
         const compoundBody = Body.create({
             parts: [enemyCollider, enemySensor],
@@ -381,7 +391,7 @@ export default class Enemy extends Entity {
     onChaseEnter = () => {
         this.anims.play('player_running', true);
         this.chaseTimer = this.scene.time.addEvent({
-            delay: 250,
+            delay: 500,
             callback: () => {
                 this.scene.navMesh.debugDrawClear();
                 this.path = this.scene.navMesh.findPath(this.position, this.attacking.position);
@@ -410,7 +420,7 @@ export default class Enemy extends Entity {
             },
             callbackScope: this,
             loop: true
-        });
+        }); 
     }; 
     onChaseUpdate = (dt) => {
         const rangeMultiplier = this.isRanged ? 1.75 : 1;
@@ -555,7 +565,7 @@ export default class Enemy extends Entity {
         };
         this.scene.combatEngaged(false);
         this.leashTimer = this.scene.time.addEvent({
-            delay: 250,
+            delay: 500,
             callback: () => {
                 let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
                 this.scene.navMesh.debugDrawClear();
@@ -585,11 +595,9 @@ export default class Enemy extends Entity {
             },
             callbackScope: this,
             loop: true
-        });
+        }); 
     };
     onLeashUpdate = (dt) => {
-        this.scene.navMesh.debugDrawClear();
-        
         let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
         let direction = originPoint.subtract(this.position);
         
@@ -611,6 +619,7 @@ export default class Enemy extends Entity {
         this.setVelocity(0, 0);
         this.leashTimer.destroy();
         this.leashTimer = null;
+        this.scene.navMesh.debugDrawClear(); 
     };
 
     onStunEnter = () => {
