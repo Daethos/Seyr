@@ -129,8 +129,8 @@ export interface Equipment {
     kyosir: number;
     influences: [string] | null;
     imgURL: string;
-    _id: string;
-}
+    _id: string; 
+};
 
 const nonNamedEnemy = [
     'Achreon Druid', "Ahn'are Apostle", "Anashtre", 
@@ -673,7 +673,7 @@ export interface GameData {
 
     lootDrop: Equipment;
     lootDropTwo: Equipment;
-    merchantEquipment: Equipment;
+    merchantEquipment: any[];
 
     cityOption: string;
     currentIntent: string;
@@ -860,7 +860,7 @@ export const initialGameData: GameData = {
     cityButton: false,
     lootDrop: [] as unknown as Equipment,
     lootDropTwo: [] as unknown as Equipment,
-    merchantEquipment: [] as unknown as Equipment,
+    merchantEquipment: [],
     cityOption: 'Innkeep',
     currentIntent: 'challenge',
     currentQuest: '',

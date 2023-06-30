@@ -29,7 +29,6 @@ export default class Enemy extends Entity {
         scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
         scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
-
     };
 
     constructor(data) {
@@ -737,7 +736,7 @@ export default class Enemy extends Entity {
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {
             this.setFlipX(this.velocity.x < 0);
         };
-        if (this.scene.state.computer_weapons[0] && this.currentWeaponSprite !== this.weaponSprite(this.scene.state.computer_weapons[0]) && this.ascean._id === this.scene.state.computer._id) {
+        if (this.scene.state.computer_weapons[0] && this.currentWeaponSprite !== this.weaponSprite(this.scene.state.computer_weapons[0]) && this.enemyID === this.scene.state.enemyID) {
             this.currentWeaponSprite = this.weaponSprite(this.scene.state.computer_weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
         }; 

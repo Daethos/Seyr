@@ -110,6 +110,8 @@ export interface CombatData {
     isStalwart: boolean; // +10% Defense, -5% Movement
     enemyID: string;
     combatTimer: number;
+
+    npcType: string;
 };
 
 interface Action {
@@ -133,6 +135,7 @@ export const ACTIONS = {
     RESET_DUEL: 'RESET_DUEL',
     SET_NEW_COMPUTER: 'SET_NEW_COMPUTER',
     SET_PHASER_COMPUTER_ENEMY: 'SET_PHASER_COMPUTER_ENEMY',
+    SET_PHASER_COMPUTER_NPC: 'SET_PHASER_COMPUTER_NPC',
     SET_ACTION_STATUS: 'SET_ACTION_STATUS',
     SET_COMBAT_ACTION: 'SET_COMBAT_ACTION',
     SET_COMBAT_COUNTER: 'SET_COMBAT_COUNTER',
@@ -272,6 +275,7 @@ export const initialCombatData: CombatData = {
     isStalwart: false,
     enemyID: '',
     combatTimer: 0,
+    npcType: '',
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {
@@ -446,6 +450,25 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_win: false,
                 enemyID: action.payload.enemyID,
                 // combatRound: 1,
+            };
+        case 'SET_PHASER_COMPUTER_NPC':
+            return {
+                ...state,
+                computer: action.payload.enemy.ascean,
+                computer_health: action.payload.enemy.attributes.healthTotal,
+                current_computer_health: action.payload.health,
+                new_computer_health: action.payload.health,
+                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
+                computer_weapon_one: action.payload.enemy.combat_weapon_one,
+                computer_weapon_two: action.payload.enemy.combat_weapon_two,
+                computer_weapon_three: action.payload.enemy.combat_weapon_three,
+                computer_defense: action.payload.enemy.defense,
+                computer_attributes: action.payload.enemy.attributes,
+                player_win: false,
+                computer_win: false,
+                enemyID: action.payload.enemyID,
+                npcType: action.payload.npcType,
             };
         case 'SET_NEW_COMPUTER_GUEST':
             return {

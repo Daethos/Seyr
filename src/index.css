@@ -38,7 +38,7 @@ html, body {
   color: #fdf6d8;
   box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.55), 3px 3px 6px 0 rgba(0, 0, 0, 0.55);
   font-weight: 900;
-  z-index: 1000;
+  z-index: 10000;
 }
 #ascean-home-pic {
   display: block;

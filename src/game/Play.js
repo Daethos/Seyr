@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import EasyStar from 'easystarjs';
 import Player from './Player';
 import Enemy from './Enemy';
+import NPC from './NPC';
 import Treasure from './Treasure';
 import NewText from './NewText.js'
 import stick from './images/stick.png';
@@ -102,7 +103,7 @@ export default class Play extends Phaser.Scene {
         
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
         
-        this.enemy = new Enemy({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+        this.enemy = new NPC({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
 
         // this.map.getObjectLayer('Enemies').objects.forEach(enemy => console.log(enemy, "Enemy"));
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
@@ -247,9 +248,20 @@ export default class Play extends Phaser.Scene {
         this.focus = data;
     };
 
+    setupNPC = async (data) => {
+        const setup = new CustomEvent('setup-npc', { detail: data });
+        window.dispatchEvent(setup);
+        this.focus = data;
+    };
+
     combatEngaged = async (engagement) => {
         const combatEngaged = new CustomEvent('combat-engaged', { detail: engagement });
         window.dispatchEvent(combatEngaged);
+    };
+
+    showDialog = async (dialog) => {
+        const show = new CustomEvent('show-dialog', { detail: dialog });
+        window.dispatchEvent(show);
     };
 
     stalwart = async (update) => {

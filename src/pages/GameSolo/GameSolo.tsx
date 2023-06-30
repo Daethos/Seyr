@@ -1868,7 +1868,7 @@ const GameSolo = ({ user }: GameProps) => {
                     playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
                 />
                 </>
-            : '' }
+            : ( '' ) }
             <GameConditions 
                 setEmergencyText={setEmergencyText} dispatch={dispatch} state={state} soundEffects={soundEffects} vibrationTime={gameState.vibrationTime}
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} handlePlayerWin={handlePlayerWin} handleComputerWin={handleComputerWin} gameState={gameState}
@@ -1879,7 +1879,7 @@ const GameSolo = ({ user }: GameProps) => {
             />
             { asceanState.ascean.experience >= asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
-            : '' }
+            : ( '' ) }
             <GameAscean state={state} dispatch={dispatch} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
             { state.combatEngaged ? 
                 <>
@@ -1903,19 +1903,19 @@ const GameSolo = ({ user }: GameProps) => {
                     <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                     { gameState.player.journal.entries.length > 0 ?
                         <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
-                    : '' }
+                    : ( '' )}
                     { gameState.showDialog && gameState.opponent ?    
                         <DialogBox 
                             npc={gameState?.opponent?.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
                             playerWin={state.player_win} computerWin={state.computer_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
-                            winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo} mapState={mapState} mapDispatch={mapDispatch}
-                            resetAscean={resetAscean} getOpponent={getOpponent} lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
+                            winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo}
+                            lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
                             gameDispatch={gameDispatch} gameState={gameState}
                         />
-                    : '' }
+                    : ( '' )}
                     { gameState.showInventory ?
                         <InventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} mapState={mapState}  />
-                    : ""}
+                    : ( '' )}
                     { gameState.opponent && mapState?.currentTile?.content !== 'city' ?
                         <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
                     : 
@@ -1931,10 +1931,10 @@ const GameSolo = ({ user }: GameProps) => {
                             inventory={gameState.player.inventory} getOpponent={getOpponent} resetAscean={resetAscean} deleteEquipment={deleteEquipment}
                             cityOption={gameState.cityOption} clearOpponent={clearOpponent} gameDispatch={gameDispatch} gameState={gameState}
                         />
-                    : '' }
+                    : ( '' ) }
                     { gameState.cityButton || mapState?.currentTile?.content === 'city' ?
                         <Button variant='' className='city-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_CITY, payload: !gameState.showCity })}>City</Button>
-                    : '' }
+                    : ( '' ) }
                 </>
             }
             <GameplayDeity 
@@ -1948,7 +1948,7 @@ const GameSolo = ({ user }: GameProps) => {
             <GameplayUnderlay 
                 ascean={gameState.player} enemy={gameState.opponent} mapState={mapState} mapDispatch={mapDispatch} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} loadingUnderlay={gameState.loadingUnderlay}    
             />
-            { tutorialContent ? tutorialContent : '' }
+            { tutorialContent ? tutorialContent : ( '' ) }
             <GameplayEventModal 
                 ascean={gameState.player} show={gameState.gameplayModal} gameplayEvent={gameState.gameplayEvent} deleteEquipment={deleteEquipment} gameDispatch={gameDispatch}
                 lootDrop={gameState.lootDrop} lootDropTwo={gameState.lootDropTwo} itemSaved={gameState.itemSaved} mapDispatch={mapDispatch} mapState={mapState}

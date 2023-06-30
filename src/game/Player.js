@@ -160,6 +160,7 @@ export default class Player extends Entity {
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
         this.checkLootdropCollision(playerSensor);
+        this.checkNpcCollision(playerSensor);
     };
 
     highlightTarget(sprite) {
@@ -294,6 +295,37 @@ export default class Player extends Entity {
                     this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
                     const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB._id, interacting: false } });
                     window.dispatchEvent(interactingLoot);
+                };
+            },
+            context: this.scene,
+        });
+    };
+
+    checkNpcCollision = (playerSensor) => {
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [playerSensor],
+            callback: (other) => {
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider') {
+                    // this.interacting.push(other.gameObjectB);
+                    // const interactingNpc = new CustomEvent('interacting-npc', { detail: { npc: other.gameObjectB._id, interacting: true } });
+                    // window.dispatchEvent(interactingNpc);
+                    const isNewNpc = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
+                    if (isNewNpc && !isNewNpc.isDead) this.touching.push(other.gameObjectB);
+                    this.currentTarget = other.gameObjectB;
+                    if (this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
+                };
+            },
+            context: this.scene,
+        }); 
+
+        this.scene.matterCollision.addOnCollideEnd({
+            objectA: [playerSensor],
+            callback: (other) => {
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider') {
+                    // this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
+                    // const interactingNpc = new CustomEvent('interacting-npc', { detail: { npc: other.gameObjectB._id, interacting: false } });
+                    // window.dispatchEvent(interactingNpc);
+                    this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
                 };
             },
             context: this.scene,
@@ -595,7 +627,11 @@ export default class Player extends Entity {
             const newTarget = this.touching[this.targetIndex];
             if (!newTarget) return;
             this.targetIndex = this.targetIndex + 1 === this.touching.length ? 0 : this.targetIndex + 1;
-            this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health }); 
+            if (newTarget.npcType) {
+                this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
+            } else {
+                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health }); 
+            };
             this.currentTarget = newTarget;
             this.highlightTarget(newTarget);
         };

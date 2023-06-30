@@ -21,7 +21,7 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
             <div key={i}>
             <Button variant='' className='dialog-buttons' onClick={() => setIntent(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
             </div>
-        )
+        );
     });
     return <>{buttons}</>;
 };
@@ -41,7 +41,7 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
         console.log(o, 'Options in ProvincialWhispersButtons');
         return (
             <Button variant='' className='dialog-buttons' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
-        )
+        );
     });
     return <>{buttons}</>;
 };
@@ -51,10 +51,8 @@ interface Props {
     enemy: any;
     npc: any;
     dialog: [];
-    getOpponent: () => Promise<void>;
     playerWin: boolean;
     computerWin: boolean;
-    resetAscean: () => Promise<void>;
     winStreak: number;
     loseStreak: number;
     highScore: number;
@@ -65,8 +63,6 @@ interface Props {
     state: any;
     deleteEquipment: (eqp: any) => Promise<void>;
     merchantEquipment: any;
-    mapState: any;
-    mapDispatch: any;
     currentIntent: any;
     clearOpponent: (data: CombatData) => Promise<void>;
     gameDispatch: React.Dispatch<any>;
@@ -85,7 +81,7 @@ interface Region {
 };
 
 
-const DialogBox = ({ state, dispatch, gameState, gameDispatch, mapState, mapDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, getOpponent, playerWin, computerWin, resetAscean, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
+const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, currentIntent, ascean, enemy, npc, dialog, merchantEquipment, deleteEquipment, playerWin, computerWin, winStreak, loseStreak, highScore, lootDrop, lootDropTwo, itemSaved }: Props) => {
     const location = useLocation();
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<any | null>(null);

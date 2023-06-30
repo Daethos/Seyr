@@ -20,20 +20,22 @@ import userService from "../../utils/userService";
 import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
 import PhaserInventoryBag from '../PhaserInventoryBag';
-import { GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, NPC } from '../../components/GameCompiler/GameStore';
 import PhaserSettings from '../PhaserSettings';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import useGameSounds from '../../components/GameCompiler/Sounds';
-import StoryActions from '../StoryActions';
+import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../CombatMouseSettings';
 import CombatUI from '../CombatUI';
 import EnemyUI from '../EnemyUI';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import screenfull from 'screenfull';
 import StoryJournal from '../../components/GameCompiler/StoryJournal';
-import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
-import LootDrop from '../../components/GameCompiler/LootDrop';
+import { StatusEffect } from '../../components/GameCompiler/StatusEffects'; 
 import { LootDropUI } from '../LootDropUI';
+import { Merchant } from '../../components/GameCompiler/NPCs';
+import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/Dialog';
+import { StoryDialog } from '../StoryDialog';
+import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -68,6 +70,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [fullScreen, setFullScreen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [combatHud, setCombatHud] = useState<boolean>(false);
+    const [dialogTag, setDialogTag] = useState<boolean>(false);
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
@@ -337,9 +340,69 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     const setupEnemy = async (e: { detail: any; }) => {
         console.log(e.detail, "This is the setup enemy function")
+        await getOpponentDialog(e.detail.enemy.name);
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
         setAsceanState({ ...asceanState, 'opponent': e.detail.game.level });
         dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id } }); 
+    };
+
+    const setupNpc = async (e: { detail: any; }) => {
+        // await getNPCDialog(e.detail.type);
+        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
+        const dialog = getNodesForNPC(npcIds[e.detail.type]);
+        console.log(dialog, "Dialog for NPC: ", e.detail.type);
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_NPC, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id, npcType: e.detail.type } }); 
+        gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: dialog });
+    };
+
+    const getOpponentDialog = async (enemy: string) => {
+        try {
+            const response = getNpcDialog(enemy);
+            if (!response) return;
+            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+        };
+    };
+
+    const getNPCDialog = async (enemy: string) => {
+        try {
+            const response = getMerchantDialog(enemy);
+            if (!response) return;
+            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
+        } catch (err: any) {
+            console.log(err.message, '<- Error in Getting an Ascean to Edit')
+        };
+    };
+
+    const fetchNpc = async (e: any) => { 
+        try {
+            const CITY_OPTIONS = {
+                'Merchant-Alchemy': 'Alchemist',
+                'Merchant-Armor': 'Armorer',
+                'Merchant-Smith': 'Blacksmith',
+                'Merchant-Jewelry': 'Jeweler',
+                'Merchant-General': 'General Merchant',
+                'Merchant-Tailor': 'Tailor',
+                'Merchant-Mystic': 'Senarian',
+                'Merchant-Weapon': 'Sevasi',
+            };
+            const getNPC = async () => {
+                let npc: NPC = Object.assign({}, Merchant);
+                npc.name = 'Traveling ' + CITY_OPTIONS[e.detail.npcType as keyof typeof CITY_OPTIONS];
+                const response = await asceanAPI.getAnimalStats(npc);
+                return {
+                    game: npc,
+                    combat: response.data.data,
+                    enemyID: e.detail.enemyID
+                };
+            };
+            const npc = await getNPC();
+            const npcData = new CustomEvent('npc-fetched', { detail: npc });
+            window.dispatchEvent(npcData);
+        } catch (err: any) {
+            console.log("Error Getting an NPC");
+        };
     };
 
     const createDialog = async (e: any) => { };
@@ -375,6 +438,26 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         };
     }, [asceanState, gameState.saveExp]);
+
+    const clearOpponent = async (data: CombatData) => {
+        try {
+            if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
+                gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
+            }, 500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Clearing Duel');
+        };
+    };
+
+    const deleteEquipment = async (eqp: any) => {
+        try {
+            await eqpAPI.deleteEquipment(eqp);
+        } catch (err) {
+            console.log(err, 'Error!')
+        };
+    };
 
     const getAsceanAndInventory = async () => {
         try {
@@ -794,11 +877,12 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
         e.preventDefault();
-        if (e.key === 'v' || e.key === 'V') setCombatHud((prev: boolean) => !prev);
+        if (e.key === 'v' || e.key === 'V') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog });
         if (e.key === 'c' || e.key === 'C') setShowPlayer((prev: boolean) => !prev);
         if (e.key === 'x' || e.key === 'X') handleInventoryMiddleware();
         if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
+    // <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
 
     const toggleFullscreen = () => screenfull.toggle();
 
@@ -863,21 +947,21 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
     const updateStamina = async (e: { detail: number }) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
     const updateStalwart = async (e: { detail: number }) => dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
-    const interactingLoot = async (e: { detail: any }) =>
-        {
-            console.log(e.detail, "Interacing With Loot")
-            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e.detail });
-        }
+    const interactingLoot = async (e: { detail: any }) => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e.detail }); 
+    const showDialog = async (e: { detail: any; }) => setDialogTag(e.detail);
 
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('fetch-enemy', fetchEnemy);
+    usePhaserEvent('fetch-npc', fetchNpc);
     usePhaserEvent('setup-enemy', setupEnemy);
+    usePhaserEvent('setup-npc', setupNpc);
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
     usePhaserEvent('request-game-data', sendGameData);
     usePhaserEvent('dialog-box', createDialog);
+    usePhaserEvent('show-dialog', showDialog);
     usePhaserEvent('interacting-loot', interactingLoot);
     usePhaserEvent('keydown', toggleCombatHud);
     usePhaserEvent('launch-game', launchGame);
@@ -895,35 +979,21 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
 
     return (
         <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>
-            <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
-                <Modal.Body>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => toggleFullscreen()}>
-                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>{ fullScreen ? 'Exit' : 'Enter' } Full Screen</h3>
-                </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={toggleMute}>
-                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>{ muteState ? 'Unmute' : 'Mute' } Game</h3>
-                </Button>
-                <Button variant='outline' style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }} className='ascean-ui' onClick={() => togglePause()}>
-                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>{ pauseState ? 'Resume' : 'Pause' } Game</h3>
-                </Button>
-                </Modal.Body>
-            </Modal>
-            <Modal show={worldModalShow} onHide={() => setWorldModalShow(false)} centered>
-                <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Latency: {' '}</h3>
-                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Friends: {' '}</h3>
-                    <h3 style={{ fontSize: '13px', textAlign: 'center', color: '' }} className=''>Players: {' '}</h3>
-                </Modal.Body>
-            </Modal>
             { currentGame ? ( <>
                 <div id='ui-hud'>
                     <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                        <h3 style={{ fontSize: '12px', textAlign: 'center' }} className=''>{state.player.name}</h3>
+                        <h3 style={{ fontSize: '12px', textAlign: 'center' }}>{state.player.name}</h3>
                     </Button>
                     { gameState.player.journal.entries.length > 0 ?
                         <StoryJournal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} ascean={gameState.player} />
                     : '' }
                     <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
+                    { dialogTag ? (
+                    // <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
+                    <Button variant='' className='ascean-ui' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>
+                        <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
+                    </Button>
+                    ) : ( '' ) }
                 </div>
                 <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
@@ -949,6 +1019,10 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                         ) : ( '' ) }
                     </div>
                 ) }
+
+                { gameState.showDialog && gameState.opponent && dialogTag ?    
+                    <StoryDialog state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} deleteEquipment={deleteEquipment} />
+                : ( '' )}
                 { gameState?.showLootOne || gameState?.showLootTwo ? (
                     <LootDropUI gameState={gameState} gameDispatch={gameDispatch} state={state} />   
                 ) : ( '' ) }
