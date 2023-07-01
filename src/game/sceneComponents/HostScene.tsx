@@ -74,6 +74,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
+    const [asceanViews, setAsceanViews] = useState<string>('Inventory'); // 'Journal', 'Settings'
 
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
@@ -879,7 +880,18 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         e.preventDefault();
         if (e.key === 'v' || e.key === 'V') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog });
         if (e.key === 'c' || e.key === 'C') setShowPlayer((prev: boolean) => !prev);
-        if (e.key === 'x' || e.key === 'X') handleInventoryMiddleware();
+        if (e.key === 'x' || e.key === 'X') {
+            setAsceanViews((prev: string) => {
+                switch (prev) {
+                    case 'Character':
+                        return 'Inventory';
+                    case 'Inventory':
+                        return 'Character';
+                    default:
+                        return 'Character';
+                };
+            });
+        };
         if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
     // <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
@@ -975,8 +987,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     usePhaserEvent('update-state-consume', updateStateConsume);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
 
-    // TODO:FIXME: Setup console.log trail for debugging lootdrop pop-up trigger. Will define whether i go that route or not for all component pop-ups.
-
     return (
         <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>
             { currentGame ? ( <>
@@ -997,7 +1007,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 </div>
                 <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
-                    <StoryAscean ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                    <StoryAscean asceanViews={asceanViews} gameState={gameState} gameDispatch={gameDispatch} ascean={state.player} damaged={state.playerDamaged} state={state} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI state={state} dispatch={dispatch} handleCallback={handleEffectTick} gameState={gameState} gameDispatch={gameDispatch} staminaPercentage={staminaPercentage} setStaminaPercentage={setStaminaPercentage} pauseState={pauseState} />
@@ -1026,9 +1036,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 { gameState?.showLootOne || gameState?.showLootTwo ? (
                     <LootDropUI gameState={gameState} gameDispatch={gameDispatch} state={state} />   
                 ) : ( '' ) }
-                { gameState.showInventory ? (
+                {/* { gameState.showInventory ? (
                     <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
-                ) : ( '' ) }
+                ) : ( '' ) } */}
             </> ) : ( '' ) }
             <div id='story-game' style={{ textAlign: 'center' }} ref={gameRef}></div>
         </div>

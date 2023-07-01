@@ -615,7 +615,7 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const speed = 1.75;
+        const speed = 1.5;
         let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\

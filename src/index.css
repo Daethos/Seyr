@@ -541,8 +541,8 @@ html, body {
 }
 .story-block {
   position: absolute;
-  margin-top: 33%;
-  margin-left: -12%;
+  margin-top: 17.5%;
+  margin-left: -8%;
   height: 35%;
   left: 0%;
 }
@@ -559,43 +559,37 @@ html, body {
   pointer-events: visible;
 }
 .story-ascean {
-  background-color: rgba(0, 0, 0, 1);
-  border: 3px solid purple;
-  box-shadow: 2px 2px 2px black;
-  border-radius: 6px;
+  /* background-color: rgba(0, 0, 0, 1); */
+  /* border: 3px solid purple; */
+  /* box-shadow: 2px 2px 2px black; */
+  /* border-radius: 6px; */
   width: 50%;
-  height: 135%;
+  /* height: 135%; */
   margin-left: 25%;
 } 
 .story-inventory-bag {
   position: absolute;
   display: grid;
-  grid-template-columns: repeat(6, 16%);
-  grid-template-rows: repeat(12, 35%);
+  grid-template-columns: repeat(4, 25%);
+  grid-template-rows: repeat(10, 15%);
   justify-content: space-evenly;
-  padding: 1%;
   z-index: 99;
-  color: #fdf6d8;
-  background-color: black;
-  border: 3px solid purple;
-  box-shadow: 2px 2px 2px black;
-  width: 65%;
-  height: 47.25%;
-  overflow-y: scroll;
-  border-radius: 6px;
-  margin-left: 32.5%;
-  margin-top: 33%;
+  color: #fdf6d8; 
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll; 
   scrollbar-width: none;
+  left: -2.5%;
 } 
 .story-inventory-bag-settings { width: 100%; } 
 .story-inventory {
   display: inline-block;
-  width: 64px;
-  height: 64px;
-  background-color: black;
+  width: 48px;
+  height: 48px;
+  background: transparent;
   color: #fdf6d8;
   font-weight: 600;
-  padding: 2.5%;
+  /* padding: 2.5%; */
 }; 
 
 
