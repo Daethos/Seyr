@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import * as eqpAPI from '../../utils/equipmentApi';
 import Overlay from 'react-bootstrap/Overlay';
 import Table from 'react-bootstrap/Table';
-import { GAME_ACTIONS, GameData, checkPlayerTrait } from './GameStore';
+import { Equipment, GAME_ACTIONS, GameData, checkPlayerTrait } from './GameStore';
 import { useLocation } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd'
 import equipSlot from '../../game/images/equip_slot.png';
@@ -45,6 +45,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
     const [deskTop, setDeskTop] = useState<boolean>(false);
     const targetRef = useRef(null);
     const location = useLocation();
+    const [weaponCompared, setWeaponCompared] = useState<any>(null);
+    const [ringCompared, setRingCompared] = useState<any>(null)
     
     const [editState, setEditState] = useState({
         weapon_one: ascean.weapon_one,
@@ -153,6 +155,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 setInventoryType('weapon_one');
                 setInventoryTypeTwo('weapon_two');
                 setInventoryTypeThree('weapon_three');
+                setWeaponCompared('weapon_one');
             };
             if (inventory?.name.includes('Hood') || inventory?.name.includes('Helm') || inventory?.name.includes('Mask')) {
                 type = 'helmet';
@@ -175,6 +178,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 setInventoryRingType('ring_two');
                 type = 'ring_one';
                 ringType = 'ring_two';
+                setRingCompared('ring_one');
             };
             if (inventory?.name.includes('Trinket')) {
                 setInventoryType('trinket');
@@ -470,9 +474,9 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         transform: 'scale(0.75)',
     };
 
-    function getBackgroundStyle() {
+    const getBackgroundStyle = () => {
         if (highlighted && highlighted?.item && highlighted?.item._id === inventory?._id) {
-            return 'red';
+            return '#820303';
         } else {
             return 'transparent';
         };
@@ -500,6 +504,174 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         background: "transparent",
         border: getHigherRarityColor(inventory?.rarity),
         display: "inline-block"
+    };
+
+    const createTable = (inventoryType: any) => {
+        console.log(inventoryType, "Selected Inventory");
+        return (
+            <Table responsive>
+            <tbody>
+                <tr style={{ fontSize: "20px", color: 'gold' }}>
+                    <td>
+                    {inventory?.name} <img src={process.env.PUBLIC_URL + inventory?.imgURL} />
+                    </td>
+                    <td>
+                    {ascean[inventoryType as keyof typeof ascean]?.name} <img src={process.env.PUBLIC_URL + ascean[inventoryType as keyof typeof ascean]?.imgURL} />
+                    </td>
+                </tr>
+                <tr>
+                    <td style={{ color: 'goldenrod' }}>
+                    { inventory?.grip && inventory?.type ?
+                        <>
+                        {inventory?.type} [{inventory?.grip}] <br />
+                        {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : '' }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : '' }]  <br />
+                        </>
+                    : inventory?.type ? 
+                        <>{inventory?.type} <br /></> 
+                    : '' }  
+                    </td>
+                    <td style={{ color: 'goldenrod' }}>
+                    { ascean[inventoryType as keyof typeof ascean]?.grip && ascean[inventoryType as keyof typeof ascean]?.type ?
+                        <>
+                        {ascean[inventoryType as keyof typeof ascean]?.type} [{ascean[inventoryType as keyof typeof ascean]?.grip}] <br />
+                        {ascean[inventoryType as keyof typeof ascean]?.attack_type} [{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[0]}{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[1] ? ' / ' + ascean[inventoryType as keyof typeof ascean]?.damage_type[1] : '' }{ascean[inventoryType as keyof typeof ascean]?.damage_type?.[2] ? ' / ' + ascean[inventoryType as keyof typeof ascean]?.damage_type[2] : '' }]  <br />
+                        </>
+                    : ascean[inventoryType as keyof typeof ascean]?.type ? 
+                        <>{ascean[inventoryType as keyof typeof ascean]?.type} <br /></> 
+                    : '' }
+                    </td>
+                </tr>
+                <tr style={{ color: '#fdf6d8' }}>
+                    <td style={{ color: textColor((inventory?.constitution + inventory?.strength + inventory?.agility + inventory?.achre + inventory?.caeren + inventory?.kyosir), 
+                        (ascean[inventoryType as keyof typeof ascean]?.constitution + ascean[inventoryType as keyof typeof ascean]?.strength + ascean[inventoryType as keyof typeof ascean]?.agility + ascean[inventoryType as keyof typeof ascean]?.achre + ascean[inventoryType as keyof typeof ascean]?.caeren + ascean[inventoryType as keyof typeof ascean]?.kyosir)) }}>
+                        {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ''}
+                        {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ''}
+                        {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ''}
+                        {inventory?.achre > 0 ? 'Ach: +' + inventory?.achre + ' ' : ''}
+                        {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ''}
+                        {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}
+                    </td>
+
+                    <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.constitution + ascean[inventoryType as keyof typeof ascean]?.strength + ascean[inventoryType as keyof typeof ascean]?.agility + ascean[inventoryType as keyof typeof ascean]?.achre + ascean[inventoryType as keyof typeof ascean]?.caeren + ascean[inventoryType as keyof typeof ascean]?.kyosir), 
+                        (inventory?.constitution + inventory?.strength + inventory?.agility + inventory?.achre + inventory?.caeren + inventory?.kyosir)) }}>
+                        {ascean[inventoryType as keyof typeof ascean]?.constitution > 0 ? 'Con: +' + ascean[inventoryType as keyof typeof ascean]?.constitution + ' ' : ''}
+                        {ascean[inventoryType as keyof typeof ascean]?.strength > 0 ? 'Str: +' + ascean[inventoryType as keyof typeof ascean]?.strength + ' ' : ''}
+                        {ascean[inventoryType as keyof typeof ascean]?.agility > 0 ? 'Agi: +' + ascean[inventoryType as keyof typeof ascean]?.agility + ' ' : ''}
+                        {ascean[inventoryType as keyof typeof ascean]?.achre > 0 ? 'Ach: +' + ascean[inventoryType as keyof typeof ascean]?.achre + ' ' : ''}
+                        {ascean[inventoryType as keyof typeof ascean]?.caeren > 0 ? 'Caer: +' + ascean[inventoryType as keyof typeof ascean]?.caeren + ' ' : ''}
+                        {ascean[inventoryType as keyof typeof ascean]?.kyosir > 0 ? 'Kyo: +' + ascean[inventoryType as keyof typeof ascean]?.kyosir + ' ' : ''}
+                    </td>
+                </tr>
+
+                { (inventory?.physical_damage && inventory?.grip) || (inventory?.magical_damage && inventory?.grip) ?  
+                <tr style={{ color: '#fdf6d8' }}>
+                    <td style={{ color: textColor((inventory?.physical_damage + inventory?.magical_damage), (ascean[inventoryType as keyof typeof ascean]?.physical_damage + ascean[inventoryType as keyof typeof ascean]?.magical_damage)) }}>
+                    Damage: {inventory?.physical_damage} Phys | {inventory?.magical_damage} Magi
+                    </td>
+                    <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_damage + ascean[inventoryType as keyof typeof ascean]?.magical_damage), (inventory?.physical_damage + inventory?.magical_damage)) }}>
+                    Damage: {ascean[inventoryType as keyof typeof ascean]?.physical_damage} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_damage} Magi
+                    </td>
+                </tr>
+                : '' }
+                { inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 || inventory?.magical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ? 
+                <tr>
+                    <td style={{ color: textColor((inventory?.physical_resistance + inventory?.magical_resistance), (ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance)) }}>
+                    { inventory?.physical_resistance || inventory?.magical_resistance ?
+                        <>
+                        Defense: {inventory?.physical_resistance} Phys | {inventory?.magical_resistance} Magi
+                        </>
+                    : 'Defense: 0 Phys | 0 Magi' }
+                    </td>
+                    <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance), (inventory?.physical_resistance + inventory?.magical_resistance)) }}>
+                    { ascean[inventoryType as keyof typeof ascean]?.physical_resistance || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ?
+                        <>
+                        Defense: {ascean[inventoryType as keyof typeof ascean]?.physical_resistance} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_resistance} Magi 
+                        </>
+                    : 'Defense: 0 Phys | 0 Magi' }
+                    </td>
+                </tr>
+                : '' }
+                {inventory?.magical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_penetration > 0 || inventory?.physical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_penetration > 0 ? 
+                <tr>
+                    <td style={{ color: textColor((inventory?.physical_penetration + inventory?.magical_penetration), (ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration)) }}>
+                    { inventory?.physical_penetration || inventory?.magical_penetration ?
+                        <>
+                        Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi 
+                        </>
+                    : 'Penetration: 0 Phys | 0 Magi' }
+                    </td>
+                    <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration), (inventory?.physical_penetration + inventory?.magical_penetration)) }}>
+                    { ascean[inventoryType as keyof typeof ascean]?.physical_penetration || ascean[inventoryType as keyof typeof ascean]?.magical_penetration ?
+                        <>
+                        Penetration: {ascean[inventoryType as keyof typeof ascean]?.physical_penetration} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_penetration} Magi
+                        </>
+                    : 'Penetration: 0 Phys | 0 Magi' }
+                    </td>
+                </tr>
+                : '' }
+
+                <tr>
+                    <td style={{ color: textColor(inventory?.critical_chance, ascean[inventoryType as keyof typeof ascean]?.critical_chance) }}>
+                    Crit Chance: {inventory?.critical_chance}%
+                    </td>
+                    <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.critical_chance, inventory?.critical_chance) }}>
+                    Crit Chance: {ascean[inventoryType as keyof typeof ascean]?.critical_chance}%
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style={{ color: textColor(inventory?.critical_damage, ascean[inventoryType as keyof typeof ascean]?.critical_damage) }}>
+                    Crit Damage: {inventory?.critical_damage}x
+                    </td>
+                    <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.critical_damage, inventory?.critical_damage) }}>
+                    Crit Damage: {ascean[inventoryType as keyof typeof ascean]?.critical_damage}x
+                    </td>
+                </tr>
+
+                <tr >
+                    <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.dodge, inventory?.dodge) }}>
+                    Dodge Timer: {inventory?.dodge}s
+                    </td>
+                    <td style={{ color: textColor(inventory?.dodge, ascean[inventoryType as keyof typeof ascean]?.dodge) }}>
+                    Dodge Timer: {ascean[inventoryType as keyof typeof ascean]?.dodge}s
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style={{ color: textColor(inventory?.roll, ascean[inventoryType as keyof typeof ascean]?.roll) }}>
+                    Roll Chance: {inventory?.roll}%
+                    </td>
+                    <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.roll, inventory?.roll) }}>
+                    Roll Chance: {ascean[inventoryType as keyof typeof ascean]?.roll}%
+                    </td>
+                </tr>
+                {inventory?.influences?.length > 0 || ascean[inventoryType as keyof typeof ascean]?.influences?.length > 0 ?
+                <tr style={{ color: '#fdf6d8' }}>
+                    <td>
+                    { inventory?.influences?.length > 0 ? 
+                        <>
+                        Influence: {inventory?.influences} <br />
+                        </>
+                    : '' }
+                    </td>
+                    <td>
+                    { ascean[inventoryType as keyof typeof ascean]?.influences?.length > 0 ? 
+                        <>
+                        Influence: {ascean[inventoryType as keyof typeof ascean]?.influences} <br />
+                        </>
+                    : '' }
+                    </td>
+                </tr>
+                : ''}
+                <tr>
+                    <td style={getRarity}>{inventory?.rarity}</td>
+                    <td style={{ color: getRarityColor(ascean[inventoryType as keyof typeof ascean]?.rarity), fontSize: "20px" }}>
+                        {ascean[inventoryType as keyof typeof ascean]?.rarity}
+                    </td>
+                </tr>
+                </tbody>
+            </Table>
+        );
     };
 
     return (
@@ -760,7 +932,25 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
 
         { compare ? (
             <>
-            <Table responsive style={{ overflow: "scroll" }}>
+            { inventoryType === 'weapon_one' ? (
+                <>
+                <Form.Select value={weaponCompared} onChange={(e) => setWeaponCompared(e.target.value)}>
+                    <option value={inventoryType}>{ascean[inventoryType as keyof typeof editState].name}</option>
+                    <option value={inventoryTypeTwo}>{ascean[inventoryTypeTwo as keyof typeof editState].name}</option>
+                    <option value={inventoryTypeThree}>{ascean[inventoryTypeThree as keyof typeof editState].name}</option>
+                </Form.Select>
+                { createTable(weaponCompared) }
+                </>
+            ) : inventoryType === 'ring_one' ? (
+                <>
+                <Form.Select value={ringCompared} onChange={(e) => setRingCompared(e.target.value)}>
+                    <option value={inventoryType}>{ascean[inventoryType as keyof typeof editState].name}</option>
+                    <option value={inventoryRingType}>{ascean[inventoryRingType as keyof typeof editState].name}</option>
+                </Form.Select>
+                { createTable(ringCompared) }
+                </>
+            ) : createTable(inventoryType) }
+            {/* <Table responsive style={{ overflow: "scroll" }}>
                     <tbody>
                         <tr style={{ fontSize: "16px", color: 'gold' }}>
                             <td>
@@ -921,60 +1111,60 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                             </td>
                         </tr>
                     </tbody>
-                    </Table>
-                    <div style={{ width: "100%", textAlign: "center" }} className='mt-3'>
-                    { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
-                        <>
-                        <Form.Select value={
-                            inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
-                            editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? 
-                            editState.legs._id : inventoryType === 'amulet' ? editState.amulet._id : inventoryType === 'ring_one' ? 
-                            editState.ring_one._id : inventoryType === 'trinket' ? editState.trinket._id : ''} onChange={handleInventory}>
-                                <option value={(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?.name} [Selected]</option>
-                                <option value={ascean[inventoryType as keyof typeof editState]?._id}>{ascean[inventoryType as keyof typeof editState]?.name} [Equipped]</option>
-                                <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+            </Table> */}
+                <div style={{ width: "100%", textAlign: "center" }} className='mt-3'>
+                { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
+                    <>
+                    <Form.Select value={
+                        inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
+                        editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? 
+                        editState.legs._id : inventoryType === 'amulet' ? editState.amulet._id : inventoryType === 'ring_one' ? 
+                        editState.ring_one._id : inventoryType === 'trinket' ? editState.trinket._id : ''} onChange={handleInventory}>
+                            <option value={(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?.name} [Selected]</option>
+                            <option value={ascean[inventoryType as keyof typeof editState]?._id}>{ascean[inventoryType as keyof typeof editState]?.name} [Equipped]</option>
+                            <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                    </Form.Select>
+                    { inventory?.grip && inventory?.type ?
+                        <><br />
+                        <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
+                            <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
+                            <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
+                            <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                        </Form.Select><br />
+                        <Form.Select value={editState.weapon_three._id} onChange={handleInventoryW3}>
+                            <option value={(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?.name} [Selected]</option>
+                            <option value={ascean[inventoryTypeThree as keyof typeof editState]?._id}>{ascean[inventoryTypeThree as keyof typeof editState]?.name} [Equipped]</option>
+                            <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                         </Form.Select>
-                        { inventory?.grip && inventory?.type ?
-                            <><br />
-                            <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
-                                <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
-                                <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
-                                <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
-                            </Form.Select><br />
-                            <Form.Select value={editState.weapon_three._id} onChange={handleInventoryW3}>
-                                <option value={(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?.name} [Selected]</option>
-                                <option value={ascean[inventoryTypeThree as keyof typeof editState]?._id}>{ascean[inventoryTypeThree as keyof typeof editState]?.name} [Equipped]</option>
-                                <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
-                            </Form.Select>
-                            </>
-                        : ( '' ) }
-                        { inventoryType === 'ring_one' ?
-                            <>
-                            <br />
-                            <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2}>
-                                <option value={(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?.name} [Selected]</option>
-                                <option value={ascean[inventoryRingType]?._id}>{ascean[inventoryRingType]?.name} [Equipped]</option>
-                                <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
-                            </Form.Select>
-                            </>
-                        : ( '' ) }
+                        </>
+                    : ( '' ) }
+                    { inventoryType === 'ring_one' ?
+                        <>
                         <br />
+                        <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2}>
+                            <option value={(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?.name} [Selected]</option>
+                            <option value={ascean[inventoryRingType]?._id}>{ascean[inventoryRingType]?.name} [Equipped]</option>
+                            <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                        </Form.Select>
                         </>
-                    : 
-                        <div style={{ color: "gold", fontSize: "20px" }}>
-                            Unforuntaely, {inventory?.name} requires you to be level {equipLevel(inventory?.rarity)} to equip.
-                            <br /><br />    
-                        </div>
-                    }
-                    { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
-                        <> 
-                        <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> 
-                        <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
-                        </>
-                    : 
-                        <Button variant='outline' style={{ color: 'red', fontWeight: 600, marginLeft: "16.5%" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
-                    }
+                    : ( '' ) }
+                    <br />
+                    </>
+                : 
+                    <div style={{ color: "gold", fontSize: "20px" }}>
+                        Unforuntaely, {inventory?.name} requires you to be level {equipLevel(inventory?.rarity)} to equip.
+                        <br /><br />    
                     </div>
+                }
+                { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
+                    <> 
+                    <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> 
+                    <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
+                    </>
+                : 
+                    <Button variant='outline' style={{ color: 'red', fontWeight: 600, marginLeft: "16.5%" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
+                }
+                </div>
                 </>
         ) : blacksmith ?
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
