@@ -3,9 +3,9 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
+import * as eqpAPI from '../../utils/equipmentApi';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
-
 interface Props {
     lootDrop: any;
     ascean: any;
@@ -22,9 +22,10 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
             const data = { ascean: ascean, lootDrop: lootDrop };
             const res = await asceanAPI.saveToInventory(data);
             console.log(res, 'Saved Item to Inventory!');
-            gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
+            if (!story) gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
             if (story) {
+                gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
                 const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
                 window.dispatchEvent(storyLoot);
             };
@@ -33,49 +34,70 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
         };
     };
 
+    const destroyItem = async () => {
+        try {
+            const res = await eqpAPI.deleteEquipment([lootDrop]);
+            console.log(res, 'Destroyed Item!');
+            if (!story) gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
+            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
+            if (story) {
+                gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
+                const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
+                window.dispatchEvent(storyLoot);
+            };
+        } catch (err: unknown) {
+            console.log(err, 'Error Destroying Item!');
+        };
+    };
+
     const lootDropPopover = (
         <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
             <Popover.Header id="popover-header" className="" as="h2">{lootDrop?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + lootDrop?.imgURL} alt={lootDrop?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-            { lootDrop?.type && lootDrop?.grip ?
+            { lootDrop?.type && lootDrop?.grip ? (
                 <>
-                {lootDrop?.type} [{lootDrop?.grip}] <br />
-                {lootDrop?.attack_type} [{lootDrop?.damage_type?.[0]}{lootDrop?.damage_type?.[1] ? ' / ' + lootDrop?.damage_type[1] : '' }{lootDrop?.damage_type?.[2] ? ' / ' + lootDrop?.damage_type[2] : '' }]  <br />
+                    {lootDrop?.type} [{lootDrop?.grip}] <br />
+                    {lootDrop?.attack_type} [{lootDrop?.damage_type?.[0]}{lootDrop?.damage_type?.[1] ? ' / ' + lootDrop?.damage_type[1] : '' }{lootDrop?.damage_type?.[2] ? ' / ' + lootDrop?.damage_type[2] : '' }]  <br />
                 </>
-            : lootDrop?.type ? <>{lootDrop?.type} <br /></> : '' }
-                {lootDrop?.constitution > 0 ? 'Con: +' + lootDrop?.constitution + ' ' : ''}
-                {lootDrop?.strength > 0 ? 'Str: +' + lootDrop?.strength + ' ' : ''}
-                {lootDrop?.agility > 0 ? 'Agi: +' + lootDrop?.agility + ' ' : ''}
-                {lootDrop?.achre > 0 ? 'Ach: +' + lootDrop?.achre + ' ' : ''}
-                {lootDrop?.caeren > 0 ? 'Caer: +' + lootDrop?.caeren + ' ' : ''}
-                {lootDrop?.kyosir > 0 ? 'Kyo: +' + lootDrop?.kyosir + ' ' : ''}<br />
+            ) : lootDrop?.type ? (  <>{lootDrop?.type} <br /></> ) : ( '' ) }
+                {lootDrop?.constitution > 0 ? 'Con: +' + lootDrop?.constitution + ' ' : ( '' )}
+                {lootDrop?.strength > 0 ? 'Str: +' + lootDrop?.strength + ' ' : ( '' )}
+                {lootDrop?.agility > 0 ? 'Agi: +' + lootDrop?.agility + ' ' : ( '' )}
+                {lootDrop?.achre > 0 ? 'Ach: +' + lootDrop?.achre + ' ' : ( '' )}
+                {lootDrop?.caeren > 0 ? 'Caer: +' + lootDrop?.caeren + ' ' : ( '' )}
+                {lootDrop?.kyosir > 0 ? 'Kyo: +' + lootDrop?.kyosir + ' ' : ( '' )}<br />
                 Damage: {lootDrop?.physical_damage} Phys | {lootDrop?.magical_damage} Magi <br />
-            { lootDrop?.physical_resistance || lootDrop?.magical_resistance ?
+            { lootDrop?.physical_resistance || lootDrop?.magical_resistance ? (
                 <>
                 Defense: {lootDrop?.physical_resistance} Phys | {lootDrop?.magical_resistance} Magi <br />
                 </>
-            : '' }
-            { lootDrop?.physical_penetration || lootDrop?.magical_resistance ?
+            ) : ( '' ) }
+            { lootDrop?.physical_penetration || lootDrop?.magical_resistance ? (
                 <>
                 Penetration: {lootDrop?.physical_penetration} Phys | {lootDrop?.magical_penetration} Magi <br />
                 </>
-            : '' }
+            ) : ( '' ) }
                 Critical Chance: {lootDrop?.critical_chance}% <br />
                 Critical Damage: {lootDrop?.critical_damage}x <br />
                 Dodge Timer: {lootDrop?.dodge}s <br />
                 Roll Chance: {lootDrop?.roll}% <br />
-            { lootDrop?.influences?.length > 0 ?
+            { lootDrop?.influences?.length > 0 ? (
                 <>
                 Influence: {lootDrop?.influences} <br />
                 </>
-            : '' }
+            ) : ( '' ) }
                 <br />
+                <div>
                 {lootDrop?.rarity}
-            { itemSaved ?
+                { itemSaved ? (
                 <Loading NavBar={true} />
-            :
-                <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: -3 + '%', fontSize: 18 + 'px', marginRight: -5 + '%' }} onClick={saveItem}>Save</Button>
-            }
+                ) : (
+                    <Button variant='' style={{ color: 'green', fontWeight: 700, float: 'right', marginTop: '-5%', fontSize: '20px', marginRight: '-5%' }} onClick={saveItem}>Save</Button>
+                )}
+                </div>
+            {/* <div style={{ textAlign: "center" }}>
+                <Button variant='' style={{ color: 'red', fontWeight: 600, fontSize: '18px' }} onClick={destroyItem}>Destroy</Button>
+            </div>                 */}
             </Popover.Body>
         </Popover>
     );

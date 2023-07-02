@@ -261,6 +261,25 @@
   white-space: pre-wrap;
   scrollbar-width: none;
 }
+.story-dialog {
+  position: absolute; 
+  justify-content: center;
+  top: 55%;
+  left: 17.5%;
+}
+.story-text {
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  top: 5%;
+  left: 7.5%;
+  width: 82.5%;
+  height: 90%;
+  color: #fdf6d8;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
 .dialog-box, .city-box {
   position: absolute; 
   top: 42.5%; 
@@ -596,9 +615,9 @@
 #story-xp {
   background-color: transparent;
   border: 1.5px solid purple;
-  margin-top: 9%;
+  margin-top: 10.75%;
   margin-left: 7.5%;
-  height: 7.5%;
+  height: 8%;
   width: 35%;
 }
 #story {
@@ -854,7 +873,7 @@
 .story-firewater {
   position: absolute;
   color: gold;
-  z-index: 999;
+  z-index: 9999;
   top: 108.1%;
   left: 25%;
   transform: scale(0.75);
@@ -908,14 +927,14 @@
   position: absolute;
   top: 108%;
   left: 50%;
-  z-index: 999;
+  z-index: 9999;
   transform: scale(0.75);
   height: 17.5%; 
 }
 .story-save-inventory {
   position: absolute;
   height: 100%;
-  z-index: 999;
+  z-index: 9999;
   font-weight: 600;
   text-shadow: 1px 1px 1px black;
   color: gold;
@@ -1809,16 +1828,12 @@
   position: absolute;
   left: 185px;
 }
-.story-effects {
-  /* display: inline-block; */
-  /* position: relative; */
-  /* position: absolute; */
+.story-effects { 
   background: black;
   width: 5%;
   margin-top: -30%;
   margin-left: 1%;
-  padding-top: 1.5%;
-  /* height: 35%; */
+  padding-top: 1.5%; 
 }
 .story-effects img {
   transform: scale(1.5);
@@ -1847,3 +1862,12 @@
   transform: scale(0.75);
 } 
 .game-ascean.story { margin-top: 0vh; z-index: 99999; }
+.story-menu-heading {
+  position: absolute;
+  text-align: center;
+  color: #fdf6d8;
+  font-family: 'Cinzel';
+  top: 80px;
+  left: 60px;
+  font-weight: 600;
+}

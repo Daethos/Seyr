@@ -58,8 +58,8 @@ const InventoryOptions = ({ drinkFirewater, firewater, setShowFirewaterModal }: 
 
     const firewaterPopover = (
         <Popover id="popover">
-            <Popover.Header id="popover" as="h3" style={{ color: "purple", fontWeight: 700 }}>Firewater ( {firewater?.charges} / {firewater?.maxCharges} ) <span id="popover-image"><img src={process.env.PUBLIC_URL +  '/images/firewater.png'} alt="Firewater" /></span></Popover.Header>
-            <Popover.Body style={{ color: "purple" }}>
+            <Popover.Header id="popover" as="h3" style={{ color: "gold", fontWeight: 700 }}>Firewater ( {firewater?.charges} / {firewater?.maxCharges} ) <span id="popover-image"><img src={process.env.PUBLIC_URL +  '/images/firewater.png'} alt="Firewater" /></span></Popover.Header>
+            <Popover.Body style={{ color: "#fdf6d8" }}>
                 This is a bottle of Fyervas Firewater, associated with Fyer of Fire and Se'vas of War. This elixir strengthens the body and imbues you with a fiery spirit, making you{' '}
                 more resilient and able to withstand combat and other challenges. This bottle has {firewater?.charges} charges left.
                 <br /><br />
@@ -181,8 +181,7 @@ const PhaserInventoryBag = ({ ascean, dispatch, inventory, admin, settings, game
         transform: 'scale(0.9)',
     };
 
-    const relaxedStyle = {
-    };
+    const relaxedStyle = {};
     
     return (
         <>
@@ -217,16 +216,14 @@ const PhaserInventoryBag = ({ ascean, dispatch, inventory, admin, settings, game
                             <Droppable key={index} droppableId={item._id}>
                         {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDroppingStyle : relaxedStyle}>
-                                {/* <img src={equipSlot} alt='equip-slot' style={{ position: "absolute", width: "80px", height: "80px", left: "109px", display: "inline-block" }} /> */}
-
+                                {/* <img src={equipSlot} alt='equip-slot' style={{ width: "72px", height: "72px", left: "109px" }} /> */}
                                 <Inventory highlighted={highlighted} setHighlighted={setHighlighted} gameState={gameState} gameDispatch={gameDispatch} bag={dndInventory} inventory={item} ascean={ascean} index={index} story={true} />
                                 {provided.placeholder}
                             </div>
                         )}
                         </Droppable>
                     )})
-                : '' }
-
+                : ( '' ) } 
             </div>
         </DragDropContext> 
         { !drinking && !admin ?

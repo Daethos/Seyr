@@ -6,10 +6,9 @@ import Loading from '../Loading/Loading';
 interface GameProps {
     totalPlayerHealth: number;
     currentPlayerHealth: number;
-    story?: boolean;
 };
 
-const StoryHealthBar = ({ totalPlayerHealth, currentPlayerHealth, story }: GameProps) => {
+const StoryHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0)
     const [loading, setLoading] = useState(true);
 
@@ -38,7 +37,7 @@ const StoryHealthBar = ({ totalPlayerHealth, currentPlayerHealth, story }: GameP
         <div>
         <ProgressBar 
             variant="info" 
-            id={story ? 'story-health' : 'player-health'} 
+            id='story-health' 
             now={playerHealthPercentage} 
         />
         <div className="story-progress">

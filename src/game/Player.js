@@ -305,10 +305,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.bodyB.label === 'npcCollider') {
-                    // this.interacting.push(other.gameObjectB);
-                    // const interactingNpc = new CustomEvent('interacting-npc', { detail: { npc: other.gameObjectB._id, interacting: true } });
-                    // window.dispatchEvent(interactingNpc);
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider') { 
                     const isNewNpc = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                     if (isNewNpc && !isNewNpc.isDead) this.touching.push(other.gameObjectB);
                     this.currentTarget = other.gameObjectB;
@@ -321,10 +318,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.bodyB.label === 'npcCollider') {
-                    // this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
-                    // const interactingNpc = new CustomEvent('interacting-npc', { detail: { npc: other.gameObjectB._id, interacting: false } });
-                    // window.dispatchEvent(interactingNpc);
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider') { 
                     this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
                 };
             },

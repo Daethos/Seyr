@@ -271,7 +271,7 @@ export const Wolf: Enemy = {
     mastery: 'Agility',
     origin: 'Wolf',
     sex: findSex(),
-    currency: {},
+    currency: { silver: 0, gold: 0 },
     experience: 0,
     high_score: 0,
     level: 0.5,
@@ -373,7 +373,6 @@ const Bear_Maul: Equipment = {
     imgURL: '/images/bear-maul.png',
     _id: '103'
 };
-
 const Bear_Bones: Equipment = {
     name: "Bear Bones",
     type: 'Leather-Cloth',
@@ -431,7 +430,6 @@ const Bear_Head: Equipment = {
     imgURL: '/images/bear-head.png',
     _id: '105'
 };
-
 const Bear_Upper_Torso: Equipment = {
     name: "Bear's Upper Torso",
     type: 'Leather-Cloth',
@@ -460,7 +458,6 @@ const Bear_Upper_Torso: Equipment = {
     imgURL: '/images/bear-upper.png',
     _id: '106'
 };
-
 const Bear_Lower_Body: Equipment = {
     name: "Bear's Lower Body",
     type: 'Leather-Cloth',
@@ -518,7 +515,6 @@ const Bear_Right_Arm: Equipment = {
     imgURL: '/images/bear-right.png',
     _id: '108'
 };
-
 const Bear_Left_Arm: Equipment = {
     name: "Bear's Left Arm",
     type: 'Leather-Cloth',
@@ -547,7 +543,6 @@ const Bear_Left_Arm: Equipment = {
     imgURL: '/images/bear-left.png',
     _id: '109'
 };
-
 const Bear_Right_Leg: Equipment = {
     name: "Bear's Right Leg",
     type: 'Leather-Cloth',
@@ -576,7 +571,6 @@ const Bear_Right_Leg: Equipment = {
     imgURL: '/images/bear-foot-right.png',
     _id: '110'
 };
-
 const Bear_Left_Leg: Equipment = {
     name: "Bear's Left Leg",
     type: 'Leather-Cloth',
@@ -635,7 +629,7 @@ export const Bear: Enemy = {
     mastery: 'Strength',
     origin: 'Bear',
     sex: findSex(),
-    currency: {},
+    currency: { silver: 0, gold: 0 },
     experience: 0,
     high_score: 0,
     level: 3,

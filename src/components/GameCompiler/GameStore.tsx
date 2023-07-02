@@ -29,7 +29,7 @@ export interface Ascean {
     origin: string;
     sex: string;
     
-    currency: object;
+    currency: { silver: number; gold: number; };
     experience: number;
     high_score: number;
     level: number;
@@ -671,9 +671,11 @@ export interface GameData {
 
     cityButton: boolean;
 
+    lootDrops: any[];
     lootDrop: Equipment;
     lootDropTwo: Equipment;
     merchantEquipment: any[];
+    showLootIds: any[];
 
     cityOption: string;
     currentIntent: string;
@@ -769,6 +771,9 @@ export const GAME_ACTIONS = {
     CLOSE_UNDERLAY: 'CLOSE_UNDERLAY',
 
     CLEAR_LOOTDROP: 'CLEAR_LOOTDROP',
+    CLEAR_LOOT_DROPS: 'CLEAR_LOOT_DROPS',
+    CLEAR_LOOT_DROP: 'CLEAR_LOOT_DROP',
+    CLEAR_SHOW_LOOT: 'CLEAR_SHOW_LOOT',
 
     SET_GAMEPLAY_MODAL: 'SET_GAMEPLAY_MODAL',
     SET_GAMEPLAY_EVENT: 'SET_GAMEPLAY_EVENT',
@@ -779,6 +784,7 @@ export const GAME_ACTIONS = {
     SET_SHOW_INVENTORY: 'SET_SHOW_INVENTORY',
     SET_SHOW_MAP: 'SET_SHOW_MAP',
     SET_CITY_BUTTON: 'SET_CITY_BUTTON',
+    SET_LOOT_DROPS: 'SET_LOOT_DROPS',
     SET_LOOT_DROP: 'SET_LOOT_DROP',
     SET_LOOT_DROP_TWO: 'SET_LOOT_DROP_TWO',
     SET_SHOW_LOOT: 'SET_SHOW_LOOT',
@@ -858,6 +864,7 @@ export const initialGameData: GameData = {
     showInventory: false,
     showMap: false,
     cityButton: false,
+    lootDrops: [],
     lootDrop: [] as unknown as Equipment,
     lootDropTwo: [] as unknown as Equipment,
     merchantEquipment: [],
@@ -886,6 +893,7 @@ export const initialGameData: GameData = {
     renderedText: '',
     showLootOne: false,
     showLootTwo: false,
+    showLootIds: [],
 };
 
 export const GameStore = (game: GameData, action: Game_Action) => {
@@ -1213,6 +1221,25 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 cityButton: action.payload,
             };
+        case 'SET_LOOT_DROPS':
+            return {
+                ...game,
+                lootDrops: [
+                    ...game.lootDrops,
+                    action.payload,
+                ],
+            };
+        case 'CLEAR_LOOT_DROPS':
+            return {
+                ...game,
+                lootDrops: [],
+            };
+        case 'CLEAR_LOOT_DROP':
+            const newLootDrops = game.lootDrops.filter(lootDrop => lootDrop._id !== action.payload);
+            return {
+                ...game,
+                lootDrops: newLootDrops,
+            };
         case 'SET_LOOT_DROP':
             return {
                 ...game,
@@ -1223,17 +1250,32 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                 ...game,
                 lootDropTwo: action.payload,
             };
-        case 'SET_SHOW_LOOT':   
-            if (game.lootDrop && game.lootDrop._id === action.payload.loot) {
+        case 'SET_SHOW_LOOT':
+            if (action.payload.interacting) {
                 return {
                     ...game,
+                    showLootIds: [
+                        ...game.showLootIds,
+                        action.payload.loot,
+                    ],
                     showLootOne: action.payload.interacting,
                 };
             } else {
                 return {
                     ...game,
-                    showLootTwo: action.payload.interacting,
+                    showLootIds: [
+                        ...game.showLootIds.filter(lootId => lootId !== action.payload.loot),
+                    ],
+                    showLootOne: game.showLootIds.length > 1 ? game.showLootOne : false,
                 };
+            };
+        case 'CLEAR_SHOW_LOOT':
+            return {
+                ...game,
+                showLootIds: [
+                    ...game.showLootIds.filter(lootId => lootId !== action.payload.loot),
+                ],
+                showLootOne: game.showLootIds.length > 1 ? game.showLootOne : false,
             };
         case 'SET_MERCHANT_EQUIPMENT':
             return {

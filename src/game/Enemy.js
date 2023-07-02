@@ -505,6 +505,8 @@ export default class Enemy extends Entity {
     };
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) this.scene.setState('computer_action', 'attack');
+        // TODO:FIXME: If the enemy is melee, the enemy should be be able to move while attacking toward the target player in order to be more effective at succeeding in hitting the player.
+        if (!this.isRanged) this.swingMomentum();
         if (!this.isAttacking) this.evaluateCombatDistance(); 
     };
     onAttackExit = () => {
@@ -517,6 +519,7 @@ export default class Enemy extends Entity {
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 10) this.scene.setState('computer_action', 'counter');
+        if (!this.isRanged) this.swingMomentum();
         if (!this.isCountering) this.evaluateCombatDistance();
     };
     onCounterExit = () => {
@@ -537,7 +540,8 @@ export default class Enemy extends Entity {
         this.posture();
     };
     onPostureUpdate = (dt) => {
-        if (this.frameCount === 3 && !this.isRanged) this.scene.setState('computer_action', 'posture');
+        if (this.frameCount === 11 && !this.isRanged) this.scene.setState('computer_action', 'posture');
+        if (!this.isRanged) this.swingMomentum();
         if (!this.isPosturing) this.evaluateCombatDistance();
     };
     onPostureExit = () => {
@@ -646,6 +650,13 @@ export default class Enemy extends Entity {
             this.particleEffect = null;
         };
         screenShake(this.scene);
+    };
+
+    swingMomentum = () => {
+        console.log("Enemy Swing Momentum");
+        let direction = this.attacking.position.subtract(this.position);
+        direction.normalize();
+        this.setVelocity(direction.x * 2, direction.y * 2);
     };
 
     evaluateCombatDistance = () => {

@@ -11,6 +11,7 @@ import Currency from '../components/GameCompiler/Currency';
 import { ACTIONS, CombatData } from '../components/GameCompiler/CombatStore';
 import { GAME_ACTIONS, GameData, Player } from '../components/GameCompiler/GameStore';
 import Typewriter from '../components/GameCompiler/Typewriter';
+import dialogWindow from '../game/images/dialog_window.png';
 
 interface DialogOptionProps {
     option: DialogNodeOption;
@@ -259,7 +260,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     };
 
     const getLoot = async (type: string) => {
-        if (gameState?.merchantEquipment.length > 0) await eqpAPI.deleteEquipment(gameState?.merchantEquipment);
+        if (gameState?.merchantEquipment.length > 0) await deleteEquipment(gameState?.merchantEquipment);
         try {
             let response: any;
             if (type === 'physical-weapon') {
@@ -282,9 +283,15 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         };
     };
 
+    const dialogStyle = {  
+        zIndex: 9999,
+    };
+
+// style={{ width: "60%", top: "75%", height: "40%", border: "3px solid #2A0134", zIndex: 9999 }}
     return (
-        <div className='dialog-box' style={{ width: "60%", top: "75%", height: "40%", border: "3px solid #2A0134", zIndex: 9999 }}>
-            <div className='dialog-text mx-2' style={{ width: "100%" }}> 
+        <div className='story-dialog' style={dialogStyle}>
+            <img src={dialogWindow} alt='Dialog Window' style={{ transform: "scale(1.1)" }} />
+            <div className='story-text'> 
             { state.npcType === 'Merchant-Blacksmith' ? (
                 <>
                     <br />

@@ -71,7 +71,7 @@ const StoryJournal = ({ dispatch, gameDispatch, ascean, quests }: JournalProps) 
     return (
         <>
         { showJournal ? (
-            <div className='dialog-box' style={{ top: "-300px", width: "80vw", border: "4px solid #2A0134" }}>
+            <div className='dialog-box' style={{ top: "-300px", width: "80vw", border: "5px solid #2A0134" }}>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
             <img src={process.env.PUBLIC_URL + `/images/` + ascean?.origin + '-' + ascean?.sex + '.jpg'} alt={ascean?.name} className='dialog-picture' style={{ borderRadius: "50%", border: "2px solid purple" }} />

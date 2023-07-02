@@ -127,11 +127,7 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
         </Accordion.Item>
 
         <Accordion.Item eventKey="6">
-        <Accordion.Header>
-            <h5 style={{ marginLeft: 'auto', color: 'gold' }}>
-            Actions (Combat Choices)
-            </h5>
-        </Accordion.Header>
+        <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}> Actions (Combat Choices)</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>
         <p style={{ color: 'gold' }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 512 512">
@@ -198,6 +194,7 @@ const PhaserSettings = ({ ascean, dispatch, gameDispatch, gameState, multiplayer
           <p style={{ color: 'gold', fontSize: 25 + 'px' }}>Good luck, and have fun!</p>
         </Accordion.Body>
         </Accordion.Item>
+        
         <Accordion.Item eventKey="7">
         <Accordion.Header><h5 style={{ marginLeft: 'auto', color: 'gold' }}>Tactics (Combat Settings)</h5></Accordion.Header>
         <Accordion.Body className='settings-accordion'>

@@ -74,7 +74,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const [modalShow, setModalShow] = useState<boolean>(false);
     const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
-    const [asceanViews, setAsceanViews] = useState<string>('Inventory'); // 'Journal', 'Settings'
+    const [asceanViews, setAsceanViews] = useState<string>('Character'); // 'Journal', 'Settings'
 
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
@@ -581,11 +581,13 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     const getOneLootDrop = async (level: number) => {
         try {
             let response = await eqpAPI.getLootDrop(level);
-            gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: response.data[0] });
+            gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: response.data[0] });
+            // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: response.data[0] });
             let roll = Math.floor(Math.random() * 100) + 1;
             if (roll <= 25) {
                 let second = await eqpAPI.getLootDrop(level);
-                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: second.data[0] });
+                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: second.data[0] });
+                // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: second.data[0] });
                 const dispatchLoot = new CustomEvent('enemyLootDrop', { 
                     detail: {
                         enemyID: state.enemyID,
@@ -601,7 +603,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     } 
                 });
                 window.dispatchEvent(dispatchLoot);
-                gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
+                // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
             };
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
             // if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);
@@ -665,11 +667,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             if (effects.counter_success === true || effects.computer_counter_success === true) {
                 playCounter();
             };
-            // setTimeout(() => {
-            //     if (effects.player_win !== true && effects.computer_win !== true) {
-            //         playCombatRound();
-            //     };
-            // }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         };
@@ -886,6 +883,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     case 'Character':
                         return 'Inventory';
                     case 'Inventory':
+                        return 'Settings';
+                    case 'Settings':
                         return 'Character';
                     default:
                         return 'Character';
@@ -997,12 +996,11 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     { gameState.player.journal.entries.length > 0 ?
                         <StoryJournal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} ascean={gameState.player} />
                     : '' }
-                    <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} />
+                    {/* <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} /> */}
                     { dialogTag ? (
-                    // <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
-                    <Button variant='' className='ascean-ui' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>
-                        <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
-                    </Button>
+                        <Button variant='' className='ascean-ui' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>
+                            <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
+                        </Button>
                     ) : ( '' ) }
                 </div>
                 <CombatMouseSettings state={state} damageType={state.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={state.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
@@ -1029,16 +1027,12 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                         ) : ( '' ) }
                     </div>
                 ) }
-
                 { gameState.showDialog && gameState.opponent && dialogTag ?    
                     <StoryDialog state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} deleteEquipment={deleteEquipment} />
                 : ( '' )}
-                { gameState?.showLootOne || gameState?.showLootTwo ? (
+                { gameState?.lootDrops.length > 0 && gameState.showLootOne ? (
                     <LootDropUI gameState={gameState} gameDispatch={gameDispatch} state={state} />   
                 ) : ( '' ) }
-                {/* { gameState.showInventory ? (
-                    <PhaserInventoryBag inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} />
-                ) : ( '' ) } */}
             </> ) : ( '' ) }
             <div id='story-game' style={{ textAlign: 'center' }} ref={gameRef}></div>
         </div>

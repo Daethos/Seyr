@@ -541,7 +541,7 @@ html, body {
 }
 .story-block {
   position: absolute;
-  margin-top: 17.5%;
+  margin-top: 16.5%;
   margin-left: -8%;
   height: 35%;
   left: 0%;
@@ -558,22 +558,17 @@ html, body {
 #story-ascean { 
   pointer-events: visible;
 }
-.story-ascean {
-  /* background-color: rgba(0, 0, 0, 1); */
-  /* border: 3px solid purple; */
-  /* box-shadow: 2px 2px 2px black; */
-  /* border-radius: 6px; */
+.story-ascean { 
   width: 50%;
-  /* height: 135%; */
   margin-left: 25%;
 } 
 .story-inventory-bag {
   position: absolute;
   display: grid;
   grid-template-columns: repeat(4, 25%);
-  grid-template-rows: repeat(10, 15%);
+  /* grid-template-rows: repeat(10, 15%); */
   justify-content: space-evenly;
-  z-index: 99;
+  z-index: 9999;
   color: #fdf6d8; 
   height: 100%;
   width: 100%;
@@ -602,16 +597,16 @@ html, body {
   margin-top: 3%;
   border: 2px solid purple;
 }
-.story-progressxp-text { position: absolute; top: 45px; font-size: 16px; left: 4.5%; width: 40%; text-align: center; }
+.story-progressxp-text { position: absolute; top: 55px; font-size: 16px; left: 4.5%; width: 40%; text-align: center; color: black; }
 .story-progress {
   position: absolute;
   overflow: hidden;
   text-align: center;
   width: 40%;
   margin-left: 4.5%;
-  margin-top: 2.75%;
+  margin-top: 2.5%;
   font-size: 18px;
-  color: white;
+  color: #fdf6d8;
   font-weight: 600;
   background: transparent;
 }
