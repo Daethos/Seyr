@@ -51,12 +51,10 @@ export interface Ascean {
 };
 
 export interface Player extends Ascean {
-    // Ascean Traits Determined By Mastery + Attributes
     primary: { name: string, description: string };
     secondary: { name: string, description: string };
     tertiary: { name: string, description: string };
     journal: object;
-
 };
 
 export interface Enemy extends Ascean {
@@ -774,6 +772,7 @@ export const GAME_ACTIONS = {
     CLEAR_LOOT_DROPS: 'CLEAR_LOOT_DROPS',
     CLEAR_LOOT_DROP: 'CLEAR_LOOT_DROP',
     CLEAR_SHOW_LOOT: 'CLEAR_SHOW_LOOT',
+    CLEAR_SHOW_LOOT_ONE: 'CLEAR_SHOW_LOOT_ONE',
 
     SET_GAMEPLAY_MODAL: 'SET_GAMEPLAY_MODAL',
     SET_GAMEPLAY_EVENT: 'SET_GAMEPLAY_EVENT',
@@ -1276,6 +1275,11 @@ export const GameStore = (game: GameData, action: Game_Action) => {
                     ...game.showLootIds.filter(lootId => lootId !== action.payload.loot),
                 ],
                 showLootOne: game.showLootIds.length > 1 ? game.showLootOne : false,
+            };
+        case 'CLEAR_SHOW_LOOT_ONE':
+            return {
+                ...game,
+                showLootOne: false,
             };
         case 'SET_MERCHANT_EQUIPMENT':
             return {

@@ -1,9 +1,7 @@
 import Phaser from "phaser";
-import Entity, { screenShake, pauseGame } from "./Entity"; 
-import { worldToTile, tileToWorld } from "./Play";
+import Entity from "./Entity"; 
 import StateMachine, { States } from "./StateMachine";
-import HealthBar from "./HealthBar";
-import ScrollingCombatText from "./ScrollingCombatText";
+import HealthBar from "./HealthBar"; 
 import playerActionsOnePNG from './images/player_actions.png';
 import playerActionsOneJSON from './images/player_actions_atlas.json';
 import playerActionsOneAnim from './images/player_actions_anim.json';
@@ -42,35 +40,24 @@ export default class NPC extends Entity {
         this.stateMachine = new StateMachine(this, 'npc');
         this.stateMachine
             .addState(States.IDLE, {
-                onEnter: this.onIdleEnter.bind(this),
-                onUpdate: this.onIdleUpdate.bind(this),
+                onEnter: this.onIdleEnter.bind(this), 
                 onExit: this.onIdleExit.bind(this),
             }) 
             .addState(States.AWARE, {
                 onEnter: this.onAwarenessEnter.bind(this),
                 onUpdate: this.onAwarenessUpdate.bind(this),
                 onExit: this.onAwarenessExit.bind(this),
-            })
-            // .addState(States.PATROL, {
-            //     onEnter: this.onPatrolEnter.bind(this),
-            //     onUpdate: this.onPatrolUpdate.bind(this),
-            //     onExit: this.onPatrolExit.bind(this),
-            // })
-            // .addState(States.LEASH, {
-            //     onEnter: this.onLeashEnter.bind(this),
-            //     onUpdate: this.onLeashUpdate.bind(this),
-            //     onExit: this.onLeashExit.bind(this),
-            // }) 
+            }) 
 
         this.stateMachine.setState(States.IDLE);
         this.setScale(0.8);
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
-        this.originPoint = {}; // For Leashing
+        this.originPoint = {}; 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        const colliderWidth = 20; // Original width of the collider
-        const colliderHeight = 36; // Original height of the collider
-        const paddingWidth = 10; // Padding to be added to the width
-        const paddingHeight = 10; // Padding to be added to the height
+        const colliderWidth = 20; 
+        const colliderHeight = 36; 
+        const paddingWidth = 10; 
+        const paddingHeight = 10; 
 
         const paddedWidth = colliderWidth + 2 * paddingWidth;
         const paddedHeight = colliderHeight + 2 * paddingHeight;
@@ -128,126 +115,14 @@ export default class NPC extends Entity {
             },
             context: this.scene,
         }); 
-    };
-  
+    }; 
 
     onIdleEnter = () => {
         this.anims.play('player_idle', true);
-    }; 
-    onIdleUpdate = (dt) => {
-        // this.idleWait -= dt;
-        // if (this.idleWait <= 0) {
-        //     this.idleWait = 5000;
-        //     if (this.stateMachine.isCurrentState(States.IDLE)) this.stateMachine.setState(States.PATROL);
-        // };
-    };
+    };  
     onIdleExit = () => {
         this.anims.stop('player_idle');
-    };
-
-    onLeashEnter = () => {
-        console.log("Leashing NPC to Origin Point of Encounter");
-        this.anims.play('player_running', true);
-        if (this.attacking) {
-            this.attacking.inCombat = false;
-            this.attacking = null;
-        };
-        this.scene.combatEngaged(false);
-        this.leashTimer = this.scene.time.addEvent({
-            delay: 500,
-            callback: () => {
-                let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
-                this.scene.navMesh.debugDrawClear();
-                this.path = this.scene.navMesh.findPath(this.position, originPoint);
-                console.log(this.path, "Path");
-                if (this.path && this.path.length > 1) {
-                    if (!this.isPathing) this.isPathing = true;
-                    const nextPoint = this.path[1];
-                    console.log(nextPoint, "Next Point In Path");
-                    this.nextPoint = nextPoint;
-                    this.scene.navMesh.debugDrawPath(this.path, 0xffd900);
-                    console.log(this.path, "Paths", this.nextPoint, "Next Point", this.position, "Enemy Position");
-                    const pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
-                    this.pathDirection = pathDirection;
-                    this.pathDirection.subtract(this.position);
-                    console.log(this.pathDirection, pathDirection, "Path Direction");
-                    this.pathDirection.normalize();
-                    console.log(this.pathDirection, "Path Direction Normalized");
-                    
-                    const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
-                    console.log(distanceToNextPoint, "Distance to Next Point");
-                    if (distanceToNextPoint < 10) {
-                        console.log("NPC Reached Next Point");
-                        this.path.shift();
-                    };
-                };
-            },
-            callbackScope: this,
-            loop: true
-        }); 
-    };
-    onLeashUpdate = (dt) => {
-        let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
-        let direction = originPoint.subtract(this.position);
-        
-        if (direction.length() >= 10) {
-            if (this.path && this.path.length > 1) {
-                this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
-            } else {
-                if (this.isPathing) this.isPathing = false;
-                direction.normalize();
-                this.setVelocity(direction.x * 2.5, direction.y * 2.5);
-            };
-        } else {
-            this.stateMachine.setState(States.IDLE);
-        };
-    };
-    onLeashExit = () => {
-        console.log("NPC Leashed to Origin Point of Encounter");
-        this.anims.stop('player_running');
-        this.setVelocity(0, 0);
-        this.leashTimer.destroy();
-        this.leashTimer = null;
-        this.scene.navMesh.debugDrawClear(); 
-    };
-
-    onPatrolEnter = () => {
-        this.anims.play('player_running', true); 
-        const patrolDirection = new Phaser.Math.Vector2(Math.random() - 0.5, Math.random() - 0.5).normalize();
-        if (patrolDirection.x < 0) { this.flipX = true };
-        const patrolSpeed = 1;
-        this.patrolVelocity = { x: patrolDirection.x * patrolSpeed, y: patrolDirection.y * patrolSpeed };
-        const delay = Phaser.Math.RND.between(2000, 3000);
-        this.patrolTimer = this.scene.time.addEvent({
-            delay: delay,
-            callback: () => {
-                const wasX = this.flipX;
-                this.scene.tweens.add({
-                    delay: 1000,
-                    targets: this,
-                    x: this.originalPosition.x,
-                    y: this.originalPosition.y,
-                    duration: delay,
-                    onUpdate: () => {
-                        if (this.flipX === wasX) this.flipX = !this.flipX;
-                    },
-                    onComplete: () => { 
-                        this.setVelocity(0, 0);
-                        if (this.stateMachine.isCurrentState(States.PATROL)) this.stateMachine.setState(States.IDLE);
-                    }
-                });
-            },
-            callbackScope: this,
-            loop: false,
-        });
-    }; 
-    onPatrolUpdate = (dt) => { 
-        this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
-    };
-    onPatrolExit = () => {
-        this.anims.stop('player_running');
-        this.patrolTimer.destroy();
-    };
+    };  
 
     onAwarenessEnter = () => {
         console.log("Aware of Player")

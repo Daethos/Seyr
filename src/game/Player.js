@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import Entity, { screenShake, pauseGame, walk } from "./Entity";  
+import Entity, { screenShake, walk } from "./Entity";  
 import StateMachine, { States } from "./StateMachine";
 import ScrollingCombatText from "./ScrollingCombatText";
 import HealthBar from "./HealthBar";
@@ -577,6 +577,27 @@ export default class Player extends Entity {
         this.clearTint();
         
     };
+
+    checkTouching = () => {
+        this.touching = this.touching.filter(gameObject => {
+            if (gameObject.isDead || (gameObject.isEnemy && !gameObject.inCombat)) {
+                console.log("Removing from touching array", gameObject, gameObject.inCombat, gameObject.isEnemy, gameObject.isDead);
+                return false;    
+            };
+            return true;
+        });
+        if (this.touching.length === 0 || this.touching.every((gameObject) => gameObject.npcType)) {
+            if (this.inCombat || this.scene.combat) {
+                this.scene.combatEngaged(false);
+                this.inCombat = false;
+            };
+        };
+        // this.touching = this.touching.filter(gameObject => ( 
+        //     !gameObject.isDead &&
+        //     (!gameObject.isEnemy || (gameObject.isEnemy && !gameObject.inCombat))
+        // ));
+          
+    };
     
     update() {
         if (this.actionSuccess) {
@@ -594,7 +615,8 @@ export default class Player extends Entity {
             this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
             this.spriteShield.setTexture(this.currentShieldSprite);
         };
-        this.touching.filter(gameObject => (gameObject !== null || gameObject.isDead));
+        // this.touching.filter(gameObject => (gameObject !== null || gameObject.isDead));
+        this.checkTouching();
         if (this.particleEffect) { 
             if (this.particleEffect.success) {
                 this.particleEffect.triggered = true;
@@ -613,7 +635,7 @@ export default class Player extends Entity {
         let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB)) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.touching.length > 0) {
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
             }; 
@@ -826,7 +848,7 @@ export default class Player extends Entity {
                 this.isAttacking = false;
             }); 
         } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) && !this.isRolling) { // RUNNING
-            walk(this.scene);
+            // walk(this.scene);
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING

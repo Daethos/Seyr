@@ -138,6 +138,7 @@ export default class Enemy extends Entity {
         this.attackTimer = null;
         this.combatThreshold = 0;
         this.attackIsLive = false;
+        this.isEnemy = true;
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -168,12 +169,12 @@ export default class Enemy extends Entity {
                 if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
+                    const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
+                    if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.computer._id !== this.ascean._id && !other.gameObjectB.touching.find((touched) => touched.ascean._id === this.ascean._id)) {
-                        this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health });
-                    };
+                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
-                    this.stateMachine.setState(States.CHASE); // TODO:FIXME: State Machine Combat
+                    this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
                     other.gameObjectB.attacking = this;
@@ -268,13 +269,15 @@ export default class Enemy extends Entity {
 
     attackInterval() {
         if (this.scene.state.computer_weapons[0]) {
-            return this.scene.state.computer_weapons[0].grip === 'Two Hand' ? 900 : 600;
+            const weapon = this.scene.state.computer_weapons[0];
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1200 : weapon.grip === 'Two Hand' ? 900 : 600;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.grip === 'Two Hand' ? 900 : 600;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1200 : weapon. weapon.grip === 'Two Hand' ? 900 : 600;
         } else {
-            return this.ascean.weapon_one.grip === 'Two Hand' ? 900 : 600;
+            const weapon = this.ascean.weapon_one;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1200 : weapon.grip === 'Two Hand' ? 900 : 600;
         };
     };
 
@@ -313,7 +316,6 @@ export default class Enemy extends Entity {
         this.idleWait -= dt;
         if (this.idleWait <= 0) {
             this.idleWait = 3000;
-            // console.log("Idle Transitioning to Patrol");
             if (this.stateMachine.isCurrentState(States.IDLE)) this.stateMachine.setState(States.PATROL);
         };
     };
@@ -322,7 +324,6 @@ export default class Enemy extends Entity {
     };
  
     onPatrolEnter = () => {
-        // console.log("Entering Patrol State");
         this.anims.play('player_running', true); 
         const patrolDirection = new Phaser.Math.Vector2(Math.random() - 0.5, Math.random() - 0.5).normalize();
         if (patrolDirection.x < 0) { this.flipX = true };
@@ -356,7 +357,6 @@ export default class Enemy extends Entity {
         this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
     };
     onPatrolExit = () => {
-        // console.log("Exiting Patrol State")
         this.anims.stop('player_running');
         this.patrolTimer.destroy();
     };
@@ -430,7 +430,7 @@ export default class Enemy extends Entity {
             this.stateMachine.setState(States.LEASH);
             return;
         };  
-        if (distance >= 150 * rangeMultiplier) {
+        if (distance >= 175 * rangeMultiplier) {
             if (this.path && this.path.length > 1) {
                 this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
             } else {
@@ -505,7 +505,6 @@ export default class Enemy extends Entity {
     };
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) this.scene.setState('computer_action', 'attack');
-        // TODO:FIXME: If the enemy is melee, the enemy should be be able to move while attacking toward the target player in order to be more effective at succeeding in hitting the player.
         if (!this.isRanged) this.swingMomentum();
         if (!this.isAttacking) this.evaluateCombatDistance(); 
     };
@@ -563,33 +562,25 @@ export default class Enemy extends Entity {
         console.log("Leashing Enemy to Origin Point of Encounter");
         this.anims.play('player_running', true);
         if (this.attacking) {
-            this.attacking.inCombat = false;
+            this.inCombat = false;
             this.attacking = null;
         };
-        this.scene.combatEngaged(false);
         this.leashTimer = this.scene.time.addEvent({
             delay: 500,
             callback: () => {
                 let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
                 this.scene.navMesh.debugDrawClear();
                 this.path = this.scene.navMesh.findPath(this.position, originPoint);
-                console.log(this.path, "Path");
                 if (this.path && this.path.length > 1) {
                     if (!this.isPathing) this.isPathing = true;
                     const nextPoint = this.path[1];
-                    console.log(nextPoint, "Next Point In Path");
                     this.nextPoint = nextPoint;
                     this.scene.navMesh.debugDrawPath(this.path, 0xffd900);
-                    console.log(this.path, "Paths", this.nextPoint, "Next Point", this.position, "Enemy Position");
                     const pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
                     this.pathDirection = pathDirection;
                     this.pathDirection.subtract(this.position);
-                    console.log(this.pathDirection, pathDirection, "Path Direction");
                     this.pathDirection.normalize();
-                    console.log(this.pathDirection, "Path Direction Normalized");
-                    
                     const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
-                    console.log(distanceToNextPoint, "Distance to Next Point");
                     if (distanceToNextPoint < 10) {
                         console.log("Enemy Reached Next Point");
                         this.path.shift();
@@ -698,7 +689,7 @@ export default class Enemy extends Entity {
             };
         } else { // Melee
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            if (direction.length() > 52) { // Outside melee range
+            if (direction.length() > 55) { // Outside melee range TODO:FIXME: Not sure if I should use a higher or lower number for better feel
                 this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityX(direction.x * 2.75);

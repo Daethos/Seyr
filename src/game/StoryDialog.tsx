@@ -186,7 +186,7 @@ interface StoryDialogProps {
     gameState: GameData;
     gameDispatch: React.Dispatch<any>;
     deleteEquipment: (equipment: any[]) => Promise<void>;
-}
+};
 
 export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEquipment }: StoryDialogProps) => {
     const [error, setError] = useState<any>({ title: '', content: '' });
@@ -287,32 +287,31 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         zIndex: 9999,
     };
 
-// style={{ width: "60%", top: "75%", height: "40%", border: "3px solid #2A0134", zIndex: 9999 }}
     return (
         <div className='story-dialog' style={dialogStyle}>
             <img src={dialogWindow} alt='Dialog Window' style={{ transform: "scale(1.1)" }} />
             <div className='story-text'> 
-            { state.npcType === 'Merchant-Blacksmith' ? (
+            { state.npcType === 'Merchant-Smith' ? (
                 <>
                     <br />
                     "You've come for forging? I only handle chiomic quality and above. Check my rates and hand me anything you think worth's it. Elsewise I trade with the Armorer if you want to find what I've made already."
                     <br /><br />
-                    Hanging on the wall is a list of prices for the various items you can forge. The prices are based on the quality. <br />
-                    <p style={{ color: "green", fontSize: "20px", marginBottom: "-1px", fontWeight: 700 }}>Kyn'gian: 1g</p> 
-                    <p style={{ color: "blue", fontSize: "20px", marginBottom: "-1px", fontWeight: 700 }}>Senic: 3g</p>
-                    <p style={{ color: "purple", fontSize: "20px", marginBottom: "-1px", fontWeight: 700 }}>Kyris: 12g</p>
-                    <p style={{ color: "darkorange", fontSize: "20px", marginBottom: "-1px", fontWeight: 700 }}>Sedyrus: 60g</p>
-                    <br />
+                    Hanging on the wall is a list of prices for the various items you can forge. The prices are based on the quality. <br /><br />
+                    <p style={{ color: "green", fontSize: "20px", marginBottom: "-1px", fontWeight: 700, display: 'inline' }}>Kyn'gian: 1g</p> |{' '}  
+                    <p style={{ color: "blue", fontSize: "20px", marginBottom: "-1px", fontWeight: 700, display: 'inline' }}>Senic: 3g</p> |{' '}
+                    <p style={{ color: "purple", fontSize: "20px", marginBottom: "-1px", fontWeight: 700, display: 'inline' }}>Kyris: 12g</p> |{' '} 
+                    <p style={{ color: "darkorange", fontSize: "20px", marginBottom: "-1px", fontWeight: 700, display: 'inline' }}>Sedyrus: 60g</p>
+                    <br /><br />
                     <Currency ascean={gameState.player} />
-                    { upgradeItems ?
-                        <>
-                        {upgradeItems.map((item: any, index: number) => {
+                    { upgradeItems ? (
+                        upgradeItems.map((item: any, index: number) => {
                             return (
-                                <Inventory key={index} inventory={item} bag={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={state.player} blacksmith={true} index={index} />
+                                <div style={{ display: 'inline-block', marginRight: '5%', marginBottom: '10%' }}>
+                                    <Inventory key={index} inventory={item} bag={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={state.player} blacksmith={true} index={index} />
+                                </div>
                             )
-                        })}
-                        </>
-                    : '' }
+                        })
+                    ) : ( '' ) }
                     <br />
                 </>
             ) : state.npcType === 'Merchant-Alchemy' ? (

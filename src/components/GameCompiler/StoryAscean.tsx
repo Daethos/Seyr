@@ -250,7 +250,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         );
     };
     return (
-        <>
+        <div style={{ zIndex: 9999 }}>
         <img src ={statPng} alt="Player Portrait" style={{ position: "absolute" }} />
         { asceanViews === VIEWS.CHARACTER ? (
             <h3 className='story-menu-heading'>
@@ -265,7 +265,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             <h3 className='story-menu-heading'>
             Settings
             </h3>
-            <Form.Select value={currentSetting} onChange={handleSettingChange} style={{ position: "absolute", width: "25%", left: "67.5%", top: "11%", background: "black", color: "#fdf6d8", borderColor: "#fdf6d8", textAlign: "center" }}>
+            <Form.Select value={currentSetting} onChange={handleSettingChange} style={{ position: "absolute", width: "25%", left: "67.5%", top: "11%", background: "black", color: "#fdf6d8", borderColor: "#fdf6d8", textAlign: "center", paddingRight: '0.75rem' }}>
                 <option value="Actions">Actions</option> 
                 <option value="General">General</option>
                 <option value="Inventory">Inventory</option>
@@ -362,7 +362,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                 <div className='p-2' style={{ overflowY: "scroll", scrollbarWidth: "none", height: "100%" }}>{createSettingInfo(currentSetting)}</div>
             ) : ( '' ) }
         </div>
-        </>
+        </div>
     );
 };
 

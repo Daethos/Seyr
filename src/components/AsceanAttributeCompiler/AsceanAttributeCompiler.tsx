@@ -37,7 +37,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
                 The determination of several factors within combat is based on your Constitution. Overall your health is most weighted by your Constitution, 
                 in addition toward being able to augment higher thresholds of endurance, like the quality of your critical attacks and ability to absord damage.
             </p><br />
-            <p> Increases Health, Defenses, Posturing, Crit Damage, its Mastery Pervasive</p>
+            <p> Increases Health, Defenses, Posturing, Crit Damage, and Stamina--its Mastery Pervasive</p>
             </Popover.Body>
         </Popover>
     );
@@ -48,7 +48,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The physical power you possess, weighing heavily into your abliity to deal and receive physical damage with brutality.
             </p><br />
-            <p> Increases Crit Damage, Physical Damage, Posturing, Affects Dual-Wielding Two-Hand Weapons</p>
+            <p> Increases Crit Damage, Physical Damage, Defense, and Posturing. Affects Dual-Wielding Two-Hand Weapons</p>
             </Popover.Body>
         </Popover>
     );
@@ -59,7 +59,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The physical clarity you possess, weighing heavily into your abliity to mitigate and perform physical damage with finesse.
             </p><br />
-            <p> Increases Crit Damage, Dodge, Phys Damage, Roll, Affects Dual-Wielding One-Hand Weapons</p>
+            <p> Increases Phys Crit Chance, Phys Damage, Dodge, Roll, and Stamina. Affects Dual-Wielding One-Hand Weapons</p>
             </Popover.Body>
         </Popover>
     );
@@ -71,7 +71,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             Of Achreo, the Wild Ancient.<br /><br />
             Synonymous with being an Arbiter, they are measured by the quality of their Achre: discernment, poise, sagacity, and existence above error.</p>
             <br />
-            <p>Increases Crit Change, Dodge, Roll, Spell Damage, Affects Dual-Wielding One-Hand Spells</p>
+            <p>Increases Magi Crit Change, Magi Damage, Dodge, Roll. Affects Dual-Wielding One-Hand Spells</p>
             </Popover.Body>
         </Popover>
     );
@@ -85,7 +85,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <br /> The Caer (Informal, Colloquial): Synonymous to 'the will.'
             </p>
             <br />
-            <p>Increases Crit Damage, Defense, Health, Spell Damage, Affects Dual-Wielding Two-Hand Spells</p>
+            <p>Increases Crit Damage, Defense, Health, Magi Damage, and Stamina. Affects Dual-Wielding Two-Hand Spells</p>
             </Popover.Body>
         </Popover>
     );
@@ -98,7 +98,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             A charisma that warps those regardless of their caer, shearing their shields while capable of quelling their most quality strikes.
             </p>
             <br />
-            <p>Increases Defenses, Penetration, its Mastery Pervasive</p>
+            <p>Increases Myriad Defense and Penetration--its Mastery Pervasive</p>
             </Popover.Body>
         </Popover>
     );
@@ -110,8 +110,8 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
     };
 
     const storyP = {
-        color: story ? 'gold' : "#fdf6d8",   
-        fontSize: story ? '12.5px' : '',
+        color: 'gold',   
+        fontSize: story ? '12.5px' : '14px',
     };
 
     if (loading) {

@@ -22,6 +22,7 @@ export default class Play extends Phaser.Scene {
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
         this.enemy = this.data.gameData.gameData.enemy;
+        this.combat = false;
         this.focus = {}; 
         this.enemies = [];
         this.particleManager = {};
@@ -50,18 +51,6 @@ export default class Play extends Phaser.Scene {
     
     create() { 
         this.input.setDefaultCursor('url(' + process.env.PUBLIC_URL + '/images/cursor.png), pointer'); 
-        
-        // const map = this.make.tilemap({ key: 'top_down' });
-        // const tileSet = map.addTilesetImage('MainLev2.0', 'MainLev2.0', 32, 32, 0, 0);
-        // console.log(tileSet, map, "Tile Set ?")
-        // const layer1 = map.createLayer('Tile Layer 1', tileSet, 0, 0);
-        // const layer2 = map.createLayer('Tile Layer 2', tileSet, 0, 0);
-        // layer2.setCollisionByProperty({ collides: true });
-        // this.matter.world.convertTilemapLayer(layer2);
-        // this.matter.world.convertTilemapLayer(layer1);
-        // this.map = map;
-        // this.matter.world.setBounds(0, 0, 960, 640); // Platformer
-        // this.matter.world.setBounds(0, 0, 2048, 2048); // Top Down
         
         // ================== Ascean Test Map ================== \\
         const map = this.make.tilemap({ key: 'ascean_test' });
@@ -96,16 +85,12 @@ export default class Play extends Phaser.Scene {
         const debugGraphics = this.add.graphics().setAlpha(0.75);
         this.navMesh.enableDebug(debugGraphics); 
         this.matter.world.createDebugGraphic(); 
-
         this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
-        
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
         
         this.enemy = new NPC({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
-
-        // this.map.getObjectLayer('Enemies').objects.forEach(enemy => console.log(enemy, "Enemy"));
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
 
@@ -251,6 +236,8 @@ export default class Play extends Phaser.Scene {
     };
 
     combatEngaged = async (engagement) => {
+        console.log(engagement, "Combat Engagement");
+        if (engagement) { this.combat = true; } else { this.combat = false; };
         const combatEngaged = new CustomEvent('combat-engaged', { detail: engagement });
         window.dispatchEvent(combatEngaged);
     };

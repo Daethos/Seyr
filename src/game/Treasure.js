@@ -14,14 +14,10 @@ export default class Treasure extends Entity {
         let depth = treasure?.properties?.find((p) => p?.name === 'depth')?.value || 2;
         super ({ scene, x: treasure.x, y: treasure.y, texture: 'treasures', frame: 'treasure-chest', depth, health: 0, name: 'treasure' }); // removed drops
 
-        // let yOrigin = treasure?.properties?.find((p) => p?.name === 'yOrigin')?.value;
-        // this.y = this.y + this.height * (yOrigin - 0.5);
-        
         const { Bodies } = Phaser.Physics.Matter.Matter;
         let circleCollider = Bodies.circle(this.x, this.y, 12, { isSensor: false, label: 'treasureCollider' });
         this.setExistingBody(circleCollider);
         this.setScale(0.75);
         this.setStatic(true);
-        // this.setOrigin(0.5, yOrigin);
     };
 };

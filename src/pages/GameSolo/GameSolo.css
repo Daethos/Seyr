@@ -211,7 +211,7 @@
 #story-console {
   position: absolute;
   text-align: center;
-  top: 140px;
+  top: 100px;
   background-color: black;
   border: 3px solid purple;
   border-radius: 6px;
@@ -326,7 +326,7 @@
   border: 1.5px solid purple;
   color: #fdf6d8;
   font-weight: 900;
-  z-index: 1000;
+  z-index: 9999;
 }
 @media screen and (max-height: 775px) {
   .dialog-box {
@@ -951,9 +951,9 @@
   z-index: 9999;
 }
 .blacksmith-forge {
-  margin-bottom: 2%;
-  margin-left: -22.5%;
-  margin-top: 20%;
+  position: absolute;
+  margin-left: -13%;
+  margin-top: 12%;
   color: gold;
   font-weight: 600;
 }
@@ -1870,4 +1870,11 @@
   top: 80px;
   left: 60px;
   font-weight: 600;
+}
+.story-dropdown {
+  background: black;
+  color: #fdf6d8;
+  border-color: #fdf6d8;
+  text-align: center;
+  padding-right: 0.75rem;
 }

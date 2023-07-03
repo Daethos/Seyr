@@ -1847,7 +1847,6 @@ const GameSolo = ({ user }: GameProps) => {
 
     return (
         <Container fluid id="game-container" style={background}>
-            {/* <canvas id="game-canvas" width={400} height={400}></canvas> */}
             { gameState.opponent ?
                 <>
                 <GameAscean state={state} dispatch={dispatch} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />

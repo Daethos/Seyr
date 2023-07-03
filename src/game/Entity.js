@@ -770,14 +770,14 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
             this.frameCount += 1;
         } else if (this.isPosturing) {
-            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 3) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.player_damage_type.toLowerCase());
-            } else if (entity === 'player' && this.checkBow(this.scene.state.weapons[0]) && this.frameCount === 3) {
+            } else if (entity === 'player' && this.checkBow(this.scene.state.weapons[0]) && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };
-            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 3) {
+            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
-            } else if (entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons[0]) && this.frameCount === 3) {
+            } else if (entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons[0]) && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);

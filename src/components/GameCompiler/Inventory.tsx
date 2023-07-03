@@ -675,7 +675,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
 
     return (
         <>
-        <Modal show={forgeModalShow} onHide={() => setForgeModalShow(false)} centered id='modal-weapon' style={{ zIndex: 99999 }}>
+        <Modal show={forgeModalShow} onHide={() => setForgeModalShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
             <Modal.Header style={{ color: "red", fontSize: "18px" }}>
                 Do You Wish To Collapse Three {inventory?.name} into one of {getNextRarity[inventory?.rarity as keyof typeof getNextRarity]} Quality for {getForgeCost[inventory?.rarity as keyof typeof getForgeCost]} Gold?
             </Modal.Header>
@@ -688,7 +688,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 </p>
             </Modal.Body>
         </Modal>
-        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ zIndex: 99999, top: story ? '-25%' : '0' }}>
+        <Modal show={removeModalShow} onHide={() => setRemoveModalShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: story ? '-25%' : '0' }}>
             <Modal.Header>
                 Do You Wish To Remove and Destroy Your {inventory?.name}? <span><img src={inventory?.imgURL} alt={inventory?.name} /></span>
             </Modal.Header>
@@ -933,7 +933,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             <>
             { inventoryType === 'weapon_one' ? (
                 <>
-                <Form.Select value={weaponCompared} onChange={(e) => setWeaponCompared(e.target.value)}>
+                <Form.Select value={weaponCompared} onChange={(e) => setWeaponCompared(e.target.value)} className='story-dropdown'>
                     <option value={inventoryType}>{ascean[inventoryType as keyof typeof editState].name}</option>
                     <option value={inventoryTypeTwo}>{ascean[inventoryTypeTwo as keyof typeof editState].name}</option>
                     <option value={inventoryTypeThree}>{ascean[inventoryTypeThree as keyof typeof editState].name}</option>
@@ -942,7 +942,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 </>
             ) : inventoryType === 'ring_one' ? (
                 <>
-                <Form.Select value={ringCompared} onChange={(e) => setRingCompared(e.target.value)}>
+                <Form.Select value={ringCompared} onChange={(e) => setRingCompared(e.target.value)} className='story-dropdown'>
                     <option value={inventoryType}>{ascean[inventoryType as keyof typeof editState].name}</option>
                     <option value={inventoryRingType}>{ascean[inventoryRingType as keyof typeof editState].name}</option>
                 </Form.Select>
@@ -952,7 +952,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 <div style={{ width: "100%", textAlign: "center" }} className='mt-3'>
                 { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
                     <>
-                    <Form.Select value={
+                    <Form.Select className='story-dropdown' value={
                         inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
                         editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? 
                         editState.legs._id : inventoryType === 'amulet' ? editState.amulet._id : inventoryType === 'ring_one' ? 
@@ -963,12 +963,12 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     </Form.Select>
                     { inventory?.grip && inventory?.type ?
                         <><br />
-                        <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
+                        <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2} className='story-dropdown'>
                             <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
                             <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
                             <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                         </Form.Select><br />
-                        <Form.Select value={editState.weapon_three._id} onChange={handleInventoryW3}>
+                        <Form.Select value={editState.weapon_three._id} onChange={handleInventoryW3} className='story-dropdown'>
                             <option value={(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?.name} [Selected]</option>
                             <option value={ascean[inventoryTypeThree as keyof typeof editState]?._id}>{ascean[inventoryTypeThree as keyof typeof editState]?.name} [Equipped]</option>
                             <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
@@ -978,7 +978,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     { inventoryType === 'ring_one' ?
                         <>
                         <br />
-                        <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2}>
+                        <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2} className='story-dropdown'>
                             <option value={(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?.name} [Selected]</option>
                             <option value={ascean[inventoryRingType]?._id}>{ascean[inventoryRingType]?.name} [Equipped]</option>
                             <option value={inventory?._id}>{inventory?.name} [Viewing]</option>

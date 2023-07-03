@@ -1,5 +1,5 @@
 import LootDrop from '../components/GameCompiler/LootDrop';
-import { GameData } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameData } from '../components/GameCompiler/GameStore';
 import { CombatData } from '../components/GameCompiler/CombatStore';
 import { useEffect, useState } from 'react';
 
@@ -12,22 +12,21 @@ interface LootDropUIProps {
 export const LootDropUI = ({ gameState, gameDispatch, state }: LootDropUIProps) => {
     const [visibleLoot, setVisibleLoot] = useState<any[]>([]);
     useEffect(() => {
-        console.log("Loot Drop UI", gameState.showLootIds);
         const visible = gameState.lootDrops?.filter((lootDrop: any) => gameState.showLootIds.includes(lootDrop._id));
-        console.log("Visible", visible);
+        if (visible.length === 0) gameDispatch({ type: GAME_ACTIONS.CLEAR_SHOW_LOOT_ONE, payload: false });
         setVisibleLoot(visible);
     }, [gameState.showLootIds, gameState.lootDrops]);
     return (
         <div style={{ 
             position: "absolute", 
-            top: "515px", 
+            top: "380px", 
             left: "275px", 
-            zIndex: 0,  
+            zIndex: 9999,  
             height: "120px",
             width: "400px",  
             fontSize: "16px",
             borderRadius: "3px",
-            border: "3px solid #2A0134",
+            border: "4px solid #2A0134",
             boxShadow: "2px 2px 2px black",
             overflow: "auto",
             scrollbarWidth: "none",

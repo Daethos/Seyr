@@ -34,9 +34,5 @@ export default class LootDrop extends Entity {
 
     destroyLootDrop = () => {
         this.destroy();
-    };
-
-    get id() {
-        return this._id;
-    };
+    }; 
 };

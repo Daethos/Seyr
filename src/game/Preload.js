@@ -4,14 +4,6 @@ import Player from "./Player.js";
 import Enemy from './Enemy.js';
 import Treasure from './Treasure.js';
 import ParticleManager from "./ParticleManager.js";
-import joystickPng from './images/generic-joystick.png';
-import joystickJson from './images/generic-joystick.json';
-import castle_tiles from '../game/images/castle_tiles.png';
-import castle_map from '../game/images/castle_map.json';
-import layer_1 from '../game/images/layer_1.png';
-// Top-Down Attempt
-import MainLev2 from '../game/images/MainLev2.0.png';
-import top_down from '../game/images/top_down.json';
 import ascean_test from '../game/images/ascean_test.json';
 import AncientForestDecorative from '../game/images/AncientForestDecorative.png';
 import AncientForestMain from '../game/images/AncientForestMainLev.png';
@@ -27,7 +19,6 @@ export default class Preload extends Phaser.Scene {
         this.enemy = {};
         this.state = {};
         this.gameState = {};
-
     };
 
     init(data) {
@@ -49,15 +40,6 @@ export default class Preload extends Phaser.Scene {
 
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
- 
-
-        // this.load.image('castle_tiles', castle_tiles);
-        // this.load.image('layer_1', layer_1);
-        // this.load.tilemapTiledJSON('castle_map', castle_map);
-
-        // Top-Down Attempt
-        // this.load.image('MainLev2.0', MainLev2);
-        // this.load.tilemapTiledJSON('top_down', top_down);
 
         this.load.image('AncientForestMain', AncientForestMain);
         this.load.image('AncientForestDecorative', AncientForestDecorative);

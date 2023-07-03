@@ -393,7 +393,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                                 readOnly 
                             ></input>
                             <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
-                            <h4 className="" style={{ marginLeft: 15 + '%' }} id="con-box">
+                            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="con-box">
                             </h4>
                         </InputGroup>
                     </div>
@@ -413,7 +413,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                                 readOnly 
                             ></input>
                         <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
-                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="str-box">
+                        <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="str-box">
                             </h4>
                         </InputGroup>
                     </div>
@@ -433,8 +433,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                                 readOnly 
                             ></input>
                         <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
-                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="agi-box">
-                            </h4>
+                        <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="agi-box">
+                        </h4>
                         </InputGroup>
                     </div>
                     <div className="property-line">
@@ -454,7 +454,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                                 readOnly 
                             ></input>
                         <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
-                        <h4 className="" style={{ marginLeft: 15 + '%' }} id="ach-box">
+                        <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="ach-box">
                             </h4>
                         </InputGroup>
                     </div>
@@ -477,7 +477,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                                 readOnly 
                             ></input>
                             <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
-                            <h4 className="" style={{ marginLeft: 15 + '%' }} id="caer-box">
+                            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="caer-box">
                             </h4>
                         </InputGroup>
                     </div>
@@ -499,7 +499,7 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
                                 readOnly 
                             ></input>
                             <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={asceanState.kyosir}>+</button>
-                            <h4 className="" style={{ marginLeft: 15 + '%' }} id="kyo-box">
+                            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="kyo-box">
                             </h4>
                         </InputGroup>
                     </div>

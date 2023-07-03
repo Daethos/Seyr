@@ -21,7 +21,6 @@ import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
 import PhaserInventoryBag from '../PhaserInventoryBag';
 import { GAME_ACTIONS, NPC } from '../../components/GameCompiler/GameStore';
-import PhaserSettings from '../PhaserSettings';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../CombatMouseSettings';
@@ -49,8 +48,6 @@ export const usePhaserEvent = (event: string, callback: any) => {
 
 interface Props {
     user: any; 
-    gameChange: boolean;
-    setGameChange: React.Dispatch<React.SetStateAction<boolean>>;
     state: any;
     dispatch: any;
     gameState: any;
@@ -60,21 +57,18 @@ interface Props {
     assets: any;
 };
 
-const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState, assets }: Props) => {
+const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState, setAsceanState, assets }: Props) => {
     const { asceanID } = useParams();
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
-    const [fullScreen, setFullScreen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [combatHud, setCombatHud] = useState<boolean>(false);
     const [dialogTag, setDialogTag] = useState<boolean>(false);
-    const [modalShow, setModalShow] = useState<boolean>(false);
-    const [worldModalShow, setWorldModalShow] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
-    const [asceanViews, setAsceanViews] = useState<string>('Character'); // 'Journal', 'Settings'
+    const [asceanViews, setAsceanViews] = useState<string>('Character');
 
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
@@ -119,9 +113,9 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     mapping: 'matterCollision'
                 },
                 {
-                    key: "PhaserNavMeshPlugin", // Key to store the plugin class under in cache
-                    plugin: PhaserNavMeshPlugin, // Class that constructs plugins
-                    mapping: "navMeshPlugin", // Property mapping to use for the scene, e.g. this.navMeshPlugin
+                    key: "PhaserNavMeshPlugin",
+                    plugin: PhaserNavMeshPlugin,
+                    mapping: "navMeshPlugin",
                     start: true
                 },
             ],
@@ -290,23 +284,20 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                 } else  if (state.player.level <= 4) { // 3-4 
                     minLevel = 2;
                     maxLevel = 4;
-                } else if (state.player.level === 5) { 
+                } else if (state.player.level <= 6) { 
                     minLevel = 4;
                     maxLevel = 6;
-                } else if (state.player.level === 6) {
-                    minLevel = 4;
-                    maxLevel = 8;
-                } else if (state.player.level === 7) {
+                } else if (state.player.level <= 8) {
                     minLevel = 5;
                     maxLevel = 9;
-                } else if (state.player.level === 8) {
-                    minLevel = 6;
-                    maxLevel = 10;
                 } else if (state.player.level <= 10) { // 9-10
                     minLevel = 7;
                     maxLevel = 12;
-                } else if (state.player.level <= 14) { // 11-14
+                } else if (state.player.level <= 12) {
                     minLevel = 8;
+                    maxLevel = 14;
+                } else if (state.player.level <= 14) { // 11-14
+                    minLevel = 10;
                     maxLevel = 16;
                 } else if (state.player.level <= 18) { // 15-18
                     minLevel = 12;
@@ -348,7 +339,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const setupNpc = async (e: { detail: any; }) => {
-        // await getNPCDialog(e.detail.type);
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
         const dialog = getNodesForNPC(npcIds[e.detail.type]);
         console.log(dialog, "Dialog for NPC: ", e.detail.type);
@@ -364,17 +354,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean to Edit')
         };
-    };
-
-    const getNPCDialog = async (enemy: string) => {
-        try {
-            const response = getMerchantDialog(enemy);
-            if (!response) return;
-            gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean to Edit')
-        };
-    };
+    }; 
 
     const fetchNpc = async (e: any) => { 
         try {
@@ -438,19 +418,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         return () => {
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         };
-    }, [asceanState, gameState.saveExp]);
-
-    const clearOpponent = async (data: CombatData) => {
-        try {
-            if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            setTimeout(() => {
-                dispatch({ type: ACTIONS.CLEAR_DUEL, payload: null });
-                gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: null });
-            }, 500);
-        } catch (err: any) {
-            console.log(err.message, 'Error Clearing Duel');
-        };
-    };
+    }, [asceanState, gameState.saveExp]); 
 
     const deleteEquipment = async (eqp: any) => {
         try {
@@ -498,7 +466,8 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
     };
 
     const saveExperience = async () => {
-        if (!gameState.saveExp || !state.player_win) return;
+        console.log('Saving Experience!', gameState.saveExp, state.player_win);
+        if (!gameState.saveExp) return;
         try {
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
             const response = await asceanAPI.saveExperience(asceanState);
@@ -545,6 +514,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         try {
             let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
             if (data.prayerData.includes('Avarice')) opponentExp = Math.round(opponentExp * 1.2);
+            console.log(opponentExp, 'Opponent Exp in Gain Experience');
             if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
                 setAsceanState({
                     ...asceanState,
@@ -568,15 +538,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         } catch (err: any) {
             console.log(err.message, 'Error Gaining Experience');
         };
-    };
-
-    useEffect(() => {
-        if (gameState.lootRoll === false || state.player_win === false) return;
-        getOneLootDrop(state.computer.level);
-        return () => {
-            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: false });
-        };
-    }, [gameState.lootRoll, state.player_win]);
+    }; 
     
     const getOneLootDrop = async (level: number) => {
         try {
@@ -690,7 +652,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             console.log(response, "Player Win Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: true });
+            await getOneLootDrop(combatData.computer.level);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
@@ -864,8 +826,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         if (newHeight > window.innerHeight) {
             newHeight = window.innerHeight;
             newWidth = newHeight * game_ratio;
-        };
-
+        }; 
         canvas.style.width = newWidth + 'px';
         canvas.style.height = newHeight + 'px';
     };
@@ -890,7 +851,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         };
         if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
-    // <Button variant='' className='dialog-button' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>Dialog</Button>
 
     const toggleFullscreen = () => screenfull.toggle();
 
@@ -930,15 +890,7 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
             resume();
             setPauseState(false);
         };
-    };
-
-    const handleInventoryMiddleware = async () => {
-        try {
-            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_INVENTORY, payload: !gameState.showInventory });
-        } catch (err: any) {
-            console.log(err, "Error Handling Dialog Middleware");
-        };
-    };
+    }; 
 
     const combatEngaged = async (e: { detail: any; }) => {
         try {
@@ -993,7 +945,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     { gameState.player.journal.entries.length > 0 ?
                         <StoryJournal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} ascean={gameState.player} />
                     : '' }
-                    {/* <PhaserSettings ascean={gameState.player} dispatch={dispatch} gameDispatch={gameDispatch} gameState={gameState} /> */}
                     { dialogTag ? (
                         <Button variant='' className='ascean-ui' onClick={() => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })}>
                             <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>

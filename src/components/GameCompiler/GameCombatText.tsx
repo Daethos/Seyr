@@ -20,11 +20,11 @@ interface Props {
 
 const GameCombatText = ({ combatTimer, story, spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
     const storyStyle = {
-        height: "80px",
+        height: "120px",
         width: "450px",  
         fontSize: "12px",
         borderRadius: "3px",
-        border: "2px solid #2A0134",
+        border: "4px solid #2A0134",
         boxShadow: "2px 2px 2px black"
     };
     const text = () => {
