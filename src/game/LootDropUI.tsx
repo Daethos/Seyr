@@ -1,7 +1,6 @@
 import LootDrop from '../components/GameCompiler/LootDrop';
 import { GameData } from '../components/GameCompiler/GameStore';
 import { CombatData } from '../components/GameCompiler/CombatStore';
-import playerPortrait from './images/player-portrait.png';
 import { useEffect, useState } from 'react';
 
 interface LootDropUIProps {
@@ -35,8 +34,7 @@ export const LootDropUI = ({ gameState, gameDispatch, state }: LootDropUIProps) 
             backgroundColor: "black",
             color: "#fdf6d8",
             textAlign: "center", 
-        }}>
-            {/* <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '400px', height: '135px', top: "-10px", left: "-25px"  }} /> */}
+        }}> 
             <div style={{ display: 'inline-block' }}>
                 { visibleLoot.length > 0 ? (
                     visibleLoot.map((lootDrop: any, index: number) => { 
@@ -45,17 +43,7 @@ export const LootDropUI = ({ gameState, gameDispatch, state }: LootDropUIProps) 
                         );
                      })
                 ) : ( '' ) }
-            </div>
-        {/* { gameState?.showLootOne && gameState?.showLootTwo && gameState?.lootDrop && gameState?.lootDropTwo ? (
-            <div style={{ display: "inline-block" }}>
-            <LootDrop story={true} lootDrop={gameState.lootDrop}  ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-            <LootDrop story={true} lootDrop={gameState.lootDropTwo} ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-            </div>
-        ) : gameState?.showLootOne && gameState?.lootDrop ? (
-            <LootDrop story={true} lootDrop={gameState.lootDrop}  ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-        ) : gameState?.showLootTwo && gameState?.lootDropTwo ? (
-            <LootDrop story={true} lootDrop={gameState.lootDropTwo} ascean={state.player} itemSaved={gameState.itemSaved} gameDispatch={gameDispatch} />
-        ) : ( '' ) } */}
+            </div> 
         </div>
     );
 };

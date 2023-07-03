@@ -8,9 +8,12 @@ import Form from 'react-bootstrap/Form';
 import ExperienceBar from './ExperienceBar';
 import { useEffect, useState } from 'react';
 import PhaserInventoryBag from '../../game/PhaserInventoryBag';
-import { GameData } from './GameStore';
+import { GAME_ACTIONS, GameData } from './GameStore';
 import statPng from '../../game/images/newStats.png';
 import Inventory from './Inventory';
+import AsceanAttributeCompiler from '../AsceanAttributeCompiler/AsceanAttributeCompiler';
+import * as settingsAPI from '../../utils/settingsApi';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
     ascean: any;
@@ -28,6 +31,7 @@ interface Props {
 
 const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean, damaged, gameState, gameDispatch, asceanViews }: Props) => {
     const [currentSetting, setCurrentSetting] = useState<string>('Actions');
+    const navigate = useNavigate();
     const [highlighted, setHighlighted] = useState({
         item: null,
         comparing: false,
@@ -48,6 +52,31 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     useEffect(() => {
         console.log(asceanState)
     }, [asceanState]);
+
+    const saveGameSettings = async () => {
+        try {
+            const settings = {
+                mapMode: gameState.mapMode,
+                joystickSpeed: gameState.joystickSpeed,
+                soundEffectVolume: gameState.soundEffectVolume,
+                timeLeft: gameState.timeLeft,
+                moveTimer: gameState.moveTimer,
+                shake: gameState.shake,
+                canvasPosition: gameState.canvasPosition,
+                canvasHeight: gameState.canvasHeight,
+                canvasWidth: gameState.canvasWidth,
+                vibrationTime: gameState.vibrationTime,
+            };
+            await settingsAPI.updateSettings(settings);
+        } catch (err: any) {
+            console.log(err, "Error Saving Map Settings")
+        };
+    };
+
+    function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
+        let volume = parseFloat(e.target.value);
+        gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: volume });
+    }; 
 
     const handleSettingChange = (e: any) => {
         setCurrentSetting(e.target.value);
@@ -213,6 +242,8 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         };
     };
 
+    const returnHome = () => navigate('/');
+
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -276,26 +307,21 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         </div>
         <div style={{ position: "absolute", color: "#fdf6d8", textAlign: "center", width: "27%", height: "55%", left: "350px", top: "22.5%", fontSize: "12px", padding: "0.5%", overflow: "scroll", scrollbarWidth: "none", zIndex: 9999 }}>
             { asceanViews === VIEWS.CHARACTER ? (
-                <>
-                <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + '/images/' + state.player.origin + '-' + state.player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
-                <div className='creature-heading'>
-                    <h2 style={{ fontSize: "14px", color: "gold" }}>{state.player.description}</h2>
+                <div style={{ display: "inline" }}>
+                    <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + '/images/' + state.player.origin + '-' + state.player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
+                    <div className='creature-heading'>
+                        <h2 style={{ fontSize: "14px", color: "gold" }}>{state.player.description}</h2>
+                    </div>
+                    <div className='property-line' style={{ fontSize: '12px' }}>
+                        Level: <p style={{ color: "gold" }}>{state.player.level}</p><br />
+                        {state.player?.currency?.silver ? <>Silver: <p style={{ color: "gold" }}>{state.player.currency.silver}</p> Gold: <p style={{ color: "gold" }}>{state.player.currency.gold} <br /></p></> : '' }
+                        Mastery: <p style={{ color: "gold" }}>{state.player.mastery}</p><br />
+                        Magical Defense: <p style={{ color: "gold" }}>{state.player_defense.magicalDefenseModifier}% / [{state.player_defense.magicalPosture}%]</p><br />
+                        Physical Defense: <p style={{ color: "gold" }}>{state.player_defense.physicalDefenseModifier}% / [{state.player_defense.physicalPosture}%]</p><br />
+                        Initiative: <p style={{ color: "gold" }}>{state.player_attributes.initiative}</p>
+                    </div>
+                    <AsceanAttributeCompiler ascean={state.player} story={true} />
                 </div>
-                <div>
-                    Level: {state.player.level}<br />
-                    {state.player?.currency?.silver ? <>Silver: {state.player.currency.silver} Gold: {state.player.currency.gold} <br /></> : '' }
-                    Mastery: {state.player.mastery}<br />
-                    Magical Defense: {state.player_defense.magicalDefenseModifier}% / [{state.player_defense.magicalPosture}%]<br />
-                    Physical Defense: {state.player_defense.physicalDefenseModifier}% / [{state.player_defense.physicalPosture}%]<br />
-                    Initiative: {state.player_attributes.initiative}
-                </div>
-                <div>Constitution: {state.player_attributes.totalConstitution} [ {state.player_attributes.totalConstitution < 10 ? '- ' + state.player_attributes.constitutionMod : '+' + state.player_attributes.constitutionMod} ] </div>
-                <div>Strength: {state.player_attributes.totalStrength} [ {state.player_attributes.totalStrength < 10 ? '- ' + state.player_attributes.strengthMod : '+' + state.player_attributes.strengthMod} ]</div>
-                <div>Agility: {state.player_attributes.totalAgility} [ {state.player_attributes.totalAgility < 10 ? '- ' + state.player_attributes.agilityMod : '+' + state.player_attributes.agilityMod} ]</div>
-                <div>Achre: {state.player_attributes.totalAchre} [ {state.player_attributes.totalAchre < 10 ? '- ' + state.player_attributes.achreMod : '+' + state.player_attributes.achreMod} ]</div>
-                <div>Caeren: {state.player_attributes.totalCaeren} [ {state.player_attributes.totalCaeren < 10 ? '- ' + state.player_attributes.caerenMod : '+' + state.player_attributes.caerenMod} ]</div>
-                <div>Kyosir: {state.player_attributes.totalKyosir} [ {state.player_attributes.totalKyosir < 10 ? '- ' + state.player_attributes.kyosirMod : '+' + state.player_attributes.kyosirMod} ]</div>
-                </>
             ) : asceanViews === VIEWS.INVENTORY ? (
                 <>
                 { highlighted.comparing ? (
@@ -303,8 +329,25 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                 ) : ( '' ) }
                 </> 
             ) : asceanViews === VIEWS.SETTINGS ? (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                    To Be Determined
+                <div style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>
+                    <h5 style={{ color: 'gold', marginLeft: 'auto' }}>
+                        Gameplay Controls
+                    <Button variant='' onClick={saveGameSettings} style={{ position: 'absolute', top: '-5px' }}>
+                        <span style={{ float: "right", color: "gold", fontSize: "10px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
+                    </Button>
+                    </h5>
+                    <br />
+                    <h6>
+                        <span style={{ float: "left" }}></span>
+                        Sound Volume ({gameState.soundEffectVolume})
+                        <span style={{ float: "right" }}></span>
+                    </h6>
+                    <Form.Range value={gameState.soundEffectVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} /><br />
+                    
+                    <Button variant='' style={{ color: 'gold', marginTop: '80%' }} onClick={returnHome}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                    <path fillRule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
+                    </svg> Return Home</Button>
                 </div>
             ) : ( '' ) }
         </div>

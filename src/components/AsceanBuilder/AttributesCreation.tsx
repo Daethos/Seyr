@@ -34,7 +34,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => { 
         console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
-            conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
+            conOut!.innerHTML = `${constitutionOutput}`;
+            // conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
         };
     }, [constitutionOutput]);
 
@@ -42,7 +43,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
-            strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
+            strOut!.innerHTML = `${strengthOutput}`;
+            // strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
         };
     }, [strengthOutput]);
 
@@ -50,7 +52,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(agilityOutput, '<- New Agility Point Total');
         if (agiOut !== null) {
-            agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
+            agiOut!.innerHTML = `${agilityOutput}`;
+            // agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
         };
     }, [agilityOutput]);
 
@@ -58,7 +61,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(achreOutput, '<- New Achre Point Total');
         if (achOut !== null) {
-            achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
+            achOut!.innerHTML = `${achreOutput}`;
+            // achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
         };
     }, [achreOutput]);
 
@@ -66,7 +70,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(caerenOutput, '<- New Caeren Point Total');
         if (caerOut !== null) {
-            caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
+            caerOut!.innerHTML = `${caerenOutput}`;
+            // caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         };
     }, [caerenOutput]);
 
@@ -74,7 +79,8 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
-            kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
+            kyoOut!.innerHTML = `${kyosirOutput}`;
+            // kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
         };
     }, [kyosirOutput]);
 

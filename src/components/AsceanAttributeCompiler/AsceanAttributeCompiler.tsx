@@ -6,9 +6,10 @@ import Popover from 'react-bootstrap/Popover';
 
 interface Props {
     ascean: any;
+    story?: boolean;
 };
 
-const AsceanAttributeCompiler = ({ ascean }: Props) => {
+const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [attributes, setAttributes] = useState<any>([])
 
@@ -32,10 +33,10 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         <Popover id='popover'>
             <Popover.Header id='popover-header'>Constitution</Popover.Header>
             <Popover.Body id='popover-body'>
-            <p style={{ fontStyle: 'italic' }}>
+            <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The determination of several factors within combat is based on your Constitution. Overall your health is most weighted by your Constitution, 
                 in addition toward being able to augment higher thresholds of endurance, like the quality of your critical attacks and ability to absord damage.
-            </p>
+            </p><br />
             <p> Increases Health, Defenses, Posturing, Crit Damage, its Mastery Pervasive</p>
             </Popover.Body>
         </Popover>
@@ -44,9 +45,9 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         <Popover id='popover'>
             <Popover.Header id='popover-header'>Strength</Popover.Header>
             <Popover.Body id='popover-body'>
-            <p style={{ fontStyle: 'italic' }}>
+            <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The physical power you possess, weighing heavily into your abliity to deal and receive physical damage with brutality.
-            </p>
+            </p><br />
             <p> Increases Crit Damage, Physical Damage, Posturing, Affects Dual-Wielding Two-Hand Weapons</p>
             </Popover.Body>
         </Popover>
@@ -55,9 +56,9 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         <Popover id='popover'>
             <Popover.Header id='popover-header'>Agility</Popover.Header>
             <Popover.Body id='popover-body'>
-            <p style={{ fontStyle: 'italic' }}>
+            <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The physical clarity you possess, weighing heavily into your abliity to mitigate and perform physical damage with finesse.
-            </p>
+            </p><br />
             <p> Increases Crit Damage, Dodge, Phys Damage, Roll, Affects Dual-Wielding One-Hand Weapons</p>
             </Popover.Body>
         </Popover>
@@ -66,10 +67,10 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         <Popover id='popover'>
             <Popover.Header id='popover-header'>Achre</Popover.Header>
             <Popover.Body id='popover-body'>
-            <p style={{ fontStyle: 'italic' }}>
+            <p style={{ fontStyle: 'italic', color: 'gold' }}>
             Of Achreo, the Wild Ancient.<br /><br />
             Synonymous with being an Arbiter, they are measured by the quality of their Achre: discernment, poise, sagacity, and existence above error.</p>
-            <br /><br />
+            <br />
             <p>Increases Crit Change, Dodge, Roll, Spell Damage, Affects Dual-Wielding One-Hand Spells</p>
             </Popover.Body>
         </Popover>
@@ -78,12 +79,12 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         <Popover id='popover'>
             <Popover.Header id='popover-header'>Caeren</Popover.Header>
             <Popover.Body id='popover-body'>
-            <p style={{ fontStyle: 'italic' }}>
+            <p style={{ fontStyle: 'italic', color: 'gold' }}>
             Of Cambire, the Ancient of Potential, lingering essence and manifestation.<br /><br />
             An idealized person or thing. A specter or phantom. Inspired from Ancient Greek's Eidolon.<br />
             <br /> The Caer (Informal, Colloquial): Synonymous to 'the will.'
             </p>
-            <br /><br />
+            <br />
             <p>Increases Crit Damage, Defense, Health, Spell Damage, Affects Dual-Wielding Two-Hand Spells</p>
             </Popover.Body>
         </Popover>
@@ -92,15 +93,26 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         <Popover id='popover'>
             <Popover.Header id='popover-header'>Kyosir</Popover.Header>
             <Popover.Body id='popover-body'>
-            <p style={{ fontStyle: 'italic' }}>
-            Compulsion concocted through the Gold Veins of Kyrisos mixed with bile and phlegm of Chiomyr, Ancient of Humor.
-            A charisma that warps those regardless of their caer, capable of quelling the most quality strikes, granting a sure smile shearing shields.
+            <p style={{ fontStyle: 'italic', color: 'gold' }}>
+            Compulsion concocted through the golden veins of Kyrisos mixed with bile and phlegm of Chiomyr.
+            A charisma that warps those regardless of their caer, shearing their shields while capable of quelling their most quality strikes.
             </p>
-            <br /><br />
+            <br />
             <p>Increases Defenses, Penetration, its Mastery Pervasive</p>
             </Popover.Body>
         </Popover>
     );
+
+    const storyH4 = {
+        fontSize: story ? '12px' : '',
+        color: story ? '#fdf6d8' : '',
+        marginBottom: story ? '-9%' : '',
+    };
+
+    const storyP = {
+        color: story ? 'gold' : "#fdf6d8",   
+        fontSize: story ? '12.5px' : '',
+    };
 
     if (loading) {
         return (
@@ -108,50 +120,44 @@ const AsceanAttributeCompiler = ({ ascean }: Props) => {
         );
     };
     return (
-        <div className="abilities">
-        <div className="ability-strength">
+        <div className="abilities" style={{ fontSize: story ? '10px' : '', marginTop: story ? '-2.5%' : '' }}>
+        <div className="ability-strength" style={{ width: story ? '27.5%' : '' }}>
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={constitutionPopover}>
-            <h4>CON</h4>
+            <h4 style={storyH4}>Con</h4>
             </OverlayTrigger>
-                <p style={{ color: "#fdf6d8" }} className="mt-2" id="con-box">{attributes.totalConstitution}<br /> ({attributes.rawConstitution} + {attributes.equipConstitution})</p>
-                <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalConstitution < 10 ? '' + attributes.constitutionMod : '+' + attributes.constitutionMod} ]</p>
+                <p style={storyP} className="mt-2" id="con-box">{attributes.totalConstitution}<br /> ({attributes.rawConstitution} + {attributes.equipConstitution})</p>
         </div>
-        <div className="ability-dexterity">
+        <div className="ability-dexterity" style={{ width: story ? '27.5%' : '' }}>
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={strengthPopover}>
-            <h4>STR</h4>
+            <h4 style={storyH4}>Str</h4>
             </OverlayTrigger>    
-            <p style={{ color: "#fdf6d8" }} className="mt-2" id="str-box">{attributes.totalStrength}<br /> ({attributes.rawStrength} + {attributes.equipStrength})</p>
-            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalStrength < 10 ? '' + attributes.strengthMod : '+' + attributes.strengthMod} ]</p>
+            <p style={storyP} className="mt-2" id="str-box">{attributes.totalStrength}<br /> ({attributes.rawStrength} + {attributes.equipStrength})</p>
         </div>
-        <div className="ability-constitution">
+        <div className="ability-constitution" style={{ width: story ? '27.5%' : '' }}>
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={agilityPopover}>
-            <h4>AGI</h4>
+            <h4 style={storyH4}>Agi</h4>
             </OverlayTrigger>
-            <p style={{ color: "#fdf6d8" }} className="mt-2" id="">{attributes.totalAgility}<br /> ({attributes.rawAgility} + {attributes.equipAgility})</p>
-            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalAgility < 10 ? '' + attributes.agilityMod : '+' + attributes.agilityMod} ]</p>
+            <p style={storyP} className="mt-2" id="">{attributes.totalAgility}<br /> ({attributes.rawAgility} + {attributes.equipAgility})</p>
             
-        </div>
-        <div className="ability-intelligence">
+        </div>{ story ? <br /> : '' }
+        <div className="ability-intelligence" style={{ width: story ? '27.5%' : '' }}>
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={achrePopover}>
-            <h4>ACH</h4>
+            <h4 style={storyH4}>Ach</h4>
              </OverlayTrigger>
-            <p style={{ color: "#fdf6d8" }} className="mt-2" id="ach-box">{attributes.totalAchre}<br /> ({attributes.rawAchre} + {attributes.equipAchre})</p>
-            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalAchre < 10 ? '' + attributes.achreMod : '+' + attributes.achreMod} ]</p>
+            <p style={storyP} className="mt-2" id="ach-box">{attributes.totalAchre}<br /> [{attributes.rawAchre} + {attributes.equipAchre}]</p>
             
         </div>
-        <div className="ability-wisdom">
+        <div className="ability-wisdom" style={{ width: story ? '27.5%' : '' }}>
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={caerenPopover}>
-            <h4>CAER</h4>
+            <h4 style={storyH4}>Caer</h4>
             </OverlayTrigger>
-            <p style={{ color: "#fdf6d8" }} className="mt-2" id="caer-box">{attributes.totalCaeren}<br /> ({attributes.rawCaeren} + {attributes.equipCaeren})</p>
-            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalCaeren < 10 ? '' + attributes.caerenMod : '+' + attributes.caerenMod} ]</p>
+            <p style={storyP} className="mt-2" id="caer-box">{attributes.totalCaeren}<br /> ({attributes.rawCaeren} + {attributes.equipCaeren})</p>
         </div>
-        <div className="ability-wisdom">
+        <div className="ability-wisdom" style={{ width: story ? '27.5%' : '' }}>
             <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={kyosirPopover}>
-            <h4>KYO</h4>
+            <h4 style={storyH4}>Kyo</h4>
             </OverlayTrigger>
-            <p style={{ color: "#fdf6d8" }} className="mt-2" id="kyo-box">{attributes.totalKyosir}<br /> ({attributes.rawKyosir} + {attributes.equipKyosir})</p>
-            <p style={{ color: "#fdf6d8" }} className="" id="">[ {attributes.totalKyosir < 10 ? '' + attributes.kyosirMod : '+' + attributes.kyosirMod} ]</p>
+            <p style={storyP} className="mt-2" id="kyo-box">{attributes.totalKyosir}<br /> ({attributes.rawKyosir} + {attributes.equipKyosir})</p>
         </div>
         </div>
     );

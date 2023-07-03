@@ -34,49 +34,49 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => { 
         console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
-            conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
+            // conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
         }
-    }, [constitutionOutput])
+    }, [constitutionOutput]);
 
     const strOut = document?.getElementById('str-box');
     useEffect(() => {
         console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
-            strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
+            // strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
         }
-    }, [strengthOutput])
+    }, [strengthOutput]);
 
     const agiOut = document?.getElementById('agi-box');
     useEffect(() => {
         console.log(agilityOutput, '<- New Strength Point Total');
         if (agiOut !== null) {
-            agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
+            // agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
         }
-    }, [agilityOutput])
+    }, [agilityOutput]);
 
     const achOut = document?.getElementById('ach-box');
     useEffect(() => {
         console.log(achreOutput, '<- New Strength Point Total');
         if (achOut !== null) {
-            achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
+            // achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
         }
-    }, [achreOutput])
+    }, [achreOutput]);
 
     const caerOut = document?.getElementById('caer-box');
     useEffect(() => {
         console.log(caerenOutput, '<- New Strength Point Total');
         if (caerOut !== null) {
-            caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
+            // caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         }
-    }, [caerenOutput])
+    }, [caerenOutput]);
 
     const kyoOut = document.getElementById('kyo-box');
     useEffect(() => {
         console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
-            kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
+            // kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
         }
-    }, [kyosirOutput])
+    }, [kyosirOutput]);
 
     useEffect(() => {
         setPoolTotal(25)
@@ -86,11 +86,11 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
         setAchreOutput(editState?.achre)
         setCaerenOutput(editState?.caeren)
         setKyosirOutput(editState?.kyosir)
-    }, [])
+    }, []);
 
     useEffect(() => {
         checkPoolTotal()
-    }, [poolTotal])
+    }, [poolTotal]);
 
     async function checkPoolTotal() {
         
@@ -134,7 +134,7 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
             if (kyoMinusButton !== null) {
                 kyoMinusButton!.style.display = 'inline-block';
             }
-        }
+        };
         if (poolTotal < 25 && constitutionOutput >= 18) {
             if (conPlusButton !== null) {
                 conPlusButton!.style.display = 'none';

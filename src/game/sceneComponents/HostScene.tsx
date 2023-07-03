@@ -582,12 +582,10 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
         try {
             let response = await eqpAPI.getLootDrop(level);
             gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: response.data[0] });
-            // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP, payload: response.data[0] });
             let roll = Math.floor(Math.random() * 100) + 1;
             if (roll <= 25) {
                 let second = await eqpAPI.getLootDrop(level);
                 gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: second.data[0] });
-                // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: second.data[0] });
                 const dispatchLoot = new CustomEvent('enemyLootDrop', { 
                     detail: {
                         enemyID: state.enemyID,
@@ -603,7 +601,6 @@ const HostScene = ({ user, gameChange, setGameChange, state, dispatch, gameState
                     } 
                 });
                 window.dispatchEvent(dispatchLoot);
-                // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROP_TWO, payload: null });
             };
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
             // if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);

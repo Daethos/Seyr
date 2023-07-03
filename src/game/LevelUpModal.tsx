@@ -26,8 +26,8 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean, story }: Pro
 
     return (
         <>            
-        <Modal show={levelUpModalShow} onHide={() => setLevelUpModalShow(false)} centered backdrop="static">
-            <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', height: 65 + 'vh', overflowY: 'auto' }}>
+        <Modal show={levelUpModalShow} style={{ zIndex: 9999, top: story ? '-25%' : '0' }} onHide={() => setLevelUpModalShow(false)} centered backdrop="static">
+            <Modal.Body style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px', height: 65 + '%', overflowY: 'auto' }}>
             <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!!</h3>
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             { asceanState.level % 2 !== 0 ? (

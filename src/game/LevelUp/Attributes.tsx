@@ -41,7 +41,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => { 
         console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
-            conOut!.innerHTML = (constitutionCurrent > 9 ? `${constitutionCurrent} +` + Math.floor((constitutionCurrent - 10) / 2) + ' Modifier' : Math.floor((constitutionCurrent - 10) / 2) + ' Modifier');
+            // conOut!.innerHTML = (constitutionCurrent > 9 ? `${constitutionCurrent} +` + Math.floor((constitutionCurrent - 10) / 2) + ' Modifier' : Math.floor((constitutionCurrent - 10) / 2) + ' Modifier');
+            conOut!.innerHTML = `${constitutionCurrent}`;
         };
     }, [constitutionOutput, constitutionCurrent, conOut]);
 
@@ -49,7 +50,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
-            strOut!.innerHTML = (strengthCurrent > 9 ? `${strengthCurrent} +` + Math.floor((strengthCurrent - 10) / 2) + ' Modifier' : Math.floor((strengthCurrent - 10) / 2) + ' Modifier');
+            strOut!.innerHTML = `${strengthCurrent}`;
+            // strOut!.innerHTML = (strengthCurrent > 9 ? `${strengthCurrent} +` + Math.floor((strengthCurrent - 10) / 2) + ' Modifier' : Math.floor((strengthCurrent - 10) / 2) + ' Modifier');
         };
     }, [strengthOutput, strengthCurrent, strOut]);
 
@@ -57,7 +59,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(agilityOutput, '<- New Agility Point Total');
         if (agiOut !== null) {
-            agiOut!.innerHTML = (agilityCurrent > 9 ? `${agilityCurrent} +` + Math.floor((agilityCurrent - 10) / 2) + ' Modifier' : Math.floor((agilityCurrent - 10) / 2) + ' Modifier');
+            agiOut!.innerHTML = `${agilityCurrent}`;
+            // agiOut!.innerHTML = (agilityCurrent > 9 ? `${agilityCurrent} +` + Math.floor((agilityCurrent - 10) / 2) + ' Modifier' : Math.floor((agilityCurrent - 10) / 2) + ' Modifier');
         };
     }, [agilityOutput, agilityCurrent, agiOut]);
 
@@ -65,7 +68,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(achreOutput, '<- New Achre Point Total');
         if (achOut !== null) {
-            achOut!.innerHTML = (achreCurrent > 9 ? `${achreCurrent} +` + Math.floor((achreCurrent - 10) / 2) + ' Modifier' : Math.floor((achreCurrent - 10) / 2) + ' Modifier');
+            achOut!.innerHTML = `${achreCurrent}`;
+            // achOut!.innerHTML = (achreCurrent > 9 ? `${achreCurrent} +` + Math.floor((achreCurrent - 10) / 2) + ' Modifier' : Math.floor((achreCurrent - 10) / 2) + ' Modifier');
         };
     }, [achreOutput, achreCurrent, achOut]);
 
@@ -73,7 +77,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(caerenOutput, '<- New Caeren Point Total');
         if (caerOut !== null) {
-            caerOut!.innerHTML = (caerenCurrent > 9 ? `${caerenCurrent} +` + Math.floor((caerenCurrent - 10) / 2) + ' Modifier' : Math.floor((caerenCurrent - 10) / 2) + ' Modifier');
+            caerOut!.innerHTML = `${caerenCurrent}`;
+            // caerOut!.innerHTML = (caerenCurrent > 9 ? `${caerenCurrent} +` + Math.floor((caerenCurrent - 10) / 2) + ' Modifier' : Math.floor((caerenCurrent - 10) / 2) + ' Modifier');
         };
     }, [caerenOutput, caerenCurrent, caerOut]);
 
@@ -81,7 +86,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     useEffect(() => {
         console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
-            kyoOut!.innerHTML = (kyosirCurrent > 9 ? `${kyosirCurrent} +` + Math.floor((kyosirCurrent - 10) / 2) + ' Modifier' : Math.floor((kyosirCurrent - 10) / 2) + ' Modifier');
+            kyoOut!.innerHTML = `${kyosirCurrent}`;
+            // kyoOut!.innerHTML = (kyosirCurrent > 9 ? `${kyosirCurrent} +` + Math.floor((kyosirCurrent - 10) / 2) + ' Modifier' : Math.floor((kyosirCurrent - 10) / 2) + ' Modifier');
         };
     }, [kyosirOutput, kyosirCurrent, kyoOut]);
 
