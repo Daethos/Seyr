@@ -1084,7 +1084,7 @@ async function updateLevel(req, res) {
 async function saveExperience(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
-        console.log(req.body.opponent, req.body.experience, 'Opponent Level + Experience in Save Experience');
+        console.log(req.body.opponent, req.body.opponentExp, 'Opponent Level + Experience in Save Experience');
         let silver = 0;
         let gold = 0;
         let currencyValue = req.body.opponent;
@@ -1132,10 +1132,10 @@ async function saveExperience(req, res) {
             ascean.firewater.charges += 1;
         };
         
-        if (ascean.experience + req.body.experience > ascean.level * 1000) {
+        if (ascean.experience + req.body.opponentExp > ascean.level * 1000) {
             ascean.experience = ascean.level * 1000;
         } else {
-            ascean.experience += req.body.experience;
+            ascean.experience += req.body.opponentExp;
         };
 
         ascean.health.current = health;

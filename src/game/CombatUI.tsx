@@ -18,7 +18,7 @@ interface CombatUIProps {
     staminaPercentage: number;
     setStaminaPercentage: any;
     pauseState: boolean;    
-    handleCallback: (state: CombatData, effect: StatusEffect) => Promise<void>;
+    handleCallback: (state: CombatData, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
 const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage, setStaminaPercentage, pauseState, handleCallback }: CombatUIProps) => {

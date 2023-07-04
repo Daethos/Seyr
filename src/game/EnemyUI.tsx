@@ -11,7 +11,7 @@ interface EnemyUIProps {
     state: CombatData;
     dispatch: any;
     pauseState: boolean;  
-    handleCallback: (state: CombatData, effect: StatusEffect) => Promise<void>;
+    handleCallback: (state: CombatData, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
 const EnemyUI = ({ state, dispatch, pauseState, handleCallback }: EnemyUIProps) => {

@@ -223,6 +223,17 @@ export default class Play extends Phaser.Scene {
         };
     };
 
+    clearNonAggressiveEnemy = async () => {
+        const clear = new CustomEvent('clear-non-aggressive-enemy');
+        window.dispatchEvent(clear);
+    };
+
+    clearNPC = async () => {
+        const clear = new CustomEvent('clear-npc');
+        window.dispatchEvent(clear);
+        // window.removeEventListener('clear-npc', this.clearNPC); 
+    };
+
     setupEnemy = async function(data) {
         const setup = new CustomEvent('setup-enemy', { detail: data });
         window.dispatchEvent(setup);
@@ -380,7 +391,7 @@ export default class Play extends Phaser.Scene {
                     this,
                     this.centerX,
                     this.centerY + 150,
-                    `Welcome to the Seyr of Daethos, ${this.ascean.name}! What do you do when you don't know what to do?`,
+                    `So, ${this.ascean.name}, what do you do when you don't know what to do?`,
                     'play',
                     0.5,
                     this.game,

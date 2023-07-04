@@ -273,6 +273,14 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
+    const clearNonAggressiveEnemy = async (e: { detail: any; }) => {
+        dispatch({ type: ACTIONS.CLEAR_NON_AGGRESSIVE_ENEMY, payload: null });
+    };
+
+    const clearNpc = async (e: { detail: any; }) => {
+        dispatch({ type: ACTIONS.CLEAR_NPC, payload: null });
+    };
+
     const fetchEnemy = async (e: { detail: any; }) => {
         const getOpponent = async () => {
             try { 
@@ -694,9 +702,9 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function handleEffectTick(state: CombatData, effect: StatusEffect): Promise<void> {
+    async function handleEffectTick(state: CombatData, effect: StatusEffect, effectTimer: number): Promise<void> {
         try {
-            const data = { combatData: state, effect };
+            const data = { combatData: state, effect, effectTimer };
             const response = await gameAPI.effectTick(data);
             console.log(response, "Response From Effect Tick");
             dispatch({ type: ACTIONS.EFFECT_RESPONSE, payload: response.data });
@@ -912,6 +920,8 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('retrieve-assets', retrieveAssets);
+    usePhaserEvent('clear-non-aggressive-enemy', clearNonAggressiveEnemy);
+    usePhaserEvent('clear-npc', clearNpc);
     usePhaserEvent('fetch-enemy', fetchEnemy);
     usePhaserEvent('fetch-npc', fetchNpc);
     usePhaserEvent('setup-enemy', setupEnemy);
@@ -970,8 +980,10 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
                                 playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
                                 />
                             </div>
-                            <EnemyUI state={state} dispatch={dispatch} pauseState={pauseState} handleCallback={handleEffectTick} />
                             </>
+                        ) : ( '' ) }
+                        { state.computer ? (
+                            <EnemyUI state={state} dispatch={dispatch} pauseState={pauseState} handleCallback={handleEffectTick} />
                         ) : ( '' ) }
                     </div>
                 ) }

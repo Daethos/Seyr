@@ -133,6 +133,8 @@ export const ACTIONS = {
     RESET_PLAYER: 'RESET_PLAYER',
     RESET_COMPUTER: 'RESET_COMPUTER',
     RESET_DUEL: 'RESET_DUEL',
+    CLEAR_NON_AGGRESSIVE_ENEMY: 'CLEAR_NON_AGGRESSIVE_ENEMY',
+    CLEAR_NPC: 'CLEAR_NPC',
     SET_NEW_COMPUTER: 'SET_NEW_COMPUTER',
     SET_PHASER_COMPUTER_ENEMY: 'SET_PHASER_COMPUTER_ENEMY',
     SET_PHASER_COMPUTER_NPC: 'SET_PHASER_COMPUTER_NPC',
@@ -212,7 +214,7 @@ export const initialCombatData: CombatData = {
     player_luckout: false,
     playerGrapplingWin: false,
     playerTrait: '',
-    computer: {},
+    computer: null,
     computer_action: '',
     computer_counter_guess: '',
     computerBlessing: 'Buff',
@@ -469,6 +471,22 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_win: false,
                 enemyID: action.payload.enemyID,
                 npcType: action.payload.npcType,
+            };
+        case 'CLEAR_NON_AGGRESSIVE_ENEMY':
+            return {
+                ...state,
+                enemyPersuaded: false,
+                player_win: false,
+                player_luckout: false,
+                playerGrapplingWin: false,
+                computer_win: false,
+                combatEngaged: false,
+                playerTrait: '',
+            };
+        case 'CLEAR_NPC':
+            return {
+                ...state,
+                npcType: '',
             };
         case 'SET_NEW_COMPUTER_GUEST':
             return {

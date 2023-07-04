@@ -28,6 +28,13 @@ export default class HealthBar extends Phaser.GameObjects.Container {
         this.visible = false;
     };
 
+    getTotal = () => this.total;
+
+    setTotal(total: number) {
+        this.total = total;
+        this.draw();
+    };
+
     setValue(value: number) {
         this.value = value;
         this.draw();

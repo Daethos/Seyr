@@ -139,6 +139,7 @@ export default class Enemy extends Entity {
         this.combatThreshold = 0;
         this.attackIsLive = false;
         this.isEnemy = true;
+        this.isAggressive = Math.random() > 0.5;
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -166,7 +167,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
@@ -179,10 +180,28 @@ export default class Enemy extends Entity {
                     other.gameObjectB.inCombat = true;
                     other.gameObjectB.attacking = this;
                     this.scene.combatEngaged(true);
+                } else if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !this.isAggressive) {
+                    const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
+                    if (newEnemy) other.gameObjectB.touching.push(this);
+                    if (this.healthbar) this.healthbar.setVisible(true);
+                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health });
+                    this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
+                    this.stateMachine.setState(States.AWARE);
                 };
             },
             context: this.scene,
         }); 
+        this.scene.matterCollision.addOnCollideEnd({
+            objectA: [enemySensor],
+            callback: other => {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !this.isAggressive) {
+                    if (this.healthbar) this.healthbar.setVisible(false);
+                    this.stateMachine.setState(States.IDLE);
+                    this.scene.clearNonAggressiveEnemy();
+                };
+            },
+            context: this.scene,
+        });
     };
 
     createEnemy() {
@@ -364,27 +383,15 @@ export default class Enemy extends Entity {
     onAwarenessEnter = () => {
         console.log("Aware of Player")
         this.anims.play('player_idle', true);
-        this.scene.time.addEvent({
-            delay: 1000,
-            callback: () => {
-                let direction = this.attacking.position.subtract(this.position);
-                if (direction.length() < 100) {
-                    this.stateMachine.setState(States.CHASE);
-                    console.log("Chasing Player From Awareness")
-                } else {
-                    this.stateMachine.setState(States.PATROL);
-                    console.log("Patrolling From Awareness")
-                };
-            },
-            callbackScope: this,
-            loop: false,
-        });
+        this.setVelocity(0);
+        this.scene.showDialog(true);
     };
-    onAwarenessUpdate = (dt) => {
-        this.setVelocity(0, 0);
+    onAwarenessUpdate = (dt) => { 
+        
     };
     onAwarenessExit = () => {
         this.anims.stop('player_idle');
+        this.scene.showDialog(false);
     };
 
     onChaseEnter = () => {
@@ -505,7 +512,7 @@ export default class Enemy extends Entity {
     };
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) this.scene.setState('computer_action', 'attack');
-        if (!this.isRanged) this.swingMomentum();
+        if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isAttacking) this.evaluateCombatDistance(); 
     };
     onAttackExit = () => {
@@ -518,7 +525,7 @@ export default class Enemy extends Entity {
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 10) this.scene.setState('computer_action', 'counter');
-        if (!this.isRanged) this.swingMomentum();
+        if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isCountering) this.evaluateCombatDistance();
     };
     onCounterExit = () => {
@@ -540,7 +547,7 @@ export default class Enemy extends Entity {
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === 11 && !this.isRanged) this.scene.setState('computer_action', 'posture');
-        if (!this.isRanged) this.swingMomentum();
+        if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isPosturing) this.evaluateCombatDistance();
     };
     onPostureExit = () => {
@@ -643,9 +650,9 @@ export default class Enemy extends Entity {
         screenShake(this.scene);
     };
 
-    swingMomentum = () => {
-        console.log("Enemy Swing Momentum");
-        let direction = this.attacking.position.subtract(this.position);
+    swingMomentum = (target) => {
+        if (!target) return;
+        let direction = target.position.subtract(this.position);
         direction.normalize();
         this.setVelocity(direction.x * 2, direction.y * 2);
     };

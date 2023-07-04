@@ -193,6 +193,7 @@ export default class Player extends Entity {
             }; 
             this.health = e.detail.new_player_health;
             this.healthbar.setValue(this.health);
+            if (this.healthbar.getTotal() < e.detail.player_health) this.healthbar.setTotal(e.detail.player_health);
             if (e.detail.new_player_health <= 0) {
                 this.isDead = true;
                 this.anims.play('player_death', true);
@@ -224,7 +225,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider') {
+                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
                     const collisionPoint = this.calculateCollisionPoint(other);
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
@@ -248,7 +249,7 @@ export default class Player extends Entity {
             objectA: [playerSensor],
             callback: (other) => {
                 if (!other.gameObjectB || other.gameObjectB.name !== 'enemy' || other.bodyB.label !== 'enemyCollider') return;
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider') {
+                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
                     const collisionPoint = this.calculateCollisionPoint(other);
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
@@ -263,7 +264,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider') {
+                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
                     this.actionAvailable = false;
                     this.actionTarget = null;
                 };
@@ -320,6 +321,7 @@ export default class Player extends Entity {
             callback: (other) => {
                 if (other.gameObjectB && other.bodyB.label === 'npcCollider') { 
                     this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
+                    this.scene.clearNPC();
                 };
             },
             context: this.scene,
@@ -631,7 +633,7 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const speed = 1.5;
+        const speed = 1.75;
         let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\

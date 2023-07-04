@@ -53,7 +53,7 @@ interface StatusEffectProps {
     dispatch: any;
     story?: boolean;
     pauseState?: boolean;
-    handleCallback?: (state: any, effect: StatusEffect) => Promise<void>;
+    handleCallback?: (state: any, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
 const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story, pauseState, handleCallback }: StatusEffectProps) => {
@@ -66,24 +66,21 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
         'Denial': 'Prevents the enemy from killing you.',
         'Silence': 'Prevents the enemy from praying.'
     };
-    useEffect(() => {
-        setEffectTimer(effect.endTime - effect.startTime);
-    }, [])
 
     useEffect(() => {
         if (!story && !pauseState) return;
-        const intervalTimer = setInterval(() => {
-            setEffectTimer((effectTimer: number) => effectTimer - 1);
-        }, 1000);
+
         if (endTime < effect.endTime) {
             setEndTime(effect.endTime); // This is for when the effect is refreshed
         };
         if ((effectTimer % 3 === 0 && effectTimer !== (effect.endTime - effect.startTime)) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) {
             console.log('Effect Tick');
-            effectTick(state, effect);
+            effectTick(state, effect, effectTimer);
         };
-        
-        if (endTime === state.combatTimer || effectTimer <= 0) {
+        const intervalTimer = setInterval(() => {
+            setEffectTimer((effectTimer: number) => effectTimer - 1);
+        }, 1000);
+        if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {
             dispatch({ type: ACTIONS.REMOVE_EFFECT, payload: effect.id });
             clearInterval(intervalTimer);
         };
@@ -92,9 +89,9 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
         return () => clearInterval(intervalTimer); // Clean up the interval on unmount
     }, [effectTimer, story, pauseState]); 
 
-    const effectTick = async (state: any, effect: StatusEffect): Promise<void> => {
+    const effectTick = async (state: any, effect: StatusEffect, effectTimer: number): Promise<void> => {
         try {
-            if (handleCallback) await handleCallback(state, effect);
+            if (handleCallback) await handleCallback(state, effect, effectTimer);
         } catch (err: any) {
             console.log(err, "Error In Effect Tick");
         };

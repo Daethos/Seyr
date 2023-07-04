@@ -13,7 +13,7 @@ export default class LootDrop extends Entity {
         console.log(scene, enemyID, drop, "Scene, Enemy, Drop");
         const enemy = scene.enemies.find((e) => e.enemyID === enemyID);
         console.log(enemy.body, "Enemy Body");
-        super ({ scene, x: enemy.body.position.x, y: enemy.body.position.y, texture: 'treasures', frame: 'treasure-chest', depth: 2, health: 0, name: drop.name });
+        super ({ scene, x: enemy.body.position.x - 16, y: enemy.body.position.y + 16, texture: 'treasures', frame: 'treasure-chest', depth: 2, health: 0, name: drop.name });
         const { Bodies } = Phaser.Physics.Matter.Matter;
         let circleCollider = Bodies.circle(this.x, this.y, 12, { isSensor: false, label: 'lootdropCollider' });
         this.setExistingBody(circleCollider);
@@ -30,7 +30,7 @@ export default class LootDrop extends Entity {
                 this.destroyLootDrop();
             };
         });
-    }; 
+    };
 
     destroyLootDrop = () => {
         this.destroy();

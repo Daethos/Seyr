@@ -280,6 +280,17 @@
   overflow-y: scroll;
   scrollbar-width: none;
 }
+.story-dialog-options {
+  position: absolute;
+  text-align: center;
+  top: 5%;
+  left: 70%;
+  height: 90%;
+  width: 20.625%;
+  border-left: 0.1rem solid #fdf6d8;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
 .dialog-box, .city-box {
   position: absolute; 
   top: 42.5%; 

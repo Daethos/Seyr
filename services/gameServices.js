@@ -2982,6 +2982,7 @@ const newDataCompiler = async (combatData) => {
         enemyID: combatData.enemyID,
         combatTimer: combatData.combatTimer,
         isStalwart: combatData.isStalwart,
+        npcType: combatData.npcType,
     };
     return newData;
 };
@@ -3333,7 +3334,7 @@ const consumePrayerSplitter = async (combatData) => {
 };
 
 const phaserEffectTickSplitter = async (data) => { 
-    let { combatData, effect } = data;
+    let { combatData, effect, effectTimer } = data;
     if (effect.playerName === combatData.player.name) { 
         switch (effect.prayer) { 
             case 'Damage': { // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
@@ -3345,8 +3346,8 @@ const phaserEffectTickSplitter = async (data) => {
                     combatData.computer_win = false;
                     combatData.player_win = true;
                 };
-                if (combatData.combatTimer >= effect.endTime) {
-                    combatData.playerEffects.filter(playerEffect => playerEffect.id === effect.id);
+                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) {
+                    combatData.playerEffects = combatData.playerEffects.filter(playerEffect => playerEffect.id !== effect.id);
                 };
                 break;
             };
@@ -3356,8 +3357,8 @@ const phaserEffectTickSplitter = async (data) => {
                 if (combatData.current_player_health > 0 || combatData.new_player_health > 0) {
                     combatData.computer_win = false;
                 };
-                if (combatData.combatTimer >= effect.endTime) {
-                    combatData.playerEffects.filter(playerEffect => playerEffect.id === effect.id);
+                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) {
+                    combatData.playerEffects = combatData.playerEffects.filter(playerEffect => playerEffect.id !== effect.id);
                 };
                 break;
             };
@@ -3370,7 +3371,7 @@ const phaserEffectTickSplitter = async (data) => {
                 if (combatData.current_player_health < 0 || combatData.new_player_health < 0) {
                     if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
                         combatData.new_player_health = 1;
-                        combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
+                        combatData.playerEffects = combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
                     } else {
                         combatData.new_player_health = 0;
                         combatData.current_player_health = 0;
@@ -3378,8 +3379,8 @@ const phaserEffectTickSplitter = async (data) => {
                         combatData.player_win = false;
                     };
                 };
-                if (combatData.combatTimer >= effect.endTime) {
-                    combatData.computerEffects.filter(computerEffect => computerEffect.id === effect.id);
+                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) {
+                    combatData.computerEffects = combatData.computerEffects.filter(computerEffect => computerEffect.id !== effect.id);
                 };
                 break;
             };
@@ -3389,8 +3390,8 @@ const phaserEffectTickSplitter = async (data) => {
                 if (combatData.current_computer_health > 0 || combatData.new_computer_health > 0) {
                     combatData.player_win = false;
                 };
-                if (combatData.combatTimer >= effect.endTime) {
-                    combatData.computerEffects.filter(computerEffect => computerEffect.id === effect.id);
+                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) {
+                    combatData.computerEffects = combatData.computerEffects.filter(computerEffect => computerEffect.id !== effect.id);
                 };
                 break;
             };

@@ -656,8 +656,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, cu
                         You persuaded {namedEnemy ? '' : ` the`} {enemy?.name} to forego hostilities. You may now travel freely through this area.<br />
                         <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                         </div>
-                :
-                    state.playerTrait !== '' ?
+                : state.playerTrait !== '' ?
                         <div>
                         { namedEnemy ? (
                             <>
