@@ -612,3 +612,14 @@ html, body {
 .story-progress-text { text-align: center; color: black; } 
 #story-pic { width: 5.5vw; border: 1px solid #fdf6d8; border-radius: 50%; }
 #story-popover-image {  margin-top: 4%; transform: scale(1.75); }
+#friend-card {
+  float: left;
+}
+.friend-block {
+  width: 100%;
+  height: 100px;
+  background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
+  border-radius: 20px;
+  padding: 5px 10px 20px; 
+  box-shadow: 0 0 0.7em #ff0195;
+}

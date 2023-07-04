@@ -31,11 +31,39 @@ interface Props {
 
 const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean, damaged, gameState, gameDispatch, asceanViews }: Props) => {
     const [currentSetting, setCurrentSetting] = useState<string>('Actions');
+    const [currentCharacter, setCurrentCharacter] = useState('Traits');
+    const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({
+        // primary: {
+        //     name: '',
+        //     traitOneName: '',
+        //     traitOneDescription: '',
+        //     traitTwoName: '',
+        //     traitTwoDescription: '',
+        // },
+        // secondary: {
+        //     name: '',
+        //     traitOneName: '',
+        //     traitOneDescription: '',
+        //     traitTwoName: '',
+        //     traitTwoDescription: '',
+        // },
+        // tertiary: {
+        //     name: '',
+        //     traitOneName: '',
+        //     traitOneDescription: '',
+        //     traitTwoName: '',
+        //     traitTwoDescription: '',
+        // },
+    });
     const navigate = useNavigate();
     const [highlighted, setHighlighted] = useState({
         item: null,
         comparing: false,
     });
+    const CHARACTERS = {
+        STATISTICS: 'Statistics',
+        TRAITS: 'Traits',
+    }
 
     const VIEWS = {
         CHARACTER: 'Character',
@@ -52,6 +80,145 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     useEffect(() => {
         console.log(asceanState)
     }, [asceanState]);
+
+    useEffect(() => {
+        playerTraits();
+        console.log(ascean.statistics, "Stats!")
+    }, [ascean])
+
+    const playerTraits = async () => {
+        const fetchTrait = async (trait: string) => {
+            switch (trait) {
+                case "Arbituous":
+                    return {
+                        name: "Arbituous",
+                        traitOneName: "Luckout",
+                        traitOneDescription: "Convince the enemy through rhetoric to cease hostility.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "Use knowledge of Ley Law to deter enemies from aggression."
+                    };
+                case "Astral":
+                    return {
+                        name: "Astral",
+                        traitOneName: "Impermanence",
+                        traitOneDescription: "Perform combat maneuvers that are impossible to follow, and thus impossible to counter.",
+                        traitTwoName: "Pursuit",
+                        traitTwoDescription: "Force encounters, even with enemies that would normally avoid you."
+                    };
+                case "Cambiren":
+                    return {
+                        name: "Cambiren",
+                        traitOneName: "Caerenicism",
+                        traitOneDescription: "Your caer doubles up on attacks.",
+                        traitTwoName: "Mini-Game",
+                        traitTwoDescription: "You can disarm and evoke your enemy's caer into a battle of its own."
+                    };
+                case "Chiomic":
+                    return {
+                        name: "Choimic",
+                        traitOneName: "Luckout",
+                        traitOneDescription: "Invoke the Ancient Chiomyr, reducing the enemy to a broken mind of mockery.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "Cause bouts of confusion and disorientation in the enemy."
+                    };
+                case "Fyeran":
+                    return {
+                        name: "Fyeran",
+                        traitOneName: "Persuasion",
+                        traitOneDescription: "You can convince those who see this world with peculiarity.",
+                        traitTwoName: "Seer",
+                        traitTwoDescription: "Your next attack is Fyers."
+                    };
+                case "Kyn'gian":
+                    return {
+                        name: "Kyn'gian",
+                        traitOneName: "Avoidance",
+                        traitOneDescription: "You can avoid most encounters.",
+                        traitTwoName: "Endurance",
+                        traitTwoDescription: "You are able to recover your health over time."
+                    };
+                case "Kyr'naic":
+                    return {
+                        name: "Kyr'naic",
+                        traitOneName: "Luckout",
+                        traitOneDescription: "Convince the enemy to acquiesce, giving their life to the Aenservaesai.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "Cause the enemy to embrace the hush and tendril."
+                    };
+                case "Ilian":
+                    return {
+                        name: "Ilian",
+                        traitOneName: "Heroism",
+                        traitOneDescription: "You exude a nature that touches others inexplicably.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "The weight of your words can sway the minds of others."
+                    };
+                case "Lilosian":
+                    return {
+                        name: "Lilosian",
+                        traitOneName: "Luckout",
+                        traitOneDescription: "Convince the enemy to profess their follies and willow.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "Speak to your enemy's faith and stay their hand."
+                    };
+                case "Ma'anreic":
+                    return {
+                        name: "Ma'anreic",
+                        traitOneName: "Negation",
+                        traitOneDescription: "You can negate the armor of your enemy.",
+                        traitTwoName: "Thievery",
+                        traitTwoDescription: "You can steal items from anyone and anywhere."
+                    };
+                case "Sedyrist":
+                    return {
+                        name: "Sedyrist",
+                        traitOneName: "Investigative",
+                        traitOneDescription: "You have a knack for piecing together peculiarities.",
+                        traitTwoName: "Tinkerer",
+                        traitTwoDescription: "You can deconstruct and reconstruct armor and weapons."
+                    };
+                case "Se'van":
+                    return {
+                        name: "Se'van",
+                        traitOneName: "Berserk",
+                        traitOneDescription: "Your attacks grow stronger for each successive form of damage received.",
+                        traitTwoName: "Mini-Game",
+                        traitTwoDescription: "Grip your enemy in a vice of your own design."
+                    };
+                case "Shaorahi":
+                    return {
+                        name: "Shaorahi",
+                        traitOneName: "Conviction",
+                        traitOneDescription: "Your attacks grow stronger the more you realize them.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "You can put the enemy in awe of your power, and have them cease their assault."
+                    };
+                case "Shrygeian":
+                    return {
+                        name: "Shrygeian",
+                        traitOneName: "Knavery",
+                        traitOneDescription: "Your explorations are amusing.",
+                        traitTwoName: "Mini-Game",
+                        traitTwoDescription: "You can duel the enemy."
+                    };
+                case "Tshaeral":
+                    return {
+                        name: "Tshaeral",
+                        traitOneName: "Mini-Game",
+                        traitOneDescription: "Your caer is imbued with tshaeral desire, a hunger to devour the world.",
+                        traitTwoName: "Persuasion",
+                        traitTwoDescription: "Your nature has a way of wilting the caer of your enemies."
+                    };
+                default: 
+                    return {};
+            };
+        };
+        setPlayerTraitWrapper({
+            'primary': await fetchTrait(gameState.primary.name),
+            'secondary': await fetchTrait(gameState.secondary.name),
+            'tertiary': await fetchTrait(gameState.tertiary.name)
+        });
+    };
 
     const saveGameSettings = async () => {
         try {
@@ -80,6 +247,50 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
 
     const handleSettingChange = (e: any) => {
         setCurrentSetting(e.target.value);
+    };
+
+    const handleCharacterChange = (e: any) => setCurrentCharacter(e.target.value);
+
+    const createCharacterInfo = (character: string) => {
+        switch (character) {
+            case CHARACTERS.STATISTICS:
+                const highestDeity = Object.entries(ascean?.statistics?.combat?.deities as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
+                const highestPrayer = Object.entries(ascean?.statistics?.combat?.prayers as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
+                const highestMastery = Object.entries(ascean?.statistics?.mastery as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
+                return (
+                    <>
+                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>Attacks</h6>
+                        Magical: <p style={{ color: 'gold', display: 'inline' }}>{ascean?.statistics?.combat?.attacks?.magical}</p><br />
+                        Physical: <p style={{ color: 'gold', display: 'inline' }}>{ascean?.statistics?.combat?.attacks?.physical}</p><br />
+                        Highest Damage: <p style={{ color: 'gold', display: 'inline' }}>{Math.round(ascean?.statistics?.combat?.attacks?.total)}</p><br /><br />
+                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>Combat</h6>
+                        Mastery: <p style={{ color: 'gold', display: 'inline' }}>{highestMastery[0].charAt(0).toUpperCase() + highestMastery[0].slice(1)} - {highestMastery[1]}</p><br />
+                        Wins / Losses: <p style={{ color: 'gold', display: 'inline' }}>{ascean?.statistics?.combat?.wins} / {ascean?.statistics?.combat?.losses}</p><br /><br />
+                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>Prayers</h6>
+                        Consumed / Invoked: <p style={{ color: 'gold', display: 'inline' }}>{ascean?.statistics?.combat?.actions?.consumes} / {ascean?.statistics?.combat?.actions?.prayers} </p><br />
+                        Highest Prayer: <p style={{ color: 'gold', display: 'inline' }}>{highestPrayer[0].charAt(0).toUpperCase() + highestPrayer[0].slice(1)} - {highestPrayer[1]}</p><br />
+                        Favored Deity: <p style={{ color: 'gold', display: 'inline' }}>{highestDeity[0]}</p><br />
+                        Blessings: <p style={{ color: 'gold', display: 'inline' }}>{highestDeity[1]}</p>
+
+                    </>
+                );
+            case CHARACTERS.TRAITS:
+                return (
+                    <>
+                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.primary?.name}</h6>
+                        <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
+                        <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
+                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.secondary?.name}</h6>
+                        <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
+                        <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
+                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.tertiary?.name}</h6>
+                        <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
+                        <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p>
+                    </>
+                );
+            default:
+                return ('');
+        };
     };
 
     const createSettingInfo = (setting: string) => {
@@ -238,7 +449,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                     </>
                 );
             default:
-                return ( '' );
+                return ('');
         };
     };
 
@@ -253,9 +464,15 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         <div style={{ zIndex: 9999 }}>
         <img src ={statPng} alt="Player Portrait" style={{ position: "absolute" }} />
         { asceanViews === VIEWS.CHARACTER ? (
+            <>
             <h3 className='story-menu-heading'>
             Character
             </h3>
+            <Form.Select value={currentCharacter} onChange={handleCharacterChange} style={{ position: "absolute", width: "25%", left: "67.5%", top: "11%", background: "black", color: "#fdf6d8", borderColor: "#fdf6d8", textAlign: "center", paddingRight: '0.75rem' }}>
+                <option value="Statistics">Statistics</option>
+                <option value="Traits">Traits</option> 
+            </Form.Select>
+            </>
         ) : asceanViews === VIEWS.INVENTORY ? (
             <h3 className='story-menu-heading'>
             Inventory
@@ -351,10 +568,19 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                 </div>
             ) : ( '' ) }
         </div>
-        <div style={{ position: "absolute", color: "#fdf6d8", textAlign: "center", width: "27%", height: "54.5%", left: "635px", top: "22.5%", fontSize: "12px" }}>
+        <div style={{ position: "absolute", color: "#fdf6d8", textAlign: "center", width: "27%", height: "54.5%", left: "635px", top: "22.5%", fontSize: "12px", overflow: 'auto', scrollbarWidth: 'none' }}>
             { asceanViews === VIEWS.CHARACTER ? (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                    To Be Determined
+                <div style={{ height: "100%", padding: '0.25rem' }}>
+                    {/* <h6 style={{ color: 'gold' }}>{playerTraitWrapper?.primary?.name}</h6>
+                    <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
+                    <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
+                    <h6 style={{ color: 'gold' }}>{playerTraitWrapper?.secondary?.name}</h6>
+                    <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
+                    <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
+                    <h6 style={{ color: 'gold' }}>{playerTraitWrapper?.tertiary?.name}</h6>
+                    <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
+                    <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p> */}
+                    {createCharacterInfo(currentCharacter)}
                 </div>
             ) : asceanViews === VIEWS.INVENTORY ? (
                 <PhaserInventoryBag highlighted={highlighted} setHighlighted={setHighlighted} inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} /> 

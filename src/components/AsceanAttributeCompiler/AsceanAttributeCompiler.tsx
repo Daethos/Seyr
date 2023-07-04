@@ -111,7 +111,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
 
     const storyP = {
         color: 'gold',   
-        fontSize: story ? '12.5px' : '14px',
+        fontSize: story ? '12.5px' : '',
     };
 
     if (loading) {

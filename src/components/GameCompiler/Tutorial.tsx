@@ -29,7 +29,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         console.log(actionName, "Action Name of Perform Action Function")
         const actionFunction = actions[actionName as keyof typeof actions];
         if (actionFunction) {
-          actionFunction();
+            actionFunction();
         };
     };
     const actions = {

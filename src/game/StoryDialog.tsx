@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom';
 import * as asceanAPI from '../utils/asceanApi';
 import * as eqpAPI from '../utils/equipmentApi';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import MerchantTable from '../components/GameCompiler/MerchantTable';
@@ -164,7 +162,7 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
         <div> 
             <Typewriter stringText={gameState?.renderedText} styling={{ overflowY: 'auto' }} performAction={handleOptionClick} />
             {gameState?.renderedOptions?.map((option: DialogNodeOption) => (
-            <DialogOption key={option.text} option={option} onClick={handleOptionClick} actions={actions} setPlayerResponses={setPlayerResponses} setKeywordResponses={setKeywordResponses} setShowDialogOptions={setShowDialogOptions} showDialogOptions={showDialogOptions} />
+                <DialogOption key={option.text} option={option} onClick={handleOptionClick} actions={actions} setPlayerResponses={setPlayerResponses} setKeywordResponses={setKeywordResponses} setShowDialogOptions={setShowDialogOptions} showDialogOptions={showDialogOptions} />
             ))}
             <br />
         </div>
@@ -215,16 +213,13 @@ interface StoryDialogProps {
 
 export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEquipment }: StoryDialogProps) => {
     const [error, setError] = useState<any>({ title: '', content: '' });
+    const [typewriterString, setTypewriterString] = useState<string>('');
     const targetRef = useRef(null);
     const [upgradeItems, setUpgradeItems] = useState<any | null>(null);
     const [playerResponses, setPlayerResponses] = useState<string[]>([]);
     const [keywordResponses, setKeywordResponses] = useState<string[]>([]);
-    const location = useLocation();
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<any | null>(null);
-    const [combatAction, setCombatAction] = useState<any | null>('actions');
-    const [localWhispers, setLocalWhispers] = useState<any>({});
-    const [showQuest, setShowQuest] = useState<boolean>(false);
     const regionInformation = {
         Astralands: "Good one, those Ashtre have quite the mouth on them I hear yet never heard. Perhaps you'll be able to catch their whispers.", 
         Kingdom: "The King, Mathyus Caderyn II, has been away from his court as of late, his son Dorien sitting the throne--though constant feathers aid his communication when abroad. Despite its unification, groans have increased with disparate and slow recovery from the century long war only having quelled for 7 years prior, with select places receiving abundance of aid over others, the discernment itself seeming weighed in favor of longstanding allies. As the King reaches further East to establish peaceable connections with the Soverains, it leads one to speculate on the disposition of those houses already under his kingship.", 
@@ -238,7 +233,6 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
     const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
     const [persuasionModalShow, setPersuasionModalShow] = useState<boolean>(false);
-    const [miniGameModalShow, setMiniGameModalShow] = useState<boolean>(false);
     const [luckout, setLuckout] = useState<boolean>(false);
     const [luckoutTraits, setLuckoutTraits] = useState<any>([]);
     const [persuasion, setPersuasion] = useState<boolean>(false);
@@ -321,9 +315,9 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             console.log(response, "Persuasion Response Recorded");        
         } else {
             await checkingLoot();
-            // gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            // gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
-                // payload: `Failure. ${persuasionTrait?.persuasion?.failure.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0]).replace('{ascean.name}', state.player.name).replace('{enemy.weapon_one.influences[0]}', state.computer.weapon_one.influences[0]).replace('{enemy.faith}', state.computer.faith)} \n\n Nevertheless, prepare for some chincanery, ${state.player.name}, and perhaps leave the pleasantries for warmer company.` });
+                setTypewriterString(`Failure. ${persuasionTrait?.persuasion?.failure.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', 
+                state.player.weapon_one.influences[0]).replace('{ascean.name}', state.player.name).replace('{enemy.weapon_one.influences[0]}', 
+                state.computer.weapon_one.influences[0]).replace('{enemy.faith}', state.computer.faith)} \n\n Nevertheless, prepare for some chincanery, ${state.player.name}, and perhaps leave the pleasantries for warmer company.`);
             const statistic = {
                 asceanID: state.player._id,
                 name: 'persuasion',
@@ -336,14 +330,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             console.log(response, "Persuasion Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             
-            //     setTimeout(() => {
-            //     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
-            //     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
-                dispatch({
-                    type: ACTIONS.SET_DUEL,
-                    payload: ''
-                });
-            // }, 4000);
+            dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
         };
     };
 
@@ -383,9 +370,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         };
         console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
-            // gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            // gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
-            //     payload: `Success. Your ${luck} nature was irresistible to ${namedEnemy ? '' : ` ${article}`} ${enemy.name}. What is it they say, ${luckoutTrait.luckout.description} \n\n Congratulations, ${ascean.name}, your words ensured you needn't a single strike to win the day.` });
+            setTypewriterString(`Success. Your ${luck} nature was irresistible to ${namedEnemy ? '' : ` ${article}`} ${enemy.name}. What is it they say, ${luckoutTrait.luckout.description} \n\n Congratulations, ${ascean.name}, your words ensured you needn't a single strike to win the day.`);
             const statistic = {
                 asceanID: ascean._id,
                 name: 'luckout',
@@ -406,15 +391,10 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     playerTrait: luck
                 }
             });
-            // setTimeout(() => {
-            //     gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
-            //     gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
-            // }, 4000);
         } else {
             await checkingLoot();
             gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-            // gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, 
-            //     payload: `Failure. ${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.` });
+            setTypewriterString(`Failure. ${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.`);
             const statistic = {
                 asceanID: ascean._id,
                 name: 'luckout',
@@ -426,14 +406,10 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             const response = await asceanAPI.recordNonCombatStatistic(statistic);
             console.log(response, "Luckout Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-            // setTimeout(() => {
-                // gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false });
-                // gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: '' });
             dispatch({
                 type: ACTIONS.SET_DUEL,
                 payload: ''
             });
-            // }, 4000);
         };
     };
 
@@ -740,77 +716,78 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     <> 
                     </>
                 : gameState.currentIntent === 'challenge' ?
-                    state.enemyPersuaded ?
+                <>
+                    { state.enemyPersuaded ?
                         <div style={{ color: "gold" }}>
                         [Success]:{' '}
                         { namedEnemy ? (
-                        <>
-                        { state.playerTrait === 'Arbituous' ? ( 
                             <>
-                            "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {state.player.name}."<br /><br />
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {state.player.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                {state.computer?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {state.player.name}. What is happening to me, what have you brought back?"<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "I'm sorry, {state.player.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in {state.computer?.name}'s eyes. "I'm sorry, {state.player.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Shaorahi' ? (
+                                <>
+                                A stillness hollows {state.computer?.name}, the chant of a dead language stirs their blood without design.<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Ilian' ? (
+                                <>
+                                "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {state.player.name}, others may be feaful of the Black Sun."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Fyeran' ? (
+                                <>
+                                "You are not here right now, {state.player.name}. Perchance we may see us in another land, then?"<br /><br />
+                                </>
+                            ) : ( '' ) }
                             </>
-                        ) : state.playerTrait === 'Chiomic' ? (
+                        ) : ( 
                             <>
-                            {state.computer?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {state.player.name}. What is happening to me, what have you brought back?"<br /><br />
+                            { state.playerTrait === 'Arbituous' ? ( 
+                                <>
+                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {state.player.name}. May we never meet again."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Chiomic' ? (
+                                <>
+                                The {state.computer?.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
+                                </>
+                            ) : state.playerTrait === "Kyr'naic" ? (
+                                <>
+                                "{state.player.name}, all my life as {article} {state.computer?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Lilosian' ? (
+                                <>
+                                Tears well up in the {state.computer?.name}'s eyes. "All of that glory in all those years, {state.player.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {state.player.weapon_one.influences[0]}." <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Shaorahi' ? (
+                                <>
+                                An unsure unease stifles the ascent of the {state.computer.name}, their eyes a haze of murk. <br /><br />
+                                </>
+                            ) : state.playerTrait === 'Ilian' ? (
+                                <>
+                                "Nooo, you cannot be Him." Concern marks the {state.computer.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {state.player.name}."<br /><br />
+                                </>
+                            ) : state.playerTrait === 'Fyeran' ? (
+                                <>
+                                Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
+                                </>
+                            ) : ( '' ) }         
                             </>
-                        ) : state.playerTrait === "Kyr'naic" ? (
-                            <>
-                            "I'm sorry, {state.player.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
-                            </>
-                        ) : state.playerTrait === 'Lilosian' ? (
-                            <>
-                            Tears well up in {state.computer?.name}'s eyes. "I'm sorry, {state.player.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
-                            </>
-                        ) : state.playerTrait === 'Shaorahi' ? (
-                            <>
-                            A stillness hollows {state.computer?.name}, the chant of a dead language stirs their blood without design.<br /><br />
-                            </>
-                        ) : state.playerTrait === 'Ilian' ? (
-                            <>
-                            "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {state.player.name}, others may be feaful of the Black Sun."<br /><br />
-                            </>
-                        ) : state.playerTrait === 'Fyeran' ? (
-                            <>
-                            "You are not here right now, {state.player.name}. Perchance we may see us in another land, then?"<br /><br />
-                            </>
-                        ) : ( '' ) }
-                        </>
-                    ) : ( 
-                        <>
-                        { state.playerTrait === 'Arbituous' ? ( 
-                            <>
-                            "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {state.player.name}. May we never meet again."<br /><br />
-                            </>
-                        ) : state.playerTrait === 'Chiomic' ? (
-                            <>
-                            The {state.computer?.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
-                            </>
-                        ) : state.playerTrait === "Kyr'naic" ? (
-                            <>
-                            "{state.player.name}, all my life as {article} {state.computer?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
-                            </>
-                        ) : state.playerTrait === 'Lilosian' ? (
-                            <>
-                            Tears well up in the {state.computer?.name}'s eyes. "All of that glory in all those years, {state.player.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {state.player.weapon_one.influences[0]}." <br /><br />
-                            </>
-                        ) : state.playerTrait === 'Shaorahi' ? (
-                            <>
-                            An unsure unease stifles the ascent of the {state.computer.name}, their eyes a haze of murk. <br /><br />
-                            </>
-                        ) : state.playerTrait === 'Ilian' ? (
-                            <>
-                            "Nooo, you cannot be Him." Concern marks the {state.computer.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {state.player.name}."<br /><br />
-                            </>
-                        ) : state.playerTrait === 'Fyeran' ? (
-                            <>
-                            Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
-                            </>
-                        ) : ( '' ) }         
-                        </>
-                    ) }
-                        You persuaded {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.<br />
+                        ) }
+                            You persuaded {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.<br />
                         </div>
-                : state.playerTrait !== '' ?
+                    : state.playerTrait !== '' ?
                         <div>
                         { namedEnemy ? (
                             <>
@@ -875,60 +852,58 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     : state.computer_win ? 
                         <div>
                             { namedEnemy ? (
-                                <>
-                                "{state.player.name}, surely this was a jest? Come now, you disrespect me with such play. What was it that possessed you to even attempt this failure?" <br /><br />        
-                                </>
+                                <> "{state.player.name}, surely this was a jest? Come now, you disrespect me with such play. What was it that possessed you to even attempt this failure?" <br /><br /> </>
                             ) : ( 
-                                <>
-                                "The {state.computer.name} are not to be trifled with."<br /><br />         
-                                </>
+                                <> "The {state.computer.name} are not to be trifled with."<br /><br /> </>
                             ) } 
                         </div> 
                     :
                         <div>
-                        { namedEnemy ? ( 
-                            <>
-                            "Greetings traveler, I am {state.computer?.name}. {state.player.name}, is it? You seem a bit dazed, can I be of some help?"<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise attack {state.computer.name}?</Button>
-                            </> 
-                        ) : ( 
-                            <>
-                            {enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} {state.computer?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your {state.player.weapon_one.name} and get into position?<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {state.computer.name}?</Button>
-                            </> 
-                        ) }
-                        { luckout ?
-                            ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
-                                {luckoutTraits.map((trait: any, index: number) => {
+                            { namedEnemy ? ( 
+                                <>
+                                    "Greetings traveler, I am {state.computer?.name}. {state.player.name}, is it? You seem a bit dazed, can I be of some help?"<br />
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise attack {state.computer.name}?</Button>
+                                </> 
+                            ) : ( 
+                                <>
+                                    {enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} {state.computer?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your {state.player.weapon_one.name} and get into position?<br />
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {state.computer.name}?</Button>
+                                </> 
+                            ) }
+                            { luckout ?
+                                ( <div>
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
+                                    {luckoutTraits.map((trait: any, index: number) => {
+                                        return (
+                                            <div key={index}>
+                                                <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                                            </div>
+                                        )
+                                    })} 
+                                </div>
+                            ) : ('') }
+                            { miniGame ? (
+                                <>
+                                {miniGameTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                                            {trait.name === "Se'van" ? (
+                                                <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Testing] Surprise {state.computer.name} and initiate Se'van Grappling</Button>
+                                            ) : trait.name === "Cambiren" ? (
+                                                <Button variant='' className='dialog-buttons inner' >[WIP] Cambiren Combat</Button>
+                                            ) : trait.name === "Tshaeral" ? (
+                                                <Button variant='' className='dialog-buttons inner' >[WIP] Tshaeral Combat</Button>
+                                            ) : trait.name === "Shrygeian" ? (
+                                                <Button variant='' className='dialog-buttons inner' >[WIP] Shrygeian Combat</Button>
+                                            ) : ('')}
                                         </div>
                                     )
-                                })} 
-                            </div>
-                        ) : ('') }
-                        { miniGame ? (
-                            <>
-                            {miniGameTraits.map((trait: any, index: number) => {
-                                return (
-                                    <div key={index}>
-                                        {trait.name === "Se'van" ? (
-                                            <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Testing] Surprise {state.computer.name} and initiate Se'van Grappling</Button>
-                                        ) : trait.name === "Cambiren" ? (
-                                            <Button variant='' className='dialog-buttons inner' >[WIP] Cambiren Combat</Button>
-                                        ) : trait.name === "Tshaeral" ? (
-                                            <Button variant='' className='dialog-buttons inner' >[WIP] Tshaeral Combat</Button>
-                                        ) : trait.name === "Shrygeian" ? (
-                                            <Button variant='' className='dialog-buttons inner' >[WIP] Shrygeian Combat</Button>
-                                        ) : ('')}
-                                    </div>
-                                )
-                            })}
-                            </>
-                        ) : ('') }
-                        </div> 
+                                })}
+                                </>
+                            ) : ('') }
+                        </div>
+                    } 
+                </>
                 : gameState.currentIntent === 'conditions' ?
                     <>
                         This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual, disposition, quests, and the like. 
@@ -1024,93 +999,88 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                             <div>
                             { namedEnemy ? (
                                 <>
-                                { state.playerTrait === 'Arbituous' ? ( 
-                                    <>
-                                    "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {state.player.name}."<br /><br />
-                                    </>
-                                ) : state.playerTrait === 'Chiomic' ? (
-                                    <>
-                                    {state.computer?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {state.player.name}. What is happening to me, what have you brought back?"<br /><br />
-                                    </>
-                                ) : state.playerTrait === "Kyr'naic" ? (
-                                    <>
-                                    "I'm sorry, {state.player.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
-                                    </>
-                                ) : state.playerTrait === 'Lilosian' ? (
-                                    <>
-                                    Tears well up in {state.computer?.name}'s eyes. "I'm sorry, {state.player.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
-                                    </>
-                                ) : (
-                                    <>
-                                    </>
-                                ) }
+                                    { state.playerTrait === 'Arbituous' ? ( 
+                                        <>
+                                        "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {state.player.name}."<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Chiomic' ? (
+                                        <>
+                                        {state.computer?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {state.player.name}. What is happening to me, what have you brought back?"<br /><br />
+                                        </>
+                                    ) : state.playerTrait === "Kyr'naic" ? (
+                                        <>
+                                        "I'm sorry, {state.player.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Lilosian' ? (
+                                        <>
+                                        Tears well up in {state.computer?.name}'s eyes. "I'm sorry, {state.player.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                        </>
+                                    ) : (
+                                        <>
+                                        </>
+                                    ) }
                                 </>
                             ) : ( 
                                 <>
-                                { state.playerTrait === 'Arbituous' ? ( 
-                                    <>
-                                    "Oh dear, another wandering Arbiter. I am absolutely not getting involved with you folk again. Good day, {state.player.name}. May we never meet again."<br /><br />
-                                    </>
-                                ) : state.playerTrait === 'Chiomic' ? (
-                                    <>
-                                    The {state.computer?.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
-                                    </>
-                                ) : state.playerTrait === "Kyr'naic" ? (
-                                    <>
-                                    "{state.player.name}, all my life as {article} {state.computer?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
-                                    </>
-                                ) : state.playerTrait === 'Lilosian' ? (
-                                    <>
-                                    Tears well up in the {state.computer?.name}'s eyes. "All of that glory in all those years, {state.player.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {state.player.weapon_one.influences[0]}." <br /><br />
-                                    </>
-                                ) : (
-                                    <>
-                                    </>
-                                ) }         
+                                    { state.playerTrait === 'Arbituous' ? ( 
+                                        <>
+                                        "Oh dear, another wandering Arbiter. I am absolutely not getting involved with you folk again. Good day, {state.player.name}. May we never meet again."<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Chiomic' ? (
+                                        <>
+                                        The {state.computer?.name} contorts and swirls with designs of ancient artifice and delight.<br /><br />
+                                        </>
+                                    ) : state.playerTrait === "Kyr'naic" ? (
+                                        <>
+                                        "{state.player.name}, all my life as {article} {state.computer?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Lilosian' ? (
+                                        <>
+                                        Tears well up in the {state.computer?.name}'s eyes. "All of that glory in all those years, {state.player.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {state.player.weapon_one.influences[0]}." <br /><br />
+                                        </>
+                                    ) : (
+                                        <>
+                                        </>
+                                    ) }         
                                 </>
                             ) } 
                             <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Leave {state.computer.name}'s caeren behind in contemplation of your {state.playerTrait} nature.</Button>
                             </div>          
-                        : state.player_win ?
+                        : state.player_win ? (
                             <>
-                            { namedEnemy ? (
-                                <>
-                                "{state.player.name}, you are truly unique in someone's design. Before you travel further, if you wish to have it, its yours."<br /><br />       
-                                </>
-                            ) : ( 
-                                <>
-                                "Go now, {state.player.name}, take what you will and find those better pastures."<br /><br />        
-                                </>
-                            ) }
-                            
+                                { namedEnemy ? (
+                                    <> "{state.player.name}, you are truly unique in someone's design. Before you travel further, if you wish to have it, its yours."<br /><br /> </>
+                                ) : ( 
+                                    <> "Go now, {state.player.name}, take what you will and find those better pastures."<br /><br /> </>
+                                ) }
                                 <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pitious nature.</Button>
                             </>
-                        : state.computer_win ?
+                        ) : state.computer_win ? (
                             <>
-                            "If you weren't entertaining in defeat I'd have a mind to simply snuff you out here and now. Seek refuge {state.player.name}, your frailty wears on my caer."<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide your shame and wounds. There's always another chance, perhaps.</Button>
+                                "If you weren't entertaining in defeat I'd have a mind to simply snuff you out here and now. Seek refuge {state.player.name}, your frailty wears on my caer."<br />
+                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide your shame and wounds. There's always another chance, perhaps.</Button>
                             </>
-                        : state.enemyPersuaded ?
+                        ) : state.enemyPersuaded ? (
                             <>
-                            You have persuaded {namedEnemy ? '' : ` ${article}`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.<br />
-                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
+                                You have persuaded {namedEnemy ? '' : ` ${article}`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.<br />
+                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                             </>
-                        :
+                        ) : (
                             <>
-                            { namedEnemy ? 
-                                <>
-                                "I hope you find what you seek, {state.player.name}. Take care in these parts, you may never know when someone wishes to approach out of malice and nothing more. Strange denizens these times." <br/>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
-                                </>
-                            : 
-                                <> 
-                                "Well, {state.player?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
-                                <br />
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
-                                </>
-                            }
+                                { namedEnemy ? ( 
+                                    <>
+                                        "I hope you find what you seek, {state.player.name}. Take care in these parts, you may never know when someone wishes to approach out of malice and nothing more. Strange denizens these times." <br/>
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
+                                    </>
+                                ) : ( 
+                                    <> 
+                                        "Well, {state.player?.name}, I suppose you've got better things to do. I'll be around if you happen to find yourself in need of supply."
+                                        <br />
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Depart from the trader's caravan and keep moving.</Button>
+                                    </>
+                                ) }
                             </>
-                        }
+                        ) }
                         { checkPlayerTrait("Kyn'gian", gameState) && !state.player_win && !state.computer_win ? (
                             <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>You remain at the edges of sight and sound, and before {state.computer.name} can react, you attempt to flee.</Button>
                         ) : ( '' ) }
@@ -1151,91 +1121,91 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                         { state.enemyPersuaded ?
                             <div style={{ color: "gold" }}>
                             [Success]:{' '}
-                             { namedEnemy ? (
-                            <>
-                            { state.playerTrait === 'Arbituous' ? ( 
+                            { namedEnemy ? (
                                 <>
-                                "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {state.player.name}."<br /><br />
+                                    { state.playerTrait === 'Arbituous' ? ( 
+                                        <>
+                                        "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {state.player.name}."<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Chiomic' ? (
+                                        <>
+                                        {state.computer?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {state.player.name}. What is happening to me, what have you brought back?"<br /><br />
+                                        </>
+                                    ) : state.playerTrait === "Kyr'naic" ? (
+                                        <>
+                                        "I'm sorry, {state.player.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Lilosian' ? (
+                                        <>
+                                        Tears well up in {state.computer?.name}'s eyes. "I'm sorry, {state.player.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Shaorahi' ? (
+                                        <>
+                                        A stillness hollows {state.computer?.name}, the chant of a dead language stirs their blood without design.<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Ilian' ? (
+                                        <>
+                                        "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {state.player.name}, others may be feaful of the Black Sun."<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Fyeran' ? (
+                                        <>
+                                        "You are not here right now, {state.player.name}. Perchance we may see us in another land, then?"<br /><br />
+                                        </>
+                                    ) : ( '' ) }
                                 </>
-                            ) : state.playerTrait === 'Chiomic' ? (
+                            ) : ( 
                                 <>
-                                {state.computer?.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. "I don't understand, {state.player.name}. What is happening to me, what have you brought back?"<br /><br />
+                                    { state.playerTrait === 'Arbituous' ? ( 
+                                        <>
+                                        "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {state.player.name}. May we never meet again."<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Chiomic' ? (
+                                        <>
+                                        The {state.computer?.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
+                                        </>
+                                    ) : state.playerTrait === "Kyr'naic" ? (
+                                        <>
+                                        "{state.player.name}, all my life as {article} {state.computer?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Lilosian' ? (
+                                        <>
+                                        Tears well up in the {state.computer?.name}'s eyes. "All of that glory in all those years, {state.player.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {state.player.weapon_one.influences[0]}." <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Shaorahi' ? (
+                                        <>
+                                        An unsure unease stifles the ascent of the {state.computer.name}, their eyes a haze of murk. <br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Ilian' ? (
+                                        <>
+                                        "Nooo, you cannot be Him." Concern marks the {state.computer.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {state.player.name}."<br /><br />
+                                        </>
+                                    ) : state.playerTrait === 'Fyeran' ? (
+                                        <>
+                                        Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
+                                        </>
+                                    ) : ( '' ) }         
                                 </>
-                            ) : state.playerTrait === "Kyr'naic" ? (
-                                <>
-                                "I'm sorry, {state.player.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here." <br /><br />
-                                </>
-                            ) : state.playerTrait === 'Lilosian' ? (
-                                <>
-                                Tears well up in {state.computer?.name}'s eyes. "I'm sorry, {state.player.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry." <br /><br />
-                                </>
-                            ) : state.playerTrait === 'Shaorahi' ? (
-                                <>
-                                A stillness hollows {state.computer?.name}, the chant of a dead language stirs their blood without design.<br /><br />
-                                </>
-                            ) : state.playerTrait === 'Ilian' ? (
-                                <>
-                                "My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {state.player.name}, others may be feaful of the Black Sun."<br /><br />
-                                </>
-                            ) : state.playerTrait === 'Fyeran' ? (
-                                <>
-                                "You are not here right now, {state.player.name}. Perchance we may see us in another land, then?"<br /><br />
-                                </>
-                            ) : ( '' ) }
-                            </>
-                        ) : ( 
-                            <>
-                            { state.playerTrait === 'Arbituous' ? ( 
-                                <>
-                                "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {state.player.name}. May we never meet again."<br /><br />
-                                </>
-                            ) : state.playerTrait === 'Chiomic' ? (
-                                <>
-                                The {state.computer?.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.<br /><br />
-                                </>
-                            ) : state.playerTrait === "Kyr'naic" ? (
-                                <>
-                                "{state.player.name}, all my life as {article} {state.computer?.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you." <br /><br />
-                                </>
-                            ) : state.playerTrait === 'Lilosian' ? (
-                                <>
-                                Tears well up in the {state.computer?.name}'s eyes. "All of that glory in all those years, {state.player.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {state.player.weapon_one.influences[0]}." <br /><br />
-                                </>
-                            ) : state.playerTrait === 'Shaorahi' ? (
-                                <>
-                                An unsure unease stifles the ascent of the {state.computer.name}, their eyes a haze of murk. <br /><br />
-                                </>
-                            ) : state.playerTrait === 'Ilian' ? (
-                                <>
-                                "Nooo, you cannot be Him." Concern marks the {state.computer.name}, for whomever they believe you are, it arrests their confidence in any action. "Yet I am not to thwart naked fate, good day {state.player.name}."<br /><br />
-                                </>
-                            ) : state.playerTrait === 'Fyeran' ? (
-                                <>
-                                Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion.<br /><br />
-                                </>
-                            ) : ( '' ) }         
-                            </>
-                        ) }
+                            ) }
                             You persuaded {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.<br />
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                             </div>
                         : '' }
                     </>
                 : gameState.currentIntent === 'provincialWhispers' ?
-                <>
-                    { state.player_win || state.enemyPersuaded ? (
-                        <>
-                        "There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"<br />
-                        <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
-                        <div style={{ color: 'gold' }}>
-                            "{regionInformation?.[province]}"
-                        </div>
-                        </>
-                    ) : state.computer_win ? (
-                        <>"I guess those whipspers must wait another day."</>
-                    ) : ( 
-                        <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
-                    ) }
+                    <>
+                        { state.player_win || state.enemyPersuaded ? (
+                            <>
+                                "There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"<br />
+                                <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
+                                <div style={{ color: 'gold' }}>
+                                    "{regionInformation?.[province]}"
+                                </div>
+                            </>
+                        ) : state.computer_win ? (
+                            <>"I guess those whipspers must wait another day."</>
+                        ) : ( 
+                            <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
+                        ) }
                     </>
                 : gameState.currentIntent === 'worldLore' ?
                     <>
