@@ -184,7 +184,7 @@ export default class Enemy extends Entity {
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health });
+                    this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.AWARE);
                 };
@@ -289,14 +289,14 @@ export default class Enemy extends Entity {
     attackInterval() {
         if (this.scene.state.computer_weapons[0]) {
             const weapon = this.scene.state.computer_weapons[0];
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1200 : weapon.grip === 'Two Hand' ? 900 : 600;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 900 : 600;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1200 : weapon. weapon.grip === 'Two Hand' ? 900 : 600;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 900 : 600;
         } else {
             const weapon = this.ascean.weapon_one;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1200 : weapon.grip === 'Two Hand' ? 900 : 600;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 900 : 600;
         };
     };
 

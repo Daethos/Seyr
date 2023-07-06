@@ -22,6 +22,8 @@ export interface CombatData {
     playerDamaged: boolean;
     enemyPersuaded: boolean;
     enemyPrayerConsumed: boolean;
+    persuasionScenario: boolean;
+    luckoutScenario: boolean;
 
     player_start_description: string;
     player_special_description: string;
@@ -111,6 +113,7 @@ export interface CombatData {
     enemyID: string;
     combatTimer: number;
 
+    isEnemy: boolean;
     npcType: string;
 };
 
@@ -159,6 +162,7 @@ export const ACTIONS = {
     CLEAR_COUNTER: 'CLEAR_COUNTER',
     AUTO_ENGAGE: 'AUTO_ENGAGE',
     PLAYER_LUCKOUT: 'PLAYER_LUCKOUT',
+    LUCKOUT_FAILURE: 'LUCKOUT_FAILURE',
     PLAYER_WIN: 'PLAYER_WIN',
     COMPUTER_WIN: 'COMPUTER_WIN',
     CLEAR_DUEL: 'CLEAR_DUEL',
@@ -198,6 +202,8 @@ export const initialCombatData: CombatData = {
     playerDamaged: false,
     enemyPersuaded: false,
     enemyPrayerConsumed: false,
+    persuasionScenario: false,
+    luckoutScenario: false,
     player_start_description: '',
     player_special_description: '',
     player_action_description: '',
@@ -277,6 +283,7 @@ export const initialCombatData: CombatData = {
     isStalwart: false,
     enemyID: '',
     combatTimer: 0,
+    isEnemy: false,
     npcType: '',
 };
 
@@ -451,6 +458,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_win: false,
                 computer_win: false,
                 enemyID: action.payload.enemyID,
+                npcType: '',
+                isEnemy: true,
                 // combatRound: 1,
             };
         case 'SET_PHASER_COMPUTER_NPC':
@@ -471,21 +480,28 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_win: false,
                 enemyID: action.payload.enemyID,
                 npcType: action.payload.npcType,
+                isEnemy: false,
             };
         case 'CLEAR_NON_AGGRESSIVE_ENEMY':
             return {
                 ...state,
+                computer: null,
+                persuasionScenario: false,
+                luckoutScenario: false,
                 enemyPersuaded: false,
+                playerLuckout: false,
                 player_win: false,
                 player_luckout: false,
                 playerGrapplingWin: false,
                 computer_win: false,
                 combatEngaged: false,
                 playerTrait: '',
+                isEnemy: false,
             };
         case 'CLEAR_NPC':
             return {
                 ...state,
+                computer: null,
                 npcType: '',
             };
         case 'SET_NEW_COMPUTER_GUEST':
@@ -631,6 +647,15 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 player_luckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
                 player_win: true,
+                luckoutScenario: true,
+            };
+        case 'LUCKOUT_FAILURE':
+            return {
+                ...state,
+                winStreak: 0,
+                player_luckout: action.payload.playerLuckout,
+                playerTrait: action.payload.playerTrait,
+                luckoutScenario: true,
             };
         case 'SET_GRAPPLING_WIN':
             console.log('grappling win')
@@ -649,6 +674,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 enemyPersuaded: action.payload.enemyPersuaded,
                 playerTrait: action.payload.playerTrait,
+                persuasionScenario: true,
             };
         case 'RESET_LUCKOUT':
             return {

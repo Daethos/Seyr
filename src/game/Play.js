@@ -21,7 +21,8 @@ export default class Play extends Phaser.Scene {
     init(data) {
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
-        this.enemy = this.data.gameData.gameData.enemy;
+        this.enemy = {};
+        this.npcs = [];
         this.combat = false;
         this.focus = {}; 
         this.enemies = [];
@@ -89,8 +90,10 @@ export default class Play extends Phaser.Scene {
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        
-        this.enemy = new NPC({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
+        for (let i = 0; i < 4; i++) {
+            this.npcs.push(new NPC({scene: this, x: 800, y: 200 + (i * 200), texture: 'player_actions', frame: 'player_idle_0'}));
+        };
+        // this.enemy = new NPC({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
 
@@ -436,8 +439,9 @@ export default class Play extends Phaser.Scene {
 
     update() {
         this.player.update(); 
-        this.enemy.update();
+        // this.enemy.update();
         this.enemies.forEach((enemy) => enemy.update());
+        this.npcs.forEach((npc) => npc.update());
         // this.lootDrops.forEach((lootDrop) => lootDrop.update());
         // if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };

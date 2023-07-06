@@ -88,9 +88,9 @@ export default class ParticleManager extends Phaser.Scene {
         });
     };
 
-    addEffect(action, player, key) { 
+    addEffect(action, player, key) {
         let particle = {
-            id: player.ascean._id + '_' + key + uuidv4(),
+            id: uuidv4(),
             action: action,
             effect: this.spriteMaker(this.scene, player, key + '_effect'), 
             key: key + '_effect',
@@ -106,12 +106,12 @@ export default class ParticleManager extends Phaser.Scene {
             velocity: action === 'attack' ? 5 : action === 'counter' ? 6 : (action === 'posture' || action === 'roll') ? 4 : 4,
         };
         const { Bodies } = Phaser.Physics.Matter.Matter;
-        const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: "effectSensor" }); 
+        const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: `effectSensor-${particle.id}`}); 
         particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
         this.sensorListener(player, particle, effectSensor);
         this.particles.push(particle); 
-        console.log(particle.id, "Particle ID")
+        if (player.name === 'enemy') console.log(particle.target, "Particle Target");
         return particle;
     };
 
@@ -151,7 +151,7 @@ export default class ParticleManager extends Phaser.Scene {
                 if (player.frameCount < 3) return;
                 break;
             case 'posture':
-                if (player.frameCount < 7) return;
+                if (player.frameCount < 11) return;
                 break; 
             default:
                 break;
@@ -159,9 +159,13 @@ export default class ParticleManager extends Phaser.Scene {
         if (!player.particleEffect.effect.visible) player.particleEffect.effect.setVisible(true); 
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
         if (player.particleEffect && player.particleEffect.effect && this.particles.find((particle) => particle.id === player.particleEffect.id)) {
+            if (player.name === 'player' && player.particleEffect.action === 'roll') return;
             player.particleEffect.effect.play(player.particleEffect.key, true);
-            player.particleEffect.target.normalize();
-            player.particleEffect.effect.setVelocity(player.particleEffect.velocity * player.particleEffect.target.x, player.particleEffect.target.y * player.particleEffect.velocity);
+            const target = player.particleEffect.target;
+            if (player.name === 'enemy') console.log(target, "Particle Target Initialized");
+            target.normalize();
+            if (player.name === 'enemy') console.log(target, "Particle Target Normalized");
+            player.particleEffect.effect.setVelocity(player.particleEffect.velocity * target.x, target.y * player.particleEffect.velocity);
         };
     };
 };

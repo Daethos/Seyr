@@ -885,8 +885,8 @@
   position: absolute;
   color: gold;
   z-index: 9999;
-  top: 108.1%;
-  left: 25%;
+  top: 81.5%;
+  left: 72.5%;
   transform: scale(0.75);
   /* grid-row-start: 7; */
 }
@@ -936,11 +936,11 @@
 }
 .story-save-inventory-outer {
   position: absolute;
-  top: 108%;
-  left: 50%;
+  top: 81.25%;
+  left: 80%;
   z-index: 9999;
   transform: scale(0.75);
-  height: 17.5%; 
+  height: 10%; 
 }
 .story-save-inventory {
   position: absolute;

@@ -279,6 +279,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const clearNpc = async (e: { detail: any; }) => {
         dispatch({ type: ACTIONS.CLEAR_NPC, payload: null });
+        gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
     };
 
     const fetchEnemy = async (e: { detail: any; }) => {
@@ -427,6 +428,22 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
             gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
         };
     }, [asceanState, gameState.saveExp]); 
+
+    useEffect(() => {
+        if (!state.player_luckout) return;
+        handlePlayerLuckout();
+    }, [state.player_luckout]);  
+
+    async function handlePlayerLuckout() {
+        try {
+            playReligion();
+            await getOneLootDrop(state.computer.level);
+            await gainExperience(state);
+            dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
+        } catch (err: any) {
+            console.log("Error Handling Player Win");
+        };
+    };
 
     const deleteEquipment = async (eqp: any) => {
         try {

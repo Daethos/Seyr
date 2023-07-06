@@ -782,7 +782,7 @@ const GameSolo = ({ user }: GameProps) => {
     }, [state.playerGrapplingWin]);
 
     useEffect(() => {
-        if (!state.player_luckout)
+        if (!state.player_luckout) return;
         handlePlayerLuckout();
         setTimeout(() => {
             gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });

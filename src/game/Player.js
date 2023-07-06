@@ -234,7 +234,7 @@ export default class Player extends Entity {
                         const isNewEnemy = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                         if (isNewEnemy && !isNewEnemy.isDead) this.touching.push(other.gameObjectB);
                         this.currentTarget = other.gameObjectB; 
-                        if (this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health });
+                        if (!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health });
                         if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
                             this.scene.combatEngaged(true);
                             this.inCombat = true;
@@ -310,7 +310,7 @@ export default class Player extends Entity {
                     const isNewNpc = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                     if (isNewNpc && !isNewNpc.isDead) this.touching.push(other.gameObjectB);
                     this.currentTarget = other.gameObjectB;
-                    if (this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
+                    if (!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
                 };
             },
             context: this.scene,
@@ -776,6 +776,18 @@ export default class Player extends Entity {
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
             if (this.dodgeCooldown === 0) {
+                const sensorDisp = 12;
+                const colliderDisp = 16;
+                if (this.isDodging) {
+                    this.body.parts[2].position.y += sensorDisp;
+                    this.body.parts[2].circleRadius = 21;
+                    this.body.parts[1].vertices[0].y += colliderDisp;
+                    this.body.parts[1].vertices[1].y += colliderDisp; 
+                    this.body.parts[0].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
+                    this.body.parts[1].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
+                    this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
+                    this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
+                };
                 this.dodgeCooldown = 2000; 
                 const dodgeDistance = 126;  
                 const dodgeDuration = 18;  
@@ -789,6 +801,14 @@ export default class Player extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.dodgeCooldown = 0;
                         this.isDodging = false;
+                        this.body.parts[2].position.y -= sensorDisp;
+                        this.body.parts[2].circleRadius = 36;
+                        this.body.parts[1].vertices[0].y -= colliderDisp;
+                        this.body.parts[1].vertices[1].y -= colliderDisp; 
+                        this.body.parts[0].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.body.parts[1].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.body.parts[0].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
                         return;
                     };
                     const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);

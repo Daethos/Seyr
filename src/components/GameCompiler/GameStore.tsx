@@ -310,7 +310,7 @@ export const TRAIT_DESCRIPTIONS = {
             description: "a sense of autoritas is weighted in your words, and can sway the minds of others.",
             action: "You're Ilianic, and are able to convince others of your point of view.",
             modal: "Heroism (This can affect all potential enemies)",
-            success: "Success!",
+            success: ["My, its been some time since I have witnessed a design such as yours. Careful whom you show your nature to, {ascean.name}, others may be fearful of the Sundering.", "`No, you cannot be Him.` Concern marks the {enemy.name}, for whomever they believe you are, it arrests their confidence in any action. `Yet I am not to thwart naked fate, good day {ascean.name}.`"],
             failure: "Failure!",
         },
         heroism: {
@@ -339,7 +339,7 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can use your knowledge of ley law to deter enemies from attacking you.",
             action: "Attempt to convince {enemy.name} of the current ley law as it stands, and their attempt to break it with murder will not stand before a trial by Arbiter, with precedent set to execute those outside the ley harming those within. And the enemy truly wishes not to acost the achre of the arbiters--last war the Arbiter's entered caused the other side to cede their religiosity entirely, and the reckoning of one's eternal caeren seems a bit harsher than the whole business of simple murdering--which while they have their merits in a merciless world wrought with mischief, isn't really the angle you're going with in order to skirt this combat issue. In summation, attempts to harm you are unequally disadvantageous for all parties involved, and you'd really prefer to getting back on the road, if possible.",
             modal: "Ethos (Affects all enemies within the Ley)",
-            success: "Success! There shall be no need of murder.",
+            success: ["Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}.", "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."],
             failure: "{enemy.name} seems more convinced of that whole murder thing."
         },
         luckout: {
@@ -347,7 +347,7 @@ export const TRAIT_DESCRIPTIONS = {
             action: "Unleash a dizzying array of syllables and concatenated and contracted words to upend the attempted assault.",
             greaterSuccess: "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}.",
             modal: "Rhetoric (Convince the enemy to cease hostility)",
-            success: "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}.",
+            success: ["Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}.", "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."],
             failure: "The tangled rhetoric appears to have caused a cessation of higher functioning in {enemy.name}'s mind, and has relegated to clearing it by vanquishing you at all costs."
         }
     },
@@ -356,14 +356,14 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can speak to you and your enemies common faith and sway their hand at violence.",
             action: "Speak on the virtues of {ascean.weapon_one.influences[0]} to {enemy.name}.",
             modal: "Pathos (Affects all enemies of the same faith)",
-            success: "Tears well up in the {enemy.name}'s eyes. 'All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}.'",
+            success: ["Tears well up in {enemy?.name}'s eyes. `I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry.`", "Tears well up in the {enemy.name}'s eyes. 'All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}.'", ],
             failure: "A beautiful speech upended by the simple notion of {enemy.name}'s {enemy.faith} faith to {enemy.weapon_one.influences[0]}."
         },
         luckout: {
             description: "you can convince the enemy to profess their follies and willow.",
             action: "Show {enemy.name} the way of peace through {ascean.weapon_one.influences[0]}",
             modal: "Peace (Allow the enemy to let go of their human failures)",
-            success: "Tears well up in {enemy.name}'s eyes. 'I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry.'",
+            success: ["Tears well up in {enemy?.name}'s eyes. `I'm sorry, {ascean.name}, I'm sorry. I'm sorry for everything I've done. I'm sorry for everything I've said. I'm sorry for everything I've thought. I'm sorry for everything I've been. I'm sorry.`", "Tears well up in the {enemy.name}'s eyes. 'All of that glory in all those years, {ascean.name}, and all this time there was something sweeter. I am so instilled with harmony, having heard your beautiful hymn of {ascean.weapon_one.influences[0]}.'", ],
             failure: "A beautiful gesture upended by the simple notion of {enemy.name}'s {enemy.faith} faith to {enemy.weapon_one.influences[0]}."
         }
     },
@@ -372,14 +372,14 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can persuade the enemy to cease the pitiless attempt to invoke meaning and purpose in themselves by base and petty means, and to instead embrace the hush and tendril of things.",
             action: "Shame {enemy.name} for their attempt to invoke meaning and purpose in themselves by base and petty means.",
             modal: "Apathy (Affects all enemies of lesser conviction)",
-            success: "{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.",
+            success: ["{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.", "I'm sorry, {ascea.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here."],
             failure: "Seems {enemy.name} is not ready to give up on their attempt to invoke meaning and purpose in themselves by base and petty means."
         },
         luckout: {
             description: "you can convince the enemy to acquiesce and die, giving up their life to the Aenservaesai.",
             action: "Offer a glimpse of the aenservaesai in its totality.",
             modal: "Aenservaesai (Unburden the enemy to acquiesce and die)",
-            success: "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here.",
+            success: ["{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.", "I'm sorry, {ascea.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here."],
             failure: "It appears {enemy.name} is not ready to die, and is infact renewed with vigor at a chance to instill meaning (your murder) into their life (continuining)."
         }
     },
@@ -459,7 +459,7 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can convince those who see this world with peculiarity.",
             action: "Speak to {enemy.name}'s curiosity.",
             modal: "Seer (Affects all enemies who are more mystic than martial)",
-            success: "Success!",
+            success: ["You are not here right now, {ascean.name}. Perchance we may see us in another land, then?", "Sweet tendrils stretch a creeping smile adorning your face, casting shades of delight for any occasion."],
             failure: "Failure!"
         },
         seer: {
@@ -480,7 +480,7 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can put the enemy in awe of your power, and have them cease their assault.",
             action: "Speak to {enemy.name} in  Shao'rahi.",
             modal: "Awe (Affects all enemies of lesser conviction)",
-            success: "Success!",
+            success: ["A stillness hollows {enemy.name}, the chant of a dead language stirs their blood without design.", "An unsure unease stifles the ascent of the {enemy.name}, their eyes a haze of murk."],
             failure: "Failure!"
         }
     },
@@ -491,9 +491,9 @@ export const TRAIT_DESCRIPTIONS = {
             success: "You have vanquished {enemy.name}, whether caeren or flesh succumbed first to be shirked from this world is a question for another day.",
             failure: "Failure!"
         },
-        persuasion: {
-            description: "your tshaeral nature has a way of wilting the caer of your enemies.",
-            action: "Convince {enemy.name} without words, show them a bit more of your true self.",
+        devour: {
+            description: "your tshaeral nature allows you to cannibalize your enemies for recovery and spirit.",
+            action: "Devour the remains of {enemy.name}.",
             success: "Success!",
             failure: "Failure!"
         }
@@ -503,14 +503,14 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can cause bouts of confusion and disorientation in the enemy, reducing their conviction in attacking you.",
             action: "Speak a chiomic riddle to befuddle {enemy.name}.",
             modal: "Humor (This affects enemies of lesser Chiomism)",
-            success: "The {enemy.name} contorts and swirls with designs of ancient artifice and delight.",
+            success: ["The {enemy.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.", "{enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. 'I don't understand, {ascean.name}. What is happening to me, what have you brought back?'"],
             failure: "You're unsure if the riddle posed was too difficult, or if the {enemy.name} is simply too stupid to understand. Either way, it doesn't seem to have worked."
         },
         luckout: {
             description: "you can invoke the Ancient Chiomyr, reducing the enemy to a broken mind of mockery.",
             action: "Lash {enemy.name} with chiomic bliss.",
             modal: "Shatter (Mental seizure of the enemy)",
-            success: "{enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. 'I don't understand, {ascean.name}. What is happening to me, what have you brought back?'",
+            success: ["The {enemy.name} contorts and swirls with designs of ancient artifice and delight. They may still speak but it seems as though their mind is retracing former moments.", "{enemy.name} looks at you with a confusion and pain emanating from every twitch of their body as its mind writhes within, thrashing and tearing at itself.. 'I don't understand, {ascean.name}. What is happening to me, what have you brought back?'"],
             failure: "Certain minds are incapable of being broken, and {enemy.name}'s is one of them. You're unsure if it's because of their own strength, or your own weakness. Or their weakness, inadvertently."
         }
     },

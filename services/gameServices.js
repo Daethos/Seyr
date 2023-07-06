@@ -2983,6 +2983,9 @@ const newDataCompiler = async (combatData) => {
         combatTimer: combatData.combatTimer,
         isStalwart: combatData.isStalwart,
         npcType: combatData.npcType,
+        persuasionScenario: combatData.persuasionScenario,
+        luckoutScenario: combatData.luckoutScenario,
+        isEnemy: combatData.isEnemy,
     };
     return newData;
 };

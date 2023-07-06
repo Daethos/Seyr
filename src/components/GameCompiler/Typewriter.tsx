@@ -105,6 +105,48 @@ const styleMap: StyleMap = {
     border: "2px solid gold",
     boxShadow: "0 0 3em gold",
   },
+  greenMarkup: {
+    color: "#fdf6d8",
+    textShadow: "1.5px 1.5px 1.5px green",
+    fontSize: "20px",
+    fontWeight: 700,
+    display: 'inline-block'
+  },
+  blueMarkup: {
+    color: "#fdf6d8",
+    textShadow: "1.5px 1.5px 1.5px blue",
+    fontSize: "20px",
+    fontWeight: 700,
+    display: 'inline-block'
+  },
+  purpleMarkup: {
+    color: "#fdf6d8",
+    textShadow: "1.5px 1.5px 1.5px purple",
+    fontSize: "20px",
+    fontWeight: 700,
+    display: 'inline-block'
+  },
+  darkorangeMarkup: {
+    color: "#fdf6d8",
+    textShadow: "1.5px 1.5px 1.5px darkorange",
+    fontSize: "20px",
+    fontWeight: 700,
+    display: 'inline-block'
+  },
+  redMarkup: {
+    color: "red",
+    textShadow: "1.5px 1.5px 1.5px #fdf6d8",
+    fontSize: "20px",
+    fontWeight: 700,
+    display: 'inline-block'
+  },
+  goldMarkup: {
+    color: "gold",
+    textShadow: "1.5px 1.5px 1.5px #fdf6d8",
+    fontSize: "20px",
+    fontWeight: 700,
+    display: 'inline-block'
+  },
 };
 
 interface TypewriterProps {

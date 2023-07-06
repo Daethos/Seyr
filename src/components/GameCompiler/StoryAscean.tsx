@@ -13,7 +13,9 @@ import statPng from '../../game/images/newStats.png';
 import Inventory from './Inventory';
 import AsceanAttributeCompiler from '../AsceanAttributeCompiler/AsceanAttributeCompiler';
 import * as settingsAPI from '../../utils/settingsApi';
+import * as asceanAPI from '../../utils/asceanApi';
 import { useNavigate } from 'react-router-dom';
+import Firewater from './Firewater';
 
 interface Props {
     ascean: any;
@@ -30,31 +32,11 @@ interface Props {
 };
 
 const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean, damaged, gameState, gameDispatch, asceanViews }: Props) => {
+    const [savingInventory, setSavingInventory] = useState(false);
     const [currentSetting, setCurrentSetting] = useState<string>('Actions');
     const [currentCharacter, setCurrentCharacter] = useState('Traits');
-    const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({
-        // primary: {
-        //     name: '',
-        //     traitOneName: '',
-        //     traitOneDescription: '',
-        //     traitTwoName: '',
-        //     traitTwoDescription: '',
-        // },
-        // secondary: {
-        //     name: '',
-        //     traitOneName: '',
-        //     traitOneDescription: '',
-        //     traitTwoName: '',
-        //     traitTwoDescription: '',
-        // },
-        // tertiary: {
-        //     name: '',
-        //     traitOneName: '',
-        //     traitOneDescription: '',
-        //     traitTwoName: '',
-        //     traitTwoDescription: '',
-        // },
-    });
+    const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({});
+    const [dragAndDropInventory, setDragAndDropInventory] = useState(gameState.player.inventory);
     const navigate = useNavigate();
     const [highlighted, setHighlighted] = useState({
         item: null,
@@ -84,7 +66,24 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     useEffect(() => {
         playerTraits();
         console.log(ascean.statistics, "Stats!")
-    }, [ascean])
+    }, [ascean]);
+
+    useEffect(() => {
+        setDragAndDropInventory(gameState.player.inventory);
+    }, [gameState.player.inventory]);
+
+    const saveInventory = async (inventory: any) => {
+        try {
+            setSavingInventory(true);
+            const flattenedInventory = inventory.map((item: any) => item._id);
+            const data = { ascean: ascean._id, inventory: flattenedInventory };
+            await asceanAPI.saveAsceanInventory(data);
+            gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: true });
+            setSavingInventory(false);
+        } catch (err: any) {
+            console.log(err, "Error Saving Inventory");
+        };
+    };
 
     const playerTraits = async () => {
         const fetchTrait = async (trait: string) => {
@@ -474,9 +473,23 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             </Form.Select>
             </>
         ) : asceanViews === VIEWS.INVENTORY ? (
+            <>
             <h3 className='story-menu-heading'>
             Inventory
             </h3> 
+            <Firewater state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} />
+            <div className='story-save-inventory-outer'>
+                <Button size='sm' onClick={() => saveInventory(dragAndDropInventory)} variant='' className='story-save-inventory'>
+                { savingInventory ? ( 
+                    <Loading NavBar={true} /> 
+                ) : ( 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 512 512">
+                        <path d="M29.438 59.375c-3.948.032-7.903.093-11.875.188 4.333 2.772 8.685 5.483 13.062 8.124C126.162 123.92 230.69 151.4 340.5 180.594c.022.006.04.025.063.03.02.006.043-.004.062 0 1.87.498 3.72 1.003 5.594 1.5l.155-.53c.947.078 1.91.125 2.875.125 4.26 0 8.34-.767 12.125-2.19l-12.5 46.595 18.063 4.813L383 170.968c25.828 1.312 50.508 6.867 74.28 15.845-1.065 11.948 2.73 21.82 9.814 23.718 8.71 2.335 19.136-8.313 23.28-23.78 1.27-4.742 1.78-9.366 1.657-13.594l.345-1.28c-.136-.008-.27-.025-.406-.032-.56-8.924-4.116-15.77-9.876-17.313-6.808-1.823-14.666 4.304-19.75 14.44-25.275-3.725-49.624-10.894-72.47-23.69l16.345-60.968-18.033-4.843-12.093 45.155c-3.24-3.908-7.318-7.1-11.938-9.313l.094-.374C250.12 83.98 144.89 58.446 29.437 59.374zm161.25 44.25c55.52-.002 105.272 12.492 159.656 27.03 8.536.55 15.094 7.463 15.094 16.157 0 9.06-7.127 16.22-16.188 16.22-2.4 0-4.653-.5-6.688-1.407-56.172-15.04-109.352-27.786-157.406-57.97 1.85-.027 3.694-.03 5.53-.03zm-46.22 164.25v20.344H55.532c15.996 38.806 51.258 65.428 88.94 74.28v32.97h58.56c-12.115 30.534-33.527 55.682-58.5 77.592h-25.436v18.72h284.344v-18.72H376c-28.728-21.894-50.024-47.016-61.594-77.593h63.656V366.31c19.75-6.995 39.5-19.54 59.25-36.718-19.806-17.518-39.235-27.25-59.25-31.938v-29.78H144.47z"></path>
+                    </svg>
+                ) }
+                </Button>
+            </div>
+            </>
         ) : asceanViews === VIEWS.SETTINGS ? (
             <>
             <h3 className='story-menu-heading'>
@@ -550,7 +563,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                     <h5 style={{ color: 'gold', marginLeft: 'auto' }}>
                         Gameplay Controls
                     <Button variant='' onClick={saveGameSettings} style={{ position: 'absolute', top: '-5px' }}>
-                        <span style={{ float: "right", color: "gold", fontSize: "10px" }}>{loading ? <Loading Combat={true} /> : `Save`}</span>
+                        <span style={{ float: "right", color: "gold", fontSize: "10px" }}>{ loading ? ( <Loading Combat={true} /> ) : ( 'Save' ) }</span>
                     </Button>
                     </h5>
                     <br />
@@ -570,20 +583,11 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         </div>
         <div style={{ position: "absolute", color: "#fdf6d8", textAlign: "center", width: "27%", height: "54.5%", left: "635px", top: "22.5%", fontSize: "12px", overflow: 'auto', scrollbarWidth: 'none' }}>
             { asceanViews === VIEWS.CHARACTER ? (
-                <div style={{ height: "100%", padding: '0.25rem' }}>
-                    {/* <h6 style={{ color: 'gold' }}>{playerTraitWrapper?.primary?.name}</h6>
-                    <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
-                    <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
-                    <h6 style={{ color: 'gold' }}>{playerTraitWrapper?.secondary?.name}</h6>
-                    <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
-                    <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
-                    <h6 style={{ color: 'gold' }}>{playerTraitWrapper?.tertiary?.name}</h6>
-                    <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
-                    <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p> */}
+                <div style={{ height: "100%", padding: '0.25rem' }}> 
                     {createCharacterInfo(currentCharacter)}
                 </div>
             ) : asceanViews === VIEWS.INVENTORY ? (
-                <PhaserInventoryBag highlighted={highlighted} setHighlighted={setHighlighted} inventory={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} dispatch={dispatch} /> 
+                <PhaserInventoryBag setDragAndDropInventory={setDragAndDropInventory} dragAndDropInventory={dragAndDropInventory} highlighted={highlighted} setHighlighted={setHighlighted} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} /> 
             ) : asceanViews === VIEWS.SETTINGS ? (
                 <div className='p-2' style={{ overflowY: "scroll", scrollbarWidth: "none", height: "100%" }}>{createSettingInfo(currentSetting)}</div>
             ) : ( '' ) }
