@@ -115,6 +115,8 @@ export interface CombatData {
 
     isEnemy: boolean;
     npcType: string;
+    isAggressive: boolean;
+    startedAggressive: boolean;
 };
 
 interface Action {
@@ -129,6 +131,7 @@ export const ACTIONS = {
     SET_CURRENCY: 'SET_CURRENCY',
     SET_COMPUTER: 'SET_COMPUTER',
     SET_NEW_COMPUTER_GUEST: 'SET_NEW_COMPUTER_GUEST',
+    SET_PHASER_AGGRESSION: 'SET_PHASER_AGGRESSION',
     SET_DUEL: 'SET_DUEL',
     RESET_LUCKOUT: 'RESET_LUCKOUT',
     RESET_GRAPPLING_WIN: 'RESET_GRAPPLING_WIN',
@@ -285,6 +288,8 @@ export const initialCombatData: CombatData = {
     combatTimer: 0,
     isEnemy: false,
     npcType: '',
+    isAggressive: false,
+    startedAggressive: false,
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {
@@ -388,8 +393,14 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 gameIsLive: false,
                 combatEngaged: true,
-                combatRound: 1, // Figure this out later TODO:FIXME: For Phaser
+                combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
+            };
+        case 'SET_PHASER_AGGRESSION':
+            return {
+                ...state,
+                combatEngaged: action.payload,
+                isAggressive: action.payload,
             };
         case 'RESET_PLAYER':
             return {
@@ -455,11 +466,13 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_weapon_three: action.payload.enemy.combat_weapon_three,
                 computer_defense: action.payload.enemy.defense,
                 computer_attributes: action.payload.enemy.attributes,
-                player_win: false,
+                player_win: action.payload.isDefeated, // In Order To Denote Whether That Enemy Has Been Defeated So The Proper Settings Are Loaded In Dialog Etc...
                 computer_win: false,
                 enemyID: action.payload.enemyID,
                 npcType: '',
                 isEnemy: true,
+                isAggressive: action.payload.isAggressive,
+                startedAggressive: action.payload.isAggressive, 
                 // combatRound: 1,
             };
         case 'SET_PHASER_COMPUTER_NPC':
@@ -481,6 +494,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 enemyID: action.payload.enemyID,
                 npcType: action.payload.npcType,
                 isEnemy: false,
+                isAggressive: false,
+                startedAggressive: false,
             };
         case 'CLEAR_NON_AGGRESSIVE_ENEMY':
             return {
@@ -702,6 +717,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'CLEAR_DUEL':
             return {
                 ...state,
+                computer: null,
                 player_win: false,
                 computer_win: false,
                 enemyPersuaded: false,

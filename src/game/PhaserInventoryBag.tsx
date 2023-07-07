@@ -1,7 +1,5 @@
 import Inventory from '../components/GameCompiler/Inventory';
-import { DragDropContext, DragStart, Droppable, DropResult } from 'react-beautiful-dnd';
-import equipSlot from './images/equip_slot.png';
-import equipSlotSelected from './images/equip_slot_selected.png';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
  
 interface IBProps {
     ascean: any;
@@ -49,7 +47,6 @@ const PhaserInventoryBag = ({ ascean, gameDispatch, gameState, setHighlighted, h
                             <Droppable key={index} droppableId={item._id}>
                             {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDroppingStyle : relaxedStyle}>
-                                {/* <img src={equipSlot} alt='equip-slot' style={{ width: "72px", height: "72px", left: "109px" }} /> */}
                                 <Inventory highlighted={highlighted} setHighlighted={setHighlighted} gameState={gameState} gameDispatch={gameDispatch} bag={dragAndDropInventory} inventory={item} ascean={ascean} index={index} story={true} />
                                 {provided.placeholder}
                             </div>

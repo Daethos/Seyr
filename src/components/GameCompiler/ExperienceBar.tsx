@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import './GameCompiler.css';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Loading from '../Loading/Loading';
 

@@ -84,7 +84,7 @@ export default class NPC extends Entity {
 
     npcFetchedFinishedListener(e) {
         if (this.enemyID !== e.detail.enemyID) return;
-        console.log(e.detail, "NPC Fetched")
+        console.log(e.detail, "NPC Fetched");
         this.ascean = e.detail.game;
         this.health = e.detail.combat.attributes.healthTotal;
         this.combatStats = e.detail.combat;
@@ -96,7 +96,7 @@ export default class NPC extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [npcSensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !other.gameObjectB.inCombat) {
                     if (this.healthbar) this.healthbar.setVisible(true);
                     this.scene.setupNPC({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.combatStats.attributes.healthTotal, type: this.npcType });
                     this.npcTarget = other.gameObjectB;

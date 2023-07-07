@@ -580,9 +580,7 @@ html, body {
   background: transparent;
   color: #fdf6d8;
   font-weight: 600;
-  /* padding: 2.5%; */
 }; 
-
 
 .settings-style { color: goldenrod; }
 #story-health {
@@ -592,8 +590,8 @@ html, body {
   margin-left: 4.5%;
   margin-top: 3%;
   border: 2px solid purple;
-}
-.story-progressxp-text { position: absolute; top: 55px; font-size: 16px; left: 4.5%; width: 40%; text-align: center; color: black; }
+} 
+.story-progressxp-text { position: absolute; top: 56.5px; font-size: 16px; left: 4.5%; width: 40%; text-align: center; color: #fdf6d8;  }
 .story-progress {
   position: absolute;
   overflow: hidden;
@@ -606,7 +604,7 @@ html, body {
   font-weight: 600;
   background: transparent;
 }
-.story-progress-text { text-align: center; color: black; } 
+.story-progress-text { text-align: center; color: #fdf6d8; text-shadow: 1.5px 1.5px 1.5px black; } 
 #story-pic { width: 5.5vw; border: 1px solid #fdf6d8; border-radius: 50%; }
 #story-popover-image {  margin-top: 4%; transform: scale(1.75); }
 #friend-card {

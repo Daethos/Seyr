@@ -35,61 +35,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
     const [agilityOutput, setAgilityOutput] = useState<number>(0);
     const [achreOutput, setAchreOutput] = useState<number>(0);
     const [caerenOutput, setCaerenOutput] = useState<number>(0);
-    const [kyosirOutput, setKyosirOutput] = useState<number>(0);
-
-    const conOut = document.getElementById('con-box') as HTMLOutputElement | null;
-    useEffect(() => { 
-        console.log(constitutionOutput, '<- New Constitution Point Total');
-        if (conOut !== null) {
-            // conOut!.innerHTML = (constitutionCurrent > 9 ? `${constitutionCurrent} +` + Math.floor((constitutionCurrent - 10) / 2) + ' Modifier' : Math.floor((constitutionCurrent - 10) / 2) + ' Modifier');
-            conOut!.innerHTML = `${constitutionCurrent}`;
-        };
-    }, [constitutionOutput, constitutionCurrent, conOut]);
-
-    const strOut = document.getElementById('str-box');
-    useEffect(() => {
-        console.log(strengthOutput, '<- New Strength Point Total');
-        if (strOut !== null) {
-            strOut!.innerHTML = `${strengthCurrent}`;
-            // strOut!.innerHTML = (strengthCurrent > 9 ? `${strengthCurrent} +` + Math.floor((strengthCurrent - 10) / 2) + ' Modifier' : Math.floor((strengthCurrent - 10) / 2) + ' Modifier');
-        };
-    }, [strengthOutput, strengthCurrent, strOut]);
-
-    const agiOut = document.getElementById('agi-box');
-    useEffect(() => {
-        console.log(agilityOutput, '<- New Agility Point Total');
-        if (agiOut !== null) {
-            agiOut!.innerHTML = `${agilityCurrent}`;
-            // agiOut!.innerHTML = (agilityCurrent > 9 ? `${agilityCurrent} +` + Math.floor((agilityCurrent - 10) / 2) + ' Modifier' : Math.floor((agilityCurrent - 10) / 2) + ' Modifier');
-        };
-    }, [agilityOutput, agilityCurrent, agiOut]);
-
-    const achOut = document.getElementById('ach-box');
-    useEffect(() => {
-        console.log(achreOutput, '<- New Achre Point Total');
-        if (achOut !== null) {
-            achOut!.innerHTML = `${achreCurrent}`;
-            // achOut!.innerHTML = (achreCurrent > 9 ? `${achreCurrent} +` + Math.floor((achreCurrent - 10) / 2) + ' Modifier' : Math.floor((achreCurrent - 10) / 2) + ' Modifier');
-        };
-    }, [achreOutput, achreCurrent, achOut]);
-
-    const caerOut = document.getElementById('caer-box');
-    useEffect(() => {
-        console.log(caerenOutput, '<- New Caeren Point Total');
-        if (caerOut !== null) {
-            caerOut!.innerHTML = `${caerenCurrent}`;
-            // caerOut!.innerHTML = (caerenCurrent > 9 ? `${caerenCurrent} +` + Math.floor((caerenCurrent - 10) / 2) + ' Modifier' : Math.floor((caerenCurrent - 10) / 2) + ' Modifier');
-        };
-    }, [caerenOutput, caerenCurrent, caerOut]);
-
-    const kyoOut = document.getElementById('kyo-box');
-    useEffect(() => {
-        console.log(kyosirOutput, '<- New Kyosir Point Total');
-        if (kyoOut !== null) {
-            kyoOut!.innerHTML = `${kyosirCurrent}`;
-            // kyoOut!.innerHTML = (kyosirCurrent > 9 ? `${kyosirCurrent} +` + Math.floor((kyosirCurrent - 10) / 2) + ' Modifier' : Math.floor((kyosirCurrent - 10) / 2) + ' Modifier');
-        };
-    }, [kyosirOutput, kyosirCurrent, kyoOut]);
+    const [kyosirOutput, setKyosirOutput] = useState<number>(0); 
 
     useEffect(() => {
         setPoolTotal(0)
@@ -315,7 +261,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
         color: "gold", 
         marginTop: "2.5%",
         fontSize: "18px",
-    }
+    };
 
     return (
         <>
@@ -341,6 +287,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 ></input>
                 <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
                 <h4 className="" style={attributeStyle} id="con-box">
+                    {constitutionCurrent}
                 </h4>
             </InputGroup>
         </div>
@@ -362,7 +309,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 ></input>
             <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
             <h4 className="" style={attributeStyle} id="str-box">
-                </h4>
+                {strengthCurrent}
+            </h4>
             </InputGroup>
         </div>
         <div className="property-line">
@@ -383,7 +331,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 ></input>
             <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
             <h4 className="" style={attributeStyle} id="agi-box">
-                </h4>
+                {agilityCurrent}
+            </h4>
             </InputGroup>
         </div>
         <div className="property-line">
@@ -404,7 +353,8 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 ></input>
             <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
             <h4 className="" style={attributeStyle} id="ach-box">
-                </h4>
+                {achreCurrent}
+            </h4>
             </InputGroup>
         </div>
         <div className="property-line last">
@@ -425,6 +375,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 ></input>
                 <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
                 <h4 className="" style={attributeStyle} id="caer-box">
+                    {caerenCurrent}
                 </h4>
             </InputGroup>
         </div>
@@ -446,6 +397,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
                 ></input>
                 <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={asceanState.kyosir}>+</button>
                 <h4 className="" style={attributeStyle} id="kyo-box">
+                    {kyosirCurrent}
                 </h4>
             </InputGroup>
         </div>

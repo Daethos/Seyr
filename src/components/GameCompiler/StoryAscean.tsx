@@ -3,7 +3,6 @@ import Loading from '../Loading/Loading';
 import StoryHealthBar from './StoryHealthBar';
 import LevelUpModal from '../../game/LevelUpModal';
 import Button from 'react-bootstrap/Button';
-import Accordion from 'react-bootstrap/Accordion'; 
 import Form from 'react-bootstrap/Form';
 import ExperienceBar from './ExperienceBar';
 import { useEffect, useState } from 'react';
@@ -34,12 +33,12 @@ interface Props {
 const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanState, levelUpAscean, damaged, gameState, gameDispatch, asceanViews }: Props) => {
     const [savingInventory, setSavingInventory] = useState(false);
     const [currentSetting, setCurrentSetting] = useState<string>('Actions');
-    const [currentCharacter, setCurrentCharacter] = useState('Traits');
+    const [currentCharacter, setCurrentCharacter] = useState('Statistics');
     const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({});
     const [dragAndDropInventory, setDragAndDropInventory] = useState(gameState.player.inventory);
     const navigate = useNavigate();
     const [highlighted, setHighlighted] = useState({
-        item: null,
+        item: null as any,
         comparing: false,
     });
     const CHARACTERS = {
@@ -60,17 +59,28 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     };
 
     useEffect(() => {
-        console.log(asceanState)
+        console.log(asceanState);
     }, [asceanState]);
 
     useEffect(() => {
         playerTraits();
-        console.log(ascean.statistics, "Stats!")
+        console.log(ascean.statistics, "Stats!");
     }, [ascean]);
 
     useEffect(() => {
         setDragAndDropInventory(gameState.player.inventory);
+        checkHighlight();
     }, [gameState.player.inventory]);
+
+    const checkHighlight = () => {
+        if (highlighted?.item) {
+            const item = gameState.player.inventory.find((item: any) => item._id === highlighted?.item?._id);
+            console.log(item, "Item", highlighted?.item, "Highlighted Item ?");
+            if (!item) {
+                setHighlighted({ item: null, comparing: false });
+            };
+        };
+    };
 
     const saveInventory = async (inventory: any) => {
         try {
@@ -503,7 +513,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             </Form.Select>
             </>
         ) : ( '' ) }
-        <div className="story-block" style={{ zIndex: 9999 }}>
+        <div className="story-block" style={{ zIndex: 9999, fontFamily: "Cinzel", }}>
             <div className='story-ascean'> 
                 { asceanState.experience === asceanState.experienceNeeded ? (
                     <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} story={true} />

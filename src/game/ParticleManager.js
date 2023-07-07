@@ -97,13 +97,13 @@ export default class ParticleManager extends Phaser.Scene {
             success: false,
             target: player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position),
             timer: this.scene.time.addEvent({
-                delay: action === 'attack' ? 1500 : action === 'counter' ? 750 : (action === 'posture' || action === 'roll') ? 1000 : 1500,
+                delay: action === 'attack' ? 2000 : action === 'counter' ? 1000 : (action === 'posture' || action === 'roll') ? 1250 : 2000,
                 callback: () => {
                     this.removeEffect(particle.id);
                 },
             }),
             triggered: false,
-            velocity: action === 'attack' ? 5 : action === 'counter' ? 6 : (action === 'posture' || action === 'roll') ? 4 : 4,
+            velocity: action === 'attack' ? 5.5 : action === 'counter' ? 7 : (action === 'posture' || action === 'roll') ? 4.5 : 4.5,
         };
         const { Bodies } = Phaser.Physics.Matter.Matter;
         const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: `effectSensor-${particle.id}`}); 
@@ -162,9 +162,7 @@ export default class ParticleManager extends Phaser.Scene {
             if (player.name === 'player' && player.particleEffect.action === 'roll') return;
             player.particleEffect.effect.play(player.particleEffect.key, true);
             const target = player.particleEffect.target;
-            if (player.name === 'enemy') console.log(target, "Particle Target Initialized");
             target.normalize();
-            if (player.name === 'enemy') console.log(target, "Particle Target Normalized");
             player.particleEffect.effect.setVelocity(player.particleEffect.velocity * target.x, target.y * player.particleEffect.velocity);
         };
     };

@@ -9,7 +9,7 @@ import Inventory from '../components/GameCompiler/Inventory';
 import { DialogNode, getNodesForNPC, npcIds, DialogNodeOption, getNodesForEnemy } from '../components/GameCompiler/DialogNode';
 import Currency from '../components/GameCompiler/Currency';
 import { ACTIONS, CombatData, shakeScreen } from '../components/GameCompiler/CombatStore';
-import { GAME_ACTIONS, GameData, Player, checkPlayerTrait, getAsceanTraits, nameCheck } from '../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameData, Player, checkPlayerTrait, nameCheck } from '../components/GameCompiler/GameStore';
 import Typewriter from '../components/GameCompiler/Typewriter';
 import dialogWindow from '../game/images/dialog_window.png';
 
@@ -170,7 +170,7 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
 };
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
-    const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
+    const filteredOptions = Object.keys(options);
     const buttons = filteredOptions.map((o: any, i: number) => {
         switch (o) {
             case 'localLore':
@@ -228,15 +228,12 @@ interface StoryDialogProps {
 
 export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEquipment }: StoryDialogProps) => {
     const [error, setError] = useState<any>({ title: '', content: '' });
-    const [typewriterString, setTypewriterString] = useState<string>('');
     const [persuasionString, setPersuasionString] = useState<string>('');
     const [luckoutString, setLuckoutString] = useState<string>('');
-    const targetRef = useRef(null);
     const [upgradeItems, setUpgradeItems] = useState<any | null>(null);
+    const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [playerResponses, setPlayerResponses] = useState<string[]>([]);
     const [keywordResponses, setKeywordResponses] = useState<string[]>([]);
-    const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
-    const [traits, setTraits] = useState<any | null>(null);
     const regionInformation = {
         Astralands: "Good one, those Ashtre have quite the mouth on them I hear yet never heard. Perhaps you'll be able to catch their whispers.", 
         Kingdom: "The King, Mathyus Caderyn II, has been away from his court as of late, his son Dorien sitting the throne--though constant feathers aid his communication when abroad. Despite its unification, groans have increased with disparate and slow recovery from the century long war only having quelled for 7 years prior, with select places receiving abundance of aid over others, the discernment itself seeming weighed in favor of longstanding allies. As the King reaches further East to establish peaceable connections with the Soverains, it leads one to speculate on the disposition of those houses already under his kingship.", 
@@ -256,7 +253,6 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     const [persuasionTraits, setPersuasionTraits] = useState<any>([]);
     const [miniGame, setMiniGame] = useState<boolean>(false);
     const [miniGameTraits, setMiniGameTraits] = useState<any>([]);
-    const article = ['a', 'e', 'i', 'o', 'u'].includes(state.computer?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
     const [enemyArticle, setEnemyArticle] = useState<any>('')
 
     useEffect(() => { 
@@ -566,9 +562,13 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
 
     const handleIntent = (intent: string) => gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: intent });
     const handleRegion = (region: keyof Region) => setProvince(region);
+
     const engageCombat = async () => {
         await checkingLoot();
-        dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
+        dispatch({ type: ACTIONS.SET_PHASER_AGGRESSION, payload: true });
+        const aggression = new CustomEvent('aggressive-enemy', { detail: { id: state.enemyID, isAggressive: true } });
+        window.dispatchEvent(aggression);
+        gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
     };
 
     const clearDuel = async () => {
@@ -630,7 +630,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     return (
                         <div key={index}>
                             <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} 
-                            onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                            onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
                         </div>
                     )
                 })}
@@ -647,8 +647,8 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 {persuasionTraits.map((trait: any, index: number) => {
                     return (
                         <div key={index}>
-                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.modal.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
-                    </div>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                        </div>
                     )
                 })}
                 </div>
@@ -661,8 +661,8 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             <ToastAlert error={error} setError={setError} />
             <div style={{ color: 'gold', fontSize: '18px' }}>
                 <div style={{ display: 'inline' }}>
-                <img src={process.env.PUBLIC_URL + `/images/` + state.computer.origin + '-' + state.computer.sex + '.jpg'} alt={state.computer.name} style={{ width: '15%' }} className='dialog-picture' />
-                {' '}<div style={{ display: 'inline' }}>{state.computer.name} <p style={{ display: 'inline', fontSize: '12px' }}>[Level {state.computer.level}] {!state.computer.alive ? '[Deceased]' : ''}</p><br /></div>
+                <img src={process.env.PUBLIC_URL + `/images/` + state?.computer?.origin + '-' + state?.computer?.sex + '.jpg'} alt={state?.computer?.name} style={{ width: '15%' }} className='dialog-picture' />
+                {' '}<div style={{ display: 'inline' }}>{state?.computer?.name} <p style={{ display: 'inline', fontSize: '12px' }}>[Level {state?.computer?.level}] {!state?.computer?.alive ? '[Deceased]' : ''}</p><br /></div>
                 </div>
             </div>
             { state.npcType === 'Merchant-Smith' ? (
@@ -692,14 +692,12 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 <>
                     <br />
                     { gameState.player?.firewater?.charges === 5 ? (
-                        <>
                         <Typewriter stringText={`The Alchemist sways in a slight tune to the swish of your flask as he turns to you. <br /><br /> ^500 "If you're needing potions of amusement and might I'm setting up craft now. Seems you're set for now, come back when you're needing more."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
-                        </>
                     ) : (
                         <>
-                        <Typewriter stringText={`The Alchemist's eyes scatter about your presence, eyeing ${gameState.player?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.<br /><br /> ^500 "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, 10s a fifth what you say? I'll need you alive for patronage."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
-                        <br />
-                        <Button variant='' className='dialog-buttons inner' style={{ color: 'blueviolet' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
+                            <Typewriter stringText={`The Alchemist's eyes scatter about your presence, eyeing ${gameState.player?.firewater?.charges} swigs left of your Fyervas Firewater before tapping on on a pipe, its sound wrapping round and through the room to its end, a quaint, little spigot with a grated catch on the floor.<br /><br /> ^500 "If you're needing potions of amusement and might I'm setting up craft now. Fill up your flask meanwhile, 10s a fifth what you say? I'll need you alive for patronage."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                            <br />
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'blueviolet' }} onClick={refillFlask}>Walk over and refill your firewater?</Button>
                         </>
                     ) }
                 </>
@@ -707,7 +705,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             { state.isEnemy ? (
                 <>
                     <DialogTree 
-                        gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={state.player} enemy={gameState.opponent} dialogNodes={getNodesForEnemy(state.computer.name)} 
+                        gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={state.player} enemy={gameState.opponent} dialogNodes={getNodesForEnemy(state?.computer?.name)} 
                         setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions}
                     />
                 { gameState.currentIntent === 'combat' ? (
@@ -722,7 +720,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                             { state.enemyPersuaded ? (
                                 <>
                                     <p style={{ color: '#fdf6d8' }}>
-                                    You persuaded {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.
+                                    You persuaded {namedEnemy ? '' : ` the`} {state?.computer?.name} to forego hostilities. You may now travel freely through this area.
                                     </p>
                                     <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                                 </>
@@ -761,15 +759,15 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                         <div>
                             { namedEnemy ? ( 
                                 <>
-                                    <Typewriter stringText={`"Greetings traveler, I am ${state.computer?.name}. ${state.player.name}, is it? You seem a bit dazed, can I be of some help?"`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                                    <Typewriter stringText={`"Greetings traveler, I am ${state?.computer?.name}. ${state.player.name}, is it? You seem a bit dazed, can I be of some help?"`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                     <br />
-                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise attack {state.computer.name}?</Button>
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Forego pleasantries and surprise attack {state?.computer?.name}?</Button>
                                 </> 
                             ) : ( 
                                 <>
-                                    <Typewriter stringText={`${enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} ${state.computer?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your ${state.weapons[0].name} and get into position?`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                                    <Typewriter stringText={`${enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} ${state?.computer?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your ${state.weapons[0].name} and get into position?`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                     <br />
-                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {state.computer.name}?</Button>
+                                    <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {state?.computer?.name}?</Button>
                                 </> 
                             ) }
                             { luckout ?
@@ -790,7 +788,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                     return (
                                         <div key={index}>
                                             {trait.name === "Se'van" ? (
-                                                <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Testing] Surprise {state.computer.name} and initiate Se'van Grappling</Button>
+                                                <Button variant='' className='dialog-buttons inner' onClick={() => engageGrappling()}>[Testing] Surprise {state?.computer?.name} and initiate Se'van Grappling</Button>
                                             ) : trait.name === "Cambiren" ? (
                                                 <Button variant='' className='dialog-buttons inner' >[WIP] Cambiren Combat</Button>
                                             ) : trait.name === "Tshaeral" ? (
@@ -819,7 +817,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 { state.enemyPersuaded ? (
                                     <>
                                         <p style={{ color: '#fdf6d8' }}>
-                                        You persuaded {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.
+                                        You persuaded {namedEnemy ? '' : ` the`} {state?.computer?.name} to forego hostilities. You may now travel freely through this area.
                                         </p>
                                         <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                                     </>
@@ -832,7 +830,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 { state.player_luckout ? (
                                     <>
                                         <p style={{ color: '#fdf6d8' }}>
-                                        You lucked out against {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.
+                                        You lucked out against {namedEnemy ? '' : ` the`} {state?.computer?.name} to forego hostilities. You may now travel freely through this area.
                                         </p>
                                         <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                                     </>
@@ -855,7 +853,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                             </>
                         ) : state.enemyPersuaded ? (
                             <>
-                                <Typewriter stringText={`You have persuaded ${enemyArticle}} ${state.computer.name} to forego hostilities. You may now travel freely through this area.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                                <Typewriter stringText={`You have persuaded ${enemyArticle}} ${state?.computer?.name} to forego hostilities. You may now travel freely through this area.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                 <br />
                                 <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                             </>
@@ -867,7 +865,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                             </>
                         ) }
                         { checkPlayerTrait("Kyn'gian", gameState) && !state.player_win && !state.computer_win ? (
-                            <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>You remain at the edges of sight and sound, and before {state.computer.name} can react, you attempt to flee.</Button>
+                            <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>You remain at the edges of sight and sound, and before {state?.computer?.name} can react, you attempt to flee.</Button>
                         ) : ( '' ) }
                     </>
                 ) : gameState.currentIntent === 'localLore' ? (
@@ -893,7 +891,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 {persuasionTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
                                     </div>
                                     )
                                 })} 
@@ -906,7 +904,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 { state.enemyPersuaded ? (
                                     <>
                                         <p style={{ color: '#fdf6d8' }}>
-                                        You persuaded {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.
+                                        You persuaded {namedEnemy ? '' : ` the`} {state?.computer?.name} to forego hostilities. You may now travel freely through this area.
                                         </p>
                                         <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
                                     </>

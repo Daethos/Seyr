@@ -2986,6 +2986,8 @@ const newDataCompiler = async (combatData) => {
         persuasionScenario: combatData.persuasionScenario,
         luckoutScenario: combatData.luckoutScenario,
         isEnemy: combatData.isEnemy,
+        isAggressive: combatData.isAggressive,
+        startedAggressive: combatData.startedAggressive,
     };
     return newData;
 };

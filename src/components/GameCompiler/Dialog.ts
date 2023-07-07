@@ -21,26 +21,7 @@ type Dialog = {
             intimate: string
         }
       };
-    };
-    defeat: {
-      text: {
-        lesser: {
-            unfamiliar: string,
-            familiar: string,
-            intimate: string,
-        },
-        neutral: {
-            unfamiliar: string,
-            familiar: string,
-            intimate: string
-        },
-        greater: {
-            unfamiliar: string,
-            familiar: string,
-            intimate: string
-        }
-      };
-    };
+    }; 
     farewell: {
         text: {
             lesser: {
@@ -59,26 +40,7 @@ type Dialog = {
                 intimate: string
             }
         };
-    };
-    greeting: {
-        text: {
-            lesser: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string,
-            },
-            neutral: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string
-            },
-            greater: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string
-            }
-        };
-    };
+    }; 
     localLore: {
         text: {
             lesser: {
@@ -194,26 +156,7 @@ type Dialog = {
                 }
             };
         }
-    };
-    praise: {
-      text: {
-        lesser: {
-            unfamiliar: string,
-            familiar: string,
-            intimate: string,
-        },
-        neutral: {
-            unfamiliar: string,
-            familiar: string,
-            intimate: string
-        },
-        greater: {
-            unfamiliar: string,
-            familiar: string,
-            intimate: string
-        }
-      };
-    };
+    }; 
     provincialWhispers: {
         text: {
             lesser: {
@@ -232,45 +175,7 @@ type Dialog = {
                 intimate: string
             }
         };
-    };
-    taunt: {
-        text: {
-            lesser: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string,
-            },
-            neutral: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string
-            },
-            greater: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string
-            }
-        };
-    };
-    victory: {
-        text: {
-            lesser: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string,
-            },
-            neutral: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string
-            },
-            greater: {
-                unfamiliar: string,
-                familiar: string,
-                intimate: string
-            }
-        };
-    };
+    }; 
     worldLore: {
         text: {
             lesser: {
@@ -316,26 +221,7 @@ const createDialog = () => {
                     intimate: ""
                 }
             },
-        },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
+        }, 
         farewell: {
             text: {
                 lesser: {
@@ -354,26 +240,7 @@ const createDialog = () => {
                     intimate: ""
                 }
             },
-        },
-        greeting: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
+        }, 
         localLore: {
             text: {
                 lesser: {
@@ -489,26 +356,7 @@ const createDialog = () => {
                     }
                 },
             }
-        },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
+        }, 
         provincialWhispers: {
             text: {
                 lesser: {
@@ -526,46 +374,8 @@ const createDialog = () => {
                     familiar: "",
                     intimate: ""
                 }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
+            },
+        }, 
         worldLore: {
             text: {
                 lesser: {
@@ -614,45 +424,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -787,64 +559,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -907,45 +622,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1080,64 +757,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1199,45 +819,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1372,64 +954,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1491,45 +1016,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1664,64 +1151,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1783,45 +1213,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -1956,64 +1348,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2075,45 +1410,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2248,64 +1545,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2367,45 +1607,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2540,64 +1742,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2659,45 +1804,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2832,64 +1939,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -2951,45 +2001,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -3124,64 +2136,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -3243,45 +2198,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -3416,64 +2333,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -3535,45 +2395,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -3708,64 +2530,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -3827,45 +2592,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4000,64 +2727,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4119,45 +2789,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4292,64 +2924,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4411,45 +2986,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4584,64 +3121,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4703,45 +3183,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4876,64 +3318,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -4995,45 +3380,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -5168,64 +3515,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -5287,45 +3577,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -5460,64 +3712,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -5579,45 +3774,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -5752,64 +3909,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -5871,45 +3971,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6044,64 +4106,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6163,45 +4168,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6336,64 +4303,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6455,45 +4365,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6628,64 +4500,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6747,45 +4562,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -6920,64 +4697,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7039,45 +4759,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7212,64 +4894,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7331,45 +4956,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7504,64 +5091,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7623,45 +5153,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7796,64 +5288,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -7915,45 +5350,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8088,64 +5485,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8207,45 +5547,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8380,64 +5682,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8499,45 +5744,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8672,64 +5879,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8791,45 +5941,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -8964,64 +6076,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9083,45 +6138,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9256,64 +6273,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9375,45 +6335,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9548,64 +6470,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9669,45 +6534,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9842,64 +6669,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -9961,45 +6731,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -10134,64 +6866,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -10253,45 +6928,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -10426,64 +7063,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -10545,45 +7125,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -10718,64 +7260,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -10837,45 +7322,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11010,64 +7457,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11129,45 +7519,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11302,64 +7654,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11421,45 +7716,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11594,64 +7851,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11713,45 +7913,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -11886,64 +8048,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12005,45 +8110,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12178,64 +8245,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12297,45 +8307,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12470,64 +8442,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12589,45 +8504,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12762,64 +8639,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -12881,45 +8701,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13054,64 +8836,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13173,45 +8898,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13346,64 +9033,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13465,45 +9095,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13638,64 +9230,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13757,45 +9292,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -13930,64 +9427,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14049,45 +9489,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14222,64 +9624,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14341,45 +9686,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14514,64 +9821,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14633,45 +9883,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14806,64 +10018,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -14925,45 +10080,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -15098,64 +10215,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -15217,45 +10277,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -15390,64 +10412,7 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-        },
-        },
-        victory: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -15509,45 +10474,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -15682,25 +10609,6 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
             text: {
                 lesser: {
@@ -15719,45 +10627,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        victory: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
+        }, 
         worldLore: {
             text: {
                 lesser: {
@@ -15802,45 +10672,7 @@ const Opponent: Record<string, Dialog> = {
                 }
             },
         },
-        defeat: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         farewell: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        greeting: {
             text: {
                 lesser: {
                     unfamiliar: "",
@@ -15975,25 +10807,6 @@ const Opponent: Record<string, Dialog> = {
                 },
             }
         },
-        praise: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
         provincialWhispers: {
             text: {
                 lesser: {
@@ -16012,45 +10825,7 @@ const Opponent: Record<string, Dialog> = {
                     intimate: ""
                 }
             },
-        },
-        taunt: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
-        victory: {
-            text: {
-                lesser: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                neutral: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                },
-                greater: {
-                    unfamiliar: "",
-                    familiar: "",
-                    intimate: ""
-                }
-            },
-        },
+        }, 
         worldLore: {
             text: {
                 lesser: {

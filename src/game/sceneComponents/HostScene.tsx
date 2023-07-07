@@ -275,6 +275,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const clearNonAggressiveEnemy = async (e: { detail: any; }) => {
         dispatch({ type: ACTIONS.CLEAR_NON_AGGRESSIVE_ENEMY, payload: null });
+        gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
     };
 
     const clearNpc = async (e: { detail: any; }) => {
@@ -340,11 +341,11 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     };
 
     const setupEnemy = async (e: { detail: any; }) => {
-        console.log(e.detail, "This is the setup enemy function")
+        console.log(e.detail, "This is the setup enemy function");
         await getOpponentDialog(e.detail.enemy.name);
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
         setAsceanState({ ...asceanState, 'opponent': e.detail.game.level });
-        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id } }); 
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id, isAggressive: e.detail.isAggressive, startedAggressive: e.detail.startedAggressive, isDefeated: e.detail.isDefeated } }); 
     };
 
     const setupNpc = async (e: { detail: any; }) => {

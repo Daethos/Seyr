@@ -8,14 +8,13 @@ import * as eqpAPI from '../utils/equipmentApi';
 import * as questAPI from '../utils/questApi';
 import { ACTIONS } from '../components/GameCompiler/PvPStore';
 import ToastAlert from '../components/ToastAlert/ToastAlert';
-import { GAME_ACTIONS, ENEMY_ENEMIES, QUESTS, getQuests, getAsceanTraits, GameData, nameCheck, checkPlayerTrait, TRAIT_DESCRIPTIONS } from '../components/GameCompiler/GameStore';
-import DialogTree, { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
-import dialogNodes from "../components/GameCompiler/DialogNodes.json"
+import { GAME_ACTIONS, ENEMY_ENEMIES, getQuests, getAsceanTraits, GameData, nameCheck, checkPlayerTrait } from '../components/GameCompiler/GameStore';
+import { getNodesForNPC, npcIds } from '../components/GameCompiler/DialogNode';
 import { useLocation } from 'react-router-dom';
 import { shakeScreen } from '../components/GameCompiler/CombatStore';
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
-    const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
+    const filteredOptions = Object.keys(options);
     const buttons = filteredOptions.map((o: any, i: number) => {
         return (
             <div key={i}>

@@ -180,6 +180,17 @@ export default class Play extends Phaser.Scene {
         this.createStateListener(); 
         this.staminaListener();
         this.enemyLootDropListener();
+        this.enemyStateListener();
+    };
+
+    enemyStateListener = () => {
+        window.addEventListener('aggressive-enemy', (e) => {
+            this.enemies.forEach(enemy => {
+                if (enemy.enemyID === e.detail.id) {
+                    enemy.isAggressive = e.detail.isAggressive;
+                };
+            });
+        });
     };
 
     enemyLootDropListener = () => { 
@@ -191,7 +202,6 @@ export default class Play extends Phaser.Scene {
 
     startJoystick(pointer) {
         if (pointer.leftButtonDown()) {
-            console.log("Joystick Active")
             this.player.joystick.isActive = true;
         };
     };
@@ -257,6 +267,7 @@ export default class Play extends Phaser.Scene {
     };
 
     showDialog = async (dialog) => {
+        console.log(`Showing Dialog: ${dialog}`);
         const show = new CustomEvent('show-dialog', { detail: dialog });
         window.dispatchEvent(show);
     };
@@ -283,7 +294,6 @@ export default class Play extends Phaser.Scene {
     };
 
     sendStateActionListener = async function() {
-        // console.log(this.state.action, this.state.computer_action, "This is the State");
         if ((this.state.action === 'counter' && this.state.computer_action === '') || (this.state.action === '' && this.state.computer_action === 'counter')) { 
             console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
             return; 

@@ -241,7 +241,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
     async function handleRemoveItem() {
         try {
             setIsLoading(true);
-            setLoadingContent(`Removing And Destroying ${inventory?.name}`);
+            setLoadingContent(`Removing And Destroying ${inventory?.name}`); 
             const data = {
                 id: ascean._id,
                 inventory: inventory,
@@ -252,6 +252,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setRemoveModalShow(false);
             setLoadingContent('');
             setIsLoading(false);
+              
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
         } catch (err: any) {
             console.log(err.message, '<- This is the error in handleRemoveItem');

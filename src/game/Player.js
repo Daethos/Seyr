@@ -34,7 +34,11 @@ export default class Player extends Entity {
         super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health }); 
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
-        this.spriteWeapon.setScale(0.6);
+        if (scene?.state?.player?.weapon_one?.grip === 'Two Hand') {
+            this.spriteWeapon.setScale(0.6);
+        } else {
+            this.spriteWeapon.setScale(0.5);
+        };
         this.spriteWeapon.setOrigin(0.25, 1);
         this.scene.add.existing(this);
         this.scene.add.existing(this.spriteWeapon);
@@ -132,7 +136,7 @@ export default class Player extends Entity {
         this.setScale(0.8);   
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         let playerCollider = Bodies.rectangle(this.x, this.y + 10, 20, 36, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
-        let playerSensor = Bodies.circle(this.x, this.y, 36, { isSensor: true, label: 'playerSensor' }); // Y + 2 For Platformer
+        let playerSensor = Bodies.circle(this.x, this.y + 2, 36, { isSensor: true, label: 'playerSensor' }); // Y + 2 For Platformer
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
             frictionAir: 0.35, 
@@ -187,7 +191,6 @@ export default class Player extends Entity {
                 let heal = Math.round(e.detail.new_player_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
-
             if (this.currentRound !== e.detail.combatRound) {
                 this.currentRound = e.detail.combatRound;
             }; 
@@ -216,7 +219,7 @@ export default class Player extends Entity {
             };
             if (e.detail.player_win) {
                 let damage = Math.round(e.detail.realized_player_damage) + ' - Victory!';
-                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'effect', e.detail.critical_success);    
+                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'effect', true);    
             };
         });
     }; 
@@ -234,7 +237,7 @@ export default class Player extends Entity {
                         const isNewEnemy = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                         if (isNewEnemy && !isNewEnemy.isDead) this.touching.push(other.gameObjectB);
                         this.currentTarget = other.gameObjectB; 
-                        if (!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health });
+                        if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated });
                         if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
                             this.scene.combatEngaged(true);
                             this.inCombat = true;
@@ -310,7 +313,7 @@ export default class Player extends Entity {
                     const isNewNpc = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                     if (isNewNpc && !isNewNpc.isDead) this.touching.push(other.gameObjectB);
                     this.currentTarget = other.gameObjectB;
-                    if (!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id && !other.gameObjectB.isDead) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
+                    if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !this.inCombat) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
                 };
             },
             context: this.scene,
@@ -402,7 +405,6 @@ export default class Player extends Entity {
     };
 
     onAttackEnter = () => {
-        // this.scene.setState('action', 'attack');
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isAttacking = true;
     }; 
@@ -424,7 +426,6 @@ export default class Player extends Entity {
     };
 
     onCounterEnter = () => {
-        // this.scene.setState('action', 'counter');
         this.isCountering = true;    
     };
     onCounterUpdate = (dt) => {
@@ -446,12 +447,11 @@ export default class Player extends Entity {
     };
 
     onPostureEnter = () => {
-        // this.scene.setState('action', 'posture');
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isPosturing = true;
     };
     onPostureUpdate = (dt) => {
-        if (this.frameCount === 3 && !this.isRanged) {
+        if (this.frameCount === 11 && !this.isRanged) {
             this.scene.setState('action', 'posture');
             console.log("Posture LIVE");
         };
@@ -610,8 +610,14 @@ export default class Player extends Entity {
         if (this.inCombat && !this.scene.combatTimer) this.scene.startCombatTimer();
         if (this.inCombat && !this.healthbar.visible) this.healthbar.setVisible(true);
         if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
+            console.log(this.spriteWeapon, "Sprite Weapon Change");
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
+            if (this.scene.state.weapons[0].grip === 'Two Hand') {
+                this.spriteWeapon.setScale(0.6);
+            } else {
+                this.spriteWeapon.setScale(0.5);
+            };
         };
         if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
             this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
@@ -648,7 +654,7 @@ export default class Player extends Entity {
             if (newTarget.npcType) {
                 this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
             } else {
-                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health }); 
+                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated }); 
             };
             this.currentTarget = newTarget;
             this.highlightTarget(newTarget);
