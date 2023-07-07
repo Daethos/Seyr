@@ -560,7 +560,27 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         };
     };
 
-    const handleIntent = (intent: string) => gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: intent });
+    const handleIntent = (intent: string) => {
+        let cleanIntent: string = '';
+        switch (intent) {
+            case 'Local Lore':
+                cleanIntent = 'localLore';
+                break;
+            case 'Provincial Whispers':
+                cleanIntent = 'provincialWhispers';
+                break;
+            case 'World Lore':
+                cleanIntent = 'worldLore ';
+                break;
+            case 'Local Whispers':
+                cleanIntent = 'localWhispers';
+                break;
+            default:
+                cleanIntent = intent;
+                break;
+        };
+        gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: cleanIntent });
+    };
     const handleRegion = (region: keyof Region) => setProvince(region);
 
     const engageCombat = async () => {
@@ -659,7 +679,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             <img src={dialogWindow} alt='Dialog Window' style={{ transform: "scale(1.1)" }} />
             <div className='story-text' style={{ width: state.isEnemy ? '62%' : '' }}> 
             <ToastAlert error={error} setError={setError} />
-            <div style={{ color: 'gold', fontSize: '18px' }}>
+            <div style={{ color: 'gold', fontSize: '18px', marginBottom: "5%" }}>
                 <div style={{ display: 'inline' }}>
                 <img src={process.env.PUBLIC_URL + `/images/` + state?.computer?.origin + '-' + state?.computer?.sex + '.jpg'} alt={state?.computer?.name} style={{ width: '15%' }} className='dialog-picture' />
                 {' '}<div style={{ display: 'inline' }}>{state?.computer?.name} <p style={{ display: 'inline', fontSize: '12px' }}>[Level {state?.computer?.level}] {!state?.computer?.alive ? '[Deceased]' : ''}</p><br /></div>
@@ -708,10 +728,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                         gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={state.player} enemy={gameState.opponent} dialogNodes={getNodesForEnemy(state?.computer?.name)} 
                         setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions}
                     />
-                { gameState.currentIntent === 'combat' ? (
-                    <> 
-                    </>
-                ) : gameState.currentIntent === 'challenge' ? (
+                { gameState.currentIntent === 'challenge' ? (
                     <>
                     { state.persuasionScenario ? (
                         <div style={{ color: "gold" }}>
@@ -869,12 +886,9 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                         ) : ( '' ) }
                     </>
                 ) : gameState.currentIntent === 'localLore' ? (
-                    <>
-                        This will entail the local lore of the region you inhabit, and the history of the area from the perspective of the enemy in question, and hopefully grant more insight into the world.
-                    </>
+                    <Typewriter stringText={`This will entail the local lore of the region you inhabit, and the history of the area from the perspective of the enemy in question, and hopefully grant more insight into the world.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                 ) : gameState.currentIntent === 'localWhispers' ? (
-                    <>
-                    </>
+                    <Typewriter stringText={`Local Whispers will provide localized intrigue to the region you're inhabiting and the actual details of the map itself.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                 ) : gameState.currentIntent === 'persuasion' ? (
                     <>
                         { state.player_win ? (
@@ -916,16 +930,17 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     <>
                         { state.player_win || state.enemyPersuaded ? (
                             <>
-                                "There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"<br /><br />
+                                <Typewriter stringText={`"There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                                <br />
                                 <div style={{ color: 'gold' }}>
                                     <Typewriter stringText={regionInformation?.[province]} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                 </div><br />
                                 <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
                             </>
                         ) : state.computer_win ? (
-                            <>"I guess those whipspers must wait another day."</>
+                            <Typewriter stringText={`"I guess those whipspers must wait another day."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                         ) : ( 
-                            <>"What is it you wish to hear? If you can best me I will tell you what I know in earnest."</>
+                            <Typewriter stringText={`"What is it you wish to hear? If you can best me I will tell you what I know in earnest."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />                            
                         ) }
                     </>
                 ) : gameState.currentIntent === 'worldLore' ? (

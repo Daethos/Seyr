@@ -145,6 +145,7 @@ export default class Enemy extends Entity {
         this.isAggressive = Math.random() > 0.5;
         this.startedAggressive = this.isAggressive;
         this.isDefeated = false;
+        this.isTriumphant = false;
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -172,7 +173,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive && !this.isTriumphant) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
@@ -189,7 +190,10 @@ export default class Enemy extends Entity {
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated });
+                    this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, 
+                        isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated,
+                        isTriumphant: this.isTriumphant 
+                    });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     if (this.stateMachine.isCurrentState(States.DEFEATED)) {
                         this.scene.showDialog(true);
@@ -203,13 +207,19 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideActive({
             objectA: [enemySensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive && !this.inCombat && !this.isAttacking) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive && !this.inCombat && !this.isAttacking && !this.isTriumphant) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated });
+                    if (this.scene.state.enemyID !== this.enemyID) {
+                        this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, 
+                            isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated,
+                            isTriumphant: this.isTriumphant 
+                        });
+
+                    } 
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
@@ -312,6 +322,8 @@ export default class Enemy extends Entity {
                 if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
                 this.inCombat = false;
                 this.attacking = null;
+                this.isTriumphant = true;
+                this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
             };
             this.checkMeleeOrRanged(e.detail.computer_weapons?.[0]);
         });
