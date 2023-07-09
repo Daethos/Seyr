@@ -65,6 +65,35 @@ export default class ParticleManager extends Phaser.Scene {
         return new Phaser.Physics.Matter.Sprite(scene.matter.world, player.x, player.y, key).setScale(0.3).setOrigin(0.5, 0.5).setDepth(player.depth + 1).setVisible(false);    
     };
 
+    setTarget(player) {
+        return player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position);
+    };
+
+    setTimer(action, id) {
+        this.scene.time.addEvent({
+            delay: action === 'attack' ? 2000 : action === 'counter' ? 1000 : (action === 'posture' || action === 'roll') ? 1250 : 2000,
+            callback: () => {
+                this.removeEffect(id);
+            },
+            loop: false
+        })
+    };
+
+    setVelocity(action) {
+        switch (action) {
+            case 'attack':
+                return 5.5;
+            case 'counter':
+                return 7;
+            case 'posture':
+                return 4.5;
+            case 'roll':
+                return 4.5;
+            default:
+                return 5.5;
+        };
+    };
+
     sensorListener(player, effect, effectSensor) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [effectSensor],
@@ -89,35 +118,31 @@ export default class ParticleManager extends Phaser.Scene {
     };
 
     addEffect(action, player, key) {
+        const id = uuidv4();
         let particle = {
-            id: uuidv4(),
+            id: id,
             action: action,
             effect: this.spriteMaker(this.scene, player, key + '_effect'), 
             key: key + '_effect',
             success: false,
-            target: player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position),
-            timer: this.scene.time.addEvent({
-                delay: action === 'attack' ? 2000 : action === 'counter' ? 1000 : (action === 'posture' || action === 'roll') ? 1250 : 2000,
-                callback: () => {
-                    this.removeEffect(particle.id);
-                },
-            }),
+            target: this.setTarget(player),
+            timer: this.setTimer(action, id),
             triggered: false,
-            velocity: action === 'attack' ? 5.5 : action === 'counter' ? 7 : (action === 'posture' || action === 'roll') ? 4.5 : 4.5,
+            velocity: this.setVelocity(action),
         };
         const { Bodies } = Phaser.Physics.Matter.Matter;
         const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: `effectSensor-${particle.id}`}); 
         particle.effect.setExistingBody(effectSensor); 
         this.scene.add.existing(particle.effect);
         this.sensorListener(player, particle, effectSensor);
-        this.particles.push(particle); 
-        if (player.name === 'enemy') console.log(particle.target, "Particle Target");
+        this.particles.push(particle);  
+        if (player.name === 'enemy') console.log(particle.target, "TARGET FOR ENEMY EFFECT");
         return particle;
     };
 
     getEffect(id) {
         return this.particles.find(particle => particle.id === id);
-    }
+    };
 
     removeEffect(id) {
         this.stopEffect(id);

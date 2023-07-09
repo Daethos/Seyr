@@ -405,28 +405,28 @@ export default class Player extends Entity {
     onCombatUpdate = (dt) => { 
         if (!this.inCombat) this.stateMachine.setState(States.NONCOMBAT); 
 
-        if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+        if (this.canSwing && this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
             this.scene.setState('counter_guess', 'attack');
             this.stateMachine.setState(States.COUNTER);           
         };
-        if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+        if (this.canSwing && this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
             this.scene.setState('counter_guess', 'posture');
             this.stateMachine.setState(States.COUNTER);
         };
-        if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+        if (this.canSwing && this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
             this.scene.setState('counter_guess', 'roll');
             this.stateMachine.setState(States.COUNTER);
         };
     
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25 && this.canSwing) {
             this.stateMachine.setState(States.ATTACK);
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15 && this.canSwing) {
             this.stateMachine.setState(States.POSTURE);
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
             this.scene.setState('counter_guess', 'counter');
             this.stateMachine.setState(States.COUNTER);
         };
@@ -438,6 +438,7 @@ export default class Player extends Entity {
     onAttackEnter = () => {
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isAttacking = true;
+        this.swingReset();
     }; 
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) {
@@ -458,6 +459,7 @@ export default class Player extends Entity {
 
     onCounterEnter = () => {
         this.isCountering = true;    
+        this.swingReset();
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 5) {
@@ -480,6 +482,7 @@ export default class Player extends Entity {
     onPostureEnter = () => {
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isPosturing = true;
+        this.swingReset();
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === 11 && !this.isRanged) {
@@ -501,6 +504,7 @@ export default class Player extends Entity {
     onRollEnter = () => {
         // this.scene.setState('action', 'roll');
         this.isRolling = true;
+        this.swingReset();
     };
     onRollUpdate = (dt) => {
         if (this.frameCount === 10) this.scene.setState('action', 'roll');
@@ -599,6 +603,15 @@ export default class Player extends Entity {
         this.scene.input.keyboard.enabled = true;
         this.clearTint();
         
+    };
+
+    swingReset = () => {
+        this.canSwing = false;
+        console.log(`Swing Timer Resetting in ${this.swingTimer}ms`);
+        this.scene.time.delayedCall(this.swingTimer, () => {
+            this.canSwing = true;
+            console.log("Swing Timer Reset!");
+        });
     };
 
     checkTouching = () => {

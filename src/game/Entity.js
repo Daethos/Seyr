@@ -77,6 +77,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.isPathing = false;
         this.chaseTimer = null;
         this.leashTimer = null;
+        this.canSwing = true;
+        this.swingTimer = 0;
     };
 
     get position() {
@@ -403,6 +405,16 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.isRanged = true;
         } else {
             this.isRanged = false;
+        };
+        switch (weapon?.grip) {
+            case 'One Hand':
+                this.swingTimer = 750;
+                break;
+            case 'Two Hand':
+                this.swingTimer = 1250;
+                break;
+            default:
+                break;
         };
     };
 

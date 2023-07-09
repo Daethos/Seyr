@@ -830,7 +830,7 @@ export default class Enemy extends Entity {
                 this.spriteWeapon.setScale(0.6);
             } else {
                 this.spriteWeapon.setScale(0.5);
-            }
+            };
         }; 
         switch (this.currentAction) {
             case 'attack':
