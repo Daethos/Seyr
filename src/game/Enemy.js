@@ -179,7 +179,7 @@ export default class Enemy extends Entity {
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated });
+                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
@@ -190,10 +190,7 @@ export default class Enemy extends Entity {
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, 
-                        isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated,
-                        isTriumphant: this.isTriumphant 
-                    });
+                    this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     if (this.stateMachine.isCurrentState(States.DEFEATED)) {
                         this.scene.showDialog(true);
@@ -214,11 +211,7 @@ export default class Enemy extends Entity {
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
                     if (this.scene.state.enemyID !== this.enemyID) {
-                        this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, 
-                            isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated,
-                            isTriumphant: this.isTriumphant 
-                        });
-
+                        this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                     } 
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
@@ -295,7 +288,7 @@ export default class Enemy extends Entity {
     enemyStateListener() {
         window.addEventListener('update-combat', (e) => {
             if (this.enemyID !== e.detail.enemyID) return;
-            console.log("Enemy Updating Combat Data")
+            console.log("Enemy Updating Combat Data");
             this.combatData = e.detail;
             if (this.health > e.detail.new_computer_health) { 
                 let damage = Math.round(this.health - e.detail.new_computer_health);
@@ -464,21 +457,15 @@ export default class Enemy extends Entity {
             callback: () => {
                 this.scene.navMesh.debugDrawClear();
                 this.path = this.scene.navMesh.findPath(this.position, this.attacking.position);
-                console.log(this.path, "Path");
                 if (this.path && this.path.length > 1) {
                     if (!this.isPathing) this.isPathing = true;
                     const nextPoint = this.path[1];
-                    console.log(nextPoint, "Next Point In Path");
                     this.nextPoint = nextPoint;
                     this.scene.navMesh.debugDrawPath(this.path, 0xffd900);
-                    console.log(this.path, "Paths", this.nextPoint, "Next Point", this.position, "Enemy Position");
                     const pathDirection = new Phaser.Math.Vector2(this.nextPoint.x, this.nextPoint.y);
                     this.pathDirection = pathDirection;
                     this.pathDirection.subtract(this.position);
-                    console.log(this.pathDirection, pathDirection, "Path Direction");
                     this.pathDirection.normalize();
-                    console.log(this.pathDirection, "Path Direction Normalized");
-                    
                     const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
                     console.log(distanceToNextPoint, "Distance to Next Point");
                     if (distanceToNextPoint < 10) {
@@ -725,16 +712,19 @@ export default class Enemy extends Entity {
         const rangeMultiplier = this.isRanged ? 3 : 1;
         
         // ============================================= Stunned ============================================= \\
+
         if (this.isStunned) {
             this.setVelocity(0);
 
         // ============================================= Chasing ============================================= \\
+
         } else if (direction.length() >= 175 * rangeMultiplier) { // > 525
 
             console.log("Enemy Transitioning from Attacking to Chasing Player");
             this.stateMachine.setState(States.CHASE);
 
         // ============================================= Ranged ============================================= \\
+
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (distanceY > 10) {
@@ -761,8 +751,8 @@ export default class Enemy extends Entity {
             };
 
         // ============================================= Melee ============================================= \\
-        } else { // Melee
 
+        } else { // Melee
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (direction.length() > 60) { 
                 this.anims.play('player_running', true);
@@ -775,6 +765,16 @@ export default class Enemy extends Entity {
                 this.anims.play('player_idle', true);
             };
         };
+    };
+
+    checkEvasion = (particle) => {
+        const particleVector = new Phaser.Math.Vector2(particle.effect.x, particle.effect.y);
+        const enemyVector = new Phaser.Math.Vector2(this.x, this.y);
+        const distance = particleVector.subtract(enemyVector);
+        if (distance.length() < 50) {
+            return true;
+        };
+        return false;
     };
 
     evaluateEnemyState = () => {
@@ -804,9 +804,15 @@ export default class Enemy extends Entity {
         if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
         if (this.attacking && this.attacking.isRanged && (this.attacking.isAttacking || this.attacking.isPosturing || this.attacking.isCountering || this.attacking.isRolling)) {
-            console.log("Player Is Ranged and Attacking. Computer Set to Evasion");
-            if (Math.abs(this.position.y - this.attacking.position.y) <= 40) this.stateMachine.setState(States.EVADE); 
-        }; 
+            if (this.attacking.particleEffect) {
+                const enemyParticle = this.scene.particleManager.getEffect(this.attacking.particleEffect.id);
+                if (enemyParticle) { 
+                    if (this.checkEvasion(enemyParticle)) {
+                        this.stateMachine.setState(States.EVADE);
+                    };
+                };
+            };
+        };
         if (this.attacking) {
             let direction = this.attacking.position.subtract(this.position);
             if (direction.x < 0) {
@@ -869,11 +875,11 @@ export default class Enemy extends Entity {
         let computerCounter;
         let actionNumber = Math.floor(Math.random() * 101);
         const computerActions = {
-            attack: 50 + this.scene.state.attack_weight,
+            attack: 40 + this.scene.state.attack_weight,
             counter: 10 + this.scene.state.counter_weight,
             dodge: 10 + this.scene.state.dodge_weight,
-            posture: 15 + this.scene.state.posture_weight,
-            roll: 15 + this.scene.state.roll_weight,
+            posture: 20 + this.scene.state.posture_weight,
+            roll: 20 + this.scene.state.roll_weight,
             counter_attack: 25 + this.scene.state.counter_attack_weight,
             counter_counter: 25 + this.scene.state.counter_counter_weight,
             counter_posture: 25 + this.scene.state.counter_posture_weight,
@@ -881,7 +887,7 @@ export default class Enemy extends Entity {
             roll_rating: !this.scene.state.computer_weapons.length ? this.ascean.weapon_one.roll : this.scene.state.computer_weapons?.[0].roll,
             armor_rating: (this.scene.state.computer_defense.physicalPosture + this.scene.state.computer_defense.magicalPosture)  /  4,
         };
-        if (actionNumber > (100 - computerActions.attack)) {
+        if (actionNumber > (100 - computerActions.attack) || target.isStunned) {
             computerAction = 'attack';
         } else if (actionNumber > (100 - computerActions.attack - computerActions.counter)) {
             computerAction = 'counter';
@@ -912,23 +918,4 @@ export default class Enemy extends Entity {
         };
         return computerAction;
     };
-
-    isAtEdgeOfLedge(scene) { 
-        const playerSensor = this.body.parts[2]; // Assuming playerSensor is the second part of the compound body
-        const rayStart = { x: playerSensor.position.x - playerSensor.circleRadius, y: playerSensor.position.y }; // Starting point of the ray
-        const rayEnd = { x: playerSensor.position.x + playerSensor.circleRadius, y: playerSensor.position.y - playerSensor.circleRadius }; // Ending point of the ray
-        const bodies = scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
-        let isAtEdge = false;
-        const intersections = scene.matter.intersectRay(rayStart.x, rayStart.y, rayEnd.x, rayEnd.y, 32, bodies).filter(intersection => intersection.id !== playerSensor.id);
-        if (intersections.length === 1) {
-            isAtEdge = true;
-        }; 
-        return isAtEdge;
-    };  
-
-    isCollidingWithPlayer() {
-        const bodies = this.scene.matter.world.getAllBodies().filter(body => body.gameObject && body.gameObject?.tile?.properties?.isGround);
-        const playerSensor = this.body.parts[2];
-        return this.scene.matter.overlap(playerSensor, bodies);
-    };   
 };

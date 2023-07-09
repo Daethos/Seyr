@@ -345,7 +345,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         await getOpponentDialog(e.detail.enemy.name);
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
         setAsceanState({ ...asceanState, 'opponent': e.detail.game.level });
-        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id, isAggressive: e.detail.isAggressive, startedAggressive: e.detail.startedAggressive, isDefeated: e.detail.isDefeated } }); 
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id, isAggressive: e.detail.isAggressive, startedAggressive: e.detail.startedAggressive, isDefeated: e.detail.isDefeated, isTriumphant: e.detail.isTriumphant } }); 
     };
 
     const setupNpc = async (e: { detail: any; }) => {

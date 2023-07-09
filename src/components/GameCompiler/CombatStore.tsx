@@ -467,7 +467,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computer_defense: action.payload.enemy.defense,
                 computer_attributes: action.payload.enemy.attributes,
                 player_win: action.payload.isDefeated, // In Order To Denote Whether That Enemy Has Been Defeated So The Proper Settings Are Loaded In Dialog Etc...
-                computer_win: false,
+                computer_win: action.payload.isTriumphant, // In Order to Discern whether the Player has been Defeated so the proper settings are loaded in dialog etc...
                 enemyID: action.payload.enemyID,
                 npcType: '',
                 isEnemy: true,

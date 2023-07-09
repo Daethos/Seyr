@@ -115,6 +115,10 @@ export default class ParticleManager extends Phaser.Scene {
         return particle;
     };
 
+    getEffect(id) {
+        return this.particles.find(particle => particle.id === id);
+    }
+
     removeEffect(id) {
         this.stopEffect(id);
         let particle = this.particles.find(particle => particle.id === id);

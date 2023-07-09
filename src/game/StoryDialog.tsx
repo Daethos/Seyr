@@ -635,6 +635,10 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         };
     };
 
+    const capitalize = (word: string) => {
+        return word === 'a' ? word?.charAt(0).toUpperCase() : word?.charAt(0).toUpperCase() + word?.slice(1);
+    };
+
     const dialogStyle = {  
         zIndex: 9999,
     };
@@ -782,7 +786,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 </> 
                             ) : ( 
                                 <>
-                                    <Typewriter stringText={`${enemyArticle === 'a' ? enemyArticle?.charAt(0).toUpperCase() : enemyArticle?.charAt(0).toUpperCase() + enemyArticle?.slice(1)} ${state?.computer?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your ${state.weapons[0].name} and get into position?`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                                    <Typewriter stringText={`${capitalize(enemyArticle)} ${state?.computer?.name} stares at you, unflinching. Eyes lightly trace about you, reacting to your movements in wait. Grip your ${state.weapons[0].name} and get into position?`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                     <br />
                                     <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {state?.computer?.name}?</Button>
                                 </> 
@@ -868,17 +872,15 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 <Typewriter stringText={`"If you weren't entertaining in defeat I'd have a mind to simply snuff you out here and now. Seek refuge, ${state.player.name}, your frailty wears on my caer."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                 <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide your shame and wounds. There's always another chance, perhaps.</Button>
                             </>
-                        ) : state.enemyPersuaded ? (
-                            <>
-                                <Typewriter stringText={`You have persuaded ${enemyArticle}} ${state?.computer?.name} to forego hostilities. You may now travel freely through this area.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
-                                <br />
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path.</Button>
-                            </>
                         ) : (
                             <>
+                            { namedEnemy ? ( 
                                 <Typewriter stringText={`"I hope you find what you seek, ${state.player.name}. Take care in these parts, you may never know when someone wishes to approach out of malice and nothing more. Strange denizens these times."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                            ) : ( 
+                                <Typewriter stringText={`The ${state?.computer?.name}'s mild flicker of thought betrays their stance, lighter and relaxed.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                            ) }
                                 <br />
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Take the advice and keep moving.</Button>
+                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Keep moving.</Button>
                             </>
                         ) }
                         { checkPlayerTrait("Kyn'gian", gameState) && !state.player_win && !state.computer_win ? (

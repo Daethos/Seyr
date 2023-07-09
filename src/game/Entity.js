@@ -982,6 +982,6 @@ export function pauseGame(duration) {
   
 export function walk(scene) {
     const duration = 32;
-    const intensity = 0.00035;
+    const intensity = 0.0003;
     scene.cameras.main.shake(duration, intensity);
 };

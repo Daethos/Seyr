@@ -56,7 +56,8 @@ export default class Player extends Entity {
         this.scene.add.existing(this.spriteShield);
         this.spriteShield.setDepth(this + 1);
         this.spriteShield.setVisible(false);
-
+        this.playerVelocity = new Phaser.Math.Vector2();
+        this.speed = this.setSpeed(scene.state.player);
         this.stateMachine = new StateMachine(this, 'player');
         this.stateMachine
             .addState(States.NONCOMBAT, {
@@ -167,6 +168,36 @@ export default class Player extends Entity {
         this.checkNpcCollision(playerSensor);
     };
 
+    setSpeed(player) {
+        let speed = 1.75;
+        const helmet = player.helmet.type;
+        const chest = player.chest.type;
+        const legs = player.legs.type;
+        let modifier = 0;
+        const addModifier = (item) => {
+            switch (item) {
+                case 'Leather-Cloth':
+                    modifier += 0.05;
+                    break;
+                case 'Leather-Mail':
+                    modifier += 0.025;
+                    break;
+                case 'Chain-Mail':
+                    modifier += 0.0;
+                    break;
+                case 'Plate-Mail':
+                    modifier -= 0.025;
+                    break;
+            };
+            console.log(modifier, "Current Speed Modifier from", item);
+        };
+        addModifier(helmet);
+        addModifier(chest);
+        addModifier(legs);
+        speed += modifier;
+        return speed;
+    };
+
     highlightTarget(sprite) {
         this.highlight.setVisible(true);
         this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
@@ -237,7 +268,7 @@ export default class Player extends Entity {
                         const isNewEnemy = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                         if (isNewEnemy && !isNewEnemy.isDead) this.touching.push(other.gameObjectB);
                         this.currentTarget = other.gameObjectB; 
-                        if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated });
+                        if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
                         if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
                             this.scene.combatEngaged(true);
                             this.inCombat = true;
@@ -550,14 +581,6 @@ export default class Player extends Entity {
         this.scene.input.keyboard.enabled = false;
         this.stunDuration = 1500;
         this.setTint(0x888888);
-        // this.stunTimer = this.scene.time.addEvent({
-        //     delay: 1500,
-        //     callback: () => {
-        //         this.isStunned = false;
-        //     },
-        //     callbackScope: this,
-        //     loop: false
-        // });
     };
     onStunUpdate = (dt) => {
         this.setVelocity(0);
@@ -574,8 +597,6 @@ export default class Player extends Entity {
     onStunExit = () => {
         this.stunDuration = 1500;
         this.scene.input.keyboard.enabled = true;
-        // this.stunTimer.destroy();
-        // this.stunTimer = null;    
         this.clearTint();
         
     };
@@ -594,11 +615,17 @@ export default class Player extends Entity {
                 this.inCombat = false;
             };
         };
-        // this.touching = this.touching.filter(gameObject => ( 
-        //     !gameObject.isDead &&
-        //     (!gameObject.isEnemy || (gameObject.isEnemy && !gameObject.inCombat))
-        // ));
-          
+    };
+
+    zeroOutVelocity = (velocityDirection, deceleration) => {
+        if (velocityDirection > 0) {
+            velocityDirection -= deceleration;
+            if (velocityDirection < 0) velocityDirection = 0;
+        } else if (velocityDirection < 0) {
+            velocityDirection += deceleration;
+            if (velocityDirection > 0) velocityDirection = 0;
+        };
+        return velocityDirection;
     };
     
     update() {
@@ -639,7 +666,9 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const speed = 1.75;
+        const acceleration = 0.15;
+        const deceleration = 0.075;
+        const speed = this.speed;
         let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\
@@ -654,7 +683,7 @@ export default class Player extends Entity {
             if (newTarget.npcType) {
                 this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
             } else {
-                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated }); 
+                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
             };
             this.currentTarget = newTarget;
             this.highlightTarget(newTarget);
@@ -682,36 +711,61 @@ export default class Player extends Entity {
         // =================== MOVEMENT ================== \\
 
         if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
-            playerVelocity.x = 1;
+            // playerVelocity.x = 1;
+            this.playerVelocity.x += acceleration;
             if (this.flipX) this.flipX = false;
         };
 
         if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
-            playerVelocity.x = -1;
+            // playerVelocity.x = -1;
+            this.playerVelocity.x -= acceleration;
             this.flipX = true;
         };
 
         if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
-            playerVelocity.y = -1;    
+            // playerVelocity.y = -1;    
+            this.playerVelocity.y -= acceleration;
         }; 
 
         if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-            playerVelocity.y = 1;    
+            // playerVelocity.y = 1;    
+            this.playerVelocity.y += acceleration;
         };
 
         // =================== STRAFING ================== \\
 
         if (this.inputKeys.strafe.E.isDown) {
-            playerVelocity.x = 1;
+            this.playerVelocity.x = 1.75;
             if (!this.flipX) this.flipX = true;
         };
         if (this.inputKeys.strafe.Q.isDown) {
-            playerVelocity.x = -1;
+            this.playerVelocity.x = -1.75;
             if (this.flipX) this.flipX = false;
         };
 
-        playerVelocity.normalize();
-        playerVelocity.scale(speed);
+        // =================== DECELERATION ================== \\
+        if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown) {
+            // this.playerVelocity.x -= deceleration;
+            this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
+        };
+        if (!this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown) {
+            // this.playerVelocity.x += deceleration;
+            this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
+        };
+        if (!this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown) {
+            // this.playerVelocity.y += deceleration;
+            this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
+        };
+        if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
+            // this.playerVelocity.y -= deceleration;
+            this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
+        };
+
+        // =================== NORMALIZING VELOCITY ================== \\
+
+        this.playerVelocity.limit(speed);
+        // playerVelocity.normalize();
+        // playerVelocity.scale(speed);
 
         // =================== VARIABLES IN MOTION ================== \\
 
@@ -724,7 +778,7 @@ export default class Player extends Entity {
 
         // ==================== SETTING VELOCITY ==================== \\
         
-        this.setVelocity(playerVelocity.x, playerVelocity.y);
+        this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
 
         // =================== ACTIONS ================== \\
 
@@ -876,7 +930,7 @@ export default class Player extends Entity {
                 this.isAttacking = false;
             }); 
         } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) && !this.isRolling) { // RUNNING
-            // walk(this.scene);
+            walk(this.scene);
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING

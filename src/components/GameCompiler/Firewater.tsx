@@ -17,9 +17,10 @@ interface FirewaterProps {
     dispatch: React.Dispatch<any>;
     gameDispatch: React.Dispatch<any>;
     gameState: GameData;
+    story?: boolean;
 };
 
-const Firewater = ({ state, dispatch, gameDispatch, gameState }: FirewaterProps) => {
+const Firewater = ({ state, dispatch, gameDispatch, gameState, story }: FirewaterProps) => {
     const [showFirwawterModal, setShowFirewaterModal] = useState<boolean>(false);
     const [showBleed, setShowBleed] = useState<boolean>(true);
     const [firewater, setFirewater] = useState(state.player.firewater);
@@ -80,8 +81,7 @@ const Firewater = ({ state, dispatch, gameDispatch, gameState }: FirewaterProps)
         color: 'gold',
         fontWeight: 400,
         fontVariant: 'small-caps',
-        fontSize: 18 + 'px',
-        height: 47.5 + 'vh',
+        fontSize: '18px',
         overflow: 'auto',
     };
 
@@ -115,7 +115,7 @@ const Firewater = ({ state, dispatch, gameDispatch, gameState }: FirewaterProps)
 
     return (
         <>
-            <Modal show={showFirwawterModal} onHide={() => setShowFirewaterModal(false)} centered backdrop="static">
+            <Modal show={showFirwawterModal} onHide={() => setShowFirewaterModal(false)} centered backdrop="static" style={{ top: story ? "-25%" : "", height: story ? "100%" : "", zIndex: 9999 }}>
                 <Modal.Header style={{ fontSize: "20px", color: "orangered" }}>
                     <Modal.Title>Replenish Firewater</Modal.Title>
                 </Modal.Header>

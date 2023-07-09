@@ -487,7 +487,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             <h3 className='story-menu-heading'>
             Inventory
             </h3> 
-            <Firewater state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} />
+            <Firewater state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} story={true} />
             <div className='story-save-inventory-outer'>
                 <Button size='sm' onClick={() => saveInventory(dragAndDropInventory)} variant='' className='story-save-inventory'>
                 { savingInventory ? ( 

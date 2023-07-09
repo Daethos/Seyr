@@ -344,8 +344,7 @@ export const TRAIT_DESCRIPTIONS = {
         },
         luckout: {
             description: "you can convince the enemy through rhetoric to cease hostility",
-            action: "Unleash a dizzying array of syllables and concatenated and contracted words to upend the attempted assault.",
-            greaterSuccess: "Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}.",
+            action: "Unleash a dizzying array of concatenated and contracted syllables to upend the attempted assault.",
             modal: "Rhetoric (Convince the enemy to cease hostility)",
             success: ["Oh, is that the right of it, Ley Law, you say? I hear still they give the Ancient Eulex round these parts. Perhaps it better we ease this tension, {ascean.name}.", "Oh dear, another wandering Arbiter. I'm absolutely not getting involved with you folk again. Good day, {ascean.name}. May we never meet again."],
             failure: "The tangled rhetoric appears to have caused a cessation of higher functioning in {enemy.name}'s mind, and has relegated to clearing it by vanquishing you at all costs."
