@@ -21,7 +21,7 @@ import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
 import PhaserInventoryBag from '../PhaserInventoryBag';
 import { GAME_ACTIONS, NPC } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatData, initialCombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../CombatMouseSettings';
 import CombatUI from '../CombatUI';
@@ -240,6 +240,65 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const updateCombatTimer = async (e: { detail: any; }) => {
         dispatch({ type: ACTIONS.SET_COMBAT_TIMER, payload: e.detail });
+    };
+
+    const updateEnemyAction = async (e: { detail: any; }) => {
+        try {
+            const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e.detail;
+            let enemyData = {
+                ...state,
+                computer: enemy,
+                computer_attributes: combatStats.attributes,
+                computer_weapon_one: combatStats.combat_weapon_one,
+                computer_weapon_two: combatStats.combat_weapon_two,
+                computer_weapon_three: combatStats.combat_weapon_three,
+                new_computer_health: health,
+                current_computer_health: health,
+                computer_health: combatStats.healthTotal,
+                computer_defense: combatStats.defense,
+                enemyID: '',
+                computer_weapons: weapons,
+                action: '',
+                computer_action: actionData.action,
+                computer_counter_guess: actionData.counter,
+                computer_damage_type: damageType,
+                computerEffects: [],
+            };
+                
+            // enemyData.computer = enemy;
+            // enemyData.computer_attributes = combatStats.attributes;
+            // enemyData.computer_weapon_one = combatStats.combat_weapon_one;
+            // enemyData.computer_weapon_two = combatStats.combat_weapon_two;
+            // enemyData.computer_weapon_three = combatStats.combat_weapon_three;
+            // enemyData.new_computer_health = health;
+            // enemyData.current_computer_health = health;
+            // enemyData.computer_health = combatStats.healthTotal;
+            // enemyData.computer_defense = combatStats.defense;
+            // enemyData.enemyID = '';
+            // enemyData.computer_weapons = weapons;
+            // enemyData.action = '';
+            // enemyData.computer_action = actionData.action;
+            // enemyData.computer_counter_guess = actionData.counter;
+            // enemyData.computer_damage_type = damageType;
+            // enemyData.computerEffects = [];
+            
+            console.log(`%c Enemy Action: "${enemyData.computer_action} ${enemyData.computer_counter_guess}"`, 'color: red; font-size: 16px; font-weight: bold;` ');
+            let response = await gameAPI.phaserAction(enemyData);
+            console.log(response.data, "Enemy Action Response");
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+            dispatch({ type: ACTIONS.REGISTER_ENEMY_ACTIONS, payload: response.data });
+            response.data.enemyID = enemyID;
+            await updateCombat(response.data);
+            await soundEffects(response.data);
+            shakeScreen(gameState.shake);
+            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            setTimeout(() => {
+                dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
+            }, 1500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Updating Enemy Action');
+        };
     };
 
     const updateState = async (e: { detail: any; }) => {
@@ -738,7 +797,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     async function handleInitiate(combatData: CombatData) {
         try { 
-            console.log(`%c Player: "${combatData.action}" ${combatData.counter_guess} | Computer: "${combatData.computer_action} ${combatData.computer_counter_guess}"`, 'color: red; font-size: 20px; font-weight: bold;` ')
+            console.log(`%c Player: "${combatData.action}" ${combatData.counter_guess} | Computer: "${combatData.computer_action} ${combatData.computer_counter_guess}"`, 'color: red; font-size: 16px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -962,6 +1021,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     usePhaserEvent('update-state-invoke', updateStateInvoke);
     usePhaserEvent('update-state-consume', updateStateConsume);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
+    usePhaserEvent('update-enemy-action', updateEnemyAction);
 
     return (
         <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>

@@ -146,6 +146,10 @@ export default class Enemy extends Entity {
         this.startedAggressive = this.isAggressive;
         this.isDefeated = false;
         this.isTriumphant = false;
+        this.currentWeapon = null;
+        this.currentDamageType = null;
+        this.isCurrentTarget = false;
+        this.counterAction = '';
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -185,6 +189,7 @@ export default class Enemy extends Entity {
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
                     other.gameObjectB.attacking = this;
+                    other.gameObjectB.currentTarget = this;
                     this.scene.combatEngaged(true);
                 } else if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !this.isAggressive) {
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
@@ -212,12 +217,13 @@ export default class Enemy extends Entity {
                     if (this.healthbar) this.healthbar.setVisible(true);
                     if (this.scene.state.enemyID !== this.enemyID) {
                         this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
-                    } 
+                    }; 
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
                     other.gameObjectB.attacking = this;
+                    other.gameObjectB.currentTarget = this;
                     this.scene.combatEngaged(true);
                 };
             },
@@ -254,10 +260,13 @@ export default class Enemy extends Entity {
         this.ascean = e.detail.game;
         this.health = e.detail.game.health.total;
         this.combatStats = e.detail.combat; 
-        
+        this.weapons = [e.detail.combat.combat_weapon_one, e.detail.combat.combat_weapon_two, e.detail.combat.combat_weapon_three];
         const weaponName = e.detail.game.weapon_one.imgURL.split('/')[2].split('.')[0];
         
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, weaponName);
+        this.currentWeapon = e.detail.game.weapon_one;
+        console.log(e.detail.game.weapon_one.damage_type, "Damage Type")
+        this.currentDamageType = e.detail.game.weapon_one.damage_type[0].toLowerCase();
         if (e.detail.game.weapon_one.grip === 'Two Hand') {
             this.spriteWeapon.setScale(0.6);
         } else {
@@ -290,12 +299,15 @@ export default class Enemy extends Entity {
             if (this.enemyID !== e.detail.enemyID) return;
             console.log("Enemy Updating Combat Data");
             this.combatData = e.detail;
+            this.weapons = e.detail.computer_weapons;
             if (this.health > e.detail.new_computer_health) { 
                 let damage = Math.round(this.health - e.detail.new_computer_health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.detail.critical_success);
                 this.stateMachine.setState(States.HURT);
                 if (this.isStunned) this.isStunned = false;
             };
+            if (this.currentWeapon._id !== e.detail.computer_weapons[0]._id) this.currentWeapon = e.detail.computer_weapons[0];
+            if (this.currentDamageType !== e.detail.computer_damage_type.toLowerCase()) this.currentDamageType = e.detail.computer_damage_type.toLowerCase();
             if (this.health < e.detail.new_computer_health) {
                 let heal = Math.round(e.detail.new_computer_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
@@ -333,8 +345,8 @@ export default class Enemy extends Entity {
     };
 
     attackInterval() {
-        if (this.scene.state.computer_weapons[0]) {
-            const weapon = this.scene.state.computer_weapons[0];
+        if (this.currentWeapon) {
+            const weapon = this.currentWeapon;
             return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 800 : 500;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
@@ -686,7 +698,8 @@ export default class Enemy extends Entity {
 
     enemyActionSuccess = () => {
         if (this.scene.state.computer_action === '') return;
-        this.scene.sendStateActionListener();
+        // this.scene.sendStateActionListener();
+        this.scene.sendEnemyActionListener(this.enemyID, this.ascean, this.currentDamageType, this.combatStats, this.weapons, this.health, { action: this.currentAction, counter: this.counterAction }, this.isCurrentTarget);
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
@@ -820,13 +833,18 @@ export default class Enemy extends Entity {
             } else {
               this.setFlipX(false);  
             };
+            if (this.attacking.currentTarget.enemyID === this.enemyID && !this.isCurrentTarget) {
+                this.isCurrentTarget = true;
+            } else if (this.attacking.currentTarget.enemyID !== this.enemyID && this.isCurrentTarget) {
+                this.isCurrentTarget = false;
+            };
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {
             this.setFlipX(this.velocity.x < 0);
         };
-        if (this.scene.state.computer_weapons[0] && this.currentWeaponSprite !== this.weaponSprite(this.scene.state.computer_weapons[0]) && this.enemyID === this.scene.state.enemyID) {
-            this.currentWeaponSprite = this.weaponSprite(this.scene.state.computer_weapons[0]);
+        if (this.currentWeapon && this.currentWeaponSprite !== this.weaponSprite(this.currentWeapon) && this.enemyID === this.scene.state.enemyID) {
+            this.currentWeaponSprite = this.weaponSprite(this.currentWeapon);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
-            if (this.scene.state.computer_weapons[0].grip === 'Two Hand') {
+            if (this.currentWeapon.grip === 'Two Hand') {
                 this.spriteWeapon.setScale(0.6);
             } else {
                 this.spriteWeapon.setScale(0.5);
@@ -884,7 +902,7 @@ export default class Enemy extends Entity {
             counter_counter: 25 + this.scene.state.counter_counter_weight,
             counter_posture: 25 + this.scene.state.counter_posture_weight,
             counter_roll: 25 + this.scene.state.counter_roll_weight,
-            roll_rating: !this.scene.state.computer_weapons.length ? this.ascean.weapon_one.roll : this.scene.state.computer_weapons?.[0].roll,
+            roll_rating: !this.currentWeapon? this.currentWeapon.roll : this.ascean.weapon_one.roll,
             armor_rating: (this.scene.state.computer_defense.physicalPosture + this.scene.state.computer_defense.magicalPosture)  /  4,
         };
         if (actionNumber > (100 - computerActions.attack) || target.isStunned) {
@@ -912,9 +930,11 @@ export default class Enemy extends Entity {
             } else {
                 computerCounter = ['attack', 'counter', 'posture', 'roll'][Math.floor(Math.random() * 4)];
             };
+            this.counterAction = computerCounter;
             this.scene.setState('computer_counter_guess', computerCounter);
         } else if (this.scene.state.computer_counter_guess !== '') {
             this.scene.setState('computer_counter_guess', '');
+            this.counterAction = '';
         };
         return computerAction;
     };

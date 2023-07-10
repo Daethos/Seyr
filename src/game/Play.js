@@ -247,7 +247,7 @@ export default class Play extends Phaser.Scene {
         // window.removeEventListener('clear-npc', this.clearNPC); 
     };
 
-    setupEnemy = async function(data) {
+    setupEnemy = async (data) => {
         const setup = new CustomEvent('setup-enemy', { detail: data });
         window.dispatchEvent(setup);
         this.focus = data;
@@ -293,7 +293,17 @@ export default class Play extends Phaser.Scene {
         });
     };
 
-    sendStateActionListener = async function() {
+    sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
+        if (!currentTarget) {
+            const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state: this.state };
+            const sendAction = new CustomEvent('update-enemy-action', { detail: data });
+            window.dispatchEvent(sendAction);
+        } else {
+            this.sendStateActionListener();
+        };
+    };
+
+    sendStateActionListener = () => { // Was Async
         if ((this.state.action === 'counter' && this.state.computer_action === '') || (this.state.action === '' && this.state.computer_action === 'counter')) { 
             console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
             return; 
@@ -302,7 +312,7 @@ export default class Play extends Phaser.Scene {
         window.dispatchEvent(sendState);
     };
 
-    sendStateSpecialListener = async function(special) {
+    sendStateSpecialListener = async (special) => {
         switch (special) {
             case 'invoke':
                 const sendInvoke = new CustomEvent('update-state-invoke', { detail: this.state });
@@ -357,16 +367,16 @@ export default class Play extends Phaser.Scene {
         if (key === 'action') this.checkStamina(value);
     };
 
-    setStateAdd = async function(key, value) { 
+    setStateAdd = (key, value) => { // Was Async
         console.log("Adding: " + key + " to " + value);
         this.state[key] += value;
     };
 
-    setGameState = async function(key, value) {
+    setGameState = async (key, value) => {
         this.gameState[key] = value;
     };
 
-    setOnGround = async function(key, value) {
+    setOnGround = async (key, value) => {
         if (key === 'player') {
             this.isPlayerOnGround = value;
         } else if (key === 'enemy') {
@@ -374,7 +384,7 @@ export default class Play extends Phaser.Scene {
         };
     };
 
-    setHanging = async function(key, value) {
+    setHanging = async (key, value) => {
         if (key === 'player') {
             this.isPlayerHanging = value;
         } else if (key === 'enemy') {
@@ -386,10 +396,10 @@ export default class Play extends Phaser.Scene {
         const border = this.add.graphics();
         border.lineStyle(4, 0x2A0134, 1);
         border.strokeRect(
-            text.x - text.width * text.originX - 2.5, // Subtract half of the border width and the x origin from the x position
-            text.y - text.height * text.originY - 2.5, // Subtract half of the border width and the y origin from the y position
-            text.width + 5, // Add the border width to the width of the text
-            text.height + 5 // Add the border width to the height of the text
+            text.x - text.width * text.originX - 2.5,
+            text.y - text.height * text.originY - 2.5, 
+            text.width + 5, 
+            text.height + 5 
         );
           
         this.add.existing(border);
@@ -461,7 +471,6 @@ export default class Play extends Phaser.Scene {
     resume() {
         this.scene.resume();
     };
- 
 };
 
 export const worldToTile = (tile) => Math.floor(tile / 32);

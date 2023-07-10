@@ -31,6 +31,100 @@ import arrowJSON from './images/arrow_json.json';
 import arrowAnim from './images/arrow_anim.json';
 import { v4 as uuidv4 } from 'uuid';
 
+class Particle {
+    constructor(scene, action, key, player) {
+        const id = uuidv4();
+        this.scene = scene;
+        this.id = id;
+        this.action = action;
+        this.effect = this.spriteMaker(this.scene, player, key + '_effect'); 
+        this.key = key + '_effect';
+        this.target = this.setTarget(player);
+        this.success = false;
+        this.timer = this.setTimer(action, id);
+        this.triggered = false;
+        this.velocity = this.setVelocity(action);
+
+        const { Bodies } = Phaser.Physics.Matter.Matter;
+        const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: `effectSensor-${id}`}); 
+        this.effect.setExistingBody(effectSensor); 
+        scene.add.existing(this.effect);
+        this.sensorListener(player, this, effectSensor);
+        if (player.name === 'enemy') console.log(this.id, this.target, "TARGET FOR ENEMY EFFECT BY", player.ascean.name);
+    };
+
+    sensorListener(player, effect, effectSensor) {
+        this.scene.matterCollision.addOnCollideStart({
+            objectA: [effectSensor],
+            callback: (other) => {
+                if (other.gameObjectB && (other.gameObjectB.name === 'enemy' && player.name === 'player' || other.gameObjectB.name === 'player' && player.name === 'enemy')) {
+                    if (player.name === 'player') {
+                        if (this.scene.state.action !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.action + " Due to Collision Success For PLAYER");
+                            this.scene.setState('action', effect.action);
+                        };
+                    } else if (player.name === 'enemy') {
+                        if (player.isCurrentTarget && this.scene.state.computer_action !== effect.action) { // TODO:FIXME: This is the culprit for the concern of differentiating currentTarget and flank 
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.computer_action + " Due to Collision Success For ENEMY");
+                            this.scene.setState('computer_action', effect.action);
+                        } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + player.currentAction + " Due to Collision Success For " + player.name);
+                            player.currentAction = effect.action;
+                        };
+                    };
+                    if (player.particleEffect && this.scene.particleManager.particles.find((particle) => particle.id === player.particleEffect.id)) player.particleEffect.success = true;
+                };
+            },
+            context: this.scene,
+        });
+    };
+
+    setTarget(player) {
+        if (player.name === 'enemy') {
+            // const target = player.attacking;
+            const target = new Phaser.Math.Vector2(player.attacking.body.position.x, player.attacking.body.position.y);
+            console.log(target, "Player Position");
+            const direction = target.subtract(player.position);
+            console.log(direction, "Direction");
+            return direction;
+        } else {
+            const target = new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY);
+            const direction = target.subtract(player.position);
+            return direction;
+        };
+        // return player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position);
+    };
+
+    setTimer(action, id) {
+        this.scene.time.addEvent({
+            delay: action === 'attack' ? 2000 : action === 'counter' ? 1000 : (action === 'posture' || action === 'roll') ? 1250 : 2000,
+            callback: () => {
+                this.scene.particleManager.removeEffect(id);
+            },
+            loop: false
+        })
+    };
+
+    setVelocity(action) {
+        switch (action) {
+            case 'attack':
+                return 5.5;
+            case 'counter':
+                return 7;
+            case 'posture':
+                return 4.5;
+            case 'roll':
+                return 4.5;
+            default:
+                return 5.5;
+        };
+    };
+
+    spriteMaker(scene, player, key) {
+        return new Phaser.Physics.Matter.Sprite(scene.matter.world, player.x, player.y, key).setScale(0.3).setOrigin(0.5, 0.5).setDepth(player.depth + 1).setVisible(false);    
+    };
+}
+
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
         scene.load.atlas('earth_effect', earthPNG, earthJSON);
@@ -66,7 +160,18 @@ export default class ParticleManager extends Phaser.Scene {
     };
 
     setTarget(player) {
-        return player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position);
+        if (player.name === 'enemy') {
+            const target = player.attacking;
+            console.log(target.position, target.body.position, "Player Position");
+            const direction = target.position.subtract(player.position);
+            console.log(direction, "Direction");
+            return direction;
+        } else {
+            const target = new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY);
+            const direction = target.subtract(player.position);
+            return direction;
+        };
+        // return player.name === 'enemy' ? player.attacking.position.subtract(player.position) : new Phaser.Math.Vector2(this.scene.input.activePointer.worldX, this.scene.input.activePointer.worldY).subtract(player.position);
     };
 
     setTimer(action, id) {
@@ -118,26 +223,29 @@ export default class ParticleManager extends Phaser.Scene {
     };
 
     addEffect(action, player, key) {
-        const id = uuidv4();
-        let particle = {
-            id: id,
-            action: action,
-            effect: this.spriteMaker(this.scene, player, key + '_effect'), 
-            key: key + '_effect',
-            success: false,
-            target: this.setTarget(player),
-            timer: this.setTimer(action, id),
-            triggered: false,
-            velocity: this.setVelocity(action),
-        };
-        const { Bodies } = Phaser.Physics.Matter.Matter;
-        const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: `effectSensor-${particle.id}`}); 
-        particle.effect.setExistingBody(effectSensor); 
-        this.scene.add.existing(particle.effect);
-        this.sensorListener(player, particle, effectSensor);
-        this.particles.push(particle);  
-        if (player.name === 'enemy') console.log(particle.target, "TARGET FOR ENEMY EFFECT");
-        return particle;
+        const newParticle = new Particle(this.scene, action, key, player);
+        // const id = uuidv4();
+        // let particle = {
+        //     id: id,
+        //     action: action,
+        //     effect: this.spriteMaker(this.scene, player, key + '_effect'), 
+        //     key: key + '_effect',
+        //     success: false,
+        //     target: this.setTarget(player),
+        //     timer: this.setTimer(action, id),
+        //     triggered: false,
+        //     velocity: this.setVelocity(action),
+        // };
+        // const { Bodies } = Phaser.Physics.Matter.Matter;
+        // const effectSensor = Bodies.circle(player.x, player.y, 6, { isSensor: true, label: `effectSensor-${particle.id}`}); 
+        // particle.effect.setExistingBody(effectSensor); 
+        // this.scene.add.existing(particle.effect);
+        // this.sensorListener(player, particle, effectSensor);
+        // this.particles.push(particle);  
+        // if (player.name === 'enemy') console.log(particle.id, particle.target, "TARGET FOR ENEMY EFFECT BY", player.ascean.name);
+        // return particle;
+        this.particles.push(newParticle);
+        return newParticle;
     };
 
     getEffect(id) {

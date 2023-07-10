@@ -340,11 +340,11 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.bodyB.label === 'npcCollider') { 
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider' && !this.inCombat) { 
                     const isNewNpc = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
                     if (isNewNpc && !isNewNpc.isDead) this.touching.push(other.gameObjectB);
                     this.currentTarget = other.gameObjectB;
-                    if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !this.inCombat) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
+                    if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id)) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
                 };
             },
             context: this.scene,
@@ -353,7 +353,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.bodyB.label === 'npcCollider') { 
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider' && (!this.inCombat || this.currentTarget.enemyID === other.gameObjectB.enemyID || other.gameObject.interacting)) { 
                     this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
                     this.scene.clearNPC();
                 };
@@ -504,7 +504,7 @@ export default class Player extends Entity {
     onRollEnter = () => {
         // this.scene.setState('action', 'roll');
         this.isRolling = true;
-        this.swingReset();
+        if (this.inCombat) this.swingReset();
     };
     onRollUpdate = (dt) => {
         if (this.frameCount === 10) this.scene.setState('action', 'roll');
@@ -663,7 +663,6 @@ export default class Player extends Entity {
             this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
             this.spriteShield.setTexture(this.currentShieldSprite);
         };
-        // this.touching.filter(gameObject => (gameObject !== null || gameObject.isDead));
         this.checkTouching();
         if (this.particleEffect) { 
             if (this.particleEffect.success) {
@@ -679,10 +678,9 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const acceleration = 0.15;
-        const deceleration = 0.075;
+        const acceleration = 0.1;
+        const deceleration = 0.0375;
         const speed = this.speed;
-        let playerVelocity = new Phaser.Math.Vector2();
         
         // =================== TARGETING ================== \\
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.touching.length > 0) {
@@ -757,20 +755,17 @@ export default class Player extends Entity {
         };
 
         // =================== DECELERATION ================== \\
+
         if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown) {
-            // this.playerVelocity.x -= deceleration;
             this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
         };
         if (!this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown) {
-            // this.playerVelocity.x += deceleration;
             this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
         };
         if (!this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown) {
-            // this.playerVelocity.y += deceleration;
             this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
         };
         if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
-            // this.playerVelocity.y -= deceleration;
             this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
         };
 
@@ -785,7 +780,7 @@ export default class Player extends Entity {
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
             if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
             if (!this.isStrafing) this.isStrafing = true;
-        } else {
+        } else if (this.isStrafing) {
             this.isStrafing = false;
         }; 
 
@@ -993,57 +988,3 @@ export default class Player extends Entity {
         return this.scene.matter.overlap(playerSensor, bodies);
     };   
 };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.down.S) || Phaser.Input.Keyboard.JustDown(this.inputKeys.down.DOWN))) {
-        //     this.autorunDown = this.autorunDown ? false : true;
-        //     console.log('AutorunDown: ', this.autorunDown);
-        // };
-
-        // if (this.autorunDown) {
-        //     if (this.autorunUp) this.autorunUp = false;
-        //     // this.setVelocityY(speed);
-        //     playerVelocity.y = 1;
-            
-        //     this.setVelocity(0, playerVelocity.y);
-        // };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.left.A) || Phaser.Input.Keyboard.JustDown(this.inputKeys.left.LEFT))) {
-        //     this.autorunLeft = this.autorunLeft ? false : true;
-        //     console.log('AutorunLeft: ', this.autorunLeft);
-        // };
-
-        // if (this.autorunLeft) {
-        //     if (this.autorunRight) this.autorunRight = false;
-        //     // this.setVelocityX(speed);
-        //     playerVelocity.x = -1;
-            
-        //     this.setVelocity(playerVelocity.x, 0);
-        //     if (!this.flipX) this.flipX = true;
-        // };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.right.D) || Phaser.Input.Keyboard.JustDown(this.inputKeys.right.RIGHT))) {
-        //     this.autorunRight = this.autorunRight ? false : true;
-        //     console.log('AutorunRight: ', this.autorunRight);
-        // };
-
-        // if (this.autorunRight) {
-        //     if (this.autorunLeft) this.autorunLeft = false;
-        //     // this.setVelocityX(playerVelocity.x);
-        //     playerVelocity.x = 1;
-            
-        //     this.setVelocity(playerVelocity.x, 0);    
-        //     if (this.flipX) this.flipX = false;
-        // };
-
-        // if (this.inputKeys.shift.SHIFT.isDown && (Phaser.Input.Keyboard.JustDown(this.inputKeys.up.W) || Phaser.Input.Keyboard.JustDown(this.inputKeys.up.UP))) {
-        //     this.autorunUp = this.autorunUp ? false : true;
-        //     console.log('AutorunUp: ', this.autorunUp);
-        // };
-
-        // if (this.autorunUp) {
-        //     if (this.autorunDown) this.autorunDown = false;
-        //     // this.setVelocityY(-playerVelocity.y);
-        //     playerVelocity.y = -1;
-            
-        //     this.setVelocity(0, playerVelocity.y);
-        // }; 

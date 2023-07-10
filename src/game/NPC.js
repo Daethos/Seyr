@@ -36,6 +36,7 @@ export default class NPC extends Entity {
         const types = ['Merchant-Alchemy', 'Merchant-Armor', 'Merchant-Smith', 'Merchant-Jewelry', 'Merchant-General', 'Merchant-Tailor', 'Merchant-Mystic', 'Merchant-Weapon'];
         this.npcType = types[Math.floor(Math.random() * types.length)];
         this.npcTarget = null;
+        this.interacting = false;
         this.createNPC();
         this.stateMachine = new StateMachine(this, 'npc');
         this.stateMachine
@@ -98,6 +99,7 @@ export default class NPC extends Entity {
             callback: other => {
                 if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !other.gameObjectB.inCombat) {
                     if (this.healthbar) this.healthbar.setVisible(true);
+                    this.interacting = true;
                     this.scene.setupNPC({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.combatStats.attributes.healthTotal, type: this.npcType });
                     this.npcTarget = other.gameObjectB;
                     this.stateMachine.setState(States.AWARE);
@@ -108,8 +110,9 @@ export default class NPC extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [npcSensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player') {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && this.interacting) {
                     if (this.healthbar) this.healthbar.setVisible(false);
+                    this.interacting = false;
                     this.stateMachine.setState(States.IDLE); 
                 };
             },

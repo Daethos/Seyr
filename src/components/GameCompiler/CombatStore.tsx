@@ -179,6 +179,7 @@ export const ACTIONS = {
     EFFECT_RESPONSE: 'EFFECT_RESPONSE',
     REMOVE_EFFECT: 'REMOVE_EFFECT',
     SET_UPDATE_STATE: 'SET_UPDATE_STATE',
+    REGISTER_ENEMY_ACTIONS: 'REGISTER_ENEMY_ACTIONS',
 };
 
 export const initialCombatData: CombatData = {
@@ -754,6 +755,34 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 deityData: [],
                 playerEffects: [],
                 computerEffects: [],
+            };
+        case 'REGISTER_ENEMY_ACTIONS':
+            return {
+                ...state,
+                player_win: action.payload.player_win,
+                computer_win: action.payload.computer_win,
+                player_action_description: action.payload.player_action_description,
+                computer_action_description: action.payload.computer_action_description,
+                player_start_description: action.payload.player_start_description,
+                computer_start_description: action.payload.computer_start_description,
+                player_death_description: action.payload.player_death_description,
+                computer_death_description: action.payload.computer_death_description,
+                player_special_description: action.payload.player_special_description,
+                computer_special_description: action.payload.computer_special_description,
+                player_influence_description: action.payload.player_influence_description,
+                computer_influence_description: action.payload.computer_influence_description,
+                player_influence_description_two: action.payload.player_influence_description_two,
+                computer_influence_description_two: action.payload.computer_influence_description_two,
+                potential_computer_damage: action.payload.potential_computer_damage,
+                realized_computer_damage: action.payload.realized_computer_damage,
+                playerDamaged: action.payload.playerDamaged,
+                computerDamaged: action.payload.computerDamaged,
+                new_player_health: action.payload.new_player_health,
+                current_player_health: action.payload.current_player_health,
+                computer_roll_success: action.payload.computer_roll_success,
+                computer_counter_success: action.payload.computer_counter_success,
+                computer_glancing_blow: action.payload.computer_glancing_blow,
+                playerEffects: action.payload.playerEffects,    
             };
         case 'SET_PLAYER_QUICK':
             return {

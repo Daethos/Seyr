@@ -379,14 +379,25 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     checkDamageType = (type, concern) => {
-        const magicTypes = ['Earth', 'Fire', 'Frost', 'Lightning', 'Wind', 'Righteous', 'Spooky', 'Sorcery', 'Wild'];
-        const physicalTypes = ['Blunt', 'Pierce', 'Slash'];
+        // if (this.name === 'enemy' && this.inCombat) console.log(`Checking if ${type} is ${concern}`);
+        const magicTypes = ['earth', 'fire', 'frost', 'lightning', 'righteous', 'spooky', 'sorcery', 'wild', 'wind'];
+        const physicalTypes = ['blunt', 'pierce', 'slash'];
         switch (concern) {
             case 'magic':
-                if (magicTypes.includes(type)) return true;
+                if (magicTypes.includes(type)) {
+                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's a match! ${magicTypes.includes(type)}`);
+                    return true;
+                } else {
+                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's not a match! ${magicTypes.includes(type)}`);
+                } 
                 break;
             case 'physical':
-                if (physicalTypes.includes(type)) return true;
+                if (physicalTypes.includes(type)) {
+                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's a match! ${physicalTypes.includes(type)}`);
+                    return true;
+                } else {
+                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's not a match! ${physicalTypes.includes(type)}`);
+                }
                 break;
             default:
                 break;
@@ -396,6 +407,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     checkBow = (weapon) => {
         if (!weapon) return false;
+        // if (this.inCombat) console.log(`${this.name} checking if ${weapon.name} is a Bow...`);
         if (weapon.type === 'Bow' || weapon.type === 'Greatbow') return true;
         return false;
     };
@@ -445,7 +457,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isCountering) { 
-            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 5) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type.toLowerCase(), 'magic') && this.frameCount === 5) {
                 this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.player_damage_type.toLowerCase());
                 if (this.flipX) {
                     this.particleEffect.effect.setOrigin(2, 0.5);
@@ -455,13 +467,15 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             } else if (entity === 'player' && this.checkBow(this.scene.state.weapons[0]) && this.frameCount === 5) {
                 this.particleEffect = this.scene.particleManager.addEffect('counter', this, 'arrow');
             };
-            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 5) {
-                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
-            } else if (entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons[0]) && this.frameCount === 5) {
+            if (entity === 'enemy' && this.checkDamageType(this.currentDamageType, 'magic') && this.frameCount === 5) {
+                if (this.frameCount === 5) console.log('Creating Counter Effect');
+                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.currentDamageType);
+            } else if (entity === 'enemy' && this.checkBow(this.currentWeapon) && this.frameCount === 5) {
                 this.particleEffect = this.scene.particleManager.addEffect('counter', this, 'arrow');
+                if (this.frameCount === 5) console.log('Creating Counter Effect');
             };
             
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0]) || entity === 'enemy' && this.checkBow(!this.scene.state.computer_weapons[0] ? this.ascean.weapon_one : this.scene.state.computer_weapons[0]))) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0]) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon))) {
                 if (this.flipX) {
                     this.spriteWeapon.setOrigin(0.1, 0.2);
                     this.spriteWeapon.setAngle(-225);
@@ -497,33 +511,37 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.frameCount += 1; 
 
         } else if (this.isRolling) {
-            if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.checkDamageType(this.scene.state.player_damage_type, 'magic')) {
+            if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.checkDamageType(this.scene.state.player_damage_type.toLowerCase(), 'magic')) {
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.scene.state.player_damage_type.toLowerCase());
             } else if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.checkBow(this.scene.state.weapons[0])) {
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
             };
-            if (entity === 'enemy' && this.frameCount === 10 && this.inCombat && this.checkDamageType(this.scene.state.computer_damage_type, 'magic')) {
-                this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.scene.state.computer_damage_type.toLowerCase());    
-            } else if (entity === 'enemy' && this.frameCount === 10 && this.inCombat && this.checkBow(this.scene.state.computer_weapons[0])) {
+            if (entity === 'enemy' && this.frameCount === 10 && this.inCombat && this.checkDamageType(this.currentDamageType, 'magic')) {
+                if (this.frameCount === 10) console.log('Creating Roll Effect');
+                this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);    
+            } else if (entity === 'enemy' && this.frameCount === 10 && this.inCombat && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
+                if (this.frameCount === 10) console.log('Creating Roll Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
             };
             this.spriteShield.setVisible(false);
             this.spriteWeapon.setVisible(false);
             this.frameCount += 1;
         } else if (this.isAttacking) {
-            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 16) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type.toLowerCase(), 'magic') && this.frameCount === 16) {
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.player_damage_type.toLowerCase());
             } else if (entity === 'player' && this.checkBow(this.scene.state.weapons[0]) && this.frameCount === 16) {
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
             };
-            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 16) {
-                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
-            } else if (entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons[0]) && this.frameCount === 16) {
+            if (entity === 'enemy' && this.checkDamageType(this.currentDamageType, 'magic') && this.frameCount === 16) {
+                if (this.frameCount === 16) console.log('Creating Attack Effect');
+                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.currentDamageType);
+            } else if (entity === 'enemy' && this.checkBow(this.currentWeapon) && this.frameCount === 16) {
+                if (this.frameCount === 16) console.log('Creating Attack Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
 
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.scene.state.computer_weapons[0] ? this.ascean.weapon_one : this.scene.state.computer_weapons[0])) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
                 if (this.flipX) {
                     if (this.frameCount === 0) { 
@@ -782,19 +800,21 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
             this.frameCount += 1;
         } else if (this.isPosturing) {
-            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type, 'magic') && this.frameCount === 11) {
+            if (entity === 'player' && this.checkDamageType(this.scene.state.player_damage_type.toLowerCase(), 'magic') && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.player_damage_type.toLowerCase());
             } else if (entity === 'player' && this.checkBow(this.scene.state.weapons[0]) && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };
-            if (entity === 'enemy' && this.checkDamageType(this.scene.state?.computer_weapons?.[0]?.damage_type[0], 'magic') && this.frameCount === 11) {
-                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.computer_weapons[0].damage_type[0].toLowerCase());
-            } else if (entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons[0]) && this.frameCount === 11) {
+            if (entity === 'enemy' && this.checkDamageType(this.currentDamageType, 'magic') && this.frameCount === 11) {
+                if (this.frameCount === 11) console.log('Creating Posture Effect');
+                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.currentDamageType);
+            } else if (entity === 'enemy' && this.checkBow(this.currentWeapon) && this.frameCount === 11) {
+                if (this.frameCount === 11) console.log('Creating Posture Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             this.spriteShield.setVisible(true);
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.scene.state.computer_weapons[0] ? this.ascean.weapon_one : this.scene.state.computer_weapons[0])) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
                 this.spriteWeapon.setDepth(3);
                 this.spriteShield.setVisible(false);
                 if (this.flipX) {
@@ -908,7 +928,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.isStrafing || this.isStalwart) {
                 this.spriteShield.setOrigin(-0.2, 0.25);
             };
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons?.[0])) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(this.currentWeapon)) {
                 this.spriteWeapon.setDepth(1);
                 this.spriteWeapon.setOrigin(0.5, 0.25);
                 this.spriteWeapon.setAngle(107.5);
@@ -923,7 +943,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.isStrafing || this.isStalwart) {
                 this.spriteShield.setOrigin(1.2, 0.25);
             };
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(this.scene.state.computer_weapons?.[0])) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(this.currentWeapon)) {
                 this.spriteWeapon.setDepth(1);
                 this.spriteWeapon.setOrigin(0.25, 0.5);
                 this.spriteWeapon.setAngle(-7.5);
@@ -935,7 +955,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.actionCountered = false;
             this.frameCount = 0;
         } else if (this.flipX) { // X Origin More Right
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.scene.state.computer_weapons[0] ? this.ascean.weapon_one : this.scene.state.computer_weapons[0])) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
                 // this.spriteWeapon.setOrigin(0.5, 1.2); // Works as a back hand hold
                 // this.spriteWeapon.setAngle(-150);
@@ -949,7 +969,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.actionCountered = false;
             this.frameCount = 0;
         } else {
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.scene.state.computer_weapons[0] ? this.ascean.weapon_one : this.scene.state.computer_weapons[0])) {
+            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
                 this.spriteWeapon.setOrigin(0.85, 0.1);
                 this.spriteWeapon.setAngle(0);
