@@ -155,7 +155,7 @@ export default class Play extends Phaser.Scene {
         this.minimap.setBounds(0, 0, 4096, 4096);
         this.minimap.scrollX = 4096;
         this.minimap.scrollY = 4096;
-        this.minimap.zoom = 0.25;
+        this.minimap.zoom = 0.2;
         this.minimap.startFollow(this.player);
         this.minimap.setLerp(0.1, 0.1);
         this.minimapBorder = this.add.rectangle(this.minimap.x - 6, this.minimap.y - 3, this.minimap.width + 4, this.minimap.height + 2);
@@ -299,7 +299,23 @@ export default class Play extends Phaser.Scene {
             const sendAction = new CustomEvent('update-enemy-action', { detail: data });
             window.dispatchEvent(sendAction);
         } else {
-            this.sendStateActionListener();
+            if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
+                console.log(this.state.action, "Action To Reset");
+                console.log(`%c --- ERROR --- Player Action Issue, Live Action Recorded w/o Action Success --- ERROR ---`, 'color: black, font-size: 12px');
+                const actionReset = async () => {
+                    console.log(`Resetting ${this.state.action}`);
+                    this.state.action = '';
+                    console.log(`Action Reset To '${this.state.action}', Enemy Action Sent`);
+                    this.sendStateActionListener();
+                    // await this.setState('action', '').then(() => {
+                    //     console.log(`Action Reset To '${this.state.action}', Enemy Action Sent`)
+                    //     this.sendStateActionListener();
+                    // });
+                };
+                await actionReset();
+            } else {
+                this.sendStateActionListener();
+            };
         };
     };
 

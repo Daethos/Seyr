@@ -35,7 +35,7 @@ export default class Player extends Entity {
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
         if (scene?.state?.player?.weapon_one?.grip === 'Two Hand') {
-            this.spriteWeapon.setScale(0.6);
+            this.spriteWeapon.setScale(0.65);
         } else {
             this.spriteWeapon.setScale(0.5);
         };
@@ -353,7 +353,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.bodyB.label === 'npcCollider' && (!this.inCombat || this.currentTarget.enemyID === other.gameObjectB.enemyID || other.gameObject.interacting)) { 
+                if (other.gameObjectB && other.bodyB.label === 'npcCollider' && (!this.inCombat || this.currentTarget.enemyID === other.gameObjectB.enemyID || other.gameObjectB.interacting)) { 
                     this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
                     this.scene.clearNPC();
                 };
@@ -502,7 +502,6 @@ export default class Player extends Entity {
     };
 
     onRollEnter = () => {
-        // this.scene.setState('action', 'roll');
         this.isRolling = true;
         if (this.inCombat) this.swingReset();
     };
@@ -607,10 +606,10 @@ export default class Player extends Entity {
 
     swingReset = () => {
         this.canSwing = false;
-        console.log(`Swing Timer Resetting in ${this.swingTimer}ms`);
+        // console.log(`Swing Timer Resetting in ${this.swingTimer}ms`);
         this.scene.time.delayedCall(this.swingTimer, () => {
             this.canSwing = true;
-            console.log("Swing Timer Reset!");
+            // console.log("Swing Timer Reset!");
         });
     };
 
@@ -626,6 +625,12 @@ export default class Player extends Entity {
             if (this.inCombat || this.scene.combat) {
                 this.scene.combatEngaged(false);
                 this.inCombat = false;
+            };
+        };
+        if (this.touching.some((gameObject) => gameObject.inCombat)) {
+            if (!this.inCombat || !this.scene.combat) {
+                this.scene.combatEngaged(true);
+                this.inCombat = true;
             };
         };
     };
@@ -654,7 +659,7 @@ export default class Player extends Entity {
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.scene.state.weapons[0].grip === 'Two Hand') {
-                this.spriteWeapon.setScale(0.6);
+                this.spriteWeapon.setScale(0.65);
             } else {
                 this.spriteWeapon.setScale(0.5);
             };
@@ -678,7 +683,7 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const acceleration = 0.1;
+        const acceleration = 0.075;
         const deceleration = 0.0375;
         const speed = this.speed;
         
@@ -702,6 +707,11 @@ export default class Player extends Entity {
 
         if (this.currentTarget) {
             this.highlightTarget(this.currentTarget); 
+            if (this.inCombat && !this.scene.state.computer) {
+                this.scene.setupEnemy({ id: this.currentTarget.enemyID, game: this.currentTarget.ascean, enemy: this.currentTarget.combatStats, health: this.currentTarget.health, 
+                    isAggressive: this.currentTarget.isAggressive, startedAggressive: this.currentTarget.startedAggressive, isDefeated: this.currentTarget.isDefeated, isTriumphant: this.currentTarget.isTriumphant 
+                });
+            }; 
         } else {
             if (this.highlight.visible) {
                 this.removeHighlight();

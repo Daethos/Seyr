@@ -1119,7 +1119,7 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
     };
-
+    console.log(combatData.computer.name, "Computer Attacking")
     if (combatData.computer_action === 'attack') {
         if (combatData.computer_weapons[0].grip === 'One Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {

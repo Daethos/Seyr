@@ -57,7 +57,7 @@ interface StatusEffectProps {
 };
 
 const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story, pauseState, handleCallback }: StatusEffectProps) => {
-    const [endTime, setEndTime] = useState(effect.endTime);
+    const [endTime, setEndTime] = useState<number>(effect.endTime);
     const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
     const specials = ['Avarice', 'Dispel', 'Denial', 'Silence'];
     const specialDescription = {
@@ -68,13 +68,15 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     };
 
     useEffect(() => {
-        if (!story && !pauseState) return;
+        setEndTime(effect.endTime);
+        setEffectTimer(effect.endTime - effect.startTime);
+    }, []);
 
-        if (endTime < effect.endTime) {
-            setEndTime(effect.endTime); // This is for when the effect is refreshed
-        };
-        if ((effectTimer % 3 === 0 && effectTimer !== (effect.endTime - effect.startTime)) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) {
-            console.log('Effect Tick');
+    useEffect(() => {
+        if (!story && !pauseState) return;
+        if (endTime < effect.endTime) setEndTime(effect.endTime);
+        if (canTick(effect, effectTimer)) {
+            // console.log('Effect Tick');
             effectTick(state, effect, effectTimer);
         };
         const intervalTimer = setInterval(() => {
@@ -87,7 +89,13 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
         if (pauseState) clearInterval(intervalTimer);
     
         return () => clearInterval(intervalTimer); // Clean up the interval on unmount
-    }, [effectTimer, story, pauseState]); 
+    }, [effectTimer, story, pauseState, endTime]);
+    
+    const canTick = (effect: StatusEffect, timer: number): boolean => {
+        // console.log(`Checking timer ${timer} for ${effect.name}, a ${effect.prayer} effect.`);
+        if (timer % 3 === 0 && timer !== (effect.endTime - effect.startTime) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) return true;
+        return false;
+    };
 
     const effectTick = async (state: any, effect: StatusEffect, effectTimer: number): Promise<void> => {
         try {
@@ -96,8 +104,6 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
             console.log(err, "Error In Effect Tick");
         };
     };
-
-
 
     const consumeEnemyPrayer = (name: string, prayer: string): void => {
         console.log('Consume Enemy Prayer', name, prayer);
@@ -150,7 +156,6 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
             </Popover.Body>
         </Popover>
     );
-
 
     const getInnerWidth = () => {
         const width = window.innerWidth;

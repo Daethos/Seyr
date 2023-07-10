@@ -233,7 +233,6 @@ export default class Enemy extends Entity {
             objectA: [enemySensor],
             callback: other => {
                 if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !this.isAggressive) {
-                    console.log("Player Left");
                     if (this.healthbar) this.healthbar.setVisible(false);
                     if (this.isDefeated) {
                         this.scene.showDialog(false);
@@ -256,7 +255,6 @@ export default class Enemy extends Entity {
 
     enemyFetchedFinishedListener(e) {
         if (this.enemyID !== e.detail.enemyID) return;
-        console.log(e.detail, "Enemy Fetched")
         this.ascean = e.detail.game;
         this.health = e.detail.game.health.total;
         this.combatStats = e.detail.combat; 
@@ -265,10 +263,9 @@ export default class Enemy extends Entity {
         
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, weaponName);
         this.currentWeapon = e.detail.game.weapon_one;
-        console.log(e.detail.game.weapon_one.damage_type, "Damage Type")
         this.currentDamageType = e.detail.game.weapon_one.damage_type[0].toLowerCase();
         if (e.detail.game.weapon_one.grip === 'Two Hand') {
-            this.spriteWeapon.setScale(0.6);
+            this.spriteWeapon.setScale(0.65);
         } else {
             this.spriteWeapon.setScale(0.5);
         };
@@ -297,7 +294,6 @@ export default class Enemy extends Entity {
     enemyStateListener() {
         window.addEventListener('update-combat', (e) => {
             if (this.enemyID !== e.detail.enemyID) return;
-            console.log("Enemy Updating Combat Data");
             this.combatData = e.detail;
             this.weapons = e.detail.computer_weapons;
             if (this.health > e.detail.new_computer_health) { 
@@ -835,8 +831,8 @@ export default class Enemy extends Entity {
             };
             if (this.attacking.currentTarget.enemyID === this.enemyID && !this.isCurrentTarget) {
                 this.isCurrentTarget = true;
-            } else if (this.attacking.currentTarget.enemyID !== this.enemyID && this.isCurrentTarget) {
-                this.isCurrentTarget = false;
+            } else if (this.attacking.currentTarget.enemyID !== this.enemyID) {
+                if (this.isCurrentTarget) this.isCurrentTarget = false;
             };
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {
             this.setFlipX(this.velocity.x < 0);
@@ -845,7 +841,7 @@ export default class Enemy extends Entity {
             this.currentWeaponSprite = this.weaponSprite(this.currentWeapon);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.currentWeapon.grip === 'Two Hand') {
-                this.spriteWeapon.setScale(0.6);
+                this.spriteWeapon.setScale(0.65);
             } else {
                 this.spriteWeapon.setScale(0.5);
             };
@@ -907,14 +903,14 @@ export default class Enemy extends Entity {
         };
         if (actionNumber > (100 - computerActions.attack) || target.isStunned) {
             computerAction = 'attack';
-        } else if (actionNumber > (100 - computerActions.attack - computerActions.counter)) {
+        } else if (actionNumber > (100 - computerActions.attack - computerActions.counter) && !this.isRanged) {
             computerAction = 'counter';
-        } else if (actionNumber > (100 - computerActions.attack - computerActions.counter - computerActions.dodge)) {
-            computerAction = 'dodge';
-        } else if (actionNumber > (100 - computerActions.attack - computerActions.counter - computerActions.dodge - computerActions.posture)) {
+        } else if (actionNumber > (100 - computerActions.attack - computerActions.counter - computerActions.posture)) {
             computerAction = 'posture';
-        } else {
+        } else if (actionNumber > (100 - computerActions.attack - computerActions.counter - computerActions.posture - computerActions.roll)) {
             computerAction = 'roll';
+        } else {
+            computerAction = 'dodge';
         };
 
         if (computerAction === 'counter') {

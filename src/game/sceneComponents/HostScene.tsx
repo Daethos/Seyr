@@ -245,6 +245,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const updateEnemyAction = async (e: { detail: any; }) => {
         try {
             const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e.detail;
+            console.log(enemy, "Enemy Action Data");
             let enemyData = {
                 ...state,
                 computer: enemy,
@@ -797,7 +798,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     async function handleInitiate(combatData: CombatData) {
         try { 
-            console.log(`%c Player: "${combatData.action}" ${combatData.counter_guess} | Computer: "${combatData.computer_action} ${combatData.computer_counter_guess}"`, 'color: red; font-size: 16px; font-weight: bold;` ')
+            console.log(`%c Player: Action - ${combatData.action} Counter -${combatData.counter_guess} | Computer: Action - ${combatData.computer_action} Counter -${combatData.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
@@ -961,7 +962,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const togglePause = () => {
         const pause = () => {
             let scene = gameRef.current.scene.getScene('Play');
-            console.log(scene, 'What is this Scene I made?')
             scene.pause();
         };
         const resume = () => {

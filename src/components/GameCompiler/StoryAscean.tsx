@@ -72,7 +72,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         checkHighlight();
     }, [gameState.player.inventory]);
 
-    const checkHighlight = () => {
+    const checkHighlight = (): void => {
         if (highlighted?.item) {
             const item = gameState.player.inventory.find((item: any) => item._id === highlighted?.item?._id);
             console.log(item, "Item", highlighted?.item, "Highlighted Item ?");
@@ -82,7 +82,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         };
     };
 
-    const saveInventory = async (inventory: any) => {
+    const saveInventory = async (inventory: any): Promise<void> => {
         try {
             setSavingInventory(true);
             const flattenedInventory = inventory.map((item: any) => item._id);
@@ -95,7 +95,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         };
     };
 
-    const playerTraits = async () => {
+    const playerTraits = async (): Promise<void> => {
         const fetchTrait = async (trait: string) => {
             switch (trait) {
                 case "Arbituous":
@@ -229,7 +229,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         });
     };
 
-    const saveGameSettings = async () => {
+    const saveGameSettings = async (): Promise<void> => {
         try {
             const settings = {
                 mapMode: gameState.mapMode,
@@ -249,16 +249,9 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
         };
     };
 
-    function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
-        let volume = parseFloat(e.target.value);
-        gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: volume });
-    }; 
-
-    const handleSettingChange = (e: any) => {
-        setCurrentSetting(e.target.value);
-    };
-
-    const handleCharacterChange = (e: any) => setCurrentCharacter(e.target.value);
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>): void => gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: parseFloat(e.target.value) });
+    const handleSettingChange = (e: any): void => setCurrentSetting(e.target.value); 
+    const handleCharacterChange = (e: any): void => setCurrentCharacter(e.target.value);
 
     const createCharacterInfo = (character: string) => {
         switch (character) {
@@ -287,14 +280,14 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                 return (
                     <>
                         <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.primary?.name}</h6>
-                        <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
-                        <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
+                            <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
+                            <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
                         <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.secondary?.name}</h6>
-                        <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
-                        <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
+                            <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
+                            <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
                         <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.tertiary?.name}</h6>
-                        <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
-                        <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p>
+                            <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
+                            <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p>
                     </>
                 );
             default:
