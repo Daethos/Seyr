@@ -434,7 +434,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         if (!this.isPosturing && !this.isStrafing && !this.isStalwart && this.spriteShield) this.spriteShield.setVisible(false);
         if (this.isDodging) this.spriteShield.setVisible(false);
         if (this.isStalwart && !this.isRolling && !this.isDodging) this.spriteShield.setVisible(true);
-        if (this.isPraying) { // Change to isPraying for Live
+        if (this.isPraying || this.isHealing) { // Change to isPraying for Live
             if (this.spriteWeapon.depth < 3) this.spriteWeapon.setDepth(3);
             if (this.flipX) {
                 if (this.frameCount === 0) {

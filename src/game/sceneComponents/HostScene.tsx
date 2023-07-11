@@ -147,8 +147,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         if (staminaPercentage < 100) {
             const timer = setTimeout(() => {
                 setStaminaPercentage(staminaPercentage + (state.player_attributes.stamina / 100));
-                // const updatedStamina = new CustomEvent('updated-stamina', { detail: Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina) });
-                // window.dispatchEvent(updatedStamina);
                 EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina));
             }, 200 - state.player_attributes.stamina);
 
@@ -210,43 +208,23 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     };
 
     const retrieveAssets = async (): Promise<void> => {
-        // const assetPackage = new CustomEvent('send-assets', {
-        //     detail: assets
-        // });
-        // window.dispatchEvent(assetPackage);
         console.log(assets, 'Retrieving Assets')
         EventEmitter.emit('send-assets', assets);
     };
 
     const sendEnemyData = async (): Promise<void> => { 
-        // const enemyData = new CustomEvent('get-enemy', {
-        //     detail: state.computer
-        // });
-        // window.dispatchEvent(enemyData);
         EventEmitter.emit('get-enemy', state.computer);
     };
 
     const sendAscean = async (): Promise<void> => {
-        // const asceanData = new CustomEvent('get-ascean', {
-        //     detail: state.player
-        // });
-        // window.dispatchEvent(asceanData);
         EventEmitter.emit('get-ascean', state.player);
     };
 
     const sendCombatData = async (): Promise<void> => {
-        // const combatData = new CustomEvent('get-combat-data', {
-        //     detail: state
-        // });
-        // window.dispatchEvent(combatData);
         EventEmitter.emit('get-combat-data', state);
     };
 
     const sendGameData = async (): Promise<void> => {
-        // const gameData = new CustomEvent('get-game-data', {
-        //     detail: gameState
-        // });
-        // window.dispatchEvent(gameData);
         EventEmitter.emit('get-game-data', gameState);
     };
 
@@ -255,7 +233,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const updateEnemyAction = async (e: any): Promise<void> => {
         try {
             const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e;
-            console.log(enemy, "Enemy Action Data");
             let enemyData = {
                 ...state,
                 computer: enemy,
@@ -277,7 +254,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
             };
             console.log(`%c Enemy Action: "${enemyData.computer_action} ${enemyData.computer_counter_guess}"`, 'color: red; font-size: 16px; font-weight: bold;` ');
             let response = await gameAPI.phaserAction(enemyData);
-            console.log(response.data, "Enemy Action Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({ type: ACTIONS.REGISTER_ENEMY_ACTIONS, payload: response.data });
             response.data.enemyID = enemyID;
@@ -396,7 +372,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     };
 
     const setupEnemy = async (e: any): Promise<void> => {
-        console.log(e, "This is the setup enemy function");
         await getOpponentDialog(e.enemy.name);
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.game });
         setAsceanState({ ...asceanState, 'opponent': e.game.level });
@@ -406,7 +381,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const setupNpc = async (e: any): Promise<void> => {
         gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.game });
         const dialog = getNodesForNPC(npcIds[e.type]);
-        console.log(dialog, "Dialog for NPC: ", e.type);
         dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_NPC, payload: { enemy: e.enemy, health: e.health, enemyID: e.id, npcType: e.type } }); 
         gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: dialog });
     };

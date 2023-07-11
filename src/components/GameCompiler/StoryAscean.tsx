@@ -64,7 +64,6 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
 
     useEffect(() => {
         playerTraits();
-        console.log(ascean.statistics, "Stats!");
     }, [ascean]);
 
     useEffect(() => {
@@ -75,7 +74,6 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     const checkHighlight = (): void => {
         if (highlighted?.item) {
             const item = gameState.player.inventory.find((item: any) => item._id === highlighted?.item?._id);
-            console.log(item, "Item", highlighted?.item, "Highlighted Item ?");
             if (!item) {
                 setHighlighted({ item: null, comparing: false });
             };
@@ -245,7 +243,7 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             };
             await settingsAPI.updateSettings(settings);
         } catch (err: any) {
-            console.log(err, "Error Saving Map Settings")
+            console.log(err, "Error Saving Game Settings");
         };
     };
 

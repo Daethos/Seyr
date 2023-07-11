@@ -35,16 +35,16 @@ export default class Preload extends Phaser.Scene {
         Treasure.preload(this);
         ParticleManager.preload(this);
 
-        this.gameData.assets.forEach(asset => {
-            this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
-        });
-
+        this.load.tilemapTiledJSON('ascean_test', ascean_test);
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
 
         this.load.image('AncientForestMain', AncientForestMain);
         this.load.image('AncientForestDecorative', AncientForestDecorative);
-        this.load.tilemapTiledJSON('ascean_test', ascean_test);
+        this.gameData.assets.forEach(asset => {
+            this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
+        });
+
         this.createLoadingBar();
     };
 

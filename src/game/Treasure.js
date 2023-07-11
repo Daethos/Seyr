@@ -4,8 +4,8 @@ import TreasureChest from './images/treasure-chest.png';
 import TreasureChestJson from './images/treasure-chest_atlas.json';
 
 export default class Treasure extends Entity {
-    
     static preload(scene) {
+        scene.load.image('treasure-chest', TreasureChest);
         scene.load.atlas('treasures', TreasureChest, TreasureChestJson);
     };
 

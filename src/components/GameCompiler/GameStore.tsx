@@ -606,7 +606,6 @@ export const getAsceanTraits = async (ascean: Player) => {
         secondary: { ...traits.secondary, ...second },
         tertiary: { ...traits.tertiary, ...third } ,
     };
-    console.log(newTraits, "Player Traits")
     return newTraits;
 };
 

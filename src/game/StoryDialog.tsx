@@ -12,6 +12,7 @@ import { ACTIONS, CombatData, shakeScreen } from '../components/GameCompiler/Com
 import { GAME_ACTIONS, GameData, Player, checkPlayerTrait, nameCheck } from '../components/GameCompiler/GameStore';
 import Typewriter from '../components/GameCompiler/Typewriter';
 import dialogWindow from '../game/images/dialog_window.png';
+import EventEmitter from './EventEmitter';
 
 interface DialogOptionProps {
     option: DialogNodeOption;
@@ -586,8 +587,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     const engageCombat = async () => {
         await checkingLoot();
         dispatch({ type: ACTIONS.SET_PHASER_AGGRESSION, payload: true });
-        const aggression = new CustomEvent('aggressive-enemy', { detail: { id: state.enemyID, isAggressive: true } });
-        window.dispatchEvent(aggression);
+        EventEmitter.emit('aggressive-enemy', { id: state.enemyID, isAggressive: true });
         gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
     };
 
@@ -629,15 +629,14 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 response = await eqpAPI.getClothEquipment(state.player.level);
             };
             console.log(response.data, 'Response!');
-            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data })
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data });
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
         };
     };
 
-    const capitalize = (word: string) => {
-        return word === 'a' ? word?.charAt(0).toUpperCase() : word?.charAt(0).toUpperCase() + word?.slice(1);
-    };
+    const capitalize = (word: string) => word === 'a' ? word?.charAt(0).toUpperCase() : word?.charAt(0).toUpperCase() + word?.slice(1);
+    
 
     const dialogStyle = {  
         zIndex: 9999,
@@ -790,8 +789,8 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                     <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {state?.computer?.name}?</Button>
                                 </> 
                             ) }
-                            { luckout ?
-                                ( <div>
+                            { luckout ? ( 
+                                <div>
                                     <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
                                     {luckoutTraits.map((trait: any, index: number) => {
                                         return (
@@ -803,8 +802,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 </div>
                             ) : ('') }
                             { miniGame ? (
-                                <>
-                                {miniGameTraits.map((trait: any, index: number) => {
+                                miniGameTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
                                             {trait.name === "Se'van" ? (
@@ -818,8 +816,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                             ) : ('')}
                                         </div>
                                     )
-                                })}
-                                </>
+                                })
                             ) : ('') }
                         </div>
                     ) } 

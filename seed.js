@@ -11,15 +11,13 @@ require('dotenv').config();
 const URL = process.env.DATABASE_URL;
 console.log('Are we feeding or are we seeding?')
 
-mongoose.connect(URL, 
-    {
-    useNewUrlParser: true, useUnifiedTopology: true })
-        .then(() => {
-            console.log('Mongo Connection Open!');
-        })
-        .catch((err) => {
-            console.log(err)
-        });
+mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log('Mongo Connection Open!');
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 
 const seedWeapons = [
     {
