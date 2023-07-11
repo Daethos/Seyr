@@ -2,6 +2,7 @@ import Entity from "./Entity.js";
 import Phaser from "phaser";
 import TreasureChest from './images/treasure-chest.png';
 import TreasureChestJson from './images/treasure-chest_atlas.json';
+import EventEmitter from "./EventEmitter.js";
 
 export default class LootDrop extends Entity {
     static preload(scene) {
@@ -25,8 +26,8 @@ export default class LootDrop extends Entity {
     };
 
     lootDropListener = () => {
-        window.addEventListener('destroy-lootdrop', (e) => {
-            if (e.detail === this._id) {
+        EventEmitter.on('destroy-lootdrop', (e) => {
+            if (e === this._id) {
                 this.destroyLootDrop();
             };
         });

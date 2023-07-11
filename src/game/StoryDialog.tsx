@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import * as asceanAPI from '../utils/asceanApi';
 import * as eqpAPI from '../utils/equipmentApi';
 import ToastAlert from '../components/ToastAlert/ToastAlert';

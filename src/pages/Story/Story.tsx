@@ -72,7 +72,7 @@ export const Story = ({ user }: Props) => {
         fetchData(); 
     }, [asceanID]); 
 
-    const sanitizeAssets = async (assets: any) => {
+    const sanitizeAssets = async (assets: any): Promise<[]> => {
         const fields = ['weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets'];
         const newAssets: any = [];
         const imageSprite = async (image: any) => {

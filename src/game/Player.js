@@ -16,6 +16,7 @@ import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json';
 import highlightPNG from './images/highlight.png';
+import EventEmitter from "./EventEmitter";
  
 export default class Player extends Entity {
     static preload(scene) { 
@@ -47,7 +48,7 @@ export default class Player extends Entity {
         this.currentWeaponSprite = spriteName;
         this.targetIndex = 0;
         this.currentTarget = null;
-        this.stamina = scene.state.player_attributes.stamina;
+        this.stamina = scene?.state?.player_attributes?.stamina;
         this.isMoving = false;
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -57,7 +58,7 @@ export default class Player extends Entity {
         this.spriteShield.setDepth(this + 1);
         this.spriteShield.setVisible(false);
         this.playerVelocity = new Phaser.Math.Vector2();
-        this.speed = this.setSpeed(scene.state.player);
+        this.speed = this.setSpeed(scene?.state?.player);
         this.stateMachine = new StateMachine(this, 'player');
         this.stateMachine
             .addState(States.NONCOMBAT, {
@@ -152,7 +153,6 @@ export default class Player extends Entity {
         this.autorunLeft = false;
         this.autorunRight = false;
         
-        // this.highlight = this.scene.add.sprite(0, 0, 'highlight');
         this.highlight = this.scene.add.graphics()
             .lineStyle(1, 0xFFD700) // Set the border color and thickness as per your preference
             .strokeCircle(0, 0, 10); // Set the radius as per your requirement
@@ -212,44 +212,44 @@ export default class Player extends Entity {
     };
 
     playerStateListener() {
-        window.addEventListener('update-combat-data', (e) => {
-            if (this.health > e.detail.new_player_health) {
+        EventEmitter.on('update-combat-data', (e) => {
+            if (this.health > e.new_player_health) {
                 this.isHurt = true;
-                let damage = Math.round(this.health - e.detail.new_player_health);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.detail.computer_critical_success);
+                let damage = Math.round(this.health - e.new_player_health);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computer_critical_success);
             };
-            if (this.health < e.detail.new_player_health) {
-                let heal = Math.round(e.detail.new_player_health - this.health);
+            if (this.health < e.new_player_health) {
+                let heal = Math.round(e.new_player_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
-            if (this.currentRound !== e.detail.combatRound) {
-                this.currentRound = e.detail.combatRound;
+            if (this.currentRound !== e.combatRound) {
+                this.currentRound = e.combatRound;
             }; 
-            this.health = e.detail.new_player_health;
+            this.health = e.new_player_health;
             this.healthbar.setValue(this.health);
-            if (this.healthbar.getTotal() < e.detail.player_health) this.healthbar.setTotal(e.detail.player_health);
-            if (e.detail.new_player_health <= 0) {
+            if (this.healthbar.getTotal() < e.player_health) this.healthbar.setTotal(e.player_health);
+            if (e.new_player_health <= 0) {
                 this.isDead = true;
                 this.anims.play('player_death', true);
                 this.inCombat = false;
                 this.attacking = null;
             };
-            if (e.detail.new_computer_health <= 0) {
+            if (e.new_computer_health <= 0) {
                 this.inCombat = false;
                 this.attacking = null;
-                this.touching = this.touching.filter(obj => obj.enemyID !== e.detail.enemyID);
+                this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
             };
 
-            this.checkMeleeOrRanged(e.detail.weapons[0]);
+            this.checkMeleeOrRanged(e.weapons[0]);
         });
 
-        window.addEventListener('update-combat', (e) => {
-            if (e.detail.computer_counter_success) {
+        EventEmitter.on('update-combat', (e) => {
+            if (e.computer_counter_success) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.setState('computer_counter_success', false);
             };
-            if (e.detail.player_win) {
-                let damage = Math.round(e.detail.realized_player_damage) + ' - Victory!';
+            if (e.player_win) {
+                let damage = Math.round(e.realized_player_damage) + ' - Victory!';
                 this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'effect', true);    
             };
         });
@@ -314,9 +314,8 @@ export default class Player extends Entity {
             callback: (other) => {
                 if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
                     this.interacting.push(other.gameObjectB);
-                    console.log(other.gameObjectB, "Interacting With Loot");
-                    const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB._id, interacting: true } });
-                    window.dispatchEvent(interactingLoot);
+                    const interactingLoot = { loot: other.gameObjectB._id, interacting: true };
+                    EventEmitter.emit('interacting-loot', interactingLoot);
                 };
             },
             context: this.scene,
@@ -326,10 +325,9 @@ export default class Player extends Entity {
             objectA: [playerSensor],
             callback: (other) => {
                 if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
-                    console.log(other.gameObjectB, "No Longer Interacting With Loot")
                     this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
-                    const interactingLoot = new CustomEvent('interacting-loot', { detail: { loot: other.gameObjectB._id, interacting: false } });
-                    window.dispatchEvent(interactingLoot);
+                    const interactingLoot = { loot: other.gameObjectB._id, interacting: false };
+                    EventEmitter.emit('interacting-loot', interactingLoot);
                 };
             },
             context: this.scene,
@@ -374,7 +372,7 @@ export default class Player extends Entity {
     };
 
     playerActionSuccess = () => {
-        console.log("Player Action Success: ", this.scene.state);
+        console.log("Player Action Success");
         if (this.scene.state.action === '') return;
         this.scene.sendStateActionListener();
         if (this.particleEffect) {
@@ -606,10 +604,8 @@ export default class Player extends Entity {
 
     swingReset = () => {
         this.canSwing = false;
-        // console.log(`Swing Timer Resetting in ${this.swingTimer}ms`);
         this.scene.time.delayedCall(this.swingTimer, () => {
             this.canSwing = true;
-            // console.log("Swing Timer Reset!");
         });
     };
 
@@ -655,7 +651,6 @@ export default class Player extends Entity {
         if (this.inCombat && !this.scene.combatTimer) this.scene.startCombatTimer();
         if (this.inCombat && !this.healthbar.visible) this.healthbar.setVisible(true);
         if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
-            console.log(this.spriteWeapon, "Sprite Weapon Change");
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.scene.state.weapons[0].grip === 'Two Hand') {
@@ -684,7 +679,7 @@ export default class Player extends Entity {
 
         // =================== MOVEMENT VARIABLES ================== \\
         const acceleration = 0.075;
-        const deceleration = 0.0375;
+        const deceleration = 0.05;
         const speed = this.speed;
         
         // =================== TARGETING ================== \\
@@ -732,24 +727,20 @@ export default class Player extends Entity {
         // =================== MOVEMENT ================== \\
 
         if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
-            // playerVelocity.x = 1;
             this.playerVelocity.x += acceleration;
             if (this.flipX) this.flipX = false;
         };
 
         if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
-            // playerVelocity.x = -1;
             this.playerVelocity.x -= acceleration;
             this.flipX = true;
         };
 
         if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
-            // playerVelocity.y = -1;    
             this.playerVelocity.y -= acceleration;
         }; 
 
         if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-            // playerVelocity.y = 1;    
             this.playerVelocity.y += acceleration;
         };
 
@@ -782,8 +773,6 @@ export default class Player extends Entity {
         // =================== NORMALIZING VELOCITY ================== \\
 
         this.playerVelocity.limit(speed);
-        // playerVelocity.normalize();
-        // playerVelocity.scale(speed);
 
         // =================== VARIABLES IN MOTION ================== \\
 

@@ -15,6 +15,7 @@ import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json'; 
 import { v4 as uuidv4 } from 'uuid';
+import EventEmitter from "./EventEmitter";
 
 export default class NPC extends Entity {
     static preload(scene) { 
@@ -78,19 +79,18 @@ export default class NPC extends Entity {
     }; 
 
     createNPC = () => {
-        const fetch = new CustomEvent('fetch-npc', { detail: { enemyID: this.enemyID, npcType: this.npcType } });
-        window.dispatchEvent(fetch); 
-        window.addEventListener('npc-fetched', this.npcFetchedFinishedListener.bind(this));
+        EventEmitter.on('npc-fetched', this.npcFetchedFinishedListener.bind(this));
+        EventEmitter.emit('fetch-npc', { enemyID: this.enemyID, npcType: this.npcType });
     };
 
     npcFetchedFinishedListener(e) {
-        if (this.enemyID !== e.detail.enemyID) return;
-        console.log(e.detail, "NPC Fetched");
-        this.ascean = e.detail.game;
-        this.health = e.detail.combat.attributes.healthTotal;
-        this.combatStats = e.detail.combat;
+        if (this.enemyID !== e.enemyID) return;
+        console.log(e, "NPC Fetched");
+        this.ascean = e.game;
+        this.health = e.combat.attributes.healthTotal;
+        this.combatStats = e.combat;
         this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health);
-        window.removeEventListener('npc-fetched', this.npcFetchedFinishedListener);
+        EventEmitter.off('npc-fetched', this.npcFetchedFinishedListener.bind(this));
     };
 
     npcCollision = (npcSensor) => {

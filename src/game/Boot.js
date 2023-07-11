@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import EventEmitter from "./EventEmitter";
 
 export default class Boot extends Phaser.Scene {
     constructor() {
@@ -15,25 +16,37 @@ export default class Boot extends Phaser.Scene {
     preload() {};
     
     create() {
-        window.addEventListener('get-ascean', this.asceanFinishedEventListener);
-        window.addEventListener('get-enemy', this.enemyFinishedEventListener);
-        window.addEventListener('get-combat-data', this.stateFinishedEventListener);
-        window.addEventListener('get-game-data', this.gameStateFinishedEventListener);
-        window.addEventListener('send-assets', this.assetsFinishedEventListener);
-        const sendAssets = new CustomEvent('retrieve-assets');
-        const getAscean = new CustomEvent('request-ascean');
-        const getEnemy = new CustomEvent('request-enemy');
-        const getState = new CustomEvent('request-combat-data');
-        const getGameData = new CustomEvent('request-game-data');
-        window.dispatchEvent(sendAssets);
-        window.dispatchEvent(getAscean);
-        window.dispatchEvent(getEnemy);
-        window.dispatchEvent(getState);
-        window.dispatchEvent(getGameData);
+        // window.addEventListener('get-ascean', this.asceanFinishedEventListener);
+        // window.addEventListener('get-enemy', this.enemyFinishedEventListener);
+        // window.addEventListener('get-combat-data', this.stateOn);
+        // window.addEventListener('get-game-data', this.gameStateOn);
+        // window.addEventListener('send-assets', this.assetsOn);
+        // const sendAssets = new CustomEvent('retrieve-assets');
+        // const getAscean = new CustomEvent('request-ascean');
+        // const getEnemy = new CustomEvent('request-enemy');
+        // const getState = new CustomEvent('request-combat-data');
+        // const getGameData = new CustomEvent('request-game-data');
+        // window.dispatchEvent(sendAssets);
+        // window.dispatchEvent(getAscean);
+        // window.dispatchEvent(getEnemy);
+        // window.dispatchEvent(getState);
+        // window.dispatchEvent(getGameData);
+        // EventEmitter.on('get-enemy', this.enemyFinishedEventListener);
+        // EventEmitter.emit('request-enemy');
+        console.log(EventEmitter, "Boot JS EVENTS")
+        EventEmitter.once('get-ascean', this.asceanOn);
+        EventEmitter.once('get-combat-data', this.stateOn);
+        EventEmitter.once('get-game-data', this.gameStateOn);
+        EventEmitter.once('send-assets', this.assetsOn);
+        EventEmitter.emit('retrieve-assets');
+        EventEmitter.emit('request-ascean');
+        EventEmitter.emit('request-combat-data');
+        EventEmitter.emit('request-game-data');
+
         this.scene.start('Preload', {
             gameData: {
                 ascean: this.ascean,
-                enemy: this.enemy,
+                // enemy: this.enemy,
                 state: this.state,
                 gameState: this.gameState,
                 assets: this.assets,
@@ -41,28 +54,20 @@ export default class Boot extends Phaser.Scene {
         });
     };
 
-    assetsFinishedEventListener = (e) => {
-        this.assets = e.detail;
-        window.removeEventListener('send-assets', this.assetsFinishedEventListener);
+    assetsOn = (e) => {
+        console.log(e, "Boot JS ASSETS")
+        this.assets = e;
     };
 
-    asceanFinishedEventListener = (e) => {
-        this.ascean = e.detail;
-        window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
+    asceanOn = (e) => {
+        this.ascean = e;
     };
 
-    enemyFinishedEventListener = (e) => {
-        this.enemy = e.detail;
-        window.removeEventListener('get-enemy', this.enemyFinishedEventListener);
+    stateOn = (e) => {
+        this.state = e;
     };
 
-    stateFinishedEventListener = (e) => {
-        this.state = e.detail;
-        window.removeEventListener('get-combat-data', this.stateFinishedEventListener);
-    };
-
-    gameStateFinishedEventListener = (e) => {
-        this.gameState = e.detail;
-        window.removeEventListener('get-game-data', this.gameStateFinishedEventListener);
+    gameStateOn = (e) => {
+        this.gameState = e;
     };
 };

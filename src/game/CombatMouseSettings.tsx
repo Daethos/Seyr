@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { usePhaserEvent } from './sceneComponents/HostScene';
+import { useKeyEvent } from './sceneComponents/HostScene';
 
 interface CombatMouseSettingsProps {
     setPrayerBlessing: (prayer: any) => void;
@@ -65,7 +65,6 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
         for (let i = 0; i < types.length; i++) {
             newTypes.push(
                 <div key={i} style={{ display: "inline" }}>
-                    {/* {types[i]}{' <--> '}{types[i] === types[types.length - 1] ? types[0] : types[i + 1]}{' | '} */}
                     {types[i]}{' <-> '}{types[i] === types[types.length - 1] ? types[0] : ''}
                 </div>
             );
@@ -73,8 +72,8 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
         return newTypes;
     };
 
-    usePhaserEvent('keydown', handleShiftKey);
-    usePhaserEvent('wheel', handleWheelRotation);
+    useKeyEvent('keydown', handleShiftKey);
+    useKeyEvent('wheel', handleWheelRotation);
 
     return (
         <div style={{ position: "absolute", width: "50%", height: "25%", textAlign: "center", left: "24.5%", top: "60%", background: 'transparent', zIndex: 99 }} onMouseDown={handleToggleScroll}>

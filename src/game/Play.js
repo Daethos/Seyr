@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import EasyStar from 'easystarjs';
 import Player from './Player';
 import Enemy from './Enemy';
 import NPC from './NPC';
@@ -9,6 +8,7 @@ import stick from './images/stick.png';
 import base from './images/base.png';
 import ParticleManager from './ParticleManager';
 import LootDrop from './LootDrop';
+import EventEmitter from './EventEmitter';
 
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -162,10 +162,7 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setStrokeStyle(2, 0x000000);
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
-        // this.minimapBorder.setPosition(this.minimap.x - 8, this.minimap.y - 3);
-        // this.minimapBorder.setSize(this.minimap.width + 4, this.minimap.height + 2);
         
-
         this.input.keyboard.on('keydown-Z', () => {
             if (this.minimap.visible) {
                 this.minimap.visible = false;
@@ -184,19 +181,18 @@ export default class Play extends Phaser.Scene {
     };
 
     enemyStateListener = () => {
-        window.addEventListener('aggressive-enemy', (e) => {
+        EventEmitter.on('aggressive-enemy', (e) => {
             this.enemies.forEach(enemy => {
-                if (enemy.enemyID === e.detail.id) {
-                    enemy.isAggressive = e.detail.isAggressive;
+                if (enemy.enemyID === e.id) {
+                    enemy.isAggressive = e.isAggressive;
                 };
             });
         });
     };
 
     enemyLootDropListener = () => { 
-        window.addEventListener('enemyLootDrop', (e) => {
-            console.log(e.detail, "e From Loot Drops");
-            e.detail.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID:e.detail.enemyID, drop: drop })));
+        EventEmitter.on('enemyLootDrop', (e) => {
+            e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID:e.enemyID, drop: drop })));
         });
     };
 
@@ -237,80 +233,61 @@ export default class Play extends Phaser.Scene {
     };
 
     clearNonAggressiveEnemy = async () => {
-        const clear = new CustomEvent('clear-non-aggressive-enemy');
-        window.dispatchEvent(clear);
+        EventEmitter.emit('clear-non-aggressive-enemy');
     };
 
     clearNPC = async () => {
-        const clear = new CustomEvent('clear-npc');
-        window.dispatchEvent(clear);
-        // window.removeEventListener('clear-npc', this.clearNPC); 
+        EventEmitter.emit('clear-npc');
     };
 
     setupEnemy = async (data) => {
-        const setup = new CustomEvent('setup-enemy', { detail: data });
-        window.dispatchEvent(setup);
+        EventEmitter.emit('setup-enemy', data);
         this.focus = data;
     };
 
     setupNPC = async (data) => {
-        const setup = new CustomEvent('setup-npc', { detail: data });
-        window.dispatchEvent(setup);
+        EventEmitter.emit('setup-npc', data);
         this.focus = data;
     };
 
     combatEngaged = async (engagement) => {
-        console.log(engagement, "Combat Engagement");
         if (engagement) { this.combat = true; } else { this.combat = false; };
-        const combatEngaged = new CustomEvent('combat-engaged', { detail: engagement });
-        window.dispatchEvent(combatEngaged);
+        EventEmitter.emit('combat-engaged', engagement);
     };
 
     showDialog = async (dialog) => {
-        console.log(`Showing Dialog: ${dialog}`);
-        const show = new CustomEvent('show-dialog', { detail: dialog });
-        window.dispatchEvent(show);
+        EventEmitter.emit('show-dialog', dialog);
     };
 
     stalwart = async (update) => {
-        const stalwart = new CustomEvent('update-stalwart', { detail: update });
-        window.dispatchEvent(stalwart);
+        EventEmitter.emit('update-stalwart', update);
     };
 
-    createStateListener = async function() { 
-        window.addEventListener('update-combat-data', (e) => {
-            this.state = e.detail;
+    createStateListener = async () => { // Was window.addEventListener()
+        EventEmitter.on('update-combat-data', (e) => {
+            this.state = e;
         });
 
-        window.addEventListener('update-game-data', (e) => {
-            this.gameState = e.detail;
+        EventEmitter.on('update-game-data', (e) => {
+            this.gameState = e;
         });
     };
 
     staminaListener = async () => {
-        window.addEventListener('updated-stamina', (e) => {
-            this.player.stamina = e.detail;
+        EventEmitter.on('updated-stamina', (e) => {
+            this.player.stamina = e;
         });
     };
 
     sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
         if (!currentTarget) {
             const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state: this.state };
-            const sendAction = new CustomEvent('update-enemy-action', { detail: data });
-            window.dispatchEvent(sendAction);
+            EventEmitter.emit('update-enemy-action', data);
         } else {
             if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
-                console.log(this.state.action, "Action To Reset");
-                console.log(`%c --- ERROR --- Player Action Issue, Live Action Recorded w/o Action Success --- ERROR ---`, 'color: black, font-size: 12px');
                 const actionReset = async () => {
-                    console.log(`Resetting ${this.state.action}`);
                     this.state.action = '';
-                    console.log(`Action Reset To '${this.state.action}', Enemy Action Sent`);
                     this.sendStateActionListener();
-                    // await this.setState('action', '').then(() => {
-                    //     console.log(`Action Reset To '${this.state.action}', Enemy Action Sent`)
-                    //     this.sendStateActionListener();
-                    // });
                 };
                 await actionReset();
             } else {
@@ -324,21 +301,18 @@ export default class Play extends Phaser.Scene {
             console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
             return; 
         };
-        const sendState = new CustomEvent('update-state-action', { detail: this.state });
-        window.dispatchEvent(sendState);
+        EventEmitter.emit('update-state-action', this.state);
     };
 
     sendStateSpecialListener = async (special) => {
         switch (special) {
             case 'invoke':
-                const sendInvoke = new CustomEvent('update-state-invoke', { detail: this.state });
-                window.dispatchEvent(sendInvoke);
+                EventEmitter.emit('update-state-invoke', this.state);
                 break;
             case 'consume':
                 this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
                 this.state.prayerSacrificeName = this.state.playerEffects[0].name;
-                const sendConsume = new CustomEvent('update-state-consume', { detail: this.state });
-                window.dispatchEvent(sendConsume);
+                EventEmitter.emit('update-state-consume', this.state);
                 break;
             default:
                 break;
@@ -348,24 +322,19 @@ export default class Play extends Phaser.Scene {
     checkStamina = (value) => {
         switch (value) {
             case 'attack':
-                const stamina = new CustomEvent('update-stamina', { detail: 25 });
-                window.dispatchEvent(stamina);
+                EventEmitter.emit('update-stamina', 25);
                 break;
             case 'counter':
-                const counterStamina = new CustomEvent('update-stamina', { detail: 15 });
-                window.dispatchEvent(counterStamina);
+                EventEmitter.emit('update-stamina', 10);
                 break;
             case 'posture':
-                const postureStamina = new CustomEvent('update-stamina', { detail: 15 });
-                window.dispatchEvent(postureStamina);
+                EventEmitter.emit('update-stamina', 15);
                 break;
             case 'roll':
-                const rollStamina = new CustomEvent('update-stamina', { detail: 15 });
-                window.dispatchEvent(rollStamina);
+                EventEmitter.emit('update-stamina', 15);
                 break;
             case 'dodge':
-                const dodgeStamina = new CustomEvent('update-stamina', { detail: 15 });
-                window.dispatchEvent(dodgeStamina);
+                EventEmitter.emit('update-stamina', 15);
                 break;
             default:
                 break;
@@ -373,18 +342,15 @@ export default class Play extends Phaser.Scene {
     };
 
     drinkFlask = async () => {
-        const drinkFlask = new CustomEvent('drink-firewater');
-        window.dispatchEvent(drinkFlask);
+        EventEmitter.emit('drink-firewater');
     };
 
     setState = (key, value) => {
-        const state = new CustomEvent('update-state', { detail: { key, value } });
-        window.dispatchEvent(state);
+        EventEmitter.emit('update-state', { key, value });
         if (key === 'action') this.checkStamina(value);
     };
 
     setStateAdd = (key, value) => { // Was Async
-        console.log("Adding: " + key + " to " + value);
         this.state[key] += value;
     };
 
@@ -456,8 +422,7 @@ export default class Play extends Phaser.Scene {
             callback: () => {
                 if (this.scene.isPaused()) return;
                 this.combatTime += 1;
-                const combatTimer = new CustomEvent('update-combat-timer', { detail: this.combatTime });
-                window.dispatchEvent(combatTimer);
+                EventEmitter.emit('update-combat-timer', this.combatTime);
             },
             callbackScope: this,
             loop: true
@@ -469,8 +434,7 @@ export default class Play extends Phaser.Scene {
         this.combatTimer.destroy();
         this.combatTimer = null;
         this.combatTime = 0;
-        const resetTimer = new CustomEvent('update-combat-timer', { detail: this.combatTime });
-        window.dispatchEvent(resetTimer);
+        EventEmitter.emit('update-combat-timer', this.combatTime);
     };
 
     update() {

@@ -17,6 +17,7 @@ import playerAttacksPNG from './images/player_attacks.png';
 import playerAttacksJSON from './images/player_attacks_atlas.json';
 import playerAttacksAnim from './images/player_attacks_anim.json'; 
 import { v4 as uuidv4 } from 'uuid';
+import EventEmitter from "./EventEmitter";
 
 export default class Enemy extends Entity {
 
@@ -67,7 +68,6 @@ export default class Enemy extends Entity {
             .addState(States.EVADE, {
                 onEnter: this.onEvasionEnter.bind(this),
                 onUpdate: this.onEvasionUpdate.bind(this),
-                onExit: this.onEvasionExit.bind(this),
             })
             .addState(States.LEASH, {
                 onEnter: this.onLeashEnter.bind(this),
@@ -248,23 +248,24 @@ export default class Enemy extends Entity {
     };
 
     createEnemy() {
-        const fetch = new CustomEvent('fetch-enemy', { detail: { enemyID: this.enemyID } });
-        window.dispatchEvent(fetch); 
-        window.addEventListener('enemy-fetched', this.enemyFetchedFinishedListener.bind(this));
+        const fetch = { enemyID: this.enemyID };
+        EventEmitter.emit('fetch-enemy', fetch);
+        EventEmitter.on('enemy-fetched', this.enemyFetchedOn.bind(this));
     };
 
-    enemyFetchedFinishedListener(e) {
-        if (this.enemyID !== e.detail.enemyID) return;
-        this.ascean = e.detail.game;
-        this.health = e.detail.game.health.total;
-        this.combatStats = e.detail.combat; 
-        this.weapons = [e.detail.combat.combat_weapon_one, e.detail.combat.combat_weapon_two, e.detail.combat.combat_weapon_three];
-        const weaponName = e.detail.game.weapon_one.imgURL.split('/')[2].split('.')[0];
+    enemyFetchedOn(e) {
+        if (this.enemyID !== e.enemyID) return;
+        console.log(e, "Enemy Fetched");
+        this.ascean = e.game;
+        this.health = e.game.health.total;
+        this.combatStats = e.combat; 
+        this.weapons = [e.combat.combat_weapon_one, e.combat.combat_weapon_two, e.combat.combat_weapon_three];
+        const weaponName = e.game.weapon_one.imgURL.split('/')[2].split('.')[0];
         
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, weaponName);
-        this.currentWeapon = e.detail.game.weapon_one;
-        this.currentDamageType = e.detail.game.weapon_one.damage_type[0].toLowerCase();
-        if (e.detail.game.weapon_one.grip === 'Two Hand') {
+        this.currentWeapon = e.game.weapon_one;
+        this.currentDamageType = e.game.weapon_one.damage_type[0].toLowerCase();
+        if (e.game.weapon_one.grip === 'Two Hand') {
             this.spriteWeapon.setScale(0.65);
         } else {
             this.spriteWeapon.setScale(0.5);
@@ -273,7 +274,7 @@ export default class Enemy extends Entity {
         this.scene.add.existing(this.spriteWeapon);
         this.spriteWeapon.setAngle(-195);
 
-        const shieldName = e.detail.game.shield.imgURL.split('/')[2].split('.')[0];
+        const shieldName = e.game.shield.imgURL.split('/')[2].split('.')[0];
 
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
         this.spriteShield.setScale(0.6);
@@ -283,8 +284,7 @@ export default class Enemy extends Entity {
 
         this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health);
         this.checkMeleeOrRanged(this.ascean.weapon_one);
-
-        window.removeEventListener('enemy-fetched', this.enemyFetchedFinishedListener);
+        EventEmitter.off('enemy-fetched', this.enemyFetchedOn.bind(this));
     };
 
     weaponSprite(weapon) {
@@ -292,48 +292,48 @@ export default class Enemy extends Entity {
     };
  
     enemyStateListener() {
-        window.addEventListener('update-combat', (e) => {
-            if (this.enemyID !== e.detail.enemyID) return;
-            this.combatData = e.detail;
-            this.weapons = e.detail.computer_weapons;
-            if (this.health > e.detail.new_computer_health) { 
-                let damage = Math.round(this.health - e.detail.new_computer_health);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.detail.critical_success);
+        EventEmitter.on('update-combat', (e) => {
+            if (this.enemyID !== e.enemyID) return;
+            this.combatData = e;
+            this.weapons = e.computer_weapons;
+            if (this.health > e.new_computer_health) { 
+                let damage = Math.round(this.health - e.new_computer_health);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.critical_success);
                 this.stateMachine.setState(States.HURT);
                 if (this.isStunned) this.isStunned = false;
             };
-            if (this.currentWeapon._id !== e.detail.computer_weapons[0]._id) this.currentWeapon = e.detail.computer_weapons[0];
-            if (this.currentDamageType !== e.detail.computer_damage_type.toLowerCase()) this.currentDamageType = e.detail.computer_damage_type.toLowerCase();
-            if (this.health < e.detail.new_computer_health) {
-                let heal = Math.round(e.detail.new_computer_health - this.health);
+            if (this.currentWeapon._id !== e.computer_weapons[0]._id) this.currentWeapon = e.computer_weapons[0];
+            if (this.currentDamageType !== e.computer_damage_type.toLowerCase()) this.currentDamageType = e.computer_damage_type.toLowerCase();
+            if (this.health < e.new_computer_health) {
+                let heal = Math.round(e.new_computer_health - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
-            if (e.detail.counter_success) {
+            if (e.counter_success) {
                 console.log("Player Counter Success, Enemy Is Now Stunned");
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect');
                 this.isStunned = true;
             };
-            this.health = e.detail.new_computer_health;
+            this.health = e.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
-            if (e.detail.new_computer_health <= 0) {
+            if (e.new_computer_health <= 0) {
                 // this.stateMachine.setState(States.DEATH);
                 this.stateMachine.setState(States.DEFEATED);
             };
-            if (e.detail.new_player_health <= 0) {
+            if (e.new_player_health <= 0) {
                 if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
                 this.inCombat = false;
                 this.attacking = null;
                 this.isTriumphant = true;
                 this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
             };
-            this.checkMeleeOrRanged(e.detail.computer_weapons?.[0]);
+            this.checkMeleeOrRanged(e.computer_weapons?.[0]);
         });
 
-        window.addEventListener('update-combat-data', (e) => {
-            if (this.enemyID !== e.detail.enemyID) return; 
-            this.health = e.detail.new_computer_health;
+        EventEmitter.on('update-combat-data', (e) => {
+            if (this.enemyID !== e.enemyID) return; 
+            this.health = e.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
-            if (e.detail.new_computer_health <= 0) {
+            if (e.new_computer_health <= 0) {
                 // this.stateMachine.setState(States.DEATH);
                 this.stateMachine.setState(States.DEFEATED);
             };
@@ -453,7 +453,6 @@ export default class Enemy extends Entity {
         
     };
     onAwarenessExit = () => {
-        console.log("No longer Aware of Player")
         this.anims.stop('player_idle');
         this.scene.showDialog(false);
     };
@@ -475,9 +474,7 @@ export default class Enemy extends Entity {
                     this.pathDirection.subtract(this.position);
                     this.pathDirection.normalize();
                     const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
-                    console.log(distanceToNextPoint, "Distance to Next Point");
                     if (distanceToNextPoint < 10) {
-                        console.log("Enemy Reached Next Point");
                         this.path.shift();
                     };
                 };
@@ -491,7 +488,6 @@ export default class Enemy extends Entity {
         const direction = this.attacking.position.subtract(this.position);
         const distance = direction.length();
         if ( Math.abs(this.originPoint.x - this.position.x) > 350 * rangeMultiplier || Math.abs(this.originPoint.y - this.position.y) > 400 * rangeMultiplier || !this.inCombat || distance > 500 * rangeMultiplier ) {
-            console.log("Chase transitioning to Leash");
             this.stateMachine.setState(States.LEASH);
             return;
         };  
@@ -504,7 +500,6 @@ export default class Enemy extends Entity {
                 this.setVelocity(direction.x * 2.5, direction.y * 2.5);
             };
         } else {
-            console.log("Enemy Transitioning to Attacking Player");
             this.stateMachine.setState(States.COMBAT);
         };
     }; 
@@ -554,10 +549,7 @@ export default class Enemy extends Entity {
             this.setVelocityY(-3); // Was 5
         };
         if (!this.isDodging && !this.isRolling) this.evaluateCombatDistance();
-    };
-    onEvasionExit = () => {
-        console.log("Exiting Evasion");
-    };
+    }; 
 
     onAttackEnter = () => {
         this.isAttacking = true;
@@ -694,7 +686,6 @@ export default class Enemy extends Entity {
 
     enemyActionSuccess = () => {
         if (this.scene.state.computer_action === '') return;
-        // this.scene.sendStateActionListener();
         this.scene.sendEnemyActionListener(this.enemyID, this.ascean, this.currentDamageType, this.combatStats, this.weapons, this.health, { action: this.currentAction, counter: this.counterAction }, this.isCurrentTarget);
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
@@ -720,20 +711,10 @@ export default class Enemy extends Entity {
         const distanceY = Math.abs(direction.y);
         const rangeMultiplier = this.isRanged ? 3 : 1;
         
-        // ============================================= Stunned ============================================= \\
-
         if (this.isStunned) {
             this.setVelocity(0);
-
-        // ============================================= Chasing ============================================= \\
-
         } else if (direction.length() >= 175 * rangeMultiplier) { // > 525
-
-            console.log("Enemy Transitioning from Attacking to Chasing Player");
             this.stateMachine.setState(States.CHASE);
-
-        // ============================================= Ranged ============================================= \\
-
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (distanceY > 10) {
@@ -758,9 +739,6 @@ export default class Enemy extends Entity {
                 direction.normalize();
                 this.setVelocityY(direction.y * 2.5);
             };
-
-        // ============================================= Melee ============================================= \\
-
         } else { // Melee
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (direction.length() > 60) { 

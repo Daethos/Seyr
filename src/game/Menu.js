@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import NewText from './NewText.js';
+import EventEmitter from "./EventEmitter.js";
 
 export default class Menu extends Phaser.Scene {
     constructor() {
@@ -53,10 +54,10 @@ export default class Menu extends Phaser.Scene {
         const border = this.add.graphics();
         border.lineStyle(3, 0xFDF6D8, 1);
         border.strokeRect(
-            text.x - text.width * text.originX - 1.5, // Subtract half of the border width and the x origin from the x position
-            text.y - text.height * text.originY - 1.5, // Subtract half of the border width and the y origin from the y position
-            text.width + 3, // Add the border width to the width of the text
-            text.height + 3 // Add the border width to the height of the text
+            text.x - text.width * text.originX - 1.5, 
+            text.y - text.height * text.originY - 1.5, 
+            text.width + 3,
+            text.height + 3 
           );
           
         this.add.existing(border);
@@ -83,7 +84,6 @@ export default class Menu extends Phaser.Scene {
 
     goPlay() {
         this.scene.start('Play', { gameData: this.gameData }); 
-        const launchGame = new CustomEvent('launch-game', { detail: true });
-        window.dispatchEvent(launchGame);
+        EventEmitter.emit('launch-game', true);
     };
 };

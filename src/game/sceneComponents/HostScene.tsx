@@ -1,8 +1,7 @@
+import '../PhaserGame.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Phaser from "phaser";
-import '../PhaserGame.css'
-import Modal from 'react-bootstrap/Modal';
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
 import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin.js';
@@ -17,11 +16,9 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as gameAPI from '../../utils/gameApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
-import DialogBox from '../DialogBox';
 import Button from 'react-bootstrap/Button';
-import PhaserInventoryBag from '../PhaserInventoryBag';
 import { GAME_ACTIONS, NPC } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatData, initialCombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
+import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../CombatMouseSettings';
 import CombatUI from '../CombatUI';
@@ -32,12 +29,22 @@ import StoryJournal from '../../components/GameCompiler/StoryJournal';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects'; 
 import { LootDropUI } from '../LootDropUI';
 import { Merchant } from '../../components/GameCompiler/NPCs';
-import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/Dialog';
+import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import { StoryDialog } from '../StoryDialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
+import EventEmitter from '../EventEmitter';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
+        EventEmitter.on(event, callback);
+        return () => {
+            EventEmitter.off(event, callback);
+        };
+    }, [event, callback]);
+}; 
+
+export const useKeyEvent = (event: string, callback: any) => {
+    useEffect(() => { 
         const eventListener = (event: Event) => callback(event);
         window.addEventListener(event, eventListener);
         return () => {
@@ -65,7 +72,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const [pauseState, setPauseState] = useState<boolean>(false);
     const [muteState, setMuteState] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [combatHud, setCombatHud] = useState<boolean>(false);
     const [dialogTag, setDialogTag] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
     const [asceanViews, setAsceanViews] = useState<string>('Character');
@@ -125,7 +131,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
                 'VirtualJoysticks/plugin/src/Button.js',
                 'VirtualJoysticks/plugin/src/DPad.js',
             ],
-        },
+        }, 
         backgroundColor: 'transparent',
     });
  
@@ -141,8 +147,9 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         if (staminaPercentage < 100) {
             const timer = setTimeout(() => {
                 setStaminaPercentage(staminaPercentage + (state.player_attributes.stamina / 100));
-                const updatedStamina = new CustomEvent('updated-stamina', { detail: Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina) });
-                window.dispatchEvent(updatedStamina);
+                // const updatedStamina = new CustomEvent('updated-stamina', { detail: Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina) });
+                // window.dispatchEvent(updatedStamina);
+                EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina));
             }, 200 - state.player_attributes.stamina);
 
             return () => {
@@ -164,8 +171,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     }, [asceanID]);
 
-
-    const getAsceanLeveled = async () => {
+    const getAsceanLeveled = async (): Promise<void> => {
         try {
             const firstResponse = await asceanAPI.getCleanAscean(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_LEVEL_UP, payload: firstResponse.data });
@@ -179,7 +185,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
     
-    const levelUpAscean = async (vaEsai: any) => {
+    const levelUpAscean = async (vaEsai: any): Promise<void> => {
         try {
             let response = await asceanAPI.levelUp(vaEsai); 
             setAsceanState({
@@ -203,48 +209,52 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const retrieveAssets = async () => {
-        const assetPackage = new CustomEvent('send-assets', {
-            detail: assets
-        });
-        window.dispatchEvent(assetPackage);
+    const retrieveAssets = async (): Promise<void> => {
+        // const assetPackage = new CustomEvent('send-assets', {
+        //     detail: assets
+        // });
+        // window.dispatchEvent(assetPackage);
+        console.log(assets, 'Retrieving Assets')
+        EventEmitter.emit('send-assets', assets);
     };
 
-    const sendEnemyData = async () => { 
-        const enemyData = new CustomEvent('get-enemy', {
-            detail: state.computer
-        });
-        window.dispatchEvent(enemyData);
+    const sendEnemyData = async (): Promise<void> => { 
+        // const enemyData = new CustomEvent('get-enemy', {
+        //     detail: state.computer
+        // });
+        // window.dispatchEvent(enemyData);
+        EventEmitter.emit('get-enemy', state.computer);
     };
 
-    const sendAscean = async () => {
-        const asceanData = new CustomEvent('get-ascean', {
-            detail: state.player
-        });
-        window.dispatchEvent(asceanData);
+    const sendAscean = async (): Promise<void> => {
+        // const asceanData = new CustomEvent('get-ascean', {
+        //     detail: state.player
+        // });
+        // window.dispatchEvent(asceanData);
+        EventEmitter.emit('get-ascean', state.player);
     };
 
-    const sendCombatData = async () => {
-        const combatData = new CustomEvent('get-combat-data', {
-            detail: state
-        });
-        window.dispatchEvent(combatData);
+    const sendCombatData = async (): Promise<void> => {
+        // const combatData = new CustomEvent('get-combat-data', {
+        //     detail: state
+        // });
+        // window.dispatchEvent(combatData);
+        EventEmitter.emit('get-combat-data', state);
     };
 
-    const sendGameData = async () => {
-        const gameData = new CustomEvent('get-game-data', {
-            detail: gameState
-        });
-        window.dispatchEvent(gameData);
+    const sendGameData = async (): Promise<void> => {
+        // const gameData = new CustomEvent('get-game-data', {
+        //     detail: gameState
+        // });
+        // window.dispatchEvent(gameData);
+        EventEmitter.emit('get-game-data', gameState);
     };
 
-    const updateCombatTimer = async (e: { detail: any; }) => {
-        dispatch({ type: ACTIONS.SET_COMBAT_TIMER, payload: e.detail });
-    };
+    const updateCombatTimer = async (e: number): Promise<void> => dispatch({ type: ACTIONS.SET_COMBAT_TIMER, payload: e });
 
-    const updateEnemyAction = async (e: { detail: any; }) => {
+    const updateEnemyAction = async (e: any): Promise<void> => {
         try {
-            const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e.detail;
+            const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e;
             console.log(enemy, "Enemy Action Data");
             let enemyData = {
                 ...state,
@@ -265,24 +275,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
                 computer_damage_type: damageType,
                 computerEffects: [],
             };
-                
-            // enemyData.computer = enemy;
-            // enemyData.computer_attributes = combatStats.attributes;
-            // enemyData.computer_weapon_one = combatStats.combat_weapon_one;
-            // enemyData.computer_weapon_two = combatStats.combat_weapon_two;
-            // enemyData.computer_weapon_three = combatStats.combat_weapon_three;
-            // enemyData.new_computer_health = health;
-            // enemyData.current_computer_health = health;
-            // enemyData.computer_health = combatStats.healthTotal;
-            // enemyData.computer_defense = combatStats.defense;
-            // enemyData.enemyID = '';
-            // enemyData.computer_weapons = weapons;
-            // enemyData.action = '';
-            // enemyData.computer_action = actionData.action;
-            // enemyData.computer_counter_guess = actionData.counter;
-            // enemyData.computer_damage_type = damageType;
-            // enemyData.computerEffects = [];
-            
             console.log(`%c Enemy Action: "${enemyData.computer_action} ${enemyData.computer_counter_guess}"`, 'color: red; font-size: 16px; font-weight: bold;` ');
             let response = await gameAPI.phaserAction(enemyData);
             console.log(response.data, "Enemy Action Response");
@@ -302,48 +294,50 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const updateState = async (e: { detail: any; }) => {
-        dispatch({ type: ACTIONS.SET_UPDATE_STATE, payload: e.detail });
-    };
-
-    const updateStateAction = async (e: { detail: any; }) => {
+    const updateState = async (e: any): Promise<void> => dispatch({ type: ACTIONS.SET_UPDATE_STATE, payload: e });
+    
+    const updateStateAction = async (e: CombatData): Promise<void> => {
         try {
-            const state = e.detail;
+            const state = e;
             await handleInitiate(state);
         } catch (err: any) {
             console.log(err.message, 'Error Updating State');
         };
     };
 
-    const updateStateInvoke = async (e: { detail: any; }) => {
+    const updateStateInvoke = async (e: CombatData): Promise<void> => {
         try {
-            const state = e.detail;
+            const state = e;
             await handleInstant(state);
         } catch (err: any) {
             console.log(err.message, 'Error Updating State');
         };
     };
 
-    const updateStateConsume = async (e: { detail: any; }) => {
+    const updateStateConsume = async (e: CombatData): Promise<void> => {
         try {
-            const state = e.detail;
+            const state = e;
             await handlePrayer(state);
         } catch (err: any) {
             console.log(err.message, 'Error Updating State');
         };
     };
 
-    const clearNonAggressiveEnemy = async (e: { detail: any; }) => {
+    const clearNonAggressiveEnemy = async (e: any): Promise<void> => {
         dispatch({ type: ACTIONS.CLEAR_NON_AGGRESSIVE_ENEMY, payload: null });
         gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
     };
 
-    const clearNpc = async (e: { detail: any; }) => {
+    const clearNpc = async (e: any): Promise<void> => {
         dispatch({ type: ACTIONS.CLEAR_NPC, payload: null });
         gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+        if (gameState.merchantEquipment.length > 0) {
+            await deleteEquipment(gameState.merchantEquipment);
+            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
+        };
     };
 
-    const fetchEnemy = async (e: { detail: any; }) => {
+    const fetchEnemy = async (e: any): Promise<void> => {
         const getOpponent = async () => {
             try { 
                 let minLevel: number = 0;
@@ -387,36 +381,37 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
                 return {
                     game: selectedOpponent.data,
                     combat: response.data.data,
-                    enemyID: e.detail.enemyID
+                    enemyID: e.enemyID
                 };
             } catch (err: any) {
                 console.log(err.message, 'Error retrieving Enemies')
             };
         };
         const opponent = await getOpponent();
-        const opponentData = new CustomEvent('enemy-fetched', {
-            detail: opponent
-        });
-        window.dispatchEvent(opponentData);
+        // const opponentData = new CustomEvent('enemy-fetched', {
+        //     detail: opponent
+        // });
+        // window.dispatchEvent(opponentData);
+        EventEmitter.emit('enemy-fetched', opponent);
     };
 
-    const setupEnemy = async (e: { detail: any; }) => {
-        console.log(e.detail, "This is the setup enemy function");
-        await getOpponentDialog(e.detail.enemy.name);
-        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
-        setAsceanState({ ...asceanState, 'opponent': e.detail.game.level });
-        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id, isAggressive: e.detail.isAggressive, startedAggressive: e.detail.startedAggressive, isDefeated: e.detail.isDefeated, isTriumphant: e.detail.isTriumphant } }); 
+    const setupEnemy = async (e: any): Promise<void> => {
+        console.log(e, "This is the setup enemy function");
+        await getOpponentDialog(e.enemy.name);
+        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.game });
+        setAsceanState({ ...asceanState, 'opponent': e.game.level });
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.enemy, health: e.health, enemyID: e.id, isAggressive: e.isAggressive, startedAggressive: e.startedAggressive, isDefeated: e.isDefeated, isTriumphant: e.isTriumphant } }); 
     };
 
-    const setupNpc = async (e: { detail: any; }) => {
-        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.detail.game });
-        const dialog = getNodesForNPC(npcIds[e.detail.type]);
-        console.log(dialog, "Dialog for NPC: ", e.detail.type);
-        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_NPC, payload: { enemy: e.detail.enemy, health: e.detail.health, enemyID: e.detail.id, npcType: e.detail.type } }); 
+    const setupNpc = async (e: any): Promise<void> => {
+        gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.game });
+        const dialog = getNodesForNPC(npcIds[e.type]);
+        console.log(dialog, "Dialog for NPC: ", e.type);
+        dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_NPC, payload: { enemy: e.enemy, health: e.health, enemyID: e.id, npcType: e.type } }); 
         gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: dialog });
     };
 
-    const getOpponentDialog = async (enemy: string) => {
+    const getOpponentDialog = async (enemy: string): Promise<void> => {
         try {
             const response = getNpcDialog(enemy);
             if (!response) return;
@@ -426,7 +421,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     }; 
 
-    const fetchNpc = async (e: any) => { 
+    const fetchNpc = async (e: any): Promise<void> => { 
         try {
             const CITY_OPTIONS = {
                 'Merchant-Alchemy': 'Alchemist',
@@ -440,17 +435,16 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
             };
             const getNPC = async () => {
                 let npc: NPC = Object.assign({}, Merchant);
-                npc.name = 'Traveling ' + CITY_OPTIONS[e.detail.npcType as keyof typeof CITY_OPTIONS];
+                npc.name = 'Traveling ' + CITY_OPTIONS[e.npcType as keyof typeof CITY_OPTIONS];
                 const response = await asceanAPI.getAnimalStats(npc);
                 return {
                     game: npc,
                     combat: response.data.data,
-                    enemyID: e.detail.enemyID
+                    enemyID: e.enemyID
                 };
             };
             const npc = await getNPC();
-            const npcData = new CustomEvent('npc-fetched', { detail: npc });
-            window.dispatchEvent(npcData);
+            EventEmitter.emit('npc-fetched', npc);
         } catch (err: any) {
             console.log("Error Getting an NPC");
         };
@@ -495,7 +489,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         handlePlayerLuckout();
     }, [state.player_luckout]);  
 
-    async function handlePlayerLuckout() {
+    async function handlePlayerLuckout(): Promise<void> {
         try {
             playReligion();
             await getOneLootDrop(state.computer.level);
@@ -506,7 +500,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const deleteEquipment = async (eqp: any) => {
+    const deleteEquipment = async (eqp: any): Promise<void> => {
         try {
             await eqpAPI.deleteEquipment(eqp);
         } catch (err) {
@@ -514,7 +508,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const getAsceanAndInventory = async () => {
+    const getAsceanAndInventory = async (): Promise<void> => {
         try {
             const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
@@ -529,7 +523,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const getOnlyInventory = async () => {
+    const getOnlyInventory = async (): Promise<void> => {
         try {
             const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
@@ -539,7 +533,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const drinkFirewater = async () => {
+    const drinkFirewater = async (): Promise<void> => {
         if (gameState.player?.firewater?.charges === 0) return;
         try {
             dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
@@ -551,7 +545,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const saveExperience = async () => {
+    const saveExperience = async (): Promise<void> => {
         console.log('Saving Experience!', gameState.saveExp, state.player_win);
         if (!gameState.saveExp) return;
         try {
@@ -596,7 +590,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
     
-    const gainExperience = async (data: CombatData) => {
+    const gainExperience = async (data: CombatData): Promise<void> => {
         try {
             let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
             if (data.prayerData.includes('Avarice')) opponentExp = Math.round(opponentExp * 1.2);
@@ -626,7 +620,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     }; 
     
-    const getOneLootDrop = async (level: number) => {
+    const getOneLootDrop = async (level: number): Promise<void> => {
         try {
             let response = await eqpAPI.getLootDrop(level);
             gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: response.data[0] });
@@ -634,21 +628,9 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
             if (roll <= 25) {
                 let second = await eqpAPI.getLootDrop(level);
                 gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: second.data[0] });
-                const dispatchLoot = new CustomEvent('enemyLootDrop', { 
-                    detail: {
-                        enemyID: state.enemyID,
-                        drops: [response.data[0], second.data[0]]
-                    } 
-                });
-                window.dispatchEvent(dispatchLoot);
+                EventEmitter.emit('enemyLootDrop', { enemyID: state.enemyID, drops: [response.data[0], second.data[0]] });
             } else {
-                const dispatchLoot = new CustomEvent('enemyLootDrop', { 
-                    detail: {
-                        enemyID: state.enemyID,
-                        drops: response.data
-                    } 
-                });
-                window.dispatchEvent(dispatchLoot);
+                EventEmitter.emit('enemyLootDrop', { enemyID: state.enemyID, drops: response.data });
             };
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
             // if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);
@@ -657,7 +639,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function soundEffects(effects: CombatData) {
+    async function soundEffects(effects: CombatData): Promise<void> {
         try {
             if (effects.realized_player_damage > 0) {
                 const soundEffectMap = {
@@ -717,7 +699,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function handlePlayerWin(combatData: CombatData) {
+    async function handlePlayerWin(combatData: CombatData): Promise<void> {
         try {
             playReligion();
             await gainExperience(combatData);
@@ -749,7 +731,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function handleComputerWin(combatData: CombatData) {
+    async function handleComputerWin(combatData: CombatData): Promise<void> {
         try {
             const statistic = {
                 asceanID: combatData.player._id,
@@ -796,7 +778,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function handleInitiate(combatData: CombatData) {
+    async function handleInitiate(combatData: CombatData): Promise<void> {
         try { 
             console.log(`%c Player: Action - ${combatData.action} Counter -${combatData.counter_guess} | Computer: Action - ${combatData.computer_action} Counter -${combatData.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
@@ -816,7 +798,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function handleInstant(state: CombatData) {
+    async function handleInstant(state: CombatData): Promise<void> {
         try {
             gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
             const response = await gameAPI.instantAction(state);
@@ -835,7 +817,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function handlePrayer(state: CombatData) {
+    async function handlePrayer(state: CombatData): Promise<void> {
         try {
             if (state.prayerSacrifice === '') return;
             const response = await gameAPI.consumePrayer(state);
@@ -854,7 +836,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function setWeaponOrder(weapon: any) {
+    async function setWeaponOrder(weapon: any): Promise<void> {
         try {
             const findWeapon = state.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
             const newWeaponOrder = async () => state?.weapons.sort((a: any, b: any) => {
@@ -868,7 +850,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function setDamageType(damageType: any) {
+    async function setDamageType(damageType: any): Promise<void> {
         try {    
             playWO();
             dispatch({ type: ACTIONS.SET_DAMAGE_TYPE, payload: damageType.target.value });
@@ -877,7 +859,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    async function setPrayerBlessing(prayer: any) {
+    async function setPrayerBlessing(prayer: any): Promise<void> {
         try {
             playWO();
             dispatch({ type: ACTIONS.SET_PRAYER_BLESSING, payload: prayer.target.value });
@@ -886,19 +868,17 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     }; 
 
-    const updateCombatListener = async (combatData: CombatData) => {
+    const updateCombatListener = async (combatData: CombatData): Promise<void> => {
         try {
-            const updateCombatData = new CustomEvent('update-combat-data', { detail: combatData });
-            window.dispatchEvent(updateCombatData);
+            EventEmitter.emit('update-combat-data', combatData);
         } catch (err: any) {
             console.log(err.message, 'Error Updating Combat Listener');
         };
     };
 
-    const updateCombat = async (combatData: CombatData) => {
+    const updateCombat = async (combatData: CombatData): Promise<void> => {
         try {
-            const updateCombat = new CustomEvent('update-combat', { detail: combatData });
-            window.dispatchEvent(updateCombat);
+            EventEmitter.emit('update-combat', combatData);
         } catch (err: any) {
             console.log(err.message, 'Error Updating Combat Listener');
         };
@@ -977,9 +957,9 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     }; 
 
-    const combatEngaged = async (e: { detail: any; }) => {
+    const combatEngaged = async (e: boolean) => {
         try {
-            if (e.detail) {
+            if (e) {
                 dispatch({ type: ACTIONS.SET_DUEL, payload: true });
             } else {
                 dispatch({ type: ACTIONS.CLEAR_DUEL, payload: false });
@@ -989,11 +969,11 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         }; 
     };
 
-    const launchGame = async (e: { detail: any; }) => setCurrentGame(e.detail);
-    const updateStamina = async (e: { detail: number }) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e.detail <= 0 ? 0 : prevPercentage - e.detail);
-    const updateStalwart = async (e: { detail: number }) => dispatch({ type: ACTIONS.SET_STALWART, payload: e.detail });
-    const interactingLoot = async (e: { detail: any }) => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e.detail }); 
-    const showDialog = async (e: { detail: any; }) => setDialogTag(e.detail);
+    const launchGame = async (e: boolean) => setCurrentGame(e);
+    const updateStamina = async (e: number) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
+    const updateStalwart = async (e: boolean) => dispatch({ type: ACTIONS.SET_STALWART, payload: e });
+    const interactingLoot = async (e: boolean) => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e }); 
+    const showDialog = async (e: boolean) => setDialogTag(e);
 
     // usePhaserEvent('resize', resizeGame);
     usePhaserEvent('retrieve-assets', retrieveAssets);
@@ -1010,7 +990,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     usePhaserEvent('dialog-box', createDialog);
     usePhaserEvent('show-dialog', showDialog);
     usePhaserEvent('interacting-loot', interactingLoot);
-    usePhaserEvent('keydown', toggleCombatHud);
+    useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
     usePhaserEvent('drink-firewater', drinkFirewater);

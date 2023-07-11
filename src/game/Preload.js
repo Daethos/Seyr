@@ -7,6 +7,7 @@ import ParticleManager from "./ParticleManager.js";
 import ascean_test from '../game/images/ascean_test.json';
 import AncientForestDecorative from '../game/images/AncientForestDecorative.png';
 import AncientForestMain from '../game/images/AncientForestMainLev.png';
+import EventEmitter from "./EventEmitter.js";
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -66,38 +67,25 @@ export default class Preload extends Phaser.Scene {
                 this.txt_file.destroy();
             },
             callbackScope: this
-        });
-        window.addEventListener('get-ascean', this.asceanFinishedEventListener);
-        window.addEventListener('get-enemy', this.enemyFinishedEventListener)
-        window.addEventListener('get-combat-data', this.stateFinishedEventListener);
-        window.addEventListener('get-game-data', this.gameStateFinishedEventListener);
-        const getAscean = new CustomEvent('request-ascean');
-        const getEnemy = new CustomEvent('request-enemy');
-        const getState = new CustomEvent('request-combat-data');
-        const getGameData = new CustomEvent('request-game-data');
-        window.dispatchEvent(getAscean);
-        window.dispatchEvent(getEnemy);
-        window.dispatchEvent(getState);
-        window.dispatchEvent(getGameData);
+        }); 
+        EventEmitter.once('get-ascean', this.asceanOnce);
+        EventEmitter.once('get-combat-data', this.stateOnce);    
+        EventEmitter.once('get-game-data', this.gameStateOnce);
+        EventEmitter.emit('request-ascean');
+        EventEmitter.emit('request-combat-data');
+        EventEmitter.emit('request-game-data');
     };
     
-    asceanFinishedEventListener = (e) => {
-        this.ascean = e.detail;
-        window.removeEventListener('get-ascean', this.asceanFinishedEventListener);
-    };
-    enemyFinishedEventListener = (e) => {
-        this.enemy = e.detail;
-        window.removeEventListener('get-enemy', this.enemyFinishedEventListener);
+    asceanOnce = (e) => {
+        this.ascean = e;
     };
 
-    stateFinishedEventListener = (e) => {
-        this.state = e.detail;
-        window.removeEventListener('get-combat-data', this.stateFinishedEventListener);
+    stateOnce = (e) => {
+        this.state = e;
     };
 
-    gameStateFinishedEventListener = (e) => {
-        this.gameState = e.detail;
-        window.removeEventListener('get-game-data', this.gameStateFinishedEventListener);
+    gameStateOnce = (e) => {
+        this.gameState = e;
     };
 
     createLoadingBar() {

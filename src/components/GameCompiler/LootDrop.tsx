@@ -5,6 +5,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
+import EventEmitter from '../../game/EventEmitter';
 interface Props {
     lootDrop: any;
     ascean: any;
@@ -25,8 +26,9 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
             if (story) {
                 gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
-                const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
-                window.dispatchEvent(storyLoot);
+                // const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
+                // window.dispatchEvent(storyLoot);
+                EventEmitter.emit('destroy-lootdrop', lootDrop._id);
             };
         } catch (err: any) {
             console.log(err.message, 'Error Saving Item to Inventory!');
@@ -41,8 +43,9 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
             gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
             if (story) {
                 gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
-                const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
-                window.dispatchEvent(storyLoot);
+                // const storyLoot = new CustomEvent('destroy-lootdrop', { detail: lootDrop._id });
+                // window.dispatchEvent(storyLoot);
+                EventEmitter.emit('destroy-lootdrop', lootDrop._id);
             };
         } catch (err: unknown) {
             console.log(err, 'Error Destroying Item!');
