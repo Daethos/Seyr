@@ -13,7 +13,7 @@ import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
-import LevelUpModal from '../../game/LevelUpModal';
+import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';

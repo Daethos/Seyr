@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import playerHealthbar from './images/player-healthbar.png';
-import playerPortrait from './images/player-portrait.png';
-import { CombatData } from '../components/GameCompiler/CombatStore';
-import { Equipment, GAME_ACTIONS, GameData } from '../components/GameCompiler/GameStore';
-import StatusEffects, { StatusEffect } from '../components/GameCompiler/StatusEffects';
+import playerHealthbar from '../images/player-healthbar.png';
+import playerPortrait from '../images/player-portrait.png';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
+import { Equipment, GAME_ACTIONS, GameData } from '../../components/GameCompiler/GameStore';
+import StatusEffects, { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 

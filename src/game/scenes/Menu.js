@@ -1,6 +1,6 @@
 import Phaser from "phaser";
-import NewText from './NewText.js';
-import EventEmitter from "./EventEmitter.js";
+import NewText from '../phaser/NewText';
+import EventEmitter from "../phaser/EventEmitter";
 
 export default class Menu extends Phaser.Scene {
     constructor() {

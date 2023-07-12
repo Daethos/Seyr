@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useKeyEvent } from './sceneComponents/HostScene';
+import { useKeyEvent } from '../scenes/HostScene';
 
 interface CombatMouseSettingsProps {
     setPrayerBlessing: (prayer: any) => void;

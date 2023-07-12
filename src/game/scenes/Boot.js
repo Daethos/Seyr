@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import EventEmitter from "./EventEmitter";
+import EventEmitter from "../phaser/EventEmitter";
 
 export default class Boot extends Phaser.Scene {
     constructor() {

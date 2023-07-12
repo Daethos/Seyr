@@ -13,7 +13,7 @@ app.use(cors());
 
 app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '100mb' }));
 
 app.use(express.static(path.join(__dirname, 'build'))); 
 app.use(require('./config/auth')); 

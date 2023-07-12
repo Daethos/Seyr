@@ -1,13 +1,13 @@
 import Phaser from "phaser";
-import NewText from './NewText.js' 
-import Player from "./Player.js";
-import Enemy from './Enemy.js';
-import Treasure from './Treasure.js';
-import ParticleManager from "./ParticleManager.js";
-import ascean_test from '../game/images/ascean_test.json';
-import AncientForestDecorative from '../game/images/AncientForestDecorative.png';
-import AncientForestMain from '../game/images/AncientForestMainLev.png';
-import EventEmitter from "./EventEmitter.js";
+import NewText from '../phaser/NewText' 
+import Player from "../entities/Player";
+import Enemy from '../entities/Enemy';
+import Treasure from '../matter/Treasure';
+import ParticleManager from "../phaser/ParticleManager";
+import ascean_test from '../images/ascean_test.json';
+import AncientForestDecorative from '../images/AncientForestDecorative.png';
+import AncientForestMain from '../images/AncientForestMainLev.png';
+import EventEmitter from "../phaser/EventEmitter";
 
 export default class Preload extends Phaser.Scene {
     constructor() {

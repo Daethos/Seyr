@@ -1,4 +1,4 @@
-import Inventory from '../components/GameCompiler/Inventory';
+import Inventory from '../../components/GameCompiler/Inventory';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
  
 interface IBProps {

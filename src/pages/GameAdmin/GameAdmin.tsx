@@ -16,7 +16,7 @@ import AsceanListItem from '../../components/GameCompiler/AsceanListItem';
 import AdminAscean from '../../components/GameCompiler/AdminAscean';
 import MerchantTable from '../../components/GameCompiler/MerchantTable';
 import { Enemy, GAME_ACTIONS, GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
-import LevelUpModal from '../../game/LevelUpModal';
+import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 import { MapStore, initialMapData } from '../../components/GameCompiler/WorldStore';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import EnemyDialogNodes from '../../components/GameCompiler/EnemyDialogNodes.json';

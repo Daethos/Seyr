@@ -1,23 +1,22 @@
 import Phaser from "phaser";
-import Entity, { screenShake, pauseGame } from "./Entity"; 
-import { worldToTile, tileToWorld } from "./Play";
-import StateMachine, { States } from "./StateMachine";
-import HealthBar from "./HealthBar";
-import ScrollingCombatText from "./ScrollingCombatText";
-import playerActionsOnePNG from './images/player_actions.png';
-import playerActionsOneJSON from './images/player_actions_atlas.json';
-import playerActionsOneAnim from './images/player_actions_anim.json';
-import playerActionsTwoPNG from './images/player_actions_two.png';
-import playerActionsTwoJSON from './images/player_actions_two_atlas.json';
-import playerActionsTwoAnim from './images/player_actions_two_anim.json';
-import playerActionsThreePNG from './images/player_actions_three.png';
-import playerActionsThreeJSON from './images/player_actions_three_atlas.json';
-import playerActionsThreeAnim from './images/player_actions_three_anim.json';
-import playerAttacksPNG from './images/player_attacks.png';
-import playerAttacksJSON from './images/player_attacks_atlas.json';
-import playerAttacksAnim from './images/player_attacks_anim.json'; 
+import Entity, { screenShake } from "./Entity"; 
+import StateMachine, { States } from "../phaser/StateMachine";
+import HealthBar from "../phaser/HealthBar";
+import ScrollingCombatText from "../phaser/ScrollingCombatText";
+import playerActionsOnePNG from '../images/player_actions.png';
+import playerActionsOneJSON from '../images/player_actions_atlas.json';
+import playerActionsOneAnim from '../images/player_actions_anim.json';
+import playerActionsTwoPNG from '../images/player_actions_two.png';
+import playerActionsTwoJSON from '../images/player_actions_two_atlas.json';
+import playerActionsTwoAnim from '../images/player_actions_two_anim.json';
+import playerActionsThreePNG from '../images/player_actions_three.png';
+import playerActionsThreeJSON from '../images/player_actions_three_atlas.json';
+import playerActionsThreeAnim from '../images/player_actions_three_anim.json';
+import playerAttacksPNG from '../images/player_attacks.png';
+import playerAttacksJSON from '../images/player_attacks_atlas.json';
+import playerAttacksAnim from '../images/player_attacks_anim.json'; 
 import { v4 as uuidv4 } from 'uuid';
-import EventEmitter from "./EventEmitter";
+import EventEmitter from "../phaser/EventEmitter";
 
 export default class Enemy extends Entity {
 

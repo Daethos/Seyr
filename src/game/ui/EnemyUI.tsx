@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import enemyHealthBar from './images/enemy-healthbar.png';
-import { CombatData } from '../components/GameCompiler/CombatStore';
-import { Equipment } from '../components/GameCompiler/GameStore';
-import StatusEffects, { StatusEffect } from '../components/GameCompiler/StatusEffects';
-import AsceanImageCard from '../components/AsceanImageCard/AsceanImageCard';
-import AsceanAttributeCompiler from '../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
+import enemyHealthBar from '../images/enemy-healthbar.png';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
+import { Equipment } from '../../components/GameCompiler/GameStore';
+import StatusEffects, { StatusEffect } from '../../components/GameCompiler/StatusEffects';
+import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
+import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'; 
-import { StatusEffect } from '../components/GameCompiler/StatusEffects';
-import CombatSettingModal from '../components/GameCompiler/CombatSettingModal';
-import { ACTIONS, CombatData } from '../components/GameCompiler/CombatStore';
-import { GameData, GAME_ACTIONS } from '../components/GameCompiler/GameStore';
+import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
+import CombatSettingModal from '../../components/GameCompiler/CombatSettingModal';
+import { ACTIONS, CombatData } from '../../components/GameCompiler/CombatStore';
+import { GameData, GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
 

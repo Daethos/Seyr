@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import * as asceanAPI from '../utils/asceanApi';
-import * as eqpAPI from '../utils/equipmentApi';
-import ToastAlert from '../components/ToastAlert/ToastAlert';
+import * as asceanAPI from '../../utils/asceanApi';
+import * as eqpAPI from '../../utils/equipmentApi';
+import ToastAlert from '../../components/ToastAlert/ToastAlert';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import MerchantTable from '../components/GameCompiler/MerchantTable';
-import Inventory from '../components/GameCompiler/Inventory';
-import { DialogNode, getNodesForNPC, npcIds, DialogNodeOption, getNodesForEnemy } from '../components/GameCompiler/DialogNode';
-import Currency from '../components/GameCompiler/Currency';
-import { ACTIONS, CombatData, shakeScreen } from '../components/GameCompiler/CombatStore';
-import { GAME_ACTIONS, GameData, Player, checkPlayerTrait, nameCheck } from '../components/GameCompiler/GameStore';
-import Typewriter from '../components/GameCompiler/Typewriter';
-import dialogWindow from '../game/images/dialog_window.png';
-import EventEmitter from './EventEmitter';
+import MerchantTable from '../../components/GameCompiler/MerchantTable';
+import Inventory from '../../components/GameCompiler/Inventory';
+import { DialogNode, getNodesForNPC, npcIds, DialogNodeOption, getNodesForEnemy } from '../../components/GameCompiler/DialogNode';
+import Currency from '../../components/GameCompiler/Currency';
+import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
+import { GAME_ACTIONS, GameData, Player, checkPlayerTrait, nameCheck } from '../../components/GameCompiler/GameStore';
+import Typewriter from '../../components/GameCompiler/Typewriter';
+import dialogWindow from '../images/dialog_window.png';
+import EventEmitter from '../phaser/EventEmitter';
 
 interface DialogOptionProps {
     option: DialogNodeOption;

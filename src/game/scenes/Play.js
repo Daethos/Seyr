@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
-import Player from './Player';
-import Enemy from './Enemy';
-import NPC from './NPC';
-import Treasure from './Treasure';
-import NewText from './NewText.js'
-import stick from './images/stick.png';
-import base from './images/base.png';
-import ParticleManager from './ParticleManager';
-import LootDrop from './LootDrop';
-import EventEmitter from './EventEmitter';
+import Player from '../entities/Player';
+import Enemy from '../entities/Enemy';
+import NPC from '../entities/NPC';
+import Treasure from '../matter/Treasure';
+import NewText from '../phaser/NewText'
+import stick from '../images/stick.png';
+import base from '../images/base.png';
+import ParticleManager from '../phaser/ParticleManager';
+import LootDrop from '../matter/LootDrop';
+import EventEmitter from '../phaser/EventEmitter';
 
 export default class Play extends Phaser.Scene {
     constructor() {

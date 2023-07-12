@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import * as asceanAPI from '../../utils/asceanApi';  
 import * as settingsAPI from '../../utils/settingsApi';
 import * as eqpAPI from '../../utils/equipmentApi';
-import HostScene from '../../game/sceneComponents/HostScene';
+import HostScene from '../../game/scenes/HostScene';
 import { GAME_ACTIONS, GameStore, initialGameData, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import userService from "../../utils/userService";

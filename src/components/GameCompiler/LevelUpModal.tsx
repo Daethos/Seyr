@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Mastery from '../components/AsceanBuilder/Mastery';
-import Attributes from './LevelUp/Attributes';
-import Faith from '../components/AsceanBuilder/Faith';
+import Mastery from '../AsceanBuilder/Mastery';
+import Attributes from './Attributes';
+import Faith from '../AsceanBuilder/Faith';
 
 interface Props {
     asceanState?: any;

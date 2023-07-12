@@ -1,8 +1,8 @@
-import Entity from "./Entity.js";
 import Phaser from "phaser";
-import TreasureChest from './images/treasure-chest.png';
-import TreasureChestJson from './images/treasure-chest_atlas.json';
-import EventEmitter from "./EventEmitter.js";
+import Entity from "../entities/Entity";
+import TreasureChest from '../images/treasure-chest.png';
+import TreasureChestJson from '../images/treasure-chest_atlas.json';
+import EventEmitter from "../phaser/EventEmitter";
 
 export default class LootDrop extends Entity {
     static preload(scene) {

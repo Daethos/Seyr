@@ -1,4 +1,4 @@
-import '../PhaserGame.css'
+import './PhaserGame.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Phaser from "phaser";
@@ -7,11 +7,11 @@ import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-p
 import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin.js';
 // @ts-ignore
 import { PhaserNavMeshPlugin } from 'phaser-navmesh';
-import Boot from '../Boot';
-import Preload from '../Preload';
-import Menu from '../Menu';
-import Play from '../Play';
-import StoryAscean from '../../components/GameCompiler/StoryAscean';
+import Boot from './Boot';
+import Preload from './Preload';
+import Menu from './Menu';
+import Play from './Play';
+import StoryAscean from '../ui/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as gameAPI from '../../utils/gameApi';
 import * as eqpAPI from '../../utils/equipmentApi';
@@ -20,19 +20,19 @@ import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS, NPC } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
-import CombatMouseSettings from '../CombatMouseSettings';
-import CombatUI from '../CombatUI';
-import EnemyUI from '../EnemyUI';
+import CombatMouseSettings from '../ui/CombatMouseSettings';
+import CombatUI from '../ui/CombatUI';
+import EnemyUI from '../ui/EnemyUI';
 import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import screenfull from 'screenfull';
 import StoryJournal from '../../components/GameCompiler/StoryJournal';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects'; 
-import { LootDropUI } from '../LootDropUI';
+import { LootDropUI } from '../ui/LootDropUI';
 import { Merchant } from '../../components/GameCompiler/NPCs';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
-import { StoryDialog } from '../StoryDialog';
+import { StoryDialog } from '../ui/StoryDialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
-import EventEmitter from '../EventEmitter';
+import EventEmitter from '../phaser/EventEmitter';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {

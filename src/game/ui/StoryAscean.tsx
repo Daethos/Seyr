@@ -1,20 +1,20 @@
-import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
-import Loading from '../Loading/Loading';
-import StoryHealthBar from './StoryHealthBar';
-import LevelUpModal from '../../game/LevelUpModal';
+import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
+import Loading from '../../components/Loading/Loading';
+import StoryHealthBar from '../../components/GameCompiler/StoryHealthBar';
+import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import ExperienceBar from './ExperienceBar';
+import ExperienceBar from '../../components/GameCompiler/ExperienceBar';
 import { useEffect, useState } from 'react';
-import PhaserInventoryBag from '../../game/PhaserInventoryBag';
-import { GAME_ACTIONS, GameData } from './GameStore';
+import PhaserInventoryBag from './PhaserInventoryBag';
+import { GAME_ACTIONS, GameData } from '../../components/GameCompiler/GameStore';
 import statPng from '../../game/images/newStats.png';
-import Inventory from './Inventory';
-import AsceanAttributeCompiler from '../AsceanAttributeCompiler/AsceanAttributeCompiler';
+import Inventory from '../../components/GameCompiler/Inventory';
+import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
 import * as settingsAPI from '../../utils/settingsApi';
 import * as asceanAPI from '../../utils/asceanApi';
 import { useNavigate } from 'react-router-dom';
-import Firewater from './Firewater';
+import Firewater from '../../components/GameCompiler/Firewater';
 
 interface Props {
     ascean: any;

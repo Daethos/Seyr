@@ -5,7 +5,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
-import EventEmitter from '../../game/EventEmitter';
+import EventEmitter from '../../game/phaser/EventEmitter';
 interface Props {
     lootDrop: any;
     ascean: any;

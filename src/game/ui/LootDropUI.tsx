@@ -1,6 +1,6 @@
-import LootDrop from '../components/GameCompiler/LootDrop';
-import { GAME_ACTIONS, GameData } from '../components/GameCompiler/GameStore';
-import { CombatData } from '../components/GameCompiler/CombatStore';
+import LootDrop from '../../components/GameCompiler/LootDrop';
+import { GAME_ACTIONS, GameData } from '../../components/GameCompiler/GameStore';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { useEffect, useState } from 'react';
 
 interface LootDropUIProps {
