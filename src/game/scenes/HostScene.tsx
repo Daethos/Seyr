@@ -608,7 +608,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
             gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
             // if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);
         } catch (err: any) {
-            console.log(err.message, 'Error Getting Loot Drop');
+            console.log(err, 'Error Getting Loot Drop');
         };
     };
 

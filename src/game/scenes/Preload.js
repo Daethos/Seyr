@@ -32,7 +32,7 @@ export default class Preload extends Phaser.Scene {
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         Player.preload(this);
         Enemy.preload(this);
-        Treasure.preload(this);
+        // Treasure.preload(this);
         ParticleManager.preload(this);
 
         this.load.tilemapTiledJSON('ascean_test', ascean_test);
