@@ -101,9 +101,9 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                     Crit Damage: {item?.critical_damage}x <br />
                     Roll Chance: {item?.roll}% <br />
                     { item?.influences && item?.influences?.length > 0 ? (
-                        <>Influence: {item?.influences?.[0]}<br /><br /></>
+                        <>Influence: {item?.influences?.[0]}<br /></>
                     ) : ( '' ) }
-                    <p style={{ color: getBorderStyle(item?.rarity) }}>
+                    <p style={{ color: getBorderStyle(item?.rarity), marginTop: "5%", fontSize: "16px" }}>
                         {item?.rarity}
                     </p>
                     { state.isStalwart ? (

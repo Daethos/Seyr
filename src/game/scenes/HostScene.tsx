@@ -208,7 +208,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     };
 
     const retrieveAssets = async (): Promise<void> => {
-        console.log(assets, 'Retrieving Assets')
         EventEmitter.emit('send-assets', assets);
     };
 

@@ -59,10 +59,6 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
     };
 
     useEffect(() => {
-        console.log(asceanState);
-    }, [asceanState]);
-
-    useEffect(() => {
         playerTraits();
     }, [ascean]);
 
@@ -256,7 +252,10 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
             case CHARACTERS.STATISTICS:
                 const highestDeity = Object.entries(ascean?.statistics?.combat?.deities as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
                 const highestPrayer = Object.entries(ascean?.statistics?.combat?.prayers as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
-                const highestMastery = Object.entries(ascean?.statistics?.mastery as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
+                let highestMastery = Object.entries(ascean?.statistics?.mastery as { [key: string]: number }).reduce((a, b) => a[1] > b[1] ? a : b);
+                if (highestMastery?.[1] === 0) {
+                    highestMastery = [ascean?.mastery, 0];
+                };
                 return (
                     <>
                         <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>Attacks</h6>
@@ -271,7 +270,6 @@ const StoryAscean = ({ ascean, state, dispatch, loading, asceanState, setAsceanS
                         Highest Prayer: <p style={{ color: 'gold', display: 'inline' }}>{highestPrayer[0].charAt(0).toUpperCase() + highestPrayer[0].slice(1)} - {highestPrayer[1]}</p><br />
                         Favored Deity: <p style={{ color: 'gold', display: 'inline' }}>{highestDeity[0]}</p><br />
                         Blessings: <p style={{ color: 'gold', display: 'inline' }}>{highestDeity[1]}</p>
-
                     </>
                 );
             case CHARACTERS.TRAITS:

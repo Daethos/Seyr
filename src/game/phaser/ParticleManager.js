@@ -1,4 +1,7 @@
 import Phaser from 'phaser';
+import arrowPNG from '../images/arrow_effect.png';
+import arrowJSON from '../images/arrow_effect_atlas.json';
+import arrowAnim from '../images/arrow_anim.json';
 import earthPNG from '../images/earth_effect.png';
 import earthJSON from '../images/earth_json.json';
 import earthAnim from '../images/earth_anim.json';
@@ -26,9 +29,6 @@ import righteousAnim from '../images/righteous_anim.json';
 import spookyPNG from '../images/spooky_effect.png';
 import spookyJSON from '../images/spooky_json.json';
 import spookyAnim from '../images/spooky_anim.json';
-import arrowPNG from '../images/arrow_effect.png';
-import arrowJSON from '../images/arrow_json.json';
-import arrowAnim from '../images/arrow_anim.json';
 import { v4 as uuidv4 } from 'uuid';
 
 class Particle {
@@ -56,7 +56,7 @@ class Particle {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [effectSensor],
             callback: (other) => {
-                if (other.gameObjectB && (other.gameObjectB.name === 'enemy' && player.name === 'player' || other.gameObjectB.name === 'player' && player.name === 'enemy')) {
+                if (other.gameObjectB && ((other.gameObjectB.name === 'enemy' && player.name === 'player') || (other.gameObjectB.name === 'player' && player.name === 'enemy'))) {
                     if (player.name === 'player') {
                         if (this.scene.state.action !== effect.action) {
                             console.log("Resetting Action To " + effect.action + " From " + this.scene.state.action + " Due to Collision Success For PLAYER");
@@ -122,6 +122,8 @@ class Particle {
 
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
+        scene.load.atlas('arrow_effect', arrowPNG, arrowJSON);
+        scene.load.animation('arrow_anim', arrowAnim);    
         scene.load.atlas('earth_effect', earthPNG, earthJSON);
         scene.load.animation('earth_anim', earthAnim);
         scene.load.atlas('fire_effect', firePNG, fireJSON);
@@ -140,8 +142,6 @@ export default class ParticleManager extends Phaser.Scene {
         scene.load.animation('righteous_anim', righteousAnim);
         scene.load.atlas('spooky_effect', spookyPNG, spookyJSON);
         scene.load.animation('spooky_anim', spookyAnim);
-        scene.load.atlas('arrow_effect', arrowPNG, arrowJSON);
-        scene.load.animation('arrow_anim', arrowAnim);    
     };
 
     constructor(scene) {
