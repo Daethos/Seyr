@@ -1,12 +1,13 @@
 import Entity from "../entities/Entity";
 import Phaser from "phaser";
 import TreasureChest from '../images/treasure-chest.png';
-import TreasureChestJson from '../images/treasure-chest_atlas.json';
+// import TreasureChestJson from '../images/treasure-chest_atlas.json';
 
 export default class Treasure extends Entity {
     static preload(scene) {
-        scene.load.atlas('treasures', TreasureChest, TreasureChestJson);
-        // scene.load.image('treasures', TreasureChest, { frameWidth: 32, frameHeight: 32 });
+        scene.load.image('treasures', TreasureChest, { frameWidth: 32, frameHeight: 32 });
+        // scene.load.atlas('treasures', TreasureChest, TreasureChestJson);
+        // scene.load.json('treasure', TreasureChestJson);
     };
 
     constructor(data) {
