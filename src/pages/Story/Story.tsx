@@ -6,7 +6,6 @@ import * as eqpAPI from '../../utils/equipmentApi';
 import HostScene from '../../game/scenes/HostScene';
 import { GAME_ACTIONS, GameStore, initialGameData, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
-import userService from "../../utils/userService";
 
 interface Props {
     user: any;

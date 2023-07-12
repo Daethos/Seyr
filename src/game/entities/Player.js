@@ -57,6 +57,8 @@ export default class Player extends Entity {
         this.spriteShield.setVisible(false);
         this.playerVelocity = new Phaser.Math.Vector2();
         this.speed = this.setSpeed(scene?.state?.player);
+        this.acceleration = 0.1;
+        this.deceleration = 0.0375;
         this.stateMachine = new StateMachine(this, 'player');
         this.stateMachine
             .addState(States.NONCOMBAT, {
@@ -676,8 +678,8 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
 
         // =================== MOVEMENT VARIABLES ================== \\
-        const acceleration = 0.075;
-        const deceleration = 0.05;
+        const acceleration = this.acceleration;
+        const deceleration = this.deceleration;
         const speed = this.speed;
         
         // =================== TARGETING ================== \\

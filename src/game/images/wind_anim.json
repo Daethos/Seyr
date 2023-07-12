@@ -1,50 +1,130 @@
 {
     "anims": [
         {
-            "key": "wind_effect",
+            "key": "frost_effect",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 20,
+            "frameRate": 120,
             "frames": [
                 {
-                    "key": "wind_effect",
-                    "frame": "001"
+                    "key": "frost_effect",
+                    "frame": "1_0"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "002"
+                    "key": "frost_effect",
+                    "frame": "1_1"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "003"
+                    "key": "frost_effect",
+                    "frame": "1_2"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "004"
+                    "key": "frost_effect",
+                    "frame": "1_3"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "005"
+                    "key": "frost_effect",
+                    "frame": "1_4"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "006"
+                    "key": "frost_effect",
+                    "frame": "1_5"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "007"
+                    "key": "frost_effect",
+                    "frame": "1_6"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "008"
+                    "key": "frost_effect",
+                    "frame": "1_7"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "009"
+                    "key": "frost_effect",
+                    "frame": "1_8"
                 },
                 {
-                    "key": "wind_effect",
-                    "frame": "010"
+                    "key": "frost_effect",
+                    "frame": "1_9"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_10"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_11"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_12"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_13"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_14"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_15"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_16"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_17"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_18"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_19"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_20"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_21"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_22"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_23"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_24"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_25"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_26"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_27"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_28"
+                },
+                {
+                    "key": "frost_effect",
+                    "frame": "1_29"
                 }
             ]
         }

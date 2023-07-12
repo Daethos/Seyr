@@ -1,0 +1,52 @@
+{
+    "anims": [
+        {
+            "key": "wind_effect",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 20,
+            "frames": [
+                {
+                    "key": "wind_effect",
+                    "frame": "001"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "002"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "003"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "004"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "005"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "006"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "007"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "008"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "009"
+                },
+                {
+                    "key": "wind_effect",
+                    "frame": "010"
+                }
+            ]
+        }
+    ]
+}
