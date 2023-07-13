@@ -154,8 +154,8 @@ export default class Player extends Entity {
         this.autorunRight = false;
         
         this.highlight = this.scene.add.graphics()
-            .lineStyle(1, 0xFFD700) // Set the border color and thickness as per your preference
-            .strokeCircle(0, 0, 10); // Set the radius as per your requirement
+            .lineStyle(1, 0xFFD700)
+            .strokeCircle(0, 0, 10); 
         this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
             intensity: 0.02,
         });

@@ -8,7 +8,6 @@ import Delete from '../AsceanBuilder/Delete';
 import Update from '../AsceanBuilder/Update';
 import Play from '../AsceanBuilder/Play';
 import Save from '../AsceanBuilder/Save';
-import Ascea from '../AsceanBuilder/Ascea';
 import Phaser from '../AsceanBuilder/Phaser';
 
 interface Props {
@@ -19,7 +18,7 @@ interface Props {
     loading?: boolean;
     accordion?: string;
     handleAsceanCreate?: any;
-}
+};
 
 const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, handleAsceanCreate }: Props) => {
 
@@ -29,20 +28,18 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
         <Col className="stat-block wide">
         <hr className="orange-border" />
         <div className="section-left">
-        { userProfile ? 
+        { userProfile ? ( 
             <>
                 <Play ascean={ascean} />
                 <Phaser ascean={ascean} />
-                {/* <Save ascean={ascean} handleAsceanCreate={handleAsceanCreate} /> */}
                 <Update ascean={ascean} NavBar={false} />
                 <Delete ascean={ascean} deleteAscean={deleteAscean} />
-                { ascean?.hardcore ?  <Ascea ascean={ascean} />  : '' }
                 <svg height="5" width="100%" className="tapered-rule mt-1">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
                 </svg>
             </>
-        : '' }
-        { accordion === 'Tight' ? 
+        ) : ( '' ) }
+        { accordion === 'Tight' ? (
             <>
             <div className="creature-heading">
                 <h1>{ascean.name}</h1>
@@ -50,7 +47,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
             </div>
             <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
             </> 
-        : accordion === 'Lean' ?  
+        ) : accordion === 'Lean' ? (
             <>
                 <div className="creature-heading">
                     <h1>{ascean.name}</h1>
@@ -81,7 +78,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     <p> {ascean.mastery}</p>
                 </div>
             </> 
-        : accordion === 'Half' ?  
+        ) : accordion === 'Half' ? (
             <>
                 <div className="creature-heading">
                     <h1>{ascean.name}</h1>
@@ -89,7 +86,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                 </div>
                 <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
                 <svg height="5" width="100%" className="tapered-rule mt-2">
-                <polyline points="0,0 550,2.5 0,5"></polyline>
+                    <polyline points="0,0 550,2.5 0,5"></polyline>
                 </svg>
                 <div className="property-line first">
                     <h4>Experience</h4>
@@ -134,9 +131,8 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     loading={loading}
                 />
                 </div>
-                    </>
-
-        :   
+            </>
+        ) : (
             <>
             <div className="creature-heading">
                 <h1>{ascean.name}</h1>
@@ -211,13 +207,13 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     </>
                     : '' }
             </>
-        }
+        ) }
             </div> 
             <hr className='orange-border bottom' />
         </Col>
         </Row>
         </React.Fragment>
-    )
-}
+    );
+};
 
-export default SolaAscean
+export default SolaAscean;

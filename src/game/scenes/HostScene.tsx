@@ -1,4 +1,3 @@
-import './PhaserGame.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Phaser from "phaser";

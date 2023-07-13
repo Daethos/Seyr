@@ -261,6 +261,8 @@
   justify-content: center;
   top: 55%;
   left: 17.5%;
+  max-width: 100%;
+  max-height: 100%;
 }
 .story-text {
   position: absolute;
@@ -989,7 +991,7 @@
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
 
-@media screen and (min-width: 1000px) {
+/* @media screen and (min-width: 1000px) {
   #game-container {
     background-size: cover;
     border: purple 10px solid;
@@ -1102,7 +1104,6 @@
     margin-top: -9.5%;
     padding: 2%;
     font-size: 24px;
-    /* width: 50%; */
     grid-column-start: 4;
     grid-column-end: 5;
     border: 5px solid purple;
@@ -1166,7 +1167,6 @@
     width: 10%;
     margin-top: 17.5%;
     margin-left: 17.5%;
-    /* grid-row-start: 7; */
   }
   #opponent-block .status-effects img {
     transform: scale(1.5);
@@ -1313,7 +1313,7 @@
   #popover-inv, #popover-header-inv, #popover-body-inv {
     transform: scale(2);
   }
-}
+} */
 
 /* ============================================================== DESKTOP STYLING ==================================================================================== */
 
@@ -1380,7 +1380,6 @@
   }
 }
 @media screen and (max-width: 330px) {
-  
   #game-container {
     transform: scale(1);
   

@@ -652,13 +652,12 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 {luckoutTraits.map((trait: any, index: number) => {
                     return (
                         <div key={index}>
-                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} 
-                            onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
                         </div>
                     )
                 })}
                 </div>
-                [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
+                [Note: Your decisions has granted this avenue of gameplay experience. There are more to discover.]<br /><br />
             </Modal.Body>
         </Modal>
         <Modal show={persuasionModalShow} onHide={() => setPersuasionModalShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
@@ -675,7 +674,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     )
                 })}
                 </div>
-                [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
+                [Note: Your decisions has granted this avenue of gameplay experience. There are more to discover.]<br /><br />
             </Modal.Body>
         </Modal>
         <div className='story-dialog' style={dialogStyle}>
@@ -822,9 +821,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     ) } 
                     </>
                 ) : gameState.currentIntent === 'conditions' ? (
-                    <>
-                        <Typewriter stringText={"This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual; disposition and the like."} styling={{ overflow: 'auto' }} performAction={hollowClick} />
-                    </>
+                    <Typewriter stringText={"This portion has not yet been written. Here you will be able to evaluate the conditions you have with said individual; disposition and the like."} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                 ) : gameState.currentIntent === 'farewell' ? (
                     <>
                         { state.persuasionScenario ? (
@@ -955,9 +952,9 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             { state.npcType !== '' ? (
                 <Currency ascean={gameState.player} />
             ) : ( '' ) }
-            { gameState?.merchantEquipment.length > 0 ?
+            { gameState?.merchantEquipment.length > 0 ? (
                 <MerchantTable dispatch={dispatch} table={gameState.merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={state.player} error={error} setError={setError} />
-            : ( '' ) }
+            ) : ( '' ) }
             </div>
             { state.isEnemy ? (
                 <div className='story-dialog-options'>

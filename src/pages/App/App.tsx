@@ -17,7 +17,6 @@ import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
 import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
-import HardCoreAscea from "../HardcoreAscea/HardCoreAscea";
 
 export interface User {
   _id: string;
@@ -76,7 +75,6 @@ function App() {
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Solo/:asceanID" element={<GameSolo user={user} />} />
-        <Route path='/Hardcore/:asceanID' element={<HardCoreAscea user={user} />} />
         <Route path="/Story/:asceanID" element={<Story user={user} />} />
         <Route path="/ChatLobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />

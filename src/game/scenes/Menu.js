@@ -25,7 +25,6 @@ export default class Menu extends Phaser.Scene {
             this,
             this.centerX,
             150,
-            // 'The Land of Hush and Tendril',
             'The Ascean',
             'title'
         );

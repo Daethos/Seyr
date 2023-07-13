@@ -122,8 +122,7 @@ class Particle {
 
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
-        scene.load.image('arrow_effect', arrowPNG);
-        // scene.load.atlas('arrow_effect', arrowPNG, arrowJSON);
+        scene.load.atlas('arrow_effect', arrowPNG, arrowJSON);
         scene.load.animation('arrow_anim', arrowAnim);    
         scene.load.atlas('earth_effect', earthPNG, earthJSON);
         scene.load.animation('earth_anim', earthAnim);
