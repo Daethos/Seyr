@@ -30,20 +30,20 @@ export default class Preload extends Phaser.Scene {
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
+        ParticleManager.preload(this);
         Player.preload(this);
         Enemy.preload(this);
         // Treasure.preload(this);
-        ParticleManager.preload(this);
 
         this.load.tilemapTiledJSON('ascean_test', ascean_test);
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
 
-        this.load.image('AncientForestMain', AncientForestMain);
-        this.load.image('AncientForestDecorative', AncientForestDecorative);
         this.gameData.assets.forEach(asset => {
             this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
         });
+        this.load.image('AncientForestMain', AncientForestMain);
+        this.load.image('AncientForestDecorative', AncientForestDecorative);
 
         this.createLoadingBar();
     };
