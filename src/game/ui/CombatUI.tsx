@@ -31,30 +31,30 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
         updatePlayerHealthPercentage();
     }, [state.new_player_health]);
 
-    useEffect(() => {
-        setDisplayedAction(`Damage: ${state.player_damage_type}`);
-    }, [state.player_damage_type]);
+    // useEffect(() => {
+    //     setDisplayedAction(`Damage: ${state.player_damage_type}`);
+    // }, [state.player_damage_type]);
 
-    useEffect(() => {
-        setDisplayedAction(`Weapon: ${state.weapons[0]?.name}`);
-    }, [state.weapons[0]]);
+    // useEffect(() => {
+    //     setDisplayedAction(`Weapon: ${state.weapons[0]?.name}`);
+    // }, [state.weapons[0]]);
 
-    useEffect(() => {
-        setDisplayedAction(`Prayer: ${state.playerBlessing}`);
-    }, [state.playerBlessing]);
+    // useEffect(() => {
+    //     setDisplayedAction(`Prayer: ${state.playerBlessing}`);
+    // }, [state.playerBlessing]);
 
     useEffect(() => {
         let instantTimer: ReturnType<typeof setTimeout>;
         if (gameState.instantStatus) {
-        instantTimer = setTimeout(() => {
-            gameDispatch({
-                type: GAME_ACTIONS.INSTANT_COMBAT,
-                payload: false,
-            });
-        }, 30000);
-        }
+            instantTimer = setTimeout(() => {
+                gameDispatch({
+                    type: GAME_ACTIONS.INSTANT_COMBAT,
+                    payload: false,
+                });
+            }, 30000);
+        };
         return () => {
-        clearTimeout(instantTimer);
+            clearTimeout(instantTimer);
         };
     }, [gameState.instantStatus, gameDispatch]);
 
@@ -63,7 +63,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
             const newHealthPercentage = Math.round((state.new_player_health/state.player_health) * 100);
             setPlayerHealthPercentage(newHealthPercentage);
         } catch (err: any) {
-            console.log(err.message, 'Error updating Health Percentage')
+            console.log(err.message, 'Error updating Health Percentage');
         };
     };
 

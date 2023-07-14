@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Phaser from "phaser";
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
-import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilterpipeline-plugin.js';
+import GlowFilterPipelinePlugin from 'phaser3-rex-plugins/plugins/glowfilter2pipeline-plugin.js';
 // @ts-ignore
 import { PhaserNavMeshPlugin } from 'phaser-navmesh';
 import Boot from './Boot';

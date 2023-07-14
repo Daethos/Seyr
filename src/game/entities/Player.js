@@ -32,6 +32,7 @@ export default class Player extends Entity {
         let { scene } = data;
         super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health }); 
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
+        this.ascean = scene.state.player;
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
         if (scene?.state?.player?.weapon_one?.grip === 'Two Hand') {
             this.spriteWeapon.setScale(0.65);
@@ -147,12 +148,10 @@ export default class Player extends Entity {
         this.setExistingBody(compoundBody);                                    
         this.sensor = playerSensor;
         this.knocking = false;
-        this.currentRound = 0;
-        this.autorunDown = false;
-        this.autorunUp = false;
-        this.autorunLeft = false;
-        this.autorunRight = false;
+        this.currentRound = 0; 
         
+        this.glow = this.setGlow(this);
+        // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
             .lineStyle(1, 0xFFD700)
             .strokeCircle(0, 0, 10); 
@@ -168,7 +167,28 @@ export default class Player extends Entity {
         this.checkNpcCollision(playerSensor);
     };
 
-    setSpeed(player) {
+    setGlow = (object) => {
+        const setColor = (mastery) => {
+            switch (mastery) {
+                case 'Constitution': return 0xFDF6D8;
+                case 'Strength': return 0xFF0000;
+                case 'Agility': return 0x00FF00;
+                case 'Achre': return 0x0000FF;
+                case 'Caeren': return 0x800080;
+                case 'Kyosir': return 0xFFD700;
+                default: return 0xFFFFFF;
+            };
+        };
+
+        return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
+            outerStrength: 1,
+            innerStrength: 1,
+            glowColor: setColor(this.ascean.mastery),
+            intensity: 0.02,
+        });
+    };
+
+    setSpeed = (player) => {
         let speed = 1.75;
         const helmet = player.helmet.type;
         const chest = player.chest.type;

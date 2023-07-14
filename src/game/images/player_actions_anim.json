@@ -124,7 +124,7 @@
             "key": "player_idle",
             "type": "frames",
             "repeat": -1,
-            "frameRate": 12,
+            "frameRate": 10,
             "frames": [
                 {
                     "key": "player_actions",

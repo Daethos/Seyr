@@ -49,7 +49,7 @@
     "phaser": "^3.60.0",
     "phaser-matter-collision-plugin": "^1.0.0",
     "phaser-navmesh": "^2.3.1",
-    "phaser3-rex-plugins": "^1.1.77",
+    "phaser3-rex-plugins": "^1.60.3",
     "pixi.js": "^7.2.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",

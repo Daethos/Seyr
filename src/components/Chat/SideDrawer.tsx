@@ -59,13 +59,13 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
         </Offcanvas.Header>
         <Offcanvas.Body style={{ color: '#fdf6d8' }}>
             <input 
-                style={{ backgroundColor: 'black', color: '#fdf6d8', border: 1 + 'px' + ' solid ' + 'purple', width: 80 + '%' }} 
+                style={{ backgroundColor: 'black', color: '#fdf6d8', border: '2px solid purple', width: 80 + '%' }} 
                 placeholder="Search by Username or Email"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyPress={(e) => { e.key === "Enter" && handleSearch(search) }}
             />
-            <Button variant="" onClick={() => handleSearch(search)} style={{ color: '#fdf6d8' }}>Go</Button>
+            <Button variant="" onClick={() => handleSearch(search)} style={{ color: '#fdf6d8' }}>Search</Button>
             { loading ? (
                 <Loading Combat={true} />
             ) : (
@@ -75,9 +75,9 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
                     )
                 })
             )}
-            { loadingChat ? 
+            { loadingChat ? (
                 <Loading Combat={true} />
-            : '' }
+            ) : ('') }
         </Offcanvas.Body>
         </Offcanvas>
         </>

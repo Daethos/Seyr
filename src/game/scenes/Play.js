@@ -93,7 +93,6 @@ export default class Play extends Phaser.Scene {
         for (let i = 0; i < 8; i++) {
             this.npcs.push(new NPC({scene: this, x: 800, y: 200 + (i * 200), texture: 'player_actions', frame: 'player_idle_0'}));
         };
-        // this.enemy = new NPC({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
 
@@ -122,35 +121,7 @@ export default class Play extends Phaser.Scene {
         camera.zoom = 1.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
-        // camera.setBounds(0, 0, 960, 640); // Platformer
-        camera.setBounds(0, 0, 4096, 4096); // Top Down
-        // var joystick = this.game.plugins.get('rexVirtualJoystick').add(this, {
-        //     x: 860,// 750 for 1.5
-        //     y: 500, // 440 for 1.5
-        //     radius: 35,
-        //     base: this.add.graphics()
-        //         .lineStyle(2, 0x000000)
-        //         .fillStyle(0xfdf6d8) 
-        //         .fillCircle(0, 0, 35)
-        //         .fillStyle(0x000000)
-        //         .fillCircle(0, 0, 33),
-        
-        //     thumb: this.add.graphics()
-        //         .lineStyle(2, 0x000000)
-        //         .fillStyle(0xfdf6d8) 
-        //         .fillCircle(0, 0, 17)
-        //         .fillStyle(0x000000)
-        //         .fillCircle(0, 0, 15),
-        
-        //     dir: '8dir',
-        //     forceMin: 16,
-        //     fixed: true,
-        //     enable: true
-        // });
-        // joystick.setScrollFactor(0);
-        // this.player.joystick = joystick; 
-        // this.player.joystick.on('pointerdown', this.startJoystick, this);
-        // this.player.joystick.on('pointerup', this.stopJoystick, this);
+        camera.setBounds(0, 0, 4096, 4096);  
         this.minimap = this.cameras.add(725, 480, 225, 150).setName('mini');
         this.minimap.setBounds(0, 0, 4096, 4096);
         this.minimap.scrollX = 4096;
@@ -285,11 +256,13 @@ export default class Play extends Phaser.Scene {
             EventEmitter.emit('update-enemy-action', data);
         } else {
             if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
-                const actionReset = async () => {
+                const playerAction = this.state.action;
+                const actionReset = async (action) => {
                     this.state.action = '';
                     this.sendStateActionListener();
+                    this.state.action = action; // Resetting Action in case it 'deserves' to exist
                 };
-                await actionReset();
+                await actionReset(playerAction);
             } else {
                 this.sendStateActionListener();
             };
@@ -439,11 +412,8 @@ export default class Play extends Phaser.Scene {
 
     update() {
         this.player.update(); 
-        // this.enemy.update();
         this.enemies.forEach((enemy) => enemy.update());
         this.npcs.forEach((npc) => npc.update());
-        // this.lootDrops.forEach((lootDrop) => lootDrop.update());
-        // if (this.player.joystick.isActive) this.handleJoystickUpdate(); 
     };
     pause() {
         this.scene.pause();

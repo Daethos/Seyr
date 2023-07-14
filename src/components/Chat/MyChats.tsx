@@ -56,7 +56,7 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
                     <h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'purple', fontVariant: 'small-caps', marginTop: 7.5 + 'px'}}>
                         <Button variant="" style={{ color: '#fdf6d8' }} size="lg" onClick={() => setSelectedChat(chat)} key={index}>
                         <h3>
-                        { !chat.isGroupChat ? 
+                        { !chat.isGroupChat ? (
                             <> 
                             <img 
                                 src={chatLogic.getSenderPhoto(user, chat.users)} 
@@ -64,27 +64,27 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
                                 style={{ 
                                     width: '35px', 
                                     height: '35px', 
-                                    borderRadius: 50 + '%', 
+                                    borderRadius: '50%', 
                                     float: 'left',
                                 }}
                             />{' '}
                             {chatLogic.getSender(user, chat.users)}
                             </>
-                        : 
-                        <> 
-                        <img
-                            src={user.photoUrl}
-                            alt={user.username}
-                            style={{ 
-                                width: '35px', 
-                                height: '35px', 
-                                borderRadius: 50 + '%', 
-                                float: 'left',
-                            }}
-                        />{' '}
-                        {chat.chatName} 
-                        </>
-                        }
+                        ) : (
+                            <> 
+                            <img
+                                src={user.photoUrl}
+                                alt={user.username}
+                                style={{ 
+                                    width: '35px', 
+                                    height: '35px', 
+                                    borderRadius: '50%', 
+                                    float: 'left',
+                                }}
+                            />{' '}
+                            {chat.chatName} 
+                            </>
+                        ) }
                         </h3>
                         {chat.latestMessages && (
                             <p style={{ fontSize: 14 + 'px', color: getLastMessageColor(chat.latestMessages, user._id) }}>

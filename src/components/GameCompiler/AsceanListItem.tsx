@@ -10,22 +10,20 @@ interface Props {
 
 const AsceanListItem = ({ ascean, state, dispatch, fetch }: Props) => {
     return (
-        <div className='friend-block my-3' style={{ height: 125 + 'px', display: 'flex' }}>
-            <h3 style={{ fontWeight: 500, fontSize: 24 + 'px', color: 'purple', fontVariant: 'small-caps', marginTop: 5 + '%' }}>
+        <div className='friend-block my-3' style={{ height: '150px', display: 'flex', justifyContent: 'center' }}>
             <img
                 src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'}
                 alt={ascean.name + ', ' + ascean.origin + ' ' + ascean.sex}
-                style={{
-                    textDecoration: 'none',
-                    marginLeft: 25 + '%',
+                style={{ 
+                    maxWidth: '25%', 
+                    borderRadius: '50%', 
                 }}
                 className="friend-pic"
             />
-            </h3>
-            <span id='user-card' style={{ float: 'right', marginTop: 2.5 + '%', marginLeft: 10 + '%' }}>
-            <Button onClick={fetch} variant="" size="lg" style={{ fontWeight: 500, fontSize: 18 + 'px', color: '#fdf6d8', fontVariant: 'small-caps' }}>
-                <p>{ascean.name.charAt(0).toUpperCase() + ascean.name.slice(1)}</p>
-                <p style={{ fontSize: 14 + 'px' }}>Level: {ascean.level} High Score: {ascean.high_score}</p>
+            <span id='user-card' style={{ marginLeft: '10%', marginTop: '2.5%' }}>
+            <Button onClick={fetch} variant="" size="lg" style={{ fontWeight: 500, fontSize: '18px', color: '#fdf6d8', fontVariant: 'small-caps' }}>
+                <p>{ascean.name}</p>
+                <p style={{ fontSize: '14px' }}>Level: {ascean.level} High Score: {ascean.high_score}</p>
             </Button>
             </span>
         </div>

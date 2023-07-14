@@ -919,8 +919,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(-0.25, 0.5);
                 this.spriteWeapon.setAngle(107.5);
             };
-            this.actionCountered = false;
-            this.frameCount = 0;
+            if (this.actionCountered) this.actionCountered = false;
+            if (this.frameCount > 0) this.frameCount = 0;
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && this.flipX) { 
             if (this.isStrafing || this.isStalwart) {
                 this.spriteShield.setOrigin(1.2, 0.25);
@@ -934,8 +934,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(0.5, 1.2);
                 this.spriteWeapon.setAngle(-194.5);
             };
-            this.actionCountered = false;
-            this.frameCount = 0;
+            if (this.actionCountered) this.actionCountered = false;
+            if (this.frameCount > 0) this.frameCount = 0;
         } else if (this.flipX) { // X Origin More Right
             if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
@@ -948,8 +948,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(-0.25, 1.2);
                 this.spriteWeapon.setAngle(-250);
             };
-            this.actionCountered = false;
-            this.frameCount = 0;
+            if (this.actionCountered) this.actionCountered = false;
+            if (this.frameCount > 0) this.frameCount = 0;
         } else {
             if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(!this.currentWeapon ? this.ascean.weapon_one : this.currentWeapon)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
@@ -960,8 +960,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(-0.15, 1.3);
                 this.spriteWeapon.setAngle(-195);
             };
-            this.actionCountered = false;
-            this.frameCount = 0;
+            if (this.actionCountered) this.actionCountered = false;
+            if (this.frameCount > 0) this.frameCount = 0;
         };
     };
 };
