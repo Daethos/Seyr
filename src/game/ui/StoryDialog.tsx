@@ -254,7 +254,9 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     const [persuasionTraits, setPersuasionTraits] = useState<any>([]);
     const [miniGame, setMiniGame] = useState<boolean>(false);
     const [miniGameTraits, setMiniGameTraits] = useState<any>([]);
-    const [enemyArticle, setEnemyArticle] = useState<any>('')
+    const [enemyArticle, setEnemyArticle] = useState<any>('');
+
+
 
     useEffect(() => { 
         checkLuckout();
@@ -947,13 +949,12 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                     gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={state.player} enemy={gameState.opponent} dialogNodes={getNodesForNPC(npcIds[state.npcType])} 
                     setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions}
                 />
-            ) : ( '' ) }
-            <br />
-            { state.npcType !== '' ? (
-                <Currency ascean={gameState.player} />
-            ) : ( '' ) }
+            ) : ( '' ) } 
             { gameState?.merchantEquipment.length > 0 ? (
                 <MerchantTable dispatch={dispatch} table={gameState.merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={state.player} error={error} setError={setError} />
+                ) : ( '' ) }
+            { state.npcType !== '' ? (
+                <Currency ascean={gameState.player} />
             ) : ( '' ) }
             </div>
             { state.isEnemy ? (

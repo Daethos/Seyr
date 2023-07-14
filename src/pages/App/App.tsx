@@ -27,7 +27,7 @@ export interface User {
   photoUrl: string;
 };
 
-function App() {
+const App = () => {
   const [user, setUser] = useState<User | null>(userService.getUser());
   const [guest, setGuest] = useState(userService.getUser());
   const [createSuccess, setCreateSuccess] = useState<boolean>(false);
@@ -69,7 +69,7 @@ function App() {
   if (user) {
     return (
       <div> 
-      <NavBar user={user} setUser={setUser} handleLogout={handleLogout} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />
+      <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />

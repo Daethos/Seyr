@@ -2,7 +2,6 @@ import Col from 'react-bootstrap/Col';
 import AsceanImageCard from '../AsceanImageCard/AsceanImageCard';
 import { Link } from "react-router-dom";
 import FeelingsCard from '../FeelingsCard/FeelingsCard';
-import CreateAscean from '../../components/CreateAscean/CreateAscean';
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler';
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
 
@@ -88,12 +87,9 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
         </div>
         <div className="section-right">
             <div className="actions">
-
             <AsceanStatCompiler ascean={ascean} communityFocus={true} key={ascean._id} />
             </div>
-            
         </div>
-        {/* <CreateAscean ascean={ascean} handleAsceanCreate={handleAsceanCreate} key={ascean._id} /> */}
         <hr className='orange-border bottom' />
         </Col>
         </>

@@ -17,6 +17,8 @@ import playerAttacksAnim from '../images/player_attacks_anim.json';
 import { v4 as uuidv4 } from 'uuid';
 import EventEmitter from "../phaser/EventEmitter";
 
+let idCount = 0;
+
 export default class NPC extends Entity {
     static preload(scene) { 
         scene.load.atlas(`player_actions`, playerActionsOnePNG, playerActionsOneJSON);
@@ -32,10 +34,12 @@ export default class NPC extends Entity {
     constructor(data) {
         let { scene } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
+        this.scene = scene;
+        this.id = idCount++;
         this.scene.add.existing(this);
         this.enemyID = uuidv4();
         const types = ['Merchant-Alchemy', 'Merchant-Armor', 'Merchant-Smith', 'Merchant-Jewelry', 'Merchant-General', 'Merchant-Tailor', 'Merchant-Mystic', 'Merchant-Weapon'];
-        this.npcType = types[Math.floor(Math.random() * types.length)];
+        this.npcType = types[this.id];
         this.npcTarget = null;
         this.interacting = false;
         this.createNPC();

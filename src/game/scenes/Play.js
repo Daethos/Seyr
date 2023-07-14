@@ -90,7 +90,7 @@ export default class Play extends Phaser.Scene {
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 8; i++) {
             this.npcs.push(new NPC({scene: this, x: 800, y: 200 + (i * 200), texture: 'player_actions', frame: 'player_idle_0'}));
         };
         // this.enemy = new NPC({scene: this, x: 800, y: 200, texture: 'player_actions', frame: 'player_idle_0'});

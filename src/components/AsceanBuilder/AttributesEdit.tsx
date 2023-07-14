@@ -34,7 +34,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => { 
         console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
-            // conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
         }
     }, [constitutionOutput]);
 
@@ -42,7 +41,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => {
         console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
-            // strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
         }
     }, [strengthOutput]);
 
@@ -50,7 +48,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => {
         console.log(agilityOutput, '<- New Strength Point Total');
         if (agiOut !== null) {
-            // agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
         }
     }, [agilityOutput]);
 
@@ -58,7 +55,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => {
         console.log(achreOutput, '<- New Strength Point Total');
         if (achOut !== null) {
-            // achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
         }
     }, [achreOutput]);
 
@@ -66,7 +62,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => {
         console.log(caerenOutput, '<- New Strength Point Total');
         if (caerOut !== null) {
-            // caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         }
     }, [caerenOutput]);
 
@@ -74,7 +69,6 @@ const AttributesEdit = ({ editState, setEditState }: Props) => {
     useEffect(() => {
         console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
-            // kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
         }
     }, [kyosirOutput]);
 

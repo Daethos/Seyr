@@ -16,7 +16,7 @@ import * as gameAPI from '../../utils/gameApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Button from 'react-bootstrap/Button';
-import { GAME_ACTIONS, NPC } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, NPC, checkPlayerTrait } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
@@ -74,6 +74,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const [dialogTag, setDialogTag] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
     const [asceanViews, setAsceanViews] = useState<string>('Character');
+    const [gameTimer, setGameTimer] = useState<number>(0);
 
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
@@ -140,7 +141,30 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     useEffect(() => {
         updateCombatListener(state);
-    }, [state]);
+    }, [state]); 
+
+    useEffect(() => {
+        if (gameRef.current) {
+            if (gameRef.current.scene.getScene('Play')) {
+                let scene = gameRef.current.scene.getScene('Play');
+                if (scene && !pauseState) {
+                    const timerInterval = setTimeout(() => {
+                        setGameTimer((timer: number) => (timer + 1));
+                    }, 1000);
+                    
+                    if (checkPlayerTrait("Kyn'gian", gameState) && gameTimer % 10 === 0) {
+                        setStaminaPercentage(staminaPercentage + (state.player_attributes.stamina / 100));
+                        EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (state.player_attributes.stamina / 100)) / 100) * state.player_attributes.stamina));
+                        dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
+                    };
+                    
+                    return () => {
+                        clearTimeout(timerInterval);
+                    };
+                };
+            };
+        };
+    }, [currentGame, pauseState, gameTimer]); 
 
     useEffect(() => {
         if (staminaPercentage < 100) {
@@ -362,10 +386,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
             };
         };
         const opponent = await getOpponent();
-        // const opponentData = new CustomEvent('enemy-fetched', {
-        //     detail: opponent
-        // });
-        // window.dispatchEvent(opponentData);
         EventEmitter.emit('enemy-fetched', opponent);
     };
 
@@ -856,19 +876,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         };
     };
 
-    const resizeGame = () => {
-        let game_ratio = 960 / 640;
-        let canvas = document.getElementsByTagName('canvas')[0];
-        let newWidth = window.innerWidth;
-        let newHeight = newWidth / game_ratio;
-        if (newHeight > window.innerHeight) {
-            newHeight = window.innerHeight;
-            newWidth = newHeight * game_ratio;
-        }; 
-        canvas.style.width = newWidth + 'px';
-        canvas.style.height = newHeight + 'px';
-    };
-
     const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
         e.preventDefault();
         if (e.key === 'v' || e.key === 'V') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog });
@@ -947,7 +954,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     const interactingLoot = async (e: boolean) => gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e }); 
     const showDialog = async (e: boolean) => setDialogTag(e);
 
-    // usePhaserEvent('resize', resizeGame);
+    useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('clear-non-aggressive-enemy', clearNonAggressiveEnemy);
     usePhaserEvent('clear-npc', clearNpc);
@@ -962,7 +969,6 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     usePhaserEvent('dialog-box', createDialog);
     usePhaserEvent('show-dialog', showDialog);
     usePhaserEvent('interacting-loot', interactingLoot);
-    useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('combat-engaged', combatEngaged);
     usePhaserEvent('drink-firewater', drinkFirewater);

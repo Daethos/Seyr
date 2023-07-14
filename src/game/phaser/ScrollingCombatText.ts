@@ -10,7 +10,7 @@ export default class ScrollingCombatText extends Phaser.GameObjects.Container {
 
     constructor(scene: Phaser.Scene, x: number, y: number, text: string, duration: number, context: string, critical?: boolean) {
         super(scene, x, y);
-        this.color = context === 'damage' ? 'red' : context === 'effect' ? 'gold' : context === 'heal' ? 'green' : 'red';
+        this.color = this.setColor(context);
         this.text = new Phaser.GameObjects.Text(scene, 0, 0, text, { 
             color: this.color, 
             fontFamily: 'Cinzel', 
@@ -28,8 +28,22 @@ export default class ScrollingCombatText extends Phaser.GameObjects.Container {
             delay: this.duration,
             callback: () => {
                 this.destroy();
-            }
+            },
+            loop: false,
         });
+    };
+
+    setColor = (context: string) => {
+        switch (context) {
+            case 'damage':
+                return 'red';
+            case 'effect':
+                return 'gold';
+            case 'heal':
+                return 'green';
+            default:
+                return 'red';
+        };
     };
 
     update(player: any) {

@@ -58,7 +58,8 @@ export default class Player extends Entity {
         this.playerVelocity = new Phaser.Math.Vector2();
         this.speed = this.setSpeed(scene?.state?.player);
         this.acceleration = 0.1;
-        this.deceleration = 0.0375;
+        this.deceleration = 0.05;
+        this.dt = this.scene.sys.game.loop.delta;
         this.stateMachine = new StateMachine(this, 'player');
         this.stateMachine
             .addState(States.NONCOMBAT, {
@@ -69,7 +70,6 @@ export default class Player extends Entity {
             .addState(States.COMBAT, {
                 onEnter: this.onCombatEnter.bind(this),
                 onUpdate: this.onCombatUpdate.bind(this),
-                onExit: this.onCombatExit.bind(this),
             })
             .addState(States.ATTACK, {
                 onEnter: this.onAttackEnter.bind(this),
@@ -249,8 +249,8 @@ export default class Player extends Entity {
                 this.scene.setState('computer_counter_success', false);
             };
             if (e.player_win) {
-                let damage = Math.round(e.realized_player_damage) + ' - Victory!';
-                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'effect', true);    
+                let damage = 'Victory!';
+                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 3000, 'effect', true);    
             };
         });
     }; 
@@ -288,7 +288,7 @@ export default class Player extends Entity {
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
-                        this.actionTarget = other;
+                        // this.actionTarget = other;
                     };
                 };
             },
@@ -300,7 +300,7 @@ export default class Player extends Entity {
             callback: (other) => {
                 if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
                     this.actionAvailable = false;
-                    this.actionTarget = null;
+                    // this.actionTarget = null;
                 };
             },
             context: this.scene,
@@ -380,7 +380,7 @@ export default class Player extends Entity {
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         };
-        // this.knockback(this.actionTarget);
+        if (!this.isRanged) this.knockback(this.actionTarget);
         screenShake(this.scene); 
     };
 
@@ -403,35 +403,32 @@ export default class Player extends Entity {
     onCombatUpdate = (dt) => { 
         if (!this.inCombat) this.stateMachine.setState(States.NONCOMBAT); 
 
-        if (this.canSwing && this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
-            this.scene.setState('counter_guess', 'attack');
-            this.stateMachine.setState(States.COUNTER);           
-        };
-        if (this.canSwing && this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
-            this.scene.setState('counter_guess', 'posture');
-            this.stateMachine.setState(States.COUNTER);
-        };
-        if (this.canSwing && this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
-            this.scene.setState('counter_guess', 'roll');
-            this.stateMachine.setState(States.COUNTER);
-        };
+        // if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+        //     this.scene.setState('counter_guess', 'attack');
+        //     this.stateMachine.setState(States.COUNTER);           
+        // };
+        // if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+        //     this.scene.setState('counter_guess', 'posture');
+        //     this.stateMachine.setState(States.COUNTER);
+        // };
+        // if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+        //     this.scene.setState('counter_guess', 'roll');
+        //     this.stateMachine.setState(States.COUNTER);
+        // };
     
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25 && this.canSwing) {
-            this.stateMachine.setState(States.ATTACK);
-        };
+        // if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25 && this.canSwing) {
+        //     this.stateMachine.setState(States.ATTACK);
+        // };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15 && this.canSwing) {
-            this.stateMachine.setState(States.POSTURE);
-        };
+        // if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15 && this.canSwing) {
+        //     this.stateMachine.setState(States.POSTURE);
+        // };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
-            this.scene.setState('counter_guess', 'counter');
-            this.stateMachine.setState(States.COUNTER);
-        };
-
-    };
-    onCombatExit = () => { 
-    };
+        // if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
+        //     this.scene.setState('counter_guess', 'counter');
+        //     this.stateMachine.setState(States.COUNTER);
+        // };
+    }; 
 
     onAttackEnter = () => {
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
@@ -578,7 +575,7 @@ export default class Player extends Entity {
 
     onStunEnter = () => {
         this.isStunned = true;
-        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect');
+        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
         this.scene.input.keyboard.enabled = false;
         this.stunDuration = 1500;
         this.setTint(0x888888);
@@ -641,47 +638,9 @@ export default class Player extends Entity {
         };
         return velocityDirection;
     };
-    
-    update() {
-        if (this.actionSuccess) {
-            this.actionSuccess = false;
-            this.playerActionSuccess();
-        };
-        this.stateMachine.update(this.scene.sys.game.loop.delta);
-        if (this.inCombat && !this.scene.combatTimer) this.scene.startCombatTimer();
-        if (this.inCombat && !this.healthbar.visible) this.healthbar.setVisible(true);
-        if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
-            this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
-            this.spriteWeapon.setTexture(this.currentWeaponSprite);
-            if (this.scene.state.weapons[0].grip === 'Two Hand') {
-                this.spriteWeapon.setScale(0.65);
-            } else {
-                this.spriteWeapon.setScale(0.5);
-            };
-        };
-        if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
-            this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
-            this.spriteShield.setTexture(this.currentShieldSprite);
-        };
-        this.checkTouching();
-        if (this.particleEffect) { 
-            if (this.particleEffect.success) {
-                this.particleEffect.triggered = true;
-                this.particleEffect.success = false;
-                this.playerActionSuccess();
-            } else {
-                this.scene.particleManager.update(this, this.particleEffect);
-            };
-        }; 
-        if (this.healthbar) this.healthbar.update(this);
-        if (this.scrollingCombatText) this.scrollingCombatText.update(this);
-        if (this.winningCombatText) this.winningCombatText.update(this);
 
-        // =================== MOVEMENT VARIABLES ================== \\
-        const acceleration = this.acceleration;
-        const deceleration = this.deceleration;
-        const speed = this.speed;
-        
+
+    handleActions = () => {
         // =================== TARGETING ================== \\
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.touching.length > 0) {
             if (this.currentTarget) {
@@ -723,77 +682,63 @@ export default class Player extends Entity {
                 this.scene.stalwart(false);
             };
         }; 
-
-        // =================== MOVEMENT ================== \\
-
-        if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
-            this.playerVelocity.x += acceleration;
-            if (this.flipX) this.flipX = false;
-        };
-
-        if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
-            this.playerVelocity.x -= acceleration;
-            this.flipX = true;
-        };
-
-        if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
-            this.playerVelocity.y -= acceleration;
-        }; 
-
-        if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-            this.playerVelocity.y += acceleration;
-        };
-
-        // =================== STRAFING ================== \\
-
-        if (this.inputKeys.strafe.E.isDown) {
-            this.playerVelocity.x = 1.75;
-            if (!this.flipX) this.flipX = true;
-        };
-        if (this.inputKeys.strafe.Q.isDown) {
-            this.playerVelocity.x = -1.75;
-            if (this.flipX) this.flipX = false;
-        };
-
-        // =================== DECELERATION ================== \\
-
-        if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown) {
-            this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
-        };
-        if (!this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown) {
-            this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
-        };
-        if (!this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown) {
-            this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
-        };
-        if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
-            this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
-        };
-
-        // =================== NORMALIZING VELOCITY ================== \\
-
-        this.playerVelocity.limit(speed);
-
-        // =================== VARIABLES IN MOTION ================== \\
-
-        if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
-            if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
-            if (!this.isStrafing) this.isStrafing = true;
-        } else if (this.isStrafing) {
-            this.isStrafing = false;
-        }; 
-
-        // ==================== SETTING VELOCITY ==================== \\
+        if (this.inCombat) {
+            if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+                this.scene.setState('counter_guess', 'attack');
+                this.stateMachine.setState(States.COUNTER);           
+            };
+            if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+                this.scene.setState('counter_guess', 'posture');
+                this.stateMachine.setState(States.COUNTER);
+            };
+            if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+                this.scene.setState('counter_guess', 'roll');
+                this.stateMachine.setState(States.COUNTER);
+            };
         
-        this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25 && this.canSwing) {
+                this.stateMachine.setState(States.ATTACK);
+            };
+            
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15 && this.canSwing) {
+                this.stateMachine.setState(States.POSTURE);
+            };
 
-        // =================== ACTIONS ================== \\
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
+                this.scene.setState('counter_guess', 'counter');
+                this.stateMachine.setState(States.COUNTER);
+            };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 20 && !this.isStalwart) {
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {
+                if (this.scene.state.playerBlessing === '') return;
+                this.stateMachine.setState(States.INVOKE);
+                const invokeInterval = 1000;
+                let elapsedTime = 0;
+                const invokeLoop = () => {
+                    if (elapsedTime >= this.invokeCooldown || !this.inCombat) {
+                        clearInterval(invokeIntervalId);
+                        this.invokeCooldown = 0;
+                        return;
+                    };
+                    elapsedTime++;
+                };
+                const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
+            };
+    
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
+                if (this.scene.state.playerEffects.length === 0) return;
+                this.isConsuming = true;
+                this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
+                this.scene.sendStateSpecialListener('consume');
+                screenShake(this.scene);
+            };
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 15 && !this.isStalwart) {
             this.stateMachine.setState(States.ROLL);
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 20 && !this.isStalwart) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 15 && !this.isStalwart) {
             this.stateMachine.setState(States.DODGE);
         };
 
@@ -801,33 +746,9 @@ export default class Player extends Entity {
             this.stateMachine.setState(States.HEAL);
         };
 
-        // =================== OPTIONS ================== \\
+    };
+    handleAnimations = () => {
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0 && this.inCombat) {
-            if (this.scene.state.playerBlessing === '') return;
-            this.stateMachine.setState(States.INVOKE);
-            const invokeInterval = 1000;
-            let elapsedTime = 0;
-            const invokeLoop = () => {
-                if (elapsedTime >= this.invokeCooldown || !this.inCombat) {
-                    clearInterval(invokeIntervalId);
-                    this.invokeCooldown = 0;
-                    return;
-                };
-                elapsedTime++;
-            };
-            const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
-        };
-
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F) && this.inCombat) {
-            if (this.scene.state.playerEffects.length === 0) return;
-            this.isConsuming = true;
-            this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
-            this.scene.sendStateSpecialListener('consume');
-            screenShake(this.scene);
-        };
- 
-        // =================== ANIMATIONS IF-ELSE CHAIN ================== \\
 
         if (this.isStunned) {
             this.setVelocity(0);
@@ -959,13 +880,123 @@ export default class Player extends Entity {
             if (this.isMoving) this.isMoving = false;
             this.anims.play('player_idle', true);
         }; 
+    };
+    handleConcerns = () => {
+        if (this.actionSuccess) {
+            this.actionSuccess = false;
+            this.playerActionSuccess();
+        };
+        if (this.particleEffect) { 
+            if (this.particleEffect.success) {
+                this.particleEffect.triggered = true;
+                this.particleEffect.success = false;
+                this.playerActionSuccess();
+            } else {
+                this.scene.particleManager.update(this, this.particleEffect);
+            };
+        };
+        if (this.inCombat && !this.scene.combatTimer) this.scene.startCombatTimer();
+        if (this.inCombat && !this.healthbar.visible) this.healthbar.setVisible(true);
+        if (this.currentWeaponSprite !== this.assetSprite(this.scene.state.weapons[0])) {
+            this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
+            this.spriteWeapon.setTexture(this.currentWeaponSprite);
+            if (this.scene.state.weapons[0].grip === 'Two Hand') {
+                this.spriteWeapon.setScale(0.65);
+            } else {
+                this.spriteWeapon.setScale(0.5);
+            };
+        };
+        if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
+            this.currentShieldSprite = this.assetSprite(this.scene.state.player.shield);
+            this.spriteShield.setTexture(this.currentShieldSprite);
+        }; 
+        if (this.healthbar) this.healthbar.update(this);
+        if (this.scrollingCombatText) this.scrollingCombatText.update(this);
+        if (this.winningCombatText) this.winningCombatText.update(this);
+    };
+    handleMovement = () => {
+        // =================== MOVEMENT VARIABLES ================== \\
+        const acceleration = this.acceleration;
+        const deceleration = this.deceleration;
+        const speed = this.speed;
+
+       // =================== MOVEMENT ================== \\
+
+       if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
+           this.playerVelocity.x += acceleration;
+           if (this.flipX) this.flipX = false;
+       };
+
+       if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
+           this.playerVelocity.x -= acceleration;
+           this.flipX = true;
+       };
+
+       if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
+           this.playerVelocity.y -= acceleration;
+       }; 
+
+       if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
+           this.playerVelocity.y += acceleration;
+       };
+
+       // =================== STRAFING ================== \\
+
+       if (this.inputKeys.strafe.E.isDown) {
+           this.playerVelocity.x = 1.75;
+           if (!this.flipX) this.flipX = true;
+       };
+       if (this.inputKeys.strafe.Q.isDown) {
+           this.playerVelocity.x = -1.75;
+           if (this.flipX) this.flipX = false;
+       };
+
+       // =================== DECELERATION ================== \\
+
+       if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown) {
+           this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
+       };
+       if (!this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown) {
+           this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
+       };
+       if (!this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown) {
+           this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
+       };
+       if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
+           this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
+       };
+
+       // =================== NORMALIZING VELOCITY ================== \\
+
+       this.playerVelocity.limit(speed);
+
+       // =================== VARIABLES IN MOTION ================== \\
+
+       if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
+           if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
+           if (!this.isStrafing) this.isStrafing = true;
+       } else if (this.isStrafing) {
+           this.isStrafing = false;
+       }; 
+
+       // ==================== SETTING VELOCITY ==================== \\
+       
+       this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
+    };
+    update() {
+        this.handleConcerns();
+        this.stateMachine.update(this.dt);
+        this.checkTouching();
+        this.handleActions();
+        this.handleAnimations();
+        this.handleMovement();
+        this.weaponRotation('player', this.currentTarget);
 
         this.spriteWeapon.setPosition(this.x, this.y);
         this.spriteShield.setPosition(this.x, this.y);
         // this.spriteHelmet.setPosition(this.x, this.y);
         // this.spriteLegs.setPosition(this.x, this.y);
         // this.spriteChest.setPosition(this.x, this.y);
-        this.weaponRotation('player', this.currentTarget);
     };
 
     isAtEdgeOfLedge(scene) {

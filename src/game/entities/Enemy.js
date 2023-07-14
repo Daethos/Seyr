@@ -309,7 +309,7 @@ export default class Enemy extends Entity {
             };
             if (e.counter_success) {
                 console.log("Player Counter Success, Enemy Is Now Stunned");
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect');
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
                 this.isStunned = true;
             };
             this.health = e.new_computer_health;
@@ -342,14 +342,14 @@ export default class Enemy extends Entity {
     attackInterval() {
         if (this.currentWeapon) {
             const weapon = this.currentWeapon;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 800 : 500;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
         } else if (this.currentWeaponSprite !== '') {
             const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
             const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 800 : 500;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
         } else {
             const weapon = this.ascean.weapon_one;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 800 : 500;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
         };
     };
 
@@ -358,7 +358,9 @@ export default class Enemy extends Entity {
     };
 
     onDefeatedEnter = () => {
-        this.anims.play('player_idle', true);
+        this.anims.play('player_pray', true).on('animationcomplete', () => {
+            this.anims.play('player_idle', true);
+        });
         this.isDefeated = true;
         this.inCombat = false;
         this.attacking = null;
@@ -691,6 +693,7 @@ export default class Enemy extends Entity {
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         };
+        // if (!this.isRanged) this.knockback(this.actionTarget)
         screenShake(this.scene);
     };
 

@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './pages/App/App';
-import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(
@@ -12,4 +11,3 @@ root.render(
     <App />
   </Router>
 );
-serviceWorker.unregister();

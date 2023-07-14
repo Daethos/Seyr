@@ -283,12 +283,12 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     knockback(other) {
         if (!other.pair.gameObjectB || !other.pair.gameObjectB.body) return;
-        let bodyPosition = other.pair.gameObjectB.body.position; // TODO:FIXME: other.pair.gameObjectB is undefined sometimes =[]
+        let bodyPosition = other.pair.gameObjectB.body.position;
         let body = other.pair.gameObjectB.body; 
         let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
         let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
         this.knockbackDirection = this.flipX ? Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition) : Phaser.Physics.Matter.Matter.Vector.sub(bodyPosition, collisionPoint);
-        this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection);
+        this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection); 
        
         const accelerationFrames = 12; 
         const accelerationStep = this.knockbackForce / accelerationFrames; 
@@ -306,8 +306,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             
             if (currentForce < this.knockbackForce) currentForce += accelerationStep; 
-            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -15 : 15);
-            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -15 : 15);
+            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -5 : 5);
+            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -5 : 5);
             Phaser.Physics.Matter.Matter.Body.applyForce(body, bodyPosition, {
                 x: forceX,
                 y: forceY
@@ -324,14 +324,12 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         });
         
         screenShake(this.scene);
-        pauseGame(100).then(() => {
-            this.setVelocityX(0);
-        });
     };
     
     knockbackPlayer(other) { 
+        if (!other.pair.gameObjectB || !other.pair.gameObjectB.body) return;
         let bodyPosition = other.gameObjectB.body.position;
-        let body = this.scene.player.body; 
+        let body = other.pair.gameObjectB.body; 
         let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
         let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
         this.knockbackDirection = this.flipX ? Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition) : Phaser.Physics.Matter.Matter.Vector.sub(bodyPosition, collisionPoint);
@@ -352,8 +350,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             
             if (currentForce < this.knockbackForce) currentForce += accelerationStep; 
-            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -10 : 10);
-            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -10 : 10);
+            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -5 : 5);
+            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -5 : 5);
             Phaser.Physics.Matter.Matter.Body.applyForce(body, bodyPosition, {
                 x: forceX,
                 y: forceY
@@ -372,32 +370,18 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         if ("vibrate" in navigator) {
             navigator.vibrate(40);
         };
-        screenShake(this.scene);
-        pauseGame(50).then(() => {
-            this.setVelocityX(0);
-        });
+        screenShake(this.scene); 
     };
 
     checkDamageType = (type, concern) => {
-        // if (this.name === 'enemy' && this.inCombat) console.log(`Checking if ${type} is ${concern}`);
         const magicTypes = ['earth', 'fire', 'frost', 'lightning', 'righteous', 'spooky', 'sorcery', 'wild', 'wind'];
         const physicalTypes = ['blunt', 'pierce', 'slash'];
         switch (concern) {
             case 'magic':
-                if (magicTypes.includes(type)) {
-                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's a match! ${magicTypes.includes(type)}`);
-                    return true;
-                } else {
-                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's not a match! ${magicTypes.includes(type)}`);
-                } 
+                if (magicTypes.includes(type)) return true; 
                 break;
             case 'physical':
-                if (physicalTypes.includes(type)) {
-                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's a match! ${physicalTypes.includes(type)}`);
-                    return true;
-                } else {
-                    // if (this.inCombat) console.log(`${this.name} checking if ${type} is ${concern}, and it's not a match! ${physicalTypes.includes(type)}`);
-                }
+                if (physicalTypes.includes(type)) return true;
                 break;
             default:
                 break;
@@ -407,7 +391,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     checkBow = (weapon) => {
         if (!weapon) return false;
-        // if (this.inCombat) console.log(`${this.name} checking if ${weapon.name} is a Bow...`);
         if (weapon.type === 'Bow' || weapon.type === 'Greatbow') return true;
         return false;
     };
@@ -430,7 +413,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         };
     };
 
-    weaponRotation(entity, target) { 
+    weaponRotation = (entity, target) => { 
         if (!this.isPosturing && !this.isStrafing && !this.isStalwart && this.spriteShield) this.spriteShield.setVisible(false);
         if (this.isDodging) this.spriteShield.setVisible(false);
         if (this.isStalwart && !this.isRolling && !this.isDodging) this.spriteShield.setVisible(true);

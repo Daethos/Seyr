@@ -539,46 +539,46 @@ export const getAsceanTraits = async (ascean: Player) => {
 
     const ATTRIBUTE_TRAITS = {
         Constitution: {
-            strength: 'Ilian', // Heroism, Persuasion (Autoritas - Most Powerful)
-            agility: "Kyn'gian", // Inexorable Negation (Avoidance), Endurance
-            achre: "Arbituous", // Persuasion (Ethos - Law), Luckout (Rhetoric)
-            caeren: "Lilosian", // Faithful, Persuasion (Pathos - Faith), Luckout (Peace)
-            kyosir: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
+            strength: 'Ilian', 
+            agility: "Kyn'gian", 
+            achre: "Arbituous", 
+            caeren: "Lilosian", 
+            kyosir: "Kyr'naic", 
         },
         Strength: {
-            constitution: 'Ilian', // Heroism, Persuasion (Autoritas - Most Powerful)
-            agility: "Se'van", // Mini-Game (Grappling), TBD
-            achre: "Sedyrist", // Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)
-            caeren: "Shaorahi", // Conviction, Persuasion (Awe), 
-            kyosir: "Tshaeral", // Persuasion (Fear), Mini-Game (Fear) 
+            constitution: 'Ilian', 
+            agility: "Se'van", 
+            achre: "Sedyrist", 
+            caeren: "Shaorahi",  
+            kyosir: "Tshaeral",  
         },
         Agility: {
-            constitution: "Kyn'gian", // Inexorable Negation (Avoidance), Endurance
-            strength: "Se'van", // Mini-Game (Grappling), TBD
-            achre: "Ma'anreic", // Thievery, Physical Negation, Stealing (Merchants, Enemies)
-            caeren: "Cambiren", // Transubstantiation, Caerenic Mini-Game
-            kyosir: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
+            constitution: "Kyn'gian", 
+            strength: "Se'van", 
+            achre: "Ma'anreic", 
+            caeren: "Cambiren", 
+            kyosir: "Shrygeian", 
         },
         Achre: {
-            constitution: "Arbituous", // Persuasion (Ethos - Law), Luckout (Rhetoric)
-            strength: "Sedyrist", // Inexorable Analyst (Investigative), Tinkerer (Can Forge Own Equipment, Deconstruct Equipment)
-            agility: "Ma'anreic", // Thievery, Physical Negation, Stealing (Merchants, Enemies)
-            caeren: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
-            kyosir: "Chiomic", // Persuasion (Humor), Luckout (Shatter)
+            constitution: "Arbituous", 
+            strength: "Sedyrist", 
+            agility: "Ma'anreic", 
+            caeren: "Fyeran",    
+            kyosir: "Chiomic", 
         },
         Caeren: {
-            constitution: "Lilosian", // Faithful, Persuasion (Pathos - Faith), Luckout (Peace)
-            strength: "Shaorahi", // Conviction, Persuasion (Awe), 
-            agility: "Cambiren", // Transubstantiation, Caerenic Mini-Game
-            achre: "Fyeran", // Seer, Persuasion (Seer), Phenomenalist (Extra Encounters in Phenomena)   
-            kyosir: "Astral", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
+            constitution: "Lilosian", 
+            strength: "Shaorahi",  
+            agility: "Cambiren", 
+            achre: "Fyeran",    
+            kyosir: "Astral", 
         },
         Kyosir: {
-            constitution: "Kyr'naic", // Apathetic, Persuasion (Apathy), Luckout (Aenservaesai)
-            strength: "Tshaeral", // Persuasion (Fear), Mini-Game (Fear) 
-            agility: "Shrygeian", // Knavery, Dueling Mini-Game, Disposition Boosts
-            achre: "Chiomic", // Persuasion (Humor), Luckout (Shatter)
-            caeren: "Astral", // Inexorable Affirmation, Impermanence, Pursuit (TBD, Can Force Encounters)
+            constitution: "Kyr'naic", 
+            strength: "Tshaeral",  
+            agility: "Shrygeian", 
+            achre: "Chiomic", 
+            caeren: "Astral", 
         },
     };
 

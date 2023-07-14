@@ -22,11 +22,11 @@ const CreateAscean = ({ ascean, handleAsceanCreate }: CreateProps) => {
     };
     return (
         <>
-        { saveState ? 
+        { saveState ? (
             <h3 className="mt-3 mb-4" style={{ color: 'indigo', fontWeight: 450, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>Enjoy the Land of Hush and Tendril</h3>
-        : ascean?.shareable === 'public' ? 
+        ) : ascean?.shareable === 'public' ? ( 
             <Form onSubmit={handleSubmit}><button className="btn btn-lg" style={{ color: 'green', fontWeight: 450, fontVariant: 'small-caps', fontSize: 25 + 'px' }} value={ascean} type="submit" >Play as {ascean?.name}?</button></Form>
-        : '' }
+        ) : ('') }
         </>
     );
 };

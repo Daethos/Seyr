@@ -35,7 +35,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
             conOut!.innerHTML = `${constitutionOutput}`;
-            // conOut!.innerHTML = (constitutionOutput > 9 ? ' +' + Math.floor((constitutionOutput - 10) / 2) + ' Modifier' : Math.floor((constitutionOutput - 10) / 2) + ' Modifier');
         };
     }, [constitutionOutput]);
 
@@ -44,7 +43,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
             strOut!.innerHTML = `${strengthOutput}`;
-            // strOut!.innerHTML = (strengthOutput > 9 ? ' +' + Math.floor((strengthOutput - 10) / 2) + ' Modifier' : Math.floor((strengthOutput - 10) / 2) + ' Modifier');
         };
     }, [strengthOutput]);
 
@@ -53,7 +51,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(agilityOutput, '<- New Agility Point Total');
         if (agiOut !== null) {
             agiOut!.innerHTML = `${agilityOutput}`;
-            // agiOut!.innerHTML = (agilityOutput > 9 ? ' +' + Math.floor((agilityOutput - 10) / 2) + ' Modifier' : Math.floor((agilityOutput - 10) / 2) + ' Modifier');
         };
     }, [agilityOutput]);
 
@@ -62,7 +59,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(achreOutput, '<- New Achre Point Total');
         if (achOut !== null) {
             achOut!.innerHTML = `${achreOutput}`;
-            // achOut!.innerHTML = (achreOutput > 9 ? ' +' + Math.floor((achreOutput - 10) / 2) + ' Modifier' : Math.floor((achreOutput - 10) / 2) + ' Modifier');
         };
     }, [achreOutput]);
 
@@ -71,7 +67,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(caerenOutput, '<- New Caeren Point Total');
         if (caerOut !== null) {
             caerOut!.innerHTML = `${caerenOutput}`;
-            // caerOut!.innerHTML = (caerenOutput > 9 ? ' +' + Math.floor((caerenOutput - 10) / 2) + ' Modifier' : Math.floor((caerenOutput - 10) / 2) + ' Modifier');
         };
     }, [caerenOutput]);
 
@@ -80,15 +75,9 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
             kyoOut!.innerHTML = `${kyosirOutput}`;
-            // kyoOut!.innerHTML = (kyosirOutput > 9 ? ' +' + Math.floor((kyosirOutput - 10) / 2) + ' Modifier' : Math.floor((kyosirOutput - 10) / 2) + ' Modifier');
         };
-    }, [kyosirOutput]);
+    }, [kyosirOutput]); 
 
-    useEffect(() => {
-        setPoolTotal(0);
-    }, []);
-
-    // Pool Total Use Effect
     useEffect(() => {
         checkPoolTotal();
     }, [poolTotal]);
@@ -237,7 +226,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleConMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -248,7 +236,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleConPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -260,7 +247,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleStrMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -271,7 +257,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleStrPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -283,7 +268,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleAgiMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -294,7 +278,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleAgiPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -306,7 +289,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleAchreMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -317,7 +299,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleAchrePlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -329,7 +310,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleCaerenMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -340,7 +320,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleCaerenPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -352,7 +331,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleKyosirMinus(e: any) {
         e.preventDefault();
         e.target.value -= 1;
-        console.log(e.target.name, 'Decrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -363,7 +341,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
     function handleKyosirPlus(e: any) {
         e.preventDefault();
         e.target.value = Number(e.target.value) + 1;
-        console.log(e.target.name, 'Incrementing to:', e.target.value);
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
@@ -371,140 +348,140 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
         setKyosirOutput(e.target.value);
         setPoolTotal(poolTotal + 1);
     };
-  return (
-    <>
-    <div className="actions">
-                        <h3>Attributes</h3>
-                        <h3 id="pool-output"></h3>
-                    </div>
-                    <div className="property-line first">
-                        <h4>Constitution</h4>
-                        <p> Increases Health, Defense, Posturing, Crit Damage</p>
-                        <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
-                        <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
-                            <input 
-                                id="con-slider" 
-                                className="form-control-number" 
-                                type="number" 
-                                name="constitution" 
-                                value={asceanState.constitution} 
-                                min="8" max="18"
-                                step="1"
-                                readOnly 
-                            ></input>
-                            <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
-                            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="con-box">
-                            </h4>
-                        </InputGroup>
-                    </div>
-                    <div className="property-line">
-                        <h4>Strength</h4>
-                        <p> Increases Crit Damage, Physical Damage, Posturing</p>
-                        <InputGroup className="mb-1">
-                        <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
-                        <input 
-                                id="con-slider" 
-                                className="form-control-number" 
-                                type="number" 
-                                name="strength" 
-                                value={asceanState.strength} 
-                                min="8" max="18"
-                                step="1"
-                                readOnly 
-                            ></input>
-                        <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
-                        <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="str-box">
-                            </h4>
-                        </InputGroup>
-                    </div>
-                    <div className="property-line">
-                        <h4>Agility</h4>
-                        <p> Increases Crit Damage, Dodge, Phys Damage, Roll</p>
-                        <InputGroup className="mb-1">
-                        <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
-                        <input 
-                                id="con-slider" 
-                                className="form-control-number" 
-                                type="number" 
-                                name="agility" 
-                                value={asceanState.agility} 
-                                min="8" max="18"
-                                step="1"
-                                readOnly 
-                            ></input>
-                        <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
-                        <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="agi-box">
-                        </h4>
-                        </InputGroup>
-                    </div>
-                    <div className="property-line">
-                        <h4>Achre: </h4>
-                        <p>Synonymous with being an Arbiter, they are measured by the quality of their achre, catchall for discernment, poise, sagacity, and existence above error.<br />
-                            Increases Crit Chance, Dodge, Spell Damage, Roll</p>
-                        <InputGroup className="mb-1">
-                        <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
-                        <input 
-                                id="con-slider" 
-                                className="form-control-number" 
-                                type="number" 
-                                name="achre" 
-                                value={asceanState.achre} 
-                                min="8" max="18"
-                                step="1"
-                                readOnly 
-                            ></input>
-                        <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
-                        <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="ach-box">
-                            </h4>
-                        </InputGroup>
-                    </div>
-                    <div className="property-line last">
-                        <h4>Caeren: </h4>
-                        <p> Of Cambire, the Ancient of Potential.
-                                <br />An idealized person or thing. A specter or phantom. Root: Eidolon.<br />
-                                <br /> The Caer: synonymous to 'the Will.'
-                            <br />Increases Crit Damage, Defense, Health, Spell Damage</p>
-                        <InputGroup className="mb-1">
-                        <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
-                        <input 
-                                id="con-slider" 
-                                className="form-control-number" 
-                                type="number" 
-                                name="caeren" 
-                                value={asceanState.caeren} 
-                                min="8" max="18"
-                                step="1"
-                                readOnly 
-                            ></input>
-                            <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
-                            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="caer-box">
-                            </h4>
-                        </InputGroup>
-                    </div>
-                    <div className="property-line last">
-                        <h4>Kyosir: </h4>
-                        <p> Compulsion concocted through the Gold Veins of Kyrisos mixed with bile and phlegm of Chiomyr, Ancient of Humor.
-                            A charisma that warps those regardless of their caer, capable of quelling the most quality strikes, it grants a sure sight that shears shields.
-                            <br />Increases Defenses, Penetration</p>
-                        <InputGroup className="mb-1">
-                        <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={asceanState.kyosir}>−</button>
-                        <input 
-                                id="con-slider" 
-                                className="form-control-number" 
-                                type="number" 
-                                name="kyosir" 
-                                value={asceanState.kyosir} 
-                                min="8" max="18"
-                                step="1"
-                                readOnly 
-                            ></input>
-                            <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={asceanState.kyosir}>+</button>
-                            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="kyo-box">
-                            </h4>
-                        </InputGroup>
-                    </div>
+    return (
+        <>
+        <div className="actions">
+            <h3>Attributes</h3>
+            <h3 id="pool-output"></h3>
+        </div>
+        <div className="property-line first">
+            <h4>Constitution</h4>
+            <p> Increases Health, Defense, Posturing, Crit Damage</p>
+            <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
+            <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
+                <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="constitution" 
+                    value={asceanState.constitution} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+                <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
+                <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="con-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line">
+            <h4>Strength</h4>
+            <p> Increases Crit Damage, Physical Damage, Posturing</p>
+            <InputGroup className="mb-1">
+            <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
+            <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="strength" 
+                    value={asceanState.strength} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+            <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
+            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="str-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line">
+            <h4>Agility</h4>
+            <p> Increases Crit Damage, Dodge, Phys Damage, Roll</p>
+            <InputGroup className="mb-1">
+            <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
+            <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="agility" 
+                    value={asceanState.agility} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+            <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
+            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="agi-box">
+            </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line">
+            <h4>Achre: </h4>
+            <p>Synonymous with being an Arbiter, they are measured by the quality of their achre, catchall for discernment, poise, sagacity, and existence above error.<br />
+                Increases Crit Chance, Dodge, Spell Damage, Roll</p>
+            <InputGroup className="mb-1">
+            <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
+            <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="achre" 
+                    value={asceanState.achre} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+            <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
+            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="ach-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line last">
+            <h4>Caeren: </h4>
+            <p> Of Cambire, the Ancient of Potential.
+                    <br />An idealized person or thing. A specter or phantom. Root: Eidolon.<br />
+                    <br /> The Caer: synonymous to 'the Will.'
+                <br />Increases Crit Damage, Defense, Health, Spell Damage</p>
+            <InputGroup className="mb-1">
+            <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
+            <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="caeren" 
+                    value={asceanState.caeren} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+                <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
+                <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="caer-box">
+                </h4>
+            </InputGroup>
+        </div>
+        <div className="property-line last">
+            <h4>Kyosir: </h4>
+            <p> Compulsion concocted through the Gold Veins of Kyrisos mixed with bile and phlegm of Chiomyr, Ancient of Humor.
+                A charisma that warps those regardless of their caer, capable of quelling the most quality strikes, it grants a sure sight that shears shields.
+                <br />Increases Defenses, Penetration</p>
+            <InputGroup className="mb-1">
+            <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={asceanState.kyosir}>−</button>
+            <input 
+                    id="con-slider" 
+                    className="form-control-number" 
+                    type="number" 
+                    name="kyosir" 
+                    value={asceanState.kyosir} 
+                    min="8" max="18"
+                    step="1"
+                    readOnly 
+                ></input>
+                <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={asceanState.kyosir}>+</button>
+                <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="kyo-box">
+                </h4>
+            </InputGroup>
+        </div>
     </>
-  )
-}
+    );
+};
 
-export default AttributesCreate
+export default AttributesCreate;

@@ -141,58 +141,7 @@ const GameSolo = ({ user }: GameProps) => {
 
     useEffect(() => {
         setMoveTimerDisplay(moveTimer);
-    }, [moveTimer]);
-
-    // function drawCubeOutline(context: CanvasRenderingContext2D, x: number, y: number, size: number, canvasWidth: number = 400, canvasHeight: number = 400) {
-    //     // Set line properties (color, thickness, etc.)
-    //     context.strokeStyle = 'gold';
-    //     context.lineWidth = 2;
-      
-    //     // Calculate the coordinates for the lines of the cube panels
-    //     const panel1 = { x1: x, y1: y, x2: x + size, y2: y };
-    //     const panel2 = { x1: x + size, y1: y, x2: x + size, y2: y + size };
-    //     const panel3 = { x1: x, y1: y + size, x2: x + size, y2: y + size };
-    //     const panel4 = { x1: x, y1: y, x2: x, y2: y + size };
-    //     const panel5 = { x1: x, y1: y, x2: x + size, y2: y + size };
-      
-    //     // Draw the panels
-    //     context.beginPath();
-    //     context.moveTo(panel1.x1, panel1.y1);
-    //     context.lineTo(panel1.x2, panel1.y2);
-    //     context.stroke();
-      
-    //     context.beginPath();
-    //     context.moveTo(panel2.x1, panel2.y1);
-    //     context.lineTo(panel2.x2, panel2.y2);
-    //     context.stroke();
-      
-    //     context.beginPath();
-    //     context.moveTo(panel3.x1, panel3.y1);
-    //     context.lineTo(panel3.x2, panel3.y2);
-    //     context.stroke();
-      
-    //     context.beginPath();
-    //     context.moveTo(panel4.x1, panel4.y1);
-    //     context.lineTo(panel4.x2, panel4.y2);
-    //     context.stroke();
-       
-      
-    //     // Add perspective lines
-    //     context.beginPath();
-    //     context.moveTo(x, y); // Top-left corner
-    //     context.lineTo(0, 0); // Top-left canvas corner
-      
-    //     context.moveTo(x + size, y); // Top-right corner
-    //     context.lineTo(canvasWidth, 0); // Top-right canvas corner
-      
-    //     context.moveTo(x, y + size); // Bottom-left corner
-    //     context.lineTo(0, canvasHeight); // Bottom-left canvas corner
-      
-    //     context.moveTo(x + size, y + size); // Bottom-right corner
-    //     context.lineTo(canvasWidth, canvasHeight); // Bottom-right canvas corner
-      
-    //     context.stroke();
-    // };   
+    }, [moveTimer]); 
 
     const useMoveTimerEffect = (mapState: MapData) => {
         useEffect(() => {
