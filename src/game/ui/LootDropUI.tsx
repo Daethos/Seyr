@@ -2,6 +2,7 @@ import LootDrop from '../../components/GameCompiler/LootDrop';
 import { GAME_ACTIONS, GameData } from '../../components/GameCompiler/GameStore';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { useEffect, useState } from 'react';
+import logWindow from '../images/log_window.png';
 
 interface LootDropUIProps {
     gameState: GameData;
@@ -17,24 +18,9 @@ export const LootDropUI = ({ gameState, gameDispatch, state }: LootDropUIProps) 
         setVisibleLoot(visible);
     }, [gameState.showLootIds, gameState.lootDrops]);
     return (
-        <div style={{ 
-            position: "absolute", 
-            top: "380px", 
-            left: "275px", 
-            zIndex: 9999,  
-            height: "120px",
-            width: "400px",  
-            fontSize: "16px",
-            borderRadius: "3px",
-            border: "4px solid #2A0134",
-            boxShadow: "2px 2px 2px black",
-            overflow: "auto",
-            scrollbarWidth: "none",
-            backgroundColor: "black",
-            color: "#fdf6d8",
-            textAlign: "center", 
-        }}> 
-            <div style={{ display: 'inline-block' }}>
+        <div className='story-loot'>
+        <img src={logWindow} alt='Log Window' style={{ position: 'absolute' }} />
+            <div style={{ display: 'inline-block', position: 'absolute' }} className='story-loot-scroll'>
                 { visibleLoot.length > 0 ? (
                     visibleLoot.map((lootDrop: any, index: number) => { 
                         return (

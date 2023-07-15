@@ -122,9 +122,9 @@ class Particle {
 
 export default class ParticleManager extends Phaser.Scene { 
     static preload(scene) {
-        scene.load.image('arrow_effect', process.env.PUBLIC_URL + '/images/arrow_effect.png');
-        // scene.load.atlas('arrow_effect', arrowPNG, arrowJSON);
-        // scene.load.animation('arrow_anim', arrowAnim);    
+        // scene.load.image('arrow_effect', process.env.PUBLIC_URL + '/images/arrow_effect.png');
+        scene.load.atlas('arrow_effect', process.env.PUBLIC_URL + '/images/arrow_effect.png', arrowJSON);
+        scene.load.animation('arrow_anim', arrowAnim);    
         scene.load.atlas('earth_effect', earthPNG, earthJSON);
         scene.load.animation('earth_anim', earthAnim);
         scene.load.atlas('fire_effect', firePNG, fireJSON);
@@ -206,7 +206,7 @@ export default class ParticleManager extends Phaser.Scene {
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
         if (player.particleEffect && player.particleEffect.effect && this.particles.find((particle) => particle.id === player.particleEffect.id)) {
             if (player.name === 'player' && player.particleEffect.action === 'roll') return;
-            if (player.particleEffect.key !== 'arrow_effect') player.particleEffect.effect.play(player.particleEffect.key, true);
+             player.particleEffect.effect.play(player.particleEffect.key, true);
             const target = player.particleEffect.target;
             target.normalize();
             player.particleEffect.effect.setVelocity(player.particleEffect.velocity * target.x, target.y * player.particleEffect.velocity);

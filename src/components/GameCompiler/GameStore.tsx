@@ -704,7 +704,7 @@ export interface GameData {
     showLootTwo: boolean;
 };
 
-interface Game_Action {
+export interface Game_Action {
     type: string;
     payload: any;
 };

@@ -6,14 +6,10 @@ interface IBProps {
     gameDispatch: React.Dispatch<any>;
     gameState: any;
     highlighted: { item: null; comparing: boolean; };
-    setHighlighted: React.Dispatch<React.SetStateAction<{
-        item: null;
-        comparing: boolean;
-    }>>;
+    setHighlighted: React.Dispatch<React.SetStateAction<{ item: null; comparing: boolean; }>>;
     dragAndDropInventory: any;
     setDragAndDropInventory: React.SetStateAction<any>;
 }; 
- 
 
 const PhaserInventoryBag = ({ ascean, gameDispatch, gameState, setHighlighted, highlighted, dragAndDropInventory, setDragAndDropInventory }: IBProps) => {
   
@@ -41,7 +37,7 @@ const PhaserInventoryBag = ({ ascean, gameDispatch, gameState, setHighlighted, h
     return (
         <DragDropContext onDragEnd={onDragEnd}> 
             <div className='story-inventory-bag'>
-                { dragAndDropInventory?.length > 0 ?
+                { dragAndDropInventory?.length > 0 ? (
                     dragAndDropInventory.map((item: any, index: number) => {
                         return (
                             <Droppable key={index} droppableId={item._id}>
@@ -53,7 +49,7 @@ const PhaserInventoryBag = ({ ascean, gameDispatch, gameState, setHighlighted, h
                             )}
                         </Droppable>
                     )})
-                : ( '' ) } 
+                ) : ( '' ) } 
             </div>
         </DragDropContext>   
     );

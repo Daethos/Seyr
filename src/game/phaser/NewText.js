@@ -87,7 +87,6 @@ export default class NewText {
         this.obj = false;
     };
       
-    // Setters 
     setText(string) {
         this.obj.text = string;
         this.obj.setText(string);
@@ -111,7 +110,6 @@ export default class NewText {
         this.obj.setScrollFactor(scrollX, scrollY);
     };
 
-    // Getters 
     getCenter() {
         return this.obj.getCenter();
     };

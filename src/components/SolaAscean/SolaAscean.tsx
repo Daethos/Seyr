@@ -151,11 +151,11 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
             </>
         ) : (
             <>
-            <div className="creature-heading">
-                <h1>{ascean.name}</h1>
-                <h2 className='ascean-description'>{ascean.description}</h2>
-            </div>
-            <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
+                <div className="creature-heading">
+                    <h1>{ascean.name}</h1>
+                    <h2 className='ascean-description'>{ascean.description}</h2>
+                </div>
+                <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
                 <svg height="5" width="100%" className="tapered-rule mt-2">
                     <polyline points="0,0 550,2.5 0,5"></polyline>
                 </svg>
@@ -208,7 +208,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     </svg>
                 </div>
                 <AsceanStatCompiler communityFocus={false} ascean={ascean} />
-                    { userProfile ? 
+                { userProfile ? ( 
                     <>
                         <div className="actions">
                         <h3>Communal</h3>
@@ -222,7 +222,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                         <p>{ascean.shareable.charAt(0).toUpperCase() + ascean.shareable.slice(1)}</p>
                         </div>
                     </>
-                    : '' }
+                ) : ( '' ) }
             </>
         ) }
             </div> 

@@ -9,10 +9,8 @@ import GameAscean from '../../components/GameCompiler/GameAscean';
 import GameActions from '../../components/GameCompiler/GameActions';
 import GameAnimations from '../../components/GameCompiler/GameAnimations';
 import GameConditions from '../../components/GameCompiler/GameConditions';
-import useSound from 'use-sound'
-import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import Button from 'react-bootstrap/Button';
-import { GameData, initialGameData, GameStore, GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
+import { initialGameData, GameStore, GAME_ACTIONS } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatData, CombatStore, initialCombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import FirstCombatModal from '../../components/GameCompiler/FirstCombatModal';
 import useGameSounds from '../../components/GameCompiler/Sounds';
@@ -21,7 +19,7 @@ import CombatOverlay from '../../components/GameCompiler/CombatOverlay';
 interface Props {
     guest: any;
     handleLogout: () => void;
-}
+};
 
 const GuestGame = ({ guest, handleLogout }: Props) => {
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
@@ -33,11 +31,10 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     const [loadingOpponent, setLoadingOpponent] = useState<boolean>(false);
     const [emergencyText, setEmergencyText] = useState<any[]>([]);
     const [timeLeft, setTimeLeft] = useState<number>(0);
-    const [dialog, setDialog] = useState<any>({});
     const [background, setBackground] = useState<any>(null);
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(0.3);
+    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playCombatRound } = useGameSounds(0.3);
 
-    const getAscean = async () => {
+    const getAscean = async (): Promise<void> => {
         setLoadingAscean(true);
         try {
             const guestData = {
@@ -86,7 +83,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         getAscean();
     }, []);
 
-    const getNewAscean = async () => {
+    const getNewAscean = async (): Promise<void> => {
         setLoadingAscean(true);
         try {
             const guestData = {
@@ -107,7 +104,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    const getOpponent = async () => {
+    const getOpponent = async (): Promise<void> => {
         setLoadingOpponent(true);
         try {
             let minLevel: number = 0;
@@ -160,7 +157,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    function handleAction(action: any) {
+    function handleAction(action: any): void {
         dispatch({
             type: ACTIONS.SET_COMBAT_ACTION,
             payload: action.target.value
@@ -168,7 +165,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
-    function handleCounter(counter: any) {
+    function handleCounter(counter: any): void {
         dispatch({
             type: ACTIONS.SET_COMBAT_COUNTER,
             payload: counter.target.value
@@ -176,7 +173,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         setTimeLeft(timeLeft + 2 > gameState.timeLeft ? gameState.timeLeft : timeLeft + 2);
     };
 
-    async function setWeaponOrder(weapon: any) {
+    async function setWeaponOrder(weapon: any): Promise<void> {
         try {
             const findWeapon = state.weapons.filter((weap: { name: any; }) => weap?.name === weapon.target.value);
             const newWeaponOrder = async () => state?.weapons.sort((a: any, b: any) => {
@@ -194,7 +191,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function setDamageType(damageType: any) {
+    async function setDamageType(damageType: any): Promise<void> {
         try {    
             playWO();
             dispatch({
@@ -253,7 +250,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function handlePlayerWin(combatData: any) {
+    async function handlePlayerWin(combatData: CombatData): Promise<void> {
         try {
             playWin();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
@@ -268,7 +265,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function handleComputerWin(combatData: any) {
+    async function handleComputerWin(combatData: CombatData): Promise<void> {
         try {
             playDeath();
             setTimeLeft(0);
@@ -282,7 +279,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function handleInitiate(combatData: CombatData) {
+    async function handleInitiate(combatData: CombatData): Promise<void> {
         try {
             if (combatData.action === '') {
                 setEmergencyText([`You Forgot To Choose An Action!\n`]);
@@ -305,7 +302,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function handleInstant(e: { preventDefault: () => void; }) {
+    async function handleInstant(e: { preventDefault: () => void; }): Promise<void> {
         e.preventDefault();
         try {
             setEmergencyText([``]);
@@ -326,7 +323,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    async function handlePrayer(e: { preventDefault: () => void; }) {
+    async function handlePrayer(e: { preventDefault: () => void; }): Promise<void> {
         e.preventDefault();
         try {
             setEmergencyText([``]);
@@ -346,7 +343,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
         };
     };
 
-    const engageCombat = () => {
+    const engageCombat = (): void => {
         dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
     };
 
