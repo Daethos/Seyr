@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getUserFetch, getUserSuccess, getUserFailure, getUserLogout } from "../../game/reducers/userState";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from '../../components/NavBar/NavBar';
 import UserProfile from '../UserProfile/UserProfile';
@@ -17,6 +19,7 @@ import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
 import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
+import Loading from "../../components/Loading/Loading";
 
 export interface User {
   _id: string;
@@ -28,23 +31,32 @@ export interface User {
 };
 
 const App = () => {
-  const [user, setUser] = useState<User | null>(userService.getUser());
-  const [guest, setGuest] = useState(userService.getUser());
+  // const [user, setUser] = useState<User | null>(userService.getUser());
+  const user = useSelector((state: any) => state.user.user) as User | null;
+  const isLoading = useSelector((state: any) => state.user.isLoading);
+  const [guest, setGuest] = useState<any>(null);
   const [createSuccess, setCreateSuccess] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => { 
+    dispatch(getUserFetch());
+  }, [dispatch]);
+ 
   function handleSignUpOrLogin() {
-    setUser(userService.getUser());
+    // setUser(userService.getUser());
+    console.log(user, "User");
+    dispatch(getUserFetch());
   };
 
-  function handleGuest() {
-    setGuest(userService.getUser());
-  };
+  const handleGuest = (): void => setGuest(userService.getUser());
+  const handleGuestLogout = (): void => setGuest(null);
 
-  function handleLogout() {
-    userService.logout();
-    setUser(null);
-    setGuest(null);
+  function handleLogout(): void {
+    console.log(`You are logging out`);
+    dispatch(getUserLogout());
+    // userService.logout();
+    // setUser(null);
   };
 
   async function handleAsceanCreate(newAscean: Object) {
@@ -69,7 +81,7 @@ const App = () => {
   if (user) {
     return (
       <div> 
-      <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
+      <NavBar user={user} handleLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
@@ -82,7 +94,7 @@ const App = () => {
         <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
         <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/:username" element={<ProfilePage user={user} />} />
-        <Route path="/Authorization" element={<AuthPage setUser={setUser} handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
+        <Route path="/Authorization" element={<AuthPage handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>
       </div>
     );
@@ -91,14 +103,14 @@ const App = () => {
   if (guest) {
     return (
       <Routes>
-        <Route path="/guestMatch" element={<GuestGame guest={guest} handleLogout={handleLogout} />} />
+        <Route path="/guestMatch" element={<GuestGame guest={guest} handleLogout={handleGuestLogout} />} />
       </Routes>
     );
   };
-
+  
   return (
     <Routes>
-      <Route path="/Authorization" element={<AuthPage setUser={setUser} handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
+      <Route path="/Authorization" element={<AuthPage handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       <Route path="/*" element={<Navigate to="/Authorization" />} />
     </Routes>
   );

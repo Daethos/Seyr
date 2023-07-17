@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SignUpForm from '../../components/SignUpForm/SignUpForm';
 import LoginForm from '../../components/LoginForm/LoginForm';
 import Button from 'react-bootstrap/Button';
@@ -8,14 +8,16 @@ import userService from '../../utils/userService';
 import { useNavigate } from "react-router-dom";
 
 interface AuthProps {
-    setUser: React.Dispatch<any>;
     handleSignUpOrLogin: () => any;
     handleGuest: () => any;
 };
 
-export default function AuthPage({ setUser, handleSignUpOrLogin, handleGuest }: AuthProps) {
+export default function AuthPage({ handleSignUpOrLogin, handleGuest }: AuthProps) {
   const [showSignUp, setShowSignUp]  = useState(false);
   const navigate = useNavigate();
+  // useEffect(() => {
+  //   ...
+  // }, [])
   const trialVersion = async () => {
     try {
       await userService.createGuestToken();
@@ -53,12 +55,12 @@ export default function AuthPage({ setUser, handleSignUpOrLogin, handleGuest }: 
       { showSignUp ?
         <>
           <Button variant="" style={{ color: 'red', fontSize: 25 + 'px', maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
-          <SignUpForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
+          <SignUpForm handleSignUpOrLogin={handleSignUpOrLogin} />
         </>
       :
         <>
           <Button variant="" style={{ color: 'red', fontSize: 25 + 'px', maxWidth: 50 + '%', marginLeft: 0 + '%' }} className="btn-lg mb-5" onClick={() => setShowSignUp(!showSignUp)}>{showSignUp ? 'Need to Log In?' : 'Need to Sign Up?'}</Button>
-          <LoginForm setUser={setUser} handleSignUpOrLogin={handleSignUpOrLogin} />
+          <LoginForm handleSignUpOrLogin={handleSignUpOrLogin} />
         </>
       }
     </Row>

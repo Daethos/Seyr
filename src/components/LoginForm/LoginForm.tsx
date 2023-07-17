@@ -9,11 +9,10 @@ import Button from 'react-bootstrap/Button';
 import ToastAlert from "../ToastAlert/ToastAlert";
 
 interface LoginProps {
-    setUser: React.Dispatch<any>;
     handleSignUpOrLogin: () => any;
 };
 
-export default function LoginPage({ handleSignUpOrLogin, setUser }: LoginProps) {
+export default function LoginPage({ handleSignUpOrLogin }: LoginProps) {
   const [show, setShow] = useState<boolean>(false)
   const [error, setError] = useState<any>({})
   const [state, setState] = useState({

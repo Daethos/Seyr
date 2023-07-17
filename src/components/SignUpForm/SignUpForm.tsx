@@ -14,10 +14,9 @@ function isPasswordMatch(passwordOne: string, passwordConf: string) {
 
 interface SignUpProps {
     handleSignUpOrLogin: () => any;
-    setUser: React.Dispatch<any>;
 };
 
-export default function SignUpPage({ handleSignUpOrLogin, setUser }: SignUpProps) {
+export default function SignUpPage({ handleSignUpOrLogin }: SignUpProps) {
   const [show, setShow] = useState<boolean>(false)
   const [showTwo, setShowTwo] = useState<boolean>(false)
   const [error, setError] = useState({

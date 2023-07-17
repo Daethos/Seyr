@@ -8,10 +8,9 @@ import ToastAlert from '../ToastAlert/ToastAlert';
 
 interface Props {
     user: any;
-    setUser: any;
 };
 
-const UserModal = ({ user, setUser }: Props) => {
+const UserModal = ({ user }: Props) => {
     const [newName, setNewName] = useState("");
     const [newEmail, setNewEmail] = useState("");
     const [newBio, setNewBio] = useState("");
@@ -27,7 +26,7 @@ const UserModal = ({ user, setUser }: Props) => {
                 username: newName,
             });
             console.log(response.data, 'Response Updating User');
-            setUser(response.data);
+            // setUser(response.data);
             setLoading(false);
         } catch (err: any) {
             console.log(err.message, 'Error Updating User');
@@ -45,8 +44,8 @@ const UserModal = ({ user, setUser }: Props) => {
                 bio: newBio,
             })
             console.log(response.data, 'Response Updating User')
-            setUser(response.data)
-            setLoadingBio(false)
+            // setUser(response.data)
+            setLoadingBio(false);
         } catch (err: any) {
             console.log(err.message, 'Error Updating User')
             setError({

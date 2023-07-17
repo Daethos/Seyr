@@ -10,11 +10,10 @@ import UserModal from '../UserModal/UserModal';
 
 interface NavProps {
     user: any;
-    setUser: React.Dispatch<any>;
     handleLogout: () => void;
 };
 
-const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
+const NavBar = ({ user, handleLogout }: NavProps) => {
   const [modalShow, setModalShow] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<boolean>(true);
   const location = useLocation();
@@ -27,7 +26,7 @@ const NavBar = ({ user, setUser, handleLogout }: NavProps) => {
       </Button>
       <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
       <Modal.Body>
-      <UserModal user={user} setUser={setUser} />
+      <UserModal user={user} />
       </Modal.Body>
       </Modal>
       <Link to="/" className="nav-item text-info" style={{ marginLeft: -30 + 'px', marginTop: -4.5 + 'px' }}>
