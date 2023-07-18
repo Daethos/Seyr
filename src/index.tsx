@@ -6,6 +6,8 @@ import createSagaMiddleware from 'redux-saga';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import combatReducer from './game/reducers/combatState';
+import communityReducer from './game/reducers/communityState';
+import gameReducer from './game/reducers/gameState';
 import playerReducer from './game/reducers/playerState';
 import userReducer from './game/reducers/userState';
 import rootSaga from './game/sagas/rootSaga';
@@ -14,10 +16,10 @@ const saga = createSagaMiddleware();
 const middleware = [saga];
 export const store = configureStore({
   reducer: {
-    player: playerReducer,
     combat: combatReducer,
+    community: communityReducer,
     user: userReducer,
-    // game: gameReducer,
+    game: gameReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
 });

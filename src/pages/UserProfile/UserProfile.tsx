@@ -1,7 +1,6 @@
 import './UserProfile.css';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading';
 import Container from 'react-bootstrap/Container';
@@ -10,41 +9,25 @@ import SolaAscean from '../../components/SolaAscean/SolaAscean'
 import HomeSettings from '../../components/HomeSettings/HomeSettings';
 import Player from '../../game/entities/Player';
 import { getUserAsceanFetch } from '../../game/reducers/userState';
+import { User } from '../App/App';
 
 interface UserProps {
-    loggedUser: any;
     setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
     handleAsceanCreate: (newAscean: Object) => Promise<void>;
 };
 
-const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserProps) => {
+const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
   const [accordionState, setAccordionState] = useState<string>('Tight');
-  // const [asceanVaEsai, setAsceanVaEsai] = useState<any>([]);
-  // const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const user = useSelector((state: any) => state.user.user) as User;
   const asceans = useSelector((state: any) => state.user.ascean) as Player[];
   const hasAscean = useSelector((state: any) => state.user.hasAscean);
   const isLoading = useSelector((state: any) => state.user.isLoading);
   const dispatch = useDispatch();
   useEffect(() => {
-    // getAscean();
     dispatch(getUserAsceanFetch());
     if (!hasAscean) navigate('/Ascean');
   }, [dispatch]);
-
-  // async function getAscean() {
-  //   setLoading(true);
-  //   try {
-  //     const response = await asceanAPI.getAllAscean();
-  //     console.log(response, "Response Getting Ascean")
-  //     if (response.data.length === 0) navigate('/Ascean');
-  //     setAsceanVaEsai([...response.data.reverse()]);
-  //     setLoading(false);
-  //   } catch (err) {
-  //     setLoading(false);
-  //     console.log(err);
-  //   };
-  // };
 
   async function saveAsceanMiddleware(saveAscean: any) {
     try {
@@ -78,7 +61,7 @@ const UserProfile = ({ loggedUser, setCreateSuccess, handleAsceanCreate }: UserP
 
   return (
     <Container>
-      <HomeSettings ascean={asceans} loggedUser={loggedUser} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
+      <HomeSettings ascean={asceans} loggedUser={user} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
         { asceans.length > 0 ? 
           asceans.map((ascean: Player, index: number) => {
             return (

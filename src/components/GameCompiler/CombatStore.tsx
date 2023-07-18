@@ -59,6 +59,7 @@ export interface CombatData {
     computer_defense: object;
     computer_attributes: object;
     computer_defense_default: object;
+    potential_computer_damage: number;
     realized_computer_damage: number;
     computerDamaged: boolean;
 
@@ -240,6 +241,7 @@ export const initialCombatData: CombatData = {
     computer_defense: {},
     computer_attributes: {},
     computer_defense_default: {},
+    potential_computer_damage: 0,
     realized_computer_damage: 0,
     computerDamaged: false,
     attack_weight: 0,
@@ -714,7 +716,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 dodgeStatus: false,
                 instantStatus: false,
                 weapons: resetty,
-            }
+            };
         case 'CLEAR_DUEL':
             return {
                 ...state,
@@ -828,7 +830,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 weather: action.payload,
             };
         case 'PLAYER_REST':
-            console.log('Dispatching Player Rest')
             const percentage = action.payload;
             let currentHealth = state.new_player_health < 0 ? 0 : state.new_player_health;
             const playerHealthHealed = Math.floor(currentHealth + (state.player_health * (percentage / 100)));

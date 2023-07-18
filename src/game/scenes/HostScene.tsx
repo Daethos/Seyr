@@ -32,6 +32,7 @@ import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import { StoryDialog } from '../ui/StoryDialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
 import EventEmitter from '../phaser/EventEmitter';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -63,8 +64,10 @@ interface Props {
     assets: any;
 };
 
-const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState, setAsceanState, assets }: Props) => {
+const HostScene = ({ user, state, dispatch, gameState, gameDispatch, asceanState, setAsceanState, assets }: Props) => {
     const { asceanID } = useParams();
+    const superState = useSelector((state: any) => state);
+    const ascean = useSelector((state: any) => state.game.player);
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
@@ -140,6 +143,10 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     }, []);
 
     useEffect(() => {
+        console.log(ascean, superState, "Ascean in Host Scene");
+    }, [ascean]);
+
+    useEffect(() => {
         updateCombatListener(state);
     }, [state]); 
 
@@ -208,6 +215,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     
     const levelUpAscean = async (vaEsai: any): Promise<void> => {
         try {
+            // dispatch(getAsceanlevelUpFetch(vaEsai));
             let response = await asceanAPI.levelUp(vaEsai); 
             setAsceanState({
                 ...asceanState,
@@ -254,6 +262,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const updateEnemyAction = async (e: any): Promise<void> => {
         try {
+            // dispatch(getEnemyActionFetch(e));
             const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e;
             let enemyData = {
                 ...state,
@@ -293,6 +302,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     };
 
     const updateState = async (e: any): Promise<void> => dispatch({ type: ACTIONS.SET_UPDATE_STATE, payload: e });
+    // const updateState = async (e: any): Promise<void> => dispatch(getCombatStateUpdate(e));
     
     const updateStateAction = async (e: CombatData): Promise<void> => {
         try {
@@ -484,6 +494,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     async function handlePlayerLuckout(): Promise<void> {
         try {
             playReligion();
+            // This is where I dispatch ?? or separate cause handlePlayerWin calls it and such ?? 
             await getOneLootDrop(state.computer.level);
             await gainExperience(state);
             dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
@@ -494,6 +505,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const deleteEquipment = async (eqp: any): Promise<void> => {
         try {
+
             await eqpAPI.deleteEquipment(eqp);
         } catch (err) {
             console.log(err, 'Error!')
@@ -502,6 +514,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const getAsceanAndInventory = async (): Promise<void> => {
         try {
+            // dispatch(getAsceanAndInventoryFetch(asceanID));
             const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
             const response = await asceanAPI.getAsceanStats(asceanID);
@@ -517,6 +530,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     const getOnlyInventory = async (): Promise<void> => {
         try {
+            // dispatch(getOnlyInventoryFetch(asceanID));
             const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
             gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
@@ -526,8 +540,10 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     };
 
     const drinkFirewater = async (): Promise<void> => {
+        // ascean.firewater.charges
         if (gameState.player?.firewater?.charges === 0) return;
         try {
+            // dispatch(getDrinkFirewaterFetch(asceanID));
             dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
             const response = await asceanAPI.drinkFirewater(state.player._id);
             gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
@@ -541,17 +557,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         console.log('Saving Experience!', gameState.saveExp, state.player_win);
         if (!gameState.saveExp) return;
         try {
-            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
-            const response = await asceanAPI.saveExperience(asceanState);
-            if (response.data.gold > 0 && response.data.silver > 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold and ${response.data.silver} silver.`] });
-            } else if (response.data.gold > 0 && response.data.silver === 0) { 
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.gold} gold.`] });
-            } else if (response.data.gold === 0 && response.data.silver > 0) {
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points and received ${response.data.silver} silver.`] });
-            } else {
-                gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: [`You gained up to ${asceanState.opponentExp} experience points.`] });
-            };
+            await asceanAPI.saveExperience(asceanState); 
             const cleanRes = await asceanAPI.getCleanAscean(asceanID);
             gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: cleanRes.data });
             dispatch({
@@ -584,6 +590,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     
     const gainExperience = async (data: CombatData): Promise<void> => {
         try {
+            // dispatch(getGainExperienceFetch({ asceanState, combatState }));
             let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
             if (data.prayerData.includes('Avarice')) opponentExp = Math.round(opponentExp * 1.2);
             console.log(opponentExp, 'Opponent Exp in Gain Experience');
@@ -614,6 +621,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
     
     const getOneLootDrop = async (level: number): Promise<void> => {
         try {
+            // dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level }));
             let response = await eqpAPI.getLootDrop(level);
             gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: response.data[0] });
             let roll = Math.floor(Math.random() * 100) + 1;
@@ -695,7 +703,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
         try {
             playReligion();
             await gainExperience(combatData);
-            const statistic = {
+            const stat = {
                 asceanID: combatData.player._id,
                 wins: 1,
                 losses: 0,
@@ -706,17 +714,16 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
                 totalDamageData: combatData.totalDamageData,
                 prayerData: combatData.prayerData,
                 deityData: combatData.deityData,
-
+                
             };
-            const response = await asceanAPI.recordCombatStatistic(statistic);
+            const response = await asceanAPI.recordCombatStatistic(stat);
             console.log(response, "Player Win Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
+            // dispatch(getCombatStatisticFetch(stat))
             await getOneLootDrop(combatData.computer.level);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
-                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -725,7 +732,8 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     async function handleComputerWin(combatData: CombatData): Promise<void> {
         try {
-            const statistic = {
+            // dispatch(getCombatStatisticFetch(stat))
+            const stat = {
                 asceanID: combatData.player._id,
                 wins: 0,
                 losses: 1,
@@ -737,17 +745,14 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
                 prayerData: combatData.prayerData,
                 deityData: combatData.deityData,
             };
-            const response = await asceanAPI.recordCombatStatistic(statistic);
+            const response = await asceanAPI.recordCombatStatistic(stat);
             console.log(response, "Player Loss Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
             playDeath();
-            gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
-            gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
             setTimeout(() => {
                 dispatch({ type: ACTIONS.COMPUTER_WIN, payload: combatData });
                 gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
-                gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -772,6 +777,7 @@ const HostScene = ({ user,state, dispatch, gameState, gameDispatch, asceanState,
 
     async function handleInitiate(combatData: CombatData): Promise<void> {
         try { 
+            // dispatch(getCombatInitiate(combatData));
             console.log(`%c Player: Action - ${combatData.action} Counter -${combatData.counter_guess} | Computer: Action - ${combatData.computer_action} Counter -${combatData.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
             const response = await gameAPI.phaserAction(combatData);
             console.log(response.data, "Initiate Response")

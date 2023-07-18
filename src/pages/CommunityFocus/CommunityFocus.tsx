@@ -1,55 +1,48 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading'; 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import * as communityAPI from '../../utils/communityApi';
 import FocusAscean from '../../components/FocusAscean/FocusAscean';
-
+import { getFocusAsceanFetch } from '../../game/reducers/communityState';
+import { useDispatch, useSelector } from 'react-redux';
+import { Player } from '../../components/GameCompiler/GameStore';
+import { User } from '../App/App';
 
 interface CommunityProps {
-    loggedUser?: any;
     handleAsceanCreate: (newAscean: Object) => Promise<void>;
 };
 
-const CommunityFocus = ({ loggedUser, handleAsceanCreate }: CommunityProps) => {
-    const [ascean, setAscean] = useState<any>([]);
-    const [loading, setLoading] = useState(true);
+const CommunityFocus = ({ handleAsceanCreate }: CommunityProps) => {
+    const user = useSelector((state: any) => state.user.user) as User;
+    const ascean = useSelector((state: any) => state.community.focus) as Player;
+    const isLoading = useSelector((state: any) => state.community.isLoading);
+    const dispatch = useDispatch();
     const { focusID } = useParams();
 
-    const getAscean = useCallback(async () => {
-        setLoading(true);
-        try {
-            const response = await communityAPI.getOneAscean(focusID);
-            setAscean(response.data)
-            setLoading(false)
-        } catch (err: any) {
-            setLoading(false)
-            console.log(err.message);
-        }
-   }, [focusID]);
-
     useEffect(() => {
-        getAscean()
-    }, [focusID, getAscean]);
+        dispatch(getFocusAsceanFetch(focusID));
+    }, [dispatch, focusID]);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Loading />
         );
     };
 
     return (
-        <Container>
+        ascean && (
+            <Container>
             <Row className="justify-content-center my-5">
             <FocusAscean
                 ascean={ascean}
                 key={ascean._id}
-                loggedUser={loggedUser}
+                loggedUser={user}
                 handleAsceanCreate={handleAsceanCreate}
-            />
+                />
             </Row>
         </Container>
+        )
     );
 };
 

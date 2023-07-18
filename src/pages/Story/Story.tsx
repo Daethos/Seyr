@@ -6,6 +6,8 @@ import * as eqpAPI from '../../utils/equipmentApi';
 import HostScene from '../../game/scenes/HostScene';
 import { GAME_ACTIONS, GameStore, initialGameData, getAsceanTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
+import { useDispatch, useSelector } from 'react-redux';
+import { getGameFetch } from '../../game/reducers/gameState';
 
 interface Props {
     user: any;
@@ -13,6 +15,8 @@ interface Props {
 
 export const Story = ({ user }: Props) => {
     const { asceanID } = useParams();
+    const dispatcher = useDispatch();
+    
     const [state, dispatch] = useReducer(CombatStore, initialCombatData);
     const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [assets, setAssets] = useState([]);
@@ -39,6 +43,7 @@ export const Story = ({ user }: Props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                dispatcher(getGameFetch(asceanID));
                 const [gameStateResponse, combatStateResponse, gameSettingResponse, assetResponse] = await Promise.all([
                     asceanAPI.getOneAscean(asceanID),
                     asceanAPI.getAsceanStats(asceanID),

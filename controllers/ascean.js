@@ -63,6 +63,20 @@ module.exports = {
     sacrificeExp,
 };
 
+const FIELDS = [
+    'weapon_one',
+    'weapon_two',
+    'weapon_three',
+    'shield',
+    'helmet',
+    'chest',
+    'legs',
+    'ring_one',
+    'ring_two',
+    'amulet',
+    'trinket'
+];
+
 async function recordSedyrist(req, res) {
     try {
         let { asceanID, successes, failures, total, totalValue } = req.body;
@@ -606,27 +620,13 @@ async function persistAscean(req, res) {
     await seedDB([secondWeapon], secondWeapon.rarity);
 
     try {
-        const previous = req.body.lineage;
-
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
-        const populated = await Promise.all(fields.map(async field => {
+        const previous = req.body.lineage; 
+        const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(previous[field]);
             return item ? item : null;
         }));
         populated.forEach((item, index) => {
-            previous[fields[index]] = item;
+            previous[FIELDS[index]] = item;
         });
 
         let pCon = previous.constitution > 100 ? 6 : previous.constitution > 50 ? 4 : previous.constitution > 25 ? 2 : 0;
@@ -940,7 +940,6 @@ async function saveToInventory(req, res) {
 
 async function saveInventory(req, res) {
     try {
-        console.log(req.body, "Req.body")
         const ascean = await Ascean.findById(req.body.ascean);
         ascean.inventory = req.body.inventory;
         await ascean.save();
@@ -965,7 +964,6 @@ async function purchaseToInventory(req, res) {
     try {
         const ascean = await Ascean.findById(req.body.ascean._id);
         ascean.inventory.push(req.body.item._id);
-        console.log(req.body.cost, 'Cost of EQP');
         ascean.currency.silver -= req.body.cost.silver;
         ascean.currency.gold -= req.body.cost.gold;
         await rebalanceCurrency(ascean);
@@ -1010,7 +1008,7 @@ const deleteEquipmentCheck = async (equipmentID) => {
         if (parsedIds.includes(equipmentID)) {
             return console.log('Equipment found in golden template list. Must be preserved at all costs!');
         };
-        const deleted = await Equipment.findByIdAndDelete(equipmentID).exec();
+        await Equipment.findByIdAndDelete(equipmentID).exec();
         console.log(`Successfully deleted equipment with id: ${equipmentID}`);
     } catch (err) {
         console.log(err, 'err');
@@ -1031,7 +1029,6 @@ async function removeItem(req, res) {
         };
         if (doesItemStillExist(itemID)) {
             console.log('Item still exists in inventory. Must be a duplicate. Removing duplicate(s).')
-            // Items need to be 'extracted' and also deleted. It means there was an accidental duplicate. Probably just filter them out ?
             ascean.inventory = ascean.inventory.filter(item => item !== itemID);
         };
         await ascean.save();
@@ -1323,28 +1320,15 @@ async function create(req, res) {
 
 async function index(req, res) {
     try {
-        let asceanCrew = await Ascean.find({ user: req.user._id, alive: true });
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
+        let asceanCrew = await Ascean.find({ user: req.user._id, alive: true }); 
         asceanCrew = asceanCrew.slice(-10) // Needs to be the last 10 characters        
         for await (let ascean of asceanCrew) {
-            const populated = await Promise.all(fields.map(async field => {
+            const populated = await Promise.all(FIELDS.map(async field => {
                 const item = await determineItemType(ascean[field]);
                 return item ? item : null;
             }));
             populated.forEach((item, index) => {
-                ascean[fields[index]] = item;
+                ascean[FIELDS[index]] = item;
             });
             await Ascean.populate(ascean, { path: 'user' });
         };
@@ -1369,26 +1353,13 @@ async function getOneAscean(req, res) {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .populate('quests')
-                                 .exec();
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
-        const populated = await Promise.all(fields.map(async field => {
+                                 .exec(); 
+        const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
         }));
         populated.forEach((item, index) => {
-            ascean[fields[index]] = item;
+            ascean[FIELDS[index]] = item;
         });
 
         const inventoryPopulated = ascean.inventory.map(async item => {
@@ -1436,27 +1407,13 @@ async function getAsceanAndInventory(req, res) {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                     .populate('user')
                                     .populate('quests')
-                                    .exec();
-        console.log(ascean.name, "Ascean Name")
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
-        const populated = await Promise.all(fields.map(async field => {
+                                    .exec(); 
+        const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
         }));
         populated.forEach((item, index) => {
-            ascean[fields[index]] = item;
+            ascean[FIELDS[index]] = item;
         });
         
         const inventoryPopulated = ascean.inventory.map(async item => {
@@ -1501,26 +1458,13 @@ async function getOneAsceanClean(req, res) {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .populate('quests')
-                                 .exec();
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
-        const populated = await Promise.all(fields.map(async field => {
+                                 .exec(); 
+        const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
         }));
         populated.forEach((item, index) => {
-            ascean[fields[index]] = item;
+            ascean[FIELDS[index]] = item;
         });
         res.status(200).json({ data: ascean });
     } catch (err) {
@@ -1534,26 +1478,13 @@ async function getAsceanStats(req, res) {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .exec();
-        console.log(ascean.name, "Ascean Name")
-        let fields = [
-            'weapon_one',
-            'weapon_two',
-            'weapon_three',
-            'shield',
-            'helmet',
-            'chest',
-            'legs',
-            'ring_one',
-            'ring_two',
-            'amulet',
-            'trinket'
-        ];
-        const populated = await Promise.all(fields.map(async field => {
+        console.log(ascean.name, "Ascean Name") 
+        const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
         }));
         populated.forEach((item, index) => {
-            ascean[fields[index]] = item;
+            ascean[FIELDS[index]] = item;
         });
         let data = await asceanService.asceanCompiler(ascean);
         if (ascean.health.current === -10) ascean.health.current = data.data.attributes.healthTotal;

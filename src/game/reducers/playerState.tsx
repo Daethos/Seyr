@@ -9,18 +9,18 @@ export const playerSlice = createSlice({
         isLoading: false,
     },
     reducers: {
-        getAsceanAllFetch: (state) => {
+        getAsceanFetch: (state) => {
             state.isLoading = true;    
         },
-        getAsceanAllSuccess: (state, action) => {
+        getAsceanSuccess: (state, action) => {
             state.player = action.payload;
             state.isLoading = false;
         },
-        getAsceanAllFailure: (state) => {
+        getAsceanFailure: (state) => {
             state.isLoading = false;
         },
     },
 });
 
-export const { getAsceanAllFetch, getAsceanAllSuccess, getAsceanAllFailure } = playerSlice.actions;
+export const { getAsceanFetch, getAsceanSuccess, getAsceanFailure } = playerSlice.actions;
 export default playerSlice.reducer;

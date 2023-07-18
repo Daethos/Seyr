@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getUserFetch, getUserSuccess, getUserFailure, getUserLogout } from "../../game/reducers/userState";
+import { getUserFetch, getUserLogout } from "../../game/reducers/userState";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from '../../components/NavBar/NavBar';
 import UserProfile from '../UserProfile/UserProfile';
@@ -19,7 +19,6 @@ import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
 import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
-import Loading from "../../components/Loading/Loading";
 
 export interface User {
   _id: string;
@@ -31,11 +30,9 @@ export interface User {
 };
 
 const App = () => {
-  // const [user, setUser] = useState<User | null>(userService.getUser());
-  const user = useSelector((state: any) => state.user.user) as User | null;
-  const isLoading = useSelector((state: any) => state.user.isLoading);
   const [guest, setGuest] = useState<any>(null);
   const [createSuccess, setCreateSuccess] = useState<boolean>(false);
+  const user = useSelector((state: any) => state.user.user) as User | null;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -43,23 +40,12 @@ const App = () => {
     dispatch(getUserFetch());
   }, [dispatch]);
  
-  function handleSignUpOrLogin() {
-    // setUser(userService.getUser());
-    console.log(user, "User");
-    dispatch(getUserFetch());
-  };
-
+  const handleSignUpOrLogin = () => dispatch(getUserFetch());
+  const handleLogout = () => dispatch(getUserLogout());
   const handleGuest = (): void => setGuest(userService.getUser());
   const handleGuestLogout = (): void => setGuest(null);
 
-  function handleLogout(): void {
-    console.log(`You are logging out`);
-    dispatch(getUserLogout());
-    // userService.logout();
-    // setUser(null);
-  };
-
-  async function handleAsceanCreate(newAscean: Object) {
+  const handleAsceanCreate = async (newAscean: Object): Promise<void> => {
     try {
         await asceanAPI.create(newAscean);
         setCreateSuccess(true);
@@ -69,7 +55,7 @@ const App = () => {
     };
   };
 
-  async function editAscean(vaEsai: Object) {
+  const editAscean = async (vaEsai: Object): Promise<void> => {
     try {
       await asceanAPI.edit(vaEsai);
       setCreateSuccess(true);
@@ -83,7 +69,7 @@ const App = () => {
       <div> 
       <NavBar user={user} handleLogout={handleLogout} />
       <Routes>
-        <Route path="/" element={<UserProfile loggedUser={user} setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/" element={<UserProfile setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Solo/:asceanID" element={<GameSolo user={user} />} />
@@ -91,8 +77,8 @@ const App = () => {
         <Route path="/ChatLobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />
-        <Route path="/CommunityFeed" element={<CommunityFeed loggedUser={user} />} />
-        <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus loggedUser={user} handleAsceanCreate={handleAsceanCreate} />} />
+        <Route path="/CommunityFeed" element={<CommunityFeed />} />
+        <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/:username" element={<ProfilePage user={user} />} />
         <Route path="/Authorization" element={<AuthPage handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
       </Routes>
@@ -107,7 +93,7 @@ const App = () => {
       </Routes>
     );
   };
-  
+
   return (
     <Routes>
       <Route path="/Authorization" element={<AuthPage handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />

@@ -4,7 +4,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Loading from '../../components/Loading/Loading'; 
-import * as communityAPI from '../../utils/communityApi';
 import CommunityAscean from '../../components/CommunityAscean/CommunityAscean';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -12,56 +11,19 @@ import Table from 'react-bootstrap/Table';
 import Accordion from 'react-bootstrap/Accordion';
 import { Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { getCommunityAsceanFetch } from '../../game/reducers/communityState';
+import { useDispatch, useSelector } from 'react-redux';
 
-interface CommunityProps {
-    loggedUser: any;
-};
+const CommunityFeed = () => { 
+    const user = useSelector((state: any) => state.user.user);
+    const ascean = useSelector((state: any) => state.community.ascean);
+    const highScores = useSelector((state: any) => state.community.scores);
+    const isLoading = useSelector((state: any) => state.community.isLoading); 
+    const dispatch = useDispatch(); 
 
-const CommunityFeed = ({ loggedUser }: CommunityProps) => {
-    const [ascean, setAscean] = useState<any>([]);
-    const [loading, setLoading] = useState(true);
-    const [highScores, setHighScores] = useState<any>([]);
-
-    useEffect(() => {
-      console.log(highScores, "High Scores")
-    }, [highScores])
-
-    useEffect(() => {
-        getAscean();
-    }, []);
-
-    useEffect(() => { console.log(ascean, "THe Community ???") }, [ascean])
-
-    function compareScores(a: any, b: any) {
-        if (a[0] === undefined) a[0] = { score: 0 };
-        if (b[0] === undefined) b[0] = { score: 0 };
-        return a[0].score - b[0].score;
-    };
-
-    async function getAscean() {
-        setLoading(true);
-        try {
-            const response = await communityAPI.getEveryone();
-            setAscean([...response.data].reverse());
-            const scores = await response.data.map((ascean: any, index: number) => {
-              let newArr = []
-              if (ascean.hardcore) {
-                let scoreData = { ascean: ascean.name, score: ascean.high_score, key: index, _id: ascean._id, mastery: ascean.mastery, photoUrl: process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg' };
-                newArr.push(scoreData);
-              };
-              return (
-                  newArr
-              );
-            });
-            console.log(scores, "SCORES")
-            const sortedScores = await scores.sort(compareScores).filter((score: any) => score[0].ascean).reverse();
-            setHighScores(sortedScores);
-            setLoading(false);
-        } catch (err: any) {
-            setLoading(false);
-            console.log(err.message);
-        };
-    };
+    useEffect(() => { 
+        dispatch(getCommunityAsceanFetch());
+    }, [dispatch]); 
 
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
@@ -101,7 +63,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
         filterAscean(filteredResults);
     }, [searchText, ascean]);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <Loading Chat={true} />
         );
@@ -115,7 +77,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
             <InputGroup className="bg-black">
             <InputGroup.Text className="bg-black">
             <img 
-                src={loggedUser.photoUrl} 
+                src={user.photoUrl} 
                 alt="User" 
                 style={{maxWidth: 5 + 'vw', maxHeight: 5 + 'vh'}}
             />
@@ -176,7 +138,7 @@ const CommunityFeed = ({ loggedUser }: CommunityProps) => {
             <CommunityAscean
                 ascean={a}
                 key={a._id}
-                loggedUser={loggedUser}
+                loggedUser={user}
             />
         )})}
         </Row>
