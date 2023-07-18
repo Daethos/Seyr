@@ -58,10 +58,7 @@ export const gameSlice = createSlice({
     reducers: {
         getGameFetch: (state, _action) => {
             state.loading = true;    
-        },
-        getPlayerLevelUpFetch: (state, _action) => {
-            state.loadedAscean = false;
-        },
+        }, 
         getDrinkFirewaterFetch: (state, _action) => {
             state.loadedAscean = false;
         },
@@ -74,10 +71,15 @@ export const gameSlice = createSlice({
         getOnlyInventoryFetch: (state, _action) => {
             state.loadingAscean = true;
         },
-        getLootDropFetch: (state, _action) => {
-
-        },
+        getLootDropFetch: (state, _action) => {},
         getCombatStatisticFetch: (state, _action) => {
+            state.loadedAscean = false;
+        },
+        getInteractingLootFetch: (state, _action) => {},
+        getShowDialogFetch: (state, _action) => {},
+        getEnemySetupFetch: (state, _action) => {},
+        getNpcSetupFetch: (state, _action) => {},
+        getAsceanLevelUpFetch: (state, _action) => {
             state.loadedAscean = false;
         },
         // ===== Player Concerns ===== \\
@@ -235,5 +237,5 @@ export const gameSlice = createSlice({
     },
 });
 
-export const { getGameFetch, setPlayerLevelUp, setPlayer, setSettings, setAsceanState, setInitialAsceanState, setAttributes, setCheckLoot, setCurrency, setExperience, setFirewater, setInventory, setTraits, setStatistics, setJournal, setJournalEntry, setPlayerBlessing, setPurchasingItem, setRepositionInventory, setInstantStatus, setCombatResolved, setEqpSwap, setSaveExp, setItemSaved, setRemoveItem, setMerchantEquipment, setDialog, setShowDialog, setShowInventory, setLootDrops, setShowLoot, setClearLootDrops, setCurrentDialogNode, setCurrentIntent, setCurrentNodeIndex, setRendering } = gameSlice.actions;
+export const { getGameFetch, getAsceanLevelUpFetch, getEnemySetupFetch, getNpcSetupFetch, getShowDialogFetch, getLootDropFetch, getOnlyInventoryFetch, getAsceanAndInventoryFetch, getDrinkFirewaterFetch, getInteractingLootFetch, getGainExperienceFetch, setPlayerLevelUp, setPlayer, setSettings, setAsceanState, setInitialAsceanState, setAttributes, setCheckLoot, setCurrency, setExperience, setFirewater, setInventory, setTraits, setStatistics, setJournal, setJournalEntry, setPlayerBlessing, setPurchasingItem, setRepositionInventory, setInstantStatus, setCombatResolved, setEqpSwap, setSaveExp, setItemSaved, setRemoveItem, setMerchantEquipment, setDialog, setShowDialog, setShowInventory, setLootDrops, setShowLoot, setClearLootDrops, setCurrentDialogNode, setCurrentIntent, setCurrentNodeIndex, setRendering } = gameSlice.actions;
 export default gameSlice.reducer;

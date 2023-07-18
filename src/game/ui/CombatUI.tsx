@@ -1,62 +1,46 @@
 import { useEffect, useState } from 'react'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import playerHealthbar from '../images/player-healthbar.png';
 import playerPortrait from '../images/player-portrait.png';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
-import { Equipment, GAME_ACTIONS, GameData } from '../../components/GameCompiler/GameStore';
-import StatusEffects, { StatusEffect } from '../../components/GameCompiler/StatusEffects';
+import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { useDispatch, useSelector } from 'react-redux';
+import { setInstantStatus } from '../reducers/gameState';
+import PhaserEffects from './PhaserEffects';
+import ItemPopover, { getBorderStyle, itemPopover } from './ItemPopover';
 
 interface CombatUIProps {
-    state: CombatData;
-    dispatch: any;
-    gameState: GameData;
-    gameDispatch: any;
     staminaPercentage: number;
-    setStaminaPercentage: any;
     pauseState: boolean;    
     handleCallback: (state: CombatData, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage, setStaminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
+const CombatUI = ({ staminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
+    const state = useSelector((state: any) => state.combat);
+    const gameState = useSelector((state: any) => state.game);
+    const dispatch = useDispatch();
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
-    const [displayedAction, setDisplayedAction] = useState<any>([]);
 
     useEffect(() => {
         updatePlayerHealthPercentage();
-    }, [state.new_player_health]);
-
-    // useEffect(() => {
-    //     setDisplayedAction(`Damage: ${state.player_damage_type}`);
-    // }, [state.player_damage_type]);
-
-    // useEffect(() => {
-    //     setDisplayedAction(`Weapon: ${state.weapons[0]?.name}`);
-    // }, [state.weapons[0]]);
-
-    // useEffect(() => {
-    //     setDisplayedAction(`Prayer: ${state.playerBlessing}`);
-    // }, [state.playerBlessing]);
+    }, [state.new_player_health]); 
 
     useEffect(() => {
         let instantTimer: ReturnType<typeof setTimeout>;
         if (gameState.instantStatus) {
             instantTimer = setTimeout(() => {
-                gameDispatch({
-                    type: GAME_ACTIONS.INSTANT_COMBAT,
-                    payload: false,
-                });
+                dispatch(setInstantStatus(false));
             }, 30000);
         };
         return () => {
             clearTimeout(instantTimer);
         };
-    }, [gameState.instantStatus, gameDispatch]);
+    }, [gameState.instantStatus, dispatch]);
 
     const updatePlayerHealthPercentage = async () => {
         try {
@@ -64,106 +48,6 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
             setPlayerHealthPercentage(newHealthPercentage);
         } catch (err: any) {
             console.log(err.message, 'Error updating Health Percentage');
-        };
-    };
-
-    const itemPopover = (item: Equipment) => {
-        return (
-            <Popover className="text-info" id="popover">
-            <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
-            <Popover.Body id="popover-body" className="">
-                { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? '' : 
-                    <>
-                        { item?.type && item?.grip ? (
-                    <>
-                        {item?.type} [{item?.grip}] <br />
-                        {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type?.[2] : '' }] <br />
-                    </>
-                    ) : item?.type ? ( <>{item.type} <br /></> ) : ( '' )}
-                    {item?.constitution > 0 ? 'CON: +' + item?.constitution + ' ' : ''}
-                    {item?.strength > 0 ? 'STR: +' + item?.strength + ' ' : ''}
-                    {item?.agility > 0 ? 'AGI: +' + item?.agility + ' ' : ''}
-                    {item?.achre > 0 ? 'ACH: +' + item?.achre + ' ' : ''}
-                    {item?.caeren > 0 ? 'CAER: +' + item?.caeren + ' ' : ''}
-                    {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ''}<br />
-                    Damage: {item?.physical_damage} Phys | {item?.magical_damage} Magi <br />
-                    { item?.physical_resistance || item?.magical_resistance ? (
-                        <>
-                            Defense: {item?.physical_resistance} Phys | {item?.magical_resistance} Magi <br />
-                        </>
-                    ) : ( '' ) }
-                    { item?.physical_penetration || item?.magical_penetration ? (
-                        <>
-                            Penetration: {item?.physical_penetration} Phys | {item?.magical_penetration} Magi <br />
-                        </>
-                    ) : ( '' ) }
-                    Crit Chance: {item?.critical_chance}% <br />
-                    Crit Damage: {item?.critical_damage}x <br />
-                    Roll Chance: {item?.roll}% <br />
-                    { item?.influences && item?.influences?.length > 0 ? (
-                        <>Influence: {item?.influences?.[0]}<br /></>
-                    ) : ( '' ) }
-                    <p style={{ color: getBorderStyle(item?.rarity), marginTop: "5%", fontSize: "16px" }}>
-                        {item?.rarity}
-                    </p>
-                    { state.isStalwart ? (
-                        <p style={{ color: "gold" }}>
-                            Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. You receive 50% less poise damage. You receive 15% less damage. You cannot dodge or roll.
-                        </p>
-                    ) : ( '' ) }
-                </> }
-            </Popover.Body>
-        </Popover>
-        );
-    };
-
-
-    function getShadowStyle(prayer: string) {
-        switch (prayer) {
-            case 'Buff':
-                return 'gold';
-            case 'Damage':
-                return 'red';
-            case 'Debuff':
-                return 'purple';
-            case 'Heal':
-                return 'green';
-            case 'Avarice':
-                return 'greenyellow';
-            case 'Denial':
-                return '#0cf';
-            case 'Dispel':
-                return '#fdf6d8';
-            case 'Silence':
-                return 'black';
-            default:
-                return 'white';
-        };
-    };
-
-    function getBorderStyle(rarity: string) {
-        switch (rarity) {
-            case 'Common':
-                return 'white';
-            case 'Uncommon':
-                return 'green';
-            case 'Rare':
-                return 'blue';
-            case 'Epic':
-                return 'purple';
-            case 'Legendary':
-                return 'darkorange';
-            default:
-                return 'grey';
-        };
-    };
-    const getItemStyle = (rarity: string) => {
-        return {
-            border: '0.15em solid ' + getShadowStyle(state.playerBlessing),
-            background: 'black',
-            boxShadow: '0 0 2em ' + getShadowStyle(state.playerBlessing),
-            borderRadius: '50%',
-            fontWeight: 700,
         };
     };
 
@@ -300,9 +184,10 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
                 fontWeight: 700 
             }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
             <div style={{ position: "absolute", left: "185px", top: "0px", transform: "scale(0.75)" }}>
-            <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
-                <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle(state.weapons[0]?.rarity)} />
-            </OverlayTrigger>
+            {/* <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
+                <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle} />
+            </OverlayTrigger> */}
+            <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} />
             </div>
             <div style={{ position: "absolute", left: "230px", top: "-10px" }}>
             { state.isStalwart ? (
@@ -314,7 +199,7 @@ const CombatUI = ({ state, dispatch, gameState, gameDispatch, staminaPercentage,
             {state.playerEffects.length > 0 ? (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {
-                        return ( <StatusEffects state={state} dispatch={dispatch} ascean={state.player} effect={effect} player={true} story={true} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
+                        return ( <PhaserEffects effect={effect} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) } 

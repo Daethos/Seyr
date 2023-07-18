@@ -38,7 +38,7 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
             newIndex = direction === 1 ? 2 : 1;
             if (!weapons[newIndex]) return;
             setSelectedWeaponIndex(newIndex);
-            setWeaponOrder( { target: { value: weapons[newIndex].name } } );
+            setWeaponOrder( { target: { value: weapons[newIndex]._id } } );
             setSelectedHighlight('Weapon');
         };
     };

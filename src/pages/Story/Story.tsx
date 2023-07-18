@@ -98,7 +98,7 @@ export const Story = ({ user }: Props) => {
     return (
         <div>
         { gameChange ? ( '' )
-            : ( <HostScene user={user} state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} asceanState={asceanState} setAsceanState={setAsceanState} assets={assets} /> 
+            : ( <HostScene gameState={gameState} gameDispatch={gameDispatch} asceanState={asceanState} setAsceanState={setAsceanState} assets={assets} /> 
         ) }
         </div>
     );

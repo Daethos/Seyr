@@ -7,6 +7,15 @@ const combatSlice = createSlice({
     reducers: {
         // ===== Combat Getter ===== \\
         getEnemyActionFetch: (state, _action) => {},
+        getCombatStateUpdate: (state, _action) => {},
+        getCombatStatisticFetch: (state, _action) => {},
+        getAsceanHealthUpdateFetch: (state, _action) => {},
+        getInitiateFetch: (state, _action) => {},
+        getCombatSettingFetch: (state, _action) => {},
+        getEffectTickFetch: (state, _action) => {},
+        getCombatFetch: (state, _action) => {},
+        getStalwartFetch: (state, _action) => {},
+        getCombatTimerFetch: (state, _action) => {},
         // ===== Combat Setup / Breakdown ===== \\
         setCombatPlayer: (state, action) => {
             state.player = action.payload.ascean;
@@ -66,7 +75,7 @@ const combatSlice = createSlice({
             state.enemyID = action.payload.enemyID;
             state.npcType = action.payload.npcType;
         },
-        setCombat: (state, _action) => {
+        setCombat: (state) => {
             state.combatEngaged = true;
             state.combatRound = 1;
             state.sessionRound = state.sessionRound === 0 ? 1 : state.sessionRound;
@@ -92,6 +101,9 @@ const combatSlice = createSlice({
             state.computer = null;
             state.npcType = '';
         },
+        setPhaser: (state, action) => {
+            state.phaser = action.payload;
+        },
         setRest: (state, action) => {
             const percentage = action.payload;
             const current = state.new_player_health;
@@ -103,7 +115,6 @@ const combatSlice = createSlice({
         setWeather: (state, action) => {
             state.weather = action.payload;
         },
-
         // ===== Combat Input Concerns ===== \\
         setCombatInput: (state, action) => {
             const { key, value } = action.payload;
@@ -178,12 +189,18 @@ const combatSlice = createSlice({
             state.computer_glancing_blow = action.payload.computer_glancing_blow;
             state.playerEffects = action.payload.playerEffects;  
         },
-
+        setRemoveEffect: (state, action) => {
+            state.playerEffects = state.playerEffects.filter(effect => effect.id !== action.payload);
+            state.computerEffects = state.computerEffects.filter(effect => effect.id !== action.payload);
+        },
+        setStalwart: (state, action) => {
+            state.isStalwart = action.payload;
+        },
+        setCombatTimer: (state, action) => {
+            state.combatTimer = action.payload;
+        },
         // ===== Combat Resolution Concerns ===== \\
         setCombatInitiated: (state, action) => {
-            state = action.payload;
-        },
-        setConsumePrayer: (state, action) => {
             state = action.payload;
         },
         setEffectResponse: (state, action) => {
@@ -274,6 +291,18 @@ const combatSlice = createSlice({
 });
 
 export const {
+    getCombatStateUpdate,
+    getEnemyActionFetch,
+    getCombatStatisticFetch,
+    getAsceanHealthUpdateFetch,
+    getInitiateFetch,
+    getCombatSettingFetch,
+    getEffectTickFetch,
+    getCombatFetch,
+    getStalwartFetch,
+    getCombatTimerFetch,
+
+
     setCombatPlayer,
     setEnemy,
     setNpc,
@@ -281,8 +310,11 @@ export const {
     setAggression,
     clearNonAggressiveEnemy,
     clearNpc,
+    setPhaser,
     setRest,
     setWeather,
+
+    setCombatTimer,
     setCombatInput,
     setClearCounter,
     setActionStatus, 
@@ -297,7 +329,8 @@ export const {
     setPlayerBlessing,
     setPrayerSacrifice,
     setInstantStatus,
-    setConsumePrayer,
+    setRemoveEffect,
+    
     setEffectResponse,
     setPlayerWin,
     setEnemyWin,
@@ -305,7 +338,8 @@ export const {
     setPlayerLuckout,
     setLuckoutFailure,
     setEnemyPersuaded,
-    resetLuckout
+    resetLuckout,
+    setStalwart
 } = combatSlice.actions;
 
 export default combatSlice.reducer;

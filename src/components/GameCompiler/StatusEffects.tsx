@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react';
-import { ACTIONS } from './CombatStore';
-import * as gameAPI from '../../utils/gameApi';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -44,70 +41,13 @@ export interface StatusEffect {
 };
 
 interface StatusEffectProps {
-    ascean: any;
     effect: StatusEffect;
     player?: boolean;
     spectator?: boolean;
     enemy?: boolean;
-    state: any;
-    dispatch: any;
-    story?: boolean;
-    pauseState?: boolean;
-    handleCallback?: (state: any, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispatch, story, pauseState, handleCallback }: StatusEffectProps) => {
-    const [endTime, setEndTime] = useState<number>(effect.endTime);
-    const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
-    const specials = ['Avarice', 'Dispel', 'Denial', 'Silence'];
-    const specialDescription = {
-        'Avarice': 'Increases the amount of experience and gold gained.',
-        'Dispel': 'Removes the last prayer affecting the enemy.',
-        'Denial': 'Prevents the enemy from killing you.',
-        'Silence': 'Prevents the enemy from praying.'
-    };
-
-    useEffect(() => {
-        setEndTime(effect.endTime);
-        setEffectTimer(effect.endTime - effect.startTime);
-    }, []);
-
-    useEffect(() => {
-        if (!story && !pauseState) return;
-        if (endTime < effect.endTime) setEndTime(effect.endTime);
-        if (canTick(effect, effectTimer)) {
-            // console.log('Effect Tick');
-            effectTick(state, effect, effectTimer);
-        };
-        const intervalTimer = setInterval(() => {
-            setEffectTimer((effectTimer: number) => effectTimer - 1);
-        }, 1000);
-        if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {
-            dispatch({ type: ACTIONS.REMOVE_EFFECT, payload: effect.id });
-            clearInterval(intervalTimer);
-        };
-        if (pauseState) clearInterval(intervalTimer);
-    
-        return () => clearInterval(intervalTimer); // Clean up the interval on unmount
-    }, [effectTimer, story, pauseState, endTime]);
-    
-    const canTick = (effect: StatusEffect, timer: number): boolean => {
-        // console.log(`Checking timer ${timer} for ${effect.name}, a ${effect.prayer} effect.`);
-        if (timer % 3 === 0 && timer !== (effect.endTime - effect.startTime) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) return true;
-        return false;
-    };
-
-    const effectTick = async (state: any, effect: StatusEffect, effectTimer: number): Promise<void> => {
-        try {
-            if (handleCallback) await handleCallback(state, effect, effectTimer);
-        } catch (err: any) {
-            console.log(err, "Error In Effect Tick");
-        };
-    };
-
-    const consumeEnemyPrayer = (name: string, prayer: string): void => {
-        console.log('Consume Enemy Prayer', name, prayer);
-    };
+const StatusEffects = ({ effect, player, spectator, enemy }: StatusEffectProps) => {
 
     const effectPopover = (
         <Popover className='text-info' id='popover' style={ spectator ? { zIndex: 9999 } : { } }>
@@ -117,25 +57,12 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
                 {effect?.debuffTarget ? <><br />Debuff Target: {effect.debuffTarget} <br /></> : ''}
                 </p>
                 <p>{effect?.description}</p>
-                { story ? (
-                    <p>
-                    Duration: {effectTimer}s <br />
-                    Start: {effect?.startTime}s | End: {effect?.endTime}s <br />
-                    {effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
-                    </p>
-                ) : (
-                    <>
-                    Duration: {effect?.duration} <br />
-                    <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
-                    Round Start: {effect?.tick?.start} | End: {effect?.tick?.end}</p>
-                    </>        
-                )}
-                <p>Effect(s): <br />
-                { specials.includes(effect.prayer) && story ? (
-                    <>
-                    {specialDescription[effect.prayer as keyof typeof specialDescription]} <br />
-                    </>
-                ) : ( '' ) }
+                <>
+                Duration: {effect?.duration} <br />
+                <p>{effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
+                Round Start: {effect?.tick?.start} | End: {effect?.tick?.end}</p>
+                </>  
+                <p>Effect(s): <br /> 
                     {effect?.effect?.physical_damage ? <>Physical Damage: {effect?.effect?.physical_damage} <br /> </> : ''}
                     {effect?.effect?.magical_damage ? <>Magical Damage: {effect?.effect?.magical_damage} <br /> </> : ''}
                     {effect?.effect?.physical_penetration ? <>Physical Penetration: {effect?.effect?.physical_penetration} <br /> </> : ''}
@@ -152,7 +79,6 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
                     {effect?.effect?.damage ? <>Damage (per Round): {Math.round(effect?.effect?.damage * 0.33)} <br /> </> : ''}
 
                 </p>
-                {/* { !player && ascean?.capable.enemyConsume && !state.enemyPrayerConsumed ? <><Button variant='' style={{ color: 'purple' }} onClick={() => consumeEnemyPrayer(effect.name, effect.prayer)}>Consume</Button></> : '' } */}
             </Popover.Body>
         </Popover>
     );
@@ -184,25 +110,20 @@ const StatusEffects = ({ effect, player, spectator, enemy, ascean, state, dispat
     };
 
     const getEffectStyle = {
-        marginTop: player && !story ? getInnerWidth() : story ? getInnerWidth() : '',
+        marginTop: player ? getInnerWidth() : '',
         border: 2 + 'px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
-        borderRadius: story ? '6px' : '',
-        marginLeft: story ? '5%' : '',
     };
 
     const getIconStyle = {
-        width: story ? '' : '100%',
-        marginTop: story ? '-10px' : '-17.5px',
-        marginLeft: story ? '-17.5px' : '',
-        transform: story ? 'scale(0.65)' : '',
+        width: '100%',
+        marginTop: '-17.5px',
     };
 
     return (
         <OverlayTrigger trigger='click' rootClose placement='auto-start' overlay={effectPopover}>
-            <Button variant='' style={getEffectStyle} className={ enemy ? 'status-effects enemy' : spectator ? 'status-effects spectator' : story ? 'story-effects' : 'status-effects'}>
-                <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/>
-                { story ? ( <p style={{ color: "gold", fontSize: "10px", marginLeft: "-8px", top: "-10px",  display: "inline" }}>{effectTimer}s</p> ) : ( '' ) }
+            <Button variant='' style={getEffectStyle} className={ enemy ? 'status-effects enemy' : spectator ? 'status-effects spectator' : 'status-effects'}>
+                <img src={process.env.PUBLIC_URL + effect?.imgURL} alt={effect?.name} style={getIconStyle}/> 
             </Button>
         </OverlayTrigger>
     );
